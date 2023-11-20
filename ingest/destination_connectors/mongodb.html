@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Retry Strategy Configuration" href="retry_strategy_config.html" /><link rel="prev" title="Partition Configuration" href="partition_config.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Permissions Configuration - Unstructured 0.11.0 documentation</title>
+  <title>MongoDB - Unstructured 0.11.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -142,6 +142,7 @@
   <script src="../../_static/doctools.js"></script>
   <script src="../../_static/sphinx_highlight.js"></script>
   <script src="../../_static/scripts/furo.js"></script>
+  <script src="../../_static/tabs.js"></script>
   <script src="../../_static/js/githubStargazers.js"></script>
   <script src="../../_static/js/sidebarScrollPosition.js"></script>
   </head>
@@ -307,7 +308,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html#key-concepts">Key Concepts</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -331,7 +332,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../core/embedding.html">Embedding</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">Ingest</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Ingest</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../index.html">Ingest</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Ingest</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/airtable.html">Airtable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/azure.html">Azure</a></li>
@@ -360,19 +361,19 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="azure_cognitive_search.html">Azure Cognitive Search</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="processor_config.html">Processor Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="read_config.html">Read Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="partition_config.html">Partition Configuration</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Permissions Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="retry_strategy_config.html">Retry Strategy Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="chunking_config.html">Chunking Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="embedding_config.html">Embedding Configuration</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fsspec_config.html">Fsspec Configuration</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configs/processor_config.html">Processor Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/read_config.html">Read Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/partition_config.html">Partition Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/permissions_config.html">Permissions Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/retry_strategy_config.html">Retry Strategy Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/chunking_config.html">Chunking Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/embedding_config.html">Embedding Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configs/fsspec_config.html">Fsspec Configuration</a></li>
 </ul>
 </li>
 </ul>
@@ -440,16 +441,61 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="permissions-configuration">
-<h1>Permissions Configuration<a class="headerlink" href="#permissions-configuration" title="Permalink to this heading"></a></h1>
-<p>A common permissions configuration is leveraged to extract user access data associated with the content from the source data provider.  Currently supported for the Sharepoint connector.</p>
-<section id="configs">
-<h2>Configs<a class="headerlink" href="#configs" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">application_id</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">client_cred</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">tenant</span></code></p></li>
-</ul>
+          <section id="mongodb">
+<h1>MongoDB<a class="headerlink" href="#mongodb" title="Permalink to this heading"></a></h1>
+<p>Batch process all your records using <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> to store structured outputs locally on your filesystem and upload those local files to an MongoDB collection.</p>
+<p>First you’ll need to install the MongoDB dependencies as shown here.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[mongodb]&quot;</span>
+</pre></div>
+</div>
+<section id="run-locally">
+<h2>Run Locally<a class="headerlink" href="#run-locally" title="Permalink to this heading"></a></h2>
+<p>The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
+upstream local connector.</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--input-path<span class="w"> </span>example-docs/fake-memo.pdf<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--anonymous<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>local-output-to-mongo<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>mongodb<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--uri<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_URI</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--database<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_DATABASE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--collection<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DESTINATION_MONGO_COLLECTION</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">LocalRunner</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">LocalRunner</span><span class="p">(</span>
+        <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-mongo&quot;</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
+        <span class="n">writer_type</span><span class="o">=</span><span class="s2">&quot;mongodb&quot;</span><span class="p">,</span>
+        <span class="n">writer_kwargs</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_URI&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_DATABASE_NAME&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;collection&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DESTINATION_MONGO_COLLECTION&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-memo.pdf&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div></div>
+<p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">&lt;upstream</span> <span class="pre">connector&gt;</span> <span class="pre">mongodb</span> <span class="pre">--help</span></code>.</p>
+<p>NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you’re running this locally. You can find more information about this in the <a class="reference external" href="https://unstructured-io.github.io/unstructured/installing.html">installation guide</a>.</p>
 </section>
 </section>
 
@@ -458,24 +504,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="retry_strategy_config.html">
-            <div class="page-info">
-              <div class="context">
-                <span>Next</span>
-              </div>
-              <div class="title">Retry Strategy Configuration</div>
-            </div>
-          </a>
-          <a class="prev-page" href="partition_config.html">
-            <div class="page-info">
-              <div class="context">
-                <span>Previous</span>
-              </div>
-              
-              <div class="title">Partition Configuration</div>
-              
-            </div>
-          </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -508,8 +538,8 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Permissions Configuration</a><ul>
-<li><a class="reference internal" href="#configs">Configs</a></li>
+<li><a class="reference internal" href="#">MongoDB</a><ul>
+<li><a class="reference internal" href="#run-locally">Run Locally</a></li>
 </ul>
 </li>
 </ul>
