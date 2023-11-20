@@ -67,4 +67,4 @@ PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"
 
-"$SCRIPT_DIR"/check-diff-evaluation-metrics.sh
+"$SCRIPT_DIR"/check-diff-evaluation-metrics.sh "$EVAL_NAME"
