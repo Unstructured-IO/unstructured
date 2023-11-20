@@ -33,7 +33,6 @@ EXPORT_DIR=$OUTPUT_ROOT/metrics-tmp/$EVAL_NAME
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-  cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$SOURCE_DIR"
 }
 trap cleanup EXIT

@@ -124,6 +124,10 @@ def measure_element_type_accuracy(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
+    if not output_list:
+        print("No output files to calculate to element type for, exiting")
+        sys.exit(0)
+
     rows = []
     accuracy_scores: List[float] = []
 
