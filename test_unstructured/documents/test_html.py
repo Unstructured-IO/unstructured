@@ -25,6 +25,7 @@ from unstructured.documents.html import (
     TEXT_TAGS,
     HTMLDocument,
     HTMLNarrativeText,
+    HTMLTable,
     HTMLTitle,
     TagsMixin,
 )
@@ -32,21 +33,26 @@ from unstructured.documents.html import (
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
 TAGS = (
-    "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"
-    "<bdo><big><blockquote><body><br><button><canvas><caption><center><cite><code><col>"
-    "<colgroup><data><datalist><dd><del><details><dfn><dialog><dir><div><dl><dt><em><embed>"
-    "<fieldset><figcaption><figure><font><footer><form><frame><frameset><h1><h2><h3><h4><h5><h6>"
-    "<head><header><hr><html><i><iframe><img><input><ins><kbd><label><legend><li><link><main>"
-    "<map><mark><meta><meter><nav><noframes><noscript><object><ol><optgroup><option><output><p>"
-    "<param><picture><pre><progress><q><rp><rt><ruby><s><samp><script><section><select><small>"
-    "<source><span><strike><strong><style><sub><summary><sup><table><tbody><td><template>"
-    "<textarea><tfoot><th><thead><time><title><tr><track><tt><u><ul><var><video><wbr>"
+    (
+        "<a><abbr><acronym><address><applet><area><article><aside><audio><b><base><basefont><bdi>"
+        "<bdo><big><blockquote><body><br><button><canvas><caption><center><cite><code><col>"
+        "<colgroup><data><datalist><dd><del><details><dfn><dialog><dir><div><dl><dt><em><embed>"
+        "<fieldset><figcaption><figure><font><footer><form><frame><frameset><h1><h2><h3><h4><h5>"
+        "<h6><head><header><hr><html><i><iframe><img><input><ins><kbd><label><legend><li><link>"
+        "<main><map><mark><meta><meter><nav><noframes><noscript><object><ol><optgroup><option>"
+        "<output><p><param><picture><pre><progress><q><rp><rt><ruby><s><samp><script><section>"
+        "<select><small><source><span><strike><strong><style><sub><summary><sup><table><tbody><td>"
+        "<template><textarea><tfoot><th><thead><time><title><tr><track><tt><u><ul><var><video><wbr>"
+    )
+    .replace(">", "")
+    .split("<")[1:]
 )
 
-TAGS = TAGS.replace(">", "").split("<")[1:]
-
-VOID_TAGS = "<area><base><br><col><embed><hr><img><input><link><meta><param><source><track><wbr>"
-VOID_TAGS = VOID_TAGS.replace(">", "").split("<")[1:]
+VOID_TAGS = (
+    ("<area><base><br><col><embed><hr><img><input><link><meta><param><source><track><wbr>")
+    .replace(">", "")
+    .split("<")[1:]
+)
 
 INCLUDED_TAGS = TEXT_TAGS + HEADING_TAGS + LIST_ITEM_TAGS + SECTION_TAGS
 EXCLUDED_TAGS = [
@@ -56,23 +62,157 @@ EXCLUDED_TAGS = [
 ]
 
 
-@pytest.fixture()
-def sample_doc():
-    table_element = HTMLTitle(
-        "I'm a title in a table.",
-        tag="p",
-        ancestortags=("table", "tbody", "tr", "td"),
+# -- table-extraction behaviors ------------------------------------------------------------------
+
+
+def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element():
+    """Bare-bones means no `<thead>`, `<tbody>`, or `<tfoot>` elements."""
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td>Lorem</td><td>Ipsum</td></tr>\n"
+        "    <tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
     )
-    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
-    page1 = Page(0)
-    page1.elements = [table_element, narrative]
-    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
-    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
-    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
-    page2 = Page(1)
-    page2.elements = [header, body, footer]
-    doc = HTMLDocument.from_pages([page1, page2])
-    return doc
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    # -- there is exactly one element and it's an HTMLTable instance --
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    # -- table text is joined into a single string; no row or cell boundaries are represented --
+    assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
+    # -- An HTML representation is also available that is longer but represents table structure.
+    # -- Note this is padded with undesired spaces for human-readability that doesn't matter to us.
+    assert element.text_as_html == (
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_elements():
+    """Cells within a `table/thead` element are included in the text and html.
+
+    The presence of a `<thead>` element in the original also determines whether a `<thead>` element
+    appears in `.text_as_html` or whether the first row of cells is simply in the body.
+    """
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    assert element.text_as_html == (
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_does_not_emit_an_HTMLTable_element_for_a_table_with_no_text():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+
+    html_document = HTMLDocument.from_string(html_str)
+
+    assert html_document.elements == []
+
+
+def test_it_does_not_consider_an_empty_table_a_bulleted_text_table():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    html_document = HTMLDocument.from_string(html_str)
+    html_elem = html_document.document_tree
+    assert html_elem is not None
+    table = html_elem.find(".//table")
+    assert table is not None
+
+    assert html._is_bulleted_table(table) is False
+
+
+def test_it_provides_parseable_HTML_in_text_as_html():
+    html_str = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    html_document = HTMLDocument.from_string(html_str)
+    (element,) = html_document.elements
+    assert isinstance(element, HTMLTable)
+    text_as_html = element.text_as_html
+    assert text_as_html is not None
+
+    html = etree.fromstring(text_as_html, etree.HTMLParser())
+
+    assert html is not None
+    # -- lxml adds the <html><body> container, that's not present in `.text_as_html` --
+    assert etree.tostring(html, encoding=str) == (
+        "<html><body>"
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "</table>"
+        "</body></html>"
+    )
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_parses_tags_correctly():
@@ -196,7 +336,6 @@ def test_parse_nothing():
 def test_read_with_existing_pages():
     page = Page(number=0)
     html_document = HTMLDocument.from_pages([page])
-    html_document._read()
     assert html_document.pages == [page]
 
 
@@ -547,7 +686,6 @@ def test_containers_with_text_are_processed():
    </div>
 </div>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         Text(text="Hi All,"),
@@ -570,7 +708,6 @@ def test_html_grabs_bulleted_text_in_tags():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -590,7 +727,6 @@ def test_html_grabs_bulleted_text_in_paras():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -642,7 +778,6 @@ def test_html_grabs_bulleted_text_in_tables():
     </body>
 </html>"""
     html_document = HTMLDocument.from_string(html_str)
-    html_document._read()
 
     assert html_document.elements == [
         ListItem(text="Happy Groundhog's day!"),
@@ -727,3 +862,25 @@ def test_line_break_in_text_tag(tag):
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
     assert doc.elements[1].text == "World"
+
+
+# -- module-level fixtures -----------------------------------------------------------------------
+
+
+@pytest.fixture()
+def sample_doc():
+    table_element = HTMLTitle(
+        "I'm a title in a table.",
+        tag="p",
+        ancestortags=("table", "tbody", "tr", "td"),
+    )
+    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
+    page1 = Page(0)
+    page1.elements = [table_element, narrative]
+    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
+    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
+    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
+    page2 = Page(1)
+    page2.elements = [header, body, footer]
+    doc = HTMLDocument.from_pages([page1, page2])
+    return doc
