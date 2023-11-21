@@ -83,7 +83,7 @@ protobuf==4.23.4
     #   -c ingest/../constraints.in
     #   google-api-core
     #   googleapis-common-protos
-pyasn1==0.5.0
+pyasn1==0.5.1
     # via
     #   pyasn1-modules
     #   rsa
@@ -109,5 +109,5 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   requests
-yarl==1.9.2
+yarl==1.9.3
     # via aiohttp

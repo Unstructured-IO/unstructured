@@ -4,6 +4,7 @@
 onnx
 pdf2image
 pdfminer.six
+pikepdf
 # Do not move to contsraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
 unstructured-inference==0.7.15
