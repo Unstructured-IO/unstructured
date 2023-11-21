@@ -562,7 +562,7 @@ def _process_pdfminer_pages(
     interpreter = PDFPageInterpreter(rsrcmgr, device)
     try:
         # Detect invalid dictionary construct for entire PDF
-        pages = PDFPage.get_pages(fp)
+        pages = list(PDFPage.get_pages(fp))
     except PSSyntaxError:
         logger.info("Detected invalid dictionary construct for PDFminer")
         logger.info("Repairing the PDF document...")
@@ -570,8 +570,8 @@ def _process_pdfminer_pages(
         with tempfile.NamedTemporaryFile() as tmp:
             with pikepdf.Pdf.open(fp) as pdf:
                 pdf.save(tmp.name)
-            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
-    for i, page in enumerate(pages):  # type: ignore
+            pages = list(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
+    for i, page in enumerate(pages):
         try:
             # Detect invalid dictionary construct for one page
             interpreter.process_page(page)
