@@ -267,7 +267,7 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.21
     # via cffi
-pygments==2.17.1
+pygments==2.17.2
     # via
     #   ipython
     #   jupyter-console
@@ -396,7 +396,7 @@ urllib3==1.26.18
     #   requests
 virtualenv==20.24.7
     # via pre-commit
-wcwidth==0.2.11
+wcwidth==0.2.12
     # via prompt-toolkit
 webcolors==1.13
     # via jsonschema
