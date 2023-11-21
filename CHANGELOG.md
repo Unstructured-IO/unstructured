@@ -1,6 +1,7 @@
-## 0.11.1-dev0
+## 0.11.1-dev1
 
 ### Enhancements
+* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
 
 ### Features
 
