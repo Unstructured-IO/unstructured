@@ -44,7 +44,7 @@ all_tests=(
 'jira.sh'
 'sharepoint.sh'
 'sharepoint-with-permissions.sh'
-'embed.sh'
+'local-embed.sh'
 )
 
 full_python_matrix_tests=(
