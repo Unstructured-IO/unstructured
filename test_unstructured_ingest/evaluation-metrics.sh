@@ -28,12 +28,11 @@ SOURCE_DIR=$OUTPUT_ROOT/gold-standard/$FOLDER_NAME
 mkdir -p "$SOURCE_DIR"
 aws s3 cp "s3://$BUCKET_NAME/$FOLDER_NAME" "$SOURCE_DIR" --recursive --no-sign-request --region us-east-2
 
-EXPORT_DIR=$OUTPUT_ROOT/metrics-tmp
+EXPORT_DIR=$OUTPUT_ROOT/metrics-tmp/$EVAL_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-  cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$SOURCE_DIR"
 }
 trap cleanup EXIT
@@ -67,4 +66,4 @@ PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"
 
-"$SCRIPT_DIR"/check-diff-evaluation-metrics.sh
+"$SCRIPT_DIR"/check-diff-evaluation-metrics.sh "$EVAL_NAME"
