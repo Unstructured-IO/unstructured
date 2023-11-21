@@ -431,7 +431,6 @@ jobs:
       - uses: actions/checkout@v3
       - name: Test Dockerfile
         run: |
-          source .venv/bin/activate
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
