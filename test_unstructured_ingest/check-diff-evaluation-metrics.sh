@@ -13,14 +13,14 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 TMP_DIRECTORY_CLEANUP=${TMP_DIRECTORY_CLEANUP:-true}
-OUTPUT_FOLDER_NAME=$1
+EVAL_NAME=$1
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 # TMP_METRICS_LATEST_RUN_DIR could be test_unstructured_ingest/metrics-tmp/text-extraction 
 # or test_unstructured_ingest/metrics-tmp/element-type 
-TMP_METRICS_LATEST_RUN_DIR=$OUTPUT_ROOT/metrics-tmp/$OUTPUT_FOLDER_NAME
+TMP_METRICS_LATEST_RUN_DIR=$OUTPUT_ROOT/metrics-tmp/$EVAL_NAME
 # METRICS_DIR could be test_unstructured_ingest/metrics/text-extraction 
 # or test_unstructured_ingest/metrics/element-type 
-METRICS_DIR=$OUTPUT_ROOT/metrics/$OUTPUT_FOLDER_NAME
+METRICS_DIR=$OUTPUT_ROOT/metrics/$EVAL_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
