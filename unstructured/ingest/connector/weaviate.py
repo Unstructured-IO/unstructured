@@ -84,6 +84,7 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         """
         Updates the element dictionary to conform to the Weaviate schema
         """
+        from dateutil import parser
 
         # Dict as string formatting
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
@@ -104,16 +105,26 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
 
         # Datetime formatting
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            data["metadata"]["data_source"]["date_created"] = date_created + "Z"
+            data["metadata"]["data_source"]["date_created"] = parser.parse(date_created).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
 
         if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            data["metadata"]["data_source"]["date_modified"] = date_modified + "Z"
+            data["metadata"]["data_source"]["date_modified"] = parser.parse(date_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
 
         if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
-            data["metadata"]["data_source"]["date_processed"] = date_processed + "Z"
+            data["metadata"]["data_source"]["date_processed"] = parser.parse(
+                date_processed
+            ).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
 
         if last_modified := data.get("metadata", {}).get("last_modified", {}):
-            data["metadata"]["last_modified"] = last_modified + "Z"
+            data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
 
         # String casting
         if version := data.get("metadata", {}).get("data_source", {}).get("version"):

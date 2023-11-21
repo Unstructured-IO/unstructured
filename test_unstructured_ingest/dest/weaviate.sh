@@ -46,9 +46,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
-  --chunk-combine-text-under-n-chars 200\
   --chunk-new-after-n-chars 2500\
-  --chunk-max-characters 38000\
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   weaviate \

@@ -7,7 +7,7 @@ import weaviate
 
 weaviate_host_url = os.getenv("WEAVIATE_HOST_URL", "http://localhost:8080")
 class_name = os.getenv("WEAVIATE_CLASS_NAME", "Elements")
-N_ELEMENTS = 5
+N_ELEMENTS = 2715
 
 if __name__ == "__main__":
     print(f"Checking contents of class collection " f"{class_name} at {weaviate_host_url}")
