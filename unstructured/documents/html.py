@@ -150,7 +150,7 @@ class HTMLDocument(XMLDocument):
             return self._pages
         logger.info("Reading document ...")
         pages: List[Page] = []
-        etree.strip_elements(self.document_tree, ["script"])
+        etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
         root = _find_main(self.document_tree)
 
         articles = _find_articles(root, assemble_articles=self.assembled_articles)

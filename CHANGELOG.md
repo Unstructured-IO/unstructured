@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
+
 ## 0.11.0
 
 ### Enhancements
