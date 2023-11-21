@@ -15,6 +15,9 @@ if [ -z "$PINECONE_API_KEY" ]; then
    exit 0
 fi
 
+# Reason of using RANDOM rather than uuidgen here is that index names generated with uuidgen
+# were not compatible, giving a 400 response probably due to the length of or character variety in
+# the index name.
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 
 PINECONE_ENVIRONMENT="us-east1-gcp"
