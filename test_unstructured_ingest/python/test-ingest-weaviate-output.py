@@ -22,4 +22,4 @@ if __name__ == "__main__":
         assert count == N_ELEMENTS
     except AssertionError:
         sys.exit(f"weaviate dest check failed: got {count}, expected {N_ELEMENTS}")
-    print("weaviate dest check success")
+    print("SUCCESS: weaviate dest check")

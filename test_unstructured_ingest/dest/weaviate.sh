@@ -23,9 +23,7 @@ function cleanup {
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
+
 }
 
 trap cleanup EXIT
@@ -53,4 +51,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --host-url http://localhost:8080 \
   --class-name elements \
 
-scripts/weaviate-test-helpers/test-ingest-weaviate-output.py
+"$SCRIPT_DIR"/python/test-ingest-weaviate-output.py

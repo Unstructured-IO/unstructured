@@ -4,16 +4,13 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig, Dict
+from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig, WeaviateWriteConfig
 
 CMD_NAME = "weaviate"
 
 
 @dataclass
-class WeaviateCliConfig(CliConfig):
-    host_url: str
-    class_name: str
-    auth_keys: t.Optional[t.Dict[str, str]] = None
-
+class WeaviateCliConfig(SimpleWeaviateConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -46,7 +43,7 @@ class WeaviateCliConfig(CliConfig):
 
 
 @dataclass
-class WeaviateCliWriteConfig(CliConfig):
+class WeaviateCliWriteConfig(WeaviateWriteConfig, CliConfig):
     batch_size: int
 
     @staticmethod

@@ -147,12 +147,7 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             for e in json_list:
                 self.conform_dict(e)
                 b.add_data_object(
-                    {
-                        "type": e.get("type", ""),
-                        "element_id": e.get("element_id", ""),
-                        "metadata": e.get("metadata", {}),
-                        "text": e.get("text", ""),
-                    },
+                    e,
                     self.connector_config.class_name,
                     vector=e.get("embeddings"),
                 )
