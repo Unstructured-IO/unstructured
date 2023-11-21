@@ -20,6 +20,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.documents.elements import (
+    Image as ImageElement,
+)
 from unstructured.partition import common
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 
@@ -85,7 +88,7 @@ def test_normalize_layout_element_dict():
 def test_normalize_layout_element_dict_caption():
     layout_element = {
         "type": "Figure",
-        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "coordinates": ((1, 2), (3, 4), (5, 6), (7, 8)),
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
@@ -93,9 +96,9 @@ def test_normalize_layout_element_dict_caption():
         layout_element,
         coordinate_system=coordinate_system,
     )
-    assert element == FigureCaption(
+    assert element == ImageElement(
         text="Some lovely text",
-        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        coordinates=((1, 2), (3, 4), (5, 6), (7, 8)),
         coordinate_system=coordinate_system,
     )
 

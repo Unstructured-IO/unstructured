@@ -10,7 +10,7 @@ beautifulsoup4==4.12.2
     #   bs4
 bs4==0.0.1
     # via -r ingest/onedrive.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in

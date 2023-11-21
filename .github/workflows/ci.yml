@@ -410,20 +410,6 @@ jobs:
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
-    - name: 'Google Cloud Auth'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
-        create_credentials_file: true
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
@@ -460,6 +446,8 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"

@@ -8,33 +8,48 @@
 # Environment Variables:
 #   - OVERWRITE_FIXTURES: Controls whether to overwrite fixtures or not. default: "false"
 
-set +e
+set -e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 TMP_DIRECTORY_CLEANUP=${TMP_DIRECTORY_CLEANUP:-true}
+EVAL_NAME=$1
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
-OUTPUT_DIR=$OUTPUT_ROOT/metrics-tmp
-EXPECTED_OUTPUT_DIR=$OUTPUT_ROOT/metrics
+# TMP_METRICS_LATEST_RUN_DIR could be test_unstructured_ingest/metrics-tmp/text-extraction 
+# or test_unstructured_ingest/metrics-tmp/element-type 
+TMP_METRICS_LATEST_RUN_DIR=$OUTPUT_ROOT/metrics-tmp/$EVAL_NAME
+# METRICS_DIR could be test_unstructured_ingest/metrics/text-extraction 
+# or test_unstructured_ingest/metrics/element-type 
+METRICS_DIR=$OUTPUT_ROOT/metrics/$EVAL_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-    cleanup_dir "$OUTPUT_DIR"
+  if [ "$TMP_DIRECTORY_CLEANUP" == "true" ]; then
+    cleanup_dir "$TMP_METRICS_LATEST_RUN_DIR"
+  else
+    echo "skipping tmp directory cleanup"
+  fi
 }
 
 trap cleanup EXIT
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
+    # remove folder if it exists
+    if [ -d "$METRICS_DIR" ]; then
+        rm -rf "$METRICS_DIR"
+        # find "$METRICS_DIR" -maxdepth 1 -type f ! -name "metrics-json-manifest.txt" -exec rm -rf {} +
+    fi
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
-    cp -rf "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT"
-# elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
-#     "$SCRIPT_DIR"/clean-permissions-files.sh "$OUTPUT_DIR"
-#     diff -r "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR"> outputdiff.txt
-#     cat outputdiff.txt
-#     diffstat -c outputdiff.txt
+    mkdir -p "$METRICS_DIR"
+    cp -rf "$TMP_METRICS_LATEST_RUN_DIR" "$OUTPUT_ROOT/metrics"
+# elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then
+#     "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
+#     diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> metricsdiff.txt
+#     cat metricsdiff.txt
+#     diffstat -c metricsdiff.txt
 #     echo
 #     echo "There are differences from the previously checked-in structured outputs."
 #     echo

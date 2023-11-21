@@ -1,22 +1,45 @@
-## 0.10.31-dev3
+## 0.11.1-dev1
+
+### Enhancements
+
+### Features
+
+* **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+
+### Fixes
+
+* **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
+
+## 0.11.0
 
 ### Enhancements
 
 * **Add a class for the strategy constants.** Add a class `PartitionStrategy` for the strategy constants and use the constants to replace strategy strings.
 * **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
+* **Improve DOCX page-break fidelity.** Improve page-break fidelity such that a paragraph containing a page-break is split into two elements, one containing the text before the page-break and the other the text after. Emit the PageBreak element between these two and assign the correct page-number (n and n+1 respectively) to the two textual elements.
 
 ### Features
 
 * **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
-* **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+* **MongoDB Destination Connector** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
 
 ### Fixes
 
-* **Fix `fast` strategy fall back to `ocr_only`.** The `fast` strategy should not fall back to a more expensive strategy.
+* **Fix `TYPE_TO_TEXT_ELEMENT_MAP`.** Updated `Figure` mapping from `FigureCaption` to `Image`.
+* **Handle errors when extracting PDF text** Certain pdfs throw unexpected errors when being opened by `pdfminer`, causing `partition_pdf()` to fail. We expect to be able to partition smoothly using an alternative strategy if text extraction doesn't work.  Added exception handling to handle unexpected errors when extracting pdf text and to help determine pdf strategy.
+* **Fix `fast` strategy fall back to `ocr_only`** The `fast` strategy should not fall back to a more expensive strategy.
 * **Remove default user ./ssh folder** The default notebook user during image build would create the known_hosts file with incorrect ownership, this is legacy and no longer needed so it was removed.
-* **Include `languages` in metadata when partitioning strategy='hi_res' or 'fast'** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
+* **Include `languages` in metadata when partitioning `strategy=hi_res` or `fast`** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
 * **Handle a case where Paddle returns a list item in ocr_data as None** In partition, while parsing PaddleOCR data, it was assumed that PaddleOCR does not return None for any list item in ocr_data. Removed the assumption by skipping the text region whenever this happens.
 * **Fix some pdfs returning `KeyError: 'N'`** Certain pdfs were throwing this error when being opened by pdfminer. Added a wrapper function for pdfminer that allows these documents to be partitioned.
+* **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
+* **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
+* **Fix empty table is identified as bulleted-table.** A table with no text content was mistakenly identified as a bulleted-table and processed by the wrong branch of the initial HTML partitioner.
+* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparseable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
+* **Fix HTML `element.metadata.text_as_html` contains spurious <br> elements in invalid locations.** The HTML generated for the `text_as_html` metadata for HTML tables contained `<br>` elements invalid locations like between `<table>` and `<tr>`. Change the HTML generator such that these do not appear.
+* **Fix HTML table cells enclosed in <thead> and <tfoot> elements are dropped.** HTML table cells nested in a `<thead>` or `<tfoot>` element were not detected and the text in those cells was omitted from the table element text and `.text_as_html`. Detect table rows regardless of the semantic tag they may be nested in.
+* **Remove whitespace padding from `.text_as_html`.** `tabulate` inserts padding spaces to achieve visual alignment of columns in HTML tables it generates. Add our own HTML generator to do this simple job and omit that padding as well as newlines ("\n") used for human readability.
+* **Fix local connector with absolute input path** When passed an absolute filepath for the input document path, the local connector incorrectly writes the output file to the input file directory. This fixes such that the output in this case is written to `output-dir/input-filename.json`
 
 ## 0.10.30
 

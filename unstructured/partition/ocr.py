@@ -39,9 +39,6 @@ from unstructured.partition.utils.constants import (
 if "OMP_THREAD_LIMIT" not in os.environ:
     os.environ["OMP_THREAD_LIMIT"] = "1"
 
-# Define table_agent as a global variable
-table_agent = None
-
 
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
@@ -228,11 +225,16 @@ def supplement_page_layout_with_ocr(
 
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
-        table_agent = init_table_agent()
+        from unstructured_inference.models import tables
+
+        tables.load_agent()
+        if tables.tables_agent is None:
+            raise RuntimeError("Unable to load table extraction agent.")
+
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List[LayoutElement], page_layout.elements),
             image=image,
-            table_agent=table_agent,
+            tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
         )
@@ -243,7 +245,7 @@ def supplement_page_layout_with_ocr(
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
     image: PILImage,
-    table_agent: "UnstructuredTableTransformerModel",
+    tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> List[LayoutElement]:
@@ -266,7 +268,7 @@ def supplement_element_with_table_extraction(
             table_tokens = get_table_tokens(
                 image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
             )
-            element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
+            element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
@@ -307,19 +309,6 @@ def get_table_tokens(
         if "block_num" not in token:
             token["block_num"] = 0
     return table_tokens
-
-
-def init_table_agent():
-    """Initialize a table agent from unstructured_inference as
-    a global variable to ensure that we only load it once."""
-
-    global table_agent
-
-    if table_agent is None:
-        table_agent = UnstructuredTableTransformerModel()
-        table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
-
-    return table_agent
 
 
 def get_layout_elements_from_ocr(

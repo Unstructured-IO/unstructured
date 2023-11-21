@@ -8,7 +8,7 @@ backoff==2.2.1
     # via -r base.in
 beautifulsoup4==4.12.2
     # via -r base.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c constraints.in
     #   requests
@@ -18,7 +18,7 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.1
+dataclasses-json==0.6.2
     # via -r base.in
 emoji==2.8.0
     # via -r base.in
@@ -72,3 +72,5 @@ urllib3==1.26.18
     # via
     #   -c constraints.in
     #   requests
+wrapt==1.16.0
+    # via -r base.in
