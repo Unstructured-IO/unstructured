@@ -2,6 +2,7 @@ import contextlib
 import io
 import os
 import re
+import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -20,7 +21,8 @@ from typing import (
 
 import numpy as np
 import pdf2image
-import wrapt
+import pikepdf
+import pypdf
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -32,6 +34,7 @@ from pdfminer.layout import (
 )
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfparser import PSSyntaxError
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -532,13 +535,13 @@ def _extract_text(item: LTItem) -> str:
 # They throw an error when we call interpreter.process_page
 # Since we don't need color info, we can just drop it in the pdfminer code
 # See #2059
-@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
-def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
-    resources = args[0]
-    if "ColorSpace" in resources:
-        del resources["ColorSpace"]
+# @wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+# def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
+#     resources = args[0]
+#     if "ColorSpace" in resources:
+#         del resources["ColorSpace"]
 
-    return wrapped(resources)
+#     return wrapped(resources)
 
 
 def _process_pdfminer_pages(
@@ -557,10 +560,40 @@ def _process_pdfminer_pages(
     laparams = LAParams()
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
-
-    for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
-        interpreter.process_page(page)
-        page_layout = device.get_result()
+    try:
+        # Detect invalid dictionary construct for entire PDF
+        pages = PDFPage.get_pages(fp)
+    except PSSyntaxError:
+        logger.info("Detected invalid dictionary construct for PDFminer")
+        logger.info("Repairing the PDF document...")
+        # repair the entire doc with pikepdf
+        with tempfile.NamedTemporaryFile() as tmp:
+            with pikepdf.Pdf.open(fp) as pdf:
+                pdf.save(tmp.name)
+            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
+    for i, page in enumerate(pages):  # type: ignore
+        try:
+            # Detect invalid dictionary construct for one page
+            interpreter.process_page(page)
+            page_layout = device.get_result()
+        except PSSyntaxError:
+            logger.info("Detected invalid dictionary construct for PDFminer")
+            logger.info("Repairing the PDF page...")
+            fp.seek(0)
+            # find the error page from binary data fp
+            pdf_reader = pypdf.PdfReader(fp)
+            pdf_writer = pypdf.PdfWriter()
+            error_page = pdf_reader.pages[i]
+            pdf_writer.add_page(error_page)
+            error_page_data = io.BytesIO()
+            pdf_writer.write(error_page_data)
+            # repair the error page with pikepdf
+            with tempfile.NamedTemporaryFile() as tmp:
+                with pikepdf.Pdf.open(error_page_data) as pdf:
+                    pdf.save(tmp.name)
+                page = list(PDFPage.get_pages(open(tmp.name, "rb")))[0]  # noqa: SIM115
+            interpreter.process_page(page)
+            page_layout = device.get_result()
 
         width, height = page_layout.width, page_layout.height
 
