@@ -9,6 +9,8 @@ OUTPUT_FOLDER_NAME=local-single-file
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
+# assigning an absolute path to the input file so that we explicitly test passing an absolute path
+ABS_INPUT_PATH="$SCRIPT_DIR/../example-docs/language-docs/UDHR_first_article_all.txt"
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
@@ -29,7 +31,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --additional-partition-args '{"strategy":"ocr_only", "languages":["ind", "est"]}' \
     --verbose \
     --reprocess \
-    --input-path example-docs/language-docs/UDHR_first_article_all.txt \
+    --input-path "$ABS_INPUT_PATH" \
     --work-dir "$WORK_DIR"
 
 set +e

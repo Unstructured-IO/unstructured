@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-openai.txt ingest/embed-openai.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via langchain
 aiosignal==1.3.1
     # via aiohttp
@@ -20,7 +20,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.1.0
     # via aiohttp
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -30,9 +30,8 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
-dataclasses-json==0.6.1
+dataclasses-json==0.6.2
     # via
     #   -c ingest/../base.txt
     #   langchain
@@ -44,11 +43,9 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.0.1
-    # via sqlalchemy
 h11==0.14.0
     # via httpcore
-httpcore==1.0.1
+httpcore==1.0.2
     # via httpx
 httpx==0.25.1
     # via openai
@@ -63,9 +60,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.331
+langchain==0.0.338
     # via -r ingest/embed-openai.in
-langsmith==0.0.60
+langsmith==0.0.65
     # via langchain
 marshmallow==3.20.1
     # via
@@ -84,7 +81,7 @@ numpy==1.24.4
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   langchain
-openai==1.1.1
+openai==1.3.3
     # via -r ingest/embed-openai.in
 packaging==23.2
     # via

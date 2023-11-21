@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/airtable.txt ingest/airtable.in
 #
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -19,7 +19,7 @@ idna==3.4
     #   requests
 inflection==0.5.1
     # via pyairtable
-pyairtable==2.1.0.post1
+pyairtable==2.2.0
     # via -r ingest/airtable.in
 pydantic==1.10.13
     # via

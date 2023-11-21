@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-huggingface.txt ingest/embed-huggingface.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via langchain
 aiosignal==1.3.1
     # via aiohttp
@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.1.0
     # via aiohttp
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -26,13 +26,12 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
 click==8.1.7
     # via
     #   -c ingest/../base.txt
     #   nltk
-dataclasses-json==0.6.1
+dataclasses-json==0.6.2
     # via
     #   -c ingest/../base.txt
     #   langchain
@@ -52,11 +51,9 @@ fsspec==2023.9.1
     #   -c ingest/../constraints.in
     #   huggingface-hub
     #   torch
-greenlet==3.0.1
-    # via sqlalchemy
 huggingface==0.0.1
     # via -r ingest/embed-huggingface.in
-huggingface-hub==0.17.3
+huggingface-hub==0.19.4
     # via
     #   sentence-transformers
     #   tokenizers
@@ -78,9 +75,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.331
+langchain==0.0.338
     # via -r ingest/embed-huggingface.in
-langsmith==0.0.60
+langsmith==0.0.65
     # via langchain
 markupsafe==2.1.3
     # via jinja2
@@ -172,14 +169,14 @@ tenacity==8.2.3
     # via langchain
 threadpoolctl==3.2.0
     # via scikit-learn
-tokenizers==0.14.1
+tokenizers==0.15.0
     # via transformers
-torch==2.1.0
+torch==2.1.1
     # via
     #   -c ingest/../constraints.in
     #   sentence-transformers
     #   torchvision
-torchvision==0.16.0
+torchvision==0.16.1
     # via sentence-transformers
 tqdm==4.66.1
     # via
@@ -188,7 +185,7 @@ tqdm==4.66.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.35.0
+transformers==4.35.2
     # via sentence-transformers
 typing-extensions==4.8.0
     # via

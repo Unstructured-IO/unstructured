@@ -19,11 +19,12 @@ def test_partition_odt_from_filename():
     assert elements == [
         Title("Lorem ipsum dolor sit amet."),
         Table(
-            text="\nHeader row  Mon    Wed"
-            "   Fri\nColor       Blue"
-            "   Red   Green\nTime        1pm"
-            "    2pm   3pm\nLeader      "
-            "Sarah  Mark  Ryan",
+            text=(
+                "Header row Mon Wed Fri"
+                " Color Blue Red Green"
+                " Time 1pm 2pm 3pm"
+                " Leader Sarah Mark Ryan"
+            )
         ),
     ]
     for element in elements:
@@ -47,11 +48,12 @@ def test_partition_odt_from_file():
     assert elements == [
         Title("Lorem ipsum dolor sit amet."),
         Table(
-            text="\nHeader row  Mon    Wed"
-            "   Fri\nColor       Blue"
-            "   Red   Green\nTime        1pm"
-            "    2pm   3pm\nLeader      "
-            "Sarah  Mark  Ryan",
+            text=(
+                "Header row Mon Wed Fri"
+                " Color Blue Red Green"
+                " Time 1pm 2pm 3pm"
+                " Leader Sarah Mark Ryan"
+            )
         ),
     ]
 
@@ -63,7 +65,7 @@ def test_partition_odt_from_file():
         False,
     ],
 )
-def test_partition_odt_infer_table_structure(infer_table_structure):
+def test_partition_odt_infer_table_structure(infer_table_structure: bool):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     with open(filename, "rb") as f:
         elements = partition_odt(file=f, infer_table_structure=infer_table_structure)
