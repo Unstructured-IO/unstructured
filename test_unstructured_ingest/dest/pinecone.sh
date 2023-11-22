@@ -40,7 +40,7 @@ function cleanup {
     -s -o /dev/null \
     -w "%{http_code}" \
     --request GET \
-    --url https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX \
+    --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
     --header 'accept: application/json' \
     --header "Api-Key: $PINECONE_API_KEY")
 
