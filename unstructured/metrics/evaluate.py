@@ -202,6 +202,10 @@ def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
+    if "count" in df.columns:
+        df["count"] = df["count"].astype(int)
+    if "filename" in df.columns and "connector" in df.columns:
+        df.sort_values(by=["connector", "filename"], inplace=True)
     df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
 
 
