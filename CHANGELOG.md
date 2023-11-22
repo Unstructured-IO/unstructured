@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Fix broken API unit tests** where the test was using `fast` stragy for images, which is not supported.
+* **Fix broken API unit test** where the test was using `fast` stragy for images, which is not supported.
 * **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
 * **Fix DOCX merged table cell repeats cell text.** Only include text for a merged cell, not for each underlying cell spanned by the merge.
 
