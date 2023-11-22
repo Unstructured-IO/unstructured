@@ -76,7 +76,6 @@ def measure_text_edit_distance(
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             source_cct = _read_text(os.path.join(source_dir, fn_txt))
-            print(f"Processing document: {fn_txt}\n")
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
