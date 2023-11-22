@@ -4,11 +4,10 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "7",
+          "document_id": "6",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
@@ -19,41 +18,39 @@
     "type": "Title"
   },
   {
-    "element_id": "9abdc842ab4bacbaa4da45cec2ef7e0d",
+    "element_id": "2ac7798b427181278fb2b450e28f4902",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "7",
+          "document_id": "6",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "D. W. Griffith",
+    "text": "D.W. Griffith",
     "type": "Title"
   },
   {
-    "element_id": "d366dfc3239f22e3c03ee629f6567a68",
+    "element_id": "9e92dee6e0d6ef246f51d7f8f4eb8c01",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "7",
+          "document_id": "6",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "A white girl (Florence Lawrence) rejects a proposal from an Indian brave (Charles Inslee) in this early one-reel Western melodrama. Despite the rejection, the Indian still comes to the girl's defense when she is abducted by his warring tribe. In her first year in films, Florence Lawrence was already the most popular among the Biograph Company's anonymous stock company players. By 1909, she was known the world over as \"The Biograph Girl.\"",
+    "text": "A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.",
     "type": "NarrativeText"
   }
 ]

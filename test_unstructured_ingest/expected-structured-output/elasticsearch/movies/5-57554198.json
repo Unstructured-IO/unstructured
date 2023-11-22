@@ -4,11 +4,10 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
@@ -19,41 +18,39 @@
     "type": "Title"
   },
   {
-    "element_id": "2ac7798b427181278fb2b450e28f4902",
+    "element_id": "9abdc842ab4bacbaa4da45cec2ef7e0d",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "D.W. Griffith",
+    "text": "D. W. Griffith",
     "type": "Title"
   },
   {
-    "element_id": "9e92dee6e0d6ef246f51d7f8f4eb8c01",
+    "element_id": "8e16a508f3df737af12e84d9cba2c7d0",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.",
+    "text": "A thug accosts a girl as she leaves her workplace but a man rescues her. The thug vows revenge and, with the help of two friends, attacks the girl and her rescuer again as they're going for a walk. This time they succeed in kidnapping the rescuer. He is bound and gagged and taken away in a cart. The girl runs home and gets help from several neighbors. They track the ruffians down to a cabin in the mountains where the gang has trapped their victim and set the cabin on fire. A thug and Rescuer fight on the roof of the house.",
     "type": "NarrativeText"
   }
 ]
