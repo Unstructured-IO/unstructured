@@ -408,32 +408,6 @@ class _DocxPartitioner:
             tablefmt="unsafehtml",
         )
 
-    def _convert_table_to_plain_text(self, table: DocxTable) -> str:
-        """Plain-text version of `table`.
-
-        Each row appears on its own line. Cells in a column are aligned using spaces as padding:
-
-            item      qty
-            spam       42
-            eggs      451
-            bacon       0
-
-        """
-
-        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
-            for block_item in cell.iter_inner_content():
-                if isinstance(block_item, Paragraph):
-                    yield block_item.text
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield self._convert_table_to_plain_text(block_item)
-
-        def iter_cells(row: _Row) -> Iterator[str]:
-            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
-
-        return tabulate([list(iter_cells(row)) for row in table.rows], tablefmt="plain")
-
     @lazyproperty
     def _document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
@@ -655,7 +629,7 @@ class _DocxPartitioner:
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = self._convert_table_to_html(table) if self._infer_table_structure else None
-        text_table = self._convert_table_to_plain_text(table)
+        text_table = " ".join(self._iter_table_texts(table))
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(
@@ -677,6 +651,36 @@ class _DocxPartitioner:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     yield from self._iter_paragraph_emphasis(paragraph)
+
+    def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
+        """Generate text of each cell in `table` stripped of leading and trailing whitespace.
+
+        Nested tables are recursed into and their text contributes to the output in depth-first
+        pre-order. Empty strings due to empty or whitespace-only cells are dropped.
+        """
+
+        def iter_cell_texts(cell: _Cell) -> Iterator[str]:
+            """Generate each text item in `cell` stripped of leading and trailing whitespace.
+
+            This includes paragraphs as well as table cell contents.
+            """
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    yield block_item.text.strip()
+                # -- can only be a Paragraph or Table so far but more types may come later --
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield from self._iter_table_texts(block_item)
+
+        for row in table.rows:
+            tr = row._tr
+            for tc in tr.tc_lst:
+                # -- vMerge="continue" indicates a spanned cell in a vertical merge --
+                if tc.vMerge == "continue":
+                    continue
+                # -- do not generate empty strings --
+                yield from (text for text in iter_cell_texts(_Cell(tc, row)) if text)
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
