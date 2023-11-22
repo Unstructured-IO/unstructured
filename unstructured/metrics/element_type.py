@@ -7,6 +7,11 @@ def get_element_type_frequency(
 ) -> Union[Dict[Tuple[str, Optional[int]], int], Dict]:
     """
     Calculate the frequency of Element Types from a list of elements.
+
+    Args:
+        elements (str): String-formatted json of all elements (as a result of elements_to_json).
+    Returns:
+        Element type and its frequency in dictionary format.
     """
     frequency: Dict = {}
     if len(elements) == 0:
