@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
@@ -56,6 +57,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     connector_config: SimpleElasticsearchConfig
     document_meta: ElasticsearchDocumentMeta
+    document: dict = field(default_factory=dict)
     registry_name: str = "elasticsearch"
 
     # TODO: remove one of filename or _tmp_download_file, using a wrapper
@@ -85,6 +87,17 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         output_file = f"{filename}.json"
         return (
             Path(self.processor_config.output_dir) / self.connector_config.index_name / output_file
+        )
+
+    def update_source_metadata(self, **kwargs):
+        if self.document is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            version=self.document["_version"],
+            exists=self.document["found"],
         )
 
     @SourceConnectionError.wrap
@@ -140,6 +153,7 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
         es = Elasticsearch(self.connector_config.url)
         scan_query = {
             "_source": self.connector_config.fields,
+            "version": True,
             "query": {"ids": {"values": self.list_of_ids}},
         }
 
@@ -163,10 +177,12 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
                 processor_config=self.processor_config,
                 read_config=self.read_config,
                 connector_config=self.connector_config,
+                document=doc,
                 document_meta=ElasticsearchDocumentMeta(
                     self.connector_config.index_name, doc["_id"]
                 ),
             )
+            ingest_doc.update_source_metadata()
             doc_body = doc["_source"]
             filename = ingest_doc.filename
             flattened_dict = flatten_dict(dictionary=doc_body)
