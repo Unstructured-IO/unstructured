@@ -4,9 +4,6 @@
 
 # Structured outputs are stored in s3-small-batch-output-to-weaviate/
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-cd "$SCRIPT_DIR"/../../.. || exit 1
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
         local \
         --num-processes "$max_processes" \
