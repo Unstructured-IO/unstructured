@@ -69,10 +69,10 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.processor_config.output_dir)
-            / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
+        filename = (
+            f"{self.remote_file_path.replace(self.connector_config.path_without_protocol, '')}.json"
         )
+        return Path(self.processor_config.output_dir) / filename
 
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
