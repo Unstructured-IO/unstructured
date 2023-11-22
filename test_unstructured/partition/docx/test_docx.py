@@ -34,6 +34,8 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 class Describe_DocxPartitioner:
     """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
 
+    # -- table behaviors -------------------------------------------------------------------------
+
     def it_can_convert_a_table_to_html(self):
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
         assert _DocxPartitioner()._convert_table_to_html(table) == (
@@ -90,8 +92,8 @@ class Describe_DocxPartitioner:
 
     def it_can_convert_a_table_to_plain_text(self):
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
-            "Header Col 1  Header Col 2\n" "Lorem ipsum   A link example"
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "Header Col 1 Header Col 2 Lorem ipsum A link example"
         )
 
     def and_it_can_convert_a_nested_table_to_plain_text(self):
@@ -111,9 +113,26 @@ class Describe_DocxPartitioner:
             +---+-------------+---+
         """
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
-            "a  >b<     c\nd  e    f  i\n   g&t  h\nj  k       l"
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "a >b< c d e f g&t h i j k l"
         )
+
+    def but_the_text_of_a_merged_cell_appears_only_once(self):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
+
+    # -- page-break behaviors --------------------------------------------------------------------
 
     def it_places_page_breaks_precisely_where_they_occur(self):
         """Page-break behavior has some subtleties.
@@ -185,7 +204,7 @@ def test_parition_docx_from_team_chat():
     assert [e.text for e in elements] == [
         "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
-        "saved-by  Dennis Forsythe",
+        "saved-by Dennis Forsythe",
     ]
     assert [e.category for e in elements] == [
         ElementType.UNCATEGORIZED_TEXT,
@@ -276,7 +295,7 @@ def test_partition_docx_processes_table():
     elements = partition_docx(example_doc_path("fake_table.docx"))
 
     assert isinstance(elements[0], Table)
-    assert elements[0].text == ("Header Col 1  Header Col 2\n" "Lorem ipsum   A Link example")
+    assert elements[0].text == ("Header Col 1 Header Col 2 Lorem ipsum A Link example")
     assert elements[0].metadata.text_as_html == (
         "<table>\n"
         "<thead>\n"
