@@ -8,13 +8,18 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        s3 \
-         --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-         --anonymous \
-         --output-dir s3-small-batch-output-to-weaviate \
-         --num-processes 2 \
-         --verbose \
+        local \
+        --num-processes "$max_processes" \
+        --output-dir "$OUTPUT_DIR" \
         --strategy fast \
+        --verbose \
+        --reprocess \
+        --input-path example-docs/book-war-and-peace-1225p.txt \
+        --work-dir "$WORK_DIR" \
+        --chunk-elements \
+        --chunk-new-after-n-chars 2500\
+        --chunk-multipage-sections \
+        --embedding-provider "langchain-huggingface" \
         weaviate \
         --host-url http://localhost:8080 \
         --class-name elements \

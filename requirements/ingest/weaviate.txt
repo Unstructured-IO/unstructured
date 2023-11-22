@@ -6,7 +6,7 @@
 #
 authlib==1.2.1
     # via weaviate-client
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c requirements/constraints.in
     #   -c requirements/ingest/../base.txt
