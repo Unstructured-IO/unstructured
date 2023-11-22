@@ -41,11 +41,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --strategy fast \
   --verbose \
   --reprocess \
-  --input-path example-docs/book-war-and-peace-1225p.txt \
+  --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
-  --chunk-elements \
-  --chunk-new-after-n-chars 2500\
-  --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   weaviate \
   --host-url http://localhost:8080 \
