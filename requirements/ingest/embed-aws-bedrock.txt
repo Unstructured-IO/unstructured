@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-aws-bedrock.txt ingest/embed-aws-bedrock.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via langchain
 aiosignal==1.3.1
     # via aiohttp
@@ -27,7 +27,7 @@ botocore==1.31.17
     #   -c ingest/../constraints.in
     #   boto3
     #   s3transfer
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -35,7 +35,6 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
 dataclasses-json==0.6.2
     # via
@@ -61,9 +60,9 @@ jsonpatch==1.33
     # via langchain
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.335
+langchain==0.0.338
     # via -r ingest/embed-aws-bedrock.in
-langsmith==0.0.63
+langsmith==0.0.65
     # via langchain
 marshmallow==3.20.1
     # via

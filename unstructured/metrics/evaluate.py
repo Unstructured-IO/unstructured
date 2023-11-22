@@ -133,6 +133,10 @@ def measure_element_type_accuracy(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
+    if not output_list:
+        print("No output files to calculate to element type for, exiting")
+        sys.exit(0)
+
     rows = []
 
     for doc in output_list:  # type: ignore
@@ -142,7 +146,7 @@ def measure_element_type_accuracy(
         connector = doc.split("/")[0]
         if fn_json in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
             rows.append([filename, doctype, connector, accuracy])
 

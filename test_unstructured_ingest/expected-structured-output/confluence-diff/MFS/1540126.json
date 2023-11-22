@@ -17,7 +17,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Driver      </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Approver    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Contributors</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Informed    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Objective   </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Due date    </td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Key outcomes</td><td>           </td><td> </td><td>           </td><td> </td><td>        </td></tr><br><tr><td>Status      </td><td>NOT STARTED</td><td>/</td><td>IN PROGRESS</td><td>/</td><td>COMPLETE</td></tr><br></tbody><br></table>"
+      "text_as_html": "<table><tr><td>Driver</td></tr><tr><td>Approver</td></tr><tr><td>Contributors</td></tr><tr><td>Informed</td></tr><tr><td>Objective</td></tr><tr><td>Due date</td></tr><tr><td>Key outcomes</td></tr><tr><td>Status</td><td>NOT STARTED</td><td>/</td><td>IN PROGRESS</td><td>/</td><td>COMPLETE</td></tr></table>"
     },
     "text": "Driver Approver Contributors Informed Objective Due date Key outcomes Status NOT STARTED  /  IN PROGRESS  /  COMPLETE",
     "type": "Table"
@@ -84,7 +84,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Must have:   </td></tr><br><tr><td>Nice to have:</td></tr><br><tr><td>Not in scope:</td></tr><br></tbody><br></table>"
+      "text_as_html": "<table><tr><td>Must have:</td></tr><tr><td>Nice to have:</td></tr><tr><td>Not in scope:</td></tr></table>"
     },
     "text": "Must have: Nice to have: Not in scope:",
     "type": "Table"
@@ -327,7 +327,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br><tr><td>         </td><td>     </td><td>        </td><td>      </td></tr><br></tbody><br></table>"
+      "text_as_html": "<table><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr></table>"
     },
     "text": "Milestone Owner Deadline Status",
     "type": "Table"

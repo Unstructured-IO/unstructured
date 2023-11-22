@@ -8,7 +8,7 @@ anyio==3.7.1
     # via
     #   -c ingest/../constraints.in
     #   httpx
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
