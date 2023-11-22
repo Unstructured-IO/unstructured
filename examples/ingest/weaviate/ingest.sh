@@ -4,15 +4,18 @@
 
 # Structured outputs are stored in s3-small-batch-output-to-weaviate/
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+cd "$SCRIPT_DIR"/../../.. || exit 1
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
         local \
-        --num-processes "$max_processes" \
-        --output-dir "$OUTPUT_DIR" \
+        --num-processes 2 \
+        --output-dir weaviate-output \
         --strategy fast \
         --verbose \
         --reprocess \
         --input-path example-docs/book-war-and-peace-1225p.txt \
-        --work-dir "$WORK_DIR" \
+        --work-dir weaviate-work-dir \
         --chunk-elements \
         --chunk-new-after-n-chars 2500\
         --chunk-multipage-sections \
