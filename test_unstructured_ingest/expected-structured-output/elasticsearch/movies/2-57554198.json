@@ -7,8 +7,7 @@
           "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
@@ -26,8 +25,7 @@
           "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
@@ -45,8 +43,7 @@
           "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
-        },
-        "version": "1"
+        }
       },
       "filetype": "text/plain",
       "languages": [
