@@ -1,4 +1,3 @@
-import csv
 import hashlib
 import os
 import typing as t
@@ -69,7 +68,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
             )
         return (
-            Path(self.read_config.download_dir) / self.document_meta.index_name / f"{f}.csv"
+            Path(self.read_config.download_dir) / self.document_meta.index_name / f"{f}.txt"
         ).resolve()
 
     @property
@@ -171,12 +170,11 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             doc_body = doc["_source"]
             filename = ingest_doc.filename
             flattened_dict = flatten_dict(dictionary=doc_body)
+            concatenated_values = "\n".join(flattened_dict.values())
 
             filename.parent.mkdir(parents=True, exist_ok=True)
             with open(filename, "w", encoding="utf8") as f:
-                w = csv.DictWriter(f, flattened_dict.keys())
-                w.writeheader()
-                w.writerow(flattened_dict)
+                f.write(concatenated_values)
             self.ingest_docs.append(ingest_doc)
 
 
