@@ -133,10 +133,6 @@ def measure_element_type_accuracy(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
-    if not output_list:
-        print("No output files to calculate to element type for, exiting")
-        sys.exit(0)
-
     rows = []
 
     for doc in output_list:  # type: ignore
@@ -152,10 +148,11 @@ def measure_element_type_accuracy(
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
     df = pd.DataFrame(rows, columns=headers)
-    df["dummy"] = 1
-    agg_df = df.groupby("dummy").agg({"element-type-accuracy": [_mean, _stdev, _pstdev, "count"]})
-    agg_df.columns = agg_df.columns.droplevel()
-    agg_df.insert(loc=0, column="metric", value=agg_df.columns.get_level_values(0)[0])
+    if df.empty:
+        agg_df = pd.DataFrame(["element-type-accuracy", None, None, None, 0]).transpose()
+    else:
+        agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, "count"]}).transpose()
+        agg_df = agg_df.reset_index()
     agg_df.columns = agg_headers
 
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
