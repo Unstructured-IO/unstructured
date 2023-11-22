@@ -86,6 +86,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
+    Source,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
@@ -95,7 +96,7 @@ from unstructured.partition.utils.sorting import (
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from unstructured_inference.inference.elements import TextRegion
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -327,6 +328,114 @@ def _process_uncategorized_text_elements(elements: List[Element]):
     return out_elements
 
 
+def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:
+    """
+    Recursively extracts LTImage objects from a PDF layout element.
+
+    This function takes a PDF layout element (could be LTImage or LTContainer) and recursively
+    extracts all LTImage objects contained within it.
+
+    Parameters:
+    - layout_object (Any): The PDF layout element to extract images from.
+
+    Returns:
+    - List[LTImage]: A list of LTImage objects extracted from the layout object.
+
+    Note:
+    - This function recursively traverses through the layout_object to find and accumulate all
+     LTImage objects.
+    - If the input layout_object is an LTImage, it will be included in the returned list.
+    - If the input layout_object is an LTContainer, the function will recursively search its
+     children for LTImage objects.
+    - If the input layout_object is neither LTImage nor LTContainer, an empty list will be
+     returned.
+    """
+
+    # recursively locate Image objects in layout_object
+    if isinstance(layout_object, LTImage):
+        return [layout_object]
+    if isinstance(layout_object, LTContainer):
+        img_list: List[LTImage] = []
+        for child in layout_object:
+            img_list = img_list + get_images_from_pdf_element(child)
+        return img_list
+    else:
+        return []
+
+
+def init_pdfminer():
+    rsrcmgr = PDFResourceManager()
+    laparams = LAParams()
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+    return device, interpreter
+
+
+def process_file_with_pdfminer(
+    filename,
+) -> Tuple[List[List["TextRegion"]], List[Tuple]]:
+    with open_filename(filename, "rb") as fp:
+        fp = cast(BinaryIO, fp)
+        extracted_regions, image_sizes = process_data_with_pdfminer(fp)
+
+    return extracted_regions, image_sizes
+
+
+def process_data_with_pdfminer(
+    fp: BinaryIO,
+    dpi: int = 200,
+) -> Tuple[List[List["TextRegion"]], List[Tuple]]:
+    """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
+    pdf pages using pdf2image"""
+
+    from unstructured_inference.inference.elements import EmbeddedTextRegion, ImageTextRegion
+
+    device, interpreter = init_pdfminer()
+    extracted_regions = []
+    image_sizes = []
+    for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
+        interpreter.process_page(page)
+        page_layout = device.get_result()
+
+        width, height = page_layout.width, page_layout.height
+
+        extracted_regions_per_page = []
+        page_image_size = (width, height)
+        for obj in page_layout:
+            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            # Coefficient to rescale bounding box to be compatible with images
+            coef = dpi / 72
+
+            if hasattr(obj, "get_text"):
+                _text = obj.get_text()
+                element_class = EmbeddedTextRegion  # type: ignore
+            else:
+                embedded_images = get_images_from_pdf_element(obj)
+                if len(embedded_images) > 0:
+                    _text = None
+                    element_class = ImageTextRegion  # type: ignore
+                else:
+                    continue
+
+            text_region = element_class.from_coords(
+                x1 * coef,
+                y1 * coef,
+                x2 * coef,
+                y2 * coef,
+                text=_text,
+                source=Source.PDFMINER,
+            )
+
+            if text_region.bbox is not None and text_region.bbox.area > 0:
+                extracted_regions_per_page.append(text_region)
+
+        extracted_regions.append(extracted_regions_per_page)
+        image_sizes.append(page_image_size)
+
+    return extracted_regions, image_sizes
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -345,9 +454,14 @@ def _partition_pdf_or_image_local(
 ) -> List[Element]:
     """Partition using package installed locally."""
     from unstructured_inference.inference.layout import (
+        DocumentLayout,
         process_data_with_model,
         process_file_with_model,
     )
+    from unstructured_inference.inference.layoutelement import (
+        merge_inferred_layout_with_extracted_layout,
+    )
+    from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     from unstructured.partition.ocr import (
         process_data_with_ocr,
@@ -370,7 +484,7 @@ def _partition_pdf_or_image_local(
 
     if file is None:
         # NOTE(christine): out_layout = extracted_layout + inferred_layout
-        out_layout = process_file_with_model(
+        inferred_document_layout = process_file_with_model(
             filename,
             is_image=is_image,
             model_name=model_name,
@@ -378,13 +492,38 @@ def _partition_pdf_or_image_local(
             extract_images_in_pdf=extract_images_in_pdf,
             image_output_dir_path=image_output_dir_path,
         )
+        extracted_layouts, image_sizes = process_file_with_pdfminer(filename)
+        merged_page_layouts = []
+        for i, (extracted_layout, image_size) in enumerate(zip(extracted_layouts, image_sizes)):
+            page_layout = inferred_document_layout.pages[i]
+            inferred_layout = page_layout.elements
+
+            threshold_kwargs = {}
+            # NOTE(Benjamin): With this the thresholds are only changed for detextron2_mask_rcnn
+            # In other case the default values for the functions are used
+            if (
+                isinstance(page_layout.detection_model, UnstructuredDetectronONNXModel)
+                and "R_50" not in page_layout.detection_model.model_path
+            ):
+                threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
+
+            page_layout.elements[:] = merge_inferred_layout_with_extracted_layout(
+                inferred_layout=inferred_layout,
+                extracted_layout=extracted_layout,
+                page_image_size=image_size,
+                **threshold_kwargs,
+            )
+            merged_page_layouts.append(page_layout)
+
+        merged_document_layout = DocumentLayout.from_pages(merged_page_layouts)
+
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_layout = out_layout
+            final_layout = merged_document_layout
         else:
             final_layout = process_file_with_ocr(
                 filename,
-                out_layout,
+                merged_document_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
