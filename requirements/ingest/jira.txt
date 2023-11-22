@@ -6,7 +6,7 @@
 #
 atlassian-python-api==3.41.3
     # via -r ingest/jira.in
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -41,5 +41,7 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   requests
-wrapt==1.15.0
-    # via deprecated
+wrapt==1.16.0
+    # via
+    #   -c ingest/../base.txt
+    #   deprecated

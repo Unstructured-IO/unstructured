@@ -1,4 +1,5 @@
 import functools
+import html
 import importlib
 import json
 import os
@@ -8,6 +9,7 @@ from datetime import datetime
 from functools import wraps
 from itertools import combinations
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Dict,
@@ -16,6 +18,7 @@ from typing import (
     Iterator,
     List,
     Optional,
+    Sequence,
     Tuple,
     TypeVar,
     Union,
@@ -26,12 +29,44 @@ import requests
 from typing_extensions import ParamSpec
 
 from unstructured.__version__ import __version__
-from unstructured.documents.elements import Text
+
+if TYPE_CHECKING:
+    from unstructured.documents.elements import Text
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
+
+
+def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
+    """Form an HTML table from "rows" and "columns" of `matrix`.
+
+    Character overhead is minimized:
+    - No whitespace padding is added for human readability
+    - No newlines ("\n") are added
+    - No `<thead>`, `<tbody>`, or `<tfoot>` elements are used; we can't tell where those might be
+      semantically appropriate anyway so at best they would consume unnecessary space and at worst
+      would be misleading.
+    """
+
+    def iter_trs(rows_of_cell_strs: Sequence[Sequence[str]]) -> Iterator[str]:
+        for row_cell_strs in rows_of_cell_strs:
+            # -- suppress emission of rows with no cells --
+            if not row_cell_strs:
+                continue
+            yield f"<tr>{''.join(iter_tds(row_cell_strs))}</tr>"
+
+    def iter_tds(row_cell_strs: Sequence[str]) -> Iterator[str]:
+        for s in row_cell_strs:
+            # -- take care of things like '<' and '>' in the text --
+            s = html.escape(s)
+            # -- substitute <br/> elements for line-feeds in the text --
+            s = "<br/>".join(s.split("\n"))
+            # -- strip leading and trailing whitespace, wrap it up and go --
+            yield f"<td>{s.strip()}</td>"
+
+    return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
 
 
 class lazyproperty(Generic[_T]):
@@ -614,7 +649,7 @@ def identify_overlapping_or_nesting_case(
 
 
 def catch_overlapping_and_nested_bboxes(
-    elements: List[Text],
+    elements: List["Text"],
     nested_error_tolerance_px: int = 5,
     sm_overlap_threshold: float = 10.0,
 ) -> (bool, List[Dict]):

@@ -2,17 +2,23 @@ from tempfile import SpooledTemporaryFile
 from typing import BinaryIO, Optional, Union
 
 from unstructured.logger import logger
+from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import dependency_exists
 
 
 def validate_strategy(strategy: str, is_image: bool = False):
     """Determines if the strategy is valid for the specified filetype."""
 
-    valid_strategies = ["auto", "fast", "ocr_only", "hi_res"]
+    valid_strategies = [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.OCR_ONLY,
+        PartitionStrategy.HI_RES,
+    ]
     if strategy not in valid_strategies:
         raise ValueError(f"{strategy} is not a valid strategy.")
 
-    if strategy == "fast" and is_image:
+    if strategy == PartitionStrategy.FAST and is_image:
         raise ValueError("The fast strategy is not available for image files.")
 
 
@@ -29,7 +35,7 @@ def determine_pdf_or_image_strategy(
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
-    if strategy == "auto":
+    if strategy == PartitionStrategy.AUTO:
         if is_image:
             strategy = _determine_image_auto_strategy()
         else:
@@ -52,7 +58,7 @@ def determine_pdf_or_image_strategy(
             "or remove copy protection from the PDF.",
         )
 
-    if strategy == "hi_res" and not unstructured_inference_installed:
+    if strategy == PartitionStrategy.HI_RES and not unstructured_inference_installed:
         logger.warning(
             "unstructured_inference is not installed. Cannot use the hi_res partitioning "
             "strategy. Falling back to partitioning with another strategy.",
@@ -61,22 +67,22 @@ def determine_pdf_or_image_strategy(
         # similar to hi_res
         if pytesseract_installed:
             logger.warning("Falling back to partitioning with ocr_only.")
-            return "ocr_only"
+            return PartitionStrategy.OCR_ONLY
         else:
             logger.warning("Falling back to partitioning with fast.")
-            return "fast"
+            return PartitionStrategy.FAST
 
-    elif strategy == "ocr_only" and not pytesseract_installed:
+    elif strategy == PartitionStrategy.OCR_ONLY and not pytesseract_installed:
         logger.warning(
             "pytesseract is not installed. Cannot use the ocr_only partitioning "
             "strategy. Falling back to partitioning with another strategy.",
         )
         if pdf_text_extractable:
             logger.warning("Falling back to partitioning with fast.")
-            return "fast"
+            return PartitionStrategy.FAST
         else:
             logger.warning("Falling back to partitioning with hi_res.")
-            return "hi_res"
+            return PartitionStrategy.HI_RES
 
     return strategy
 
@@ -85,7 +91,7 @@ def _determine_image_auto_strategy():
     """If "auto" is passed in as the strategy, determines what strategy to use
     for images."""
     # Use hi_res as the only default since images are only about one page
-    return "hi_res"
+    return PartitionStrategy.HI_RES
 
 
 def _determine_pdf_auto_strategy(
@@ -98,9 +104,9 @@ def _determine_pdf_auto_strategy(
     # NOTE(robinson) - Currently "hi_res" is the only strategy where
     # infer_table_structure and extract_images_in_pdf are used.
     if infer_table_structure or extract_images_in_pdf:
-        return "hi_res"
+        return PartitionStrategy.HI_RES
 
     if pdf_text_extractable:
-        return "fast"
+        return PartitionStrategy.FAST
     else:
-        return "ocr_only"
+        return PartitionStrategy.OCR_ONLY

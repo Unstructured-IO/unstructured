@@ -85,6 +85,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
+    PartitionStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
@@ -116,7 +117,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
@@ -219,7 +220,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -244,20 +245,23 @@ def partition_pdf_or_image(
     )
 
     extracted_elements = []
+    pdf_text_extractable = False
     if not is_image:
-        extracted_elements = extractable_elements(
-            filename=filename,
-            file=spooled_to_bytes_io_if_needed(file),
-            include_page_breaks=include_page_breaks,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
-            **kwargs,
-        )
-        pdf_text_extractable = any(
-            isinstance(el, Text) and el.text.strip() for el in extracted_elements
-        )
-    else:
-        pdf_text_extractable = False
+        try:
+            extracted_elements = extractable_elements(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            pdf_text_extractable = any(
+                isinstance(el, Text) and el.text.strip() for el in extracted_elements
+            )
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            logger.warning("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
@@ -268,11 +272,11 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
     )
 
-    if strategy == "hi_res":
+    if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            _layout_elements = _partition_pdf_or_image_local(
+            elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -284,22 +288,15 @@ def partition_pdf_or_image(
                 image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+            out_elements = _process_uncategorized_text_elements(elements)
 
-    elif strategy == "fast":
+    elif strategy == PartitionStrategy.FAST:
         return extracted_elements
 
-    elif strategy == "ocr_only":
+    elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            _layout_elements = _partition_pdf_or_image_with_ocr(
+            elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -308,17 +305,26 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            out_elements = _process_uncategorized_text_elements(elements)
 
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+    return out_elements
 
-    return layout_elements
+
+def _process_uncategorized_text_elements(elements: List[Element]):
+    """Processes a list of elements, creating a new list where elements with the
+    category `UncategorizedText` are replaced with corresponding
+    elements created from their text content."""
+
+    out_elements = []
+    for el in elements:
+        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
+            new_el = element_from_text(cast(Text, el).text)
+            new_el.metadata = el.metadata
+        else:
+            new_el = el
+        out_elements.append(new_el)
+
+    return out_elements
 
 
 @requires_dependencies("unstructured_inference")

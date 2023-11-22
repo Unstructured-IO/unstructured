@@ -299,7 +299,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><br><tbody><br><tr><td>Notes          </td></tr><br><tr><td>Important Links</td></tr><br></tbody><br></table>"
+      "text_as_html": "<table><tr><td>Notes</td></tr><tr><td>Important Links</td></tr></table>"
     },
     "text": "Notes Important Links",
     "type": "Table"
