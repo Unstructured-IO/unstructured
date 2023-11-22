@@ -383,7 +383,7 @@ def process_file_with_pdfminer(
 
 
 def process_data_with_pdfminer(
-    fp: BinaryIO,
+    fp: Optional[Union[bytes, BinaryIO]],
     dpi: int = 200,
 ) -> Tuple[List[List["TextRegion"]], List[Tuple]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
@@ -454,14 +454,9 @@ def _partition_pdf_or_image_local(
 ) -> List[Element]:
     """Partition using package installed locally."""
     from unstructured_inference.inference.layout import (
-        DocumentLayout,
         process_data_with_model,
         process_file_with_model,
     )
-    from unstructured_inference.inference.layoutelement import (
-        merge_inferred_layout_with_extracted_layout,
-    )
-    from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     from unstructured.partition.ocr import (
         process_data_with_ocr,
@@ -493,30 +488,11 @@ def _partition_pdf_or_image_local(
             image_output_dir_path=image_output_dir_path,
         )
         extracted_layouts, image_sizes = process_file_with_pdfminer(filename)
-        merged_page_layouts = []
-        for i, (extracted_layout, image_size) in enumerate(zip(extracted_layouts, image_sizes)):
-            page_layout = inferred_document_layout.pages[i]
-            inferred_layout = page_layout.elements
-
-            threshold_kwargs = {}
-            # NOTE(Benjamin): With this the thresholds are only changed for detextron2_mask_rcnn
-            # In other case the default values for the functions are used
-            if (
-                isinstance(page_layout.detection_model, UnstructuredDetectronONNXModel)
-                and "R_50" not in page_layout.detection_model.model_path
-            ):
-                threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
-
-            page_layout.elements[:] = merge_inferred_layout_with_extracted_layout(
-                inferred_layout=inferred_layout,
-                extracted_layout=extracted_layout,
-                page_image_size=image_size,
-                **threshold_kwargs,
-            )
-            merged_page_layouts.append(page_layout)
-
-        merged_document_layout = DocumentLayout.from_pages(merged_page_layouts)
-
+        merged_document_layout = _merge_inferred_with_extracted(
+            inferred_document_layout,
+            extracted_layouts,
+            image_sizes,
+        )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             final_layout = merged_document_layout
@@ -531,7 +507,7 @@ def _partition_pdf_or_image_local(
                 pdf_image_dpi=pdf_image_dpi,
             )
     else:
-        out_layout = process_data_with_model(
+        inferred_document_layout = process_data_with_model(
             file,
             is_image=is_image,
             model_name=model_name,
@@ -539,15 +515,23 @@ def _partition_pdf_or_image_local(
             extract_images_in_pdf=extract_images_in_pdf,
             image_output_dir_path=image_output_dir_path,
         )
+        if hasattr(file, "seek"):
+            file.seek(0)
+        extracted_layouts, image_sizes = process_data_with_pdfminer(file)
+        merged_document_layout = _merge_inferred_with_extracted(
+            inferred_document_layout,
+            extracted_layouts,
+            image_sizes,
+        )
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_layout = out_layout
+            final_layout = merged_document_layout
         else:
             if hasattr(file, "seek"):
                 file.seek(0)
             final_layout = process_data_with_ocr(
                 file,
-                out_layout,
+                merged_document_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
@@ -599,6 +583,44 @@ def _partition_pdf_or_image_local(
                 out_elements.append(cast(Element, el))
 
     return out_elements
+
+
+def _merge_inferred_with_extracted(
+    inferred_document_layout,
+    extracted_layouts,
+    image_sizes,
+):
+    from unstructured_inference.inference.layout import DocumentLayout
+    from unstructured_inference.inference.layoutelement import (
+        merge_inferred_layout_with_extracted_layout,
+    )
+    from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
+    merged_page_layouts = []
+    for i, (extracted_layout, image_size) in enumerate(zip(extracted_layouts, image_sizes)):
+        page_layout = inferred_document_layout.pages[i]
+        inferred_layout = page_layout.elements
+
+        threshold_kwargs = {}
+        # NOTE(Benjamin): With this the thresholds are only changed for detextron2_mask_rcnn
+        # In other case the default values for the functions are used
+        if (
+            isinstance(page_layout.detection_model, UnstructuredDetectronONNXModel)
+            and "R_50" not in page_layout.detection_model.model_path
+        ):
+            threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
+
+        page_layout.elements[:] = merge_inferred_layout_with_extracted_layout(
+            inferred_layout=inferred_layout,
+            extracted_layout=extracted_layout,
+            page_image_size=image_size,
+            **threshold_kwargs,
+        )
+        merged_page_layouts.append(page_layout)
+
+    merged_document_layout = DocumentLayout.from_pages(merged_page_layouts)
+
+    return merged_document_layout
 
 
 @requires_dependencies("pdfminer", "local-inference")
