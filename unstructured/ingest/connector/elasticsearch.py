@@ -157,7 +157,6 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             "query": {"ids": {"values": self.list_of_ids}},
         }
 
-        print(f"Running scan with query: {scan_query}")
         result = scan(
             es,
             query=scan_query,
@@ -165,7 +164,6 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             index=self.connector_config.index_name,
         )
         return list(result)
-        return [r["_source"] for r in result]
 
     @SourceConnectionError.wrap
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
