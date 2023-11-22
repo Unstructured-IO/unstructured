@@ -44,8 +44,6 @@ class WeaviateCliConfig(SimpleWeaviateConfig, CliConfig):
 
 @dataclass
 class WeaviateCliWriteConfig(WeaviateWriteConfig, CliConfig):
-    batch_size: int
-
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

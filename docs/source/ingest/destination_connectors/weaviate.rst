@@ -22,10 +22,10 @@ running locally.
       .. code:: shell
 
         unstructured-ingest \
-            s3 \
-            --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+            local \
+            --input-path example-docs/fake-memo.pdf \
             --anonymous \
-            --output-dir s3-small-batch-output-to-sql \
+            --output-dir local-output-to-weaviate \
             --num-processes 2 \
             --verbose \
             --strategy fast \
@@ -37,33 +37,29 @@ running locally.
 
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "s3",
-          "--remote-url", "s3://utic-dev-tech-fixtures/small-pdf-set/",
-          "--anonymous",
-          "--output-dir", "s3-small-batch-output-to-postgresql",
-          "--num-processes", "2",
-          "--verbose",
-          "--strategy", "fast",
-          "weaviate"
-          "--host-url http://localhost:808"
-          "--class-name elements"
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import LocalRunner
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
-
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
+        if __name__ == "__main__":
+            runner = LocalRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
+                    output_dir="local-output-to-weaviate",
+                    num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+                writer_type="weaviate",
+                writer_kwargs={
+                    "host_url": os.getenv("WEAVIATE_HOST_URL"),
+                    "class_name": os.getenv("WEAVIATE_CLASS_NAME")
+                }
+            )
+            runner.run(
+                input_path="example-docs/fake-memo.pdf",
+            )
 
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> weaviate --help``.

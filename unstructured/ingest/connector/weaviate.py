@@ -146,10 +146,11 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         with self.client.batch as b:
             for e in json_list:
                 self.conform_dict(e)
+                vector = e.pop("embeddings", None)
                 b.add_data_object(
                     e,
                     self.connector_config.class_name,
-                    vector=e.get("embeddings"),
+                    vector=vector,
                 )
 
     @requires_dependencies(["weaviate"], extras="weaviate")
