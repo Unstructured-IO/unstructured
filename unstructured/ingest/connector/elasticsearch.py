@@ -97,7 +97,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             return
         self.source_metadata = SourceMetadata(
             version=self.document["_version"],
-            exists=self.document["found"],
+            exists=True,
         )
 
     @SourceConnectionError.wrap
