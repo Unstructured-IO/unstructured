@@ -98,7 +98,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --permissions-tenant "$SHAREPOINT_PERMISSIONS_TENANT" \
     --path "Shared Documents" \
     --recursive \
-    --embedding-api-key "$OPENAI_API_KEY" \
+    --embedding-provider "langchain-huggingface" \
     --chunk-elements \
     --chunk-multipage-sections \
     --work-dir "$WORK_DIR" \

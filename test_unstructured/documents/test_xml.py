@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 import os
 from pathlib import Path
 
@@ -35,7 +37,7 @@ def test_read_xml(sample_document, tmpdir):
 def test_xml_read_raises():
     xml_document = XMLDocument()
     with pytest.raises(NotImplementedError):
-        xml_document._read()
+        xml_document._parse_pages_from_element_tree()
 
 
 def test_from_string(sample_document):

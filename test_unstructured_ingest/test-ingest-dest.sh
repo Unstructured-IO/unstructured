@@ -17,6 +17,7 @@ all_tests=(
   'gcs.sh'
   'mongodb.sh'
   's3.sh'
+  'sharepoint-embed-cog-index.sh'
 )
 
 full_python_matrix_tests=(
