@@ -134,16 +134,15 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
     list_of_ids: t.List[str] = field(default_factory=list)
     registry_name: str = "elasticsearch_batch"
 
+    def __post_init__(self):
+        # Until python3.8 is deprecated, this is a limitation of dataclass inheritance
+        # to make it a required field
+        if len(self.list_of_ids) == 0:
+            raise ValueError("list_of_ids is required")
+
     @property
     def unique_id(self) -> str:
-        return ",".join(self.list_of_ids)
-
-    def _concatenate_dict_fields(self, dictionary, seperator="\n"):
-        """Concatenates all values for each key in a dictionary in a nested manner.
-        Used to parse a python dictionary to an aggregated string"""
-        values = [self._flatten_values(value, seperator) for value in dictionary.values()]
-        concatenated_values = seperator.join(values)
-        return concatenated_values
+        return ",".join(sorted(self.list_of_ids))
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def _get_docs(self):

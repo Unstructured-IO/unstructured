@@ -318,7 +318,7 @@ class BaseIngestDoc(ABC):
 
     @property
     @abstractmethod
-    def unique_id(self):
+    def unique_id(self) -> str:
         pass
 
 
