@@ -1,47 +1,89 @@
 Azure Marketplace Deployment Guide
 ===================================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Introduction
 ------------
 This guide provides step-by-step instructions for deploying a service on Azure using the Azure Marketplace.
 
 1. Login to Azure Portal
 ------------------------
-- **URL**: `https://portal.azure.com`
+- **URL**: `https://portal.azure.com <https://portal.azure.com/>`__.
 
 2. Access Azure Marketplace
 ---------------------------
-- Navigate to the Azure Marketplace using the following URL:
-  `https://azuremarketplace.microsoft.com/en-us/marketplace/apps/unstructured1691024866136.customer_api_v1?tab=Overview`
+- Navigate to the Azure Marketplace using `this URL <https://azuremarketplace.microsoft.com/en-us/marketplace/apps/unstructured1691024866136.customer_api_v1?tab=Overview/>`__.
+
+
+.. image:: imgs/Azure_Step2.png
+  :align: center
+  :alt: Azure Marketplace
+
 
 3. Start Deployment Process
 ---------------------------
-- Click the **Get it now** button and fill out the form.
-- Click **Continue**.
-- Click **Create**.
-- Select `utic-dev` as the resource group.
-- Fill in the **name field**.
+- Click the **Get it Now** button and fill out the form.
+- Read the Terms and click **Continue**.
+- Click **Create** button.
+
+
+.. image:: imgs/Azure_Step3.png
+  :align: center
+  :alt: Deployment Process
+
 
 4. Configure Deployment Options
 -------------------------------
-- Choose **Virtual machine scale set** from Availability options.
-- Click **Create new**.
-- Set fields as instructed and choose a custom name.
-- Configure scaling options (either directly or through the scaling tab).
-- Fill in fields as instructed.
 
-5. Networking and Load Balancer Setup
--------------------------------------
-- Click on the **networking tab**.
-- Select `utic-dev` for the network.
-- Select **Azure Load Balancer**.
-- Create a load balancer with a name matching the deploy name.
-- Check **Enable application health monitoring**.
-- Set request path to `/healthcheck`.
+On the **Create a virtual machine** page, go to **Basics** tab and follow the steps below.
+
+- Project details
+    - Select **Subscription** and **Resource group** from dropdown menu.
+    - Or, you can also ``Create New`` resource group.
+
+.. image:: imgs/Azure_Step4a.png
+  :align: center
+  :alt: project details
+
+- Instance details
+    - Provide a name in the **Virtual machine name** field.
+    - Select a **Region** from the dropdown menu.
+    - **Image**: Select ``Unstructured Customer Hosted API Hourly - x64 Gen2`` (*default*)
+    - **Size**: Select VM size from dropdown menu.
+
+.. image:: imgs/Azure_Step4b.png
+  :align: center
+  :alt: instance details
+
+- Administrator account
+    - **Authentication type**: Select ``Password`` or ``SSH public key``.
+    - Enter the ``credentials``.
+
+.. image:: imgs/Azure_Step4c.png
+  :align: center
+  :alt: administrator account
+
+
+5. Set Up Load Balancer
+-----------------------
+
+On the **Create a virtual machine** page, go to **Networking** tab and follow the steps below.
+
+- Networking interface (required fields)
+    - **Virtual network**: Select from dropdown menu or create new
+    - **Subnet**: Select from dropdown menu
+    - **Configure network security group**: Select from dropdown menu or create new
+
+- Load balancing
+    - **Load balancing option**: Select ``Azure load balancer``
+    - **Select a load balance**: Select from dropdown menu or create new
+        - **Type**: Select ``Public`` or ``Internal``
+        - **Protococl**: Select ``TCP`` or ``UDP``
+        - **Port** and **Backend Port**: Set to ``port 80``
+
+.. image:: imgs/Azure_Step5.png
+  :align: center
+  :alt: load balancer
+
 
 6. Finalize and Deploy
 ----------------------
@@ -49,21 +91,31 @@ This guide provides step-by-step instructions for deploying a service on Azure u
 - Wait for validation.
 - Click **Create**.
 
+.. image:: imgs/Azure_Step6.png
+  :align: center
+  :alt: deployment
+
+
 7. Post-Deployment Steps
 ------------------------
-- Search for **resource groups** in Azure.
-- Select `utic-dev` in the subscription.
-- Monitor the deployment status and ensure success.
-- Navigate to the deployed resource.
-- Retrieve the public IP.
-- Optionally, create a Route 53 A record for the IP.
-- Remember to delete the resource group after usage.
+- Go to the **Virtual Machine** from Azure console.
+- Retrieve the **Load balancer public IP address**
+- The deployed endpoint is **http://<load-balancer-public-IP-address>/general/v0/general**
 
-8. Verification and Testing
+.. image:: imgs/Azure_Step7.png
+  :align: center
+  :alt: retrieve public ip
+
+
+7. Verification and Testing
 ---------------------------
 - Navigate to the public IP with the specified path for documentation and API testing.
 - Perform API testing with `curl` commands.
 
-9. Notes and Observations
--------------------------
-- Document any specific observations or issues encountered during the deployment and testing phase.
+.. code-block:: bash
+
+  curl -q -X POST http://<you-IP-address>/general/v0/general -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F files=@english-and-korean.png -o /tmp/english-and-korean.png.json
+
+.. image:: imgs/Azure_Step8.png
+  :align: center
+  :alt: testing
