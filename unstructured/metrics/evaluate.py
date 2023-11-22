@@ -155,7 +155,7 @@ def measure_element_type_accuracy(
     agg_df.columns = agg_headers
 
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
+    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
     _display(agg_df)
 
 
