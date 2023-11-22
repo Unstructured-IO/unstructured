@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "e262a45ed241c06a8548e04a0af5c63d",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "9",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>D. W. Griffith</td>\n      <td>The film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nD. W. Griffith\nThe film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.\n\n\n",
+    "type": "Table"
+  }
+]

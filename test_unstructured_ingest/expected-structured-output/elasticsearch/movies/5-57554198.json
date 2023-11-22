@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "e22e9b6f0ca1d3d52a54c1e85ff191bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "5",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>D. W. Griffith</td>\n      <td>A thug accosts a girl as she leaves her workplace but a man rescues her. The thug vows revenge and, with the help of two friends, attacks the girl and her rescuer again as they're going for a walk. This time they succeed in kidnapping the rescuer. He is bound and gagged and taken away in a cart. The girl runs home and gets help from several neighbors. They track the ruffians down to a cabin in the mountains where the gang has trapped their victim and set the cabin on fire. A thug and Rescuer fight on the roof of the house.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nD. W. Griffith\nA thug accosts a girl as she leaves her workplace but a man rescues her. The thug vows revenge and, with the help of two friends, attacks the girl and her rescuer again as they're going for a walk. This time they succeed in kidnapping the rescuer. He is bound and gagged and taken away in a cart. The girl runs home and gets help from several neighbors. They track the ruffians down to a cabin in the mountains where the gang has trapped their victim and set the cabin on fire. A thug and Rescuer fight on the roof of the house.\n\n\n",
+    "type": "Table"
+  }
+]

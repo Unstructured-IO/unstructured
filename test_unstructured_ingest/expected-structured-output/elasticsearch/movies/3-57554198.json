@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "c0bac7c629b7cd8a15ea825023c91555",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "3",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>Edwin Stanton Porter</td>\n      <td>The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nEdwin Stanton Porter\nThe plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.\n\n\n",
+    "type": "Table"
+  }
+]

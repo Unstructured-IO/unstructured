@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "5e8ff63e91b3b197337fc56bcf0eb803",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "1",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>Wallace McCutcheon and Ediwin S. Porter</td>\n      <td>Boone's daughter befriends an Indian maiden as Boone and his companion start out on a hunting expedition. While he is away, Boone's cabin is attacked by the Indians, who set it on fire and abduct Boone's daughter. Boone returns, swears vengeance, then heads out on the trail to the Indian camp. His daughter escapes but is chased. The Indians encounter Boone, which sets off a huge fight on the edge of a cliff. A burning arrow gets shot into the Indian camp. Boone gets tied to the stake and tortured. The burning arrow sets the Indian camp on fire, causing panic. Boone is rescued by his horse, and Boone has a knife fight in which he kills the Indian chief.[2]</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nWallace McCutcheon and Ediwin S. Porter\nBoone's daughter befriends an Indian maiden as Boone and his companion start out on a hunting expedition. While he is away, Boone's cabin is attacked by the Indians, who set it on fire and abduct Boone's daughter. Boone returns, swears vengeance, then heads out on the trail to the Indian camp. His daughter escapes but is chased. The Indians encounter Boone, which sets off a huge fight on the edge of a cliff. A burning arrow gets shot into the Indian camp. Boone gets tied to the stake and tortured. The burning arrow sets the Indian camp on fire, causing panic. Boone is rescued by his horse, and Boone has a knife fight in which he kills the Indian chief.[2]\n\n\n",
+    "type": "Table"
+  }
+]

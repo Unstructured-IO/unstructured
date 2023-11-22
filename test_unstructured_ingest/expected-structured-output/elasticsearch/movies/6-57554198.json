@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "6033e68e26458755a951bb9708fcf9a6",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "6",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>D.W. Griffith</td>\n      <td>A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nD.W. Griffith\nA young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.\n\n\n",
+    "type": "Table"
+  }
+]

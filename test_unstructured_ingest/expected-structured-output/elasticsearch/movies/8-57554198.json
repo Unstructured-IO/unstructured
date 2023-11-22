@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "d4bfdf4adb6c943806eb66c9f81c7d56",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "8",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>Unknown</td>\n      <td>No prints of the first American film adaptation of A Christmas Carol are known to exist,[1] but The Moving Picture World magazine provided a scene-by-scene description before the film's release.[2] Scrooge goes into his office and begins working. His nephew, along with three women who wish for Scrooge to donate enter. However, Scrooge dismisses them. On the night of Christmas Eve, his long-dead partner Jacob Marley comes as a ghost, warning him of a horrible fate if he does not change his ways. Scrooge meets three spirits that show Scrooge the real meaning of Christmas, along with his grave, the result of his parsimonious ways. The next morning, he wakes and realizes the error of his ways. Scrooge was then euphoric and generous for the rest of his life.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nUnknown\nNo prints of the first American film adaptation of A Christmas Carol are known to exist,[1] but The Moving Picture World magazine provided a scene-by-scene description before the film's release.[2] Scrooge goes into his office and begins working. His nephew, along with three women who wish for Scrooge to donate enter. However, Scrooge dismisses them. On the night of Christmas Eve, his long-dead partner Jacob Marley comes as a ghost, warning him of a horrible fate if he does not change his ways. Scrooge meets three spirits that show Scrooge the real meaning of Christmas, along with his grave, the result of his parsimonious ways. The next morning, he wakes and realizes the error of his ways. Scrooge was then euphoric and generous for the rest of his life.\n\n\n",
+    "type": "Table"
+  }
+]

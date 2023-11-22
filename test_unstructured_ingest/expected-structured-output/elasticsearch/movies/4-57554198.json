@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "3e23a8271f9718bc0f258cf77b861532",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "4",
+          "index_name": "movies",
+          "url": "http://localhost:9200"
+        }
+      },
+      "filetype": "text/csv",
+      "languages": [
+        "eng"
+      ],
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>ethnicity</td>\n      <td>director</td>\n      <td>plot</td>\n    </tr>\n    <tr>\n      <td>American</td>\n      <td>D. W. Griffith</td>\n      <td>On a beautiful summer day a father and mother take their daughter Dollie on an outing to the river. The mother refuses to buy a gypsy's wares. The gypsy tries to rob the mother, but the father drives him off. The gypsy returns to the camp and devises a plan. They return and kidnap Dollie while her parents are distracted. A rescue crew is organized, but the gypsy takes Dollie to his camp. They gag Dollie and hide her in a barrel before the rescue party gets to the camp. Once they leave the gypsies and escapes in their wagon. As the wagon crosses the river, the barrel falls into the water. Still sealed in the barrel, Dollie is swept downstream in dangerous currents. A boy who is fishing in the river finds the barrel, and Dollie is reunited safely with her parents.</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nethnicity\ndirector\nplot\n\n\nAmerican\nD. W. Griffith\nOn a beautiful summer day a father and mother take their daughter Dollie on an outing to the river. The mother refuses to buy a gypsy's wares. The gypsy tries to rob the mother, but the father drives him off. The gypsy returns to the camp and devises a plan. They return and kidnap Dollie while her parents are distracted. A rescue crew is organized, but the gypsy takes Dollie to his camp. They gag Dollie and hide her in a barrel before the rescue party gets to the camp. Once they leave the gypsies and escapes in their wagon. As the wagon crosses the river, the barrel falls into the water. Still sealed in the barrel, Dollie is swept downstream in dangerous currents. A boy who is fishing in the river finds the barrel, and Dollie is reunited safely with her parents.\n\n\n",
+    "type": "Table"
+  }
+]
