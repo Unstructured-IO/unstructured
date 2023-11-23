@@ -4,13 +4,13 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.connector.pinecone import SimplePineconeConfig
 
 
 @dataclass
-class PineconeCliWriteConfig(BaseConfig, CliMixin):
+class PineconeCliWriteConfig(SimplePineconeConfig, CliConfig):
     api_key: str
     index_name: str
     environment: str
