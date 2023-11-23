@@ -1,4 +1,4 @@
-## 0.11.1-dev0
+## 0.11.1-dev3
 
 ### Enhancements
 
@@ -8,7 +8,11 @@
 
 ### Fixes
 
+* **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
+* **Fix DOCX merged table cell repeats cell text.** Only include text for a merged cell, not for each underlying cell spanned by the merge.
+* **Fix tables not extracted from DOCX header/footers.** Headers and footers in DOCX documents skip tables defined in the header and commonly used for layout/alignment purposes. Extract text from tables as a string and include in the `Header` and `Footer` document elements.
 * **Process chunking parameter names in ingest correctly** Solves a bug where chunking parameters weren't being processed and used by ingest cli by renaming faulty parameter names and prepends; adds relevant parameters to ingest pinecone test to verify that the parameters are functional.
+
 
 ## 0.11.0
 
@@ -21,11 +25,11 @@
 ### Features
 
 * **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
-* **MongoDB Destination Connector** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
+* **MongoDB Destination Connector.** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
 
 ### Fixes
 
-* **Fix `TYPE_TO_TEXT_ELEMENT_MAP`** Updated `Figure` mapping from `FigureCaption` to `Image`.
+* **Fix `TYPE_TO_TEXT_ELEMENT_MAP`.** Updated `Figure` mapping from `FigureCaption` to `Image`.
 * **Handle errors when extracting PDF text** Certain pdfs throw unexpected errors when being opened by `pdfminer`, causing `partition_pdf()` to fail. We expect to be able to partition smoothly using an alternative strategy if text extraction doesn't work.  Added exception handling to handle unexpected errors when extracting pdf text and to help determine pdf strategy.
 * **Fix `fast` strategy fall back to `ocr_only`** The `fast` strategy should not fall back to a more expensive strategy.
 * **Remove default user ./ssh folder** The default notebook user during image build would create the known_hosts file with incorrect ownership, this is legacy and no longer needed so it was removed.
