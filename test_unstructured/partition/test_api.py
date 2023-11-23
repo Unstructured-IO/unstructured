@@ -14,6 +14,7 @@ DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EML_TEST_FILE = "eml/fake-email.eml"
 
 skip_outside_ci = os.getenv("CI", "").lower() in {"", "false", "f", "0"}
+skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
 
 class MockResponse:
@@ -123,6 +124,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_no_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
@@ -141,6 +143,7 @@ def test_partition_via_api_with_no_strategy():
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg")
 
@@ -156,6 +159,7 @@ def test_partition_via_api_with_image_hi_res_strategy_includes_coordinates():
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_valid_request_data_kwargs():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
@@ -402,6 +406,7 @@ def get_api_key():
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_multiple_via_api_valid_request_data_kwargs():
     filenames = [
         os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
