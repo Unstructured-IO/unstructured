@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import typing as t
-import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -23,6 +22,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -272,54 +272,6 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         size_bytes = sys.getsizeof(json_data)
         return size_bytes
 
-    def conform_dict(self, data: dict, max_size=100 * 1024 * 1024) -> None:
-        """
-        updates the dictionary that is from each Element being converted into a dict/json
-        into a dictionary that conforms to the schema expected by the
-        Elasticsearch index
-        """
-        from dateutil import parser  # type: ignore
-
-        if self.get_document_size(data) > max_size:
-            raise ValueError(
-                "Element too large, element size exceeds the maximum allowed size, which is 100Mbs."
-            )
-
-        data["id"] = str(uuid.uuid4())
-
-        if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
-            data["metadata"]["coordinates"]["points"] = json.dumps(points)
-        if version := data.get("metadata", {}).get("data_source", {}).get("version"):
-            data["metadata"]["data_source"]["version"] = str(version)
-        if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
-            data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
-        if permissions_data := (
-            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
-        ):
-            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
-        if links := data.get("metadata", {}).get("links"):
-            data["metadata"]["links"] = [json.dumps(link) for link in links]
-        if last_modified := data.get("metadata", {}).get("last_modified"):
-            data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-        if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            data["metadata"]["data_source"]["date_created"] = parser.parse(date_created).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-        if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            data["metadata"]["data_source"]["date_modified"] = parser.parse(date_modified).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
-            data["metadata"]["data_source"]["date_processed"] = parser.parse(
-                date_processed,
-            ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
-        if page_number := data.get("metadata", {}).get("page_number"):
-            data["metadata"]["page_number"] = str(page_number)
-
     DestinationConnectionError.wrap
 
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
@@ -334,6 +286,17 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         bulk_data = element_dicts
         bulk(self.client, bulk_data)
 
+    def conform_dict(self, element_dict):
+        return {
+            "element_id": element_dict.pop("element_id", None),
+            "embeddings": element_dict.pop("embeddings", None),
+            "text": element_dict.pop("text", None),
+            "metadata": flatten_dict(
+                element_dict.pop("metadata", None),
+                separator="-",
+            ),
+        }
+
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         element_dicts_all_docs: t.List[t.Dict[str, t.Any]] = []
@@ -341,8 +304,9 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 element_dicts_one_doc = json.load(json_file)
-                for element_dict in element_dicts_one_doc:
-                    self.conform_dict(data=element_dict)
+                element_dicts_one_doc = [
+                    self.conform_dict(element_dict) for element_dict in element_dicts_one_doc
+                ]
                 logger.info(
                     f"appending {len(element_dicts_one_doc)} elements from "
                     "content in doc: {local_path}"
