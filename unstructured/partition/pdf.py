@@ -35,6 +35,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from unstructured_inference.inference.ordering import order_layout
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -94,7 +95,6 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
-from unstructured_inference.inference.ordering import order_layout
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
