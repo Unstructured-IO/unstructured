@@ -545,6 +545,17 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     return wrapped(resources)
 
 
+def get_page_data(fp: BinaryIO, page_number: int):
+    """Find the binary data for a given page number from a PDF binary file."""
+    pdf_reader = pypdf.PdfReader(fp)
+    pdf_writer = pypdf.PdfWriter()
+    page = pdf_reader.pages[page_number]
+    pdf_writer.add_page(page)
+    page_data = io.BytesIO()
+    pdf_writer.write(page_data)
+    return page_data
+
+
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str,
@@ -580,14 +591,9 @@ def _process_pdfminer_pages(
         except PSSyntaxError:
             logger.info("Detected invalid dictionary construct for PDFminer")
             logger.info("Repairing the PDF page...")
+            # reread fp and find the error page from binary data fp
             fp.seek(0)
-            # find the error page from binary data fp
-            pdf_reader = pypdf.PdfReader(fp)
-            pdf_writer = pypdf.PdfWriter()
-            error_page = pdf_reader.pages[i]
-            pdf_writer.add_page(error_page)
-            error_page_data = io.BytesIO()
-            pdf_writer.write(error_page_data)
+            error_page_data = get_page_data(fp, page_number=i)
             # repair the error page with pikepdf
             with tempfile.NamedTemporaryFile() as tmp:
                 with pikepdf.Pdf.open(error_page_data) as pdf:
