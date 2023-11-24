@@ -18,6 +18,7 @@ from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
 from .dropbox import get_base_dest_cmd as dropbox_base_dest_cmd
 from .dropbox import get_base_src_cmd as dropbox_base_src_cmd
+from .elasticsearch import get_base_dest_cmd as elasticsearch_base_dest_cmd
 from .elasticsearch import get_base_src_cmd as elasticsearch_base_src_cmd
 from .fsspec import get_base_dest_cmd as fsspec_base_dest_cmd
 from .fsspec import get_base_src_cmd as fsspec_base_src_cmd
@@ -85,6 +86,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
     box_base_dest_cmd,
     dropbox_base_dest_cmd,
+    elasticsearch_base_dest_cmd,
     fsspec_base_dest_cmd,
     gcs_base_dest_cmd,
     s3_base_dest_cmd,
