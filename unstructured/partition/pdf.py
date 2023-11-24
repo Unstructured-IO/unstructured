@@ -924,13 +924,15 @@ def get_uris_from_annots(
                 continue
 
             rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
-            if not rect or not isinstance(rect, Tuple) or len(rect) != 4:
+            if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
                 continue
             x1, y1, x2, y2 = rect_to_bbox(rect, height)
 
             if "A" not in annotation_dict:
                 continue
             uri_dict = try_resolve(annotation_dict["A"])
+            if not isinstance(uri_dict, dict):
+                continue
             uri_type = None
             if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
                 uri_type = str(uri_dict["S"])

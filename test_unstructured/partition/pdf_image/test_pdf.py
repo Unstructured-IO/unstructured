@@ -904,7 +904,7 @@ def test_ocr_language_passes_through(strategy, ocr_func):
                     "Border": [0, 0, 1],
                     "C": [0, 1, 1],
                     "H": "/'I'",
-                    "Rect": (304.055, 224.156, 452.472, 234.368),
+                    "Rect": [304.055, 224.156, 452.472, 234.368],
                 },
                 {
                     "Type": "/'Annot'",
@@ -936,7 +936,7 @@ def test_ocr_language_passes_through(strategy, ocr_func):
                     "Border": [0, 0, 1],
                     "C": [0, 1, 1],
                     "H": "/'I'",
-                    "Rect": "I am not a tuple!",
+                    "Rect": "I am not a tuple or list!",
                 },
                 {
                     "Type": "/'Annot'",
