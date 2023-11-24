@@ -101,6 +101,11 @@ class PineconeDestinationConnector(BaseDestinationConnector):
                     ],  # noqa: E203
                 )
 
+    def select_fields_from_element(
+        self, element: t.Dict, fields: t.List[str] = ["text", "metadata"]
+    ) -> t.Dict:
+        return {key: element[key] for key in fields if key in element}
+
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
@@ -114,8 +119,19 @@ class PineconeDestinationConnector(BaseDestinationConnector):
                         "id": element.pop("element_id", None),
                         "values": element.pop("embeddings", None),
                         "metadata": {
-                            k: (json.dumps(v) if isinstance(v, list) else v)
-                            for k, v in flatten_dict(element["metadata"], separator="-").items()
+                            # Since pinecone does not allow lists of any type other than str,
+                            # we dump list objects (parsing them to str) wherever we see them.
+                            k: (
+                                v
+                                if not isinstance(v, list)
+                                else [json.dumps(list_item) for list_item in v]
+                            )
+                            for k, v in flatten_dict(
+                                self.select_fields_from_element(
+                                    element, fields=["text", "metadata"]
+                                ),
+                                separator="-",
+                            ).items()
                         },
                     }
                     for element in dict_content
