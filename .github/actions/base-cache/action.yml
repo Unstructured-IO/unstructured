@@ -33,3 +33,4 @@ runs:
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
+        make install-local-inference-branch
