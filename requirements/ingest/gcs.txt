@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/gcs.txt ingest/gcs.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via gcsfs
 aiosignal==1.3.1
     # via aiohttp
@@ -20,7 +20,7 @@ bs4==0.0.1
     # via -r ingest/gcs.in
 cachetools==5.3.2
     # via google-auth
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -28,7 +28,6 @@ certifi==2023.7.22
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
 decorator==5.1.1
     # via gcsfs
@@ -43,7 +42,7 @@ fsspec==2023.9.1
     #   gcsfs
 gcsfs==2023.9.1
     # via -r ingest/gcs.in
-google-api-core==2.12.0
+google-api-core==2.14.0
     # via
     #   google-cloud-core
     #   google-cloud-storage

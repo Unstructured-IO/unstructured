@@ -428,7 +428,7 @@ def test_partition_multiple_via_api_valid_request_data_kwargs():
 
     elements = partition_multiple_via_api(
         filenames=filenames,
-        strategy="fast",
+        strategy="auto",
         api_key=get_api_key(),
     )
     assert isinstance(elements, list)

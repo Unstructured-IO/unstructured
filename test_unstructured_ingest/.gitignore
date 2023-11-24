@@ -2,3 +2,5 @@ structured-output
 download
 expected-text-output/**
 text-output/**
+metrics-tmp/**
+structured-output-eval/**

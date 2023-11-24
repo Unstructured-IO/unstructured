@@ -28,9 +28,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
   echo "deleting test folder $DESTINATION_DROPBOX"
   curl -X POST https://api.dropboxapi.com/2/files/delete_v2 \
@@ -76,7 +73,7 @@ expected_num_files=1
 num_files_in_dropbox=$(curl -X POST https://api.dropboxapi.com/2/files/list_folder \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer $DROPBOX_ACCESS_TOKEN" \
-  --data "{\"path\":\"$DESTINATION_DROPBOX/example-docs/\"}" | jq '.entries | length')
+  --data "{\"path\":\"$DESTINATION_DROPBOX/\"}" | jq '.entries | length')
 if [ "$num_files_in_dropbox" -ne "$expected_num_files" ]; then
     echo "Expected $expected_num_files files to be uploaded to dropbox, but found $num_files_in_dropbox files."
     exit 1
