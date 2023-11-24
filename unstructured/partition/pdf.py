@@ -94,6 +94,7 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
+from unstructured_inference.inference.ordering import order_layout
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -392,7 +393,7 @@ def process_data_with_pdfminer(
     from unstructured_inference.inference.elements import EmbeddedTextRegion, ImageTextRegion
 
     device, interpreter = init_pdfminer()
-    extracted_regions = []
+    layouts = []
     image_sizes = []
     for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
         interpreter.process_page(page)
@@ -400,7 +401,7 @@ def process_data_with_pdfminer(
 
         width, height = page_layout.width, page_layout.height
 
-        extracted_regions_per_page = []
+        layout: List["TextRegion"] = []
         page_image_size = (width, height)
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
@@ -428,12 +429,13 @@ def process_data_with_pdfminer(
             )
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
-                extracted_regions_per_page.append(text_region)
+                layout.append(text_region)
 
-        extracted_regions.append(extracted_regions_per_page)
+        layout = order_layout(layout)
+        layouts.append(layout)
         image_sizes.append(page_image_size)
 
-    return extracted_regions, image_sizes
+    return layouts, image_sizes
 
 
 @requires_dependencies("unstructured_inference")
