@@ -6,7 +6,7 @@
 #
 aiobotocore==2.5.4
     # via s3fs
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via
     #   aiobotocore
     #   s3fs
@@ -22,10 +22,6 @@ botocore==1.31.17
     # via
     #   -c ingest/../constraints.in
     #   aiobotocore
-charset-normalizer==3.3.2
-    # via
-    #   -c ingest/../base.txt
-    #   aiohttp
 frozenlist==1.4.0
     # via
     #   aiohttp
@@ -63,6 +59,8 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   botocore
 wrapt==1.16.0
-    # via aiobotocore
+    # via
+    #   -c ingest/../base.txt
+    #   aiobotocore
 yarl==1.9.2
     # via aiohttp

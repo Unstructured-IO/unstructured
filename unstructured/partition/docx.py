@@ -408,32 +408,6 @@ class _DocxPartitioner:
             tablefmt="unsafehtml",
         )
 
-    def _convert_table_to_plain_text(self, table: DocxTable) -> str:
-        """Plain-text version of `table`.
-
-        Each row appears on its own line. Cells in a column are aligned using spaces as padding:
-
-            item      qty
-            spam       42
-            eggs      451
-            bacon       0
-
-        """
-
-        def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
-            for block_item in cell.iter_inner_content():
-                if isinstance(block_item, Paragraph):
-                    yield block_item.text
-                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
-                    block_item, DocxTable
-                ):
-                    yield self._convert_table_to_plain_text(block_item)
-
-        def iter_cells(row: _Row) -> Iterator[str]:
-            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
-
-        return tabulate([list(iter_cells(row)) for row in table.rows], tablefmt="plain")
-
     @lazyproperty
     def _document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
@@ -478,6 +452,36 @@ class _DocxPartitioner:
         export will have no sections.
         """
         return bool(self._document.sections)
+
+    def _header_footer_text(self, hdrftr: _Header | _Footer) -> str:
+        """The text enclosed in `hdrftr` as a single string.
+
+        Each paragraph is included along with the text of each table cell. Empty text is omitted.
+        Each paragraph text-item is separated by a newline ("\n") although note that a paragraph
+        that contains a line-break will also include a newline representing that line-break, so
+        newlines do not necessarily distinguish separate paragraphs.
+
+        The entire text of a table is included as a single string with a space separating the text
+        of each cell.
+
+        A header with no text or only whitespace returns the empty string ("").
+        """
+
+        def iter_hdrftr_texts(hdrftr: _Header | _Footer) -> Iterator[str]:
+            """Generate each text item in `hdrftr` stripped of leading and trailing whitespace.
+
+            This includes paragraphs as well as table cell contents.
+            """
+            for block_item in hdrftr.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    yield block_item.text.strip()
+                # -- can only be a Paragraph or Table so far but more types may come later --
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield " ".join(self._iter_table_texts(block_item))
+
+        return "\n".join(text for text in iter_hdrftr_texts(hdrftr) if text)
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -564,7 +568,7 @@ class _DocxPartitioner:
             """Generate zero-or-one Footer elements for `footer`."""
             if footer.is_linked_to_previous:
                 return
-            text = "\n".join([p.text for p in footer.paragraphs])
+            text = self._header_footer_text(footer)
             if not text:
                 return
             yield Footer(
@@ -589,11 +593,11 @@ class _DocxPartitioner:
         See `._iter_section_footers()` docstring for more on docx headers and footers.
         """
 
-        def iter_header(header: _Header, header_footer_type: str) -> Iterator[Header]:
+        def maybe_iter_header(header: _Header, header_footer_type: str) -> Iterator[Header]:
             """Generate zero-or-one Header elements for `header`."""
             if header.is_linked_to_previous:
                 return
-            text = "\n".join([p.text for p in header.paragraphs])
+            text = self._header_footer_text(header)
             if not text:
                 return
             yield Header(
@@ -606,11 +610,11 @@ class _DocxPartitioner:
                 ),
             )
 
-        yield from iter_header(section.header, "primary")
+        yield from maybe_iter_header(section.header, "primary")
         if section.different_first_page_header_footer:
-            yield from iter_header(section.first_page_header, "first_page")
+            yield from maybe_iter_header(section.first_page_header, "first_page")
         if self._document.settings.odd_and_even_pages_header_footer:
-            yield from iter_header(section.even_page_header, "even_page")
+            yield from maybe_iter_header(section.even_page_header, "even_page")
 
     def _iter_section_page_breaks(self, section_idx: int, section: Section) -> Iterator[PageBreak]:
         """Generate zero-or-one `PageBreak` document elements for `section`.
@@ -655,7 +659,7 @@ class _DocxPartitioner:
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
         html_table = self._convert_table_to_html(table) if self._infer_table_structure else None
-        text_table = self._convert_table_to_plain_text(table)
+        text_table = " ".join(self._iter_table_texts(table))
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
         yield Table(
@@ -677,6 +681,36 @@ class _DocxPartitioner:
             for cell in row.cells:
                 for paragraph in cell.paragraphs:
                     yield from self._iter_paragraph_emphasis(paragraph)
+
+    def _iter_table_texts(self, table: DocxTable) -> Iterator[str]:
+        """Generate text of each cell in `table` stripped of leading and trailing whitespace.
+
+        Nested tables are recursed into and their text contributes to the output in depth-first
+        pre-order. Empty strings due to empty or whitespace-only cells are dropped.
+        """
+
+        def iter_cell_texts(cell: _Cell) -> Iterator[str]:
+            """Generate each text item in `cell` stripped of leading and trailing whitespace.
+
+            This includes paragraphs as well as table cell contents.
+            """
+            for block_item in cell.iter_inner_content():
+                if isinstance(block_item, Paragraph):
+                    yield block_item.text.strip()
+                # -- can only be a Paragraph or Table so far but more types may come later --
+                elif isinstance(  # pyright: ignore[reportUnnecessaryIsInstance]
+                    block_item, DocxTable
+                ):
+                    yield from self._iter_table_texts(block_item)
+
+        for row in table.rows:
+            tr = row._tr
+            for tc in tr.tc_lst:
+                # -- vMerge="continue" indicates a spanned cell in a vertical merge --
+                if tc.vMerge == "continue":
+                    continue
+                # -- do not generate empty strings --
+                yield from (text for text in iter_cell_texts(_Cell(tc, row)) if text)
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:

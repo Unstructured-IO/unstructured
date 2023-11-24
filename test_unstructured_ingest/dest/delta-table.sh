@@ -23,6 +23,14 @@ function cleanup() {
 
 trap cleanup EXIT
 
+# Make sure directory doesn't exist at the beginning of script as this will cause it to break
+if [ -d "$DESTINATION_TABLE" ]; then
+  echo "cleaning up directory: $DESTINATION_TABLE"
+  rm -rf "$DESTINATION_TABLE"
+else
+  echo "$DESTINATION_TABLE does not exist or is not a directory, skipping deletion"
+fi
+
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
     --num-processes "$max_processes" \

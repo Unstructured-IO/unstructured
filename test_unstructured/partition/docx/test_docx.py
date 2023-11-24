@@ -34,6 +34,8 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 class Describe_DocxPartitioner:
     """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
 
+    # -- table behaviors -------------------------------------------------------------------------
+
     def it_can_convert_a_table_to_html(self):
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
         assert _DocxPartitioner()._convert_table_to_html(table) == (
@@ -90,8 +92,8 @@ class Describe_DocxPartitioner:
 
     def it_can_convert_a_table_to_plain_text(self):
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
-            "Header Col 1  Header Col 2\n" "Lorem ipsum   A link example"
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "Header Col 1 Header Col 2 Lorem ipsum A link example"
         )
 
     def and_it_can_convert_a_nested_table_to_plain_text(self):
@@ -111,9 +113,26 @@ class Describe_DocxPartitioner:
             +---+-------------+---+
         """
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-        assert _DocxPartitioner()._convert_table_to_plain_text(table) == (
-            "a  >b<     c\nd  e    f  i\n   g&t  h\nj  k       l"
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "a >b< c d e f g&t h i j k l"
         )
+
+    def but_the_text_of_a_merged_cell_appears_only_once(self):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
+
+    # -- page-break behaviors --------------------------------------------------------------------
 
     def it_places_page_breaks_precisely_where_they_occur(self):
         """Page-break behavior has some subtleties.
@@ -178,20 +197,29 @@ class Describe_DocxPartitioner:
                 f"\n\nGot:      {str_repr(e)}\n"
             )
 
+    # -- header/footer behaviors -----------------------------------------------------------------
 
-def test_parition_docx_from_team_chat():
-    """Docx with no sections partitions recognizing both paragraphs and tables."""
-    elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
-    assert [e.text for e in elements] == [
-        "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
-        "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
-        "saved-by  Dennis Forsythe",
-    ]
-    assert [e.category for e in elements] == [
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.TABLE,
-    ]
+    def it_includes_table_cell_text_in_Header_text(self):
+        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
+        section = partitioner._document.sections[0]
+
+        header_iter = partitioner._iter_section_headers(section)
+
+        element = next(header_iter)
+        assert element.text == "First header para\nTable cell1 Table cell2\nLast header para"
+
+    def it_includes_table_cell_text_in_Footer_text(self):
+        """This case also verifies nested-table and merged-cell behaviors."""
+        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
+        section = partitioner._document.sections[0]
+
+        footer_iter = partitioner._iter_section_footers(section)
+
+        element = next(footer_iter)
+        assert element.text == "para1\ncell1 a b c d e f\npara2"
+
+
+# -- docx-file loading behaviors -----------------------------------------------------------------
 
 
 def test_partition_docx_from_filename(
@@ -239,18 +267,6 @@ def test_partition_docx_from_file(mock_document_file_path: str, expected_element
         assert element.metadata.filename is None
 
 
-@pytest.mark.parametrize("infer_table_structure", [True, False])
-def test_partition_docx_infer_table_structure(infer_table_structure: bool):
-    elements = partition_docx(
-        example_doc_path("fake_table.docx"), infer_table_structure=infer_table_structure
-    )
-    table_element_has_text_as_html_field = (
-        hasattr(elements[0].metadata, "text_as_html")
-        and elements[0].metadata.text_as_html is not None
-    )
-    assert table_element_has_text_as_html_field == infer_table_structure
-
-
 def test_partition_docx_from_file_with_metadata_filename(
     mock_document_file_path: str, expected_elements: List[Text]
 ):
@@ -272,11 +288,41 @@ def test_partition_docx_raises_with_neither():
         partition_docx()
 
 
+# ------------------------------------------------------------------------------------------------
+
+
+def test_parition_docx_from_team_chat():
+    """Docx with no sections partitions recognizing both paragraphs and tables."""
+    elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
+    assert [e.text for e in elements] == [
+        "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
+        "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
+        "saved-by Dennis Forsythe",
+    ]
+    assert [e.category for e in elements] == [
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.UNCATEGORIZED_TEXT,
+        ElementType.TABLE,
+    ]
+
+
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_docx_infer_table_structure(infer_table_structure: bool):
+    elements = partition_docx(
+        example_doc_path("fake_table.docx"), infer_table_structure=infer_table_structure
+    )
+    table_element_has_text_as_html_field = (
+        hasattr(elements[0].metadata, "text_as_html")
+        and elements[0].metadata.text_as_html is not None
+    )
+    assert table_element_has_text_as_html_field == infer_table_structure
+
+
 def test_partition_docx_processes_table():
     elements = partition_docx(example_doc_path("fake_table.docx"))
 
     assert isinstance(elements[0], Table)
-    assert elements[0].text == ("Header Col 1  Header Col 2\n" "Lorem ipsum   A Link example")
+    assert elements[0].text == ("Header Col 1 Header Col 2 Lorem ipsum A Link example")
     assert elements[0].metadata.text_as_html == (
         "<table>\n"
         "<thead>\n"
@@ -600,6 +646,9 @@ def test_add_chunking_strategy_on_partition_docx():
         assert len(chunk.text) <= 9
 
 
+# -- language behaviors --------------------------------------------------------------------------
+
+
 def test_partition_docx_element_metadata_has_languages():
     filename = "example-docs/handbook-1p.docx"
     elements = partition_docx(filename=filename)
@@ -626,6 +675,9 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
             filename=filename,
             languages="eng",  # pyright: ignore[reportGeneralTypeIssues]
         )
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_partition_docx_includes_hyperlink_metadata():

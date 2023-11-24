@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/github.txt ingest/github.in
 #
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -54,4 +54,6 @@ urllib3==1.26.18
     #   pygithub
     #   requests
 wrapt==1.16.0
-    # via deprecated
+    # via
+    #   -c ingest/../base.txt
+    #   deprecated
