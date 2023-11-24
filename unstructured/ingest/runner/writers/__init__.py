@@ -5,6 +5,7 @@ from .azure_cognitive_search import azure_cognitive_search_writer
 from .box import box_writer
 from .delta_table import delta_table_writer
 from .dropbox import dropbox_writer
+from .elasticsearch import elasticsearch_writer
 from .gcs import gcs_writer
 from .mongodb import mongodb_writer
 from .s3 import s3_writer
@@ -15,6 +16,7 @@ writer_map: t.Dict[str, t.Callable] = {
     "box": box_writer,
     "delta_table": delta_table_writer,
     "dropbox": dropbox_writer,
+    "elasticsearch": elasticsearch_writer,
     "gcs": gcs_writer,
     "mongodb": mongodb_writer,
     "s3": s3_writer,

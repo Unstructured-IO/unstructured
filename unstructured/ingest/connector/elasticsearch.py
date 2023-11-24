@@ -1,18 +1,26 @@
 import hashlib
 import json
 import os
+import sys
 import typing as t
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
+)
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
+    BaseDestinationConnector,
     BaseIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -237,3 +245,107 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
             )
             for id in ids
         ]
+
+
+@dataclass
+class ElasticsearchWriteConfig(WriteConfig):
+    url: str
+    index_name: str
+
+
+@dataclass
+class ElasticsearchDestinationConnector(BaseDestinationConnector):
+    write_config: ElasticsearchWriteConfig
+    connector_config: SimpleElasticsearchConfig
+
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def initialize(self):
+        # TODO-dest session handles
+        pass
+
+    def check_connection(self):
+        pass
+
+    def get_document_size(doc):
+        # Convert the document to JSON and get its size in bytes
+        json_data = json.dumps(doc)
+        size_bytes = sys.getsizeof(json_data)
+        return size_bytes
+
+    def conform_dict(self, data: dict, max_size=100 * 1024 * 1024) -> None:
+        """
+        updates the dictionary that is from each Element being converted into a dict/json
+        into a dictionary that conforms to the schema expected by the
+        Elasticsearch index
+        """
+        from dateutil import parser  # type: ignore
+
+        if self.get_document_size(data) > max_size:
+            raise ValueError(
+                "Element too large, element size exceeds the maximum allowed size, which is 100Mbs."
+            )
+
+        data["id"] = str(uuid.uuid4())
+
+        if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
+            data["metadata"]["coordinates"]["points"] = json.dumps(points)
+        if version := data.get("metadata", {}).get("data_source", {}).get("version"):
+            data["metadata"]["data_source"]["version"] = str(version)
+        if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
+            data["metadata"]["data_source"]["record_locator"] = json.dumps(record_locator)
+        if permissions_data := (
+            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
+        ):
+            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
+        if links := data.get("metadata", {}).get("links"):
+            data["metadata"]["links"] = [json.dumps(link) for link in links]
+        if last_modified := data.get("metadata", {}).get("last_modified"):
+            data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
+            data["metadata"]["data_source"]["date_created"] = parser.parse(date_created).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
+            data["metadata"]["data_source"]["date_modified"] = parser.parse(date_modified).strftime(
+                "%Y-%m-%dT%H:%M:%S.%fZ",
+            )
+        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
+            data["metadata"]["data_source"]["date_processed"] = parser.parse(
+                date_processed,
+            ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
+            data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
+        if page_number := data.get("metadata", {}).get("page_number"):
+            data["metadata"]["page_number"] = str(page_number)
+
+    DestinationConnectionError.wrap
+
+    def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
+        logger.info(
+            f"writing {len(element_dicts)} documents to destination "
+            f"index named {self.connector_config.index_name}",
+            f"at {self.connector_config.url}",
+        )
+        from elasticsearch.helpers import bulk
+
+        # TODO-dest batch management (size control etc) here
+        bulk_data = element_dicts
+        bulk(self.client, bulk_data)
+
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+        element_dicts_all_docs: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                element_dicts_one_doc = json.load(json_file)
+                for element_dict in element_dicts_one_doc:
+                    self.conform_dict(data=element_dict)
+                logger.info(
+                    f"appending {len(element_dicts_one_doc)} elements from "
+                    "content in doc: {local_path}"
+                )
+                element_dicts_all_docs.extend(element_dicts_one_doc)
+        self.write_dict(element_dicts=element_dicts_all_docs)

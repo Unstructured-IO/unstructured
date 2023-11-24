@@ -8,6 +8,8 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
 
+CMD_NAME = "elasticsearch"
+
 
 @dataclass
 class ElasticsearchCliConfig(CliConfig):
@@ -43,6 +45,36 @@ class ElasticsearchCliConfig(CliConfig):
         return options
 
 
+@dataclass
+class ElasticsearchCliWriteConfig(CliConfig):
+    index_name: str
+    url: str
+    jq_query: t.Optional[str] = None
+
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--batch-size"],
+                required=True,
+                type=str,
+                help="Number of items to be uploaded each time",
+            ),
+        ]
+        return options
+
+
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="elasticsearch", cli_config=ElasticsearchCliConfig)
+    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=ElasticsearchCliConfig)
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(
+        cmd_name=CMD_NAME,
+        cli_config=ElasticsearchCliConfig,
+        additional_cli_options=[ElasticsearchCliWriteConfig],
+    )
     return cmd_cls
