@@ -577,7 +577,7 @@ def _process_pdfminer_pages(
         pages = list(PDFPage.get_pages(fp))
     except PSSyntaxError:
         logger.info("Detected invalid dictionary construct for PDFminer")
-        logger.info("Repairing the PDF document...")
+        logger.info("Repairing the PDF document ...")
         # repair the entire doc with pikepdf
         with tempfile.NamedTemporaryFile() as tmp:
             with pikepdf.Pdf.open(fp) as pdf:
@@ -590,7 +590,7 @@ def _process_pdfminer_pages(
             page_layout = device.get_result()
         except PSSyntaxError:
             logger.info("Detected invalid dictionary construct for PDFminer")
-            logger.info("Repairing the PDF page...")
+            logger.info(f"Repairing the PDF page {i+1} ...")
             # reread fp and find the error page from binary data fp
             fp.seek(0)
             error_page_data = get_page_data(fp, page_number=i)
@@ -599,8 +599,13 @@ def _process_pdfminer_pages(
                 with pikepdf.Pdf.open(error_page_data) as pdf:
                     pdf.save(tmp.name)
                 page = list(PDFPage.get_pages(open(tmp.name, "rb")))[0]  # noqa: SIM115
-            interpreter.process_page(page)
-            page_layout = device.get_result()
+            try:
+                interpreter.process_page(page)
+                page_layout = device.get_result()
+            except Exception:
+                logger.warning(f"PDFMiner failed to process PDF page {i+1} after repairing it.")
+                break
+
 
         width, height = page_layout.width, page_layout.height
 
@@ -956,29 +961,28 @@ def get_uris_from_annots(
         including its coordinates, bounding box, type, URI link, and page number.
     """
     annotation_list = []
-    if annots:
-        for annotation in annots:
-            annotation_dict = try_resolve(annotation)
-            if not isinstance(annotation_dict, dict):
-                continue
+    for annotation in annots:
+        annotation_dict = try_resolve(annotation)
+        if not isinstance(annotation_dict, dict):
+            continue
 
-            subtype = annotation_dict["Subtype"] if "Subtype" in annotation_dict else None
-            if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
-                continue
+        subtype = annotation_dict["Subtype"] if "Subtype" in annotation_dict else None
+        if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
+            continue
 
-            rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
-            if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
-                continue
-            x1, y1, x2, y2 = rect_to_bbox(rect, height)
+        rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
+        if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
+            continue
+        x1, y1, x2, y2 = rect_to_bbox(rect, height)
 
-            if "A" not in annotation_dict:
-                continue
-            uri_dict = try_resolve(annotation_dict["A"])
-            if not isinstance(uri_dict, dict):
-                continue
-            uri_type = None
-            if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
-                uri_type = str(uri_dict["S"])
+        if "A" not in annotation_dict:
+            continue
+        uri_dict = try_resolve(annotation_dict["A"])
+        if not isinstance(uri_dict, dict):
+            continue
+        uri_type = None
+        if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
+            uri_type = str(uri_dict["S"])
 
         uri = None
         try:

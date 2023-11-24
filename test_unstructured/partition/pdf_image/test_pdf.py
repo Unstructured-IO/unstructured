@@ -1041,8 +1041,9 @@ def test_partition_pdf_with_bad_color_profile():
 @pytest.mark.parametrize(
     ("filename", "expected_log"),
     [
-        ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document..."),
-        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page..."),
+        ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
+        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
+        ("failure-after-repair.pdf", "PDFMiner failed to process PDF page 26 after repairing it."),
     ],
 )
 def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
