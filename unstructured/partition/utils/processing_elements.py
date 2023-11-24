@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from unstructured_inference.constants import Source
+from unstructured.partition.utils.constants import Source
 from unstructured_inference.inference.layout import DocumentLayout
 
 
