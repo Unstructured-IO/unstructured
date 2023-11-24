@@ -606,7 +606,6 @@ def _process_pdfminer_pages(
                 logger.warning(f"PDFMiner failed to process PDF page {i+1} after repairing it.")
                 break
 
-
         width, height = page_layout.width, page_layout.height
 
         page_elements = []
@@ -962,19 +961,24 @@ def get_uris_from_annots(
     """
     annotation_list = []
     for annotation in annots:
+        # Check annotation is valid for extraction
         annotation_dict = try_resolve(annotation)
         if not isinstance(annotation_dict, dict):
             continue
-
         subtype = annotation_dict["Subtype"] if "Subtype" in annotation_dict else None
         if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
             continue
-
+        # Extract bounding box and update coordinates
         rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
         if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
             continue
         x1, y1, x2, y2 = rect_to_bbox(rect, height)
-
+        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+        coordinates_metadata = CoordinatesMetadata(
+            points=points,
+            system=coordinate_system,
+        )
+        # Extract type
         if "A" not in annotation_dict:
             continue
         uri_dict = try_resolve(annotation_dict["A"])
@@ -983,7 +987,7 @@ def get_uris_from_annots(
         uri_type = None
         if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
             uri_type = str(uri_dict["S"])
-
+        # Extract URI link
         uri = None
         try:
             if uri_type == "/'URI'":
@@ -992,13 +996,6 @@ def get_uris_from_annots(
                 uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
         except Exception:
             pass
-
-        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-
-        coordinates_metadata = CoordinatesMetadata(
-            points=points,
-            system=coordinate_system,
-        )
 
         annotation_list.append(
             {
