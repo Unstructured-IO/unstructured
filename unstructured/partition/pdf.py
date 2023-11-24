@@ -924,7 +924,7 @@ def get_uris_from_annots(
                 continue
 
             rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
-            if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
+            if not rect or not isinstance(rect, Tuple) or len(rect) != 4:
                 continue
             x1, y1, x2, y2 = rect_to_bbox(rect, height)
 
