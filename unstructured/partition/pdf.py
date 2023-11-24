@@ -35,7 +35,6 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
-from unstructured_inference.inference.ordering import order_layout
 
 from unstructured.chunking.title import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -391,6 +390,7 @@ def process_data_with_pdfminer(
     pdf pages using pdf2image"""
 
     from unstructured_inference.inference.elements import EmbeddedTextRegion, ImageTextRegion
+    from unstructured_inference.inference.ordering import order_layout
 
     device, interpreter = init_pdfminer()
     layouts = []
