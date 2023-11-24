@@ -8,7 +8,7 @@
 # Environment Variables:
 #   - OVERWRITE_FIXTURES: Controls whether to overwrite fixtures or not. default: "false"
 
-set -e
+set +e
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
@@ -45,10 +45,9 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
     mkdir -p "$METRICS_DIR"
     cp -rf "$TMP_METRICS_LATEST_RUN_DIR" "$OUTPUT_ROOT/metrics"
-elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then
+elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then  
     "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
-    diff -r "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> metricsdiff.txt
-    cat metricsdiff.txt
+    diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> metricsdiff.txt
     diffstat -c metricsdiff.txt
     echo
     echo "There are differences from the previously checked-in structured outputs."
