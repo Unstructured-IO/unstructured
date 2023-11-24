@@ -37,4 +37,3 @@ runs:
         python${{ inputs.python-version }} -m venv .venv
         source .venv/bin/activate
         make install-all-ingest
-        make install-local-inference-branch
