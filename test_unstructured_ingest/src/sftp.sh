@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -e
+
+SRC_PATH=$(dirname "$(realpath "$0")")
+SCRIPT_DIR=$(dirname "$SRC_PATH")
+cd "$SCRIPT_DIR"/.. || exit 1
+OUTPUT_FOLDER_NAME=sftp
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
+DOWNLOAD_DIR=$OUTPUT_ROOT/download/$OUTPUT_FOLDER_NAME
+max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
+
+# shellcheck disable=SC1091
+source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC2317
+function cleanup() {
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
+}
+# trap cleanup EXIT
+
+# if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
+#     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
+#     exit 0
+# fi
+
+# Create temporary service key file
+# GCP_INGEST_SERVICE_KEY_FILE=$(mktemp)
+# cat "$GCP_INGEST_SERVICE_KEY" > "$GCP_INGEST_SERVICE_KEY_FILE"
+
+RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
+    sftp \
+    --num-processes "1" \
+    --download-dir "$DOWNLOAD_DIR" \
+    --preserve-downloads \
+    --reprocess \
+    --output-dir "$OUTPUT_DIR" \
+    --verbose \
+    --recursive \
+    --sftp-username foo \
+    --sftp-password pass \
+    --remote-url sftp://upload \
+    --work-dir "$WORK_DIR"
+
+# "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
