@@ -35,6 +35,13 @@ function cleanup() {
 
 trap cleanup EXIT
 
+function check_output_folder() {
+    if [ ! -d "$TMP_METRICS_LATEST_RUN_DIR" ]; then
+        # there is no evaluation output to perform action
+        exit 0
+    fi
+}
+
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     # remove folder if it exists
@@ -44,12 +51,10 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
     fi
     # force copy (overwrite) files from metrics-tmp (new eval metrics) to metrics (old eval metrics)
     mkdir -p "$METRICS_DIR"
-    if [ ! -d "$TMP_METRICS_LATEST_RUN_DIR" ]; then
-        echo "There is no evaluation output for $EVAL_NAME. Skipping the overwrite."
-        exit 0
-    fi
+    check_output_folder
     cp -rf "$TMP_METRICS_LATEST_RUN_DIR" "$OUTPUT_ROOT/metrics"
 elif ! diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR" ; then  
+    check_output_folder
     "$SCRIPT_DIR"/clean-permissions-files.sh "$TMP_METRICS_LATEST_RUN_DIR"
     diff -ru "$METRICS_DIR" "$TMP_METRICS_LATEST_RUN_DIR"> metricsdiff.txt
     diffstat -c metricsdiff.txt
