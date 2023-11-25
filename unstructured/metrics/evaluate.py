@@ -8,7 +8,6 @@ from typing import List, Optional, Tuple, Union
 
 import click
 import pandas as pd
-
 from tqdm import tqdm
 
 from unstructured.metrics.element_type import (
