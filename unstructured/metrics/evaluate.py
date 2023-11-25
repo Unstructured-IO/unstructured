@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple, Union
 
 import click
 import pandas as pd
+from tqdm import tqdm
 
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
@@ -40,6 +41,7 @@ def measure_text_edit_distance(
     export_dir: str = "metrics",
     grouping: Optional[str] = None,
     weights: Tuple[int, int, int] = (2, 1, 1),
+    visualize: bool = False,
 ) -> None:
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -61,7 +63,8 @@ def measure_text_edit_distance(
     rows = []
 
     # assumption: output file name convention is name-of-file.doc.json
-    for doc in output_list:  # type: ignore
+    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
+    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
         filename = (doc.split("/")[-1]).split(".json")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
@@ -118,6 +121,7 @@ def measure_element_type_accuracy(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
+    visualize: bool = False,
 ):
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -134,7 +138,8 @@ def measure_element_type_accuracy(
 
     rows = []
 
-    for doc in output_list:  # type: ignore
+    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
+    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
         filename = (doc.split("/")[-1]).split(".json")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_json = filename + ".json"
