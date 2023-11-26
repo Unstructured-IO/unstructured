@@ -46,7 +46,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --recursive \
     --sftp-username foo \
     --sftp-password pass \
-    --remote-url sftp://upload \
+    --remote-url sftp://localhost:47474/upload \
     --work-dir "$WORK_DIR"
 
 # "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
