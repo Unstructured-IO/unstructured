@@ -12,9 +12,11 @@ class ElasticSearchRunner(Runner):
         self,
         url: str,
         index_name: str,
-        jq_query: t.Optional[str] = None,
+        batch_size: int = 100,
+        fields: t.Optional[t.List[str]] = None,
         **kwargs,
     ):
+        fields = fields if fields else []
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
@@ -37,9 +39,7 @@ class ElasticSearchRunner(Runner):
 
         source_doc_connector = ElasticsearchSourceConnector(  # type: ignore
             connector_config=SimpleElasticsearchConfig(
-                url=url,
-                index_name=index_name,
-                jq_query=jq_query,
+                url=url, index_name=index_name, fields=fields, batch_size=batch_size
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,

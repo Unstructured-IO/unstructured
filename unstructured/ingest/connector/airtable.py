@@ -9,7 +9,7 @@ import requests
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -46,7 +46,7 @@ class AirtableTableMeta:
 
 
 @dataclass
-class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class AirtableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
 
@@ -135,7 +135,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["pandas"])
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         import pandas as pd
 
