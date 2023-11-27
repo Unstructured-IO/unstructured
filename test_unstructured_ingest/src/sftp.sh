@@ -27,11 +27,11 @@ function cleanup() {
     cleanup_dir "$DOWNLOAD_DIR"
   fi
 }
-# trap cleanup EXIT
+trap cleanup EXIT
 
 # shellcheck source=/dev/null
-# scripts/sftp-test-helpers/create-and-check-sftp.sh
-# wait
+scripts/sftp-test-helpers/create-and-check-sftp.sh
+wait
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
