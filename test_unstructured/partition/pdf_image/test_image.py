@@ -10,7 +10,7 @@ from unstructured_inference.inference import layout
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType
-from unstructured.partition import image, ocr, pdf
+from unstructured.partition.pdf_image import image, ocr, pdf
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,

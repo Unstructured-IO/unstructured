@@ -73,7 +73,7 @@ from unstructured.partition.lang import (
     check_languages,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.ocr import (
+from unstructured.partition.pdf_image.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
@@ -460,7 +460,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.ocr import (
+    from unstructured.partition.pdf_image.ocr import (
         process_data_with_ocr,
         process_file_with_ocr,
     )

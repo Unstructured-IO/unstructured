@@ -18,8 +18,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import ocr, pdf, strategies
-from unstructured.partition.pdf import get_uris_from_annots
+from unstructured.partition import strategies
+from unstructured.partition.pdf_image import ocr, pdf
+from unstructured.partition.pdf_image.pdf import get_uris_from_annots
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,

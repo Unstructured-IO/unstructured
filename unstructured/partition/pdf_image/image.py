@@ -8,7 +8,7 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.lang import (
     convert_old_ocr_languages_to_languages,
 )
-from unstructured.partition.pdf import partition_pdf_or_image
+from unstructured.partition.pdf_image.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 
 

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-from unstructured.partition.pdf import convert_pdf_to_images
+from unstructured.partition.pdf_image.pdf import convert_pdf_to_images
 from unstructured.utils import requires_dependencies
 
 
