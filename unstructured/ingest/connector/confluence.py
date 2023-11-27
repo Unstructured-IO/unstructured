@@ -10,7 +10,7 @@ import requests
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -80,7 +80,7 @@ def scroll_wrapper(func):
 
 
 @dataclass
-class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
 
@@ -168,7 +168,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["atlassian"], extras="confluence")
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
