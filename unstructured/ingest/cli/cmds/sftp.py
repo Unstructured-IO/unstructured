@@ -13,23 +13,23 @@ CMD_NAME = "sftp"
 
 @dataclass
 class SftpCliConfig(CliConfig):
-    sftp_username: t.Optional[str] = None ###### probably required
-    sftp_password: t.Optional[str] = None ###### probably required
+    username: str
+    password: str
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--sftp-username"],
-                default=None,
-                help="BLAH BLAH BLAH"
-                "BLAH BLAH BLAH",
+                ["--username"],
+                required=True,
+                type=str,
+                help="Username for sftp connection",
             ),
             click.Option(
-                ["--sftp-password"],
-                default=None,
-                help="BLAH BLAH BLAH"
-                "BLAH BLAH BLAH",
+                ["--password"],
+                required=True,
+                type=str,
+                help="Password for sftp connection",
             ),
         ]
         return options

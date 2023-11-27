@@ -4,7 +4,7 @@ services:
     container_name: sftp-test
     ports:
       - "47474:22"  # rarely used port in case standard port is used in CI
-    command: foo:pass:::upload
+    command: foo:bar:::upload
     healthcheck:
       test: ["CMD-SHELL", "ssh -o 'BatchMode=true' -o 'StrictHostKeyChecking=no' healthcheck-invlaid@localhost 2>&1 | grep -q 'Permission denied'"]
       interval: 30s
