@@ -115,8 +115,8 @@ class FsspecConfig(FileStorageConfig):
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
-    host: str = field(init=False)
-    port: str = field(init=False)
+    host: t.Optional[str] = None
+    port: t.Optional[str] = None
 
     def get_access_kwargs(self) -> dict:
         return self.access_kwargs
@@ -144,11 +144,12 @@ class FsspecConfig(FileStorageConfig):
             return
 
         # sftp urls contain an host and a port like this: sftp://host:port/path
+        # NOTE. SHOULD WE INSTEAD PASS THE HOST AND PORT AS SEPARATE flags TO THE CLI?
+        # NOTE. Currently it causes the metadata url to not include host and port. Maybe this is ok
         match = re.match(rf"{self.protocol}://([\w.-]+):(\d+)/([\w.-_]+)", self.remote_url)
         if match and self.protocol == "sftp":
             self.host = match.group(1)
             self.port = int(match.group(2))
-
             self.dir_path = match.group(3)
             self.file_path = ""
             self.path_without_protocol = match.group(3)

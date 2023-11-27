@@ -7,8 +7,7 @@
           "protocol": "sftp",
           "remote_file_path": "upload/folder1/folder2/wiki_movie_plots_small2.csv"
         },
-        "url": "sftp://upload/folder1/folder2/wiki_movie_plots_small2.csv",
-        "version": "219211692935711551142175734945047748466"
+        "url": "sftp://upload/folder1/folder2/wiki_movie_plots_small2.csv"
       },
       "file_directory": "/Users/davidpotter/Documents/Unstructured/sessions/unstructured/test_unstructured_ingest/download/sftp/folder1/folder2",
       "filename": "wiki_movie_plots_small2.csv",

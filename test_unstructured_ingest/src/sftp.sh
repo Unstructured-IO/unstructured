@@ -38,7 +38,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     sftp \
     --num-processes "$max_processes" \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude metadata.data_source.date_processed,metadata.last_modified \
+    --metadata-exclude metadata.data_source.date_processed,metadata.last_modified,metadata.data_source.version \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
@@ -46,7 +46,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --recursive \
     --username foo \
     --password bar \
-    --remote-url sftp://localhost:47474/upload \
+    --remote-url sftp://localhost:47474/upload/ \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

@@ -12,6 +12,7 @@ from unstructured.ingest.interfaces import (
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
+    FsspecConfig,
 )
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
@@ -255,3 +256,49 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
     expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
+
+
+def test_path_extraction_sftp():
+    config = FsspecConfig(remote_url="sftp://example.com:22/path/to/")
+    assert config.protocol == "sftp"
+    assert config.path_without_protocol == "path/to/"
+    assert config.host == "example.com"
+    assert config.port == 22
+    assert config.dir_path == "path/to/"
+    assert config.file_path == ""
+
+def test_post_init_invalid_protocol():
+    with pytest.raises(ValueError):
+        FsspecConfig(remote_url="ftp://example.com/path/to/file.txt")
+
+def test_path_extraction_dropbox_root():
+    config = FsspecConfig(remote_url="dropbox:// /")
+    assert config.protocol == "dropbox"
+    assert config.path_without_protocol == " /"
+    assert config.dir_path == " "
+    assert config.file_path == ""
+
+def test_path_extraction_dropbox_subfolder():
+    config = FsspecConfig(remote_url="dropbox://path")
+    assert config.protocol == "dropbox"
+    assert config.path_without_protocol == "path"
+    assert config.dir_path == "path"
+    assert config.file_path == ""
+
+def test_path_extraction_s3_no_trailing_prefix():
+    config = FsspecConfig(remote_url="s3://bucket-name")
+    assert config.protocol == "s3"
+    assert config.path_without_protocol == "bucket-name"
+    assert config.dir_path == "bucket-name"
+    assert config.file_path == ""
+
+def test_path_extraction_s3_valid_path():
+    config = FsspecConfig(remote_url="s3://bucket-name/path/to/file.txt")
+    assert config.protocol == "s3"
+    assert config.path_without_protocol == "bucket-name/path/to/file.txt"
+    assert config.dir_path == "bucket-name"
+    assert config.file_path == "path/to/file.txt"
+
+def test_path_extraction_s3_invalid_path():
+    with pytest.raises(ValueError):
+        FsspecConfig(remote_url="s3:///bucket-name/path/to")
