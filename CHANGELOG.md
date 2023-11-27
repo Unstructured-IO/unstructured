@@ -1,3 +1,13 @@
+## 0.11.1-dev3
+
+### Enhancements
+
+### Features
+
+* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from sftp.
+
+### Fixes
+
 ## 0.11.1-dev2
 
 ### Enhancements

@@ -45,6 +45,7 @@ all_tests=(
 'sharepoint.sh'
 'sharepoint-with-permissions.sh'
 'local-embed.sh'
+'sftp.sh'
 )
 
 full_python_matrix_tests=(

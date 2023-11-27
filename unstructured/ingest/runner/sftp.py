@@ -24,7 +24,12 @@ class SftpRunner(FsspecBaseRunner):
         from unstructured.ingest.connector.sftp import SftpSourceConnector, SimpleSftpConfig
 
         connector_config = SimpleSftpConfig.from_dict(self.fsspec_config.to_dict())  # type: ignore
-        connector_config.access_kwargs = {"host": connector_config.host, "port": connector_config.port, "username": username, "password": password}
+        connector_config.access_kwargs = {
+            "host": connector_config.host,
+            "port": connector_config.port,
+            "username": username,
+            "password": password,
+        }
         source_doc_connector = SftpSourceConnector(  # type: ignore
             read_config=self.read_config,
             connector_config=connector_config,

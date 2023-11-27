@@ -207,6 +207,10 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest/jira.txt
 
+.PHONY: install-ingest-sftp
+install-ingest-sftp:
+	python3 -m pip install -r requirements/ingest/sftp.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
