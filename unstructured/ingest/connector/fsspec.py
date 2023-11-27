@@ -13,7 +13,7 @@ from unstructured.ingest.error import (
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     FsspecConfig,
     IngestDocCleanupMixin,
@@ -50,7 +50,7 @@ class SimpleFsspecConfig(FsspecConfig, BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -80,7 +80,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -209,7 +209,7 @@ class FsspecSourceConnector(
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
         uncompressed_files = []
-        docs: t.List[BaseIngestDoc] = []
+        docs: t.List[BaseSingleIngestDoc] = []
         for file in files:
             if any(file.endswith(ext) for ext in compressed_file_ext):
                 compressed_files.append(file)
@@ -305,7 +305,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.write_config.write_text_kwargs,
         )
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
             file_path = doc.base_output_filename
             filename = file_path if file_path else None

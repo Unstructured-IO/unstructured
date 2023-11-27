@@ -4,11 +4,11 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -19,41 +19,41 @@
     "type": "Title"
   },
   {
-    "element_id": "2ac7798b427181278fb2b450e28f4902",
+    "element_id": "b764cdc0eab7137467211272fa539f12",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "D.W. Griffith",
+    "text": "Unknown",
     "type": "Title"
   },
   {
-    "element_id": "9e92dee6e0d6ef246f51d7f8f4eb8c01",
+    "element_id": "2659129a67b301911027d0ea747109e4",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "6",
+          "document_id": "2",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "A young couple decides to elope after being caught in the midst of a romantic moment by the woman's angry father. They make plans to leave, but a thief discovers their plans and hides in their trunk and waits for the right moment to steal their belongings.",
+    "text": "Before heading out to a baseball game at a nearby ballpark, sports fan Mr. Brown drinks several highball cocktails. He arrives at the ballpark to watch the game, but has become so inebriated that the game appears to him in reverse, with the players running the bases backwards and the baseball flying back into the pitcher's hand. After the game is over, Mr. Brown is escorted home by one of his friends. When they arrive at Brown's house, they encounter his wife who becomes furious with the friend and proceeds to physically assault him, believing he is responsible for her husband's severe intoxication. [1]",
     "type": "NarrativeText"
   }
 ]

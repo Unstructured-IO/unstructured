@@ -8,7 +8,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -53,7 +53,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SlackIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -136,7 +136,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
         from slack_sdk.errors import SlackApiError

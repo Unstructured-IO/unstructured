@@ -9,7 +9,7 @@ from typing import List, Optional
 from unstructured.ingest.connector.local import LocalSourceConnector, SimpleLocalConfig
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     ProcessorConfig,
     ReadConfig,
 )
@@ -73,7 +73,7 @@ class CompressionSourceConnectorMixin:
     read_config: ReadConfig
     connector_config: BaseConnectorConfig
 
-    def process_compressed_doc(self, doc: BaseIngestDoc) -> List[BaseIngestDoc]:
+    def process_compressed_doc(self, doc: BaseSingleIngestDoc) -> List[BaseSingleIngestDoc]:
         """
         Utility function which helps process compressed files. Extracts the contents and returns
         generated ingest docs via local source connector

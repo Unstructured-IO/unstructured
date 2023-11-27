@@ -7,7 +7,7 @@ from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -60,7 +60,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
 
 
 @dataclass
-class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class OneDriveIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleOneDriveConfig
     file_name: str
     file_path: str
@@ -148,7 +148,7 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         file = self._fetch_file()
         self.update_source_metadata(file=file)
