@@ -575,8 +575,7 @@ def _open_pdfminer_pages_generator(
             except PSSyntaxError:
                 logger.info("Detected invalid dictionary construct for PDFminer")
                 logger.info(f"Repairing the PDF page {i+1} ...")
-                # reread fp and find the error page from binary data fp
-                fp.seek(0)
+                # find the error page from binary data fp
                 error_page_data = get_page_data(fp, page_number=i)
                 # repair the error page with pikepdf
                 with tempfile.NamedTemporaryFile() as tmp:
