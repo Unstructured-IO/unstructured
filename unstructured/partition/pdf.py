@@ -566,8 +566,10 @@ def _open_pdfminer_pages_generator(
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
     try:
+        i = 0
+        pages = PDFPage.get_pages(fp)
         # Detect invalid dictionary construct for entire PDF
-        for i, page in enumerate(PDFPage.get_pages(fp)):
+        for page in pages:
             try:
                 # Detect invalid dictionary construct for one page
                 interpreter.process_page(page)
@@ -590,6 +592,7 @@ def _open_pdfminer_pages_generator(
                             f"PDFMiner failed to process PDF page {i+1} after repairing it."
                         )
                         break
+            i += 1
             yield page, page_layout
     except PSSyntaxError:
         logger.info("Detected invalid dictionary construct for PDFminer")
