@@ -7,7 +7,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -35,7 +35,7 @@ class SimpleRedditConfig(BaseConnectorConfig):
 
 
 @dataclass
-class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class RedditIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleRedditConfig = field(repr=False)
     post_id: str
     registry_name: str = "reddit"
@@ -76,7 +76,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
