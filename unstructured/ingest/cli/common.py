@@ -67,6 +67,7 @@ def log_options(options: dict, verbose=False):
         "token",
         "client_id",
         "client_cred",
+        "password",
     ]
     options_to_log = options.copy()
     options_to_log.update(

@@ -38,4 +38,3 @@ class SftpCliConfig(CliConfig):
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=SftpCliConfig, is_fsspec=True)
     return cmd_cls
-

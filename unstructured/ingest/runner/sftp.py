@@ -1,5 +1,4 @@
 import logging
-import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import FsspecBaseRunner

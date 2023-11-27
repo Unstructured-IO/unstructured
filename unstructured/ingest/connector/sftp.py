@@ -1,22 +1,3 @@
-
-"""
-    Note: if using this with the ``open`` or ``open_files``, with full URLs,
-    there is no way to tell if a path is relative, so all paths are assumed
-    to be absolute.
-    """
-
-"""
-from fsspec.implementations.sftp import SFTPFileSystem
-
-# @requires_dependencies(["fsspec"])
-fs = SFTPFileSystem(host="localhost", port="47474", username="foo", password="pass")
-breakpoint()
-
-# list a directory
-print(fs.ls("/"))
-print(fs.find("/"))
-
-"""
 from dataclasses import dataclass
 from typing import Type
 
