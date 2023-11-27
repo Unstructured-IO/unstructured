@@ -9,7 +9,7 @@
         },
         "url": "sftp://upload/folder1/wiki_movie_plots_small.csv"
       },
-      "file_directory": "/Users/davidpotter/Documents/Unstructured/sessions/unstructured/test_unstructured_ingest/download/sftp/folder1",
+      "file_directory": "/Users/davidpotter/Documents/Unstructured/sessions/unstructured/test_unstructured_ingest/download/sftp/upload/folder1",
       "filename": "wiki_movie_plots_small.csv",
       "filetype": "text/csv",
       "languages": [
