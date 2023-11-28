@@ -14,6 +14,7 @@ class FakeConfigDropboxRoot:
     output_dir = "/fakeuser/fake_output"
     dir_path = " "
     download_dir = "/fakeuser/fake_download"
+    path_without_protocol = " "
 
 
 @dataclass
@@ -21,6 +22,7 @@ class FakeConfigFolder:
     output_dir = "/fakeuser/fake_output"
     dir_path = "fake_folder"
     download_dir = "/fakeuser/fake_download"
+    path_without_protocol = "fake_folder"
 
 
 def test_dropbox_root_succeeds():
