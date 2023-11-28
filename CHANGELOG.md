@@ -189,7 +189,7 @@ ocr agent tesseract/paddle in environment variable `OCR_AGENT` for OCRing the en
 
 ### Features
 
-* **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.s
+* **Adds element type percent match function** In order to evaluate the element type extracted, we add a function that calculates the matched percentage between two frequency dictionary.
 
 ### Fixes
 
