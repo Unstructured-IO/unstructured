@@ -1,8 +1,9 @@
-from typing import Any, List, Optional, Union, Tuple, cast, BinaryIO, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, BinaryIO, List, Optional, Tuple, Union, cast
 
-from pdfminer.layout import LTImage, LTContainer, LAParams
-from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.converter import PDFPageAggregator
+from pdfminer.layout import LAParams, LTContainer, LTImage
+from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+from pdfminer.pdfpage import PDFPage
 from pdfminer.utils import open_filename
 
 from unstructured.partition.utils.constants import Source
@@ -57,18 +58,18 @@ def get_images_from_pdf_element(layout_object: Any) -> List[LTImage]:
 
 def process_file_with_pdfminer(
     filename,
-) -> Tuple[List[List["TextRegion"]], List[Tuple]]:
+) -> List[List["TextRegion"]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
-        extracted_regions, image_sizes = process_data_with_pdfminer(fp)
+        extracted_regions = process_data_with_pdfminer(fp)
 
-    return extracted_regions, image_sizes
+    return extracted_regions
 
 
 def process_data_with_pdfminer(
     fp: Optional[Union[bytes, BinaryIO]],
     dpi: int = 200,
-) -> Tuple[List[List["TextRegion"]], List[Tuple]]:
+) -> List[List["TextRegion"]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
@@ -77,19 +78,17 @@ def process_data_with_pdfminer(
 
     device, interpreter = init_pdfminer()
     layouts = []
-    image_sizes = []
+    # Coefficient to rescale bounding box to be compatible with images
+    coef = dpi / 72
     for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
         interpreter.process_page(page)
         page_layout = device.get_result()
 
-        width, height = page_layout.width, page_layout.height
+        height = page_layout.height
 
         layout: List["TextRegion"] = []
-        page_image_size = (width, height)
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            # Coefficient to rescale bounding box to be compatible with images
-            coef = dpi / 72
 
             if hasattr(obj, "get_text"):
                 _text = obj.get_text()
@@ -116,9 +115,8 @@ def process_data_with_pdfminer(
 
         layout = order_layout(layout)
         layouts.append(layout)
-        image_sizes.append(page_image_size)
 
-    return layouts, image_sizes
+    return layouts
 
 
 def rect_to_bbox(
