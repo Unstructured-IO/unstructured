@@ -16,21 +16,12 @@ if [ -z "$PINECONE_API_KEY" ]; then
    exit 0
 fi
 
-if [ -z "$PINECONE_INDEX" ]; then
-  # Reason of using RANDOM rather than uuidgen here is that index names generated with uuidgen
-  # were not compatible, giving a 400 response probably due to the length of or character variety in
-  # the index name.
-  RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
-  PINECONE_INDEX="ingest-test-$RANDOM_SUFFIX"
-fi
+RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 
-if [ -z "$PINECONE_ENVIRONMENT" ]; then
-  PINECONE_ENVIRONMENT="us-east1-gcp"
-fi
-
-if [ -z "$PINECONE_PROJECT_ID" ]; then
-  PINECONE_PROJECT_ID="art8iaj"
-fi
+# Set the variables with default values if they're not set in the environment
+PINECONE_INDEX=${PINECONE_INDEX:-"ingest-test-$RANDOM_SUFFIX"}
+PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT:-"us-east1-gcp"}
+PINECONE_PROJECT_ID=${PINECONE_PROJECT_ID:-"art8iaj"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
