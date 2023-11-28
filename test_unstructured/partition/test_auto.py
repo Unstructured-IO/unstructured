@@ -330,7 +330,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
 def test_auto_partition_pdf_uses_table_extraction():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.pdf")
     with patch(
-        "unstructured.partition.ocr.process_file_with_ocr",
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy=PartitionStrategy.HI_RES)
         assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
@@ -390,7 +390,7 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
 def test_auto_partition_formats_languages_for_tesseract():
     filename = "example-docs/chi_sim_image.jpeg"
     with patch(
-        "unstructured.partition.ocr.process_file_with_ocr",
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_ocr:
         partition(filename, strategy=PartitionStrategy.HI_RES, languages=["zh"])
         _, kwargs = mock_process_file_with_ocr.call_args_list[0]

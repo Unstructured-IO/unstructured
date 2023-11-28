@@ -391,7 +391,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
 def test_partition_pdf_uses_table_extraction():
     filename = example_doc_path("layout-parser-paper-fast.pdf")
     with mock.patch(
-        "unstructured.partition.ocr.process_file_with_ocr",
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, infer_table_structure=True)
         assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
@@ -633,7 +633,7 @@ def test_partition_pdf_metadata_date(
     )
 
     mocker.patch(
-        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
+        "unstructured.partition.pdf_image.pdf.get_the_last_modification_date_pdf_or_img",
         return_value=mocked_last_modification_date,
     )
 
