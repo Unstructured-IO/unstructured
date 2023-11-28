@@ -1,14 +1,13 @@
 [
   {
-    "type": "Title",
     "element_id": "73fc474f26cb8de0b5a419c4defedbd8",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-17T01:04:51.496000+00:00",
+        "date_modified": "2023-10-17T02:33:00.334000+00:00",
         "record_locator": {
           "hubspot_id": "41287834137"
-        },
-        "date_created": "2023-10-17T01:04:51.496000+00:00",
-        "date_modified": "2023-10-17T02:33:00.334000+00:00"
+        }
       },
       "filename": "41287834137.txt",
       "filetype": "text/plain",
@@ -16,18 +15,18 @@
         "eng"
       ]
     },
-    "text": "Call with Brian Halligan (Sample Contact)"
+    "text": "Call with Brian Halligan (Sample Contact)",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "0199fd97b4b4c4f1b9f0182598c199d7",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-17T01:04:51.496000+00:00",
+        "date_modified": "2023-10-17T02:33:00.334000+00:00",
         "record_locator": {
           "hubspot_id": "41287834137"
-        },
-        "date_created": "2023-10-17T01:04:51.496000+00:00",
-        "date_modified": "2023-10-17T02:33:00.334000+00:00"
+        }
       },
       "filename": "41287834137.txt",
       "filetype": "text/plain",
@@ -35,6 +34,7 @@
         "eng"
       ]
     },
-    "text": "<p>Sample call with sample contact. This is <strong>a line with rich formatted text.</strong></p>"
+    "text": "<p>Sample call with sample contact. This is <strong>a line with rich formatted text.</strong></p>",
+    "type": "NarrativeText"
   }
 ]
