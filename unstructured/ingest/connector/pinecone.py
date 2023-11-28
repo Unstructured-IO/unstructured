@@ -64,7 +64,11 @@ class PineconeDestinationConnector(BaseDestinationConnector):
         pass
 
     def check_connection(self):
-        pass
+        create_pinecone_object(
+            self.connector_config.api_key,
+            self.connector_config.index_name,
+            self.connector_config.environment,
+        )
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
