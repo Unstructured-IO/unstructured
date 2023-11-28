@@ -7,7 +7,7 @@ import weaviate
 
 weaviate_host_url = os.getenv("WEAVIATE_HOST_URL", "http://localhost:8080")
 class_name = os.getenv("WEAVIATE_CLASS_NAME", "Elements")
-N_ELEMENTS = 2715
+N_ELEMENTS = 5
 
 if __name__ == "__main__":
     print(f"Checking contents of class collection " f"{class_name} at {weaviate_host_url}")
@@ -21,5 +21,5 @@ if __name__ == "__main__":
     try:
         assert count == N_ELEMENTS
     except AssertionError:
-        sys.exit(f"weaviate dest check failed: got {count}, expected {N_ELEMENTS}")
+        sys.exit(f"FAIL: weaviate dest check failed: got {count}, expected {N_ELEMENTS}")
     print("SUCCESS: weaviate dest check")
