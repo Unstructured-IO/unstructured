@@ -60,20 +60,4 @@ def run_init_checks(
 
 def log_options(options: dict, verbose=False):
     ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
-    sensitive_fields = [
-        "account_name",
-        "account_key",
-        "api_key",
-        "token",
-        "client_id",
-        "client_cred",
-    ]
-    options_to_log = options.copy()
-    options_to_log.update(
-        {
-            k: "*******"
-            for k, v in options_to_log.items()
-            if k in sensitive_fields and v is not None
-        },
-    )
-    logger.debug(f"options: {options_to_log}")
+    logger.debug(f"options: {options}")
