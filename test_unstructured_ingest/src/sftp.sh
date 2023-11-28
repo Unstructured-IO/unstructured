@@ -38,7 +38,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     sftp \
     --num-processes "$max_processes" \
     --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude metadata.data_source.date_processed,metadata.last_modified,metadata.data_source.version \
+    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.data_source.version \
     --preserve-downloads \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
