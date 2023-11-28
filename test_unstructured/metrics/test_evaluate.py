@@ -21,7 +21,7 @@ GOLD_CCT_DIRNAME = "gold_standard_cct"
 GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
 
 
-# @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_text_extraction():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
