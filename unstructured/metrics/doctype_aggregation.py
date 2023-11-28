@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 import click
 import pandas as pd
 
-from unstructured.metrics.evaluate import measure_text_edit_distance
+from unstructured.metrics.evaluate import measure_text_extraction_accuracy
 
 
 @click.group()
@@ -66,7 +66,7 @@ def measure_holistic_eval_cct(
     weights: Tuple[int, int, int],
 ) -> None:
     export_dir = "result_doctype_aggregate"
-    measure_text_edit_distance(
+    measure_text_extraction_accuracy(
         output_dir=output_dir,
         source_dir=source_dir,
         output_list=output_list,
