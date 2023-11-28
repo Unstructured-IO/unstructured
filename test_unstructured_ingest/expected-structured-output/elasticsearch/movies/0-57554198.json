@@ -8,7 +8,7 @@
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -27,7 +27,7 @@
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -46,7 +46,7 @@
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -65,7 +65,7 @@
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -84,7 +84,7 @@
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [

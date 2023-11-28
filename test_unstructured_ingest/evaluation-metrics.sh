@@ -62,6 +62,7 @@ SOURCE_LIST=(
 read -ra output_args <<< "$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}")"
 read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
 
+# mkdir export_dir is handled in python script
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
     $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
     --export_dir "$EXPORT_DIR"

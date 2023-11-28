@@ -6,7 +6,7 @@ from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -96,7 +96,7 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to write records: {e}", exc_info=True)
             raise WriteError(f"failed to write records: {e}")
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         json_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
