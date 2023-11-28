@@ -1,3 +1,5 @@
+import json
+import os
 import typing as t
 from dataclasses import dataclass
 
@@ -10,6 +12,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import SourceNode
+from unstructured.ingest.utils.logging import hide_sensitive_fields
 
 # module-level variable to store session handle
 session_handle: t.Optional[BaseSessionHandle] = None
@@ -27,6 +30,10 @@ class Reader(SourceNode):
             # Still need to fetch metadata if file exists locally
             doc.update_source_metadata()
         else:
+            logger.debug(
+                f"Fetching {json.dumps(hide_sensitive_fields(doc.to_dict()))} "
+                f"- PID: {os.getpid()}"
+            )
             if self.retry_strategy:
                 self.retry_strategy(doc.get_file)
             else:
@@ -36,6 +43,10 @@ class Reader(SourceNode):
         return doc.filename
 
     def get_batch(self, doc_batch: BaseIngestDocBatch, ingest_doc_dict: dict) -> t.List[str]:
+        logger.debug(
+            f"Fetching {json.dumps(hide_sensitive_fields(doc_batch.to_dict()))} "
+            f"- PID: {os.getpid()}"
+        )
         if self.retry_strategy:
             self.retry_strategy(doc_batch.get_files)
         else:

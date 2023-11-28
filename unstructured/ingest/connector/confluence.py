@@ -1,5 +1,4 @@
 import math
-import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -170,8 +169,6 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @requires_dependencies(["atlassian"], extras="confluence")
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
         # TODO: instead of having a separate connection object for each doc,
         # have a separate connection object for each process
 
