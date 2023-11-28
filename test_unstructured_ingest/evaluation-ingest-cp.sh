@@ -1,24 +1,22 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
-OUTPUT_DIR=$1
-OUTPUT_FOLDER_NAME=$2
-structured_outputs=("$OUTPUT_DIR"/*)
+EXPECTED_OUTPUTS_DIR=$1
+CONNECTOR_TYPE=$2
 
-CP_DIR=$SCRIPT_DIR/structured-output-eval/$OUTPUT_FOLDER_NAME
-mkdir -p "$CP_DIR"
+EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
+EVAL_OUTPUT_DIR=$EVAL_OUTPUT_ROOT/structured-output-eval/$CONNECTOR_TYPE
 
-selected_outputs=$(cat "$SCRIPT_DIR/metrics/metrics-json-manifest.txt")
+mkdir -p "$EVAL_OUTPUT_DIR"
 
-# If structured output file in this connector's outputs match the 
-# selected outputs in the txt file, copy to the destination
-for file in "${structured_outputs[@]}"; do
-  if [[ -f "$file" && "${selected_outputs[*]}" =~ $(basename "$file") ]] ; then
-    echo "--- Copying $file to $CP_DIR ---"
-    cp "$file" "$CP_DIR"
+while IFS= read -r json_filename
+do
+  if find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -print -quit | grep -q . ; then
+      echo "evaluation: copying $json_filename to $EVAL_OUTPUT_DIR"
+      find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -exec cp {} "$EVAL_OUTPUT_DIR" \;
   fi
-done 
+done < "$SCRIPT_DIR/metrics/metrics-json-manifest.txt"

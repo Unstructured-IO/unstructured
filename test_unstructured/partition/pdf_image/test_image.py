@@ -9,8 +9,12 @@ from unstructured_inference.inference import layout
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
+from unstructured.documents.elements import ElementType
 from unstructured.partition import image, ocr, pdf
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.partition.utils.constants import (
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
+    PartitionStrategy,
+)
 from unstructured.utils import only
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -125,8 +129,10 @@ def test_partition_image_local_raises_with_no_filename():
 def test_partition_image_with_auto_strategy(
     filename="example-docs/layout-parser-paper-fast.jpg",
 ):
-    elements = image.partition_image(filename=filename, strategy="auto")
-    titles = [el for el in elements if el.category == "Title" and len(el.text.split(" ")) > 10]
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
+    titles = [
+        el for el in elements if el.category == ElementType.TITLE and len(el.text.split(" ")) > 10
+    ]
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
     idx = 3
     assert titles[0].text == title
@@ -139,7 +145,7 @@ def test_partition_image_with_table_extraction(
 ):
     elements = image.partition_image(
         filename=filename,
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
@@ -150,7 +156,7 @@ def test_partition_image_with_table_extraction(
 def test_partition_image_with_multipage_tiff(
     filename="example-docs/layout-parser-paper-combined.tiff",
 ):
-    elements = image.partition_image(filename=filename, strategy="auto")
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     assert elements[-1].metadata.page_number == 2
 
 
@@ -162,7 +168,7 @@ def test_partition_image_with_language_passed(filename="example-docs/example.jpg
     ) as mock_partition:
         image.partition_image(
             filename=filename,
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
             ocr_languages="eng+swe",
         )
 
@@ -177,7 +183,7 @@ def test_partition_image_from_file_with_language_passed(
         "process_data_with_ocr",
         mock.MagicMock(),
     ) as mock_partition, open(filename, "rb") as f:
-        image.partition_image(file=f, strategy="hi_res", ocr_languages="eng+swe")
+        image.partition_image(file=f, strategy=PartitionStrategy.HI_RES, ocr_languages="eng+swe")
 
     assert mock_partition.call_args.kwargs.get("ocr_languages") == "eng+swe"
 
@@ -190,9 +196,34 @@ def test_partition_image_raises_with_invalid_language(
     with pytest.raises(TesseractError):
         image.partition_image(
             filename=filename,
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
             ocr_languages="fakeroo",
         )
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [
+        (PartitionStrategy.HI_RES),
+        (PartitionStrategy.OCR_ONLY),
+    ],
+)
+def test_partition_image_strategies_keep_languages_metadata(strategy):
+    filename = os.path.join(
+        DIRECTORY,
+        "..",
+        "..",
+        "..",
+        "example-docs",
+        "english-and-korean.png",
+    )
+    elements = image.partition_image(
+        filename=filename,
+        languages=["eng", "kor"],
+        strategy=strategy,
+    )
+
+    assert elements[0].metadata.languages == ["eng", "kor"]
 
 
 def test_partition_image_with_ocr_detects_korean():
@@ -207,7 +238,7 @@ def test_partition_image_with_ocr_detects_korean():
     elements = image.partition_image(
         filename=filename,
         ocr_languages="eng+kor",
-        strategy="ocr_only",
+        strategy=PartitionStrategy.OCR_ONLY,
     )
 
     assert elements[0].text == "RULES AND INSTRUCTIONS"
@@ -220,7 +251,7 @@ def test_partition_image_with_ocr_detects_korean_from_file():
         elements = image.partition_image(
             file=f,
             ocr_languages="eng+kor",
-            strategy="ocr_only",
+            strategy=PartitionStrategy.OCR_ONLY,
         )
 
     assert elements[0].text == "RULES AND INSTRUCTIONS"
@@ -289,7 +320,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
         "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
-    elements = image.partition_image(filename=filename, stratefy="hi_res")
+    elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -326,7 +357,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     )
     elements = image.partition_image(
         filename=filename,
-        stratefy="hi_res",
+        stratefy=PartitionStrategy.HI_RES,
         metadata_last_modified=expected_last_modification_date,
     )
 
@@ -359,7 +390,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = image.partition_image(file=f, stratefy="hi_res")
+        elements = image.partition_image(file=f, stratefy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -399,7 +430,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         elements = image.partition_image(
             file=f,
             metadata_last_modified=expected_last_modification_date,
-            stratefy="hi_res",
+            stratefy=PartitionStrategy.HI_RES,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -408,7 +439,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
 def test_partition_msg_with_json():
     elements = image.partition_image(
         example_doc_path("layout-parser-paper-fast.jpg"),
-        strategy="auto",
+        strategy=PartitionStrategy.AUTO,
     )
     assert_round_trips_through_JSON(elements)
 
@@ -416,7 +447,7 @@ def test_partition_msg_with_json():
 def test_partition_image_with_ocr_has_coordinates_from_filename(
     filename="example-docs/english-and-korean.png",
 ):
-    elements = image.partition_image(filename=filename, strategy="ocr_only")
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.OCR_ONLY)
     int_coordinates = [(int(x), int(y)) for x, y in elements[0].metadata.coordinates.points]
     assert int_coordinates == [(14, 16), (14, 37), (381, 37), (381, 16)]
 
@@ -434,7 +465,7 @@ def test_partition_image_with_ocr_coordinates_are_not_nan_from_filename(
 ):
     import math
 
-    elements = image.partition_image(filename=filename, strategy="ocr_only")
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.OCR_ONLY)
     for element in elements:
         # TODO (jennings) One or multiple elements is an empty string
         # without coordinates. This should be fixed in a new issue
@@ -450,7 +481,9 @@ def test_partition_image_formats_languages_for_tesseract():
     with mock.patch(
         "unstructured.partition.ocr.process_file_with_ocr",
     ) as mock_process_file_with_ocr:
-        image.partition_image(filename=filename, strategy="hi_res", languages=["jpn_vert"])
+        image.partition_image(
+            filename=filename, strategy=PartitionStrategy.HI_RES, languages=["jpn_vert"]
+        )
         _, kwargs = mock_process_file_with_ocr.call_args_list[0]
         assert "ocr_languages" in kwargs
         assert kwargs["ocr_languages"] == "jpn_vert"
@@ -458,7 +491,7 @@ def test_partition_image_formats_languages_for_tesseract():
 
 def test_partition_image_warns_with_ocr_languages(caplog):
     filename = "example-docs/layout-parser-paper-fast.jpg"
-    image.partition_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    image.partition_image(filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
@@ -477,12 +510,12 @@ def test_add_chunking_strategy_on_partition_image_hi_res(
 ):
     elements = image.partition_image(
         filename=filename,
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
     chunk_elements = image.partition_image(
         filename,
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
         chunking_strategy="by_title",
     )
@@ -511,16 +544,19 @@ def test_partition_image_uses_model_name():
 )
 def test_partition_image_hi_res_ocr_mode(ocr_mode, idx_title_element):
     filename = "example-docs/layout-parser-paper-fast.jpg"
-    elements = image.partition_image(filename=filename, ocr_mode=ocr_mode, strategy="hi_res")
-    first_line = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
+    elements = image.partition_image(
+        filename=filename, ocr_mode=ocr_mode, strategy=PartitionStrategy.HI_RES
+    )
     # Note(yuming): idx_title_element is different based on xy-cut and ocr mode
-    assert elements[idx_title_element].text == first_line
+    assert elements[idx_title_element].category == ElementType.TITLE
 
 
 def test_partition_image_hi_res_invalid_ocr_mode():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(ValueError):
-        _ = image.partition_image(filename=filename, ocr_mode="invalid_ocr_mode", strategy="hi_res")
+        _ = image.partition_image(
+            filename=filename, ocr_mode="invalid_ocr_mode", strategy=PartitionStrategy.HI_RES
+        )
 
 
 @pytest.mark.parametrize(
@@ -535,7 +571,7 @@ def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     elements = image.partition_image(
         filename=filename,
         ocr_mode=ocr_mode,
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
@@ -548,7 +584,7 @@ def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
 def test_partition_image_raises_TypeError_for_invalid_languages():
     filename = "example-docs/layout-parser-paper-fast.jpg"
     with pytest.raises(TypeError):
-        image.partition_image(filename=filename, strategy="hi_res", languages="eng")
+        image.partition_image(filename=filename, strategy=PartitionStrategy.HI_RES, languages="eng")
 
 
 @pytest.fixture()
@@ -573,7 +609,7 @@ def test_partition_image_has_filename(inference_results):
     ) as mock_inference_func:
         elements = image.partition_image(
             filename=os.path.join(doc_path, filename),
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
         )
     # Make sure we actually went down the path we expect.
     mock_inference_func.assert_called_once()

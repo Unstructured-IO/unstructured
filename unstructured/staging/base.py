@@ -115,10 +115,10 @@ def elements_to_json(
     element_dict = convert_to_dict(pre_processed_elements)
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
-            json.dump(element_dict, f, indent=indent)
+            json.dump(element_dict, f, indent=indent, sort_keys=True)
             return None
     else:
-        return json.dumps(element_dict, indent=indent)
+        return json.dumps(element_dict, indent=indent, sort_keys=True)
 
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:

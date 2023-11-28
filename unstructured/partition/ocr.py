@@ -22,6 +22,7 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 from unstructured_pytesseract import Output
 
+from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -37,9 +38,6 @@ from unstructured.partition.utils.constants import (
 # otherwise we see major performance problems
 if "OMP_THREAD_LIMIT" not in os.environ:
     os.environ["OMP_THREAD_LIMIT"] = "1"
-
-# Define table_agent as a global variable
-table_agent = None
 
 
 def process_data_with_ocr(
@@ -188,7 +186,6 @@ def supplement_page_layout_with_ocr(
     """
 
     ocr_agent = get_ocr_agent()
-    ocr_layout = None
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = get_ocr_layout_from_image(
             image,
@@ -202,7 +199,8 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if element.text == "":
-                padded_element = pad_element_bboxes(element, padding=12)
+                padding = env_config.IMAGE_CROP_PAD
+                padded_element = pad_element_bboxes(element, padding=padding)
                 cropped_image = image.crop(
                     (
                         padded_element.bbox.x1,
@@ -227,19 +225,18 @@ def supplement_page_layout_with_ocr(
 
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
-        table_agent = init_table_agent()
-        if ocr_layout is None:
-            # Note(yuming): ocr_layout is None for individual_blocks ocr_mode
-            ocr_layout = get_ocr_layout_from_image(
-                image,
-                ocr_languages=ocr_languages,
-                ocr_agent=ocr_agent,
-            )
+        from unstructured_inference.models import tables
+
+        tables.load_agent()
+        if tables.tables_agent is None:
+            raise RuntimeError("Unable to load table extraction agent.")
+
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List[LayoutElement], page_layout.elements),
-            ocr_layout=ocr_layout,
             image=image,
-            table_agent=table_agent,
+            tables_agent=tables.tables_agent,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
         )
 
     return page_layout
@@ -247,16 +244,17 @@ def supplement_page_layout_with_ocr(
 
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
-    ocr_layout: List[TextRegion],
     image: PILImage,
-    table_agent: "UnstructuredTableTransformerModel",
+    tables_agent: "UnstructuredTableTransformerModel",
+    ocr_languages: str = "eng",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
     for element in elements:
-        if element.type == "Table":
+        if element.type == ElementType.TABLE:
             padding = env_config.TABLE_IMAGE_CROP_PAD
             padded_element = pad_element_bboxes(element, padding=padding)
             cropped_image = image.crop(
@@ -267,59 +265,38 @@ def supplement_element_with_table_extraction(
                     padded_element.bbox.y2,
                 ),
             )
-            table_tokens = get_table_tokens_per_element(
-                padded_element,
-                ocr_layout,
+            table_tokens = get_table_tokens(
+                image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
             )
-            element.text_as_html = table_agent.predict(cropped_image, ocr_tokens=table_tokens)
+            element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
-def get_table_tokens_per_element(
-    table_element: LayoutElement,
-    ocr_layout: List[TextRegion],
+def get_table_tokens(
+    image: PILImage,
+    ocr_languages: str = "eng",
+    ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> List[Dict]:
-    """
-    Extract and prepare table tokens within the specified table element
-    based on the OCR layout of an entire image.
+    """Get OCR tokens from either paddleocr or tesseract"""
 
-    Parameters:
-    - table_element (LayoutElement): The table element for which table tokens
-      should be extracted. It typically represents the bounding box of the table.
-    - ocr_layout (List[TextRegion]): A list of TextRegion objects representing
-      the OCR layout of the entire image.
-
-    Returns:
-    - List[Dict]: A list of dictionaries, each containing information about a table
-      token within the specified table element. Each dictionary includes the
-      following fields:
-        - 'bbox': A list of four coordinates [x1, y1, x2, y2]
-                    relative to the table element's bounding box.
-        - 'text': The text content of the table token.
-        - 'span_num': (Optional) The span number of the table token.
-        - 'line_num': (Optional) The line number of the table token.
-        - 'block_num': (Optional) The block number of the table token.
-    """
-    # TODO(yuming): update table_tokens from List[Dict] to List[TABLE_TOKEN]
-    # where TABLE_TOKEN will be a data class defined in unstructured-inference
+    ocr_layout = get_ocr_layout_from_image(
+        image,
+        ocr_languages=ocr_languages,
+        ocr_agent=ocr_agent,
+    )
     table_tokens = []
     for ocr_region in ocr_layout:
-        if ocr_region.bbox.is_in(
-            table_element.bbox,
-            error_margin=env_config.TABLE_TOKEN_ERROR_MARGIN,
-        ):
-            table_tokens.append(
-                {
-                    "bbox": [
-                        # token bound box is relative to table element
-                        ocr_region.bbox.x1 - table_element.bbox.x1,
-                        ocr_region.bbox.y1 - table_element.bbox.y1,
-                        ocr_region.bbox.x2 - table_element.bbox.x1,
-                        ocr_region.bbox.y2 - table_element.bbox.y1,
-                    ],
-                    "text": ocr_region.text,
-                },
-            )
+        table_tokens.append(
+            {
+                "bbox": [
+                    ocr_region.bbox.x1,
+                    ocr_region.bbox.y1,
+                    ocr_region.bbox.x2,
+                    ocr_region.bbox.y2,
+                ],
+                "text": ocr_region.text,
+            }
+        )
 
     # 'table_tokens' is a list of tokens
     # Need to be in a relative reading order
@@ -332,19 +309,6 @@ def get_table_tokens_per_element(
         if "block_num" not in token:
             token["block_num"] = 0
     return table_tokens
-
-
-def init_table_agent():
-    """Initialize a table agent from unstructured_inference as
-    a global variable to ensure that we only load it once."""
-
-    global table_agent
-
-    if table_agent is None:
-        table_agent = UnstructuredTableTransformerModel()
-        table_agent.initialize(model="microsoft/table-transformer-structure-recognition")
-
-    return table_agent
 
 
 def get_layout_elements_from_ocr(
@@ -368,7 +332,9 @@ def get_layout_elements_from_ocr(
         # and merging steps are not necessary.
 
         layout_elements = [
-            LayoutElement(bbox=r.bbox, text=r.text, source=r.source, type="UncategorizedText")
+            LayoutElement(
+                bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT
+            )
             for r in ocr_regions
         ]
     else:
@@ -493,7 +459,7 @@ def get_ocr_layout_tesseract(
         text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
         or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
     ):
-        # rounding avoids unnecessary precision and potential numerical issues assocaited
+        # rounding avoids unnecessary precision and potential numerical issues associated
         # with numbers very close to 1 inside cv2 image processing
         zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
         ocr_df = unstructured_pytesseract.image_to_data(
@@ -551,12 +517,17 @@ def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[Te
       data frame will result in its associated bounding box being ignored.
     """
 
+    if zoom <= 0:
+        zoom = 1
+
     text_regions = []
     for idtx in ocr_data.itertuples():
         text = idtx.text
         if not text:
             continue
-        cleaned_text = text.strip()
+
+        cleaned_text = str(text) if not isinstance(text, str) else text.strip()
+
         if cleaned_text:
             x1 = idtx.left / zoom
             y1 = idtx.top / zoom
@@ -598,6 +569,9 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
     text_regions = []
     for idx in range(len(ocr_data)):
         res = ocr_data[idx]
+        if not res:
+            continue
+
         for line in res:
             x1 = min([i[0] for i in line[0]])
             y1 = min([i[1] for i in line[0]])
@@ -762,7 +736,9 @@ def get_elements_from_ocr_regions(
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
-        LayoutElement(text=r.text, source=r.source, type="UncategorizedText", bbox=r.bbox)
+        LayoutElement(
+            text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox
+        )
         for r in merged_regions
     ]
 

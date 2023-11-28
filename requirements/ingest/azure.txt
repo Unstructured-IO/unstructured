@@ -6,7 +6,7 @@
 #
 adlfs==2023.10.0
     # via -r ingest/azure.in
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via adlfs
 aiosignal==1.3.1
     # via aiohttp
@@ -23,9 +23,9 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.15.0
     # via adlfs
-azure-storage-blob==12.18.3
+azure-storage-blob==12.19.0
     # via adlfs
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -37,7 +37,6 @@ cffi==1.16.0
 charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
-    #   aiohttp
     #   requests
 cryptography==41.0.5
     # via

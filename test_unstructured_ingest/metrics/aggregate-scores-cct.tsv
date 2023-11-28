@@ -1,3 +1,0 @@
-strategy	average	sample_sd	population_sd	count
-cct-accuracy	0.735	0.069	0.048	2
-cct-%missing	0.086	0.069	0.049	2

@@ -36,6 +36,7 @@ def main():
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
+@click.option("--grouping", type=str, help="Input field for aggregration, or leave blank if none.")
 @click.option(
     "--weights",
     type=(int, int, int),
@@ -50,10 +51,11 @@ def measure_text_edit_distance_command(
     output_list: Optional[List[str]],
     source_list: Optional[List[str]],
     export_dir: str,
+    grouping: Optional[str],
     weights: Tuple[int, int, int],
 ):
     return measure_text_edit_distance(
-        output_dir, source_dir, output_list, source_list, export_dir, weights
+        output_dir, source_dir, output_list, source_list, export_dir, grouping, weights
     )
 
 

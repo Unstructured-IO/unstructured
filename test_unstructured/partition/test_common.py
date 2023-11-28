@@ -12,12 +12,16 @@ from unstructured.documents.elements import (
     CheckBox,
     CoordinatesMetadata,
     ElementMetadata,
+    ElementType,
     FigureCaption,
     Header,
     ListItem,
     NarrativeText,
     Text,
     Title,
+)
+from unstructured.documents.elements import (
+    Image as ImageElement,
 )
 from unstructured.partition import common
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
@@ -84,7 +88,7 @@ def test_normalize_layout_element_dict():
 def test_normalize_layout_element_dict_caption():
     layout_element = {
         "type": "Figure",
-        "coordinates": [[1, 2], [3, 4], [5, 6], [7, 8]],
+        "coordinates": ((1, 2), (3, 4), (5, 6), (7, 8)),
         "text": "Some lovely text",
     }
     coordinate_system = PixelSpace(width=10, height=20)
@@ -92,9 +96,9 @@ def test_normalize_layout_element_dict_caption():
         layout_element,
         coordinate_system=coordinate_system,
     )
-    assert element == FigureCaption(
+    assert element == ImageElement(
         text="Some lovely text",
-        coordinates=[[1, 2], [3, 4], [5, 6], [7, 8]],
+        coordinates=((1, 2), (3, 4), (5, 6), (7, 8)),
         coordinate_system=coordinate_system,
     )
 
@@ -515,7 +519,7 @@ def test_ocr_data_to_elements(
             bbox=r.bbox,
             text=r.text,
             source=r.source,
-            type="UncategorizedText",
+            type=ElementType.UNCATEGORIZED_TEXT,
         )
         for r in text_regions
     ]
@@ -527,7 +531,7 @@ def test_ocr_data_to_elements(
     )
 
     assert len(ocr_data) == len(elements)
-    assert {el.category for el in elements} == {"UncategorizedText"}
+    assert {el.category for el in elements} == {ElementType.UNCATEGORIZED_TEXT}
 
     # check coordinates metadata
     image_width, image_height = image.size

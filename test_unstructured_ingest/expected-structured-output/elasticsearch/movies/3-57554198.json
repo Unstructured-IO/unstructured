@@ -1,59 +1,59 @@
 [
   {
-    "type": "Title",
     "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
     "metadata": {
       "data_source": {
-        "version": "1",
         "record_locator": {
-          "url": "http://localhost:9200",
+          "document_id": "3",
           "index_name": "movies",
-          "document_id": "3"
-        }
+          "url": "http://localhost:9200"
+        },
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "American"
+    "text": "American",
+    "type": "Title"
   },
   {
-    "type": "Title",
     "element_id": "9496aba3ea633310e2d669820269ad00",
     "metadata": {
       "data_source": {
-        "version": "1",
         "record_locator": {
-          "url": "http://localhost:9200",
+          "document_id": "3",
           "index_name": "movies",
-          "document_id": "3"
-        }
+          "url": "http://localhost:9200"
+        },
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "Edwin Stanton Porter"
+    "text": "Edwin Stanton Porter",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "6ead4aca7b509813147c41699dd1a7d4",
     "metadata": {
       "data_source": {
-        "version": "1",
         "record_locator": {
-          "url": "http://localhost:9200",
+          "document_id": "3",
           "index_name": "movies",
-          "document_id": "3"
-        }
+          "url": "http://localhost:9200"
+        },
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers."
+    "text": "The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.",
+    "type": "NarrativeText"
   }
 ]

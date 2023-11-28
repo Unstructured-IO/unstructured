@@ -20,7 +20,10 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition import ocr, pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.partition.utils.constants import (
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
+    PartitionStrategy,
+)
 
 
 class MockResponse:
@@ -131,9 +134,9 @@ def test_partition_pdf_local_raises_with_no_filename():
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        ("fast", {1, 4}, {"pdfminer"}),
-        ("hi_res", {1, 3, 4}, {"yolox", "pdfminer"}),
-        ("ocr_only", {1, 3, 4}, {"ocr_tesseract"}),
+        (PartitionStrategy.FAST, {1, 4}, {"pdfminer"}),
+        (PartitionStrategy.HI_RES, {1, 3, 4}, {"yolox", "pdfminer"}),
+        (PartitionStrategy.OCR_ONLY, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
 def test_partition_pdf(
@@ -179,7 +182,7 @@ def test_partition_pdf_with_model_name_env_var(
         "process_file_with_model",
         mock.MagicMock(),
     ) as mock_process:
-        pdf.partition_pdf(filename=filename, strategy="hi_res")
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
@@ -193,14 +196,16 @@ def test_partition_pdf_with_model_name(
         "process_file_with_model",
         mock.MagicMock(),
     ) as mock_process:
-        pdf.partition_pdf(filename=filename, strategy="hi_res", model_name="checkbox")
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.HI_RES, model_name="checkbox"
+        )
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_auto_strategy(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     assert elements[6].text == title
     assert elements[6].metadata.filename == "layout-parser-paper-fast.pdf"
@@ -224,7 +229,7 @@ def test_partition_pdf_with_no_page_breaks(
 def test_partition_pdf_with_fast_strategy(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
-    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
     assert {element.metadata.page_number for element in elements} == {1, 2}
@@ -234,7 +239,7 @@ def test_partition_pdf_with_fast_strategy(
 
 def test_partition_pdf_with_fast_neg_coordinates():
     filename = example_doc_path("negative-coords.pdf")
-    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
     assert len(elements) == 5
     assert elements[0].metadata.coordinates.points[0][0] < 0
     assert elements[0].metadata.coordinates.points[1][0] < 0
@@ -243,7 +248,7 @@ def test_partition_pdf_with_fast_neg_coordinates():
 def test_partition_pdf_with_fast_groups_text(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
-    elements = pdf.partition_pdf(filename=filename, url=None, strategy="fast")
+    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
 
     first_narrative_element = None
     for element in elements:
@@ -260,7 +265,7 @@ def test_partition_pdf_with_fast_strategy_from_file(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     with open(filename, "rb") as f:
-        elements = pdf.partition_pdf(file=f, url=None, strategy="fast")
+        elements = pdf.partition_pdf(file=f, url=None, strategy=PartitionStrategy.FAST)
     assert len(elements) > 10
 
 
@@ -271,7 +276,7 @@ def test_partition_pdf_with_fast_strategy_and_page_breaks(
     elements = pdf.partition_pdf(
         filename=filename,
         url=None,
-        strategy="fast",
+        strategy=PartitionStrategy.FAST,
         include_page_breaks=True,
     )
     assert len(elements) > 10
@@ -305,7 +310,7 @@ def test_partition_pdf_falls_back_to_fast(
         "extractable_elements",
         return_value=mock_return,
     ) as mock_partition:
-        pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
+        pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
 
     mock_partition.assert_called_once()
     assert "unstructured_inference is not installed" in caplog.text
@@ -330,7 +335,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
         pdf,
         "_partition_pdf_or_image_with_ocr",
     ) as mock_partition_ocr:
-        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+        pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.OCR_ONLY)
 
     mock_partition.assert_called_once()
     mock_partition_ocr.assert_not_called()
@@ -354,7 +359,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
         "_partition_pdf_or_image_local",
         return_value=mock_return,
     ) as mock_partition:
-        pdf.partition_pdf(filename=filename, url=None, strategy="ocr_only")
+        pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.OCR_ONLY)
 
     mock_partition.assert_called_once()
     assert "pytesseract is not installed" in caplog.text
@@ -376,7 +381,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
         "_partition_pdf_or_image_with_ocr",
         return_value=mock_return,
     ) as mock_partition:
-        pdf.partition_pdf(filename=filename, url=None, strategy="hi_res")
+        pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.HI_RES)
 
     mock_partition.assert_called_once()
     assert "unstructured_inference is not installed" in caplog.text
@@ -404,15 +409,34 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
         filename=filename,
         ocr_mode=ocr_mode,
         languages=["kor"],
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert elements[0].metadata.languages == ["kor"]
     assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     # FIXME(yuming): didn't test full sentence here since unit test and docker test have
     # some differences on spaces between characters
     assert "업" in table[0]
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [
+        (PartitionStrategy.FAST),
+        (PartitionStrategy.HI_RES),
+        (PartitionStrategy.OCR_ONLY),
+    ],
+)
+def test_partition_pdf_strategies_keep_languages_metadata(strategy):
+    filename = example_doc_path("korean-text-with-tables.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        languages=["kor"],
+        strategy=strategy,
+    )
+    assert elements[0].metadata.languages == ["kor"]
 
 
 @pytest.mark.parametrize(
@@ -427,20 +451,20 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     elements = pdf.partition_pdf(
         filename=filename,
         ocr_mode=ocr_mode,
-        strategy="hi_res",
+        strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 2
     assert "<table><thead><th>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
-    # FIXME(yuming): comment this out since there are some table regression issue
-    # assert "Layouts of scanned modern magazines and scientific reports" in table[0]
+    assert "Layouts of scanned modern magazines and scientific report" in table[0]
+    assert "Layouts of scanned US newspapers from the 20th century" in table[0]
 
 
 def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
-    elements = pdf.partition_pdf(filename=filename, strategy="hi_res")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
     idx = 3
     assert elements[idx].text == title
@@ -452,24 +476,21 @@ def test_partition_pdf_with_copy_protection():
 def test_partition_pdf_with_dpi():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     with mock.patch.object(layout, "process_file_with_model", mock.MagicMock()) as mock_process:
-        pdf.partition_pdf(filename=filename, strategy="hi_res", pdf_image_dpi=100)
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, pdf_image_dpi=100)
         assert mock_process.call_args[1]["pdf_image_dpi"] == 100
 
 
 def test_partition_pdf_requiring_recursive_text_grab(filename=example_doc_path("reliance.pdf")):
-    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     assert len(elements) > 50
     assert elements[0].metadata.page_number == 1
     assert elements[-1].metadata.page_number == 3
 
 
-def test_partition_pdf_with_copy_protection_fallback_to_hi_res(caplog):
-    filename = os.path.join("example-docs", "loremipsum-flat.pdf")
-    elements = pdf.partition_pdf(filename=filename, strategy="fast")
-    elements[0] == Title(
-        "LayoutParser: A Uniﬁed Toolkit for Deep Based Document Image Analysis",
-    )
-    assert "PDF text is not extractable" in caplog.text
+def test_partition_pdf_text_not_extractable():
+    filename = example_doc_path("loremipsum-flat.pdf")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
+    assert len(elements) == 0
 
 
 def test_partition_pdf_fails_if_pdf_not_processable(
@@ -488,7 +509,7 @@ def test_partition_pdf_fails_if_pdf_not_processable(
 
 def test_partition_pdf_fast_groups_text_in_text_box():
     filename = os.path.join("example-docs", "chevron-page.pdf")
-    elements = pdf.partition_pdf(filename=filename, strategy="fast")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.FAST)
     expected_coordinate_points_0 = (
         (193.1741, 71.94000000000005),
         (193.1741, 91.94000000000005),
@@ -546,7 +567,7 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
         elements = pdf.partition_pdf(
             file=f,
             url=None,
-            strategy="fast",
+            strategy=PartitionStrategy.FAST,
             metadata_filename="test",
         )
     for element in elements:
@@ -554,7 +575,15 @@ def test_partition_pdf_with_fast_strategy_from_file_with_metadata_filename(
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize("strategy", ["auto", "hi_res", "fast", "ocr_only"])
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.FAST,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
 def test_partition_pdf_exclude_metadata(
     file_mode,
     strategy,
@@ -580,7 +609,15 @@ def test_partition_pdf_exclude_metadata(
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
-@pytest.mark.parametrize("strategy", ["auto", "hi_res", "fast", "ocr_only"])
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.FAST,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
 @pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
 def test_partition_pdf_metadata_date(
     mocker,
@@ -626,7 +663,7 @@ def test_partition_pdf_metadata_date(
     assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
 
 
-@pytest.mark.parametrize("strategy", ["fast", "hi_res"])
+@pytest.mark.parametrize("strategy", [PartitionStrategy.FAST, PartitionStrategy.HI_RES])
 def test_partition_pdf_with_json(strategy: str):
     elements = pdf.partition_pdf(
         example_doc_path("layout-parser-paper-fast.pdf"),
@@ -648,19 +685,21 @@ def test_add_chunking_strategy_by_title_on_partition_pdf(
 def test_partition_pdf_formats_languages_for_tesseract():
     filename = example_doc_path("DA-1p.pdf")
     with mock.patch.object(ocr, "process_file_with_ocr", mock.MagicMock()) as mock_process:
-        pdf.partition_pdf(filename=filename, strategy="hi_res", languages=["en"])
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, languages=["en"])
         assert mock_process.call_args[1]["ocr_languages"] == "eng"
 
 
 def test_partition_pdf_warns_with_ocr_languages(caplog):
     filename = example_doc_path("chevron-page.pdf")
-    pdf.partition_pdf(filename=filename, strategy="hi_res", ocr_languages="eng")
+    pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng")
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
     filename = example_doc_path("DA-1p.pdf")
-    pdf.partition_pdf_or_image(filename=filename, strategy="hi_res", ocr_languages="eng")
+    pdf.partition_pdf_or_image(
+        filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
+    )
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
@@ -669,7 +708,7 @@ def test_partition_categorization_backup():
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
         elements = pdf.partition_pdf_or_image(
             example_doc_path("layout-parser-paper-fast.pdf"),
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
         )
         # Should have changed the element class from Text to Title
         assert isinstance(elements[0], Title)
@@ -681,7 +720,7 @@ def test_partition_categorization_backup():
     [example_doc_path("layout-parser-paper-fast.pdf")],
 )
 def test_combine_numbered_list(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
     first_list_element = None
     for element in elements:
         if isinstance(element, ListItem):
@@ -699,7 +738,7 @@ def test_combine_numbered_list(filename):
     [example_doc_path("layout-parser-paper-fast.pdf")],
 )
 def test_partition_pdf_hyperlinks(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
     links = [
         {
             "text": "8",
@@ -725,7 +764,7 @@ def test_partition_pdf_hyperlinks(filename):
     [example_doc_path("embedded-link.pdf")],
 )
 def test_partition_pdf_hyperlinks_multiple_lines(filename):
-    elements = pdf.partition_pdf(filename=filename, strategy="auto")
+    elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.AUTO)
     assert elements[-1].metadata.links[-1]["text"] == "capturing"
     assert len(elements[-1].metadata.links) == 2
 
@@ -738,7 +777,7 @@ def test_partition_pdf_uses_model_name():
         pdf.partition_pdf(
             example_doc_path("layout-parser-paper-fast.pdf"),
             model_name="test",
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
         )
 
         mockpartition.assert_called_once()
@@ -759,7 +798,7 @@ def test_partition_pdf_word_bbox_not_char(
 def test_partition_pdf_raises_TypeError_for_invalid_languages():
     filename = example_doc_path("chevron-page.pdf")
     with pytest.raises(TypeError):
-        pdf.partition_pdf(filename=filename, strategy="hi_res", languages="eng")
+        pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, languages="eng")
 
 
 @pytest.mark.parametrize(
@@ -803,7 +842,7 @@ def test_partition_model_name_default_to_None():
     try:
         pdf.partition_pdf(
             filename=filename,
-            strategy="hi_res",
+            strategy=PartitionStrategy.HI_RES,
             ocr_languages="eng",
             model_name=None,
         )
@@ -815,15 +854,15 @@ def test_partition_model_name_default_to_None():
     ("strategy", "ocr_func"),
     [
         (
-            "hi_res",
+            PartitionStrategy.HI_RES,
             "unstructured_pytesseract.image_to_data",
         ),
         (
-            "ocr_only",
+            PartitionStrategy.OCR_ONLY,
             "unstructured_pytesseract.image_to_data",
         ),
         (
-            "ocr_only",
+            PartitionStrategy.OCR_ONLY,
             "unstructured_pytesseract.image_to_string",
         ),
     ],
@@ -908,7 +947,7 @@ def test_partition_pdf_with_ocr_only_strategy(
     if file_mode == "filename":
         elements = pdf.partition_pdf(
             filename=filename,
-            strategy="ocr_only",
+            strategy=PartitionStrategy.OCR_ONLY,
             languages=["eng"],
             is_image=is_image,
         )
@@ -916,7 +955,7 @@ def test_partition_pdf_with_ocr_only_strategy(
         with open(filename, "rb") as f:
             elements = pdf.partition_pdf(
                 file=f,
-                strategy="ocr_only",
+                strategy=PartitionStrategy.OCR_ONLY,
                 languages=["eng"],
                 is_image=is_image,
             )
@@ -927,7 +966,7 @@ def test_partition_pdf_with_ocr_only_strategy(
             spooled_temp_file.seek(0)
             elements = pdf.partition_pdf(
                 file=spooled_temp_file,
-                strategy="ocr_only",
+                strategy=PartitionStrategy.OCR_ONLY,
                 languages=["eng"],
                 is_image=is_image,
             )
@@ -950,3 +989,17 @@ def test_partition_pdf_with_ocr_only_strategy(
     # check detection origin
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
         assert {element.metadata.detection_origin for element in elements} == {"ocr_tesseract"}
+
+
+def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
+    # AttributeError was previously being raised when partitioning documents that contained only
+    # numerical values with `strategy=PartitionStrategy.OCR_ONLY`
+    filename = example_doc_path("all-number-table.pdf")
+    assert pdf.partition_pdf(filename, strategy=PartitionStrategy.OCR_ONLY)
+
+
+# As of pdfminer 221105, this pdf throws an error and requires a workaround
+# See #2059
+def test_partition_pdf_with_bad_color_profile():
+    filename = example_doc_path("pdf-bad-color-space.pdf")
+    assert pdf.partition_pdf(filename, strategy="fast")
