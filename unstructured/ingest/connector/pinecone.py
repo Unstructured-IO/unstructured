@@ -17,10 +17,13 @@ from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
+if t.TYPE_CHECKING:
+    from pinecone import Index as PineconeIndex
+
 
 @dataclass
 class PineconeSessionHandle(BaseSessionHandle):
-    service: "pinecone.Index"  # noqa: F821
+    service: "PineconeIndex"
 
 
 @DestinationConnectionError.wrap
