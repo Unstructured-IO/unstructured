@@ -14,7 +14,7 @@ def calculate_accuracy(
     Calculates accuracy by calling calculate_edit_distance function using `return_as=score`.
     The function will return complement of the edit distance instead.
     """
-    return calculate_edit_distance(output, source, weights, return_as="score")
+    return calculate_edit_distance(output, source, weights, return_as="distance")
 
 
 def calculate_edit_distance(
@@ -127,6 +127,25 @@ def calculate_percent_missing_text(
 
     Returns the percentage of missing text represented as a decimal between 0 and 1.
     """
+    total_source_word_count, total_missing_word_count = get_source_and_missing_word_counts(
+        output=output, source=source
+    )
+    # calculate percent missing text
+    if total_source_word_count == 0:
+        return 0  # nothing missing because nothing in source document
+
+    fraction_missing = round(total_missing_word_count / total_source_word_count, 3)
+    return min(fraction_missing, 1)  # limit to 100%
+
+
+def get_source_and_missing_word_counts(
+    output: Optional[str], source: Optional[str]
+) -> Tuple[int, int]:
+    """
+    Creates the bag of words (BOW) found in each input text and their frequencies, then compares the
+    output BOW against the source BOW to calculate the % of text from the source text missing from
+    the output text.
+    """
     output = _prepare_str(output)
     source = _prepare_str(source)
     output_bow = bag_of_words(output)
@@ -145,12 +164,7 @@ def calculate_percent_missing_text(
             output_count = output_bow[source_word]
             total_missing_word_count += max(source_count - output_count, 0)
 
-    # calculate percent missing text
-    if total_source_word_count == 0:
-        return 0  # nothing missing because nothing in source document
-
-    fraction_missing = round(total_missing_word_count / total_source_word_count, 3)
-    return min(fraction_missing, 1)  # limit to 100%
+    return total_source_word_count, total_missing_word_count
 
 
 def _prepare_str(string: Optional[str]) -> str:

@@ -13,7 +13,11 @@ from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
-from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
+from unstructured.metrics.text_extraction import (
+    calculate_edit_distance,
+    calculate_percent_missing_text,
+    get_source_and_missing_word_counts,
+)
 from unstructured.staging.base import elements_from_json, elements_to_text
 
 logger = logging.getLogger("unstructured.ingest")
@@ -76,19 +80,46 @@ def measure_text_edit_distance(
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
             source_cct = _read_text(os.path.join(source_dir, fn_txt))
-            accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            distance = round(calculate_edit_distance(output_cct, source_cct, weights), 3)
+            num_chars = len(source_cct)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
+            source_wc, missing_wc = get_source_and_missing_word_counts(output_cct, source_cct)
 
-            rows.append([filename, doctype, connector, accuracy, percent_missing])
+            rows.append(
+                [
+                    filename,
+                    doctype,
+                    connector,
+                    distance,
+                    num_chars,
+                    source_wc,
+                    missing_wc,
+                    distance / num_chars,
+                    percent_missing,
+                ]
+            )
 
-    headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
+    headers = [
+        "filename",
+        "doctype",
+        "connector",
+        "cct-distance",
+        "cct-num_characters",
+        "cct-source_wc",
+        "cct-missing_wc",
+        "cct-accuracy",
+        "cct-%missing",
+    ]
     df = pd.DataFrame(rows, columns=headers)
     export_filename = "all-docs-cct"
 
     acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
     miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    acc_weighted = df["cct-distance"].sum() / df["cct-num_characters"].sum()
+    miss_weighted = df["cct-missing_wc"].sum() / df["cct-source_wc"].sum()
     agg_df = pd.concat((acc, miss)).reset_index()
     agg_df.columns = agg_headers
+    agg_df["weighted-mean"] = pd.Series([acc_weighted, miss_weighted])
 
     if grouping:
         if grouping in ["doctype", "connector"]:
