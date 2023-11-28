@@ -22,6 +22,7 @@ from unstructured.ingest.interfaces import (
     RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.utils.logging import hide_sensitive_fields
 
 
 @dataclass
@@ -110,7 +111,8 @@ class DocFactoryNode(PipelineNode):
     def initialize(self):
         logger.info(
             f"Running doc factory to generate ingest docs. "
-            f"Source connector: {self.source_doc_connector.to_json()}",
+            f"Source connector: "
+            f"{json.dumps(hide_sensitive_fields(self.source_doc_connector.to_dict()))}",
         )
         super().initialize()
         self.source_doc_connector.initialize()
