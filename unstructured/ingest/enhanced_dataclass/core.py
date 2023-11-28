@@ -34,7 +34,7 @@ def _recursive_repr(user_function):
     return wrapper
 
 
-def _asdict(obj, encode_json=False, preserve_sensitive=True):
+def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***REDACTED***"):
     """
     A re-implementation of `asdict` (based on the original in the `dataclasses`
     source) to support arbitrary Collection and Mapping types.
@@ -44,7 +44,7 @@ def _asdict(obj, encode_json=False, preserve_sensitive=True):
         overrides = _user_overrides_or_exts(obj)
         for field in fields(obj):
             if getattr(field, "sensitive", False) and not preserve_sensitive:
-                value = "***REDACTED***"
+                value = redacted_text
             elif overrides[field.name].encoder:
                 value = getattr(obj, field.name)
             else:
