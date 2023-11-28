@@ -492,9 +492,13 @@ def _merge_inferred_with_extracted(
     from unstructured_inference.inference.layoutelement import (
         merge_inferred_layout_with_extracted_layout,
     )
+    from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     if is_image:
+        for page in inferred_document_layout.pages:
+            for el in page.elements:
+                el.text = el.text or ""
         return inferred_document_layout
 
     if file is None:
@@ -519,12 +523,19 @@ def _merge_inferred_with_extracted(
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
 
-        inferred_page.elements[:] = merge_inferred_layout_with_extracted_layout(
+        merged_layout = merge_inferred_layout_with_extracted_layout(
             inferred_layout=inferred_layout,
             extracted_layout=extracted_layout,
             page_image_size=image_size,
             **threshold_kwargs,
         )
+
+        elements = inferred_page.get_elements_from_layout(
+            layout=cast(List[TextRegion], merged_layout),
+            pdf_objects=extracted_layout,
+        )
+
+        inferred_page.elements[:] = elements
 
     return inferred_document_layout
 
