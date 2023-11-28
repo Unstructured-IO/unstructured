@@ -7,12 +7,12 @@ from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.sql.connector import SqlWriteConfig
 
 CMD_NAME = "sql"
-SQL_DRIVERS = {"postgresql", "sqlite"}
+SQL_DRIVERS = {"postgresql", "sqlite", "mysql"}
 
 
 @dataclass
 class SqlCliConfig(CliConfig):
-    drivername: t.Optional[str]
+    db_name: t.Optional[str]
     username: t.Optional[str]
     password: t.Optional[str] = field(repr=False)
     host: t.Optional[str]
@@ -24,7 +24,7 @@ class SqlCliConfig(CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--drivername"],
+                ["--db_name"],
                 default="postgresql",
                 type=click.Choice(SQL_DRIVERS),
                 help="Name of the database backend",
@@ -57,17 +57,7 @@ class SqlCliConfig(CliConfig):
                 ["--database"],
                 default=None,
                 type=str,
-                help="Database name",
-            ),
-            click.Option(
-                ["--database-url"],
-                default=None,
-                type=str,
-                help=(
-                    "Database url to be passed to the SQLAlchemy engine. "
-                    "If not present, the connector will build the url "
-                    "from the other parameters."
-                ),
+                help="Database name. For sqlite databases, this is the path to the .db file.",
             ),
         ]
         return options
@@ -83,6 +73,14 @@ class SqlCliWriteConfig(SqlWriteConfig, CliConfig):
                 default=None,
                 type=Dict(),
                 help=("Name of the table(s) mapped to those defined in the example schema."),
+            ),
+            click.Option(
+                ["--table-column-mapping"],
+                default=None,
+                type=Dict(),
+                help=(
+                    "Name of the table(s) column(s) mapped to those defined in the example schema."
+                ),
             ),
             click.Option(
                 ["--mode"],

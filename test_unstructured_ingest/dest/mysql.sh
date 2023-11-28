@@ -11,7 +11,7 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
-DATABASE_NAME="postgresql"
+DATABASE_NAME="mysql"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -51,4 +51,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --port 5432 \
     --database elements \
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "postgresql"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "mysql"

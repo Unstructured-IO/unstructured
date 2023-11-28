@@ -9,4 +9,5 @@ services:
       POSTGRES_DB: elements
       POSTGRES_USER: unstructured
       POSTGRES_PASSWORD: test
-  
+    volumes:
+      - ./create-postgres-schema.sql:/docker-entrypoint-initdb.d/init.sql

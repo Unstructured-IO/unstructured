@@ -16,7 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
          --verbose \
         --strategy fast \
         sql \
-        --drivername postgresql \
+        --db_name postgresql \
         --username postgres \
         --password test \
         --host localhost \

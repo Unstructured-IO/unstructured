@@ -32,7 +32,7 @@ upstream s3 connector.
             --verbose \
             --strategy fast \
             sql \
-            --drivername postgresql \
+            --db_name postgresql \
             --username postgres \
             --password test \
             --host localhost \
@@ -73,7 +73,7 @@ upstream s3 connector.
           "--verbose",
           "--strategy", "fast",
           "sql"
-          "--drivername postgresql"
+          "--db_name postgresql"
           "--username postgres"
           "--password test"
           "--host localhost"

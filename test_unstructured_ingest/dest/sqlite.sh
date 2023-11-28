@@ -12,6 +12,7 @@ WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 DATABASE_NAME="sqlite"
+DB_PATH=$SCRIPT_DIR/elements.db
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -19,7 +20,7 @@ function cleanup {
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
-  rm -rf "$SCRIPT_DIR"/elements.db
+  rm -rf "$DB_PATH"
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
     
@@ -31,7 +32,7 @@ trap cleanup EXIT
 # Create sql instance and create `elements` class
 echo "Creating SQL DB instance"
 # shellcheck source=/dev/null
-scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_NAME"
+scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_NAME" "$DB_PATH"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -44,8 +45,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --input-path example-docs/fake-memo.pdf \
     --work-dir "$WORK_DIR" \
   sql \
-    --drivername "$DATABASE_NAME" \
+    --db_name "$DATABASE_NAME" \
     --username unstructured \
-    --database-url sqlite:////"$SCRIPT_DIR"/elements.db
+    --database "$DB_PATH"
 
-scripts/sql-test-helpers/test-ingest-sql-output.py "$DATABASE_NAME"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "sqlite" "$DB_PATH"

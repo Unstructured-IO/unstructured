@@ -12,42 +12,68 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-from .tables import (
+from .schema import (
     COORDINATES_TABLE_NAME,
     DATA_SOURCE_TABLE_NAME,
     ELEMENTS_TABLE_NAME,
     METADATA_TABLE_NAME,
-    check_schema_exists,
-    create_schema,
-    drop_schema,
-    make_schema,
+    DatabaseSchema,
 )
 
 
 @dataclass
 class SimpleSqlConfig(BaseConnectorConfig):
-    drivername: t.Optional[str]
+    db_name: t.Optional[str]
     username: t.Optional[str]
     password: t.Optional[str] = field(repr=False)
     host: t.Optional[str]
     database: t.Optional[str]
-    database_url: t.Optional[str] = None
     port: t.Optional[int] = 5432
 
+    def __post_init__(self):
+        if (self.db_name == "sqlite") and (self.database is None):
+            raise ValueError(
+                "A sqlite connection requires a path to a *.db file "
+                "through the `database` argument"
+            )
+
     @property
-    def db_url(self):
-        from sqlalchemy.engine.url import URL
+    def connection(self):
+        if self.db_name == "postgresql":
+            return self._make_psycopg_connection
+        elif self.db_name == "mysql":
+            return self._make_mysql_connection
+        elif self.db_name == "sqlite":
+            return self._make_sqlite_connection
+        raise ValueError(f"Unsupported database {self.db_name} connection.")
 
-        if self.database_url is not None:
-            return self.database_url
+    def _make_sqlite_connection(self):
+        from sqlite3 import connect
 
-        return URL.create(
-            drivername=self.drivername,
-            username=self.username,
+        return connect(database=self.database)
+
+    @requires_dependencies(["psycopg2"])
+    def _make_psycopg_connection(self):
+        from psycopg2 import connect
+
+        return connect(
+            user=self.username,
             password=self.password,
+            dbname=self.database,
             host=self.host,
             port=self.port,
+        )
+
+    @requires_dependencies(["mysql"])
+    def _make_mysql_connection(self):
+        import mysql.connector
+
+        return mysql.connector.connect(
+            user=self.username,
+            password=self.password,
             database=self.database,
+            host=self.host,
+            port=self.port,
         )
 
 
@@ -55,6 +81,18 @@ class SimpleSqlConfig(BaseConnectorConfig):
 class SqlWriteConfig(WriteConfig):
     mode: t.Literal["error", "append", "overwrite"] = "error"
     table_name_mapping: t.Optional[t.Dict[str, str]] = None
+    table_column_mapping: t.Optional[t.Dict[str, str]] = None
+
+    def __post_init__(self):
+        if self.table_column_mapping is None:
+            self.table_name_mapping = {
+                ELEMENTS_TABLE_NAME: ELEMENTS_TABLE_NAME,
+                METADATA_TABLE_NAME: METADATA_TABLE_NAME,
+                DATA_SOURCE_TABLE_NAME: DATA_SOURCE_TABLE_NAME,
+                COORDINATES_TABLE_NAME: COORDINATES_TABLE_NAME,
+            }
+        if self.table_column_mapping is None:
+            self.table_column_mapping = {}
 
 
 @dataclass
@@ -62,21 +100,11 @@ class SqlDestinationConnector(BaseDestinationConnector):
     write_config: SqlWriteConfig
     connector_config: SimpleSqlConfig
 
-    @requires_dependencies(["sqlalchemy"], extras="sql")
     def initialize(self):
-        from sqlalchemy import create_engine
-
-        self.engine = create_engine(self.connector_config.db_url)
-        if self.write_config.table_name_mapping is None:
-            self.write_config.table_name_mapping = {
-                ELEMENTS_TABLE_NAME: ELEMENTS_TABLE_NAME,
-                METADATA_TABLE_NAME: METADATA_TABLE_NAME,
-                DATA_SOURCE_TABLE_NAME: DATA_SOURCE_TABLE_NAME,
-                COORDINATES_TABLE_NAME: COORDINATES_TABLE_NAME,
-            }
+        pass
 
     def check_connection(self):
-        pass
+        return self.connector_config.connection()
 
     def conform_dict(self, data: dict) -> tuple:
         """
@@ -109,7 +137,9 @@ class SqlDestinationConnector(BaseDestinationConnector):
             data["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
 
         # Array of items as string formatting
-        if embeddings := data.get("embeddings"):
+        if (embeddings := data.get("embeddings")) and (
+            self.connector_config.db_name != "postgresql"
+        ):
             data["embeddings"] = str(json.dumps(embeddings))
 
         if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
@@ -166,51 +196,60 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         return data, metadata, data_source, coordinates
 
-    def _resolve_schema(self) -> t.Optional[dict]:
-        schema_exists = check_schema_exists(self.engine, self.write_config.table_name_mapping)
-        if not schema_exists:
-            return create_schema(self.engine, self.write_config.table_name_mapping)
-
-        if self.write_config.mode == "error":
+    def _resolve_mode(self, schema_exists) -> t.Optional[dict]:
+        if self.write_config.mode == "error" and schema_exists:
             raise ValueError(
                 f"There's already an elements schema ({str(self.write_config.table_name_mapping)}) "
                 f"at {self.connector_config.db_url}"
             )
-        elif self.write_config.mode == "overwrite":
-            drop_schema(self.engine, self.write_config.table_name_mapping)
-            return create_schema(self.engine, self.write_config.table_name_mapping)
-        elif self.write_config.mode == "append":
-            return make_schema(self.write_config.table_name_mapping, self.engine.dialect.__str__)
-
-        return None
 
     # @DestinationConnectionError.wrap
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        from sqlalchemy import insert
-
         logger.info(
-            f"writing {len(json_list)} objects to database url " f"{self.connector_config.db_url} "
+            f"writing {len(json_list)} objects to database {self.connector_config.database} "
+            f"at {self.connector_config.host}"
         )
 
-        schema = self._resolve_schema()
-        if schema is None:
-            return
+        conn = self.connector_config.connection()
+        with conn:
+            schema_helper = DatabaseSchema(conn=conn, db_name=self.connector_config.db_name)
 
-        with self.engine.connect() as conn:
+            schema_exists = schema_helper.check_schema_exists(self.write_config.table_name_mapping)
+            self._resolve_mode(schema_exists)
             for e in json_list:
                 elem, mdata, dsource, coords = self.conform_dict(e)
                 if coords is not None:
-                    conn.execute(insert(schema[COORDINATES_TABLE_NAME]), [coords])
+                    coords_name = self.write_config.table_name_mapping[COORDINATES_TABLE_NAME]
+                    schema_helper.insert(
+                        coords_name, coords, self.write_config.table_column_mapping.get(coords_name)
+                    )
 
                 if dsource is not None:
-                    conn.execute(insert(schema[DATA_SOURCE_TABLE_NAME]), [dsource])
+                    dsource_name = self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME]
+                    schema_helper.insert(
+                        coords_name,
+                        dsource,
+                        self.write_config.table_column_mapping.get(dsource_name),
+                    )
 
                 if mdata is not None:
-                    conn.execute(insert(schema[METADATA_TABLE_NAME]), [mdata])
-                conn.execute(insert(schema[ELEMENTS_TABLE_NAME]), [elem])
-                conn.commit()
+                    mdata_name = self.write_config.table_name_mapping[METADATA_TABLE_NAME]
+                    schema_helper.insert(
+                        mdata_name,
+                        mdata,
+                        self.write_config.table_column_mapping.get(mdata_name),
+                    )
 
-    @requires_dependencies(["sqlalchemy"], extras="sql")
+                elements_name = self.write_config.table_name_mapping[ELEMENTS_TABLE_NAME]
+                schema_helper.insert(
+                    elements_name,
+                    elem,
+                    self.write_config.table_column_mapping.get(elements_name),
+                )
+
+            conn.commit()
+        conn.close()
+
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         json_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
