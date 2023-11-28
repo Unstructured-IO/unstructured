@@ -7,7 +7,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSessionHandle,
     BaseSourceConnector,
     ConfigSessionHandleMixin,
@@ -56,7 +56,7 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
-class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
+class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleHubSpotConfig
     object_id: str
     object_type: str
@@ -97,7 +97,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
     def _add_custom_properties(self):
         if (self.connector_config.custom_properties is not None) and (
             (cprops := self.connector_config.custom_properties.get(self.object_type)) is not None
-        ):
+        ): 
             self.content_properties += cprops
 
     def _join_object_properties(self, obj) -> str:
@@ -156,7 +156,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseI
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         obj = self._fetch_obj()
         if obj is None:
@@ -178,6 +178,9 @@ class HubSpotSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def initialize(self):
         self.hubspot = self.connector_config.create_session_handle().service
+
+    def check_connection(self):
+        return self.connector_config.create_session_handle().service
 
     @requires_dependencies(["hubspot"], extras="hubspot")
     def _list_objects(self, get_page_method, object_type: str, content_properties: t.List[str]):
