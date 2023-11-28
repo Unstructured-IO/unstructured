@@ -1,10 +1,12 @@
-## 0.11.1-dev3
+## 0.11.1-dev4
 
 ### Enhancements
 
 * **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
 
 ### Features
+
+* **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
 
