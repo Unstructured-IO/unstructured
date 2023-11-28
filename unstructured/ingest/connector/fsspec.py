@@ -70,10 +70,19 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.processor_config.output_dir)
-            / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
-        )
+        # Dynamically parse filename , can change if remote path was pointing to the single
+        # file, a directory, or nested directory
+        if self.remote_file_path == self.connector_config.path_without_protocol:
+            file = self.remote_file_path.split("/")[-1]
+            filename = f"{file}.json"
+        else:
+            path_without_protocol = (
+                self.connector_config.path_without_protocol
+                if self.connector_config.path_without_protocol.endswith("/")
+                else f"{self.connector_config.path_without_protocol}/"
+            )
+            filename = f"{self.remote_file_path.replace(path_without_protocol, '')}.json"
+        return Path(self.processor_config.output_dir) / filename
 
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
