@@ -22,13 +22,14 @@ GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-def test_text_extraction():
+def test_text_extraction_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     measure_text_extraction_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
+    assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
@@ -36,13 +37,14 @@ def test_text_extraction():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-def test_element_type():
+def test_element_type_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_ELEMENT_TYPE_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     measure_element_type_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
+    assert os.path.isfile(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"), sep="\t")
     assert len(df) == 1
     assert len(df.columns) == 4
