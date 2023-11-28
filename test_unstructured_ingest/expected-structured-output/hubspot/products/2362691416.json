@@ -1,14 +1,13 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "933bc6afa05b12e4c5834ab8b405a4ef",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-16T23:41:00.868000+00:00",
+        "date_modified": "2023-10-16T23:41:00.868000+00:00",
         "record_locator": {
           "hubspot_id": "2362691416"
-        },
-        "date_created": "2023-10-16T23:41:00.868000+00:00",
-        "date_modified": "2023-10-16T23:41:00.868000+00:00"
+        }
       },
       "filename": "2362691416.txt",
       "filetype": "text/plain",
@@ -16,18 +15,18 @@
         "eng"
       ]
     },
-    "text": "Example product description. This is a text containing relevant information pertaining to ProductB. The text represents a non-existing product created as sample data for testing purposes."
+    "text": "Example product description. This is a text containing relevant information pertaining to ProductB. The text represents a non-existing product created as sample data for testing purposes.",
+    "type": "NarrativeText"
   },
   {
-    "type": "Title",
     "element_id": "ab6d7e3f100c883716adf7754ffed14d",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-16T23:41:00.868000+00:00",
+        "date_modified": "2023-10-16T23:41:00.868000+00:00",
         "record_locator": {
           "hubspot_id": "2362691416"
-        },
-        "date_created": "2023-10-16T23:41:00.868000+00:00",
-        "date_modified": "2023-10-16T23:41:00.868000+00:00"
+        }
       },
       "filename": "2362691416.txt",
       "filetype": "text/plain",
@@ -35,18 +34,18 @@
         "eng"
       ]
     },
-    "text": "Default-opt1-value;opt2-value;Option3"
+    "text": "Default-opt1-value;opt2-value;Option3",
+    "type": "Title"
   },
   {
-    "type": "Title",
     "element_id": "ab6d7e3f100c883716adf7754ffed14d",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-16T23:41:00.868000+00:00",
+        "date_modified": "2023-10-16T23:41:00.868000+00:00",
         "record_locator": {
           "hubspot_id": "2362691416"
-        },
-        "date_created": "2023-10-16T23:41:00.868000+00:00",
-        "date_modified": "2023-10-16T23:41:00.868000+00:00"
+        }
       },
       "filename": "2362691416.txt",
       "filetype": "text/plain",
@@ -54,18 +53,18 @@
         "eng"
       ]
     },
-    "text": "Default-opt1-value;opt2-value;Option3"
+    "text": "Default-opt1-value;opt2-value;Option3",
+    "type": "Title"
   },
   {
-    "type": "Title",
     "element_id": "ab6d7e3f100c883716adf7754ffed14d",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-16T23:41:00.868000+00:00",
+        "date_modified": "2023-10-16T23:41:00.868000+00:00",
         "record_locator": {
           "hubspot_id": "2362691416"
-        },
-        "date_created": "2023-10-16T23:41:00.868000+00:00",
-        "date_modified": "2023-10-16T23:41:00.868000+00:00"
+        }
       },
       "filename": "2362691416.txt",
       "filetype": "text/plain",
@@ -73,18 +72,18 @@
         "eng"
       ]
     },
-    "text": "Default-opt1-value;opt2-value;Option3"
+    "text": "Default-opt1-value;opt2-value;Option3",
+    "type": "Title"
   },
   {
-    "type": "Title",
     "element_id": "ab6d7e3f100c883716adf7754ffed14d",
     "metadata": {
       "data_source": {
+        "date_created": "2023-10-16T23:41:00.868000+00:00",
+        "date_modified": "2023-10-16T23:41:00.868000+00:00",
         "record_locator": {
           "hubspot_id": "2362691416"
-        },
-        "date_created": "2023-10-16T23:41:00.868000+00:00",
-        "date_modified": "2023-10-16T23:41:00.868000+00:00"
+        }
       },
       "filename": "2362691416.txt",
       "filetype": "text/plain",
@@ -92,6 +91,7 @@
         "eng"
       ]
     },
-    "text": "Default-opt1-value;opt2-value;Option3"
+    "text": "Default-opt1-value;opt2-value;Option3",
+    "type": "Title"
   }
 ]
