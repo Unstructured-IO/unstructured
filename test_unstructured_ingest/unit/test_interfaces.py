@@ -8,7 +8,7 @@ import pytest
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
@@ -40,7 +40,7 @@ TEST_DATE_PROCESSSED = "2022-12-13T15:44:08"
 
 
 @dataclass
-class TestIngestDoc(BaseIngestDoc):
+class TestIngestDoc(BaseSingleIngestDoc):
     connector_config: TestConfig
 
     @property

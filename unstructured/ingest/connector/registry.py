@@ -11,7 +11,10 @@ from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
 from unstructured.ingest.connector.delta_table import DeltaTableIngestDoc
 from unstructured.ingest.connector.discord import DiscordIngestDoc
 from unstructured.ingest.connector.dropbox import DropboxIngestDoc
-from unstructured.ingest.connector.elasticsearch import ElasticsearchIngestDoc
+from unstructured.ingest.connector.elasticsearch import (
+    ElasticsearchIngestDoc,
+    ElasticsearchIngestDocBatch,
+)
 from unstructured.ingest.connector.gcs import GcsIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
@@ -46,6 +49,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "discord": DiscordIngestDoc,
     "dropbox": DropboxIngestDoc,
     "elasticsearch": ElasticsearchIngestDoc,
+    "elasticsearch_batch": ElasticsearchIngestDocBatch,
     "gcs": GcsIngestDoc,
     "github": GitHubIngestDoc,
     "gitlab": GitLabIngestDoc,

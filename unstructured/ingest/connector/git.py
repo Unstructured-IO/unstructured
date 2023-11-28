@@ -7,7 +7,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -25,7 +25,7 @@ class SimpleGitConfig(BaseConnectorConfig):
 
 
 @dataclass
-class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class GitIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleGitConfig = field(repr=False)
     path: str
 
@@ -55,7 +55,7 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         raise NotImplementedError()
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()

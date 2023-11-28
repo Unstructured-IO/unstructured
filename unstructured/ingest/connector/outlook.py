@@ -9,7 +9,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -74,7 +74,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
 
 
 @dataclass
-class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class OutlookIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleOutlookConfig
     message_id: str
     registry_name: str = "outlook"
@@ -149,7 +149,7 @@ class OutlookIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         ).execute_query()
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(["office365"], extras="outlook")
     def get_file(self):
         """Relies on Office365 python sdk message object to do the download."""
