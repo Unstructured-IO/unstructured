@@ -7,8 +7,8 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseSingleIngestDoc,
     BaseSessionHandle,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     ConfigSessionHandleMixin,
     IngestDocCleanupMixin,
@@ -97,7 +97,7 @@ class HubSpotIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseS
     def _add_custom_properties(self):
         if (self.connector_config.custom_properties is not None) and (
             (cprops := self.connector_config.custom_properties.get(self.object_type)) is not None
-        ): 
+        ):
             self.content_properties += cprops
 
     def _join_object_properties(self, obj) -> str:
