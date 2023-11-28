@@ -98,7 +98,7 @@ from unstructured.partition.utils.sorting import (
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from unstructured_inference.inference.layout import DocumentLayout
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -381,11 +381,14 @@ def _partition_pdf_or_image_local(
             extract_images_in_pdf=extract_images_in_pdf,
             image_output_dir_path=image_output_dir_path,
         )
-        extracted_layouts = process_file_with_pdfminer(filename)
+
         merged_document_layout = _merge_inferred_with_extracted(
             inferred_document_layout,
-            extracted_layouts,
+            filename,
+            file,
+            is_image,
         )
+
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             final_layout = merged_document_layout
@@ -410,11 +413,14 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-        extracted_layouts = process_data_with_pdfminer(file)
+
         merged_document_layout = _merge_inferred_with_extracted(
             inferred_document_layout,
-            extracted_layouts,
+            filename,
+            file,
+            is_image,
         )
+
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             final_layout = merged_document_layout
@@ -478,13 +484,23 @@ def _partition_pdf_or_image_local(
 
 
 def _merge_inferred_with_extracted(
-    inferred_document_layout,
-    extracted_layouts,
-):
+    inferred_document_layout: "DocumentLayout",
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO]] = None,
+    is_image: bool = False,
+) -> "DocumentLayout":
     from unstructured_inference.inference.layoutelement import (
         merge_inferred_layout_with_extracted_layout,
     )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
+    if is_image:
+        return inferred_document_layout
+
+    if file is None:
+        extracted_layouts = process_file_with_pdfminer(filename)
+    else:
+        extracted_layouts = process_data_with_pdfminer(file)
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_layout) in enumerate(zip(inferred_pages, extracted_layouts)):
