@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
-set -eu -o pipefail
+set -u -o pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
+# If the file already exists, reset it
+if [ -f "$SKIPPED_FILES_LOG" ]; then
+  rm "$SKIPPED_FILES_LOG"
+  touch "$SKIPPED_FILES_LOG"
+fi
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
@@ -52,17 +58,17 @@ for test in "${all_tests[@]}"; do
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
   fi
-  if [[ "${tests_to_ignore[*]}" =~ $test ]]; then
-    echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
-    set +e
-    echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/dest/"$test"
-    set -e
-    echo "--------- FINISHED SCRIPT $test ---------"
-  else
-    echo "--------- RUNNING SCRIPT $test ---------"
-    echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/dest/"$test"
-    echo "--------- FINISHED SCRIPT $test ---------"
+  echo "--------- RUNNING SCRIPT $test ---------"
+  echo "Running ./test_unstructured_ingest/$test"
+  ./test_unstructured_ingest/dest/"$test"
+  rc=$?
+  if [[ $rc -eq 8 ]]; then
+    echo "$test (skipped due to missing env var)" | tee "$SKIPPED_FILES_LOG"
+  elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
+    echo "$test (skipped checking error code: $rc)" | tee "$SKIPPED_FILES_LOG"
+    continue
+  elif [[ $rc -ne 0 ]]; then
+    exit $rc
   fi
+  echo "--------- FINISHED SCRIPT $test ---------"
 done

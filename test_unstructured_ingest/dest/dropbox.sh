@@ -16,7 +16,7 @@ CI=${CI:-"false"}
 if [ -z "$DROPBOX_APP_KEY" ] || [ -z "$DROPBOX_APP_SECRET" ] || [ -z "$DROPBOX_REFRESH_TOKEN" ]; then
    echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"
    echo "DROPBOX_APP_KEY, DROPBOX_APP_SECRET, DROPBOX_REFRESH_TOKEN"
-   exit 0
+   exit 8
 fi
 
 # Get a new access token from Dropbox
