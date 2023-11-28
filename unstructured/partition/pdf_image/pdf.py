@@ -489,10 +489,10 @@ def _merge_inferred_with_extracted(
     file: Optional[Union[bytes, BinaryIO]] = None,
     is_image: bool = False,
 ) -> "DocumentLayout":
+    from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layoutelement import (
         merge_inferred_layout_with_extracted_layout,
     )
-    from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
     if is_image:
