@@ -249,8 +249,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
 
 @dataclass
 class ElasticsearchWriteConfig(WriteConfig):
-    url: str
-    index_name: str
+    batch_size: int
 
 
 @dataclass

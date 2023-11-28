@@ -24,7 +24,7 @@ class ElasticsearchCliConfig(CliConfig):
                 ["--index-name"],
                 required=True,
                 type=str,
-                help="Name for the Elasticsearch index to pull data from",
+                help="Name of the Elasticsearch index to pull data from, or upload data to.",
             ),
             click.Option(
                 ["--url"],
@@ -47,9 +47,7 @@ class ElasticsearchCliConfig(CliConfig):
 
 @dataclass
 class ElasticsearchCliWriteConfig(CliConfig):
-    index_name: str
-    url: str
-    jq_query: t.Optional[str] = None
+    batch_size: t.Optional[str] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -57,6 +55,7 @@ class ElasticsearchCliWriteConfig(CliConfig):
             click.Option(
                 ["--batch-size"],
                 required=True,
+                default=10,
                 type=str,
                 help="Number of items to be uploaded each time",
             ),

@@ -17,7 +17,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
   echo "Stopping Elasticsearch Docker container"
-  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yml down --remove-orphans -v
+  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
@@ -31,8 +31,15 @@ trap cleanup EXIT
 
 echo "Creating elasticsearch instance"
 # shellcheck source=/dev/null
-scripts/elasticsearch-test-helpers/create-elasticsearch-instance.sh
+scripts/elasticsearch-test-helpers/destination_connector/create-elasticsearch-instance.sh
 wait
+
+  # --chunk-elements \
+  # --chunk-combine-text-under-n-chars 200\
+  # --chunk-new-after-n-chars 2500\
+  # --chunk-max-characters 38000\
+  # --chunk-multipage-sections \
+  # --embedding-provider "langchain-huggingface" \
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -43,14 +50,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
-  --chunk-elements \
-  --chunk-combine-text-under-n-chars 200\
-  --chunk-new-after-n-chars 2500\
-  --chunk-max-characters 38000\
-  --chunk-multipage-sections \
-  --embedding-provider "langchain-huggingface" \
   elasticsearch \
-  --host-url http://localhost:9200 \
+  --url http://localhost:9200 \
   --index-name ingest-test \
 
 scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py
