@@ -90,13 +90,6 @@ class Pipeline(DataClassJsonMixin):
                 f"uploading elements from {len(partitioned_jsons)} "
                 "document(s) to the destination"
             )
-
-            write_config = self.write_node.dest_doc_connector.write_config
-            if hasattr(write_config, "num_processes"):
-                logger.info(
-                    f"using {write_config.num_processes} processes to upload",
-                )
-
             self.write_node(iterable=partitioned_jsons)
 
         if self.permissions_node:

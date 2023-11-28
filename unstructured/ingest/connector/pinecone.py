@@ -92,6 +92,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
         pinecone_batch_size = self.write_config.batch_size
 
+        logger.info(f"using {self.write_config.num_processes} processes to upload")
         if self.write_config.num_processes == 1:
             for i in range(0, len(dict_list), pinecone_batch_size):
                 self.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
