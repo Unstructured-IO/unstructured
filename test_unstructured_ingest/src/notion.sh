@@ -26,7 +26,7 @@ trap cleanup EXIT
 
 if [ -z "$NOTION_API_KEY" ]; then
    echo "Skipping Notion ingest test because the NOTION_API_KEY env var is not set."
-   exit 0
+   exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
