@@ -33,7 +33,7 @@ def _recursive_repr(user_function):
     return wrapper
 
 
-def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***REDACTED***"):
+def _asdict(obj, encode_json=False, redact_sensitive=False, redacted_text="***REDACTED***"):
     """
     A re-implementation of `asdict` (based on the original in the `dataclasses`
     source) to support arbitrary Collection and Mapping types.
@@ -42,7 +42,7 @@ def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***R
         result = []
         overrides = _user_overrides_or_exts(obj)
         for field in fields(obj):
-            if getattr(field, "sensitive", False) and not preserve_sensitive:
+            if getattr(field, "sensitive", False) and redact_sensitive:
                 value = redacted_text
             elif overrides[field.name].encoder:
                 value = getattr(obj, field.name)
@@ -50,7 +50,7 @@ def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***R
                 value = _asdict(
                     getattr(obj, field.name),
                     encode_json=encode_json,
-                    preserve_sensitive=preserve_sensitive,
+                    redact_sensitive=redact_sensitive,
                     redacted_text=redacted_text,
                 )
             result.append((field.name, value))
@@ -61,10 +61,28 @@ def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***R
         )
     elif isinstance(obj, Mapping):
         return {
-            _asdict(k, encode_json=encode_json): _asdict(v, encode_json=encode_json)
+            _asdict(
+                k,
+                encode_json=encode_json,
+                redact_sensitive=redact_sensitive,
+                redacted_text=redacted_text,
+            ): _asdict(
+                v,
+                encode_json=encode_json,
+                redact_sensitive=redact_sensitive,
+                redacted_text=redacted_text,
+            )
             for k, v in obj.items()
         }
     elif isinstance(obj, Collection) and not isinstance(obj, (str, bytes, Enum)):
-        return [_asdict(v, encode_json=encode_json) for v in obj]
+        return [
+            _asdict(
+                v,
+                encode_json=encode_json,
+                redact_sensitive=redact_sensitive,
+                redacted_text=redacted_text,
+            )
+            for v in obj
+        ]
     else:
         return copy.deepcopy(obj)

@@ -24,13 +24,13 @@ def test_enhanced_field():
 
 def test_to_json():
     auth = AuthData(username="my name", password="top secret")
-    j = auth.to_json(preserve_sensitive=False, redacted_text="THIS IS REDACTED")
+    j = auth.to_json(redact_sensitive=False, redacted_text="THIS IS REDACTED")
     expected = json.dumps({"username": "my name", "password": "THIS IS REDACTED"})
     assert j == expected
 
 
 def test_to_dict():
     auth = AuthData(username="my name", password="top secret")
-    d = auth.to_dict(preserve_sensitive=False)
+    d = auth.to_dict(redact_sensitive=False)
     expected = {"username": "my name", "password": "***REDACTED***"}
     assert d == expected
