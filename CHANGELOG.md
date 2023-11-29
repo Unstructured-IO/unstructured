@@ -1,6 +1,7 @@
 ## 0.11.1-dev5
 
 ### Enhancements
+* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
 
 * **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
 
