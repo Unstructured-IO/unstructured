@@ -210,6 +210,13 @@ class CliProcessorConfig(ProcessorConfig, CliMixin):
                 help="Is set, will raise error if any doc in the pipeline fail. Otherwise will "
                 "log error and continue with other docs",
             ),
+            click.Option(
+                ["--encryption-key-file"],
+                default=None,
+                type=click.Path(),
+                help="If provided, will encrypt all data being cached during "
+                "the process using this key file",
+            ),
             click.Option(["-v", "--verbose"], is_flag=True, default=False),
         ]
         return options

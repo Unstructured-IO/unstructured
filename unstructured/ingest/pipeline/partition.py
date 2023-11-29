@@ -1,5 +1,4 @@
 import hashlib
-import json
 import typing as t
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,10 +24,8 @@ class Partitioner(PartitionNode):
             self.pipeline_context.ingest_docs_map[hashed_filename] = ingest_doc_dict
             doc_filename = f"{hashed_filename}.json"
             json_path = (Path(self.get_path()) / doc_filename).resolve()
-            if (
-                not self.pipeline_context.reprocess
-                and json_path.is_file()
-                and json_path.stat().st_size
+            if not self.pipeline_context.reprocess and self.cached_data_exists(
+                filepath=str(json_path)
             ):
                 logger.info(f"File exists: {json_path}, skipping partition")
                 return str(json_path)
@@ -49,9 +46,9 @@ class Partitioner(PartitionNode):
                 partition_config=self.partition_config,
                 **partition_kwargs,
             )
-            with open(json_path, "w", encoding="utf8") as output_f:
-                logger.info(f"writing partitioned content to {json_path}")
-                json.dump(elements, output_f, ensure_ascii=False, indent=2, sort_keys=True)
+            self.pipeline_context.file_handler.write_json(
+                data=elements, filepath=str(json_path), ensure_ascii=False, indent=2, sort_keys=True
+            )
             return str(json_path)
         except Exception as e:
             if self.pipeline_context.raise_on_error:

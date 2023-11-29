@@ -40,19 +40,22 @@ class Chunker(ReformatNode):
             self.pipeline_context.ingest_docs_map[
                 hashed_filename
             ] = self.pipeline_context.ingest_docs_map[filename]
-            if (
-                not self.pipeline_context.reprocess
-                and json_path.is_file()
-                and json_path.stat().st_size
+            if not self.pipeline_context.reprocess and self.cached_data_exists(
+                filepath=str(json_path)
             ):
                 logger.debug(f"File exists: {json_path}, skipping chunking")
                 return str(json_path)
             elements = elements_from_json(filename=elements_json)
             chunked_elements = self.chunking_config.chunk(elements=elements)
             elements_dict = convert_to_dict(chunked_elements)
-            with open(json_path, "w", encoding="utf8") as output_f:
-                logger.info(f"writing chunking content to {json_path}")
-                json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
+            logger.info(f"writing chunking content to {json_path}")
+            self.pipeline_context.file_handler.write_json(
+                data=elements_dict,
+                filepath=str(json_path),
+                ensure_ascii=False,
+                indent=2,
+                sort_keys=True,
+            )
             return str(json_path)
         except Exception as e:
             if self.pipeline_context.raise_on_error:

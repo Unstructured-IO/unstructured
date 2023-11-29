@@ -18,11 +18,7 @@ session_handle: t.Optional[BaseSessionHandle] = None
 @dataclass
 class Reader(SourceNode):
     def get_single(self, doc: BaseSingleIngestDoc, ingest_doc_dict: dict) -> str:
-        if (
-            not self.read_config.re_download
-            and doc.filename.is_file()
-            and doc.filename.stat().st_size
-        ):
+        if not self.read_config.re_download and self.cached_data_exists(filepath=doc.filename):
             logger.info(f"File exists: {doc.filename}, skipping download")
             # Still need to fetch metadata if file exists locally
             doc.update_source_metadata()

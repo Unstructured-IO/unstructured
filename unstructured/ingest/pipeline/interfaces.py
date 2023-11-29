@@ -22,6 +22,10 @@ from unstructured.ingest.interfaces import (
     RetryStrategyConfig,
 )
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.pipeline.encrypt import FernetEncryption
+from unstructured.ingest.pipeline.file_handler import FileHandler, LocalFileHandler
+
+DEFAULT_FILE_HANDLER = LocalFileHandler()
 
 
 @dataclass
@@ -30,8 +34,14 @@ class PipelineContext(ProcessorConfig):
     Data that gets shared across each pipeline node
     """
 
+    file_handler: FileHandler = DEFAULT_FILE_HANDLER
+
     def __post_init__(self):
         self._ingest_docs_map: t.Optional[DictProxy] = None
+        if self.encryption_key_file:
+            with open(file=self.encryption_key_file) as key_file:
+                key_data = key_file.read()
+                self.file_handler.set_encryption(FernetEncryption(key=key_data))
 
     @property
     def ingest_docs_map(self) -> DictProxy:
@@ -97,6 +107,13 @@ class PipelineNode(DataClassJsonMixin, ABC):
 
     def get_path(self) -> t.Optional[Path]:
         return None
+
+    def cached_data_exists(self, filepath: str, **kwargs) -> bool:
+        stat = self.pipeline_context.file_handler.stat(filepath=filepath)
+        return stat.is_file and stat.size
+
+    def save_cached_data(self, data: str, filepath: str, **kwargs):
+        self.pipeline_context.file_handler.write(data=data, filepath=filepath)
 
 
 @dataclass
