@@ -1,6 +1,7 @@
 import json
 import multiprocessing as mp
 import typing as t
+import uuid
 from dataclasses import dataclass
 
 from unstructured.ingest.error import DestinationConnectionError, WriteError
@@ -116,13 +117,13 @@ class PineconeDestinationConnector(BaseDestinationConnector):
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
 
-                # assign element_id to "id", embeddings to "values", and other fields to "metadata"
+                # we assign embeddings to "values", and other fields to "metadata"
                 dict_content = [
                     # While flatten_dict enables indexing on various fields,
                     # element_serialized enables easily reloading the element object to memory.
                     # element_serialized is formed without text/embeddings to avoid data bloating.
                     {
-                        "id": element.pop("element_id", None),
+                        "id": str(uuid.uuid4()),
                         "values": element.pop("embeddings", None),
                         "metadata": {
                             "text": element.pop("text", None),
