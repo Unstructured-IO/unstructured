@@ -344,7 +344,7 @@ def convert_to_coco(
     elements: List[Element],
     dataset_description: Optional[str] = None,
     dataset_version: str = "1.0",
-    contributors: Tuple[str] = ("Unstructured Developers"),
+    contributors: Tuple[str] = ("Unstructured Developers",),
 ) -> List[Dict[str, Any]]:
     coco_dataset = {}
     # Handle Info
