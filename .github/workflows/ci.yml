@@ -286,7 +286,6 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
-        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
@@ -348,6 +347,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
         MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"
