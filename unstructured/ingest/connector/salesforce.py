@@ -22,7 +22,7 @@ from dateutil import parser  # type: ignore
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -82,7 +82,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleSalesforceConfig
     record_type: str
     record_id: str
@@ -183,7 +183,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()

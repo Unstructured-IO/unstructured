@@ -143,6 +143,7 @@ setup(
         "github": load_requirements("requirements/ingest/github.in"),
         "gitlab": load_requirements("requirements/ingest/gitlab.in"),
         "google-drive": load_requirements("requirements/ingest/google-drive.in"),
+        "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
         "notion": load_requirements("requirements/ingest/notion.in"),
         "onedrive": load_requirements("requirements/ingest/onedrive.in"),

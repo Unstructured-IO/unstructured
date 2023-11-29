@@ -4,11 +4,11 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "3",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -19,41 +19,41 @@
     "type": "Title"
   },
   {
-    "element_id": "9496aba3ea633310e2d669820269ad00",
+    "element_id": "9abdc842ab4bacbaa4da45cec2ef7e0d",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "3",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "Edwin Stanton Porter",
+    "text": "D. W. Griffith",
     "type": "Title"
   },
   {
-    "element_id": "6ead4aca7b509813147c41699dd1a7d4",
+    "element_id": "8e16a508f3df737af12e84d9cba2c7d0",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "3",
+          "document_id": "5",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.",
+    "text": "A thug accosts a girl as she leaves her workplace but a man rescues her. The thug vows revenge and, with the help of two friends, attacks the girl and her rescuer again as they're going for a walk. This time they succeed in kidnapping the rescuer. He is bound and gagged and taken away in a cart. The girl runs home and gets help from several neighbors. They track the ruffians down to a cabin in the mountains where the gang has trapped their victim and set the cabin on fire. A thug and Rescuer fight on the roof of the house.",
     "type": "NarrativeText"
   }
 ]
