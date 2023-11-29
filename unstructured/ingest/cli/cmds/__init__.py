@@ -26,6 +26,7 @@ from .gcs import get_base_src_cmd as gcs_base_src_cmd
 from .github import get_base_src_cmd as github_base_src_cmd
 from .gitlab import get_base_src_cmd as gitlab_base_src_cmd
 from .google_drive import get_base_src_cmd as google_drive_base_src_cmd
+from .hubspot import get_base_src_cmd as hubspot_base_src_cmd
 from .jira import get_base_src_cmd as jira_base_src_cmd
 from .local import get_base_src_cmd as local_base_src_cmd
 from .mongodb import get_base_dest_cmd as mongo_base_dest_cmd
@@ -59,6 +60,7 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     github_base_src_cmd,
     gitlab_base_src_cmd,
     google_drive_base_src_cmd,
+    hubspot_base_src_cmd,
     jira_base_src_cmd,
     local_base_src_cmd,
     notion_base_src_cmd,

@@ -154,6 +154,7 @@ setup(
         "salesforce": load_requirements("requirements/ingest/salesforce.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
         "weaviate": load_requirements("requirements/ingest/weaviate.in"),
+        "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,

@@ -1,4 +1,4 @@
-## 0.11.1-dev4
+## 0.11.1-dev5
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * **Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+* **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
 
