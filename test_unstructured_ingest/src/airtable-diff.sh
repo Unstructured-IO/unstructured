@@ -32,7 +32,7 @@ VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
 
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
-   exit 0
+   exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}

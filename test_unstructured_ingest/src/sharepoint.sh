@@ -27,7 +27,7 @@ trap cleanup EXIT
 
 if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ]; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_CLIENT_ID or SHAREPOINT_CRED env var is not set."
-   exit 0
+   exit 8
 fi
 
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly

@@ -1,0 +1,97 @@
+[
+  {
+    "element_id": "5a5df14caf682c8e2cfa8d2aa817bc30",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-16T23:37:12.954000+00:00",
+        "date_modified": "2023-10-16T23:37:12.954000+00:00",
+        "record_locator": {
+          "hubspot_id": "2362691415"
+        }
+      },
+      "filename": "2362691415.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Example product description. This is a text containing relevant information pertaining to ProductA. The text represents a non-existing product created as sample data for testing purposes.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "617f4a42b4ffcb9ce8dc5e84ef4e6d99",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-16T23:37:12.954000+00:00",
+        "date_modified": "2023-10-16T23:37:12.954000+00:00",
+        "record_locator": {
+          "hubspot_id": "2362691415"
+        }
+      },
+      "filename": "2362691415.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "opt2-value;Option3",
+    "type": "Title"
+  },
+  {
+    "element_id": "617f4a42b4ffcb9ce8dc5e84ef4e6d99",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-16T23:37:12.954000+00:00",
+        "date_modified": "2023-10-16T23:37:12.954000+00:00",
+        "record_locator": {
+          "hubspot_id": "2362691415"
+        }
+      },
+      "filename": "2362691415.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "opt2-value;Option3",
+    "type": "Title"
+  },
+  {
+    "element_id": "617f4a42b4ffcb9ce8dc5e84ef4e6d99",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-16T23:37:12.954000+00:00",
+        "date_modified": "2023-10-16T23:37:12.954000+00:00",
+        "record_locator": {
+          "hubspot_id": "2362691415"
+        }
+      },
+      "filename": "2362691415.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "opt2-value;Option3",
+    "type": "Title"
+  },
+  {
+    "element_id": "617f4a42b4ffcb9ce8dc5e84ef4e6d99",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-16T23:37:12.954000+00:00",
+        "date_modified": "2023-10-16T23:37:12.954000+00:00",
+        "record_locator": {
+          "hubspot_id": "2362691415"
+        }
+      },
+      "filename": "2362691415.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "opt2-value;Option3",
+    "type": "Title"
+  }
+]

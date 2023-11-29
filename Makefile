@@ -207,6 +207,10 @@ install-ingest-salesforce:
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest/jira.txt
 
+.PHONY: install-ingest-hubspot
+install-ingest-hubspot:
+	python3 -m pip install -r requirements/ingest-hubspot.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt

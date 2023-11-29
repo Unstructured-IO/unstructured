@@ -1,0 +1,21 @@
+[
+  {
+    "element_id": "060aebe50334b4900eb185486809ed2c",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:03:33.710000+00:00",
+        "date_modified": "2023-10-17T01:03:33.710000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287833179"
+        }
+      },
+      "filename": "41287833179.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "<div style=\"\" dir=\"auto\" data-top-level=\"true\"><p style=\"margin:0;\">This is a test document to use for unit tests.</p><p style=\"margin:0;\">Doylestown, PA 18901</p><p style=\"margin:0;\">Important points:</p><ul><li><p style=\"margin:0;\">Hamburgers are delicious</p></li><li><p style=\"margin:0;\">Dogs are the best</p></li><li><p style=\"margin:0;\">I love fuzzy blankets</p></li></ul><br></div>",
+    "type": "NarrativeText"
+  }
+]

@@ -26,7 +26,7 @@ trap cleanup EXIT
 
 if [ -z "$DISCORD_TOKEN" ]; then
    echo "Skipping Discord ingest test because the DISCORD_TOKEN env var is not set."
-   exit 0
+   exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}

@@ -15,7 +15,7 @@ CI=${CI:-"false"}
 
 if [ -z "$MONGODB_URI" ] && [ -z "$MONGODB_DATABASE_NAME" ]; then
     echo "Skipping MongoDB destination ingest test because the MONGODB_URI and MONGODB_DATABASE_NAME env var are not set."
-    exit 0
+    exit 8
 fi
 
 
