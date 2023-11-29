@@ -1,11 +1,16 @@
 ## 0.11.2-dev0
 
 ### Enhancements
+
 * **Updated Documentation**: (i) Added examples, and (ii) API Documentation, including Usage, SDKs, Azure Marketplace, and parameters and validation errors.
 
 ### Features
 
+* * **Add Pinecone destination connector.** Problem: After ingesting data from a source, users might want to produce embeddings for their data and write these into a vector DB. Pinecone is an option among these vector databases. Feature: Added Pinecone destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Pinecone.
+
 ### Fixes
+
+* **Process chunking parameter names in ingest correctly** Solves a bug where chunking parameters weren't being processed and used by ingest cli by renaming faulty parameter names and prepends; adds relevant parameters to ingest pinecone test to verify that the parameters are functional.
 
 ## 0.11.1
 
