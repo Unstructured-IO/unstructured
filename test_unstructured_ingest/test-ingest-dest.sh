@@ -22,6 +22,7 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   'mongodb.sh'
+  'pinecone.sh'  
   's3.sh'
   'sharepoint-embed-cog-index.sh'
 )

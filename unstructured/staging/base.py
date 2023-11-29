@@ -176,7 +176,9 @@ def elements_from_json(
         return dict_to_elements(element_dict)
 
 
-def flatten_dict(dictionary, parent_key="", separator="_", keys_to_omit: List[str] = None):
+def flatten_dict(
+    dictionary, parent_key="", separator="_", flatten_lists=False, keys_to_omit: List[str] = None
+):
     keys_to_omit = keys_to_omit if keys_to_omit else []
     flattened_dict = {}
     for key, value in dictionary.items():
@@ -185,8 +187,19 @@ def flatten_dict(dictionary, parent_key="", separator="_", keys_to_omit: List[st
             flattened_dict[new_key] = value
         elif isinstance(value, dict):
             flattened_dict.update(
-                flatten_dict(value, new_key, separator, keys_to_omit=keys_to_omit),
+                flatten_dict(value, new_key, separator, flatten_lists, keys_to_omit=keys_to_omit),
             )
+        elif isinstance(value, list) and flatten_lists:
+            for index, item in enumerate(value):
+                flattened_dict.update(
+                    flatten_dict(
+                        {f"{new_key}{separator}{index}": item},
+                        "",
+                        separator,
+                        flatten_lists,
+                        keys_to_omit=keys_to_omit,
+                    )
+                )
         else:
             flattened_dict[new_key] = value
     return flattened_dict

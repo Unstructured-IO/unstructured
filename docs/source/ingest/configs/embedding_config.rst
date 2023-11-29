@@ -10,5 +10,6 @@ the dataset.
 
 Configs
 ---------------------
-* ``api_key``: If an api key is required to generate the embeddings via an api (i.e. OpenAI)
-* ``model_name``: The model to use for the embedder.
+* ``embedding_provider``: An unstructured embedding provider to use while doing embedding. A few examples: langchain-openai, langchain-huggingface, langchain-aws-bedrock.
+* ``embedding_api_key``: If an api key is required to generate the embeddings via an api (i.e. OpenAI)
+* ``embedding_model_name``: The model to use for the embedder, if necessary.
