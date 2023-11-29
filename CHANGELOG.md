@@ -1,10 +1,12 @@
-## 0.11.1-dev3
+## 0.11.2
 
 ### Enhancements
 
 * **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
 
 ### Features
+
+* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
 
 ### Fixes
 

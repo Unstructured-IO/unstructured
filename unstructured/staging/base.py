@@ -2,6 +2,7 @@ import csv
 import io
 import json
 from copy import deepcopy
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from unstructured.documents.coordinates import PixelSpace
@@ -337,3 +338,80 @@ def filter_element_types(
         return filtered_elements
 
     return elements
+
+
+def convert_to_coco(
+    elements: List[Element],
+    dataset_description: str = f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}",
+    dataset_version: str = "1.0",
+    contributors: List = ["Unstructured Developers"],
+) -> List[Dict[str, Any]]:
+    coco_dataset = {}
+    #Handle Info
+    coco_dataset['info'] = {
+        'description': dataset_description,
+        'version': dataset_version,
+        "year": datetime.now().year,
+        "contributors": ",".join(contributors),
+        "date_created": datetime.now().date().isoformat()
+    }
+    elements_dict = convert_to_dict(elements)
+    #Handle Images
+    images = [
+        {
+            'width': (
+                el['metadata']['coordinates']['layout_width']
+                if el['metadata'].get('coordinates') 
+                else None
+            ),
+            'height': (
+                el['metadata']['coordinates']['layout_height']
+                if el['metadata'].get('coordinates')
+                else None
+            ),
+            'file_directory': el['metadata'].get('file_directory', ''),
+            'file_name': el['metadata'].get('filename',''),
+            'page_number': el['metadata'].get('page_number','')
+        } 
+        for el in elements_dict
+    ]
+    images = list({tuple(sorted(d.items())): d for d in images}.values())
+    for index, d in enumerate(images):
+        d['id'] = index+1
+    coco_dataset['images'] = images
+    #Handle Categories
+    categories = sorted(set(TYPE_TO_TEXT_ELEMENT_MAP.keys()))
+    categories = [{'id': i+1, 'name': cat} for i, cat in enumerate(categories)]
+    coco_dataset['categories'] = categories
+    #Handle Annotations
+    annotations = [
+        {
+            'id': el['element_id'],
+            'category_id': [x['id'] for x in categories if x['name'] == el['type']][0],
+            'bbox': [
+                float(el['metadata'].get('coordinates')['points'][0][0]),
+                float(el['metadata'].get('coordinates')['points'][0][1]),
+                float(
+                    abs(el['metadata'].get('coordinates')['points'][0][0]
+                    - el['metadata'].get('coordinates')['points'][2][0])
+                ),
+                float(
+                    abs(el['metadata'].get('coordinates')['points'][0][1]
+                    - el['metadata'].get('coordinates')['points'][1][1])
+                )
+            ] if el['metadata'].get('coordinates') else [],
+            'area': (
+                float(
+                    abs(el['metadata'].get('coordinates')['points'][0][0]
+                    - el['metadata'].get('coordinates')['points'][2][0])
+                ) * 
+                float(
+                    abs(el['metadata'].get('coordinates')['points'][0][1]
+                    - el['metadata'].get('coordinates')['points'][1][1])
+                )
+            ) if el['metadata'].get('coordinates') else None
+        }
+        for el in elements_dict
+    ]
+    coco_dataset['annotations'] = annotations
+    return coco_dataset
