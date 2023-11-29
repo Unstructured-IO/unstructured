@@ -19,6 +19,7 @@ from unstructured.ingest.connector.gcs import GcsIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
+from unstructured.ingest.connector.hubspot import HubSpotIngestDoc
 from unstructured.ingest.connector.jira import JiraIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
 from unstructured.ingest.connector.notion.connector import (
@@ -55,6 +56,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "github": GitHubIngestDoc,
     "gitlab": GitLabIngestDoc,
     "google_drive": GoogleDriveIngestDoc,
+    "hubspot": HubSpotIngestDoc,
     "jira": JiraIngestDoc,
     "local": LocalIngestDoc,
     "notion_database": NotionDatabaseIngestDoc,

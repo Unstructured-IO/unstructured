@@ -1,0 +1,3176 @@
+[
+    {
+        "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        25.0
+                    ],
+                    [
+                        27.0,
+                        93.0
+                    ],
+                    [
+                        103.0,
+                        93.0
+                    ],
+                    [
+                        103.0,
+                        25.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "a",
+        "type": "Title"
+    },
+    {
+        "element_id": "57c80547a4fb7190d2719c112b3ccd74",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        118.0,
+                        29.0
+                    ],
+                    [
+                        118.0,
+                        92.0
+                    ],
+                    [
+                        572.0,
+                        92.0
+                    ],
+                    [
+                        572.0,
+                        29.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Department of the Treasury Internal Revenue Service",
+        "type": "Title"
+    },
+    {
+        "element_id": "3946c42a1f494117b1952a55bd2c7dae",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        31.0,
+                        115.0
+                    ],
+                    [
+                        31.0,
+                        177.0
+                    ],
+                    [
+                        957.0,
+                        177.0
+                    ],
+                    [
+                        957.0,
+                        115.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Instructions for Form 3115",
+        "type": "Title"
+    },
+    {
+        "element_id": "9d48783caaa979fe4be685e77cc18a03",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        204.0
+                    ],
+                    [
+                        27.0,
+                        249.0
+                    ],
+                    [
+                        511.0,
+                        249.0
+                    ],
+                    [
+                        511.0,
+                        204.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "(Rev. November 1987)",
+        "type": "Title"
+    },
+    {
+        "element_id": "4a17cc01a68e2bf011ba1458d70f369a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        267.0
+                    ],
+                    [
+                        26.0,
+                        302.0
+                    ],
+                    [
+                        836.0,
+                        302.0
+                    ],
+                    [
+                        836.0,
+                        267.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Application for Change in Accounting Method",
+        "type": "Title"
+    },
+    {
+        "element_id": "766cf1d1243ef2cdbb0db5ad32d7f9c9",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        321.0
+                    ],
+                    [
+                        26.0,
+                        348.0
+                    ],
+                    [
+                        939.0,
+                        348.0
+                    ],
+                    [
+                        939.0,
+                        321.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "4a17cc01a68e2bf011ba1458d70f369a"
+        },
+        "text": "(Section references are to the Internal Revenue Code unless otherwise noted.)",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "61ed58fa51293f429f87e8cf1896c9e4",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        392.0
+                    ],
+                    [
+                        28.0,
+                        417.0
+                    ],
+                    [
+                        430.0,
+                        417.0
+                    ],
+                    [
+                        430.0,
+                        392.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Paperwork Reduction Act Notice",
+        "type": "Title"
+    },
+    {
+        "element_id": "828767cbc922e731b59894afba55fe10",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        427.0
+                    ],
+                    [
+                        27.0,
+                        559.0
+                    ],
+                    [
+                        473.0,
+                        559.0
+                    ],
+                    [
+                        473.0,
+                        427.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "61ed58fa51293f429f87e8cf1896c9e4"
+        },
+        "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to give us this information.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "a1547a4ed1611eee44b15e99120fb978",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        575.0
+                    ],
+                    [
+                        28.0,
+                        600.0
+                    ],
+                    [
+                        332.0,
+                        600.0
+                    ],
+                    [
+                        332.0,
+                        575.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "General Instructions",
+        "type": "Title"
+    },
+    {
+        "element_id": "68a3289177b49b285e133a5267eb355f",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        29.0,
+                        618.0
+                    ],
+                    [
+                        29.0,
+                        643.0
+                    ],
+                    [
+                        229.0,
+                        643.0
+                    ],
+                    [
+                        229.0,
+                        618.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Purpose of Form",
+        "type": "Title"
+    },
+    {
+        "element_id": "fdb8017fc73bdc12f7200dece8b76c99",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        654.0
+                    ],
+                    [
+                        26.0,
+                        808.0
+                    ],
+                    [
+                        482.0,
+                        808.0
+                    ],
+                    [
+                        482.0,
+                        654.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "68a3289177b49b285e133a5267eb355f"
+        },
+        "text": "File this form to request a change in your accounting method, including the accounting treatment of any item. If you are requesting a change in accounting period, use Form 1128, Application for Change in Accounting Period. For more information, see Publication 538, Accounting Periods and Methods.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "40f5ea916f51f85ab53afbceaadeb84f",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        817.0
+                    ],
+                    [
+                        27.0,
+                        926.0
+                    ],
+                    [
+                        481.0,
+                        926.0
+                    ],
+                    [
+                        481.0,
+                        817.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "68a3289177b49b285e133a5267eb355f"
+        },
+        "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115).",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "84e7e32f584e2ee9f47ba593bf86c559",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        935.0
+                    ],
+                    [
+                        27.0,
+                        1000.0
+                    ],
+                    [
+                        481.0,
+                        1000.0
+                    ],
+                    [
+                        481.0,
+                        935.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "68a3289177b49b285e133a5267eb355f"
+        },
+        "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change Is desired.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        1008.0
+                    ],
+                    [
+                        28.0,
+                        1185.0
+                    ],
+                    [
+                        484.0,
+                        1185.0
+                    ],
+                    [
+                        484.0,
+                        1008.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "68a3289177b49b285e133a5267eb355f"
+        },
+        "text": "You must give all relevant facts, including a detailed description of your present and proposed methods. You must also state the reason(s) you believe approval to make the requested change should be granted. Attach additional pages if more space is needed for explanations. Each page should show your name, address, and identifying number.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "505160cf4f5ef1cf128734840a8c98d1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        1192.0
+                    ],
+                    [
+                        28.0,
+                        1257.0
+                    ],
+                    [
+                        469.0,
+                        1257.0
+                    ],
+                    [
+                        469.0,
+                        1192.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "68a3289177b49b285e133a5267eb355f"
+        },
+        "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "242a9dba10a04654d4adef9c58ff96f6",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        29.0,
+                        1273.0
+                    ],
+                    [
+                        29.0,
+                        1350.0
+                    ],
+                    [
+                        467.0,
+                        1350.0
+                    ],
+                    [
+                        467.0,
+                        1273.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Changes to Accounting Methods Required Under the Tax Reform Act of 1986",
+        "type": "Title"
+    },
+    {
+        "element_id": "75931e4615ac2cd0d33588f5975aa7a0",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        1365.0
+                    ],
+                    [
+                        28.0,
+                        1740.0
+                    ],
+                    [
+                        484.0,
+                        1740.0
+                    ],
+                    [
+                        484.0,
+                        1365.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "242a9dba10a04654d4adef9c58ff96f6"
+        },
+        "text": "Uniform capitalization rules and limitation on cash method.\u2014If you are required to change your method of accounting under section,263A (relating to the capitalization and inclusion in inventory costs of certain expenses) or 448 (limiting the use of the cash method of accounting by certain taxpayers) as added by the Tax Reform Act of 1986 (\u201cAct\u201d), the change is treated as initiated by the taxpayer, approved by the Commissioner, and the period for taking the adjustments under section 481(a) into account will not exceed 4 years. (Hospitals required to change from the cash method under section 448 have 10 years to take the adjustrnents into account.) Complete Section A and the appropriate sections (B-1 or C and D) for which the change is required.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "5109bb5c3ab0b7dc4b0c9bb275247942",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        1745.0
+                    ],
+                    [
+                        28.0,
+                        2026.0
+                    ],
+                    [
+                        488.0,
+                        2026.0
+                    ],
+                    [
+                        488.0,
+                        1745.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "242a9dba10a04654d4adef9c58ff96f6"
+        },
+        "text": "Disregard the instructions under Time and Place for Filing and Late Applications. Instead, attach Form 3115 to your income tax return for the year of change; do not file it separately. Also include on a separate statement accompanying the Form 3115 the period over which the section 481(a) adjustment will be taken into account and the basis for that conclusion. Identify the automatic change being made at the top of page 1 of Form 3115 (e.g., \u201cAutomatic Change to Accrual Method\u2014Section 448\u201d). See Temporary Regulations sections 1.263A-1T and 1.448-1T for additional information.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "463c7a60fb455863074b2919009e36f1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        388.0
+                    ],
+                    [
+                        525.0,
+                        501.0
+                    ],
+                    [
+                        974.0,
+                        501.0
+                    ],
+                    [
+                        974.0,
+                        388.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "242a9dba10a04654d4adef9c58ff96f6"
+        },
+        "text": "Long-term contracts. \u2014If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "d30c76a61eda53cddda756c6d370d0e9",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        510.0
+                    ],
+                    [
+                        525.0,
+                        929.0
+                    ],
+                    [
+                        987.0,
+                        929.0
+                    ],
+                    [
+                        987.0,
+                        510.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "242a9dba10a04654d4adef9c58ff96f6"
+        },
+        "text": "Other methods.\u2014Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "5756fb398995bb6518a87637f24f426e",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        946.0
+                    ],
+                    [
+                        525.0,
+                        971.0
+                    ],
+                    [
+                        828.0,
+                        971.0
+                    ],
+                    [
+                        828.0,
+                        946.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Time and Place for Filing",
+        "type": "Title"
+    },
+    {
+        "element_id": "af8bdf713f162b09567c8d1a3a2d4de7",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        981.0
+                    ],
+                    [
+                        525.0,
+                        1048.0
+                    ],
+                    [
+                        959.0,
+                        1048.0
+                    ],
+                    [
+                        959.0,
+                        981.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "5756fb398995bb6518a87637f24f426e"
+        },
+        "text": "Generally, applicants must file this form within the first 180 days of the tax year in which it is desired to make the change.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "9dda11db48254f5e0d0000afb5d1dd9b",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        1056.0
+                    ],
+                    [
+                        525.0,
+                        1231.0
+                    ],
+                    [
+                        983.0,
+                        1231.0
+                    ],
+                    [
+                        983.0,
+                        1056.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "5756fb398995bb6518a87637f24f426e"
+        },
+        "text": "Taxpayers, other than exempt organizations, should file Form 3115 with the Commissioner of Internal Revenue, Attention: CC:C:4, 1111 Constitution Avenue, NW, Washington, DC 20224, Exempt organizations should file with the Assistant Commissioner (Employee Plans and Exempt Organizations), 1111 Constitution Avenue, NW, Washington, DC 20224.",
+        "type": "UncategorizedText"
+    },
+    {
+        "element_id": "4d063cdbd131401fa29e1d0e824dc017",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        1239.0
+                    ],
+                    [
+                        525.0,
+                        1433.0
+                    ],
+                    [
+                        983.0,
+                        1433.0
+                    ],
+                    [
+                        983.0,
+                        1239.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "5756fb398995bb6518a87637f24f426e"
+        },
+        "text": "You should normally receive an acknowledgment of receipt of your application within 30 days. If you do not hear from IRS within 30 days of submitting your completed Form 3115, you may inquire as to the receipt of your application by writing to: Control Clerk, CC:C:4, Internal Revenue Service, Room 5040, 1111 Constitution Avenue, NW, Washington, DC 20224.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "9112783151f904e2500e3f979246fe23",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        526.0,
+                        1444.0
+                    ],
+                    [
+                        526.0,
+                        1537.0
+                    ],
+                    [
+                        977.0,
+                        1537.0
+                    ],
+                    [
+                        977.0,
+                        1444.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "5756fb398995bb6518a87637f24f426e"
+        },
+        "text": "See section 5.03 of Rev. Proc. 84-74 for filing an early application. Note: /f this form is being filed in accordance with Rev. Proc. 74-11, see Section G below.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "a4316c02df07840f1beb56609cb09735",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        528.0,
+                        1555.0
+                    ],
+                    [
+                        528.0,
+                        1580.0
+                    ],
+                    [
+                        739.0,
+                        1580.0
+                    ],
+                    [
+                        739.0,
+                        1555.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Late Applications",
+        "type": "Title"
+    },
+    {
+        "element_id": "1428cc32bdf8d7392786ef9630d5daf9",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        527.0,
+                        1590.0
+                    ],
+                    [
+                        527.0,
+                        1762.0
+                    ],
+                    [
+                        982.0,
+                        1762.0
+                    ],
+                    [
+                        982.0,
+                        1590.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "a4316c02df07840f1beb56609cb09735"
+        },
+        "text": "If your application is filed after the 180-day period, it 1s late. The application will be considered for processing only upon a showing of \u201cgood cause\u201d and if it can be shown to the satisfaction of the Commissioner that granting you an extension will not jeopardize the Government's interests. For further information, see Rev, Proc. 79-63.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "025a65465b6fd9635316e92633b24c7e",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        528.0,
+                        1782.0
+                    ],
+                    [
+                        528.0,
+                        1807.0
+                    ],
+                    [
+                        765.0,
+                        1807.0
+                    ],
+                    [
+                        765.0,
+                        1782.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Identifying Number",
+        "type": "Title"
+    },
+    {
+        "element_id": "174c82e3aaff00ca222300c67ebf8478",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        526.0,
+                        1818.0
+                    ],
+                    [
+                        526.0,
+                        1955.0
+                    ],
+                    [
+                        983.0,
+                        1955.0
+                    ],
+                    [
+                        983.0,
+                        1818.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "025a65465b6fd9635316e92633b24c7e"
+        },
+        "text": "Individuals.\u2014An individual should enter his or her social security number in this block. If the application is made on behalf of a husband and wife who file their income tax return jointly, enter the social security numbers of both. Others.-\u2014The employer identification number of",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "138bc39ed883db62eb13920f3123df79",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        526.0,
+                        1957.0
+                    ],
+                    [
+                        526.0,
+                        1996.0
+                    ],
+                    [
+                        960.0,
+                        1996.0
+                    ],
+                    [
+                        960.0,
+                        1957.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "025a65465b6fd9635316e92633b24c7e"
+        },
+        "text": "an applicant other than an individual should be entered in this block.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "f1a73e2204a114077f988c9da98d7f8b",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1023.0,
+                        393.0
+                    ],
+                    [
+                        1023.0,
+                        419.0
+                    ],
+                    [
+                        1142.0,
+                        419.0
+                    ],
+                    [
+                        1142.0,
+                        393.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Signature",
+        "type": "Title"
+    },
+    {
+        "element_id": "dc1531183c8e3f45a78f110ec1efe15f",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        425.0
+                    ],
+                    [
+                        1022.0,
+                        539.0
+                    ],
+                    [
+                        1472.0,
+                        539.0
+                    ],
+                    [
+                        1472.0,
+                        425.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "Individuals. \u2014An individual desiring the change should sign the application. If the application pertains to a husband and wife filing a joint income tax return, the names of both should appear in the heading and both should sign.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "7d3a67d75914a504a52ec53998b796af",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        547.0
+                    ],
+                    [
+                        1022.0,
+                        629.0
+                    ],
+                    [
+                        1473.0,
+                        629.0
+                    ],
+                    [
+                        1473.0,
+                        547.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "Partnerships.\u2014The form should be signed with the partnership name followed by the signature of one of the general partners and the words \u201cGeneral Partner.\u201d",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "9de285e8e3b042aa9ac86edde98a21a9",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        642.0
+                    ],
+                    [
+                        1021.0,
+                        906.0
+                    ],
+                    [
+                        1484.0,
+                        906.0
+                    ],
+                    [
+                        1484.0,
+                        642.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "Corporations, cooperatives, and insurance companies.\u2014The form should show the name of the corporation, cooperative, or insurance company and the signature of the president, vice president, treasurer, assistant treasurer, or chief accounting officer (such as tax officer) authorized to sign, and his or her official title. Receivers, trustees, or assignees must sign any application they are required to file. For a subsidiary corporation filing a consolidated return with its parent, the form should be signed by an officer of the parent corporation.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "df06bd3517f30f1754d6c57666af0c65",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        914.0
+                    ],
+                    [
+                        1022.0,
+                        1023.0
+                    ],
+                    [
+                        1473.0,
+                        1023.0
+                    ],
+                    [
+                        1473.0,
+                        914.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "Fiduciaries.\u2014The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "52e2b8e4b8527ae448e9db2dfd0c43c7",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        1032.0
+                    ],
+                    [
+                        1021.0,
+                        1119.0
+                    ],
+                    [
+                        1483.0,
+                        1119.0
+                    ],
+                    [
+                        1483.0,
+                        1032.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "Preparer other than partner, officer, etc.\u2014The signature of the individual preparing the application should appear in the space provided on page 6.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "1df7107903f249d938fbf3710f50283a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        1127.0
+                    ],
+                    [
+                        1021.0,
+                        1236.0
+                    ],
+                    [
+                        1484.0,
+                        1236.0
+                    ],
+                    [
+                        1484.0,
+                        1127.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "f1a73e2204a114077f988c9da98d7f8b"
+        },
+        "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "8b06cd6e2bf7fc15130d5d9ed7e66283",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        1252.0
+                    ],
+                    [
+                        1022.0,
+                        1278.0
+                    ],
+                    [
+                        1229.0,
+                        1278.0
+                    ],
+                    [
+                        1229.0,
+                        1252.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Affiliated Groups",
+        "type": "Title"
+    },
+    {
+        "element_id": "58e977f2200b46ac8b372586dfd781bf",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        1288.0
+                    ],
+                    [
+                        1021.0,
+                        1397.0
+                    ],
+                    [
+                        1474.0,
+                        1397.0
+                    ],
+                    [
+                        1474.0,
+                        1288.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "8b06cd6e2bf7fc15130d5d9ed7e66283"
+        },
+        "text": "Taxpayers that are members of an affiliated group filing a consolidated return that seeks to change to the same accounting method for more than one member of the group must file a separate Form 3115 for each such member,",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "58703de56debc34a1d68e6ed6f8fd067",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        1413.0
+                    ],
+                    [
+                        1022.0,
+                        1474.0
+                    ],
+                    [
+                        1327.0,
+                        1474.0
+                    ],
+                    [
+                        1327.0,
+                        1413.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1
+        },
+        "text": "Specific Instructions Section A",
+        "type": "Title"
+    },
+    {
+        "element_id": "b57b7502430c59194bb865cfa1bcfab5",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        1488.0
+                    ],
+                    [
+                        1022.0,
+                        1575.0
+                    ],
+                    [
+                        1455.0,
+                        1575.0
+                    ],
+                    [
+                        1455.0,
+                        1488.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "Item 5a, page 1.\u2014\u201cTaxable income or (loss) from operations\u201d is to be entered before application of any net operating loss deduction under section 172(a).",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "9eefeb9556d95a8dd563ff3270cae7f4",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        1583.0
+                    ],
+                    [
+                        1022.0,
+                        1913.0
+                    ],
+                    [
+                        1472.0,
+                        1913.0
+                    ],
+                    [
+                        1472.0,
+                        1583.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "Item 6, page 2.\u2014The term \u201cgross receipts\u201d includes total sales (net of returns and allowances) and all amounts received for services. In addition, gross receipts include any income from investments and from incidental or outside sources (e.g., interest, dividends, rents, royalties, and annuities). However, if you are a resaler of personal property, exclude from gross receipts any amounts not derived in the ordinary course of a trade or business. Gross receipts do not include amounts received for sales taxes if, under the applicable state or local law, the tax is legally imposed on the purchaser of the good or service, and the taxpayer merely collects and remits the tax to the taxing authority.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "3e63f740940cd3ab94c17d2bbf48b13a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2050,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        1921.0
+                    ],
+                    [
+                        1022.0,
+                        1987.0
+                    ],
+                    [
+                        1463.0,
+                        1987.0
+                    ],
+                    [
+                        1463.0,
+                        1921.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 1,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "Item 7b, page 2.\u2014If item 7b 1s \u201cYes,\u201d indicate on a separate sheet the following for each separate trade or business: Nature of business",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "3db206c935841c3dcd5b3a1d41e56b84",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        25.0,
+                        27.0
+                    ],
+                    [
+                        25.0,
+                        181.0
+                    ],
+                    [
+                        470.0,
+                        181.0
+                    ],
+                    [
+                        470.0,
+                        27.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "(manufacturing, retailer, wholesaler, etc.), employer identification number, overall method of accounting, and whether, in the last 6 years, that business has changed its accounting method, or is also changing its accounting method as part of this request or as a separate request.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "48ddf405e03a362566cdbc32cc5cd11c",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        189.0
+                    ],
+                    [
+                        26.0,
+                        254.0
+                    ],
+                    [
+                        484.0,
+                        254.0
+                    ],
+                    [
+                        484.0,
+                        189.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "Item 11, page 2.\u2014If you cannot provide the requested information, you may sign a statement under penalties of perjury that:",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "1bbe995811e9fd4c3ce1b218cb641f4e",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        262.0
+                    ],
+                    [
+                        26.0,
+                        349.0
+                    ],
+                    [
+                        488.0,
+                        349.0
+                    ],
+                    [
+                        488.0,
+                        262.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "(1) Gives your best estimate of the percentage of the section 481(a) adjustment that would have been required if the requested change had been made for each of the 3 preceding years; and",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "f7872ac379aa024934461d08fa31ebd9",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        25.0,
+                        357.0
+                    ],
+                    [
+                        25.0,
+                        400.0
+                    ],
+                    [
+                        468.0,
+                        400.0
+                    ],
+                    [
+                        468.0,
+                        357.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "(2) Explains in detail why you cannot provide the requested information.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "2de8f0b5003bcb8c12a4dc59c8e1f740",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        408.0
+                    ],
+                    [
+                        26.0,
+                        470.0
+                    ],
+                    [
+                        491.0,
+                        470.0
+                    ],
+                    [
+                        491.0,
+                        408.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "See section 5.06(2) of Rev. Proc. 84-74 for the required perjury statement that must be attached.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "678ecc0340dc8848f891bf12a555a3fd",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        25.0,
+                        482.0
+                    ],
+                    [
+                        25.0,
+                        548.0
+                    ],
+                    [
+                        488.0,
+                        548.0
+                    ],
+                    [
+                        488.0,
+                        482.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "1ca3fe4a69a54c0a0b7bb8a964da6ef4",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        556.0
+                    ],
+                    [
+                        26.0,
+                        642.0
+                    ],
+                    [
+                        488.0,
+                        642.0
+                    ],
+                    [
+                        488.0,
+                        556.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "58703de56debc34a1d68e6ed6f8fd067"
+        },
+        "text": "Item 13, page 2.\u2014Insert the actual number of tax years. Use of the term \u201csince inception\u201d is not acceptable. However, \u201cmore than 6 years\u201d Is acceptable.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "136a59b0c53731bc299206fda46e0888",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        659.0
+                    ],
+                    [
+                        27.0,
+                        680.0
+                    ],
+                    [
+                        167.0,
+                        680.0
+                    ],
+                    [
+                        167.0,
+                        659.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section B-1",
+        "type": "Title"
+    },
+    {
+        "element_id": "e4a695ea83818204438fe08add6d1554",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        695.0
+                    ],
+                    [
+                        26.0,
+                        959.0
+                    ],
+                    [
+                        478.0,
+                        959.0
+                    ],
+                    [
+                        478.0,
+                        695.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "136a59b0c53731bc299206fda46e0888"
+        },
+        "text": "Item 1b, page 2.\u2014Include any amounts reported as income ina prior year although the income had not been accrued (earned) or received in the prior year; for example, discount on installment loans reported as income for the year in which the loans were made instead of for the year or years in which the income was received or earned. Advance payments under Rev. Proc. 71-21 or Regulations section 1.451-5 must be fully explained and all pertinent information must be submitted with this application.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "f63f53aab435b8c9789ab7d6b982db3f",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        27.0,
+                        976.0
+                    ],
+                    [
+                        27.0,
+                        997.0
+                    ],
+                    [
+                        282.0,
+                        997.0
+                    ],
+                    [
+                        282.0,
+                        976.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Sections B-2 and B-3",
+        "type": "Title"
+    },
+    {
+        "element_id": "eac562ca19f6198691856c695e2790bd",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        1011.0
+                    ],
+                    [
+                        26.0,
+                        1206.0
+                    ],
+                    [
+                        488.0,
+                        1206.0
+                    ],
+                    [
+                        488.0,
+                        1011.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "f63f53aab435b8c9789ab7d6b982db3f"
+        },
+        "text": "Limitation on the Use of the Cash Method of Accounting. \u2014Except as provided below, C corporations, partnerships with a C corporation as a partner, and tax shelters may not use the cash method of accounting. For purposes of this limitation, a trust subject to the tax on unrelated business income under section 511 1s treated as aC corporation with respect to its unrelated trade or business activities.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "e5bed7fe04dd22cabe5e5c0362d37743",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        1219.0
+                    ],
+                    [
+                        26.0,
+                        1261.0
+                    ],
+                    [
+                        466.0,
+                        1261.0
+                    ],
+                    [
+                        466.0,
+                        1219.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "f63f53aab435b8c9789ab7d6b982db3f"
+        },
+        "text": "The limitation on the use of the cash method (except for tax shelters) does not apply to\u2014",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "69bd87b2ad5873c030748e62adf61b89",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        1265.0
+                    ],
+                    [
+                        26.0,
+                        1463.0
+                    ],
+                    [
+                        481.0,
+                        1463.0
+                    ],
+                    [
+                        481.0,
+                        1265.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "f63f53aab435b8c9789ab7d6b982db3f"
+        },
+        "text": "(1) Farming businesses.\u2014F or this purpose, the term \u201cfarming business\u201d 1s defined in section 263A(e)(4), but it also includes the raising, harvesting, or growing of trees to which section 263A(c)(5) applies. Notwithstanding this exception, section 447 requires certain C corporations and partnerships with a C corporation as a partner to use the accrual method.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "df67e4b3a4a1352209c2648b87d675e2",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        26.0,
+                        1476.0
+                    ],
+                    [
+                        26.0,
+                        1634.0
+                    ],
+                    [
+                        479.0,
+                        1634.0
+                    ],
+                    [
+                        479.0,
+                        1476.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "f63f53aab435b8c9789ab7d6b982db3f"
+        },
+        "text": "(2) Qualified personal service corporations. \u2014 A \u201cqualified personal service corporation\u201d is any corporation: (a) substantially all of the activities of which involve the performance of services in the fields of health, law, engineering, architecture, accounting, actuarial science, performing arts, or consulting, and (b)",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        28.0,
+                        2017.0
+                    ],
+                    [
+                        28.0,
+                        2042.0
+                    ],
+                    [
+                        116.0,
+                        2042.0
+                    ],
+                    [
+                        116.0,
+                        2017.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Page 2",
+        "type": "Title"
+    },
+    {
+        "element_id": "44902073e7cc4fa753f25d40e009dcef",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        29.0
+                    ],
+                    [
+                        524.0,
+                        204.0
+                    ],
+                    [
+                        987.0,
+                        204.0
+                    ],
+                    [
+                        987.0,
+                        29.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "794f7062cf3f56f2c7d70702bd3d13e1"
+        },
+        "text": "substantially all of the stock of which is owned by employees performing the services, retired employees who had performed the services, any estate of any individual who had performed the services listed above, or any person who acquired stock of the corporation as a result of the death of an employee or retiree described above if the acquisition occurred within 2 years of death.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "badb592231dd87276dc7297d518a8f5e",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        213.0
+                    ],
+                    [
+                        524.0,
+                        522.0
+                    ],
+                    [
+                        985.0,
+                        522.0
+                    ],
+                    [
+                        985.0,
+                        213.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "794f7062cf3f56f2c7d70702bd3d13e1"
+        },
+        "text": "(3) Entities with gross receipts of $5,000,000 or less.\u2014To qualify for this exception, the C corporation's or partnership\u2019s annual average gross receipts for the three years ending with the prior tax year may not exceed $5,000,000. If the corporation or partnership was not in existence for the entire 3-year period, the period of existence is used to determine whether the corporation or partnership qualifies. If any tax year in the 3-year period is a short tax year, the corporation or partnership must annualize the gross receipts by multiplying the gross receipts by 12 and dividing the result by the number of months in the short period.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "a50ed92585ec98497171f56bc829c16a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        531.0
+                    ],
+                    [
+                        524.0,
+                        574.0
+                    ],
+                    [
+                        946.0,
+                        574.0
+                    ],
+                    [
+                        946.0,
+                        531.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "794f7062cf3f56f2c7d70702bd3d13e1"
+        },
+        "text": "For more information, see section 448 and Temporary Regulations section 1.448-1T.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "53e33d10c9df4a570490182ccef0cd95",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        590.0
+                    ],
+                    [
+                        525.0,
+                        611.0
+                    ],
+                    [
+                        642.0,
+                        611.0
+                    ],
+                    [
+                        642.0,
+                        590.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section C",
+        "type": "Title"
+    },
+    {
+        "element_id": "a9e8c96063f3fea7ea05eb3cd41ebe7a",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        626.0
+                    ],
+                    [
+                        524.0,
+                        713.0
+                    ],
+                    [
+                        970.0,
+                        713.0
+                    ],
+                    [
+                        970.0,
+                        626.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "Applicants must give complete details about the present method of valuing inventory and the proposed method. State whether all or part of your inventory ts involved in the change.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "7e90b155b5cdb2481b1dfbb1118142c5",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        523.0,
+                        721.0
+                    ],
+                    [
+                        523.0,
+                        893.0
+                    ],
+                    [
+                        961.0,
+                        893.0
+                    ],
+                    [
+                        961.0,
+                        721.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "Inventories of retail merchants.\u2014The retail method of pricing inventories does not contemplate valuation of goods at the retail selling price. The retail selling price of goods on hand must be reduced to approximate cost or cost or market, whichever Is lower, by the adjustments required in Regulations section 1.471-8.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "357d52f500b965abc29ea60039de4fd8",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        523.0,
+                        905.0
+                    ],
+                    [
+                        523.0,
+                        1032.0
+                    ],
+                    [
+                        984.0,
+                        1032.0
+                    ],
+                    [
+                        984.0,
+                        905.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "LIFO inventory changes.\u2014Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. If you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "347f638641329c72c971a522ec07f6b1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        523.0,
+                        1045.0
+                    ],
+                    [
+                        523.0,
+                        1198.0
+                    ],
+                    [
+                        986.0,
+                        1198.0
+                    ],
+                    [
+                        986.0,
+                        1045.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "(1) The specific types and classes of goods in the LIFO inventories involved in the proposed changes and the comparative value of such Inventories as of the end of the tax year preceding the year of change determined by: (a) the LIFO method, and (b) the proposed method and basis (such as FIFO cost or lower of cost or market).",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "ea8e44805e010fa33ed03e9a8f22ddb2",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        523.0,
+                        1207.0
+                    ],
+                    [
+                        523.0,
+                        1334.0
+                    ],
+                    [
+                        970.0,
+                        1334.0
+                    ],
+                    [
+                        970.0,
+                        1207.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "(2) State whether the proposed identification and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "6028c579dc843bb5aa2c704f46085914",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        1346.0
+                    ],
+                    [
+                        524.0,
+                        1411.0
+                    ],
+                    [
+                        984.0,
+                        1411.0
+                    ],
+                    [
+                        984.0,
+                        1346.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "53e33d10c9df4a570490182ccef0cd95"
+        },
+        "text": "(3) The termination event statement required by section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "92e21a61e1d872dbbe3e3221a920b409",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        1427.0
+                    ],
+                    [
+                        525.0,
+                        1448.0
+                    ],
+                    [
+                        641.0,
+                        1448.0
+                    ],
+                    [
+                        641.0,
+                        1427.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section D",
+        "type": "Title"
+    },
+    {
+        "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        524.0,
+                        1464.0
+                    ],
+                    [
+                        524.0,
+                        1594.0
+                    ],
+                    [
+                        975.0,
+                        1594.0
+                    ],
+                    [
+                        975.0,
+                        1464.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "92e21a61e1d872dbbe3e3221a920b409"
+        },
+        "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "b6b99aba936d71652bca9a28d2a68eb8",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        525.0,
+                        1638.0
+                    ],
+                    [
+                        525.0,
+                        1652.0
+                    ],
+                    [
+                        1001.0,
+                        1652.0
+                    ],
+                    [
+                        1001.0,
+                        1638.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "% U.S. Government Printing Office: 1987\u2014201-993/60166",
+        "type": "Title"
+    },
+    {
+        "element_id": "8d6743276d5bc8e32d0b05ba0b232db8",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1022.0,
+                        30.0
+                    ],
+                    [
+                        1022.0,
+                        51.0
+                    ],
+                    [
+                        1136.0,
+                        51.0
+                    ],
+                    [
+                        1136.0,
+                        30.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section E",
+        "type": "Title"
+    },
+    {
+        "element_id": "86fab9f7b35d56a2d48baf0782b7c53d",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1020.0,
+                        65.0
+                    ],
+                    [
+                        1020.0,
+                        328.0
+                    ],
+                    [
+                        1478.0,
+                        328.0
+                    ],
+                    [
+                        1478.0,
+                        65.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "8d6743276d5bc8e32d0b05ba0b232db8"
+        },
+        "text": "Section 460(f) provides that the term \u201clong-term contract\u201d means any contract for the manufacturing, building, installation, or construction of property that is not completed within the tax year in which it 1s entered into. However, a manufacturing contract will not qualify as a long-term contract unless the contract involves the manufacture of: (1) a unique item not normally included in your finished goods inventory, or (2) any item that normally requires more than 12 calendar months to complete.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "825f9197a40400f76d2a527e8d7a2c71",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        337.0
+                    ],
+                    [
+                        1021.0,
+                        535.0
+                    ],
+                    [
+                        1478.0,
+                        535.0
+                    ],
+                    [
+                        1478.0,
+                        337.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "8d6743276d5bc8e32d0b05ba0b232db8"
+        },
+        "text": "All long-term contracts entered into after February 28, 1986, except for real property construction contracts expected to be completed within 2 years by contractors whose average annual gross receipts for the 3 prior tax years do not exceed $10,000,000, must be accounted for using either the percentage of completion- capitalized cost method or the percentage of completion method. See section 460.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "dcf589bb37d079ecce4b375abc332606",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1020.0,
+                        544.0
+                    ],
+                    [
+                        1020.0,
+                        654.0
+                    ],
+                    [
+                        1484.0,
+                        654.0
+                    ],
+                    [
+                        1484.0,
+                        544.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "8d6743276d5bc8e32d0b05ba0b232db8"
+        },
+        "text": "Caution: At the time these instructions were printed, Congress was considering legislation that would repeal the use of the percentage of completion-capitalized cost method for certain long-term contracts.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "32786e68a6fd82dc356d2d58bf283dc4",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1021.0,
+                        670.0
+                    ],
+                    [
+                        1021.0,
+                        691.0
+                    ],
+                    [
+                        1137.0,
+                        691.0
+                    ],
+                    [
+                        1137.0,
+                        670.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section G",
+        "type": "Title"
+    },
+    {
+        "element_id": "cf5e2bc86b7c77533924eb940fd522d5",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1020.0,
+                        706.0
+                    ],
+                    [
+                        1020.0,
+                        770.0
+                    ],
+                    [
+                        1411.0,
+                        770.0
+                    ],
+                    [
+                        1411.0,
+                        706.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "32786e68a6fd82dc356d2d58bf283dc4"
+        },
+        "text": "This section Is to be used only to request a change in a method of accounting for depreciation under section 167.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "b8355dc568ea042f9da586188b404bca",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1019.0,
+                        779.0
+                    ],
+                    [
+                        1019.0,
+                        999.0
+                    ],
+                    [
+                        1476.0,
+                        999.0
+                    ],
+                    [
+                        1476.0,
+                        779.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "32786e68a6fd82dc356d2d58bf283dc4"
+        },
+        "text": "Rev. Proc. 74-11 provides a procedure whereby applicants are considered to have obtained the consent of the Commissioner to change their method of accounting for depreciation. You must file Form 3115 with the Service Center where your return will be filed within the first 180 days of the tax year in which it is desired to make the change. Attach a copy of the form to the income tax return for the tax year of the change.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "319882ba6726e29222f5522c53887960",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1019.0,
+                        1007.0
+                    ],
+                    [
+                        1019.0,
+                        1183.0
+                    ],
+                    [
+                        1479.0,
+                        1183.0
+                    ],
+                    [
+                        1479.0,
+                        1007.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "32786e68a6fd82dc356d2d58bf283dc4"
+        },
+        "text": "Note: Do not use Form 3115 to make an election under section 168. Such an election may be made only on the tax return for the year in which the property 1s placed in service. In addition, Form 3115 is not to be used to request approval to revoke an election made under section 168. Such a request must be made in accordance with Rev. Proc. 87-1 (updated annually).",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "a8155ab3bed92cc259ab58331619e0e1",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1020.0,
+                        1199.0
+                    ],
+                    [
+                        1020.0,
+                        1220.0
+                    ],
+                    [
+                        1136.0,
+                        1220.0
+                    ],
+                    [
+                        1136.0,
+                        1199.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2
+        },
+        "text": "Section H",
+        "type": "Title"
+    },
+    {
+        "element_id": "cb1f664a186a87f6560cde136d70b558",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1019.0,
+                        1235.0
+                    ],
+                    [
+                        1019.0,
+                        1388.0
+                    ],
+                    [
+                        1480.0,
+                        1388.0
+                    ],
+                    [
+                        1480.0,
+                        1235.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "a8155ab3bed92cc259ab58331619e0e1"
+        },
+        "text": "Generally, this section should be used for requesting changes In a method of accounting for which provision has not been made elsewhere on this form. Attach additional pages if more space ts needed for a full explanation of the present method used and the proposed change requested.",
+        "type": "NarrativeText"
+    },
+    {
+        "element_id": "16be8056dead49d2cdf618d7effe64b7",
+        "metadata": {
+            "coordinates": {
+                "layout_height": 2067,
+                "layout_width": 1512,
+                "points": [
+                    [
+                        1019.0,
+                        1397.0
+                    ],
+                    [
+                        1019.0,
+                        1461.0
+                    ],
+                    [
+                        1443.0,
+                        1461.0
+                    ],
+                    [
+                        1443.0,
+                        1397.0
+                    ]
+                ],
+                "system": "PixelSpace"
+            },
+            "file_directory": "../unstructured-inference/sample-docs",
+            "filename": "IRS-form-1987.pdf",
+            "filetype": "application/pdf",
+            "languages": [
+                "eng"
+            ],
+            "last_modified": "2023-08-03T16:53:39",
+            "page_number": 2,
+            "parent_id": "a8155ab3bed92cc259ab58331619e0e1"
+        },
+        "text": "lf you are making an election under section 458, show the applicable information under Regulations section 1.458-10.",
+        "type": "NarrativeText"
+    }
+]

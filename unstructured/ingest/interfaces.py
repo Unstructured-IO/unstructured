@@ -730,7 +730,7 @@ class ConfigSessionHandleMixin:
 @dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
-    _session_handle: t.Optional[BaseSessionHandle] = None
+    _session_handle: t.Optional[BaseSessionHandle] = field(default=None, init=False)
 
     @property
     def session_handle(self):

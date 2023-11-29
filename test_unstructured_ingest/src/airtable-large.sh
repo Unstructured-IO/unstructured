@@ -30,7 +30,7 @@ trap cleanup EXIT
 
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
    echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
-   exit 0
+   exit 8
 fi
 
 # Provides component IDs such as LARGE_TEST_LIST_OF_PATHS,

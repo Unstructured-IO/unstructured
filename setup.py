@@ -153,6 +153,7 @@ setup(
         "delta-table": load_requirements("requirements/ingest/delta-table.in"),
         "salesforce": load_requirements("requirements/ingest/salesforce.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
+        "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         "sftp": load_requirements("requirements/ingest/sftp.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),

@@ -29,7 +29,7 @@ trap cleanup EXIT
 
 if [ -z "$BOX_APP_CONFIG" ] && [ -z "$BOX_APP_CONFIG_PATH" ]; then
    echo "Skipping Box ingest test because neither BOX_APP_CONFIG nor BOX_APP_CONFIG_PATH env vars are set."
-   exit 0
+   exit 8
 fi
 
 if [ -z "$BOX_APP_CONFIG_PATH" ]; then

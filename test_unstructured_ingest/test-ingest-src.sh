@@ -1,51 +1,58 @@
 #!/usr/bin/env bash
 
-set -eu -o pipefail
+set -u -o pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
+# If the file already exists, reset it
+if [ -f "$SKIPPED_FILES_LOG" ]; then
+  rm "$SKIPPED_FILES_LOG"
+  touch "$SKIPPED_FILES_LOG"
+fi
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-'s3.sh'
-'s3-minio.sh'
-'azure.sh'
-'biomed-api.sh'
-'biomed-path.sh'
-# NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
-'pdf-fast-reprocess.sh'
-'salesforce.sh'
-'box.sh'
-'discord.sh'
-'dropbox.sh'
-'github.sh'
-'gitlab.sh'
-'google-drive.sh'
-'wikipedia.sh'
-'local.sh'
-'slack.sh'
-'against-api.sh'
-'gcs.sh'
-'onedrive.sh'
-'outlook.sh'
-'elasticsearch.sh'
-'confluence-diff.sh'
-'confluence-large.sh'
-'airtable-diff.sh'
-# NOTE(ryan): This test is disabled because it is triggering too many requests to the API
-# 'airtable-large.sh'
-'local-single-file.sh'
-'local-single-file-with-encoding.sh'
-'local-single-file-with-pdf-infer-table-structure.sh'
-'notion.sh'
-'delta-table.sh'
-'jira.sh'
-'sharepoint.sh'
-'sharepoint-with-permissions.sh'
-'local-embed.sh'
-'sftp.sh'
+  's3.sh'
+  's3-minio.sh'
+  'azure.sh'
+  'biomed-api.sh'
+  'biomed-path.sh'
+  # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
+  'pdf-fast-reprocess.sh'
+  'salesforce.sh'
+  'box.sh'
+  'discord.sh'
+  'dropbox.sh'
+  'github.sh'
+  'gitlab.sh'
+  'google-drive.sh'
+  'wikipedia.sh'
+  'local.sh'
+  'slack.sh'
+  'against-api.sh'
+  'gcs.sh'
+  'onedrive.sh'
+  'outlook.sh'
+  'elasticsearch.sh'
+  'confluence-diff.sh'
+  'confluence-large.sh'
+  'airtable-diff.sh'
+  # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
+  # 'airtable-large.sh'
+  'local-single-file.sh'
+  'local-single-file-with-encoding.sh'
+  'local-single-file-with-pdf-infer-table-structure.sh'
+  'notion.sh'
+  'delta-table.sh'
+  'jira.sh'
+  'sharepoint.sh'
+  'sharepoint-with-permissions.sh'
+  'hubspot.sh'
+  'local-embed.sh'
+  'sftp.sh'
 )
 
 full_python_matrix_tests=(
@@ -66,6 +73,8 @@ function print_last_run() {
   if [ "$CURRENT_TEST" != "none" ]; then
     echo "Last ran script: $CURRENT_TEST"
   fi
+  echo "######## SKIPPED TESTS: ########"
+  cat "$SKIPPED_FILES_LOG"
 }
 
 trap print_last_run EXIT
@@ -85,20 +94,22 @@ for test in "${all_tests[@]}"; do
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
   fi
-  if [[ "${tests_to_ignore[*]}" =~ $test ]]; then
-    echo "--------- RUNNING SCRIPT $test --- IGNORING FAILURES"
-    set +e
-    echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/src/"$test"
-    set -e
-    echo "--------- FINISHED SCRIPT $test ---------"
-  else
-    echo "--------- RUNNING SCRIPT $test ---------"
-    echo "Running ./test_unstructured_ingest/$test"
-    ./test_unstructured_ingest/src/"$test"
-    echo "--------- FINISHED SCRIPT $test ---------"
+  echo "--------- RUNNING SCRIPT $test ---------"
+  echo "Running ./test_unstructured_ingest/$test"
+  ./test_unstructured_ingest/src/"$test"
+  rc=$?
+  if [[ $rc -eq 8 ]]; then
+    echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
+  elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
+    echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
+    continue
+  elif [[ $rc -ne 0 ]]; then
+    exit $rc
   fi
+  echo "--------- FINISHED SCRIPT $test ---------"
 done
+
+set +e
 
 all_eval=(
   'text-extraction'

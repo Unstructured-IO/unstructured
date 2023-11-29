@@ -13,7 +13,7 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$AZURE_DEST_CONNECTION_STR" ]; then
    echo "Skipping Azure destination ingest test because the AZURE_DEST_CONNECTION_STR env var is not set."
-   exit 0
+   exit 8
 fi
 
 CONTAINER=utic-ingest-test-fixtures-output
