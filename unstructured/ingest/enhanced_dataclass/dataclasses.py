@@ -19,8 +19,8 @@ class EnhancedField(Field):
         "_field_type",  # Private: not to be used by user code.
     )
 
-    def __init__(self, *args, sensitive=False, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *args, sensitive=False):
+        super().__init__(*args)
         self.sensitive = sensitive
 
     @_recursive_repr
