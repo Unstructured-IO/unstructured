@@ -41,7 +41,7 @@ protobuf==4.23.4
     #   -c ingest/../constraints.in
     #   google-api-core
     #   googleapis-common-protos
-pyasn1==0.5.0
+pyasn1==0.5.1
     # via
     #   pyasn1-modules
     #   rsa

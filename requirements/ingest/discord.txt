@@ -26,5 +26,5 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-yarl==1.9.2
+yarl==1.9.3
     # via aiohttp
