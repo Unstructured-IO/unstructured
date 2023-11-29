@@ -16,6 +16,7 @@ from .gcs import GCSRunner
 from .github import GithubRunner
 from .gitlab import GitlabRunner
 from .google_drive import GoogleDriveRunner
+from .hubspot import HubSpotRunner
 from .jira import JiraRunner
 from .local import LocalRunner
 from .notion import NotionRunner
@@ -44,6 +45,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "gitlab": GitlabRunner,
     "gdrive": GoogleDriveRunner,
     "google_drive": GoogleDriveRunner,
+    "hubspot": HubSpotRunner,
     "jira": JiraRunner,
     "local": LocalRunner,
     "notion": NotionRunner,

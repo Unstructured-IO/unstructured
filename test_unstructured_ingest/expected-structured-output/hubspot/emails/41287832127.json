@@ -1,0 +1,135 @@
+[
+  {
+    "element_id": "449ba1b44e428c5e5cb2f3daf220bf10",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Contacted support (https://www.google.com/) for this issue. These are the findings:",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "9d459017ca7704c92c926193becd3d64",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Formatted text with highlights",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "dbdfa3eecd2f2b78884c78d80f655b39",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Optional bullet point",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "dbfa727d0434039dfcc1c469d894a5ac",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Additionally:",
+    "type": "Title"
+  },
+  {
+    "element_id": "7ec9e5221e28c519f3c55b4c83482afb",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "1. These",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "e018622ff09c88cbef13a0686f055e31",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "2. Are numbered",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "653257bc00021e92dadc939d1334068c",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T01:02:11.851000+00:00",
+        "date_modified": "2023-10-17T01:02:11.851000+00:00",
+        "record_locator": {
+          "hubspot_id": "41287832127"
+        }
+      },
+      "filename": "41287832127.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "3. Points on a list.",
+    "type": "ListItem"
+  }
+]
