@@ -39,6 +39,8 @@ function print_last_run() {
   if [ "$CURRENT_TEST" != "none" ]; then
     echo "Last ran script: $CURRENT_TEST"
   fi
+  echo "######## SKIPPED TESTS: ########"
+  cat "$SKIPPED_FILES_LOG"
 }
 
 trap print_last_run EXIT
