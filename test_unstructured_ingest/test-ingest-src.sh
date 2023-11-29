@@ -73,7 +73,9 @@ function print_last_run() {
     echo "Last ran script: $CURRENT_TEST"
   fi
   echo "######## SKIPPED TESTS: ########"
-  cat "$SKIPPED_FILES_LOG"
+  if [ -f "$file_name" ]; then
+    cat "$SKIPPED_FILES_LOG"
+  fi
 }
 
 trap print_last_run EXIT
