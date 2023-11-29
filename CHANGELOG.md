@@ -1,4 +1,4 @@
-## 0.11.1-dev5
+## 0.11.1
 
 ### Enhancements
 * **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
@@ -7,6 +7,7 @@
 
 ### Features
 
+* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
 * **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
