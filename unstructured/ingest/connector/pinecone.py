@@ -64,6 +64,7 @@ class PineconeDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
+    @DestinationConnectionError.wrap
     def check_connection(self):
         create_pinecone_object(
             self.connector_config.api_key,
