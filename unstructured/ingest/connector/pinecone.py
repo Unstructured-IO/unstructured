@@ -109,11 +109,6 @@ class PineconeDestinationConnector(BaseDestinationConnector):
                     ],  # noqa: E203
                 )
 
-    def select_fields_from_element(
-        self, element: t.Dict, fields: t.List[str] = ["text", "metadata"]
-    ) -> t.Dict:
-        return {key: element[key] for key in fields if key in element}
-
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
@@ -123,14 +118,21 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
                 # assign element_id to "id", embeddings to "values", and other fields to "metadata"
                 dict_content = [
+                    # While flatten_dict enables indexing on various fields,
+                    # element_serialized enables easily reloading the element object to memory.
+                    # element_serialized is formed without text/embeddings to avoid data bloating.
                     {
                         "id": element.pop("element_id", None),
                         "values": element.pop("embeddings", None),
-                        "metadata": flatten_dict(
-                            self.select_fields_from_element(element, fields=["text", "metadata"]),
-                            separator="-",
-                            flatten_lists=True,
-                        ),
+                        "metadata": {
+                            "text": element.pop("text", None),
+                            "element_serialized": json.dumps(element),
+                            **flatten_dict(
+                                element,
+                                separator="-",
+                                flatten_lists=True,
+                            ),
+                        },
                     }
                     for element in dict_content
                 ]
