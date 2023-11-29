@@ -63,8 +63,13 @@ jobs:
       run: |
         source .venv/bin/activate
         make check
-    - name: ShellCheck
-      uses: ludeeus/action-shellcheck@master
+
+  shellcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@master
 
 
   test_unit:
