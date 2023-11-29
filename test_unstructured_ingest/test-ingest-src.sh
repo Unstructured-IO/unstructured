@@ -7,8 +7,8 @@ SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
 # If the file already exists, reset it
 if [ -f "$SKIPPED_FILES_LOG" ]; then
   rm "$SKIPPED_FILES_LOG"
-  touch "$SKIPPED_FILES_LOG"
 fi
+touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
@@ -73,9 +73,7 @@ function print_last_run() {
     echo "Last ran script: $CURRENT_TEST"
   fi
   echo "######## SKIPPED TESTS: ########"
-  if [ -f "$SKIPPED_FILES_LOG" ]; then
-    cat "$SKIPPED_FILES_LOG"
-  fi
+  cat "$SKIPPED_FILES_LOG"
 }
 
 trap print_last_run EXIT
