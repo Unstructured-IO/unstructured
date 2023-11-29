@@ -347,6 +347,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
         MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"
