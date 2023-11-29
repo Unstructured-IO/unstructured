@@ -586,10 +586,7 @@ def _open_pdfminer_pages_generator(
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
 
-    rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    device, interpreter = init_pdfminer()
     try:
         i = 0
         pages = PDFPage.get_pages(fp)
