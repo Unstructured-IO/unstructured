@@ -48,7 +48,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup, changelog]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -248,7 +248,7 @@ jobs:
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup_ingest, lint, changelog]
+    needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
