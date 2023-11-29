@@ -1,10 +1,4 @@
-## 0.11.2
-
-### Features
-
-* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
-
-## 0.11.1-dev4
+## 0.11.1
 
 ### Enhancements
 
@@ -12,6 +6,7 @@
 
 ### Features
 
+* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
 * **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
