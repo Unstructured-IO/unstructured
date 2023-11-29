@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Core Functionality" href="core.html" /><link rel="prev" title="Docker Installation" href="installation/docker.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Unstructured API - Unstructured 0.11.0 documentation</title>
+  <title>Unstructured API - Unstructured 0.11.1 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -361,8 +361,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="ingest/destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="ingest/configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -925,11 +926,11 @@
 <p>The following instructions are intended to help you get up and running using Docker to interact with <code class="docutils literal notranslate"><span class="pre">unstructured-api</span></code>. See <a class="reference external" href="https://docs.docker.com/get-docker/">docker</a> if you don’t already have docker installed on your machine.</p>
 <p>NOTE: Multi-platform images are built to support both x86_64 and Apple silicon hardware. Docker pull should download the corresponding image for your architecture, but you can specify with <code class="docutils literal notranslate"><span class="pre">--platform</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">--platform</span> <span class="pre">linux/amd64</span></code>) if needed.</p>
 <p>Docker images is built for all pushes to <code class="docutils literal notranslate"><span class="pre">main</span></code>. Each image is tagged with the corresponding short commit hash (e.g. <code class="docutils literal notranslate"><span class="pre">fbc7a69</span></code>) and the application version (e.g. <code class="docutils literal notranslate"><span class="pre">0.5.5-dev1</span></code>). Also, the most recent image is tagged with <code class="docutils literal notranslate"><span class="pre">latest</span></code>. To leverage this, use <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">pull</span></code> from the image repository.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>quay.io/unstructured-io/unstructured-api:latest
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>downloads.unstructured.io/unstructured-io/unstructured-api:latest
 </pre></div>
 </div>
 <p>Once pulled, you can launch the container as a web app on localhost:8000.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-d<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>unstructured-api<span class="w"> </span>quay.io/unstructured-io/unstructured-api:latest<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>-d<span class="w"> </span>--rm<span class="w"> </span>--name<span class="w"> </span>unstructured-api<span class="w"> </span>downloads.unstructured.io/unstructured-io/unstructured-api:latest<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0
 </pre></div>
 </div>
 </section>
