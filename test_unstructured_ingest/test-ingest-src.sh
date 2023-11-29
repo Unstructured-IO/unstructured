@@ -73,7 +73,7 @@ function print_last_run() {
     echo "Last ran script: $CURRENT_TEST"
   fi
   echo "######## SKIPPED TESTS: ########"
-  if [ -f "$file_name" ]; then
+  if [ -f "$SKIPPED_FILES_LOG" ]; then
     cat "$SKIPPED_FILES_LOG"
   fi
 }
