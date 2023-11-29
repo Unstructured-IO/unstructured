@@ -7,10 +7,10 @@
         "date_modified": "2023-07-08T20:46:29-07:00",
         "record_locator": {
           "protocol": "box",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-2/ideas-page.html"
+          "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested-2/ideas-page.html"
         },
-        "url": "box://utic-test-ingest-fixtures/nested-2/ideas-page.html",
-        "version": "283914639584808115992043447111745786445"
+        "url": "box://utic-test-ingest-fixtures/nested-1/nested-2/ideas-page.html",
+        "version": "335093909193111497704678674535730958705"
       },
       "filetype": "text/html",
       "languages": [
