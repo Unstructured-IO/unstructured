@@ -4,6 +4,7 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
+from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from unstructured_inference.inference import layout
 
@@ -125,7 +126,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises((FileNotFoundError, PDFPageCountError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 

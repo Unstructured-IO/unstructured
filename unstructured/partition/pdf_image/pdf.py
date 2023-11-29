@@ -21,6 +21,7 @@ from typing import (
 import numpy as np
 import pdf2image
 import wrapt
+from pdfminer import psparser
 from pdfminer.layout import (
     LTChar,
     LTContainer,
@@ -95,8 +96,8 @@ from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
 )
-from unstructured.utils import requires_dependencies
 from unstructured.patches.pdfminer import parse_keyword
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
