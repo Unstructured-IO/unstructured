@@ -33,7 +33,7 @@ logger.setLevel(logging.DEBUG)
 agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
 
 
-def measure_text_edit_distance(
+def measure_text_extraction_accuracy(
     output_dir: str,
     source_dir: str,
     output_list: Optional[List[str]] = None,
