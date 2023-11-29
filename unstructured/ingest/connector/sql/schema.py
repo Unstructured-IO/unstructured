@@ -47,24 +47,28 @@ TABLE_COLUMN_NAMES = {
 
 
 class DatabaseSchema:
-    def __init__(self, conn, db_name) -> None:
+    def __init__(self, conn, db_name, table_name_mapping, table_column_mapping) -> None:
         self.db_name = db_name
         self.cursor = conn.cursor()
         self.placeholder = "?" if db_name == "sqlite" else "%s"
+        self.table_name_mapping = table_name_mapping
+        self.table_column_mapping = table_column_mapping
 
     def insert(
         self,
-        table_name: t.List,
+        table,
+        table_name: str,
         data: t.Dict[str, any],
-        table_column_mapping: t.Dict[str, str] = None,
     ) -> None:
         columns = []
         values = []
 
-        for c in TABLE_COLUMN_NAMES[table_name]:
+        for c in TABLE_COLUMN_NAMES[table]:
             if c in data:
                 column_name = (
-                    c if (table_column_mapping is None) else table_column_mapping.get(c, c)
+                    c
+                    if (self.table_column_mapping is None)
+                    else self.table_column_mapping.get(c, c)
                 )
                 columns.append(column_name)
                 values.append(data[c])
@@ -76,9 +80,9 @@ class DatabaseSchema:
 
         self.cursor.execute(query, values)
 
-    def drop_schema(self, table_name_mapping):
+    def clear_schema(self):
         tables = [
-            table_name_mapping[v]
+            self.table_name_mapping[v]
             for v in [
                 COORDINATES_TABLE_NAME,
                 DATA_SOURCE_TABLE_NAME,
@@ -86,15 +90,14 @@ class DatabaseSchema:
                 ELEMENTS_TABLE_NAME,
             ]
         ]
-        query = f"DROP TABLE {','.join(tables)}"
-
+        query = "; ".join([f"DELETE FROM {x}" for x in tables])
         self.cursor.execute(query)
 
-    def check_schema_exists(self, table_name_mapping: t.Optional[t.Dict[str, str]] = None):
+    def check_schema_exists(self):
         elements_table_name = (
             ELEMENTS_TABLE_NAME
-            if (table_name_mapping is None)
-            else table_name_mapping.get(ELEMENTS_TABLE_NAME, ELEMENTS_TABLE_NAME)
+            if (self.table_name_mapping is None)
+            else self.table_name_mapping.get(ELEMENTS_TABLE_NAME, ELEMENTS_TABLE_NAME)
         )
         query = f"SELECT id FROM {elements_table_name} LIMIT 1;"
         result = self.cursor.execute(query)

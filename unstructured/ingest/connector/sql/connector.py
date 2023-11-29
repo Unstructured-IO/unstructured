@@ -84,7 +84,7 @@ class SqlWriteConfig(WriteConfig):
     table_column_mapping: t.Optional[t.Dict[str, str]] = None
 
     def __post_init__(self):
-        if self.table_column_mapping is None:
+        if self.table_name_mapping is None:
             self.table_name_mapping = {
                 ELEMENTS_TABLE_NAME: ELEMENTS_TABLE_NAME,
                 METADATA_TABLE_NAME: METADATA_TABLE_NAME,
@@ -196,12 +196,17 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         return data, metadata, data_source, coordinates
 
-    def _resolve_mode(self, schema_exists) -> t.Optional[dict]:
-        if self.write_config.mode == "error" and schema_exists:
+    def _resolve_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
+        schema_exists = schema_helper.check_schema_exists()
+        if (
+            self.write_config.mode == "error" or self.write_config.mode == "ignore"
+        ) and schema_exists:
             raise ValueError(
                 f"There's already an elements schema ({str(self.write_config.table_name_mapping)}) "
                 f"at {self.connector_config.db_url}"
             )
+        if self.write_config.mode == "overwrite" and schema_exists:
+            schema_helper.clear_schema()
 
     # @DestinationConnectionError.wrap
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
@@ -212,42 +217,45 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         conn = self.connector_config.connection()
         with conn:
-            schema_helper = DatabaseSchema(conn=conn, db_name=self.connector_config.db_name)
+            schema_helper = DatabaseSchema(
+                conn=conn,
+                db_name=self.connector_config.db_name,
+                table_name_mapping=self.write_config.table_name_mapping,
+                table_column_mapping=self.write_config.table_column_mapping,
+            )
 
-            schema_exists = schema_helper.check_schema_exists(self.write_config.table_name_mapping)
-            self._resolve_mode(schema_exists)
+            self._resolve_mode(schema_helper)
             for e in json_list:
                 elem, mdata, dsource, coords = self.conform_dict(e)
                 if coords is not None:
-                    coords_name = self.write_config.table_name_mapping[COORDINATES_TABLE_NAME]
                     schema_helper.insert(
-                        coords_name, coords, self.write_config.table_column_mapping.get(coords_name)
+                        COORDINATES_TABLE_NAME,
+                        self.write_config.table_name_mapping[COORDINATES_TABLE_NAME],
+                        coords,
                     )
 
                 if dsource is not None:
-                    dsource_name = self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME]
                     schema_helper.insert(
-                        coords_name,
+                        DATA_SOURCE_TABLE_NAME,
+                        self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME],
                         dsource,
-                        self.write_config.table_column_mapping.get(dsource_name),
                     )
 
                 if mdata is not None:
-                    mdata_name = self.write_config.table_name_mapping[METADATA_TABLE_NAME]
                     schema_helper.insert(
-                        mdata_name,
+                        METADATA_TABLE_NAME,
+                        self.write_config.table_name_mapping[METADATA_TABLE_NAME],
                         mdata,
-                        self.write_config.table_column_mapping.get(mdata_name),
                     )
 
-                elements_name = self.write_config.table_name_mapping[ELEMENTS_TABLE_NAME]
                 schema_helper.insert(
-                    elements_name,
+                    ELEMENTS_TABLE_NAME,
+                    self.write_config.table_name_mapping[ELEMENTS_TABLE_NAME],
                     elem,
-                    self.write_config.table_column_mapping.get(elements_name),
                 )
 
             conn.commit()
+            schema_helper.cursor.close()
         conn.close()
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
