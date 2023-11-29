@@ -349,7 +349,11 @@ def convert_to_coco(
     coco_dataset = {}
     # Handle Info
     coco_dataset["info"] = {
-        "description": f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}" if not dataset_description else dataset_description,
+        "description": (
+            dataset_description
+            if dataset_description
+            else f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}"
+        ),
         "version": dataset_version,
         "year": datetime.now().year,
         "contributors": ",".join(contributors),
