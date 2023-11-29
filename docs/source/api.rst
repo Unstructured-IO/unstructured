@@ -1,7 +1,7 @@
 Unstructured API
 #################
 
-Try our hosted API! You can get your API key `here <https://unstructured.io/#get-api-key>`__ now and start using it today.
+Try our hosted API! You can get your API key `here <https://unstructured.io/api-key>`__ now and start using it today.
 
 You will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the `API documentation <https://api.unstructured.io/general/docs#/>`__.
 
