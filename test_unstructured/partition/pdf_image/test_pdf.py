@@ -20,7 +20,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition import strategies
-from unstructured.partition.pdf_image import ocr, pdf
+from unstructured.partition.pdf_image import ocr, pdf, pdfminer_processing
 from unstructured.partition.pdf_image.pdf import get_uris_from_annots
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
@@ -111,13 +111,23 @@ def test_partition_pdf_local(monkeypatch, filename, file):
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
+        pdfminer_processing,
+        "process_data_with_pdfminer",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "process_file_with_pdfminer",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
         ocr,
         "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
         ocr,
-        "process_data_with_ocr",
+        "process_file_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
