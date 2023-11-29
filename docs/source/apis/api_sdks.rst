@@ -70,7 +70,7 @@ Usage
 
 Below is a basic example of how to use the JavaScript SDK:
 
-.. code-block:: javascript
+.. code-block:: bash
 
     import { UnstructuredClient } from "unstructured-client";
     import { PartitionResponse } from "unstructured-client/dist/sdk/models/operations";
