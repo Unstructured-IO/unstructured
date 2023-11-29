@@ -15,8 +15,7 @@ from dataclasses_json.core import (
 
 
 def _recursive_repr(user_function):
-    # Decorator to make a repr function return "..." for a recursive
-    # call.
+    # Copied from dataclasses as this method isn't exposed for importing
     repr_running = set()
 
     @functools.wraps(user_function)
@@ -48,7 +47,12 @@ def _asdict(obj, encode_json=False, preserve_sensitive=True, redacted_text="***R
             elif overrides[field.name].encoder:
                 value = getattr(obj, field.name)
             else:
-                value = _asdict(getattr(obj, field.name), encode_json=encode_json)
+                value = _asdict(
+                    getattr(obj, field.name),
+                    encode_json=encode_json,
+                    preserve_sensitive=preserve_sensitive,
+                    redacted_text=redacted_text,
+                )
             result.append((field.name, value))
 
         result = _handle_undefined_parameters_safe(cls=obj, kvs=dict(result), usage="to")
