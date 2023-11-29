@@ -289,7 +289,7 @@ def test_path_extraction_dropbox_subfolder():
     assert config.file_path == ""
 
 
-def test_path_extraction_s3_no_trailing_prefix():
+def test_path_extraction_s3_bucket_only():
     config = FsspecConfig(remote_url="s3://bucket-name")
     assert config.protocol == "s3"
     assert config.path_without_protocol == "bucket-name"
