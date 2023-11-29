@@ -77,8 +77,6 @@ from unstructured.partition.pdf_image.ocr import (
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
     init_pdfminer,
-    process_data_with_pdfminer,
-    process_file_with_pdfminer,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -100,7 +98,7 @@ from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
+    pass
 
 
 # NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
@@ -359,14 +357,14 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.pdf_image.pdfminer_processing import (
-        process_file_with_pdfminer,
-        process_data_with_pdfminer,
-    )
-
     from unstructured.partition.pdf_image.ocr import (
         process_data_with_ocr,
         process_file_with_ocr,
+    )
+
+    from unstructured.partition.pdf_image.pdfminer_processing import (
+        process_data_with_pdfminer,
+        process_file_with_pdfminer,
     )
 
     if languages is None:
@@ -492,8 +490,6 @@ def _partition_pdf_or_image_local(
                 out_elements.append(cast(Element, el))
 
     return out_elements
-
-
 
 
 @requires_dependencies("pdfminer", "local-inference")

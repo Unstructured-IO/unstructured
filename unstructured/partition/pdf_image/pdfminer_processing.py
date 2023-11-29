@@ -5,13 +5,18 @@ from pdfminer.layout import LAParams, LTContainer, LTImage
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
 from pdfminer.utils import open_filename
-
-from unstructured.partition.utils.constants import Source
-
-from unstructured_inference.inference.elements import TextRegion, EmbeddedTextRegion, ImageTextRegion
-from unstructured_inference.inference.layoutelement import merge_inferred_layout_with_extracted_layout
+from unstructured_inference.inference.elements import (
+    EmbeddedTextRegion,
+    ImageTextRegion,
+    TextRegion,
+)
+from unstructured_inference.inference.layoutelement import (
+    merge_inferred_layout_with_extracted_layout,
+)
 from unstructured_inference.inference.ordering import order_layout
 from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
+from unstructured.partition.utils.constants import Source
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
