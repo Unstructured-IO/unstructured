@@ -12,7 +12,7 @@ from requests.adapters import HTTPAdapter
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -104,7 +104,7 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
 
 @dataclass
-class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class BiomedIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleBiomedConfig
     file_meta: BiomedFileMeta
     registry_name: str = "biomed"
@@ -127,7 +127,7 @@ class BiomedIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             Path.unlink(self.filename)
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         download_path = self.file_meta.download_filepath  # type: ignore
         dir_ = Path(os.path.dirname(download_path))  # type: ignore

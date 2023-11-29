@@ -13,7 +13,7 @@ mkdir -p "$OUTPUT_DIR"
 EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
-  METRIC_STRATEGY="measure-text-edit-distance-command"
+  METRIC_STRATEGY="measure-text-extraction-accuracy-command"
 elif [ "$EVAL_NAME" == "element-type" ]; then
   METRIC_STRATEGY="measure-element-type-accuracy-command"
 else

@@ -6,7 +6,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -26,7 +26,7 @@ class SimpleWikipediaConfig(BaseConnectorConfig):
 
 
 @dataclass
-class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class WikipediaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleWikipediaConfig = field(repr=False)
 
     @property
@@ -93,7 +93,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()

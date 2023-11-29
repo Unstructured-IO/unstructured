@@ -1,0 +1,40 @@
+[
+  {
+    "element_id": "e16186c007177522ca0eca7fd0fcf4ee",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-10T20:40:26.538000+00:00",
+        "date_modified": "2023-10-10T20:40:32.184000+00:00",
+        "record_locator": {
+          "hubspot_id": "1976928828"
+        }
+      },
+      "filename": "1976928828.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "New testing ticket",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "ee441736574234833b081e33c08203ae",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-10T20:40:26.538000+00:00",
+        "date_modified": "2023-10-10T20:40:32.184000+00:00",
+        "record_locator": {
+          "hubspot_id": "1976928828"
+        }
+      },
+      "filename": "1976928828.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is a testing ticket. This text is used for testing purposes and is meant to represent a block of content within a ticket in the ticket description field. The remains of this is text is just filler.",
+    "type": "NarrativeText"
+  }
+]

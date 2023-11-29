@@ -8,7 +8,7 @@ from pathlib import Path
 
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     SourceMetadata,
 )
@@ -30,7 +30,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
 
 
 @dataclass
-class LocalIngestDoc(BaseIngestDoc):
+class LocalIngestDoc(BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
     """
