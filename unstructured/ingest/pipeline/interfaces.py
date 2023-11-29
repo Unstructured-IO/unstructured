@@ -34,7 +34,7 @@ class PipelineContext(ProcessorConfig):
     Data that gets shared across each pipeline node
     """
 
-    file_handler: FileHandler = DEFAULT_FILE_HANDLER
+    file_handler: FileHandler = field(default=DEFAULT_FILE_HANDLER)
 
     def __post_init__(self):
         self._ingest_docs_map: t.Optional[DictProxy] = None
