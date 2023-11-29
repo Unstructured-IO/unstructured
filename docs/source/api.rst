@@ -568,13 +568,13 @@ Docker images is built for all pushes to ``main``. Each image is tagged with the
 
 .. code:: shell
 
-  docker pull quay.io/unstructured-io/unstructured-api:latest
+  docker pull downloads.unstructured.io/unstructured-io/unstructured-api:latest
 
 Once pulled, you can launch the container as a web app on localhost:8000.
 
 .. code:: shell
 
-  docker run -p 8000:8000 -d --rm --name unstructured-api quay.io/unstructured-io/unstructured-api:latest --port 8000 --host 0.0.0.0
+  docker run -p 8000:8000 -d --rm --name unstructured-api downloads.unstructured.io/unstructured-io/unstructured-api:latest --port 8000 --host 0.0.0.0
 
 
 Developing with the API Locally
