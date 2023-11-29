@@ -10,9 +10,9 @@ DEFAULT_ENCRYPTION = NoopEncryption()
 
 @dataclass
 class FileStat:
-    size: int
     exists: bool
-    is_file: bool
+    size: t.Optional[int] = None
+    is_file: t.Optional[bool] = None
 
 
 @dataclass

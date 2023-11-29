@@ -6,7 +6,9 @@ from unstructured.ingest.pipeline.file_handler.interfaces import FileHandler, Fi
 class LocalFileHandler(FileHandler):
     def stat(self, filepath: str) -> FileStat:
         path = Path(filepath)
-        return FileStat(exists=path.exists(), is_file=path.is_file(), size=path.stat().st_size)
+        if path.exists():
+            return FileStat(exists=True, is_file=path.is_file(), size=path.stat().st_size)
+        return FileStat(exists=False)
 
     def _write(self, data: str, filepath: str):
         with open(filepath, "w") as output_f:
