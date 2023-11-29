@@ -12,7 +12,7 @@ from unstructured.ingest.error import SourceConnectionError, SourceConnectionNet
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -41,7 +41,7 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
 
 
 @dataclass
-class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleDeltaTableConfig
     uri: str
     modified_date: str
@@ -94,7 +94,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         fs = self._get_fs_from_uri()
         self.update_source_metadata(fs=fs)
@@ -118,6 +118,9 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleDeltaTableConfig
     delta_table: t.Optional["DeltaTable"] = None
+
+    def check_connection(self):
+        pass
 
     @requires_dependencies(["deltalake"], extras="delta-table")
     def initialize(self):
@@ -172,6 +175,9 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         pass
 
+    def check_connection(self):
+        pass
+
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
@@ -200,7 +206,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
         writer.join()
 
     @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         elements_dict: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename

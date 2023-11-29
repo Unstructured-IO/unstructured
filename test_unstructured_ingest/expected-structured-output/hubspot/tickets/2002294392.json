@@ -1,0 +1,116 @@
+[
+  {
+    "element_id": "7f997c725c554921f9c717d7e5aba9cb",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Issue with tests",
+    "type": "Title"
+  },
+  {
+    "element_id": "25dc3d5a3aab9da2b4692bd9d6e8ef8e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "There's no issue, only another sample ticket for testing purposes.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "35d3a70798368dc95d5858bcd58ccb9e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is an empty custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "35d3a70798368dc95d5858bcd58ccb9e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is an empty custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "35d3a70798368dc95d5858bcd58ccb9e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is an empty custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "35d3a70798368dc95d5858bcd58ccb9e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-17T00:59:03.435000+00:00",
+        "date_modified": "2023-10-17T02:57:25.829000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002294392"
+        }
+      },
+      "filename": "2002294392.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is an empty custom property.",
+    "type": "NarrativeText"
+  }
+]

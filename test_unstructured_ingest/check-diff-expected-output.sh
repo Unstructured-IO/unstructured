@@ -16,10 +16,11 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 OVERWRITE_FIXTURES=${OVERWRITE_FIXTURES:-false}
 TMP_DIRECTORY_CLEANUP=${TMP_DIRECTORY_CLEANUP:-true}
 OUTPUT_FOLDER_NAME=$1
-OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
-OUTPUT_DIR_TEXT=$SCRIPT_DIR/text-output/$OUTPUT_FOLDER_NAME
-EXPECTED_OUTPUT_DIR=$SCRIPT_DIR/expected-structured-output/$OUTPUT_FOLDER_NAME
-EXPECTED_OUTPUT_DIR_TEXT=$SCRIPT_DIR/expected-text-output/$OUTPUT_FOLDER_NAME
+OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
+OUTPUT_DIR_TEXT=$OUTPUT_ROOT/text-output/$OUTPUT_FOLDER_NAME
+EXPECTED_OUTPUT_DIR=$OUTPUT_ROOT/expected-structured-output/$OUTPUT_FOLDER_NAME
+EXPECTED_OUTPUT_DIR_TEXT=$OUTPUT_ROOT/expected-text-output/$OUTPUT_FOLDER_NAME
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -42,7 +43,7 @@ if [ "$OVERWRITE_FIXTURES" != "false" ]; then
         rm -rf "$EXPECTED_OUTPUT_DIR"
     fi
     mkdir -p "$EXPECTED_OUTPUT_DIR"
-    cp -rf "$OUTPUT_DIR" "$SCRIPT_DIR/expected-structured-output"
+    cp -rf "$OUTPUT_DIR" "$OUTPUT_ROOT/expected-structured-output"
 elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
     "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"

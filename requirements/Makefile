@@ -1,7 +1,7 @@
 PIP = pip-compile --upgrade -o $@ $<
 SHELL := /bin/bash
 # we don't need to make constraints.txt from constraints.in
-REQUIREMENTS := $(filter-out constraints.in,$(shell find . -type f -name '*.in'))
+REQUIREMENTS := $(filter-out ./constraints.in,$(shell find . -type f -name '*.in'))
 REQUIREMENTSTXT := $(patsubst %.in,%.txt,$(REQUIREMENTS))
 
 # those dependencies only needs constraint.in to and %.in to compile

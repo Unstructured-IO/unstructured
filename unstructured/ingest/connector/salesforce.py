@@ -22,7 +22,7 @@ from dateutil import parser  # type: ignore
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -82,7 +82,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleSalesforceConfig
     record_type: str
     record_id: str
@@ -183,7 +183,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
@@ -223,6 +223,16 @@ class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     def initialize(self):
         pass
+
+    @requires_dependencies(["simple_salesforce"], extras="salesforce")
+    def check_connection(self):
+        from simple_salesforce.exceptions import SalesforceError
+
+        try:
+            self.connector_config.get_client()
+        except SalesforceError as salesforce_error:
+            logger.error(f"failed to validate connection: {salesforce_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {salesforce_error}")
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_ingest_docs(self) -> t.List[SalesforceIngestDoc]:

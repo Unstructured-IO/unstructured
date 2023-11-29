@@ -1,38 +1,38 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "cebc4803f41f12981b808ffd79d7b480",
     "metadata": {
       "data_source": {
-        "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATzq5tAADZYn%2FlfnvLSqIcW%2FYsN8ebAAAZT8XfAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
-        "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAAZRQ8Y",
+        "date_created": "2023-07-25T01:26:22",
+        "date_modified": "2023-07-25T01:26:41",
         "record_locator": {
           "message_id": "AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn-lfnvLSqIcW-YsN8ebAAATzq5tAADZYn-lfnvLSqIcW-YsN8ebAAAZT8XfAAA=",
           "user_email": "devops@unstructuredio.onmicrosoft.com"
         },
-        "date_created": "2023-07-25T01:26:22",
-        "date_modified": "2023-07-25T01:26:41"
+        "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATzq5tAADZYn%2FlfnvLSqIcW%2FYsN8ebAAAZT8XfAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+        "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAAZRQ8Y"
       },
+      "emphasized_text_contents": [
+        "this is a message for the subfolder1_1"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
       "filename": "497eba8c81c801c6.eml",
-      "last_modified": "2023-07-24T18:25:52-07:00",
       "filetype": "message/rfc822",
       "languages": [
         "eng"
       ],
+      "last_modified": "2023-07-24T18:25:52-07:00",
       "sent_from": [
         "Ryan Nikolaidis <ryan@unstructured.io>"
       ],
       "sent_to": [
         "devops@unstructuredio.onmicrosoft.com"
       ],
-      "subject": "subfolder1_1",
-      "emphasized_text_contents": [
-        "this is a message for the subfolder1_1"
-      ],
-      "emphasized_text_tags": [
-        "span"
-      ]
+      "subject": "subfolder1_1"
     },
-    "text": "this is a message for the subfolder1_1"
+    "text": "this is a message for the subfolder1_1",
+    "type": "NarrativeText"
   }
 ]

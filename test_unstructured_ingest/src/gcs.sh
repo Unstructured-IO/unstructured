@@ -15,6 +15,7 @@ CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC2317
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -26,7 +27,7 @@ trap cleanup EXIT
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
-    exit 0
+    exit 8
 fi
 
 # Create temporary service key file
@@ -48,7 +49,4 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --remote-url gs://utic-test-ingest-fixtures/ \
     --work-dir "$WORK_DIR"
 
-
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
-
-"$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

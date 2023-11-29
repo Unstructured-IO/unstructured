@@ -11,7 +11,7 @@ from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -71,7 +71,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleSharepointConfig
     site_url: str
     server_path: str
@@ -276,7 +276,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 file.download(f).execute_query()
         logger.info(f"File downloaded: {self.filename}")
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @SourceConnectionError.wrap
     @requires_dependencies(["office365"])
     def get_file(self):
@@ -290,6 +290,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
+
+    def check_connection(self):
+        try:
+            site_client = self.connector_config.get_site_client()
+            site_client.site_pages.pages.get().execute_query()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:

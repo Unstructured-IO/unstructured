@@ -5,11 +5,15 @@ from contextlib import suppress
 from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
-from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
+)
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     FsspecConfig,
     IngestDocCleanupMixin,
@@ -45,7 +49,7 @@ class SimpleFsspecConfig(FsspecConfig, BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -65,17 +69,26 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.processor_config.output_dir)
-            / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
-        )
+        # Dynamically parse filename , can change if remote path was pointing to the single
+        # file, a directory, or nested directory
+        if self.remote_file_path == self.connector_config.path_without_protocol:
+            file = self.remote_file_path.split("/")[-1]
+            filename = f"{file}.json"
+        else:
+            path_without_protocol = (
+                self.connector_config.path_without_protocol
+                if self.connector_config.path_without_protocol.endswith("/")
+                else f"{self.connector_config.path_without_protocol}/"
+            )
+            filename = f"{self.remote_file_path.replace(path_without_protocol, '')}.json"
+        return Path(self.processor_config.output_dir) / filename
 
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
         from fsspec import AbstractFileSystem, get_filesystem_class
@@ -147,6 +160,18 @@ class FsspecSourceConnector(
 
     connector_config: SimpleFsspecConfig
 
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def __post_init__(self):
         self.ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
 
@@ -192,7 +217,7 @@ class FsspecSourceConnector(
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
         uncompressed_files = []
-        docs: t.List[BaseIngestDoc] = []
+        docs: t.List[BaseSingleIngestDoc] = []
         for file in files:
             if any(file.endswith(ext) for ext in compressed_file_ext):
                 compressed_files.append(file)
@@ -244,6 +269,18 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.connector_config.get_access_kwargs(),
         )
 
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_kwargs(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
     def write_dict(
         self,
         *args,
@@ -276,7 +313,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **self.write_config.write_text_kwargs,
         )
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
             file_path = doc.base_output_filename
             filename = file_path if file_path else None

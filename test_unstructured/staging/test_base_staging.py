@@ -15,6 +15,7 @@ from unstructured.documents.elements import (
     CoordinateSystem,
     DataSourceMetadata,
     ElementMetadata,
+    ElementType,
     FigureCaption,
     Image,
     Link,
@@ -40,7 +41,7 @@ def test_convert_to_isd():
     isd = base.convert_to_isd(elements)
 
     assert isd[0]["text"] == "Title 1"
-    assert isd[0]["type"] == "Title"
+    assert isd[0]["type"] == ElementType.TITLE
 
     assert isd[1]["text"] == "Narrative 1"
     assert isd[1]["type"] == "NarrativeText"
@@ -157,7 +158,6 @@ def test_default_pandas_dtypes():
             emphasized_text_tags=["emphasized", "text", "tags"],
             text_as_html="text_as_html",
             regex_metadata={"key": [RegexMetadata(text="text", start=0, end=4)]},
-            max_characters=2,
             is_continuation=True,
             detection_class_prob=0.5,
         ),
@@ -292,6 +292,107 @@ def test_filter_element_types_with_exclude_and_include_element_type(
             exclude_element_types=element_types,
             include_element_types=element_types,
         )
+
+
+def test_convert_to_coco():
+    elements = [
+        Text(
+            text="some text",
+            element_id="123",
+            detection_origin="some origin",
+            embeddings=[1.1, 2.2, 3.3, 4.4],
+            metadata=ElementMetadata(
+                coordinates=CoordinatesMetadata(
+                    points=((1, 2), (1, 4), (3, 4), (3, 2)),
+                    system=CoordinateSystem(width=12.3, height=99.4),
+                ),
+                data_source=DataSourceMetadata(
+                    url="http://mysite.com",
+                    version="123",
+                    record_locator={"some": "data", "value": 3},
+                    date_created="then",
+                    date_processed="now",
+                    date_modified="before",
+                    permissions_data=[{"data": 1}, {"data": 2}],
+                ),
+                filename="filename",
+                file_directory="file_directory",
+                last_modified="last_modified",
+                filetype="filetype",
+                attached_to_filename="attached_to_filename",
+                parent_id="parent_id",
+                category_depth=1,
+                image_path="image_path",
+                languages=["eng", "spa"],
+                page_number=1,
+                page_name="page_name",
+                url="url",
+                link_urls=["links", "url"],
+                link_texts=["links", "texts"],
+                links=[Link(text="text", url="url", start_index=1)],
+                sent_from=["sent", "from"],
+                sent_to=["sent", "to"],
+                subject="subject",
+                section="section",
+                header_footer_type="header_footer_type",
+                emphasized_text_contents=["emphasized", "text", "contents"],
+                emphasized_text_tags=["emphasized", "text", "tags"],
+                text_as_html="text_as_html",
+                regex_metadata={"key": [RegexMetadata(text="text", start=0, end=4)]},
+                is_continuation=True,
+                detection_class_prob=0.5,
+            ),
+        )
+    ]
+    missing_elements = [
+        Text(
+            text="some text",
+            element_id="123",
+            detection_origin="some origin",
+            embeddings=[1.1, 2.2, 3.3, 4.4],
+            metadata=ElementMetadata(
+                data_source=DataSourceMetadata(
+                    url="http://mysite.com",
+                    version="123",
+                    record_locator={"some": "data", "value": 3},
+                    date_created="then",
+                    date_processed="now",
+                    date_modified="before",
+                    permissions_data=[{"data": 1}, {"data": 2}],
+                ),
+                filename="filename",
+                file_directory="file_directory",
+                last_modified="last_modified",
+                filetype="filetype",
+                attached_to_filename="attached_to_filename",
+                parent_id="parent_id",
+                category_depth=1,
+                image_path="image_path",
+                languages=["eng", "spa"],
+                page_number=1,
+                page_name="page_name",
+                url="url",
+                link_urls=["links", "url"],
+                link_texts=["links", "texts"],
+                links=[Link(text="text", url="url", start_index=1)],
+                sent_from=["sent", "from"],
+                sent_to=["sent", "to"],
+                subject="subject",
+                section="section",
+                header_footer_type="header_footer_type",
+                emphasized_text_contents=["emphasized", "text", "contents"],
+                emphasized_text_tags=["emphasized", "text", "tags"],
+                text_as_html="text_as_html",
+                regex_metadata={"key": [RegexMetadata(text="text", start=0, end=4)]},
+                is_continuation=True,
+                detection_class_prob=0.5,
+            ),
+        )
+    ]
+    full_coco = base.convert_to_coco(elements)
+    limited_coco = base.convert_to_coco(missing_elements)
+    assert full_coco["annotations"][0]["area"]
+    assert limited_coco["annotations"][0]["area"] is None
 
 
 def test_flatten_dict():

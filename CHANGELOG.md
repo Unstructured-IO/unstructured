@@ -1,8 +1,91 @@
-## 0.10.29-dev13
+## 0.11.2-dev0
 
 ### Enhancements
 
-* **Add include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
+### Features
+
+* * **Add Pinecone destination connector.** Problem: After ingesting data from a source, users might want to produce embeddings for their data and write these into a vector DB. Pinecone is an option among these vector databases. Feature: Added Pinecone destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Pinecone.
+
+### Fixes
+
+* **Process chunking parameter names in ingest correctly** Solves a bug where chunking parameters weren't being processed and used by ingest cli by renaming faulty parameter names and prepends; adds relevant parameters to ingest pinecone test to verify that the parameters are functional.
+
+## 0.11.1
+
+### Enhancements
+* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
+
+* **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
+
+### Features
+
+* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
+* **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
+
+### Fixes
+
+* **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
+* **Fix DOCX merged table cell repeats cell text.** Only include text for a merged cell, not for each underlying cell spanned by the merge.
+* **Fix tables not extracted from DOCX header/footers.** Headers and footers in DOCX documents skip tables defined in the header and commonly used for layout/alignment purposes. Extract text from tables as a string and include in the `Header` and `Footer` document elements.
+* **Fix output filepath for fsspec-based source connectors.** Previously the base directory was being included in the output filepath unnecessarily.
+
+## 0.11.0
+
+### Enhancements
+
+* **Add a class for the strategy constants.** Add a class `PartitionStrategy` for the strategy constants and use the constants to replace strategy strings.
+* **Temporary Support for paddle language parameter.** User can specify default langage code for paddle with ENV `DEFAULT_PADDLE_LANG` before we have the language mapping for paddle.
+* **Improve DOCX page-break fidelity.** Improve page-break fidelity such that a paragraph containing a page-break is split into two elements, one containing the text before the page-break and the other the text after. Emit the PageBreak element between these two and assign the correct page-number (n and n+1 respectively) to the two textual elements.
+
+### Features
+
+* **Add ad-hoc fields to `ElementMetadata` instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
+* **MongoDB Destination Connector.** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
+
+### Fixes
+
+* **Fix `TYPE_TO_TEXT_ELEMENT_MAP`.** Updated `Figure` mapping from `FigureCaption` to `Image`.
+* **Handle errors when extracting PDF text** Certain pdfs throw unexpected errors when being opened by `pdfminer`, causing `partition_pdf()` to fail. We expect to be able to partition smoothly using an alternative strategy if text extraction doesn't work.  Added exception handling to handle unexpected errors when extracting pdf text and to help determine pdf strategy.
+* **Fix `fast` strategy fall back to `ocr_only`** The `fast` strategy should not fall back to a more expensive strategy.
+* **Remove default user ./ssh folder** The default notebook user during image build would create the known_hosts file with incorrect ownership, this is legacy and no longer needed so it was removed.
+* **Include `languages` in metadata when partitioning `strategy=hi_res` or `fast`** User defined `languages` was previously used for text detection, but not included in the resulting element metadata for some strategies. `languages` will now be included in the metadata regardless of partition strategy for pdfs and images.
+* **Handle a case where Paddle returns a list item in ocr_data as None** In partition, while parsing PaddleOCR data, it was assumed that PaddleOCR does not return None for any list item in ocr_data. Removed the assumption by skipping the text region whenever this happens.
+* **Fix some pdfs returning `KeyError: 'N'`** Certain pdfs were throwing this error when being opened by pdfminer. Added a wrapper function for pdfminer that allows these documents to be partitioned.
+* **Fix mis-splits on `Table` chunks.** Remedies repeated appearance of full `.text_as_html` on metadata of each `TableChunk` split from a `Table` element too large to fit in the chunking window.
+* **Import tables_agent from inference** so that we don't have to initialize a global table agent in unstructured OCR again
+* **Fix empty table is identified as bulleted-table.** A table with no text content was mistakenly identified as a bulleted-table and processed by the wrong branch of the initial HTML partitioner.
+* **Fix partition_html() emits empty (no text) tables.** A table with cells nested below a `<thead>` or `<tfoot>` element was emitted as a table element having no text and unparseable HTML in `element.metadata.text_as_html`. Do not emit empty tables to the element stream.
+* **Fix HTML `element.metadata.text_as_html` contains spurious <br> elements in invalid locations.** The HTML generated for the `text_as_html` metadata for HTML tables contained `<br>` elements invalid locations like between `<table>` and `<tr>`. Change the HTML generator such that these do not appear.
+* **Fix HTML table cells enclosed in <thead> and <tfoot> elements are dropped.** HTML table cells nested in a `<thead>` or `<tfoot>` element were not detected and the text in those cells was omitted from the table element text and `.text_as_html`. Detect table rows regardless of the semantic tag they may be nested in.
+* **Remove whitespace padding from `.text_as_html`.** `tabulate` inserts padding spaces to achieve visual alignment of columns in HTML tables it generates. Add our own HTML generator to do this simple job and omit that padding as well as newlines ("\n") used for human readability.
+* **Fix local connector with absolute input path** When passed an absolute filepath for the input document path, the local connector incorrectly writes the output file to the input file directory. This fixes such that the output in this case is written to `output-dir/input-filename.json`
+
+## 0.10.30
+
+### Enhancements
+
+* **Support nested DOCX tables.** In DOCX, like HTML, a table cell can itself contain a table. In this case, create nested HTML tables to reflect that structure and create a plain-text table with captures all the text in nested tables, formatting it as a reasonable facsimile of a table.
+* **Add connection check to ingest connectors** Each source and destination connector now support a `check_connection()` method which makes sure a valid connection can be established with the source/destination given any authentication credentials in a lightweight request.
+
+### Features
+
+* **Add functionality to do a second OCR on cropped table images.** Changes to the values for scaling ENVs affect entire page OCR output(OCR regression) so we now do a second OCR for tables.
+* **Adds ability to pass timeout for a request when partitioning via a `url`.** `partition` now accepts a new optional parameter `request_timeout` which if set will prevent any `requests.get` from hanging indefinitely and instead will raise a timeout error. This is useful when partitioning a url that may be slow to respond or may not respond at all.
+
+### Fixes
+
+* **Fix logic that determines pdf auto strategy.** Previously, `_determine_pdf_auto_strategy` returned `hi_res` strategy only if `infer_table_structure` was true. It now returns the `hi_res` strategy if either `infer_table_structure` or `extract_images_in_pdf` is true.
+* **Fix invalid coordinates when parsing tesseract ocr data.** Previously, when parsing tesseract ocr data, the ocr data had invalid bboxes if zoom was set to `0`. A logical check is now added to avoid such error.
+* **Fix ingest partition parameters not being passed to the api.** When using the --partition-by-api flag via unstructured-ingest, none of the partition arguments are forwarded, meaning that these options are disregarded. With this change, we now pass through all of the relevant partition arguments to the api. This allows a user to specify all of the same partition arguments they would locally and have them respected when specifying --partition-by-api.
+* **Support tables in section-less DOCX.** Generalize solution for MS Chat Transcripts exported as DOCX by including tables in the partitioned output when present.
+* **Support tables that contain only numbers when partitioning via `ocr_only`** Tables that contain only numbers are returned as floats in a pandas.DataFrame when the image is converted from `.image_to_data()`. An AttributeError was raised downstream when trying to `.strip()` the floats.
+* **Improve DOCX page-break detection.** DOCX page breaks are reliably indicated by `w:lastRenderedPageBreak` elements present in the document XML. Page breaks are NOT reliably indicated by "hard" page-breaks inserted by the author and when present are redundant to a `w:lastRenderedPageBreak` element so cause over-counting if used. Use rendered page-breaks only.
+
+## 0.10.29
+
+### Enhancements
+
+* **Adds include_header argument for partition_csv and partition_tsv** Now supports retaining header rows in CSV and TSV documents element partitioning.
 * **Add retry logic for all source connectors** All http calls being made by the ingest source connectors have been isolated and wrapped by the `SourceConnectionNetworkError` custom error, which triggers the retry logic, if enabled, in the ingest pipeline.
 * **Google Drive source connector supports credentials from memory** Originally, the connector expected a filepath to pull the credentials from when creating the client. This was expanded to support passing that information from memory as a dict if access to the file system might not be available.
 * **Add support for generic partition configs in ingest cli** Along with the explicit partition options supported by the cli, an `additional_partition_args` arg was added to allow users to pass in any other arguments that should be added when calling partition(). This helps keep any changes to the input parameters of the partition() exposed in the CLI.
@@ -21,6 +104,7 @@
 * **Ingest session handler not being shared correctly** All ingest docs that leverage the session handler should only need to set it once per process. It was recreating it each time because the right values weren't being set nor available given how dataclasses work in python.
 * **Ingest download-only fix.** Previously the download only flag was being checked after the doc factory pipeline step, which occurs before the files are actually downloaded by the source node. This check was moved after the source node to allow for the files to be downloaded first before exiting the pipeline.
 * **Fix flaky chunk-metadata.** Prior implementation was sensitive to element order in the section resulting in metadata values sometimes being dropped. Also, not all metadata items can be consolidated across multiple elements (e.g. coordinates) and so are now dropped from consolidated metadata.
+* **Fix tesseract error `Estimating resolution as X`** leaded by invalid language parameters input. Proceed with defalut language `eng` when `lang.py` fails to find valid language code for tesseract, so that we don't pass an empty string to tesseract CLI and raise an exception in downstream.
 
 ## 0.10.28
 
@@ -264,11 +348,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * **Fixes a metadata backwards compatibility error** Problem: When calling `partition_via_api`, the hosted api may return an element schema that's newer than the current `unstructured`. In this case, metadata fields were added which did not exist in the local `ElementMetadata` dataclass, and `__init__()` threw an error. Fix: remove nonexistent fields before instantiating in `ElementMetadata.from_json()`. Importance: Crucial to avoid breaking changes when adding fields.
 * **Fixes issue with Discord connector when a channel returns `None`** Problem: Getting the `jump_url` from a nonexistent Discord `channel` fails. Fix: property `jump_url` is now retrieved within the same context as the messages from the channel. Importance: Avoids cascading issues when the connector fails to fetch information about a Discord channel.
 * **Fixes occasionally SIGABTR when writing table with `deltalake` on Linux** Problem: occasionally on Linux ingest can throw a `SIGABTR` when writing `deltalake` table even though the table was written correctly. Fix: put the writing function into a `Process` to ensure its execution to the fullest extent before returning to the main process. Importance: Improves stability of connectors using `deltalake`
-
-
-* **Fix badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class
-should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class
-allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
+* **Fixes badly initialized Formula** Problem: YoloX contain new types of elements, when loading a document that contain formulas a new element of that class should be generated, however the Formula class inherits from Element instead of Text. After this change the element is correctly created with the correct class allowing the document to be loaded. Fix: Change parent class for Formula to Text. Importance: Crucial to be able to load documents that contain formulas.
 
 ## 0.10.16
 

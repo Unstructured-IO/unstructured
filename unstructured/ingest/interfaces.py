@@ -2,7 +2,6 @@
 through Unstructured."""
 
 import functools
-import json
 import os
 import re
 import typing as t
@@ -11,7 +10,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import requests
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _asdict, _decode_dataclass
 
@@ -21,8 +19,9 @@ from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
+from unstructured.partition.api import partition_via_api
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict, elements_from_json, flatten_dict
+from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -88,6 +87,7 @@ class PartitionConfig(BaseConfig):
     partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
     api_key: t.Optional[str] = None
+    hi_res_model_name: t.Optional[str] = None
 
 
 @dataclass
@@ -191,6 +191,7 @@ class ChunkingConfig(BaseConfig):
     multipage_sections: bool = True
     combine_text_under_n_chars: int = 500
     max_characters: int = 1500
+    new_after_n_chars: t.Optional[int] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
         if self.chunk_elements:
@@ -199,6 +200,7 @@ class ChunkingConfig(BaseConfig):
                 multipage_sections=self.multipage_sections,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 max_characters=self.max_characters,
+                new_after_n_chars=self.new_after_n_chars,
             )
         else:
             return elements
@@ -211,9 +213,25 @@ class PermissionsConfig(BaseConfig):
     tenant: t.Optional[str]
 
 
+# module-level variable to store session handle
+global_write_session_handle: t.Optional[BaseSessionHandle] = None
+
+
 @dataclass
 class WriteConfig(BaseConfig):
-    pass
+    def global_session(self):
+        try:
+            global global_write_session_handle
+            if isinstance(self, IngestDocSessionHandleMixin):
+                if global_write_session_handle is None:
+                    # create via write_config.session_handle, which is a property that creates a
+                    # session handle if one is not already defined
+                    global_write_session_handle = self.session_handle
+                else:
+                    self._session_handle = global_write_session_handle
+        except Exception as e:
+            print("Global session handle creation error")
+            raise (e)
 
 
 class BaseConnectorConfig(ABC):
@@ -252,6 +270,7 @@ class IngestDocJsonMixin(DataClassJsonMixin):
         "_output_filename",
         "record_locator",
         "_source_metadata",
+        "unique_id",
     ]
 
     def add_props(self, as_dict: dict, props: t.List[str]):
@@ -280,8 +299,49 @@ class IngestDocJsonMixin(DataClassJsonMixin):
         return doc
 
 
+class BatchIngestDocJsonMixin(DataClassJsonMixin):
+    """
+    Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
+    created from the dataclass. This explicitly sets properties to look for on the IngestDoc
+    class when creating the json/dict for serialization purposes.
+    """
+
+    properties_to_serialize = ["unique_id"]
+
+    def add_props(self, as_dict: dict, props: t.List[str]):
+        for prop in props:
+            val = getattr(self, prop)
+            if isinstance(val, Path):
+                val = str(val)
+            if isinstance(val, DataClassJsonMixin):
+                val = val.to_dict(encode_json=False)
+            as_dict[prop] = val
+
+    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, encode_json=encode_json)
+        self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
+        return as_dict
+
+    @classmethod
+    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
+        doc = _decode_dataclass(cls, kvs, infer_missing)
+        return doc
+
+
 @dataclass
-class BaseIngestDoc(IngestDocJsonMixin, ABC):
+class BaseIngestDoc(ABC):
+    processor_config: ProcessorConfig
+    read_config: ReadConfig
+    connector_config: BaseConnectorConfig
+
+    @property
+    @abstractmethod
+    def unique_id(self) -> str:
+        pass
+
+
+@dataclass
+class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
     """An "ingest document" is specific to a connector, and provides
     methods to fetch a single raw document, store it locally for processing, any cleanup
     needed after successful processing of the doc, and the ability to write the doc's
@@ -290,9 +350,6 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
     Crucially, it is not responsible for the actual processing of the raw document.
     """
 
-    processor_config: ProcessorConfig
-    read_config: ReadConfig
-    connector_config: BaseConnectorConfig
     _source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
     _date_processed: t.Optional[str] = field(init=False, default=None)
 
@@ -363,6 +420,10 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return None
+
+    @property
+    def unique_id(self) -> str:
+        return self.filename
 
     @property
     def source_url(self) -> t.Optional[str]:
@@ -453,21 +514,17 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
             logger.debug(f"Using remote partition ({endpoint})")
 
-            with open(self.filename, "rb") as f:
-                headers_dict = {}
-                if partition_config.api_key:
-                    headers_dict["UNSTRUCTURED-API-KEY"] = partition_config.api_key
-                response = requests.post(
-                    f"{endpoint}",
-                    files={"files": (str(self.filename), f)},
-                    headers=headers_dict,
-                    # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
-                    # pass the stringified json here
-                )
-
-            if response.status_code != 200:
-                raise RuntimeError(f"Caught {response.status_code} from API: {response.text}")
-            elements = elements_from_json(text=json.dumps(response.json()))
+            passthrough_partition_kwargs = {
+                k: str(v) for k, v in partition_kwargs.items() if v is not None
+            }
+            elements = partition_via_api(
+                filename=str(self.filename),
+                api_key=partition_config.api_key,
+                api_url=endpoint,
+                **passthrough_partition_kwargs,
+            )
+            # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
+            # pass the stringified json here
         return elements
 
     def process_file(
@@ -523,7 +580,24 @@ class BaseIngestDoc(IngestDocJsonMixin, ABC):
 
 
 @dataclass
-class BaseSourceConnector(DataClassJsonMixin, ABC):
+class BaseIngestDocBatch(BaseIngestDoc, BatchIngestDocJsonMixin, ABC):
+    ingest_docs: t.List[BaseSingleIngestDoc] = field(default_factory=list)
+
+    @abstractmethod
+    @SourceConnectionError.wrap
+    def get_files(self):
+        """Fetches the "remote" docs and stores it locally on the filesystem."""
+
+
+@dataclass
+class BaseConnector(DataClassJsonMixin, ABC):
+    @abstractmethod
+    def check_connection(self):
+        pass
+
+
+@dataclass
+class BaseSourceConnector(BaseConnector, ABC):
     """Abstract Base Class for a connector to a remote source, e.g. S3 or Google Drive."""
 
     processor_config: ProcessorConfig
@@ -551,7 +625,7 @@ class BaseSourceConnector(DataClassJsonMixin, ABC):
 
 
 @dataclass
-class BaseDestinationConnector(DataClassJsonMixin, ABC):
+class BaseDestinationConnector(BaseConnector, ABC):
     write_config: WriteConfig
     connector_config: BaseConnectorConfig
 
@@ -565,7 +639,7 @@ class BaseDestinationConnector(DataClassJsonMixin, ABC):
         configured."""
 
     @abstractmethod
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         pass
 
     @abstractmethod
@@ -660,7 +734,7 @@ class ConfigSessionHandleMixin:
 @dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
-    _session_handle: t.Optional[BaseSessionHandle] = None
+    _session_handle: t.Optional[BaseSessionHandle] = field(default=None, init=False)
 
     @property
     def session_handle(self):

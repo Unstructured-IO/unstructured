@@ -10,12 +10,14 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-DESTINATION_GCS="gs://utic-test-ingest-fixtures-output/$(date +%s)"
+BUCKET="utic-test-ingest-fixtures-output"
+DIRECTORY=$(uuidgen)
+DESTINATION_GCS="gs://$BUCKET/$DIRECTORY"
 CI=${CI:-"false"}
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
-    exit 0
+    exit 8
 fi
 
 # Create temporary service key file
@@ -27,14 +29,11 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
-  if gcloud storage ls "$DESTINATION_GCS"; then
-    echo "deleting $DESTINATION_GCS"
-    gcloud storage rm --recursive "$DESTINATION_GCS"
-  fi
+  python "$SCRIPT_DIR"/python/test-gcs-output.py down \
+  --service-account-file "$GCP_INGEST_SERVICE_KEY_FILE" \
+  --bucket "$BUCKET" \
+  --blob-path "$DIRECTORY"
 
 }
 
@@ -55,9 +54,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --remote-url "$DESTINATION_GCS"
 
 # Simply check the number of files uploaded
-expected_num_files=1
-num_files_in_gcs=$(gcloud storage ls "$DESTINATION_GCS"/example-docs/ | wc -l )
-if [ "$num_files_in_gcs" -ne "$expected_num_files" ]; then
-    echo "Expected $expected_num_files files to be uploaded to gcs, but found $num_files_in_gcs files."
-    exit 1
-fi
+python "$SCRIPT_DIR"/python/test-gcs-output.py check \
+--expected-files 1 \
+--service-account-file "$GCP_INGEST_SERVICE_KEY_FILE" \
+--bucket "$BUCKET" \
+--blob-path "$DIRECTORY"

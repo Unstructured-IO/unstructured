@@ -10,7 +10,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-DESTINATION_S3="s3://utic-dev-tech-fixtures/utic-ingest-test-fixtures-output/$(date +%s)/"
+DESTINATION_S3="s3://utic-dev-tech-fixtures/utic-ingest-test-fixtures-output/$(uuidgen)/"
 CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
@@ -18,9 +18,6 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
 
   if aws s3 ls "$DESTINATION_S3" --region us-east-2; then
     echo "deleting destination s3 location: $DESTINATION_S3"
@@ -46,7 +43,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 
 # Simply check the number of files uploaded
 expected_num_files=1
-num_files_in_s3=$(aws s3 ls "${DESTINATION_S3}example-docs/" --region us-east-2 | grep -c "\.json$")
+num_files_in_s3=$(aws s3 ls "${DESTINATION_S3}" --region us-east-2 | grep -c "\.json$")
 if [ "$num_files_in_s3" -ne "$expected_num_files" ]; then
     echo "Expected $expected_num_files files to be uploaded to s3, but found $num_files_in_s3 files."
     exit 1

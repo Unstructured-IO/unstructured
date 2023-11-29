@@ -8,7 +8,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -53,7 +53,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SlackIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -136,7 +136,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
         from slack_sdk.errors import SlackApiError
@@ -197,6 +197,18 @@ class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleSlackConfig
+
+    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
+    def check_connection(self):
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackClientError
+
+        try:
+            client = WebClient(token=self.connector_config.token)
+            client.users_identity()
+        except SlackClientError as slack_error:
+            logger.error(f"failed to validate connection: {slack_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {slack_error}")
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""

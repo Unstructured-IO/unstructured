@@ -262,9 +262,9 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
         options = [
             click.Option(
                 ["--pdf-infer-table-structure"],
+                is_flag=True,
                 default=False,
-                help="If set to True, partition will include the table's text "
-                "content in the response.",
+                help="Partition will include the table's text_as_html " "in the response metadata.",
             ),
             click.Option(
                 ["--strategy"],
@@ -344,6 +344,11 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 ["--api-key"],
                 default=None,
                 help="API Key for partition endpoint.",
+            ),
+            click.Option(
+                ["--hi-res-model-name"],
+                default=None,
+                help="Model name for hi-res strategy.",
             ),
         ]
         return options
@@ -463,13 +468,19 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 default=False,
             ),
             click.Option(
-                ["--chunk-combine-under-n-chars"],
+                ["--chunk-combine-text-under-n-chars"],
                 type=int,
                 default=500,
                 show_default=True,
             ),
             click.Option(
                 ["--chunk-new-after-n-chars"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
+            click.Option(
+                ["--chunk-max-characters"],
                 type=int,
                 default=1500,
                 show_default=True,
@@ -498,9 +509,9 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 new_kvs["chunk_elements"] = chunk_elements
             new_kvs.update(
                 {
-                    k[len("chunking_") :]: v  # noqa: E203
+                    k[len("chunk_") :]: v  # noqa: E203
                     for k, v in kvs.items()
-                    if k.startswith("chunking_")
+                    if k.startswith("chunk_")
                 },
             )
             if len(new_kvs.keys()) == 0:

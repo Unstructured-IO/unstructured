@@ -1,11 +1,14 @@
 import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
+import httpx
+
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     RetryStrategyConfig,
@@ -17,20 +20,22 @@ from unstructured.utils import (
 )
 
 NOTION_API_VERSION = "2022-06-28"
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.notion.client import Client as NotionClient
 
 
 @dataclass
 class SimpleNotionConfig(BaseConnectorConfig):
     """Connector config to process all messages by channel id's."""
 
-    page_ids: t.List[str]
-    database_ids: t.List[str]
-    recursive: bool
     notion_api_key: str
+    page_ids: t.List[str] = field(default_factory=list)
+    database_ids: t.List[str] = field(default_factory=list)
+    recursive: bool = False
 
 
 @dataclass
-class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -69,7 +74,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             retry_strategy_config=self.retry_strategy_config,
         )
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
@@ -153,7 +158,7 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
 
 @dataclass
-class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -192,7 +197,7 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             retry_strategy_config=self.retry_strategy_config,
         )
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_file(self):
         from notion_client import APIErrorCode, APIResponseError
@@ -284,20 +289,35 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     connector_config: SimpleNotionConfig
     retry_strategy_config: t.Optional[RetryStrategyConfig] = None
+    _client: t.Optional["NotionClient"] = field(init=False, default=None)
+
+    @property
+    def client(self) -> "NotionClient":
+        from unstructured.ingest.connector.notion.client import Client as NotionClient
+
+        if self._client is None:
+            self._client = NotionClient(
+                notion_version=NOTION_API_VERSION,
+                auth=self.connector_config.notion_api_key,
+                logger=logger,
+                log_level=logger.level,
+                retry_strategy_config=self.retry_strategy_config,
+            )
+        return self._client
+
+    def check_connection(self):
+        try:
+            request = self.client._build_request("HEAD", "users")
+            response = self.client.client.send(request)
+            response.raise_for_status()
+        except httpx.HTTPStatusError as http_error:
+            logger.error(f"failed to validate connection: {http_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""
-        from unstructured.ingest.connector.notion.client import Client as NotionClient
-
-        # Pin the version of the api to avoid schema changes
-        self.client = NotionClient(
-            notion_version=NOTION_API_VERSION,
-            auth=self.connector_config.notion_api_key,
-            logger=logger,
-            log_level=logger.level,
-            retry_strategy_config=self.retry_strategy_config,
-        )
+        _ = self.client
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
     def get_child_page_content(self, page_id: str):
@@ -352,7 +372,7 @@ class NotionSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return child_content
 
     def get_ingest_docs(self):
-        docs: t.List[BaseIngestDoc] = []
+        docs: t.List[BaseSingleIngestDoc] = []
         if self.connector_config.page_ids:
             docs += [
                 NotionPageIngestDoc(
