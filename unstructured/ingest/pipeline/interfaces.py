@@ -112,9 +112,6 @@ class PipelineNode(DataClassJsonMixin, ABC):
         stat = self.pipeline_context.file_handler.stat(filepath=filepath)
         return stat.is_file and stat.size
 
-    def save_cached_data(self, data: str, filepath: str, **kwargs):
-        self.pipeline_context.file_handler.write(data=data, filepath=filepath)
-
 
 @dataclass
 class DocFactoryNode(PipelineNode):
