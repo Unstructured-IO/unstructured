@@ -96,9 +96,15 @@ from unstructured.partition.utils.sorting import (
     sort_page_elements,
 )
 from unstructured.utils import requires_dependencies
+from unstructured.patches.pdfminer import parse_keyword
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
+
+
+# NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
+# the bug: https://github.com/pdfminer/pdfminer.six/pull/885
+psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
