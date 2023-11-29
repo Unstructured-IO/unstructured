@@ -18,22 +18,22 @@ CI=${CI:-"false"}
 
 if [ -z "$SHAREPOINT_CLIENT_ID" ] || [ -z "$SHAREPOINT_CRED" ] ; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_CLIENT_ID or SHAREPOINT_CRED env var is not set."
-   exit 0
+   exit 8
 fi
 
 if [ -z "$SHAREPOINT_PERMISSIONS_APP_ID" ] || [ -z "$SHAREPOINT_PERMISSIONS_APP_CRED" ] || [ -z "$SHAREPOINT_PERMISSIONS_TENANT" ] ; then
    echo "Skipping Sharepoint ingest test because the SHAREPOINT_PERMISSIONS_APP_ID, SHAREPOINT_PERMISSIONS_APP_CRED, or SHAREPOINT_PERMISSIONS_TENANT env var is not set."
-   exit 0
+   exit 8
 fi
 
 if [ -z "$OPENAI_API_KEY" ]; then
    echo "Skipping Sharepoint embedding ingest test because the OPENAI_API_KEY env var is not set."
-   exit 0
+   exit 8
 fi
 
 if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    echo "Skipping Sharepoint Azure Cognitive Search ingest test because neither AZURE_SEARCH_ENDPOINT nor AZURE_SEARCH_API_KEY env vars are set."
-   exit 0
+   exit 8
 fi
 
 # shellcheck disable=SC1091

@@ -4,11 +4,11 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "5",
+          "document_id": "9",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -23,11 +23,11 @@
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "5",
+          "document_id": "9",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
@@ -38,22 +38,22 @@
     "type": "Title"
   },
   {
-    "element_id": "8e16a508f3df737af12e84d9cba2c7d0",
+    "element_id": "b87d0bbbe5c735bca621fc172fc44605",
     "metadata": {
       "data_source": {
         "record_locator": {
-          "document_id": "5",
+          "document_id": "9",
           "index_name": "movies",
           "url": "http://localhost:9200"
         },
-        "version": "1"
+        "version": 1
       },
       "filetype": "text/plain",
       "languages": [
         "eng"
       ]
     },
-    "text": "A thug accosts a girl as she leaves her workplace but a man rescues her. The thug vows revenge and, with the help of two friends, attacks the girl and her rescuer again as they're going for a walk. This time they succeed in kidnapping the rescuer. He is bound and gagged and taken away in a cart. The girl runs home and gets help from several neighbors. They track the ruffians down to a cabin in the mountains where the gang has trapped their victim and set the cabin on fire. A thug and Rescuer fight on the roof of the house.",
+    "text": "The film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.",
     "type": "NarrativeText"
   }
 ]

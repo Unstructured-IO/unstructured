@@ -17,7 +17,7 @@ CI=${CI:-"false"}
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
-    exit 0
+    exit 8
 fi
 
 # Create temporary service key file

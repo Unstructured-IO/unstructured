@@ -4,7 +4,7 @@ set -e
 
 if [ -z "$UNS_API_KEY" ]; then
    echo "Skipping ingest test against api because the UNS_API_KEY env var is not set."
-   exit 0
+   exit 8
 fi
 SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
