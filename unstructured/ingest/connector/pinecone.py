@@ -126,21 +126,11 @@ class PineconeDestinationConnector(BaseDestinationConnector):
                     {
                         "id": element.pop("element_id", None),
                         "values": element.pop("embeddings", None),
-                        "metadata": {
-                            # Since pinecone does not allow lists of any type other than str,
-                            # we dump list objects (parsing them to str) wherever we see them.
-                            k: (
-                                v
-                                if not isinstance(v, list)
-                                else [json.dumps(list_item) for list_item in v]
-                            )
-                            for k, v in flatten_dict(
-                                self.select_fields_from_element(
-                                    element, fields=["text", "metadata"]
-                                ),
-                                separator="-",
-                            ).items()
-                        },
+                        "metadata": flatten_dict(
+                            self.select_fields_from_element(element, fields=["text", "metadata"]),
+                            separator="-",
+                            flatten_lists=True,
+                        ),
                     }
                     for element in dict_content
                 ]
