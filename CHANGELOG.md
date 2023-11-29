@@ -1,3 +1,12 @@
+## 0.11.2-dev0
+
+### Enhancements
+* **Updated Documentation**: (i) Added examples, and (ii) API Documentation, including Usage, SDKs, Azure Marketplace, and parameters and validation errors.
+
+### Features
+
+### Fixes
+
 ## 0.11.1
 
 ### Enhancements
