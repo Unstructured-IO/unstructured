@@ -3,7 +3,7 @@ import io
 import json
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -342,14 +342,14 @@ def filter_element_types(
 
 def convert_to_coco(
     elements: List[Element],
-    dataset_description: str = f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}",
+    dataset_description: Optional[str] = None,
     dataset_version: str = "1.0",
-    contributors: List = ["Unstructured Developers"],
+    contributors: Tuple[str] = ("Unstructured Developers"),
 ) -> List[Dict[str, Any]]:
     coco_dataset = {}
     # Handle Info
     coco_dataset["info"] = {
-        "description": dataset_description,
+        "description": f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}" if not dataset_description else dataset_description,
         "version": dataset_version,
         "year": datetime.now().year,
         "contributors": ",".join(contributors),
