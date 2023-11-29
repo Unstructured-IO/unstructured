@@ -62,5 +62,5 @@ wrapt==1.16.0
     # via
     #   -c ingest/../base.txt
     #   aiobotocore
-yarl==1.9.2
+yarl==1.9.3
     # via aiohttp
