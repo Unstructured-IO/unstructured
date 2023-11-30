@@ -1,6 +1,6 @@
 import json
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
@@ -11,6 +11,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from weaviate import Client
 
 
 @dataclass
@@ -29,22 +32,27 @@ class WeaviateWriteConfig(WriteConfig):
 class WeaviateDestinationConnector(BaseDestinationConnector):
     write_config: WeaviateWriteConfig
     connector_config: SimpleWeaviateConfig
+    _client: t.Optional["Client"] = field(init=False, default=None)
+
+    @property
+    @requires_dependencies(["weaviate"], extras="weaviate")
+    def client(self) -> "Client":
+        if self._client is None:
+            from weaviate import Client
+
+            auth = self._resolve_auth_method()
+            self._client = Client(url=self.connector_config.host_url, auth_client_secret=auth)
+        return self._client
 
     @requires_dependencies(["weaviate"], extras="weaviate")
     @DestinationConnectionError.wrap
     def initialize(self):
-        from weaviate import Client
-
-        auth = self._resolve_auth_method()
-        self.client: Client = Client(url=self.connector_config.host_url, auth_client_secret=auth)
+        _ = self.client
 
     @requires_dependencies(["weaviate"], extras="weaviate")
     def check_connection(self):
-        from weaviate import Client
-
         try:
-            auth = self._resolve_auth_method()
-            _ = Client(url=self.connector_config.host_url, auth_client_secret=auth)
+            _ = self.client
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
