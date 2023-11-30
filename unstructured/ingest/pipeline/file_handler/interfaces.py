@@ -24,6 +24,10 @@ class FileHandler(ABC):
         self.encryption = encryption
 
     @abstractmethod
+    def cp(self, path1: str, path2: str, decrypt: bool = False):
+        pass
+
+    @abstractmethod
     def _write(self, data: str, filepath: str):
         pass
 
