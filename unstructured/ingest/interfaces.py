@@ -11,13 +11,14 @@ from datetime import datetime
 from pathlib import Path
 
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import Json, _asdict, _decode_dataclass
+from dataclasses_json.core import Json, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.api import partition_via_api
@@ -289,16 +290,20 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
                 val = val.to_dict(encode_json=False)
             as_dict[prop] = val
 
-    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
-        as_dict = _asdict(self, encode_json=encode_json)
+    def to_dict(self, **kwargs) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, **kwargs)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         if getattr(self, "_source_metadata") is not None:
             self.add_props(as_dict=as_dict, props=self.metadata_properties)
         return as_dict
 
     @classmethod
-    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
-        doc = _decode_dataclass(cls, kvs, infer_missing)
+    def from_dict(
+        cls: t.Type[A], kvs: Json, *, infer_missing=False, apply_name_overload: bool = True
+    ) -> A:
+        doc = super().from_dict(
+            kvs=kvs, infer_missing=infer_missing, apply_name_overload=apply_name_overload
+        )
         if meta := kvs.get("_source_metadata"):
             setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
         if date_processed := kvs.get("_date_processed"):
