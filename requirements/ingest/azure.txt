@@ -98,5 +98,5 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   requests
-yarl==1.9.2
+yarl==1.9.3
     # via aiohttp

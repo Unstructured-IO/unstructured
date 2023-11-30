@@ -18,7 +18,7 @@ API_VERSION=2023-07-01-Preview
 
 if [ -z "$AZURE_SEARCH_ENDPOINT" ] && [ -z "$AZURE_SEARCH_API_KEY" ]; then
    echo "Skipping Azure Cognitive Search ingest test because neither AZURE_SEARCH_ENDPOINT nor AZURE_SEARCH_API_KEY env vars are set."
-   exit 0
+   exit 8
 fi
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh

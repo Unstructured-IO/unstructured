@@ -30,7 +30,7 @@ trap cleanup EXIT
 
 if [ -z "$CONFLUENCE_USER_EMAIL" ] || [ -z "$CONFLUENCE_API_TOKEN" ]; then
    echo "Skipping Confluence ingest test because the CONFLUENCE_USER_EMAIL or CONFLUENCE_API_TOKEN env var is not set."
-   exit 0
+   exit 8
 fi
 
 # The test checks the scenario where --confluence-list-of-spaces and --confluence-num-of-spaces

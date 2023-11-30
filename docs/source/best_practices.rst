@@ -7,7 +7,7 @@ High-level overview of available strategies and models in ``Unstructured`` libra
 
 .. image:: imgs/strategy.png
   :width: 1000
-  :alt: Alternative text
+  :alt: strategy
 
 .. toctree::
    :maxdepth: 1
