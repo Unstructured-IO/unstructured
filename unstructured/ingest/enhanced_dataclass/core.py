@@ -33,7 +33,13 @@ def _recursive_repr(user_function):
     return wrapper
 
 
-def _asdict(obj, encode_json=False, redact_sensitive=False, redacted_text="***REDACTED***"):
+def _asdict(
+    obj,
+    encode_json=False,
+    redact_sensitive=False,
+    redacted_text="***REDACTED***",
+    apply_name_overload: bool = True,
+):
     """
     A re-implementation of `asdict` (based on the original in the `dataclasses`
     source) to support arbitrary Collection and Mapping types.
@@ -53,7 +59,10 @@ def _asdict(obj, encode_json=False, redact_sensitive=False, redacted_text="***RE
                     redact_sensitive=redact_sensitive,
                     redacted_text=redacted_text,
                 )
-            result.append((field.name, value))
+            if overload_name := getattr(field, "overload_name", None) and apply_name_overload:
+                result.append((overload_name, value))
+            else:
+                result.append((field.name, value))
 
         result = _handle_undefined_parameters_safe(cls=obj, kvs=dict(result), usage="to")
         return _encode_overrides(

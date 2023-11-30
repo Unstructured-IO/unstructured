@@ -1,12 +1,14 @@
+import typing as t
 from dataclasses import MISSING, Field
 
 from unstructured.ingest.enhanced_dataclass.core import _recursive_repr
 
 
 class EnhancedField(Field):
-    def __init__(self, *args, sensitive=False):
+    def __init__(self, *args, sensitive=False, overload_name: t.Optional[str] = None):
         super().__init__(*args)
         self.sensitive = sensitive
+        self.overload_name = overload_name
 
     @_recursive_repr
     def __repr__(self):
@@ -22,6 +24,7 @@ class EnhancedField(Field):
             f"compare={self.compare!r}",
             f"metadata={self.metadata!r}",
             f"sensitive={self.sensitive!r}",
+            f"overload_name={self.overload_name!r}",
             f"_field_type={self._field_type}",
         ]
         if kw_only := getattr(self, "kw_only"):
@@ -40,6 +43,7 @@ def enhanced_field(
     metadata=None,
     kw_only=MISSING,
     sensitive=False,
+    overload_name: t.Optional[str] = None,
 ):
     if default is not MISSING and default_factory is not MISSING:
         raise ValueError("cannot specify both default and default_factory")
@@ -47,4 +51,4 @@ def enhanced_field(
     # Support for kw_only added in 3.10, to support as low as 3.8, need to dynamically map
     if "kw_only" in EnhancedField.__slots__:
         args.append(kw_only)
-    return EnhancedField(*args, sensitive=sensitive)
+    return EnhancedField(*args, sensitive=sensitive, overload_name=overload_name)

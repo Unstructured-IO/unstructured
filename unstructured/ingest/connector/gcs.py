@@ -16,7 +16,9 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class GcsAccessConfig(AccessConfig):
-    token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    token: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="service_account_key"
+    )
 
 
 @dataclass
