@@ -44,7 +44,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --reprocess \
     --output-dir "$OUTPUT_DIR" \
     --verbose \
-    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
+    --token "$GCP_INGEST_SERVICE_KEY_FILE" \
     --recursive \
     --remote-url gs://utic-test-ingest-fixtures/ \
     --work-dir "$WORK_DIR"

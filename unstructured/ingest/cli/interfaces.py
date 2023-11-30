@@ -46,6 +46,9 @@ class Dict(click.ParamType):
 class FileOrJson(click.ParamType):
     name = "file-or-json"
 
+    def __init__(self, allow_raw_str: bool = False):
+        self.allow_raw_str = allow_raw_str
+
     def convert(
         self,
         value: t.Any,
@@ -60,7 +63,8 @@ class FileOrJson(click.ParamType):
             try:
                 return json.loads(value)
             except json.JSONDecodeError:
-                pass
+                if self.allow_raw_str:
+                    return value
         self.fail(
             gettext(
                 "{value} is not a valid json string nor an existing filepath.",
