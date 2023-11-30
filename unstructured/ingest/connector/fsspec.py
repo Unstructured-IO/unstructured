@@ -95,7 +95,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         self._create_full_tmp_dir_path()
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_config().to_dict(),
+            **self.connector_config.get_access_config(),
         )
         logger.debug(f"Fetching {self.to_json(redacted_text=True)} - PID: {os.getpid()}")
         self._get_file(fs=fs)
@@ -111,7 +111,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_config().to_dict(),
+            **self.connector_config.get_access_config(),
         )
 
         date_created = None
@@ -165,7 +165,7 @@ class FsspecSourceConnector(
 
         try:
             fs = get_filesystem_class(self.connector_config.protocol)(
-                **self.connector_config.get_access_config().to_dict(),
+                **self.connector_config.get_access_config(),
             )
             fs.ls(path=self.connector_config.path_without_protocol)
         except Exception as e:
@@ -179,7 +179,7 @@ class FsspecSourceConnector(
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_config().to_dict(),
+            **self.connector_config.get_access_config(),
         )
 
         """Verify that can get metadata for an object, validates connections info."""
@@ -266,7 +266,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_config().to_dict(),
+            **self.connector_config.get_access_config(),
         )
 
     def check_connection(self):
@@ -274,7 +274,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         try:
             fs = get_filesystem_class(self.connector_config.protocol)(
-                **self.connector_config.get_access_config().to_dict(),
+                **self.connector_config.get_access_config(),
             )
             fs.ls(path=self.connector_config.path_without_protocol)
         except Exception as e:
@@ -293,7 +293,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_config().to_dict(),
+            **self.connector_config.get_access_config(),
         )
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
