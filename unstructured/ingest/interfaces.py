@@ -109,14 +109,14 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
-class AccessConfig(EnhancedDataClassJsonMixin, ABC):
+class AccessConfig(EnhancedDataClassJsonMixin):
     # Meant to designate holding any sensitive information associated with other configs
     pass
 
 
 @dataclass
 class FsspecConfig(FileStorageConfig):
-    access_config: AccessConfig = enhanced_field(default=None)
+    access_config: AccessConfig = None
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
