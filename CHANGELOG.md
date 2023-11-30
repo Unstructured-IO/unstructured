@@ -1,13 +1,13 @@
-## 0.11.4-dev2
+## 0.11.4-dev3
 
 ### Enhancements
 
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
+* **Improve handling of auth data for fsspec connectors** Leverage an extension od the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
 
 ### Features
 
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
-
 
 ### Fixes
 
@@ -16,7 +16,6 @@
 ### Enhancements
 
 * **Updated Documentation**: (i) Added examples, and (ii) API Documentation, including Usage, SDKs, Azure Marketplace, and parameters and validation errors.
-* **Improve handling of auth data for fsspec connectors** Leverage an extension od the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
 
 ### Features
 
