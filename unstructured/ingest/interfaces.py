@@ -122,8 +122,8 @@ class FsspecConfig(FileStorageConfig):
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
 
-    def get_access_config(self) -> AccessConfig:
-        return self.access_config
+    def get_access_config(self) -> dict:
+        return self.access_config.to_dict()
 
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.remote_url.split("://")
