@@ -25,7 +25,10 @@ def test_enhanced_field():
             assert hasattr(f, "sensitive") is False
         else:
             assert isinstance(f, EnhancedField)
-            assert f.sensitive is True
+            if f.name == "password":
+                assert f.sensitive is True
+            else:
+                assert not f.sensitive
 
 
 @pytest.mark.parametrize(
