@@ -45,13 +45,13 @@ class Chunker(ReformatNode):
                 and json_path.is_file()
                 and json_path.stat().st_size
             ):
-                logger.debug(f"File exists: {json_path}, skipping embedding")
+                logger.debug(f"File exists: {json_path}, skipping chunking")
                 return str(json_path)
             elements = elements_from_json(filename=elements_json)
             chunked_elements = self.chunking_config.chunk(elements=elements)
             elements_dict = convert_to_dict(chunked_elements)
             with open(json_path, "w", encoding="utf8") as output_f:
-                logger.info(f"writing embeddings content to {json_path}")
+                logger.info(f"writing chunking content to {json_path}")
                 json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
             return str(json_path)
         except Exception as e:

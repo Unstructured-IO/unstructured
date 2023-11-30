@@ -44,7 +44,6 @@ Library Documentation
    installing
    api
    core
-   bricks
    ingest/index
    metadata
    examples

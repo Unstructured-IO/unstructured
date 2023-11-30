@@ -26,11 +26,11 @@ that span between pages. This kwarg is ``True`` by default.
 not split elements, it is possible for a section to exceed that lenght, for
 example if a ``NarrativeText`` elements exceeds ``1500`` characters on its on.
 
-Similarly, sections under ``combine_under_n_chars`` will be combined if they
+Similarly, sections under ``combine_text_under_n_chars`` will be combined if they
 do not exceed the specified threshold, which defaults to ``500``. This will combine
 a series of ``Title`` elements that occur one after another, which sometimes
 happens in lists that are not detected as ``ListItem`` elements. Set
-``combine_under_n_chars=0`` to turn off this behavior.
+``combine_text_under_n_chars=0`` to turn off this behavior.
 
 The following shows an example of how to use ``chunk_by_title``. You will
 see the document chunked into sections instead of elements.

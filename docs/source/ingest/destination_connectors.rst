@@ -11,3 +11,5 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    destination_connectors/azure_cognitive_search
    destination_connectors/delta_table
    destination_connectors/mongodb
+   destination_connectors/pinecone
+   destination_connectors/s3
