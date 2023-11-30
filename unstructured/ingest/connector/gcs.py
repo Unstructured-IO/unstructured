@@ -1,3 +1,4 @@
+import typing as t
 from dataclasses import dataclass
 from typing import Type
 
@@ -7,13 +8,20 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import AccessConfig
 from unstructured.utils import requires_dependencies
 
 
 @dataclass
+class GcsAccessConfig(AccessConfig):
+    token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+
+
+@dataclass
 class SimpleGcsConfig(SimpleFsspecConfig):
-    pass
+    access_config: GcsAccessConfig = None
 
 
 @dataclass
