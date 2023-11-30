@@ -333,7 +333,7 @@ jobs:
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-    needs: [setup_ingest, lint, changelog]
+    needs: [setup_ingest, lint]
     steps:
     # actions/checkout MUST come before auth
     - uses: 'actions/checkout@v4'
