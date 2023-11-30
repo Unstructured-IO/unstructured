@@ -241,7 +241,7 @@ class WriteConfig(BaseConfig):
             raise (e)
 
 
-class BaseConnectorConfig(ABC):
+class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
