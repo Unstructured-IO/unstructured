@@ -59,7 +59,8 @@ def _asdict(
                     redact_sensitive=redact_sensitive,
                     redacted_text=redacted_text,
                 )
-            if overload_name := getattr(field, "overload_name", None) and apply_name_overload:
+            if getattr(field, "overload_name", None) and apply_name_overload:
+                overload_name = getattr(field, "overload_name")
                 result.append((overload_name, value))
             else:
                 result.append((field.name, value))

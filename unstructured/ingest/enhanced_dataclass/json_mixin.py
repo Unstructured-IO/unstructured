@@ -24,6 +24,7 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         sort_keys: bool = False,
         redact_sensitive=False,
         redacted_text="***REDACTED***",
+        apply_name_overload: bool = True,
         **kw
     ) -> str:
         return json.dumps(
@@ -31,6 +32,7 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
                 encode_json=False,
                 redact_sensitive=redact_sensitive,
                 redacted_text=redacted_text,
+                apply_name_overload=apply_name_overload,
             ),
             cls=_ExtendedEncoder,
             skipkeys=skipkeys,
