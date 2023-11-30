@@ -20,11 +20,25 @@ from unstructured.staging.base import flatten_dict
 
 @dataclass
 class ChromaSessionHandle(BaseSessionHandle):
-    service: "chroma.Index"  # noqa: F821
+    service: "ChromaIndex"
 
+@DestinationConnectionError.wrap
+@requires_dependencies(["chromadb"], extras="chroma")
+def create_chroma_object(self, db_path, collection_name): #api_key, index_name, environment): # maybe chroma client?
+    import chromadb
+
+    chroma_client = chromadb.PersistentClient(path=db_path)
+    print("** getting client **")
+    print(chroma_client)
+    collection = chroma_client.get_or_create_collection(name=collection_name)
+
+    # chroma.init(api_key=api_key, environment=environment)
+    # index = pinecone.Index(index_name)
+    # logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
+    return collection
 
 @dataclass
-class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin, WriteConfig):
+class ChromaWriteConfig(ConfigSessionHandleMixin, WriteConfig):
     db_path: str # RENAME CLIENT
     collection_name: str
     # api_key: str
@@ -34,20 +48,6 @@ class ChromaWriteConfig(WriteConfigSessionHandleMixin, ConfigSessionHandleMixin,
     # with the bug, session handle gets created for each batch,
     # rather than with each process
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["chromadb"], extras="chroma")
-    def create_chroma_object(self, db_path, collection_name): #api_key, index_name, environment): # maybe chroma client?
-        import chromadb
-
-        chroma_client = chromadb.PersistentClient(path=db_path)
-        print("** getting client **")
-        print(chroma_client)
-        collection = chroma_client.get_or_create_collection(name=collection_name)
-
-        # chroma.init(api_key=api_key, environment=environment)
-        # index = pinecone.Index(index_name)
-        # logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
-        return collection
 
     def create_session_handle(self) -> ChromaSessionHandle:
         service = self.create_chroma_object(self.db_path, self.collection_name)
@@ -88,11 +88,16 @@ class ChromaDestinationConnector(BaseDestinationConnector):
     write_config: WriteConfig
     connector_config: SimpleChromaConfig
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["chromadb"], extras="chroma")
     def initialize(self):
         pass
+    @DestinationConnectionError.wrap
+    def check_connection(self):
+        create_chroma_object(
+            self.db_path, self.collection_name
+        )
 
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["chromadb"], extras="chroma")
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"Inserting / updating {len(dict_list)} documents to destination "
