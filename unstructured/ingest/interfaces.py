@@ -98,6 +98,7 @@ class ProcessorConfig(BaseConfig):
     output_dir: str = "structured-output"
     num_processes: int = 2
     raise_on_error: bool = False
+    encryption_key_file: t.Optional[str] = None
 
 
 @dataclass

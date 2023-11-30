@@ -1,5 +1,4 @@
 import os
-import shutil
 from pathlib import Path
 
 from unstructured.ingest.connector.registry import create_ingest_doc_from_dict
@@ -16,4 +15,4 @@ class Copier(CopyNode):
         desired_output = ingest_doc._output_filename
         Path(desired_output).parent.mkdir(parents=True, exist_ok=True)
         logger.info(f"Copying {json_path} -> {desired_output}")
-        shutil.copy(json_path, desired_output)
+        self.pipeline_context.file_handler.cp(path1=json_path, path2=desired_output, decrypt=True)

@@ -23,6 +23,7 @@
 
 * **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
 * **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
+* **Add encryption for cached content in ingest CI** As part of the pipeline being run during an ingest CLI invocation, an optional key file can be passed in to encrypt all data being cached.
 
 ### Fixes
 

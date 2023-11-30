@@ -40,10 +40,8 @@ class Embedder(ReformatNode):
             self.pipeline_context.ingest_docs_map[
                 hashed_filename
             ] = self.pipeline_context.ingest_docs_map[filename]
-            if (
-                not self.pipeline_context.reprocess
-                and json_path.is_file()
-                and json_path.stat().st_size
+            if not self.pipeline_context.reprocess and self.cached_data_exists(
+                filepath=str(json_path)
             ):
                 logger.debug(f"File exists: {json_path}, skipping embedding")
                 return str(json_path)
@@ -51,9 +49,13 @@ class Embedder(ReformatNode):
             embedder = self.embedder_config.get_embedder()
             embedded_elements = embedder.embed_documents(elements=elements)
             elements_dict = convert_to_dict(embedded_elements)
-            with open(json_path, "w", encoding="utf8") as output_f:
-                logger.info(f"writing embeddings content to {json_path}")
-                json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
+            self.pipeline_context.file_handler.write_json(
+                data=elements_dict,
+                filepath=str(json_path),
+                ensure_ascii=False,
+                indent=2,
+                sort_keys=True,
+            )
             return str(json_path)
         except Exception as e:
             if self.pipeline_context.raise_on_error:
