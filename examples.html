@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Integrations" href="integrations.html" /><link rel="prev" title="Metadata" href="metadata.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Transforming HTML into Vector Database" href="examples/chroma.html" /><link rel="prev" title="Metadata" href="metadata.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Examples - Unstructured 0.11.1 documentation</title>
+  <title>Examples - Unstructured 0.11.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -252,7 +252,7 @@
       <label class="search-icon" for="__search">
         <div class="visually-hidden">Toggle search</div>
       </label>
-      <!-- <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <!-- <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label> -->
@@ -321,8 +321,15 @@
 <li class="toctree-l2"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">Unstructured API</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="core.html">Core Functionality</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Core Functionality</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="apis/api_sdks.html">Python and JavaScript SDK for Unstructured API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/usage_methods.html">Accessing Unstructured API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/api_parameters.html">API Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/validation_errors.html">API Validation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="core.html">Core Functionality</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Core Functionality</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="core/partition.html">Partitioning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/cleaning.html">Cleaning</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/extracting.html">Extracting</a></li>
@@ -331,8 +338,8 @@
 <li class="toctree-l2"><a class="reference internal" href="core/embedding.html">Embedding</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="ingest/index.html">Ingest</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Ingest</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="ingest/index.html">Ingest</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Ingest</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/source_connectors.html">Source Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Source Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/airtable.html">Airtable</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/biomed.html">Biomed</a></li>
@@ -359,13 +366,15 @@
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/mongodb.html">MongoDB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/s3.html">S3</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ingest/configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="ingest/configs/processor_config.html">Processor Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/configs/read_config.html">Read Configuration</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/configs/partition_config.html">Partition Configuration</a></li>
@@ -379,9 +388,23 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Examples</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/chroma.html">Transforming HTML into Vector Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/databricks.html">Databricks Delta Table and Connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="best_practices/models.html">Models</a></li>
 </ul>
@@ -396,7 +419,7 @@
     </div>
   </aside>
   <div class="main">
-    <div class="content">
+    <div class="content content--no-toc">
       <div class="article-container">
         <a href="#" class="back-to-top muted-link">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -420,7 +443,7 @@
               </svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg>
                 <use href="#svg-toc"></use>
@@ -448,173 +471,22 @@ example documents in the
 <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/tree/main/example-docs">example-docs</a>, along
 with instructions on how to download additional documents that are too large to store in the
 repo.</p>
-<section id="sentiment-analysis-labeling-in-labelstudio">
-<h2>Sentiment Analysis Labeling in LabelStudio<a class="headerlink" href="#sentiment-analysis-labeling-in-labelstudio" title="Permalink to this heading"></a></h2>
-<p>The following workflow will show how to format and upload the risk section from an SEC filing
-to LabelStudio for a sentiment analysis labeling task. In addition to the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code>
-library, this example assumes you have <a class="reference external" href="https://labelstud.io/guide/#Quick-start">LabelStudio</a>
-installed and running locally.</p>
-<p>In addition to the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library, this examples assumes you have the
-<a class="reference external" href="https://github.com/Unstructured-IO/pipeline-sec-filings">SEC pipeline</a> repo installed and
-on your Python path, as well <a class="reference external" href="https://labelstud.io/guide/#Quick-start">LabelStudio</a> installed
-and running locally. First, we’ll import dependencies create some dummy risk narrative sections.
-For info on how to pull real SEC documents from EDGAR, see our
-<a class="reference external" href="https://github.com/Unstructured-IO/pipeline-sec-filings">SEC pipeline</a> repo.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-
-<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">NarrativeText</span>
-<span class="kn">from</span> <span class="nn">unstructured.staging.label_studio</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">stage_for_label_studio</span><span class="p">,</span>
-    <span class="n">LabelStudioAnnotation</span><span class="p">,</span>
-    <span class="n">LabelStudioPrediction</span><span class="p">,</span>
-    <span class="n">LabelStudioResult</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">risk_section</span> <span class="o">=</span> <span class="p">[</span><span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Risk section 1&quot;</span><span class="p">),</span> <span class="n">NarrativeText</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s2">&quot;Risk section 2&quot;</span><span class="p">)]</span>
-</pre></div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/chroma.html">Transforming HTML into Vector Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/databricks.html">Databricks Delta Table and Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#introduction">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/dict_to_elements.html#conclusion">Conclusion</a></li>
+</ul>
 </div>
-<p>Next, we’ll prepopulate some annotations and predictions. Annotations and predictions are optional.
-If you added annotations, the labeling examples will be pre-labeled in the LabelStudio UI. Predictions
-are used for active learning in LabelStudio. If you include predictions, they will help determine
-the order in which labeled examples are presented to annotators. Feel free to skip this step if you do
-not need either of these features for your labeling task:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">risk_section</span><span class="p">:</span>
-    <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">LabelStudioAnnotation</span><span class="p">(</span>
-          <span class="n">result</span><span class="o">=</span><span class="p">[</span>
-              <span class="n">LabelStudioResult</span><span class="p">(</span>
-                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span>
-                  <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Positive&quot;</span><span class="p">]},</span>
-                  <span class="n">from_name</span><span class="o">=</span><span class="s2">&quot;sentiment&quot;</span><span class="p">,</span>
-                  <span class="n">to_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
-              <span class="p">)</span>
-          <span class="p">]</span>
-      <span class="p">)]</span>
-    <span class="p">)</span>
-
-
-<span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">risk_section</span><span class="p">:</span>
-    <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">LabelStudioPrediction</span><span class="p">(</span>
-          <span class="n">result</span><span class="o">=</span><span class="p">[</span>
-              <span class="n">LabelStudioResult</span><span class="p">(</span>
-                  <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;choices&quot;</span><span class="p">,</span>
-                  <span class="n">value</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Positive&quot;</span><span class="p">]},</span>
-                  <span class="n">from_name</span><span class="o">=</span><span class="s2">&quot;sentiment&quot;</span><span class="p">,</span>
-                  <span class="n">to_name</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
-              <span class="p">)</span>
-          <span class="p">],</span>
-          <span class="n">score</span><span class="o">=</span><span class="mf">0.68</span>
-      <span class="p">)]</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>Finally, we’ll format the data for upload to LabelStudio. You can omit the <code class="docutils literal notranslate"><span class="pre">annotations</span></code>
-and <code class="docutils literal notranslate"><span class="pre">predictions</span></code> kwargs if you did’t generated annotations or predictions.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">label_studio_data</span> <span class="o">=</span> <span class="n">stage_for_label_studio</span><span class="p">(</span>
-    <span class="n">elements</span><span class="o">=</span><span class="n">risk_section</span><span class="p">,</span>
-    <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">,</span>
-    <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span><span class="p">,</span>
-    <span class="n">text_field</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
-    <span class="n">id_field</span><span class="o">=</span><span class="s2">&quot;id&quot;</span>
-<span class="p">)</span>
-
-<span class="c1"># The resulting JSON file is ready to be uploaded to LabelStudio</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;label-studio.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">label_studio_data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>At this point, you can go into the LabelStudio UI and select <code class="docutils literal notranslate"><span class="pre">Create</span></code> to create a new project.
-Upload your sample <code class="docutils literal notranslate"><span class="pre">label-studio.json</span></code> file and select <code class="docutils literal notranslate"><span class="pre">Text</span> <span class="pre">Classification</span></code> for your
-labeling setup, and you’re good to go.</p>
-<p>You can also create a new project in LabelStudio through
-the API by running the following command. Hit <code class="docutils literal notranslate"><span class="pre">Account</span> <span class="pre">&amp;</span> <span class="pre">Settings</span></code> under your user name to find your
-API token. First, use the <a class="reference external" href="https://labelstud.io/api#operation/api_projects_create">create project</a> call to
-create a new project.
-After creating a project, upload data using the following command. The project ID will come from the
-response of the create project call. For existing projects, you can find the project ID in the URL for
-the project.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;Authorization: Token ${LABELSTUDIO_TOKEN}&#39;</span><span class="w"> </span><span class="se">\</span>
--X<span class="w"> </span>POST<span class="w"> </span><span class="s1">&#39;http://localhost:8080/api/projects/{project_id}/import&#39;</span><span class="w"> </span><span class="se">\</span>
--F<span class="w"> </span><span class="s1">&#39;file=@label-studio.json&#39;</span>
-</pre></div>
-</div>
-<p>At this point, you’re good to go to start labeling in the LabelStudio UI.</p>
-</section>
-<section id="extracting-metadata-from-documents">
-<h2>Extracting Metadata from Documents<a class="headerlink" href="#extracting-metadata-from-documents" title="Permalink to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes utilities for extracting metadata from
-documents. Currently, there is support for extracting metadata from <code class="docutils literal notranslate"><span class="pre">.docx</span></code>,
-<code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, and <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> documents. When you call these functions, the return type
-is a <code class="docutils literal notranslate"><span class="pre">Metadata</span></code> data class that you can convert to a dictionary by calling the
-<code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> method. If you extract metadata from a <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> document, the output
-will include EXIF metadata in the <code class="docutils literal notranslate"><span class="pre">exif_data</span></code> attribute, if it is available.
-Here is an example of how to use the metadata extraction functionality:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.metadata</span> <span class="kn">import</span> <span class="n">get_jpg_metadata</span>
-
-<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/example.jpg&quot;</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="n">get_jpg_metadata</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>You can also pass in a file-like object with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.metadata</span> <span class="kn">import</span> <span class="n">get_jpg_metadata</span>
-
-<span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;example-docs/example.jpg&quot;</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">metadata</span> <span class="o">=</span> <span class="n">get_jpg_metadata</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>To extract metadata from <code class="docutils literal notranslate"><span class="pre">.docx</span></code> or <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code>, use <code class="docutils literal notranslate"><span class="pre">get_docx_metadata</span></code> and
-<code class="docutils literal notranslate"><span class="pre">get_xlsx_metadata</span></code>. The interfaces are the same as <code class="docutils literal notranslate"><span class="pre">get_jpg_metadata</span></code>.</p>
-</section>
-<section id="exploring-source-documents">
-<h2>Exploring Source Documents<a class="headerlink" href="#exploring-source-documents" title="Permalink to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> library includes tools for helping you explore source documents.
-To get a summary of the size (in bytes) and type of documents in a directory, you can
-use the <code class="docutils literal notranslate"><span class="pre">get_directory_file_info</span></code> function, as show below. The function will
-recursively explore files in subdirectories.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.exploration</span> <span class="kn">import</span> <span class="n">get_directory_file_info</span>
-
-<span class="n">file_info</span> <span class="o">=</span> <span class="n">get_directory_file_info</span><span class="p">(</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
-<span class="n">file_info</span><span class="o">.</span><span class="n">filetype</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>The output (<code class="docutils literal notranslate"><span class="pre">file_info</span></code>) is a <code class="docutils literal notranslate"><span class="pre">pandas</span></code> <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>.
-The result should look similar to:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FileType</span><span class="o">.</span><span class="n">EML</span>     <span class="mi">4</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">TXT</span>     <span class="mi">3</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">HTML</span>    <span class="mi">2</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">XML</span>     <span class="mi">2</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">PDF</span>     <span class="mi">2</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">DOCX</span>    <span class="mi">1</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">PPTX</span>    <span class="mi">1</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">XLSX</span>    <span class="mi">1</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">JPG</span>     <span class="mi">1</span>
-<span class="n">Name</span><span class="p">:</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">int64</span>
-</pre></div>
-</div>
-<p>You can also find the average file size by file type by using the following command</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.file_utils.exploration</span> <span class="kn">import</span> <span class="n">get_directory_file_info</span>
-
-<span class="n">file_info</span> <span class="o">=</span> <span class="n">get_directory_file_info</span><span class="p">(</span><span class="s2">&quot;example-docs&quot;</span><span class="p">)</span>
-<span class="n">file_info</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;filetype&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>The output should look similar to the following:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>                   <span class="n">filesize</span>
-<span class="n">filetype</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">DOCX</span>  <span class="mf">3.660200e+04</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">EML</span>   <span class="mf">1.490885e+05</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">HTML</span>  <span class="mf">1.228404e+06</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">JPG</span>   <span class="mf">3.276400e+04</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">PDF</span>   <span class="mf">2.429245e+06</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">PPTX</span>  <span class="mf">2.832900e+04</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">TXT</span>   <span class="mf">6.113333e+02</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">XLSX</span>  <span class="mf">4.765000e+03</span>
-<span class="n">FileType</span><span class="o">.</span><span class="n">XML</span>   <span class="mf">7.135000e+02</span>
-</pre></div>
-</div>
-</section>
 </section>
 
         </article>
@@ -622,12 +494,12 @@ The result should look similar to:</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="integrations.html">
+          <a class="next-page" href="examples/chroma.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Integrations</div>
+              <div class="title">Transforming HTML into Vector Database</div>
             </div>
           </a>
           <a class="prev-page" href="metadata.html">
@@ -660,29 +532,8 @@ The result should look similar to:</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            Contents
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Examples</a><ul>
-<li><a class="reference internal" href="#sentiment-analysis-labeling-in-labelstudio">Sentiment Analysis Labeling in LabelStudio</a></li>
-<li><a class="reference internal" href="#extracting-metadata-from-documents">Extracting Metadata from Documents</a></li>
-<li><a class="reference internal" href="#exploring-source-documents">Exploring Source Documents</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
