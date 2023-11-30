@@ -58,7 +58,7 @@ class Embedder(ReformatNode):
         except Exception as e:
             if self.pipeline_context.raise_on_error:
                 raise
-            logger.error(f"failed to chunk content from file {elements_json}, {e}", exc_info=True)
+            logger.error(f"failed to embed content from file {elements_json}, {e}", exc_info=True)
             return None
 
     def get_path(self) -> Path:

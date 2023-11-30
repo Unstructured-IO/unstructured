@@ -58,7 +58,7 @@ packaging==23.2
     # via
     #   -c base.txt
     #   sphinx
-pygments==2.17.1
+pygments==2.17.2
     # via
     #   furo
     #   sphinx

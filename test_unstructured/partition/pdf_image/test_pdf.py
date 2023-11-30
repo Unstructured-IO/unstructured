@@ -1,3 +1,4 @@
+import logging
 import math
 import os
 from tempfile import SpooledTemporaryFile
@@ -914,13 +915,45 @@ def test_ocr_language_passes_through(strategy, ocr_func):
                     "Border": [0, 0, 1],
                     "C": [0, 1, 0],
                     "H": "/'I'",
-                    "Rect": [468.305, 128.081, 480.26, 136.494],
+                    "Rect": (468.305, 128.081, 480.26, 136.494),
                 },
             ],
             792,
             PixelSpace(612, 792),
             1,
             2,
+        ),
+        (
+            [
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {
+                        "Type": "/'Action'",
+                        "S": "/'URI'",
+                        "URI": "b'https://layout-parser.github.io'",
+                    },
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 1],
+                    "H": "/'I'",
+                    "Rect": "I am not a tuple or list!",
+                },
+                {
+                    "Type": "/'Annot'",
+                    "Subtype": "/'Link'",
+                    "A": {"S": "/'GoTo'", "D": "b'cite.harley2015evaluation'"},
+                    "BS": {"S": "/'S'", "W": 1},
+                    "Border": [0, 0, 1],
+                    "C": [0, 1, 0],
+                    "H": "/'I'",
+                    "Rect": (468.305, 128.081, 480.26),
+                },
+            ],
+            792,
+            PixelSpace(612, 792),
+            1,
+            0,
         ),
     ],
 )
@@ -1003,3 +1036,17 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
 def test_partition_pdf_with_bad_color_profile():
     filename = example_doc_path("pdf-bad-color-space.pdf")
     assert pdf.partition_pdf(filename, strategy="fast")
+
+
+@pytest.mark.parametrize(
+    ("filename", "expected_log"),
+    [
+        ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
+        ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
+        ("failure-after-repair.pdf", "PDFMiner failed to process PDF page 26 after repairing it."),
+    ],
+)
+def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
+    caplog.set_level(logging.INFO)
+    assert pdf.extractable_elements(filename=example_doc_path(filename))
+    assert expected_log in caplog.text
