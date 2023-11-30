@@ -16,6 +16,7 @@
 ### Enhancements
 
 * **Updated Documentation**: (i) Added examples, and (ii) API Documentation, including Usage, SDKs, Azure Marketplace, and parameters and validation errors.
+* **Improve handling of auth data for fsspec connectors** Leverage an extension od the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
 
 ### Features
 
