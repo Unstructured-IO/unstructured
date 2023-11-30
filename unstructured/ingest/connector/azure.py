@@ -24,7 +24,7 @@ class AzureAccessConfig(AccessConfig):
 
 @dataclass
 class SimpleAzureBlobStorageConfig(SimpleFsspecConfig):
-    access_config: AzureAccessConfig = enhanced_field(default=None)
+    access_config: AzureAccessConfig = None
 
 
 @dataclass

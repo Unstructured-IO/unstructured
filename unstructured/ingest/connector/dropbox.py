@@ -19,7 +19,9 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import AccessConfig
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
@@ -29,8 +31,13 @@ class MissingFolderError(Exception):
 
 
 @dataclass
+class DropboxAccessConfig(AccessConfig):
+    token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleDropboxConfig(SimpleFsspecConfig):
-    pass
+    access_config: DropboxAccessConfig = None
 
 
 @dataclass

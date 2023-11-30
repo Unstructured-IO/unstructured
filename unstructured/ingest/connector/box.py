@@ -17,7 +17,6 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
-from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import AccessConfig
 from unstructured.ingest.logger import logger
@@ -35,7 +34,7 @@ class BoxAccessConfig(AccessConfig):
 
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
-    access_config: BoxAccessConfig = enhanced_field(default=None)
+    access_config: BoxAccessConfig = None
 
     @requires_dependencies(["boxfs"], extras="box")
     def get_access_config(self) -> dict:
