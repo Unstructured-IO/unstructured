@@ -19,6 +19,6 @@ def gcs_writer(
         write_config=FsspecWriteConfig(),
         connector_config=SimpleGcsConfig(
             remote_url=remote_url,
-            access_kwargs={"token": service_account_key},
+            access_config={"token": service_account_key},
         ),
     )

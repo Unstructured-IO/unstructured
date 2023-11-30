@@ -93,7 +93,7 @@ class DropboxSourceConnector(FsspecSourceConnector):
 
         try:
             self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-                **self.connector_config.get_access_kwargs(),
+                **self.connector_config.get_access_config(),
             )
             # Dropbox requires a forward slash at the front of the folder path. This
             # creates some complications in path joining so a custom path is created here.

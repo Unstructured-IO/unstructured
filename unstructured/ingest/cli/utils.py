@@ -1,4 +1,5 @@
 import typing as t
+from dataclasses import fields
 from gettext import gettext as _
 
 import click
@@ -45,13 +46,21 @@ def extract_configs(
     }
     if extras:
         for k, conf in extras.items():
-            res[k] = conf.from_dict(data)
+            res_config = conf.from_dict(data)
+            # Need to make sure to extract potentially nested access configs
+            if access_config_field := [f for f in fields(res_config) if f.name == "access_config"]:
+                access_config = access_config_field[0]
+                access_config_type = access_config.type
+                res_config.access_config = access_config_type.from_dict(data)
+            res[k] = res_config
     for v in validate:
         v.from_dict(data)
     return res
 
 
-def add_options(cmd: click.Command, extras=t.List[t.Type[CliConfig]], is_src=True) -> click.Command:
+def add_options(
+    cmd: click.Command, extras: t.List[t.Type[CliConfig]], is_src: bool = True
+) -> click.Command:
     configs: t.List[t.Type[CliConfig]] = (
         [
             CliPartitionConfig,
@@ -65,8 +74,9 @@ def add_options(cmd: click.Command, extras=t.List[t.Type[CliConfig]], is_src=Tru
         if is_src
         else []
     )
-    configs.extend(extras)
-    for config in configs:
+    # make sure what's unique to this cmd appears first
+    extras.extend(configs)
+    for config in extras:
         try:
             config.add_cli_options(cmd=cmd)
         except ValueError as e:

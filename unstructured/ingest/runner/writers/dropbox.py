@@ -19,6 +19,6 @@ def dropbox_writer(
         write_config=FsspecWriteConfig(),
         connector_config=SimpleDropboxConfig(
             remote_url=remote_url,
-            access_kwargs={"token": token},
+            access_config={"token": token},
         ),
     )

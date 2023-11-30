@@ -24,6 +24,6 @@ def s3_writer(
         write_config=FsspecWriteConfig(),
         connector_config=SimpleS3Config(
             remote_url=remote_url,
-            access_kwargs=access_kwargs,
+            access_config=access_kwargs,
         ),
     )

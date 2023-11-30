@@ -29,17 +29,17 @@ class AccessTokenError(Exception):
 @dataclass
 class SimpleBoxConfig(SimpleFsspecConfig):
     @requires_dependencies(["boxfs"], extras="box")
-    def get_access_kwargs(self):
+    def get_access_config(self):
         # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
         # because it is not serializable.
         from boxsdk import JWTAuth
 
         access_kwargs_with_oauth = {
             "oauth": JWTAuth.from_settings_file(
-                self.access_kwargs["box_app_config"],
+                self.access_config["box_app_config"],
             ),
         }
-        access_kwargs_with_oauth.update(self.access_kwargs)
+        access_kwargs_with_oauth.update(self.access_config)
         return access_kwargs_with_oauth
 
 
@@ -63,7 +63,7 @@ class BoxSourceConnector(FsspecSourceConnector):
         from boxfs import BoxFileSystem
 
         try:
-            BoxFileSystem(**self.connector_config.access_kwargs)
+            BoxFileSystem(**self.connector_config.access_config)
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
@@ -82,7 +82,7 @@ class BoxDestinationConnector(FsspecDestinationConnector):
         from boxfs import BoxFileSystem
 
         try:
-            BoxFileSystem(**self.connector_config.access_kwargs)
+            BoxFileSystem(**self.connector_config.access_config)
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")

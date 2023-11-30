@@ -17,6 +17,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.api import partition_via_api
@@ -43,7 +44,7 @@ class BaseSessionHandle(ABC):
     e.g., a connection for making a request for fetching documents."""
 
 
-class BaseConfig(DataClassJsonMixin, ABC):
+class BaseConfig(EnhancedDataClassJsonMixin, ABC):
     pass
 
 
@@ -86,7 +87,7 @@ class PartitionConfig(BaseConfig):
     metadata_include: t.List[str] = field(default_factory=list)
     partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
-    api_key: t.Optional[str] = None
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     hi_res_model_name: t.Optional[str] = None
 
 
@@ -108,15 +109,21 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
+class AccessConfig(EnhancedDataClassJsonMixin, ABC):
+    # Meant to designate holding any sensitive information associated with other configs
+    pass
+
+
+@dataclass
 class FsspecConfig(FileStorageConfig):
-    access_kwargs: dict = field(default_factory=dict)
+    access_config: AccessConfig = enhanced_field(default=None)
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
 
-    def get_access_kwargs(self) -> dict:
-        return self.access_kwargs
+    def get_access_config(self) -> AccessConfig:
+        return self.access_config
 
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.remote_url.split("://")
@@ -171,7 +178,7 @@ class ReadConfig(BaseConfig):
 @dataclass
 class EmbeddingConfig(BaseConfig):
     provider: str
-    api_key: t.Optional[str] = None
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
@@ -209,8 +216,8 @@ class ChunkingConfig(BaseConfig):
 @dataclass
 class PermissionsConfig(BaseConfig):
     application_id: t.Optional[str]
-    client_cred: t.Optional[str]
     tenant: t.Optional[str]
+    client_cred: t.Optional[str] = enhanced_field(sensitive=True)
 
 
 # module-level variable to store session handle
@@ -248,7 +255,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
 
 
-class IngestDocJsonMixin(DataClassJsonMixin):
+class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
     """
     Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
     created from the dataclass. This explicitly sets properties to look for on the IngestDoc

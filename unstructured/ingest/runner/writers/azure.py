@@ -32,6 +32,6 @@ def azure_writer(
         write_config=FsspecWriteConfig(write_text_kwargs={"overwrite": overwrite}),
         connector_config=SimpleAzureBlobStorageConfig(
             remote_url=remote_url,
-            access_kwargs=access_kwargs,
+            access_config=access_kwargs,
         ),
     )
