@@ -4,8 +4,12 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from dataclasses_json.core import Json
+
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseIngestDocBatch,
     BaseSingleIngestDoc,
@@ -23,16 +27,55 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class ElasticsearchAccessConfig(AccessConfig):
+    hosts: t.Optional[t.List[str]] = None
+    username: t.Optional[str] = None
+    password: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    cloud_id: t.Optional[str] = None
+    api_key: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="es_api_key"
+    )
+    api_key_id: t.Optional[str] = None
+    bearer_auth: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    ca_certs: t.Optional[str] = None
+    ssl_assert_fingerprint: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+
+    def to_dict(self, **kwargs) -> t.Dict[str, Json]:
+        d = super().to_dict(**kwargs)
+        # Update auth related fields to conform to what the SDK expects based on the
+        # supported methods:
+        # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
+        if not self.ca_certs:
+            # ES library already sets a default for this, don't want to
+            # introduce data by setting it to None
+            d.pop("ca_certs")
+        if self.password and (self.cloud_id or self.ca_certs or self.ssl_assert_fingerprint):
+            d.pop("password")
+            d["basic_auth"] = ("elastic", self.password)
+        elif not self.cloud_id and self.username and self.password:
+            d.pop("username", None)
+            d.pop("password", None)
+            d["basic_auth"] = (self.username, self.password)
+        elif self.api_key and self.api_key_id:
+            d.pop("api_key_id", None)
+            d.pop("api_key", None)
+            d["api_key"] = (self.api_key_id, self.api_key)
+        # This doesn't exist on the client init, remove:
+        d.pop("api_key_id", None)
+        return d
+
+
+@dataclass
 class SimpleElasticsearchConfig(BaseConnectorConfig):
     """Connector config where:
     url is the url to access the elasticsearch server,
     index_name is the name of the index to reach to,
     """
 
-    url: str
     index_name: str
     batch_size: int = 100
     fields: t.List[str] = field(default=list)
+    access_config: ElasticsearchAccessConfig = None
 
 
 @dataclass
@@ -121,7 +164,7 @@ class ElasticsearchIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "url": self.connector_config.url,
+            "hosts": self.connector_config.access_config.hosts,
             "index_name": self.connector_config.index_name,
             "document_id": self.document_meta.document_id,
         }
@@ -149,7 +192,7 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
         from elasticsearch import Elasticsearch
         from elasticsearch.helpers import scan
 
-        es = Elasticsearch(self.connector_config.url)
+        es = Elasticsearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
         scan_query = {
             "_source": self.connector_config.fields,
             "version": True,
@@ -203,7 +246,9 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
         from elasticsearch import Elasticsearch
 
         if self._es is None:
-            self._es = Elasticsearch(self.connector_config.url)
+            self._es = Elasticsearch(
+                **self.connector_config.access_config.to_dict(apply_name_overload=False)
+            )
         return self._es
 
     def check_connection(self):
