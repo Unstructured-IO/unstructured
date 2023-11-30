@@ -13,12 +13,14 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$AZURE_DEST_CONNECTION_STR" ]; then
    echo "Skipping Azure destination ingest test because the AZURE_DEST_CONNECTION_STR env var is not set."
-   exit 0
+   exit 8
 fi
 
 CONTAINER=utic-ingest-test-fixtures-output
 DIRECTORY=$(uuidgen)
-REMOTE_URL="abfs://$CONTAINER/$DIRECTORY/"
+DIRECTORY="test"
+REMOTE_URL_RAW="$CONTAINER/$DIRECTORY/"
+REMOTE_URL="abfs://$REMOTE_URL_RAW"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -26,14 +28,13 @@ function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 
-  echo "deleting azure storage blob directory $CONTAINER/$DIRECTORY"
-  az storage fs directory delete -f "$CONTAINER" -n "$DIRECTORY" --connection-string "$AZURE_DEST_CONNECTION_STR" --yes
+  python "$SCRIPT_DIR"/python/test-azure-output.py down \
+  --connection-string "$AZURE_DEST_CONNECTION_STR" \
+  --container "$CONTAINER" \
+  --blob-path "$DIRECTORY"
 
 }
 trap cleanup EXIT
-
-# Create directory to use for testing
-az storage fs directory create -f "$CONTAINER" --n "$DIRECTORY" --connection-string "$AZURE_DEST_CONNECTION_STR"
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
@@ -51,9 +52,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --connection-string "$AZURE_DEST_CONNECTION_STR"
 
 # Simply check the number of files uploaded
-expected_num_files=1
-num_files_in_azure=$(az storage blob list -c "$CONTAINER" --prefix "$DIRECTORY"/example-docs/ --connection-string "$AZURE_DEST_CONNECTION_STR" | jq 'length')
-if [ "$num_files_in_azure" -ne "$expected_num_files" ]; then
-    echo "Expected $expected_num_files files to be uploaded to azure, but found $num_files_in_azure files."
-    exit 1
-fi
+python "$SCRIPT_DIR"/python/test-azure-output.py check \
+--expected-files 1 \
+--connection-string "$AZURE_DEST_CONNECTION_STR" \
+--container "$CONTAINER" \
+--blob-path "$DIRECTORY"

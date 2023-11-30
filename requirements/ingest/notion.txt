@@ -8,19 +8,19 @@ anyio==3.7.1
     # via
     #   -c ingest/../constraints.in
     #   httpx
-certifi==2023.7.22
+certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   httpcore
     #   httpx
-exceptiongroup==1.1.3
+exceptiongroup==1.2.0
     # via anyio
 h11==0.14.0
     # via httpcore
 htmlbuilder==1.0.0
     # via -r ingest/notion.in
-httpcore==1.0.1
+httpcore==1.0.2
     # via httpx
 httpx==0.25.1
     # via notion-client

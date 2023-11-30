@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/discord.txt ingest/discord.in
 #
-aiohttp==3.8.6
+aiohttp==3.9.0
     # via discord-py
 aiosignal==1.3.1
     # via aiohttp
@@ -12,10 +12,6 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-charset-normalizer==3.3.2
-    # via
-    #   -c ingest/../base.txt
-    #   aiohttp
 discord-py==2.3.2
     # via -r ingest/discord.in
 frozenlist==1.4.0
@@ -30,5 +26,5 @@ multidict==6.0.4
     # via
     #   aiohttp
     #   yarl
-yarl==1.9.2
+yarl==1.9.3
     # via aiohttp

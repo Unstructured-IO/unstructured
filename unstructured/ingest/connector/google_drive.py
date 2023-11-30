@@ -12,8 +12,8 @@ from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
     BaseSessionHandle,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     ConfigSessionHandleMixin,
     IngestDocCleanupMixin,
@@ -113,7 +113,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
+class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleGoogleDriveConfig
     meta: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "google_drive"
@@ -186,7 +186,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         from googleapiclient.http import MediaIoBaseDownload
 

@@ -1,13 +1,14 @@
 #! /usr/bin/env python3
 
-import csv
 import logging
 import os
 import statistics
 import sys
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import click
+import pandas as pd
+from tqdm import tqdm
 
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
@@ -29,16 +30,18 @@ if "ingest_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 
-agg_headers = ["strategy", "average", "sample_sd", "population_sd", "count"]
+agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
 
 
-def measure_text_edit_distance(
+def measure_text_extraction_accuracy(
     output_dir: str,
     source_dir: str,
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
+    grouping: Optional[str] = None,
     weights: Tuple[int, int, int] = (2, 1, 1),
+    visualize: bool = False,
 ) -> None:
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -58,15 +61,20 @@ def measure_text_edit_distance(
         sys.exit(0)
 
     rows = []
-    accuracy_scores: List[float] = []
-    percent_missing_scores: List[float] = []
 
     # assumption: output file name convention is name-of-file.doc.json
-    for doc in output_list:  # type: ignore
-        fn = (doc.split("/")[-1]).split(".json")[0]
-        doctype = fn.rsplit(".", 1)[-1]
-        fn_txt = fn + ".txt"
+    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
+    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
+        filename = (doc.split("/")[-1]).split(".json")[0]
+        doctype = filename.rsplit(".", 1)[-1]
+        fn_txt = filename + ".txt"
         connector = doc.split("/")[0]
+
+        # not all odetta cct files follow the same naming convention;
+        # some exclude the original filetype from the name
+        if fn_txt not in source_list:
+            fn = filename.rsplit(".", 1)[0]
+            fn_txt = fn + ".txt"
 
         if fn_txt in source_list:  # type: ignore
             output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
@@ -74,34 +82,37 @@ def measure_text_edit_distance(
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
 
-            rows.append([fn, doctype, connector, accuracy, percent_missing])
-            accuracy_scores.append(accuracy)
-            percent_missing_scores.append(percent_missing)
+            rows.append([filename, doctype, connector, accuracy, percent_missing])
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
-    _write_to_file(export_dir, "all-docs-cct.tsv", rows, headers)
+    df = pd.DataFrame(rows, columns=headers)
+    export_filename = "all-docs-cct"
 
-    agg_rows = []
-    agg_rows.append(
-        [
-            "cct-accuracy",
-            _mean(accuracy_scores),
-            _stdev(accuracy_scores),
-            _pstdev(accuracy_scores),
-            len(accuracy_scores),
-        ],
-    )
-    agg_rows.append(
-        [
-            "cct-%missing",
-            _mean(percent_missing_scores),
-            _stdev(percent_missing_scores),
-            _pstdev(percent_missing_scores),
-            len(percent_missing_scores),
-        ],
-    )
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_rows, agg_headers)
-    _display(agg_rows, agg_headers)
+    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
+    agg_df = pd.concat((acc, miss)).reset_index()
+    agg_df.columns = agg_headers
+
+    if grouping:
+        if grouping in ["doctype", "connector"]:
+            grouped_acc = (
+                df.groupby(grouping)
+                .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+            )
+            grouped_miss = (
+                df.groupby(grouping)
+                .agg({"cct-%missing": [_mean, _stdev, "count"]})
+                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+            )
+            df = _format_grouping_output(grouped_acc, grouped_miss)
+            export_filename = f"all-{grouping}-agg-cct"
+        else:
+            print("No field to group by. Returning a non-group evaluation.")
+
+    _write_to_file(export_dir, f"{export_filename}.tsv", df)
+    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
+    _display(agg_df)
 
 
 def measure_element_type_accuracy(
@@ -110,6 +121,7 @@ def measure_element_type_accuracy(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
+    visualize: bool = False,
 ):
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -125,34 +137,31 @@ def measure_element_type_accuracy(
         source_list = _listdir_recursive(source_dir)
 
     rows = []
-    accuracy_scores: List[float] = []
 
-    for doc in output_list:  # type: ignore
-        fn = (doc.split("/")[-1]).split(".json")[0]
-        doctype = fn.rsplit(".", 1)[-1]
+    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
+    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
+        filename = (doc.split("/")[-1]).split(".json")[0]
+        doctype = filename.rsplit(".", 1)[-1]
+        fn_json = filename + ".json"
         connector = doc.split("/")[0]
-        if doc in source_list:  # type: ignore
+        if fn_json in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text(os.path.join(source_dir, doc)))
+            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
-            rows.append([fn, doctype, connector, accuracy])
-            accuracy_scores.append(accuracy)
+            rows.append([filename, doctype, connector, accuracy])
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
-    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", rows, headers)
+    df = pd.DataFrame(rows, columns=headers)
+    if df.empty:
+        agg_df = pd.DataFrame(["element-type-accuracy", None, None, None, 0]).transpose()
+    else:
+        agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, "count"]}).transpose()
+        agg_df = agg_df.reset_index()
+    agg_df.columns = agg_headers
 
-    agg_rows = []
-    agg_rows.append(
-        [
-            "element-type-accuracy",
-            _mean(accuracy_scores),
-            _stdev(accuracy_scores),
-            _pstdev(accuracy_scores),
-            len(accuracy_scores),
-        ],
-    )
-    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_rows, agg_headers)
-    _display(agg_rows, agg_headers)
+    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
+    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
+    _display(agg_df)
 
 
 def _listdir_recursive(dir: str):
@@ -168,13 +177,20 @@ def _listdir_recursive(dir: str):
     return listdir
 
 
-def _display(rows, headers):
+def _format_grouping_output(*df):
+    return pd.concat(df, axis=1).reset_index()
+
+
+def _display(df):
+    if len(df) == 0:
+        return
+    headers = df.columns.tolist()
     col_widths = [
-        max(len(headers[i]), max(len(str(row[i])) for row in rows)) for i in range(len(headers))
+        max(len(header), max(len(str(item)) for item in df[header])) for header in headers
     ]
-    click.echo(" ".join(headers[i].ljust(col_widths[i]) for i in range(len(headers))))
+    click.echo(" ".join(header.ljust(col_widths[i]) for i, header in enumerate(headers)))
     click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
-    for row in rows:
+    for _, row in df.iterrows():
         formatted_row = []
         for item in row:
             if isinstance(item, float):
@@ -186,31 +202,31 @@ def _display(rows, headers):
         )
 
 
-def _write_to_file(dir: str, filename: str, rows: List[Any], headers: List[Any], mode: str = "w"):
+def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):
         os.makedirs(dir)
-    with open(os.path.join(os.path.join(dir, filename)), mode, newline="") as tsv:
-        writer = csv.writer(tsv, delimiter="\t")
-        if mode == "w":
-            writer.writerow(headers)
-        writer.writerows(rows)
+    if "count" in df.columns:
+        df["count"] = df["count"].astype(int)
+    if "filename" in df.columns and "connector" in df.columns:
+        df.sort_values(by=["connector", "filename"], inplace=True)
+    df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
 
 
-def _mean(scores: List[float], rounding: Optional[int] = 3):
-    if len(scores) < 1:
+def _mean(scores: Union[pd.Series, List[float]], rounding: Optional[int] = 3):
+    if len(scores) == 0:
         return None
-    elif len(scores) == 1:
-        mean = scores[0]
-    else:
-        mean = statistics.mean(scores)
+    mean = statistics.mean(scores)
     if not rounding:
         return mean
     return round(mean, rounding)
 
 
-def _stdev(scores: List[float], rounding: Optional[int] = 3):
+def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
+    # Filter out None values
+    scores = [score for score in scores if score is not None]
+    # Proceed only if there are more than one value
     if len(scores) <= 1:
         return None
     if not rounding:
@@ -218,7 +234,8 @@ def _stdev(scores: List[float], rounding: Optional[int] = 3):
     return round(statistics.stdev(scores), rounding)
 
 
-def _pstdev(scores: List[float], rounding: Optional[int] = 3):
+def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
+    scores = [score for score in scores if score is not None]
     if len(scores) <= 1:
         return None
     if not rounding:

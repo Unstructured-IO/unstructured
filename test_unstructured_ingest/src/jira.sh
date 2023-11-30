@@ -27,7 +27,7 @@ trap cleanup EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
    echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
-   exit 0
+   exit 8
 fi
 
 # Required arguments:

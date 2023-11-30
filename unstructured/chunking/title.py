@@ -32,36 +32,6 @@ _Section: TypeAlias = "_NonTextSection | _TableSection | _TextSection"
 TEXT_SEPARATOR = "\n\n"
 
 
-def chunk_table_element(element: Table, max_characters: int = 500) -> List[Table | TableChunk]:
-    text = element.text
-    html = getattr(element, "text_as_html", None)
-
-    if len(text) <= max_characters and (  # type: ignore
-        html is None or len(html) <= max_characters  # type: ignore
-    ):
-        return [element]
-
-    chunks: List[Table | TableChunk] = []
-    metadata = copy.copy(element.metadata)
-    is_continuation = False
-
-    while text or html:
-        text_chunk, text = text[:max_characters], text[max_characters:]
-        table_chunk = TableChunk(text=text_chunk, metadata=copy.copy(metadata))
-
-        if html:
-            html_chunk, html = html[:max_characters], html[max_characters:]
-            table_chunk.metadata.text_as_html = html_chunk
-
-        if is_continuation:
-            table_chunk.metadata.is_continuation = True
-
-        chunks.append(table_chunk)
-        is_continuation = True
-
-    return chunks
-
-
 def chunk_by_title(
     elements: List[Element],
     multipage_sections: bool = True,
@@ -78,7 +48,7 @@ def chunk_by_title(
     Parameters
     ----------
     elements
-        A list of unstructured elements. Usually the output of a partition functions.
+        A list of unstructured elements. Usually the output of a partition function.
     multipage_sections
         If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
@@ -129,8 +99,6 @@ def chunk_by_title(
 
     # ----------------------------------------------------------------
 
-    chunked_elements: List[Element] = []
-
     sections = _SectionCombiner(
         _split_elements_by_title_and_table(
             elements,
@@ -142,31 +110,7 @@ def chunk_by_title(
         combine_text_under_n_chars,
     ).iter_combined_sections()
 
-    for section in sections:
-        if isinstance(section, _NonTextSection):
-            chunked_elements.append(section.element)
-            continue
-
-        if isinstance(section, _TableSection):
-            chunked_elements.extend(chunk_table_element(section.table, max_characters))
-            continue
-
-        # -- otherwise, it's a _TextSection object --
-        text = section.text
-        chunk_meta = section.consolidated_metadata
-
-        # -- split chunk into CompositeElements objects maxlen or smaller --
-        text_len = len(text)
-        start = 0
-        remaining = text_len
-
-        while remaining > 0:
-            end = min(start + max_characters, text_len)
-            chunked_elements.append(CompositeElement(text=text[start:end], metadata=chunk_meta))
-            start = end
-            remaining = text_len - end
-
-    return chunked_elements
+    return [chunk for section in sections for chunk in section.iter_chunks(max_characters)]
 
 
 def _split_elements_by_title_and_table(
@@ -327,10 +271,9 @@ class _NonTextSection:
     def __init__(self, element: Element) -> None:
         self._element = element
 
-    @property
-    def element(self) -> Element:
-        """The non-text element of this section (currently only CheckBox is non-text)."""
-        return self._element
+    def iter_chunks(self, maxlen: int) -> Iterator[Element]:
+        """Generate the non-text element of this section."""
+        yield self._element
 
 
 class _TableSection:
@@ -339,10 +282,36 @@ class _TableSection:
     def __init__(self, table: Table) -> None:
         self._table = table
 
-    @property
-    def table(self) -> Table:
-        """The `Table` element of this section."""
-        return self._table
+    def iter_chunks(self, maxlen: int) -> Iterator[Table | TableChunk]:
+        """Split this section into one or more `Table` or `TableChunk` objects maxlen or smaller."""
+        text = self._table.text
+        html = self._table.metadata.text_as_html or ""
+
+        # -- only chunk a table when it's too big to swallow whole --
+        if len(text) <= maxlen and len(html) <= maxlen:
+            yield self._table
+            return
+
+        is_continuation = False
+
+        while text or html:
+            # -- split off the next maxchars into the next TableChunk --
+            text_chunk, text = text[:maxlen], text[maxlen:]
+            table_chunk = TableChunk(text=text_chunk, metadata=copy.deepcopy(self._table.metadata))
+
+            # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
+            # -- HTML elements that *correspond* to the TextChunk.text fragment.
+            if html:
+                html_chunk, html = html[:maxlen], html[maxlen:]
+                table_chunk.metadata.text_as_html = html_chunk
+
+            # -- mark second and later chunks as a continuation --
+            if is_continuation:
+                table_chunk.metadata.is_continuation = True
+
+            yield table_chunk
+
+            is_continuation = True
 
 
 class _TextSection:
@@ -367,32 +336,24 @@ class _TextSection:
         """Return new `_TextSection` that combines this and `other_section`."""
         return _TextSection(self._elements + other_section._elements)
 
-    @lazyproperty
-    def consolidated_metadata(self) -> ElementMetadata:
-        """Metadata applicable to this section as a single chunk.
+    def iter_chunks(self, maxlen: int) -> Iterator[CompositeElement]:
+        """Split this section into one or more `CompositeElement` objects maxlen or smaller."""
+        text = self._text
+        text_len = len(text)
+        start = 0
+        remaining = text_len
 
-        Formed by applying consolidation rules to all metadata fields across the elements of this
-        section.
-
-        For the sake of consistency, the same rules are applied (for example, for dropping values)
-        to a single-element section too, even though metadata for such a section is already
-        "consolidated".
-        """
-        return ElementMetadata(**self._meta_kwargs)
-
-    @lazyproperty
-    def text(self) -> str:
-        """The concatenated text of all elements in this section.
-
-        Each element-text is separated from the next by a blank line ("\n\n").
-        """
-        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
+        while remaining > 0:
+            end = min(start + maxlen, text_len)
+            yield CompositeElement(text=text[start:end], metadata=self._consolidated_metadata)
+            start = end
+            remaining = text_len - end
 
     @lazyproperty
     def text_length(self) -> int:
         """Length of concatenated text of this section, including separators."""
         # -- used by section-combiner to identify combination candidates --
-        return len(self.text)
+        return len(self._text)
 
     @lazyproperty
     def _all_metadata_values(self) -> Dict[str, List[Any]]:
@@ -416,7 +377,7 @@ class _TextSection:
             """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
             return (
                 (field_name, value)
-                for field_name, value in vars(metadata).items()
+                for field_name, value in metadata.known_fields.items()
                 if value is not None
             )
 
@@ -428,6 +389,19 @@ class _TextSection:
                 field_values[field_name].append(value)
 
         return dict(field_values)
+
+    @lazyproperty
+    def _consolidated_metadata(self) -> ElementMetadata:
+        """Metadata applicable to this section as a single chunk.
+
+        Formed by applying consolidation rules to all metadata fields across the elements of this
+        section.
+
+        For the sake of consistency, the same rules are applied (for example, for dropping values)
+        to a single-element section too, even though metadata for such a section is already
+        "consolidated".
+        """
+        return ElementMetadata(**self._meta_kwargs)
 
     @lazyproperty
     def _consolidated_regex_meta(self) -> Dict[str, List[RegexMetadata]]:
@@ -501,6 +475,14 @@ class _TextSection:
                     )
 
         return dict(iter_kwarg_pairs())
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The concatenated text of all elements in this section.
+
+        Each element-text is separated from the next by a blank line ("\n\n").
+        """
+        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
 
 
 class _TextSectionBuilder:

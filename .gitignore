@@ -139,6 +139,7 @@ dmypy.json
 /structured-output
 test_unstructured_ingest/workdir/
 test_unstructured_ingest/delta-table-dest/
+test_unstructured_ingest/skipped-files.txt
 
 # suggested ingest mirror directory
 /mirror
@@ -200,3 +201,4 @@ example-docs/*_images
 examples/**/output/
 
 outputdiff.txt
+metricsdiff.txt

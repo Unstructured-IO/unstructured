@@ -2,6 +2,7 @@ import contextlib
 import io
 import os
 import re
+import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -20,6 +21,9 @@ from typing import (
 
 import numpy as np
 import pdf2image
+import pikepdf
+import pypdf
+import wrapt
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import (
     LAParams,
@@ -31,6 +35,7 @@ from pdfminer.layout import (
 )
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
 from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfparser import PSSyntaxError
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -76,7 +81,7 @@ from unstructured.partition.ocr import (
     get_layout_elements_from_ocr,
     get_ocr_agent,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT,
@@ -84,6 +89,7 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
     OCRMode,
+    PartitionStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
@@ -115,7 +121,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
@@ -162,6 +168,7 @@ def partition_pdf(
         If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
         given path
     """
+
     exactly_one(filename=filename, file=file)
 
     languages = check_languages(languages, ocr_languages)
@@ -217,7 +224,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    strategy: str = "auto",
+    strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -232,6 +239,8 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
+    validate_strategy(strategy, is_image)
+
     languages = check_languages(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
@@ -239,35 +248,27 @@ def partition_pdf_or_image(
         filename=filename,
     )
 
-    if (
-        not is_image
-        and determine_pdf_or_image_strategy(
-            strategy,
-            filename=filename,
-            file=file,
-            is_image=is_image,
-            infer_table_structure=infer_table_structure,
-            extract_images_in_pdf=extract_images_in_pdf,
-        )
-        != "ocr_only"
-    ):
-        extracted_elements = extractable_elements(
-            filename=filename,
-            file=spooled_to_bytes_io_if_needed(file),
-            include_page_breaks=include_page_breaks,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
-            **kwargs,
-        )
-        pdf_text_extractable = any(
-            isinstance(el, Text) and el.text.strip() for el in extracted_elements
-        )
-    else:
-        pdf_text_extractable = False
+    extracted_elements = []
+    pdf_text_extractable = False
+    if not is_image:
+        try:
+            extracted_elements = extractable_elements(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            pdf_text_extractable = any(
+                isinstance(el, Text) and el.text.strip() for el in extracted_elements
+            )
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            logger.warning("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        filename=filename,
         file=file,
         is_image=is_image,
         infer_table_structure=infer_table_structure,
@@ -275,11 +276,11 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
     )
 
-    if strategy == "hi_res":
+    if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            _layout_elements = _partition_pdf_or_image_local(
+            elements = _partition_pdf_or_image_local(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
                 is_image=is_image,
@@ -291,22 +292,15 @@ def partition_pdf_or_image(
                 image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+            out_elements = _process_uncategorized_text_elements(elements)
 
-    elif strategy == "fast":
+    elif strategy == PartitionStrategy.FAST:
         return extracted_elements
 
-    elif strategy == "ocr_only":
+    elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
         with warnings.catch_warnings():
-            _layout_elements = _partition_pdf_or_image_with_ocr(
+            elements = _partition_pdf_or_image_with_ocr(
                 filename=filename,
                 file=file,
                 include_page_breaks=include_page_breaks,
@@ -315,17 +309,26 @@ def partition_pdf_or_image(
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 **kwargs,
             )
+            out_elements = _process_uncategorized_text_elements(elements)
 
-            layout_elements = []
-            for el in _layout_elements:
-                if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-                    new_el = element_from_text(cast(Text, el).text)
-                    new_el.metadata = el.metadata
-                else:
-                    new_el = el
-                layout_elements.append(new_el)
+    return out_elements
 
-    return layout_elements
+
+def _process_uncategorized_text_elements(elements: List[Element]):
+    """Processes a list of elements, creating a new list where elements with the
+    category `UncategorizedText` are replaced with corresponding
+    elements created from their text content."""
+
+    out_elements = []
+    for el in elements:
+        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
+            new_el = element_from_text(cast(Text, el).text)
+            new_el.metadata = el.metadata
+        else:
+            new_el = el
+        out_elements.append(new_el)
+
+    return out_elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -529,6 +532,82 @@ def _extract_text(item: LTItem) -> str:
     return "\n"
 
 
+# Some pages with a ICC color space do not follow the pdf spec
+# They throw an error when we call interpreter.process_page
+# Since we don't need color info, we can just drop it in the pdfminer code
+# See #2059
+@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
+    resources = args[0]
+    if "ColorSpace" in resources:
+        del resources["ColorSpace"]
+
+    return wrapped(resources)
+
+
+def get_page_data(fp: BinaryIO, page_number: int):
+    """Find the binary data for a given page number from a PDF binary file."""
+    pdf_reader = pypdf.PdfReader(fp)
+    pdf_writer = pypdf.PdfWriter()
+    page = pdf_reader.pages[page_number]
+    pdf_writer.add_page(page)
+    page_data = io.BytesIO()
+    pdf_writer.write(page_data)
+    return page_data
+
+
+def _open_pdfminer_pages_generator(
+    fp: BinaryIO,
+):
+    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
+
+    rsrcmgr = PDFResourceManager()
+    laparams = LAParams()
+    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+    interpreter = PDFPageInterpreter(rsrcmgr, device)
+    try:
+        i = 0
+        pages = PDFPage.get_pages(fp)
+        # Detect invalid dictionary construct for entire PDF
+        for page in pages:
+            try:
+                # Detect invalid dictionary construct for one page
+                interpreter.process_page(page)
+                page_layout = device.get_result()
+            except PSSyntaxError:
+                logger.info("Detected invalid dictionary construct for PDFminer")
+                logger.info(f"Repairing the PDF page {i+1} ...")
+                # find the error page from binary data fp
+                error_page_data = get_page_data(fp, page_number=i)
+                # repair the error page with pikepdf
+                with tempfile.NamedTemporaryFile() as tmp:
+                    with pikepdf.Pdf.open(error_page_data) as pdf:
+                        pdf.save(tmp.name)
+                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
+                    try:
+                        interpreter.process_page(page)
+                        page_layout = device.get_result()
+                    except Exception:
+                        logger.warning(
+                            f"PDFMiner failed to process PDF page {i+1} after repairing it."
+                        )
+                        break
+            i += 1
+            yield page, page_layout
+    except PSSyntaxError:
+        logger.info("Detected invalid dictionary construct for PDFminer")
+        logger.info("Repairing the PDF document ...")
+        # repair the entire doc with pikepdf
+        with tempfile.NamedTemporaryFile() as tmp:
+            with pikepdf.Pdf.open(fp) as pdf:
+                pdf.save(tmp.name)
+            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
+            for page in pages:
+                interpreter.process_page(page)
+                page_layout = device.get_result()
+                yield page, page_layout
+
+
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str,
@@ -538,18 +617,10 @@ def _process_pdfminer_pages(
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
 ):
-    """Uses PDF miner to split a document into pages and process them."""
+    """Uses PDFMiner to split a document into pages and process them."""
     elements: List[Element] = []
 
-    rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-
-    for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
-        interpreter.process_page(page)
-        page_layout = device.get_result()
-
+    for i, (page, page_layout) in enumerate(_open_pdfminer_pages_generator(fp)):
         width, height = page_layout.width, page_layout.height
 
         page_elements = []
@@ -876,7 +947,10 @@ def get_uris(
     """
     if isinstance(annots, List):
         return get_uris_from_annots(annots, height, coordinate_system, page_number)
-    return get_uris_from_annots(annots.resolve(), height, coordinate_system, page_number)
+    resolved_annots = annots.resolve()
+    if resolved_annots is None:
+        return []
+    return get_uris_from_annots(resolved_annots, height, coordinate_system, page_number)
 
 
 def get_uris_from_annots(
@@ -901,46 +975,52 @@ def get_uris_from_annots(
         including its coordinates, bounding box, type, URI link, and page number.
     """
     annotation_list = []
-    if annots:
-        for annotation in annots:
-            annotation_dict = (
-                try_resolve(annotation) if isinstance(try_resolve(annotation), dict) else None
-            )
-            if (
-                not annotation_dict
-                or str(annotation_dict["Subtype"]) != "/'Link'"
-                or "A" not in annotation_dict
-            ):
-                continue
-            x1, y1, x2, y2 = rect_to_bbox(annotation_dict["Rect"], height)
-            uri_dict = try_resolve(annotation_dict["A"])
+    for annotation in annots:
+        # Check annotation is valid for extraction
+        annotation_dict = try_resolve(annotation)
+        if not isinstance(annotation_dict, dict):
+            continue
+        subtype = annotation_dict["Subtype"] if "Subtype" in annotation_dict else None
+        if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
+            continue
+        # Extract bounding box and update coordinates
+        rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
+        if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
+            continue
+        x1, y1, x2, y2 = rect_to_bbox(rect, height)
+        points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+        coordinates_metadata = CoordinatesMetadata(
+            points=points,
+            system=coordinate_system,
+        )
+        # Extract type
+        if "A" not in annotation_dict:
+            continue
+        uri_dict = try_resolve(annotation_dict["A"])
+        if not isinstance(uri_dict, dict):
+            continue
+        uri_type = None
+        if "S" in uri_dict and not isinstance(uri_dict["S"], PDFObjRef):
             uri_type = str(uri_dict["S"])
+        # Extract URI link
+        uri = None
+        try:
+            if uri_type == "/'URI'":
+                uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
+            if uri_type == "/'GoTo'":
+                uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
+        except Exception:
+            pass
 
-            uri = None
-            try:
-                if uri_type == "/'URI'":
-                    uri = try_resolve(try_resolve(uri_dict["URI"])).decode("utf-8")
-                if uri_type == "/'GoTo'":
-                    uri = try_resolve(try_resolve(uri_dict["D"])).decode("utf-8")
-            except Exception:
-                pass
-
-            points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-
-            coordinates_metadata = CoordinatesMetadata(
-                points=points,
-                system=coordinate_system,
-            )
-
-            annotation_list.append(
-                {
-                    "coordinates": coordinates_metadata,
-                    "bbox": (x1, y1, x2, y2),
-                    "type": uri_type,
-                    "uri": uri,
-                    "page_number": page_number,
-                },
-            )
+        annotation_list.append(
+            {
+                "coordinates": coordinates_metadata,
+                "bbox": (x1, y1, x2, y2),
+                "type": uri_type,
+                "uri": uri,
+                "page_number": page_number,
+            },
+        )
     return annotation_list
 
 

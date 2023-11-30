@@ -15,6 +15,7 @@ CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC2317
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -27,7 +28,7 @@ trap cleanup EXIT
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
     echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
     echo "The Google Drive test content can be found at https://drive.google.com/drive/folders/1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr"
-    exit 0
+    exit 8
 fi
 
 # Create temporary service key file
@@ -50,6 +51,16 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --work-dir "$WORK_DIR"
 
 
+set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
+EXIT_CODE=$?
+set -e
+
+if [ "$EXIT_CODE" -ne 0 ]; then
+    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+    # Handle the error or exit
+fi
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
+
+exit $EXIT_CODE
