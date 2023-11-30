@@ -16,4 +16,5 @@ Configs
 * ``chunk_elements (default False)``: Boolean flag whether to run chunking as part of the ingest process.
 * ``multipage_sections (default True)``: If True, sections can span multiple pages.
 * ``combine_text_under_n_chars (default 500)``: Combines elements (for example a series of titles) until a section reaches a length of n characters. Defaults to `max_characters` which combines chunks whenever space allows. Specifying 0 for this argument suppresses combining of small chunks. Note this value is "capped" at the `new_after_n_chars` value since a value higher than that would not change this parameter's effect.
+* ``new_after_n_chars (default 1500)``: Cuts off new sections once they reach a length of n characters (soft max). Defaults to `max_characters` when not specified, which effectively disables any soft window. Specifying 0 for this argument causes each element to appear in a chunk by itself (although an element with text longer than `max_characters` will be still be split into two or more chunks).
 * ``max_characters (default 1500)``: Chunks elements text and text_as_html (if present) into chunks of length n characters (hard max)
