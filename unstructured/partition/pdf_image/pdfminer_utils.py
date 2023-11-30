@@ -1,8 +1,15 @@
-from typing import Any, List, Tuple
+import tempfile
+from typing import Any, BinaryIO, List, Tuple
 
+import pikepdf
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfparser import PSSyntaxError
+
+from unstructured.logger import logger
+from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
 
 def init_pdfminer():
@@ -70,3 +77,52 @@ def rect_to_bbox(
     y1 = height - y1
     y2 = height - y2
     return (x1, y1, x2, y2)
+
+
+def open_pdfminer_pages_generator(
+    fp: BinaryIO,
+):
+    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
+
+    device, interpreter = init_pdfminer()
+    try:
+        i = 0
+        pages = PDFPage.get_pages(fp)
+        # Detect invalid dictionary construct for entire PDF
+        for page in pages:
+            try:
+                # Detect invalid dictionary construct for one page
+                interpreter.process_page(page)
+                page_layout = device.get_result()
+            except PSSyntaxError:
+                logger.info("Detected invalid dictionary construct for PDFminer")
+                logger.info(f"Repairing the PDF page {i+1} ...")
+                # find the error page from binary data fp
+                error_page_data = get_page_data(fp, page_number=i)
+                # repair the error page with pikepdf
+                with tempfile.NamedTemporaryFile() as tmp:
+                    with pikepdf.Pdf.open(error_page_data) as pdf:
+                        pdf.save(tmp.name)
+                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
+                    try:
+                        interpreter.process_page(page)
+                        page_layout = device.get_result()
+                    except Exception:
+                        logger.warning(
+                            f"PDFMiner failed to process PDF page {i+1} after repairing it."
+                        )
+                        break
+            i += 1
+            yield page, page_layout
+    except PSSyntaxError:
+        logger.info("Detected invalid dictionary construct for PDFminer")
+        logger.info("Repairing the PDF document ...")
+        # repair the entire doc with pikepdf
+        with tempfile.NamedTemporaryFile() as tmp:
+            with pikepdf.Pdf.open(fp) as pdf:
+                pdf.save(tmp.name)
+            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
+            for page in pages:
+                interpreter.process_page(page)
+                page_layout = device.get_result()
+                yield page, page_layout

@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
-from pdfminer.pdfpage import PDFPage
 from pdfminer.utils import open_filename
 from unstructured_inference.inference.elements import (
     EmbeddedTextRegion,
@@ -15,7 +14,7 @@ from unstructured_inference.models.detectron2onnx import UnstructuredDetectronON
 
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
-    init_pdfminer,
+    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.utils.constants import Source
@@ -93,14 +92,10 @@ def get_regions_by_pdfminer(
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
-    device, interpreter = init_pdfminer()
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for i, page in enumerate(PDFPage.get_pages(fp)):  # type: ignore
-        interpreter.process_page(page)
-        page_layout = device.get_result()
-
+    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
         height = page_layout.height
 
         layout: List["TextRegion"] = []

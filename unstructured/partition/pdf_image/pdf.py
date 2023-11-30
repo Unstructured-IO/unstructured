@@ -2,7 +2,6 @@ import contextlib
 import io
 import os
 import re
-import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -21,8 +20,6 @@ from typing import (
 
 import numpy as np
 import pdf2image
-import pikepdf
-import pypdf
 import wrapt
 from pdfminer import psparser
 from pdfminer.layout import (
@@ -32,8 +29,6 @@ from pdfminer.layout import (
     LTItem,
     LTTextBox,
 )
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PSSyntaxError
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -76,7 +71,7 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
-    init_pdfminer,
+    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -570,66 +565,6 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     return wrapped(resources)
 
 
-def get_page_data(fp: BinaryIO, page_number: int):
-    """Find the binary data for a given page number from a PDF binary file."""
-    pdf_reader = pypdf.PdfReader(fp)
-    pdf_writer = pypdf.PdfWriter()
-    page = pdf_reader.pages[page_number]
-    pdf_writer.add_page(page)
-    page_data = io.BytesIO()
-    pdf_writer.write(page_data)
-    return page_data
-
-
-def _open_pdfminer_pages_generator(
-    fp: BinaryIO,
-):
-    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
-
-    device, interpreter = init_pdfminer()
-    try:
-        i = 0
-        pages = PDFPage.get_pages(fp)
-        # Detect invalid dictionary construct for entire PDF
-        for page in pages:
-            try:
-                # Detect invalid dictionary construct for one page
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-            except PSSyntaxError:
-                logger.info("Detected invalid dictionary construct for PDFminer")
-                logger.info(f"Repairing the PDF page {i+1} ...")
-                # find the error page from binary data fp
-                error_page_data = get_page_data(fp, page_number=i)
-                # repair the error page with pikepdf
-                with tempfile.NamedTemporaryFile() as tmp:
-                    with pikepdf.Pdf.open(error_page_data) as pdf:
-                        pdf.save(tmp.name)
-                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
-                    try:
-                        interpreter.process_page(page)
-                        page_layout = device.get_result()
-                    except Exception:
-                        logger.warning(
-                            f"PDFMiner failed to process PDF page {i+1} after repairing it."
-                        )
-                        break
-            i += 1
-            yield page, page_layout
-    except PSSyntaxError:
-        logger.info("Detected invalid dictionary construct for PDFminer")
-        logger.info("Repairing the PDF document ...")
-        # repair the entire doc with pikepdf
-        with tempfile.NamedTemporaryFile() as tmp:
-            with pikepdf.Pdf.open(fp) as pdf:
-                pdf.save(tmp.name)
-            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
-            for page in pages:
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-                yield page, page_layout
-
-
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str,
@@ -642,7 +577,7 @@ def _process_pdfminer_pages(
     """Uses PDFMiner to split a document into pages and process them."""
     elements: List[Element] = []
 
-    for i, (page, page_layout) in enumerate(_open_pdfminer_pages_generator(fp)):
+    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
         width, height = page_layout.width, page_layout.height
 
         page_elements = []
