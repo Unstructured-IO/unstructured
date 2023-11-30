@@ -28,7 +28,7 @@ class GCSRunner(FsspecBaseRunner):
         if service_account_key:
             access_kwargs["token"] = service_account_key
 
-        connector_config.access_kwargs = access_kwargs
+        connector_config.access_config = access_kwargs
 
         source_doc_connector = GcsSourceConnector(  # type: ignore
             connector_config=connector_config,

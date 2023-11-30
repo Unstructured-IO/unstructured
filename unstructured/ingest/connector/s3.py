@@ -1,3 +1,4 @@
+import typing as t
 from dataclasses import dataclass
 from typing import Type
 
@@ -7,12 +8,23 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.interfaces import AccessConfig
 from unstructured.utils import requires_dependencies
 
 
 @dataclass
+class S3AccessConfig(AccessConfig):
+    anon: bool = False
+    endpoint_url: t.Optional[str] = None
+    key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+
+
+@dataclass
 class SimpleS3Config(SimpleFsspecConfig):
-    pass
+    access_config: S3AccessConfig = enhanced_field(default=None)
 
 
 @dataclass
