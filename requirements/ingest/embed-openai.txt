@@ -68,7 +68,7 @@ langchain==0.0.344
     # via -r ingest/embed-openai.in
 langchain-core==0.0.8
     # via langchain
-langsmith==0.0.67
+langsmith==0.0.68
     # via
     #   langchain
     #   langchain-core

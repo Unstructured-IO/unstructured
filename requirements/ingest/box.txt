@@ -9,9 +9,7 @@ attrs==23.1.0
 boxfs==0.2.1
     # via -r ingest/box.in
 boxsdk[jwt]==3.9.2
-    # via
-    #   boxfs
-    #   boxsdk
+    # via boxfs
 certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
