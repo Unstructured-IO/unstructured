@@ -14,7 +14,9 @@ pandas==2.0.3
     #   -c constraints.in
     #   -r extra-csv.in
 python-dateutil==2.8.2
-    # via pandas
+    # via
+    #   -c base.txt
+    #   pandas
 pytz==2023.3.post1
     # via pandas
 six==1.16.0

@@ -277,6 +277,7 @@ pyproject-hooks==1.0.0
     # via build
 python-dateutil==2.8.2
     # via
+    #   -c base.txt
     #   -c test.txt
     #   arrow
     #   jupyter-client

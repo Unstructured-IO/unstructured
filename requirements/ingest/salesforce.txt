@@ -42,7 +42,9 @@ pycparser==2.21
 pyjwt==2.8.0
     # via simple-salesforce
 python-dateutil==2.8.2
-    # via pendulum
+    # via
+    #   -c ingest/../base.txt
+    #   pendulum
 pytz==2023.3.post1
     # via zeep
 pytzdata==2020.1

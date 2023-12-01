@@ -9,7 +9,9 @@ attrs==23.1.0
 boxfs==0.2.1
     # via -r ingest/box.in
 boxsdk[jwt]==3.9.2
-    # via boxfs
+    # via
+    #   boxfs
+    #   boxsdk
 certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
@@ -37,7 +39,9 @@ pycparser==2.21
 pyjwt==2.8.0
     # via boxsdk
 python-dateutil==2.8.2
-    # via boxsdk
+    # via
+    #   -c ingest/../base.txt
+    #   boxsdk
 requests==2.31.0
     # via
     #   -c ingest/../base.txt

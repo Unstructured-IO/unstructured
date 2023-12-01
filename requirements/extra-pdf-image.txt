@@ -172,6 +172,7 @@ pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
     # via
+    #   -c base.txt
     #   matplotlib
     #   pandas
 python-multipart==0.0.6
