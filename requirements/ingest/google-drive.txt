@@ -17,9 +17,9 @@ charset-normalizer==3.3.2
     #   requests
 google-api-core==2.14.0
     # via google-api-python-client
-google-api-python-client==2.108.0
+google-api-python-client==2.109.0
     # via -r ingest/google-drive.in
-google-auth==2.23.4
+google-auth==2.24.0
     # via
     #   google-api-core
     #   google-api-python-client
@@ -32,7 +32,7 @@ httplib2==0.22.0
     # via
     #   google-api-python-client
     #   google-auth-httplib2
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
