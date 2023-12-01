@@ -18,13 +18,13 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.2
+dataclasses-json==0.6.3
     # via -r base.in
 emoji==2.8.0
     # via -r base.in
 filetype==1.2.0
     # via -r base.in
-idna==3.4
+idna==3.6
     # via requests
 joblib==1.3.2
     # via nltk
