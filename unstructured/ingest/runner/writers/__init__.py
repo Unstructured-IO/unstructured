@@ -7,6 +7,7 @@ from .box import BoxWriter
 from .delta_table import DeltaTableWriter
 from .dropbox import DropboxWriter
 from .gcs import GcsWriter
+from .mongodb import MongodbWriter
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
     "azure": AzureWriter,
@@ -15,7 +16,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "delta_table": DeltaTableWriter,
     "dropbox": DropboxWriter,
     "gcs": GcsWriter,
-    # "mongodb": mongodb_writer,
+    "mongodb": MongodbWriter,
     # "s3": s3_writer,
     # "pinecone": pinecone_writer,
     # "weaviate": weaviate_writer,
