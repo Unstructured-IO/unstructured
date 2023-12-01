@@ -9,6 +9,7 @@ from .dropbox import DropboxWriter
 from .gcs import GcsWriter
 from .mongodb import MongodbWriter
 from .pinecone import PineconeWriter
+from .s3 import S3Writer
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
     "azure": AzureWriter,
@@ -19,9 +20,8 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "gcs": GcsWriter,
     "mongodb": MongodbWriter,
     "pinecone": PineconeWriter,
-    # "s3": s3_writer,
-    # "pinecone": pinecone_writer,
     # "weaviate": weaviate_writer,
+    "s3": S3Writer,
 }
 
 __all__ = ["writer_map"]

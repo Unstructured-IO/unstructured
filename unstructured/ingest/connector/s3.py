@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -20,6 +21,11 @@ class S3AccessConfig(AccessConfig):
     key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+
+
+@dataclass
+class S3WriteConfig(FsspecWriteConfig):
+    pass
 
 
 @dataclass
@@ -50,3 +56,4 @@ class S3SourceConnector(FsspecSourceConnector):
 @dataclass
 class S3DestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleS3Config
+    write_config: S3WriteConfig

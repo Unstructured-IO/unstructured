@@ -76,8 +76,9 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
         return dd
 
     adjusted_dict = conform_dict(inner_d=flat_data, inner_config=config)
+    print(adjusted_dict)
     config.from_dict(adjusted_dict)
-    return config.from_dict(adjusted_dict)
+    return config.from_dict(adjusted_dict, apply_name_overload=False)
 
 
 def extract_configs(
