@@ -22,9 +22,9 @@ htmlbuilder==1.0.0
     # via -r ingest/notion.in
 httpcore==1.0.2
     # via httpx
-httpx==0.25.1
+httpx==0.25.2
     # via notion-client
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   anyio

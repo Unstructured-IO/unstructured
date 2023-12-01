@@ -1,6 +1,8 @@
-## 0.11.4-dev0
+## 0.11.4-dev2
 
 ### Enhancements
+
+* **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
 
 ### Features
 
@@ -25,8 +27,8 @@
 ## 0.11.1
 
 ### Enhancements
-* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
 
+* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
 * **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
 
 ### Features
