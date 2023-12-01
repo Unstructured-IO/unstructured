@@ -22,7 +22,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.1.1
     # via matplotlib
-cryptography==41.0.5
+cryptography==41.0.7
     # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -37,7 +37,7 @@ filelock==3.13.1
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.45.0
+fonttools==4.45.1
     # via matplotlib
 fsspec==2023.9.1
     # via
@@ -52,7 +52,7 @@ huggingface-hub==0.19.4
     #   unstructured-inference
 humanfriendly==10.0
     # via coloredlogs
-idna==3.4
+idna==3.6
     # via
     #   -c base.txt
     #   requests
@@ -172,6 +172,7 @@ pytesseract==0.3.10
     # via layoutparser
 python-dateutil==2.8.2
     # via
+    #   -c base.txt
     #   matplotlib
     #   pandas
 python-multipart==0.0.6
@@ -216,7 +217,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.11
+timm==0.9.12
     # via effdet
 tokenizers==0.15.0
     # via transformers

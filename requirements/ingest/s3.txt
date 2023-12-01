@@ -6,7 +6,7 @@
 #
 aiobotocore==2.5.4
     # via s3fs
-aiohttp==3.9.0
+aiohttp==3.9.1
     # via
     #   aiobotocore
     #   s3fs
@@ -31,7 +31,7 @@ fsspec==2023.9.1
     #   -c ingest/../constraints.in
     #   -r ingest/s3.in
     #   s3fs
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   yarl
@@ -42,7 +42,9 @@ multidict==6.0.4
     #   aiohttp
     #   yarl
 python-dateutil==2.8.2
-    # via botocore
+    # via
+    #   -c ingest/../base.txt
+    #   botocore
 s3fs==2023.9.1
     # via -r ingest/s3.in
 six==1.16.0
