@@ -5,6 +5,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
     WriteTextConfig,
 )
@@ -18,6 +19,11 @@ from unstructured.utils import requires_dependencies
 @dataclass
 class AzureWriteTextConfig(WriteTextConfig):
     overwrite: bool = False
+
+
+@dataclass
+class AzureWriteConfig(FsspecWriteConfig):
+    write_text_config: t.Optional[AzureWriteTextConfig] = None
 
 
 @dataclass
@@ -66,6 +72,7 @@ class AzureBlobStorageSourceConnector(FsspecSourceConnector):
 @dataclass
 class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleAzureBlobStorageConfig
+    write_config: AzureWriteConfig
 
     @requires_dependencies(["adlfs"], extras="azure")
     def check_connection(self):

@@ -15,6 +15,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
@@ -28,8 +29,14 @@ class AccessTokenError(Exception):
 
 
 @dataclass
+class BoxWriteConfig(FsspecWriteConfig):
+    pass
+
+
+@dataclass
 class BoxAccessConfig(AccessConfig):
     box_app_config: t.Optional[str] = None
+    verbose: bool = False
 
 
 @dataclass
@@ -40,16 +47,19 @@ class SimpleBoxConfig(SimpleFsspecConfig):
     def get_access_config(self) -> dict:
         # Return access_kwargs with oauth. The oauth object can not be stored directly in the config
         # because it is not serializable.
-        from boxsdk import JWTAuth
+        from boxsdk import JWTAuth, LoggingClient
 
         access_kwargs_with_oauth: dict[str, t.Any] = {
             "oauth": JWTAuth.from_settings_file(
                 self.access_config.box_app_config,
             ),
         }
-        access_config = self.access_config.to_dict()
+        access_config: dict[str, t.Any] = self.access_config.to_dict()
         access_config.pop("box_app_config", None)
+        if access_config.pop("verbose", False):
+            access_kwargs_with_oauth["client_type"] = LoggingClient
         access_kwargs_with_oauth.update(access_config)
+
         return access_kwargs_with_oauth
 
 
@@ -86,6 +96,7 @@ class BoxSourceConnector(FsspecSourceConnector):
 @dataclass
 class BoxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleBoxConfig
+    write_config: BoxWriteConfig
 
     @requires_dependencies(["boxfs"], extras="box")
     def check_connection(self):
