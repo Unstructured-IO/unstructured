@@ -66,7 +66,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=GcsCliConfig,
-        addition_configs={"fsspec_config": SimpleGcsConfig},
+        addition_configs={"fsspec_config": SimpleGcsConfig, "write_config": GcsCliConfig},
         is_fsspec=True,
     )
     return cmd_cls

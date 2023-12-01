@@ -11,8 +11,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class DropboxWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: t.Optional["SimpleDropboxConfig"] = None
-    write_config: t.Optional["DropboxWriteConfig"] = None
+    fsspec_config: "SimpleDropboxConfig"
+    write_config: "DropboxWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.dropbox import (

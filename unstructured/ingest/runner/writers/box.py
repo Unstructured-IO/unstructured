@@ -11,8 +11,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class BoxWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: t.Optional["SimpleBoxConfig"] = None
-    write_config: t.Optional["BoxWriteConfig"] = None
+    fsspec_config: "SimpleBoxConfig"
+    write_config: "BoxWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.box import (

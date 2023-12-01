@@ -14,8 +14,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class DeltaTableWriter(Writer, EnhancedDataClassJsonMixin):
-    write_config: t.Optional["DeltaTableWriteConfig"] = None
-    connector_config: t.Optional["SimpleDeltaTableConfig"] = None
+    write_config: "DeltaTableWriteConfig"
+    connector_config: "SimpleDeltaTableConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.delta_table import (
