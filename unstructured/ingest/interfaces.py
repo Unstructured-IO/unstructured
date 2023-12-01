@@ -45,6 +45,7 @@ class BaseSessionHandle(ABC):
     e.g., a connection for making a request for fetching documents."""
 
 
+@dataclass
 class BaseConfig(EnhancedDataClassJsonMixin, ABC):
     pass
 
