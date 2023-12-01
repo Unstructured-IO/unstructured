@@ -46,6 +46,8 @@ frozenlist==1.4.0
     # via
     #   aiohttp
     #   aiosignal
+greenlet==3.0.1
+    # via sqlalchemy
 idna==3.6
     # via
     #   -c ingest/../base.txt
@@ -62,11 +64,11 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.341
+langchain==0.0.344
     # via -r ingest/embed-aws-bedrock.in
-langchain-core==0.0.6
+langchain-core==0.0.8
     # via langchain
-langsmith==0.0.67
+langsmith==0.0.68
     # via
     #   langchain
     #   langchain-core

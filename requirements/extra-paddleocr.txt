@@ -59,7 +59,7 @@ imageio==2.33.0
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-metadata==6.8.0
+importlib-metadata==6.9.0
     # via flask
 importlib-resources==6.1.1
     # via matplotlib

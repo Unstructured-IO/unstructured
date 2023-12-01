@@ -51,6 +51,8 @@ fsspec==2023.9.1
     #   -c ingest/../constraints.in
     #   huggingface-hub
     #   torch
+greenlet==3.0.1
+    # via sqlalchemy
 huggingface==0.0.1
     # via -r ingest/embed-huggingface.in
 huggingface-hub==0.19.4
@@ -77,11 +79,11 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.341
+langchain==0.0.344
     # via -r ingest/embed-huggingface.in
-langchain-core==0.0.6
+langchain-core==0.0.8
     # via langchain
-langsmith==0.0.67
+langsmith==0.0.68
     # via
     #   langchain
     #   langchain-core

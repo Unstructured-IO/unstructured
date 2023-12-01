@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=extra-markdown.txt extra-markdown.in
 #
-importlib-metadata==6.8.0
+importlib-metadata==6.9.0
     # via markdown
 markdown==3.5.1
     # via -r extra-markdown.in

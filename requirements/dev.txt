@@ -91,7 +91,7 @@ idna==3.6
     #   anyio
     #   jsonschema
     #   requests
-importlib-metadata==6.8.0
+importlib-metadata==6.9.0
     # via
     #   build
     #   jupyter-client
@@ -138,7 +138,7 @@ jsonschema[format-nongpl]==4.20.0
     #   jupyter-events
     #   jupyterlab-server
     #   nbformat
-jsonschema-specifications==2023.11.1
+jsonschema-specifications==2023.11.2
     # via jsonschema
 jupyter==1.0.0
     # via -r dev.in
@@ -301,7 +301,7 @@ qtconsole==5.5.1
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.31.0
+referencing==0.31.1
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -319,7 +319,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.13.1
+rpds-py==0.13.2
     # via
     #   jsonschema
     #   referencing
@@ -354,7 +354,7 @@ tomli==2.0.1
     #   jupyterlab
     #   pip-tools
     #   pyproject-hooks
-tornado==6.3.3
+tornado==6.4
     # via
     #   ipykernel
     #   jupyter-client
@@ -395,7 +395,7 @@ urllib3==1.26.18
     #   -c constraints.in
     #   -c test.txt
     #   requests
-virtualenv==20.24.7
+virtualenv==20.25.0
     # via pre-commit
 wcwidth==0.2.12
     # via prompt-toolkit

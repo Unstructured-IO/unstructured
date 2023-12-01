@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/jira.txt ingest/jira.in
 #
-atlassian-python-api==3.41.3
+atlassian-python-api==3.41.4
     # via -r ingest/jira.in
 certifi==2023.11.17
     # via
