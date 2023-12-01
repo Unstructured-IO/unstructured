@@ -4,12 +4,13 @@ from .azure import AzureWriter
 from .azure_cognitive_search import AzureCognitiveSearchWriter
 from .base_writer import Writer
 from .box import BoxWriter
+from .delta_table import DeltaTableWriter
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
     "azure": AzureWriter,
     "azure_cognitive_search": AzureCognitiveSearchWriter,
     "box": BoxWriter,
-    # "delta_table": delta_table_writer,
+    "delta_table": DeltaTableWriter,
     # "dropbox": dropbox_writer,
     # "gcs": gcs_writer,
     # "mongodb": mongodb_writer,

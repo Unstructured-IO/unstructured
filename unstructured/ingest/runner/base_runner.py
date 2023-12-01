@@ -54,8 +54,6 @@ class Runner(EnhancedDataClassJsonMixin, ABC):
         return self.permissions_config if permissions_config_filled else None
 
     def process_documents(self, source_doc_connector: BaseSourceConnector):
-        print(self.to_json(indent=2))
-        return
         process_documents(
             processor_config=self.processor_config,
             source_doc_connector=source_doc_connector,
