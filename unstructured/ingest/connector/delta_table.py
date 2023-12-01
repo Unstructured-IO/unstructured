@@ -33,7 +33,6 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
     without_files: bool = False
-    columns: t.Optional[t.List[str]] = None
 
     @staticmethod
     def storage_options_from_str(options_str: str) -> t.Dict[str, str]:

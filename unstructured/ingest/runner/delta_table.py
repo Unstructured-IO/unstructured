@@ -15,7 +15,6 @@ class DeltaTableRunner(Runner):
         version: t.Optional[int] = None,
         storage_options: t.Optional[str] = None,
         without_files: bool = False,
-        columns: t.Optional[t.List[str]] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
@@ -43,7 +42,6 @@ class DeltaTableRunner(Runner):
                 if storage_options
                 else None,
                 without_files=without_files,
-                columns=columns,
             ),
             read_config=self.read_config,
             processor_config=self.processor_config,
