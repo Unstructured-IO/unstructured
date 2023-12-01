@@ -262,7 +262,7 @@ class WriteTextConfig(EnhancedDataClassJsonMixin, ABC):
 class FsspecWriteConfig(WriteConfig):
     write_text_config: t.Optional[WriteTextConfig] = None
 
-    def get_write_text_config(self) -> dict[str, t.Any]:
+    def get_write_text_config(self) -> t.Dict[str, t.Any]:
         if write_text_kwargs := self.write_text_config:
             return write_text_kwargs.to_dict()
         return {}
