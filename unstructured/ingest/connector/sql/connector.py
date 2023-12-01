@@ -99,12 +99,21 @@ class SqlWriteConfig(WriteConfig):
 class SqlDestinationConnector(BaseDestinationConnector):
     write_config: SqlWriteConfig
     connector_config: SimpleSqlConfig
+    _client: t.Optional[t.Any] = field(init=False, default=None)
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = self.connector_config.connection()
+        return self._client
 
     def initialize(self):
-        pass
+        _ = self.client
 
     def check_connection(self):
-        return self.connector_config.connection()
+        cursor = self.client.cursor()
+        cursor.execute("SELECT 1;")
+        cursor.close()
 
     def conform_dict(self, data: dict) -> tuple:
         """
@@ -215,8 +224,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
             f"at {self.connector_config.host}"
         )
 
-        conn = self.connector_config.connection()
-        with conn:
+        with self.client as conn:
             schema_helper = DatabaseSchema(
                 conn=conn,
                 db_name=self.connector_config.db_name,
