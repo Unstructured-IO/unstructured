@@ -251,7 +251,7 @@ class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
 
 
 @dataclass
-class SourceMetadata(DataClassJsonMixin, ABC):
+class SourceMetadata(EnhancedDataClassJsonMixin, ABC):
     date_created: t.Optional[str] = None
     date_modified: t.Optional[str] = None
     version: t.Optional[str] = None
@@ -315,7 +315,7 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
         return doc
 
 
-class BatchIngestDocJsonMixin(DataClassJsonMixin):
+class BatchIngestDocJsonMixin(EnhancedDataClassJsonMixin):
     """
     Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
     created from the dataclass. This explicitly sets properties to look for on the IngestDoc
@@ -606,7 +606,7 @@ class BaseIngestDocBatch(BaseIngestDoc, BatchIngestDocJsonMixin, ABC):
 
 
 @dataclass
-class BaseConnector(DataClassJsonMixin, ABC):
+class BaseConnector(EnhancedDataClassJsonMixin, ABC):
     @abstractmethod
     def check_connection(self):
         pass
