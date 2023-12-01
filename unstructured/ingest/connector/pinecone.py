@@ -84,8 +84,6 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
 
-        self.write_config.global_session()
-
         index = self.pinecone_index
         try:
             response = index.upsert(batch)
