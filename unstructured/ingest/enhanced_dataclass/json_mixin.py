@@ -3,9 +3,9 @@ import typing as t
 from dataclasses import fields
 
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import Json, _decode_dataclass, _ExtendedEncoder
+from dataclasses_json.core import Json, _ExtendedEncoder
 
-from unstructured.ingest.enhanced_dataclass.core import _asdict
+from unstructured.ingest.enhanced_dataclass.core import _asdict, _decode_dataclass
 
 A = t.TypeVar("A", bound="EnhancedDataClassJsonMixin")
 

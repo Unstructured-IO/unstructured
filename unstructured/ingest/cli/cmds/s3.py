@@ -7,7 +7,7 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.s3 import S3AccessConfig, SimpleS3Config
+from unstructured.ingest.connector.s3 import S3AccessConfig, S3WriteConfig, SimpleS3Config
 
 CMD_NAME = "s3"
 
@@ -69,7 +69,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=S3CliConfig,
-        addition_configs={"fsspec_config": SimpleS3Config},
+        addition_configs={"fsspec_config": SimpleS3Config, "write_config": S3WriteConfig},
         is_fsspec=True,
     )
     return cmd_cls

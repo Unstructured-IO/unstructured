@@ -111,7 +111,7 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
-class AccessConfig(EnhancedDataClassJsonMixin):
+class AccessConfig(BaseConfig):
     # Meant to designate holding any sensitive information associated with other configs
     pass
 
@@ -125,7 +125,10 @@ class FsspecConfig(FileStorageConfig):
     file_path: str = field(init=False)
 
     def get_access_config(self) -> dict:
-        return self.access_config.to_dict(apply_name_overload=False)
+        if self.access_config:
+            return self.access_config.to_dict(apply_name_overload=False)
+        else:
+            return {}
 
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.remote_url.split("://")
