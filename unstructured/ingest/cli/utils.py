@@ -76,6 +76,7 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
         return dd
 
     adjusted_dict = conform_dict(inner_d=flat_data, inner_config=config)
+    config.from_dict(adjusted_dict)
     return config.from_dict(adjusted_dict)
 
 
@@ -106,13 +107,7 @@ def extract_configs(
     )
     if extras:
         for k, conf in extras.items():
-            res_config = conf.from_dict(data)
-            # Need to make sure to extract potentially nested access configs
-            if access_config_field := [f for f in fields(res_config) if f.name == "access_config"]:
-                access_config = access_config_field[0]
-                access_config_type = access_config.type
-                res_config.access_config = access_config_type.from_dict(data)
-            res[k] = res_config
+            res[k] = extract_config(flat_data=data, config=conf)
     for v in validate:
         v.from_dict(data)
     return res

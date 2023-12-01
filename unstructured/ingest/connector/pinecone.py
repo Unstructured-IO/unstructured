@@ -1,15 +1,16 @@
+import itertools
 import json
 import multiprocessing as mp
 import typing as t
 import uuid
 from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
-    BaseSessionHandle,
     ConfigSessionHandleMixin,
     IngestDocSessionHandleMixin,
     WriteConfig,
@@ -20,11 +21,6 @@ from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from pinecone import Index as PineconeIndex
-
-
-@dataclass
-class PineconeSessionHandle(BaseSessionHandle):
-    service: "PineconeIndex"
 
 
 @DestinationConnectionError.wrap
@@ -40,37 +36,48 @@ def create_pinecone_object(api_key, index_name, environment):
 
 @dataclass
 class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
-    api_key: str
     index_name: str
     environment: str
-
-    def create_session_handle(self) -> PineconeSessionHandle:
-        service = create_pinecone_object(self.api_key, self.index_name, self.environment)
-        return PineconeSessionHandle(service=service)
+    api_key: str = enhanced_field(sensitive=True)
 
 
 @dataclass
-class PineconeWriteConfig(IngestDocSessionHandleMixin, WriteConfig):
-    connector_config: SimplePineconeConfig
+class PineconeWriteConfig(WriteConfig):
     batch_size: int = 50
     num_processes: int = 1
 
 
 @dataclass
-class PineconeDestinationConnector(BaseDestinationConnector):
+class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConnector):
     write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
+    _index: t.Optional["PineconeIndex"] = None
+
+    @property
+    def pinecone_index(self):
+        if self._index is None:
+            self._index = self.create_index()
+        return self._index
 
     def initialize(self):
         pass
 
+    @requires_dependencies(["pinecone"], extras="pinecone")
+    def create_index(self) -> "PineconeIndex":
+        import pinecone
+
+        pinecone.init(
+            api_key=self.connector_config.api_key, environment=self.connector_config.environment
+        )
+        index = pinecone.Index(self.connector_config.index_name)
+        logger.debug(
+            f"Connected to index: {pinecone.describe_index(self.connector_config.index_name)}"
+        )
+        return index
+
     @DestinationConnectionError.wrap
     def check_connection(self):
-        create_pinecone_object(
-            self.connector_config.api_key,
-            self.connector_config.index_name,
-            self.connector_config.environment,
-        )
+        _ = self.pinecone_index
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
@@ -79,12 +86,21 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
         self.write_config.global_session()
 
-        index = self.write_config.session_handle.service
+        index = self.pinecone_index
         try:
             response = index.upsert(batch)
         except pinecone.core.client.exceptions.ApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
+
+    @staticmethod
+    def chunks(iterable, batch_size=100):
+        """A helper function to break an iterable into chunks of size batch_size."""
+        it = iter(iterable)
+        chunk = tuple(itertools.islice(it, batch_size))
+        while chunk:
+            yield chunk
+            chunk = tuple(itertools.islice(it, batch_size))
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
@@ -96,20 +112,14 @@ class PineconeDestinationConnector(BaseDestinationConnector):
 
         logger.info(f"using {self.write_config.num_processes} processes to upload")
         if self.write_config.num_processes == 1:
-            for i in range(0, len(dict_list), pinecone_batch_size):
-                self.upsert_batch(dict_list[i : i + pinecone_batch_size])  # noqa: E203
+            for chunk in self.chunks(dict_list, pinecone_batch_size):
+                self.upsert_batch(chunk)  # noqa: E203
 
         else:
             with mp.Pool(
                 processes=self.write_config.num_processes,
             ) as pool:
-                pool.map(
-                    self.upsert_batch,
-                    [
-                        dict_list[i : i + pinecone_batch_size]  # noqa: E203
-                        for i in range(0, len(dict_list), pinecone_batch_size)
-                    ],  # noqa: E203
-                )
+                pool.map(self.upsert_batch, list(self.chunks(dict_list, pinecone_batch_size)))
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
