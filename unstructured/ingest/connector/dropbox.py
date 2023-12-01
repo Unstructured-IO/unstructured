@@ -17,6 +17,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -33,6 +34,11 @@ class MissingFolderError(Exception):
 @dataclass
 class DropboxAccessConfig(AccessConfig):
     token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
+class DropboxWriteConfig(FsspecWriteConfig):
+    pass
 
 
 @dataclass
@@ -151,3 +157,4 @@ class DropboxSourceConnector(FsspecSourceConnector):
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig
+    write_config: DropboxWriteConfig
