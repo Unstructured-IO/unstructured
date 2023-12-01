@@ -1,5 +1,4 @@
 import hashlib
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -210,7 +209,6 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
     @SourceConnectionError.wrap
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def get_files(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         documents = self._get_docs()
         for doc in documents:
             ingest_doc = ElasticsearchIngestDoc(
