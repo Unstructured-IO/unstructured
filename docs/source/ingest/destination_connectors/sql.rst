@@ -1,8 +1,8 @@
-PostgreSQL
+SQL
 ===========
-NOTE: At the moment, the connector only supports PostgreSQL.
+NOTE: At the moment, the connector only supports PostgreSQL and SQLite.
 
-Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a PostgreSQL schema.
+Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a PostgreSQL or SQLite schema.
 
 First you'll need to install the sql dependencies as shown here.
 
@@ -24,10 +24,10 @@ upstream s3 connector.
       .. code:: shell
 
         unstructured-ingest \
-            s3 \
-            --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+            local \
+            --input-path example-docs/fake-memo.pdf \
             --anonymous \
-            --output-dir s3-small-batch-output-to-sql \
+            --output-dir local-output-to-mongo \
             --num-processes 2 \
             --verbose \
             --strategy fast \
@@ -39,38 +39,18 @@ upstream s3 connector.
             --port 5432 \
             --database elements
 
-   .. tab:: Shell - with database-uurl
-    
-    You can use the connectors with a SQLAlchemy `database URL <https://docs.sqlalchemy.org/en/20/core/engines.html#database-urls`_
-
-      .. code:: shell
-
-        unstructured-ingest \
-            s3 \
-            --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-            --anonymous \
-            --output-dir s3-small-batch-output-to-sql \
-            --num-processes 2 \
-            --verbose \
-            --strategy fast \
-            sql \
-            --database-url postgresql+pg8000://dbuser:kx%40jj5%2Fg@pghost10/appdb
-
-
-   .. tab:: Python
-
       .. code:: python
 
         import subprocess
 
         command = [
           "unstructured-ingest",
-          "s3",
-          "--remote-url", "s3://utic-dev-tech-fixtures/small-pdf-set/",
+          "local",
+          "--input-path", "example-docs/fake-memo.pdf",
           "--anonymous",
-          "--output-dir", "s3-small-batch-output-to-postgresql",
-          "--num-processes", "2",
-          "--verbose",
+          "--output-dir", "local-output-to-mongo"
+          "--num-processes", "2"
+          "--verbose"
           "--strategy", "fast",
           "sql"
           "--db_name postgresql"

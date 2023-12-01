@@ -25,7 +25,7 @@ class SqlCliConfig(CliConfig):
         options = [
             click.Option(
                 ["--db_name"],
-                default="postgresql",
+                required=True,
                 type=click.Choice(SQL_DRIVERS),
                 help="Name of the database backend",
             ),
