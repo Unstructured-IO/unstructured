@@ -68,7 +68,10 @@ def measure_text_extraction_accuracy(
         filename = (doc.split("/")[-1]).split(".json")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
-        connector = doc.split("/")[0]
+        if len(doc.split("/")) > 1:
+            connector = doc.split("/")[0]
+        else:
+            connector = None
 
         # not all odetta cct files follow the same naming convention;
         # some exclude the original filetype from the name
@@ -143,7 +146,11 @@ def measure_element_type_accuracy(
         filename = (doc.split("/")[-1]).split(".json")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_json = filename + ".json"
-        connector = doc.split("/")[0]
+        if len(doc.split("/")) > 1:
+            connector = doc.split("/")[0]
+        else:
+            connector = None
+            
         if fn_json in source_list:  # type: ignore
             output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
             source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
