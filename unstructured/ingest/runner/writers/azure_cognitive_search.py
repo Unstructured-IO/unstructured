@@ -13,8 +13,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class AzureCognitiveSearchWriter(Writer):
-    connector_config: t.Optional["SimpleAzureCognitiveSearchStorageConfig"] = None
-    write_config: t.Optional["AzureCognitiveSearchWriteConfig"] = None
+    connector_config: "SimpleAzureCognitiveSearchStorageConfig"
+    write_config: "AzureCognitiveSearchWriteConfig"
 
     def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.azure_cognitive_search import (

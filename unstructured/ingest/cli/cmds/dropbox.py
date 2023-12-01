@@ -7,7 +7,11 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.dropbox import DropboxAccessConfig, SimpleDropboxConfig
+from unstructured.ingest.connector.dropbox import (
+    DropboxAccessConfig,
+    DropboxWriteConfig,
+    SimpleDropboxConfig,
+)
 
 CMD_NAME = "dropbox"
 
@@ -43,7 +47,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=DropboxCliConfig,
-        addition_configs={"fsspec_config": SimpleDropboxConfig},
+        addition_configs={"fsspec_config": SimpleDropboxConfig, "write_config": DropboxWriteConfig},
         is_fsspec=True,
     )
     return cmd_cls
