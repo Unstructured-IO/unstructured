@@ -231,19 +231,7 @@ global_write_session_handle: t.Optional[BaseSessionHandle] = None
 
 @dataclass
 class WriteConfig(BaseConfig):
-    def global_session(self):
-        try:
-            global global_write_session_handle
-            if isinstance(self, IngestDocSessionHandleMixin):
-                if global_write_session_handle is None:
-                    # create via write_config.session_handle, which is a property that creates a
-                    # session handle if one is not already defined
-                    global_write_session_handle = self.session_handle
-                else:
-                    self._session_handle = global_write_session_handle
-        except Exception as e:
-            print("Global session handle creation error")
-            raise (e)
+    pass
 
 
 class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
