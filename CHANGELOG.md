@@ -1,9 +1,14 @@
-## 0.11.3-dev0
+## 0.11.4-dev0
 
 ### Enhancements
+
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
 
-## 0.11.2
+### Features
+
+### Fixes
+
+## 0.11.3
 
 ### Enhancements
 

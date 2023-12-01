@@ -9,7 +9,7 @@ repos:
       - id: check-xml
       - id: end-of-file-fixer
         exclude: \.json$
-        include: \.py$
+        files: \.py$
       - id: trailing-whitespace
       - id: mixed-line-ending
 
