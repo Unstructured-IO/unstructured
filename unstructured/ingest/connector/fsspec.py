@@ -318,11 +318,12 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
         full_output_path = f"{self.connector_config.protocol}://{output_path}"
         logger.debug(f"uploading content to {full_output_path}")
+        write_text_configs = self.write_config.get_write_text_config() if self.write_config else {}
         fs.write_text(
             full_output_path,
             json.dumps(elements_dict, indent=indent),
             encoding=encoding,
-            **self.write_config.get_write_text_config(),
+            **write_text_configs,
         )
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:

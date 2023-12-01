@@ -1,24 +1,25 @@
 import typing as t
+from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.dropbox import DropboxWriteConfig, SimpleDropboxConfig
 
 
-def dropbox_writer(
-    remote_url: str,
-    token: t.Optional[str],
-    verbose: bool = False,
-    **kwargs,
-) -> BaseDestinationConnector:
-    from unstructured.ingest.connector.dropbox import (
-        DropboxDestinationConnector,
-        SimpleDropboxConfig,
-    )
-    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
+@dataclass
+class DropboxWriter(Writer, EnhancedDataClassJsonMixin):
+    fsspec_config: t.Optional["SimpleDropboxConfig"] = None
+    write_config: t.Optional["DropboxWriteConfig"] = None
 
-    return DropboxDestinationConnector(
-        write_config=FsspecWriteConfig(),
-        connector_config=SimpleDropboxConfig(
-            remote_url=remote_url,
-            access_config={"token": token},
-        ),
-    )
+    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.dropbox import (
+            DropboxDestinationConnector,
+        )
+
+        return DropboxDestinationConnector(
+            write_config=self.write_config,
+            connector_config=self.fsspec_config,
+        )
