@@ -227,10 +227,6 @@ install-unstructured-inference:
 .PHONY: install-local-inference
 install-local-inference: install install-all-docs
 
-.PHONY: install-local-inference-branch
-install-local-inference-branch:
-	git clone -b  refactor/remove_pdfminer_code --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
-
 .PHONY: install-pandoc
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
