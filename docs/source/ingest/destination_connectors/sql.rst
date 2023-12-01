@@ -39,40 +39,38 @@ upstream s3 connector.
             --port 5432 \
             --database elements
 
+   .. tab:: Python
+
       .. code:: python
 
-        import subprocess
+        import os
 
-        command = [
-          "unstructured-ingest",
-          "local",
-          "--input-path", "example-docs/fake-memo.pdf",
-          "--anonymous",
-          "--output-dir", "local-output-to-mongo"
-          "--num-processes", "2"
-          "--verbose"
-          "--strategy", "fast",
-          "sql"
-          "--db_name postgresql"
-          "--username postgres"
-          "--password test"
-          "--host localhost"
-          "--port 5432"
-          "--database elements"
-        ]
+        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
+        from unstructured.ingest.runner import LocalRunner
 
-        # Run the command
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
-        output, error = process.communicate()
+        if __name__ == "__main__":
+            runner = LocalRunner(
+                processor_config=ProcessorConfig(
+                    verbose=True,
+                    output_dir="local-output-to-postgres",
+                    num_processes=2,
+                ),
+                read_config=ReadConfig(),
+                partition_config=PartitionConfig(),
+                writer_type="sql",
+                writer_kwargs={
+                    "db_name": os.getenv("DB_NAME"),
+                    "username": os.getenv("USERNAME"),
+                    "password": os.getenv("DB_PASSWORD"),
+                    "host": os.getenv("DB_HOST"),
+                    "port": os.getenv("DB_PORT"),
+                    "database": os.getenv("DB_DATABASE"),
 
-        # Print output
-        if process.returncode == 0:
-            print('Command executed successfully. Output:')
-            print(output.decode())
-        else:
-            print('Command failed. Error:')
-            print(error.decode())
-
+                }
+            )
+            runner.run(
+                input_path="example-docs/fake-memo.pdf",
+            )
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> sql --help``.
 

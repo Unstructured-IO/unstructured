@@ -6,9 +6,3 @@
 #
 psycopg2-binary==2.9.9
     # via -r requirements/ingest/sql.in
-sqlalchemy==2.0.23
-    # via -r requirements/ingest/sql.in
-typing-extensions==4.8.0
-    # via
-    #   -c requirements/ingest/../base.txt
-    #   sqlalchemy
