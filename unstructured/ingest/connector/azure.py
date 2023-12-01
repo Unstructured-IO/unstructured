@@ -6,6 +6,7 @@ from unstructured.ingest.connector.fsspec import (
     FsspecIngestDoc,
     FsspecSourceConnector,
     SimpleFsspecConfig,
+    WriteTextConfig,
 )
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
@@ -15,11 +16,16 @@ from unstructured.utils import requires_dependencies
 
 
 @dataclass
+class AzureWriteTextConfig(WriteTextConfig):
+    overwrite: bool = False
+
+
+@dataclass
 class AzureAccessConfig(AccessConfig):
-    account_name: str = enhanced_field(default=None, sensitive=True)
-    account_key: str = enhanced_field(default=None, sensitive=True)
-    connection_string: str = enhanced_field(default=None, sensitive=True)
-    sas_token: str = enhanced_field(default=None, sensitive=True)
+    account_name: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    account_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    connection_string: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    sas_token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
 
 
 @dataclass
@@ -47,7 +53,7 @@ class AzureBlobStorageSourceConnector(FsspecSourceConnector):
         from adlfs import AzureBlobFileSystem
 
         try:
-            AzureBlobFileSystem(**self.connector_config.access_config)
+            AzureBlobFileSystem(**self.connector_config.get_access_config())
         except ValueError as connection_error:
             logger.error(f"failed to validate connection: {connection_error}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {connection_error}")
@@ -66,7 +72,7 @@ class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
         from adlfs import AzureBlobFileSystem
 
         try:
-            AzureBlobFileSystem(**self.connector_config.access_config)
+            AzureBlobFileSystem(**self.connector_config.get_access_config())
         except ValueError as connection_error:
             logger.error(f"failed to validate connection: {connection_error}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {connection_error}")

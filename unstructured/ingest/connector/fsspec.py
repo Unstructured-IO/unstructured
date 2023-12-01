@@ -1,10 +1,12 @@
 import json
 import os
 import typing as t
+from abc import ABC
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePath
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.error import (
     DestinationConnectionError,
     SourceConnectionError,
@@ -253,8 +255,18 @@ class FsspecSourceConnector(
 
 
 @dataclass
+class WriteTextConfig(EnhancedDataClassJsonMixin, ABC):
+    pass
+
+
+@dataclass
 class FsspecWriteConfig(WriteConfig):
-    write_text_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+    write_text_config: t.Optional[WriteTextConfig] = None
+
+    def get_write_text_config(self) -> dict[str, t.Any]:
+        if write_text_kwargs := self.write_text_config:
+            return write_text_kwargs.to_dict()
+        return {}
 
 
 @dataclass
@@ -310,7 +322,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             full_output_path,
             json.dumps(elements_dict, indent=indent),
             encoding=encoding,
-            **self.write_config.write_text_kwargs,
+            **self.write_config.get_write_text_config(),
         )
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:

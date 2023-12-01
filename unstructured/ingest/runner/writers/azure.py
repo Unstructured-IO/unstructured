@@ -1,37 +1,29 @@
 import typing as t
+from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
 
-
-def azure_writer(
-    remote_url: str,
-    account_name: t.Optional[str] = None,
-    account_key: t.Optional[str] = None,
-    connection_string: t.Optional[str] = None,
-    overwrite: bool = False,
-    verbose: bool = False,
-    **kwargs,
-) -> BaseDestinationConnector:
+if t.TYPE_CHECKING:
     from unstructured.ingest.connector.azure import (
-        AzureBlobStorageDestinationConnector,
+        AzureWriteTextConfig,
         SimpleAzureBlobStorageConfig,
     )
-    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
 
-    if account_name:
-        access_kwargs = {
-            "account_name": account_name,
-            "account_key": account_key,
-        }
-    elif connection_string:
-        access_kwargs = {"connection_string": connection_string}
-    else:
-        access_kwargs = {}
 
-    return AzureBlobStorageDestinationConnector(
-        write_config=FsspecWriteConfig(write_text_kwargs={"overwrite": overwrite}),
-        connector_config=SimpleAzureBlobStorageConfig(
-            remote_url=remote_url,
-            access_config=access_kwargs,
-        ),
-    )
+@dataclass
+class AzureWriter(Writer, EnhancedDataClassJsonMixin):
+    fsspec_config: t.Optional["SimpleAzureBlobStorageConfig"] = None
+    write_config: t.Optional["AzureWriteTextConfig"] = None
+
+    def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.azure import (
+            AzureBlobStorageDestinationConnector,
+        )
+        from unstructured.ingest.connector.fsspec import FsspecWriteConfig
+
+        return AzureBlobStorageDestinationConnector(
+            write_config=FsspecWriteConfig(write_text_config=self.write_config),
+            connector_config=self.fsspec_config,
+        )

@@ -18,10 +18,10 @@ class S3CliConfig(S3AccessConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--anon"],
+                ["--anonymous"],
                 is_flag=True,
                 default=False,
-                help="Connect to s3 without local AWS credentials (anonymous).",
+                help="Connect to s3 without local AWS credentials.",
             ),
             click.Option(
                 ["--endpoint-url"],

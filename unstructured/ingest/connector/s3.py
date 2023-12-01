@@ -15,7 +15,7 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class S3AccessConfig(AccessConfig):
-    anon: bool = False
+    anon: bool = enhanced_field(default=False, overload_name="anonymous")
     endpoint_url: t.Optional[str] = None
     key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
