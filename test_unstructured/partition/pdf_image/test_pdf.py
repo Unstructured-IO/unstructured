@@ -5,6 +5,7 @@ from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
+from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
 from unstructured_inference.inference import layout
 
@@ -19,8 +20,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import ocr, pdf, strategies
-from unstructured.partition.pdf import get_uris_from_annots
+from unstructured.partition import strategies
+from unstructured.partition.pdf_image import ocr, pdf, pdfminer_processing
+from unstructured.partition.pdf_image.pdf import get_uris_from_annots
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -110,13 +112,23 @@ def test_partition_pdf_local(monkeypatch, filename, file):
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
+        pdfminer_processing,
+        "process_data_with_pdfminer",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        pdfminer_processing,
+        "process_file_with_pdfminer",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
         ocr,
         "process_data_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
     monkeypatch.setattr(
         ocr,
-        "process_data_with_ocr",
+        "process_file_with_ocr",
         lambda *args, **kwargs: MockDocumentLayout(),
     )
 
@@ -125,7 +137,7 @@ def test_partition_pdf_local(monkeypatch, filename, file):
 
 
 def test_partition_pdf_local_raises_with_no_filename():
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises((FileNotFoundError, PDFPageCountError)):
         pdf._partition_pdf_or_image_local(filename="", file=None, is_image=False)
 
 
@@ -391,7 +403,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
 def test_partition_pdf_uses_table_extraction():
     filename = example_doc_path("layout-parser-paper-fast.pdf")
     with mock.patch(
-        "unstructured.partition.ocr.process_file_with_ocr",
+        "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         pdf.partition_pdf(filename, infer_table_structure=True)
         assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
@@ -633,7 +645,7 @@ def test_partition_pdf_metadata_date(
     )
 
     mocker.patch(
-        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
+        "unstructured.partition.pdf_image.pdf.get_the_last_modification_date_pdf_or_img",
         return_value=mocked_last_modification_date,
     )
 
