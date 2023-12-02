@@ -26,6 +26,7 @@ all_tests=(
   's3.sh'
   'postgresql.sh'
   'sqlite.sh'
+  'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
 )
 

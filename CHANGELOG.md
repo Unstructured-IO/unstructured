@@ -1,4 +1,4 @@
-## 0.11.4-dev2
+## 0.11.4-dev3
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 **PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a PostgreSQL or SQLite database.
+* **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+
 
 ### Fixes
 

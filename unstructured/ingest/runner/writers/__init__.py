@@ -10,6 +10,7 @@ from .mongodb import mongodb_writer
 from .pinecone import pinecone_writer
 from .s3 import s3_writer
 from .sql import sql_writer
+from .weaviate import weaviate_writer
 
 writer_map: t.Dict[str, t.Callable] = {
     "azure": azure_writer,
@@ -21,6 +22,7 @@ writer_map: t.Dict[str, t.Callable] = {
     "mongodb": mongodb_writer,
     "s3": s3_writer,
     "sql": sql_writer,
+    "weaviate": weaviate_writer,
     "pinecone": pinecone_writer,
 }
 
