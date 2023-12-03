@@ -191,6 +191,10 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest/sharepoint.txt
 
+.PHONY: install-ingest-weaviate
+install-ingest-weaviate:
+	python3 -m pip install -r requirements/ingest/weaviate.txt
+
 .PHONY: install-ingest-local
 install-ingest-local:
 	echo "no unique dependencies for local connector"
@@ -206,6 +210,14 @@ install-ingest-salesforce:
 .PHONY: install-ingest-jira
 install-ingest-jira:
 	python3 -m pip install -r requirements/ingest/jira.txt
+
+.PHONY: install-ingest-hubspot
+install-ingest-hubspot:
+	python3 -m pip install -r requirements/ingest-hubspot.txt
+
+.PHONY: install-ingest-pinecone
+install-ingest-pinecone:
+	python3 -m pip install -r requirements/ingest-pinecone.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:

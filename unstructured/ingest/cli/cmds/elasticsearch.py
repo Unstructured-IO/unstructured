@@ -4,19 +4,14 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliConfig,
-)
+from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
+from unstructured.ingest.connector.elasticsearch import SimpleElasticsearchConfig
 
 CMD_NAME = "elasticsearch"
 
 
 @dataclass
-class ElasticsearchCliConfig(CliConfig):
-    index_name: str
-    url: str
-    jq_query: t.Optional[str] = None
-
+class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -33,13 +28,17 @@ class ElasticsearchCliConfig(CliConfig):
                 help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
             ),
             click.Option(
-                ["--jq-query"],
-                default=None,
-                type=str,
-                help="JQ query to get and concatenate a subset of the fields from a JSON document. "
-                "For a group of JSON documents, it assumes that all of the documents "
-                "have the same schema.  Currently only supported for the Elasticsearch connector. "
-                "Example: --jq-query '{meta, body}'",
+                ["--fields"],
+                type=DelimitedString(),
+                default=[],
+                help="If provided, will limit the fields returned by Elasticsearch "
+                "to this comma-delimited list",
+            ),
+            click.Option(
+                ["--batch-size"],
+                default=100,
+                type=click.IntRange(0),
+                help="how many records to read at a time per process",
             ),
         ]
         return options

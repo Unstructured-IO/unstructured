@@ -15,7 +15,7 @@ CI=${CI:-"false"}
 
 if [ -z "$AWS_ACCESS_KEY_ID" ] && [ -z "$AWS_SECRET_ACCESS_KEY" ]; then
    echo "Skipping Delta Table ingest test because either AWS_ACCESS_KEY_ID or AWS_SECRET_ACCESS_KEY env var was not set."
-   exit 0
+   exit 8
 fi
 
 # shellcheck disable=SC1091

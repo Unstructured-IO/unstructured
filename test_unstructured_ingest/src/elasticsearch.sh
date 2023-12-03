@@ -47,7 +47,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --verbose \
     --index-name movies \
     --url http://localhost:9200 \
-    --jq-query '{ethnicity, director, plot}' \
-    --work-dir "$WORK_DIR"
+    --fields 'ethnicity,director,plot' \
+    --work-dir "$WORK_DIR" \
+    --batch-size 2
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

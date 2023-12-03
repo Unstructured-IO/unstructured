@@ -22,7 +22,7 @@ fsspec==2023.9.1
     #   -c ingest/../constraints.in
     #   -r ingest/dropbox.in
     #   dropboxdrivefs
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests

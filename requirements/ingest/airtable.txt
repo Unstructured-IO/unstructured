@@ -13,13 +13,13 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
 inflection==0.5.1
     # via pyairtable
-pyairtable==2.2.0
+pyairtable==2.2.1
     # via -r ingest/airtable.in
 pydantic==1.10.13
     # via

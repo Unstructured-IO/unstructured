@@ -1,14 +1,48 @@
-## 0.11.1-dev2
+## 0.11.4-dev2
 
 ### Enhancements
 
+* **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
+
 ### Features
+
+* **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+
+
+### Fixes
+
+## 0.11.3
+
+### Enhancements
+
+* **Updated Documentation**: (i) Added examples, and (ii) API Documentation, including Usage, SDKs, Azure Marketplace, and parameters and validation errors.
+
+### Features
+
+* * **Add Pinecone destination connector.** Problem: After ingesting data from a source, users might want to produce embeddings for their data and write these into a vector DB. Pinecone is an option among these vector databases. Feature: Added Pinecone destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Pinecone.
+
+### Fixes
+
+* **Process chunking parameter names in ingest correctly** Solves a bug where chunking parameters weren't being processed and used by ingest cli by renaming faulty parameter names and prepends; adds relevant parameters to ingest pinecone test to verify that the parameters are functional.
+
+## 0.11.1
+
+### Enhancements
+
+* **Use `pikepdf` to repair invalid PDF structure** for PDFminer when we see error `PSSyntaxError` when PDFminer opens the document and creates the PDFminer pages object or processes a single PDF page.
+* **Batch Source Connector support** For instances where it is more optimal to read content from a source connector in batches, a new batch ingest doc is added which created multiple ingest docs after reading them in in batches per process.
+
+### Features
+
+* **Staging Brick for Coco Format** Staging brick which converts a list of Elements into Coco Format.
+* **Adds HubSpot connector** Adds connector to retrieve call, communications, emails, notes, products and tickets from HubSpot
 
 ### Fixes
 
 * **Do not extract text of `<style>` tags in HTML.** `<style>` tags containing CSS in invalid positions previously contributed to element text. Do not consider text node of a `<style>` element as textual content.
 * **Fix DOCX merged table cell repeats cell text.** Only include text for a merged cell, not for each underlying cell spanned by the merge.
 * **Fix tables not extracted from DOCX header/footers.** Headers and footers in DOCX documents skip tables defined in the header and commonly used for layout/alignment purposes. Extract text from tables as a string and include in the `Header` and `Footer` document elements.
+* **Fix output filepath for fsspec-based source connectors.** Previously the base directory was being included in the output filepath unnecessarily.
 
 ## 0.11.0
 
@@ -20,7 +54,7 @@
 
 ### Features
 
-* **Add ad-hoc fields to ElementMetadata instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
+* **Add ad-hoc fields to `ElementMetadata` instance.** End-users can now add their own metadata fields simply by assigning to an element-metadata attribute-name of their choice, like `element.metadata.coefficient = 0.58`. These fields will round-trip through JSON and can be accessed with dotted notation.
 * **MongoDB Destination Connector.** New destination connector added to all CLI ingest commands to support writing partitioned json output to mongodb.
 
 ### Fixes

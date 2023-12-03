@@ -48,7 +48,7 @@ jobs:
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup, changelog]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -70,6 +70,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
+
 
   test_unit:
     strategy:
@@ -219,6 +220,31 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+  test_ingest_unit:
+    strategy:
+      matrix:
+        python-version: [ "3.8","3.9","3.10","3.11" ]
+    runs-on: ubuntu-latest
+    needs: [ setup_ingest, lint ]
+    steps:
+      # actions/checkout MUST come before auth
+      - uses: 'actions/checkout@v4'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Get full Python version
+        id: full-python-version
+        run: echo version=$(python -c "import sys; print('-'.join(str(v) for v in sys.version_info))") >> $GITHUB_OUTPUT
+      - name: Setup virtual environment
+        uses: ./.github/actions/base-ingest-cache
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Test Ingest (unit)
+        run: |
+          source .venv/bin/activate
+          PYTHONPATH=. pytest test_unstructured_ingest/unit
+
 
   test_ingest_src:
     strategy:
@@ -246,10 +272,6 @@ jobs:
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.22.0'
-    - name: Test Ingest (unit)
-      run: |
-        source .venv/bin/activate
-        PYTHONPATH=. pytest test_unstructured_ingest/unit
     - name: Test (end-to-end)
       env:
         AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
@@ -262,6 +284,7 @@ jobs:
         DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         GCP_INGEST_SERVICE_KEY: ${{ secrets.GCP_INGEST_SERVICE_KEY }}
         GH_READ_ONLY_ACCESS_TOKEN: ${{ secrets.GH_READ_ONLY_ACCESS_TOKEN }}
+        HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
         JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
         JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
@@ -286,6 +309,7 @@ jobs:
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"
@@ -328,10 +352,6 @@ jobs:
       uses: KengoTODA/actions-setup-docker-compose@v1
       with:
         version: '2.22.0'
-    - name: Test Ingest (unit)
-      run: |
-        source .venv/bin/activate
-        PYTHONPATH=. pytest test_unstructured_ingest/unit
     - name: Test (end-to-end)
       env:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -346,6 +366,8 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
         MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
+        AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
+        PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "tesseract"
         CI: "true"
