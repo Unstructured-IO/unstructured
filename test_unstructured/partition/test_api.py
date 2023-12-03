@@ -66,7 +66,7 @@ def test_partition_via_api_from_filename(monkeypatch):
         lambda *args, **kwargs: MockResponse(status_code=200),
     )
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-    elements = partition_via_api(filename=filename, api_key=get_api_key())
+    elements = partition_via_api(filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
@@ -80,7 +80,7 @@ def test_partition_via_api_from_file(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with open(filename, "rb") as f:
-        elements = partition_via_api(file=f, metadata_filename=filename, api_key=get_api_key())
+        elements = partition_via_api(file=f, metadata_filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
@@ -94,7 +94,7 @@ def test_partition_via_api_from_file_warns_with_file_filename(monkeypatch, caplo
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with open(filename, "rb") as f:
-        partition_via_api(file=f, file_filename=filename, api_key=get_api_key())
+        partition_via_api(file=f, file_filename=filename)
 
     assert "WARNING" in caplog.text
     assert "The file_filename kwarg will be deprecated" in caplog.text
@@ -133,7 +133,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
 
     with pytest.raises(ValueError):
-        partition_via_api(filename=filename, api_key=get_api_key())
+        partition_via_api(filename=filename)
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
