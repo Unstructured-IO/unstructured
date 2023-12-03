@@ -52,7 +52,7 @@ class ElasticsearchCliWriteConfig(CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--batch-size"],
+                ["--batch-size-upload"],
                 required=True,
                 default=10,
                 type=str,
