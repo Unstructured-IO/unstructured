@@ -20,7 +20,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
   echo "Stopping Elasticsearch Docker container"
-  docker-compose -f scripts/elasticsearch-test-helpers/docker-compose.yaml down --remove-orphans -v
+  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -32,7 +32,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # shellcheck source=/dev/null
-scripts/elasticsearch-test-helpers/create-fill-and-check-es.sh
+scripts/elasticsearch-test-helpers/source_connector/create-fill-and-check-es.sh
 wait
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
