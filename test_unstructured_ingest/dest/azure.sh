@@ -18,7 +18,6 @@ fi
 
 CONTAINER=utic-ingest-test-fixtures-output
 DIRECTORY=$(uuidgen)
-DIRECTORY="test"
 REMOTE_URL_RAW="$CONTAINER/$DIRECTORY/"
 REMOTE_URL="abfs://$REMOTE_URL_RAW"
 
