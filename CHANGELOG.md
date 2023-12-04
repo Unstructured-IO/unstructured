@@ -2,22 +2,12 @@
 
 ### Enhancements
 
-### Features
-
-* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from sftp.
-
-### Fixes
-
-## 0.11.4-dev2
-
-### Enhancements
-
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
 
 ### Features
 
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
-
+* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from sftp.
 
 ### Fixes
 
