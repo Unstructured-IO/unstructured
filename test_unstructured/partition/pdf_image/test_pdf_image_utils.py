@@ -1,6 +1,7 @@
 import os
 import tempfile
 
+import numpy as np
 import pytest
 from PIL import Image as PILImg
 
@@ -11,7 +12,10 @@ from unstructured.partition.pdf_image import pdf_image_utils
 
 
 @pytest.mark.parametrize("image_type", ["pil", "numpy_array"])
-def test_write_image(image_type, mock_pil_image, mock_numpy_image):
+def test_write_image(image_type):
+    mock_pil_image = PILImg.new("RGB", (50, 50))
+    mock_numpy_image = np.zeros((50, 50, 3), np.uint8)
+
     image_map = {
         "pil": mock_pil_image,
         "numpy_array": mock_numpy_image,
