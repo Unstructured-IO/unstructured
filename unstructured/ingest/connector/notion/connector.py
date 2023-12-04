@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     RetryStrategyConfig,
     SourceConnectorCleanupMixin,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import (
@@ -93,7 +94,6 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 page_id=self.page_id,
                 logger=logger,
             )
-            self.check_exists = True
             self.file_exists = True
             if html := text_extraction.html:
                 with open(self._tmp_download_file(), "w") as page_file:
@@ -101,13 +101,12 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
-                self.check_exists = True
                 self.file_exists = False
             else:
                 logger.error(f"Error: {error}")
 
     @requires_dependencies(dependencies=["notion_client"], extras="notion")
-    def get_file_metadata(self):
+    def update_source_metadata(self, **kwargs):
         from notion_client import APIErrorCode, APIResponseError
 
         client = self.get_client()
@@ -115,41 +114,30 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
         try:
-            self.file_metadata = client.pages.retrieve(page_id=self.page_id)  # type: ignore
-            self.check_exists = True
+            file_metadata = client.pages.retrieve(page_id=self.page_id)  # type: ignore
             self.file_exists = True
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
-                self.check_exists = True
                 self.file_exists = False
             else:
                 logger.error(f"Error: {error}")
 
-    @property
-    def date_created(self) -> t.Optional[str]:
-        """The date the document was created on the source system."""
-        if not hasattr(self, "file_metadata") or not self.file_metadata:
-            self.get_file_metadata()
-
-        return self.file_metadata.created_time if self.file_metadata else None
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        """The date the document was last modified on the source system."""
-        if not hasattr(self, "file_metadata") or not self.file_metadata:
-            self.get_file_metadata()
-
-        return self.file_metadata.last_edited_time if self.file_metadata else None
+        if not self.file_exists:
+            self.source_metadata = SourceMetadata(exists=False)
+            return
+        self.source_metadata = SourceMetadata(
+            date_created=file_metadata.created_time,
+            date_modified=file_metadata.last_edited_time,
+            exists=self.file_exists,
+        )
 
     @property
-    def exists(self) -> t.Optional[bool]:
-        """Whether the document exists on the remote source."""
-        if self.check_exists:
-            return self.file_exists
+    def version(self) -> t.Optional[str]:
+        return None
 
-        self.get_file_metadata()
-
-        return self.file_exists
+    @property
+    def source_url(self) -> t.Optional[str]:
+        return None
 
     @property
     def filename(self):
@@ -216,7 +204,6 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 database_id=self.database_id,
                 logger=logger,
             )
-            self.check_exists = True
             self.file_exists = True
             if html := text_extraction.html:
                 with open(self._tmp_download_file(), "w") as page_file:
@@ -224,7 +211,6 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
-                self.check_exists = True
                 self.file_exists = False
             else:
                 logger.error(f"Error: {error}")
@@ -238,43 +224,26 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         # The Notion block endpoint gives more hierarchical information (parent,child relationships)
         # than the pages endpoint so choosing to use that one to get metadata about the page
         try:
-            self.file_metadata = client.databases.retrieve(
+            file_metadata = client.databases.retrieve(
                 database_id=self.database_id,
             )  # type: ignore
-            self.check_exists = True
             self.file_exists = True
         except APIResponseError as error:
             if error.code == APIErrorCode.ObjectNotFound:
-                self.check_exists = True
                 self.file_exists = False
             else:
                 logger.error(f"Error: {error}")
 
-    @property
-    def date_created(self) -> t.Optional[str]:
-        """The date the document was created on the source system."""
-        if not hasattr(self, "file_metadata") or not self.file_metadata:
-            self.get_file_metadata()
-
-        return self.file_metadata.created_time if self.file_metadata else None
-
-    @property
-    def date_modified(self) -> t.Optional[str]:
-        """The date the document was last modified on the source system."""
-        if not hasattr(self, "file_metadata") or not self.file_metadata:
-            self.get_file_metadata()
-
-        return self.file_metadata.last_edited_time if self.file_metadata else None
-
-    @property
-    def exists(self) -> t.Optional[bool]:
-        """Whether the document exists on the remote source."""
-        if self.check_exists:
-            return self.file_exists
-
-        self.get_file_metadata()
-
-        return self.file_exists
+        if not self.file_exists:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            date_created=file_metadata.created_time,
+            date_modified=file_metadata.last_edited_time,
+            exists=self.file_exists,
+        )
 
     @property
     def filename(self):
