@@ -57,7 +57,7 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
                     t.get_args(u)[0] if t.get_origin(u) is list else u for u in union_values
                 ]
                 # Ignore injected NoneType when optional
-                concrete_union_values = [v for v in union_values if is_subclass(v, type(None))]
+                concrete_union_values = [v for v in union_values if not is_subclass(v, type(None))]
                 dataclass_union_values = [v for v in concrete_union_values if is_dataclass(v)]
                 non_dataclass_union_values = [
                     v for v in concrete_union_values if not is_dataclass(v)
@@ -84,6 +84,7 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
         return dd
 
     adjusted_dict = conform_dict(inner_d=flat_data, inner_config=config)
+    print(adjusted_dict)
     config.from_dict(adjusted_dict)
     return config.from_dict(adjusted_dict, apply_name_overload=False)
 
