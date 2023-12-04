@@ -25,6 +25,7 @@ all_tests=(
   'pinecone.sh'  
   's3.sh'
   'postgresql.sh'
+  'pgvector.sh'
   'sqlite.sh'
   'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
