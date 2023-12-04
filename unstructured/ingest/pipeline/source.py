@@ -28,7 +28,9 @@ class Reader(SourceNode):
             # Still need to fetch metadata if file exists locally
             doc.update_source_metadata()
         else:
-            logger.debug(f"Fetching {doc.to_json(redact_sensitive=True)} - PID: {os.getpid()}")
+            # TODO: update to use doc.to_json(redact_sensitive=True) once session handler
+            #  can be serialized
+            logger.debug(f"Fetching {doc} - PID: {os.getpid()}")
             if self.retry_strategy:
                 self.retry_strategy(doc.get_file)
             else:
