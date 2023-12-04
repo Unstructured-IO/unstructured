@@ -1,13 +1,8 @@
-DATA_PATH = "scripts/elasticsearch-test-helpers/wiki_movie_plots_small.csv"
+import json
+
 CLUSTER_URL = "http://localhost:9200"
 INDEX_NAME = "ingest-test-destination"
+MAPPING_PATH = "docs/source/ingest/destination_connectors/elasticsearch_elements_mappings.json"
 
-# TODO-dest make this a json and load via there
-MAPPINGS = {
-    "properties": {
-        "a": {"type": "text", "analyzer": "english"},
-        "b": {"type": "text", "analyzer": "standard"},
-        "c": {"type": "integer"},
-        "d": {"type": "keyword"},
-    },
-}
+with open(MAPPING_PATH) as f:
+    mappings = json.load(f)
