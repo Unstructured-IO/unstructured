@@ -1,4 +1,5 @@
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
@@ -8,6 +9,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig, WeaviateWriteConfig
 
 
+@dataclass
 class WeaviateWriter(Writer, EnhancedDataClassJsonMixin):
     write_config: "WeaviateWriteConfig"
     connector_config: "SimpleWeaviateConfig"
