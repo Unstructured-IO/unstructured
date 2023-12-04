@@ -1,7 +1,8 @@
-## 0.11.4-dev2
+## 0.11.4-dev3
 
 ### Enhancements
 
+* **Refactor image extraction code.** The image extraction code is moved from `unstructured-inference` to `unstructured`. 
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
 
 ### Features
