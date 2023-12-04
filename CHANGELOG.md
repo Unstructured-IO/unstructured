@@ -1,3 +1,9 @@
+## 0.11.4-dev3
+
+### Fixes
+
+* **Fix Azure destination directory** Solves a bug where Azure destination test was failing.
+
 ## 0.11.4-dev2
 
 ### Enhancements
