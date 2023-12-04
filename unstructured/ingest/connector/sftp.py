@@ -17,33 +17,23 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class SimpleSftpConfig(SimpleFsspecConfig):
+    host: t.Optional[str] = ""
+    port: t.Optional[str] = ""
     def __post_init__(self):
-        # host: t.Optional[str] = ""
-        # port: t.Optional[str] = ""
         super().__post_init__()
-        print("****** SimpleSftpConfig *****")
-        print(self.protocol)
-        print(self.access_kwargs)
-        # breakpoint()
-        print("*************")
 
         _,ext= os.path.splitext(self.remote_url)
         if ext:
-            # then we can know there is a file
+            # We only want the filename if it has an extension
             self.file_path= Path(self.remote_url).name
-            rr=Path(self.remote_url).parent.as_posix()
+            self.dir_path= Path(urlparse(self.remote_url).path).parent.as_posix().lstrip("/")
+            self.path_without_protocol= Path(urlparse(self.remote_url).path).parent.as_posix().lstrip("/")
         else:
-            rr=self.remote_url
-
-            
-        uu= urlparse(rr)
-        breakpoint()
-        self.path_without_protocol = uu.path.lstrip("/") #Path(u.path).parent
-        self.dir_path = uu.path.lstrip("/") #Path(u.path).parent
+            self.file_path=""
+            self.dir_path= urlparse(self.remote_url).path.lstrip("/")
+            self.path_without_protocol= urlparse(self.remote_url).path.lstrip("/")
         self.host= urlparse(self.remote_url).hostname
         self.port= urlparse(self.remote_url).port
-        # breakpoint()
-        print("*************")
 
 
 @dataclass

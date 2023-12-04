@@ -46,7 +46,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     --recursive \
     --username foo \
     --password bar \
-    --remote-url sftp://localhost:47474/upload/folder1/folder2/wiki_movie_plots_small2.csv \
+    --remote-url sftp://localhost:47474/upload/ \
     --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

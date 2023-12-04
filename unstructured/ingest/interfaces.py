@@ -141,19 +141,6 @@ class FsspecConfig(FileStorageConfig):
             self.file_path = match.group(2) or ""
             return
 
-        # sftp urls contain an host and a port like this: sftp://host:port/path
-        # NOTE. SHOULD WE INSTEAD PASS THE HOST AND PORT AS SEPARATE flags TO THE CLI?
-        # NOTE. Currently it causes the metadata url to not include host and port. Maybe this is ok
-        # NOTE. Do host and port need to be added to dataclass variables?
-        # match = re.match(rf"{self.protocol}://([\w.-]+):(\d+)/([\w.-_]+)", self.remote_url)
-        # if match and self.protocol == "sftp":
-        #     self.host = match.group(1)
-        #     self.port = int(match.group(2))
-        #     self.dir_path = match.group(3)
-        #     self.file_path = ""
-        #     self.path_without_protocol = match.group(3)
-        #     return
-
         # just a path with no trailing prefix
         match = re.match(rf"{self.protocol}://([^/\s]+?)(/*)$", self.remote_url)
         if match:
