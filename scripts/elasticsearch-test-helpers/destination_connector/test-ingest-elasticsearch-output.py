@@ -8,7 +8,7 @@ from es_cluster_config import (
     INDEX_NAME,
 )
 
-N_ELEMENTS = 5
+N_ELEMENTS = 11933
 
 if __name__ == "__main__":
     print(f"Checking contents of index" f"{INDEX_NAME} at {CLUSTER_URL}")
@@ -18,12 +18,12 @@ if __name__ == "__main__":
     print(client.info())
 
     # es.indices.refresh(index=INDEX_NAME)
-    count = client.cat.count(index=INDEX_NAME, format="json")[0]["count"]
+    count = int(client.cat.count(index=INDEX_NAME, format="json")[0]["count"])
     try:
         assert count == N_ELEMENTS
     except AssertionError:
         sys.exit(
             "Elasticsearch dest check failed:"
-            "got {count} items in index, expected {N_ELEMENTS} items in index."
+            f"got {count} items in index, expected {N_ELEMENTS} items in index."
         )
     print("Elasticsearch destination test was successful")

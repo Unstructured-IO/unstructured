@@ -52,6 +52,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   elasticsearch \
   --url http://localhost:9200 \
-  --index-name ingest-test \
+  --index-name ingest-test-destination \
 
 scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py
