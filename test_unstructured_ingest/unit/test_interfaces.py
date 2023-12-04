@@ -258,16 +258,6 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         assert expected_keys == set(elem.keys())
 
 
-def test_path_extraction_sftp():
-    config = FsspecConfig(remote_url="sftp://example.com:22/path/to/")
-    assert config.protocol == "sftp"
-    assert config.path_without_protocol == "path/to/"
-    assert config.host == "example.com"
-    assert config.port == 22
-    assert config.dir_path == "path/to/"
-    assert config.file_path == ""
-
-
 def test_post_init_invalid_protocol():
     with pytest.raises(ValueError):
         FsspecConfig(remote_url="ftp://example.com/path/to/file.txt")

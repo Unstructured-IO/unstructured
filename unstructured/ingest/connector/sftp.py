@@ -16,8 +16,8 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class SimpleSftpConfig(SimpleFsspecConfig):
-    host: t.Optional[str] = ""
-    port: t.Optional[str] = ""
+    host: str = ""
+    port: str = ""
 
     def __post_init__(self):
         super().__post_init__()
