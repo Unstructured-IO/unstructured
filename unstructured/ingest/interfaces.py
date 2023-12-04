@@ -466,9 +466,9 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
 
         return wrapper
 
-    @abstractmethod
     def update_source_metadata(self, **kwargs) -> None:
         """Sets the SourceMetadata and the  properties for the doc"""
+        self._source_metadata = SourceMetadata()
 
     def update_permissions_data(self):
         """Sets the _permissions_data property for the doc.
