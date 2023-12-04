@@ -22,7 +22,9 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   'mongodb.sh'
+  'pinecone.sh'  
   's3.sh'
+  'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
 )
 
@@ -38,6 +40,8 @@ function print_last_run() {
   if [ "$CURRENT_TEST" != "none" ]; then
     echo "Last ran script: $CURRENT_TEST"
   fi
+  echo "######## SKIPPED TESTS: ########"
+  cat "$SKIPPED_FILES_LOG"
 }
 
 trap print_last_run EXIT

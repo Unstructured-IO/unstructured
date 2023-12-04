@@ -6,5 +6,5 @@
 #
 msg-parser==1.2.0
     # via -r extra-msg.in
-olefile==0.46
+olefile==0.47
     # via msg-parser
