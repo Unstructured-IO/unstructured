@@ -3,6 +3,7 @@ import json
 import os
 import sys
 import typing as t
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -36,7 +37,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
     url: str
     index_name: str
     batch_size: int = 100
-    fields: t.List[str] = field(default=list)
+    fields: t.List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -187,7 +188,8 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             doc_body = doc["_source"]
             filename = ingest_doc.filename
             flattened_dict = flatten_dict(dictionary=doc_body)
-            concatenated_values = "\n".join(flattened_dict.values())
+            str_values = [str(value) for value in flattened_dict.values()]
+            concatenated_values = "\n".join(str_values)
 
             filename.parent.mkdir(parents=True, exist_ok=True)
             with open(filename, "w", encoding="utf8") as f:
@@ -271,10 +273,19 @@ class ElasticsearchWriteConfig(WriteConfig):
 class ElasticsearchDestinationConnector(BaseDestinationConnector):
     write_config: ElasticsearchWriteConfig
     connector_config: SimpleElasticsearchConfig
+    _client: t.Optional["Elasticsearch"] = field(init=False, default=None)
+
+    @property
+    def client(self):
+        from elasticsearch import Elasticsearch
+
+        if self._client is None:
+            self._client = Elasticsearch(self.connector_config.url)
+        return self._client
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
-        # TODO-dest session handles
+        _ = self.client
         pass
 
     def check_connection(self):
@@ -288,16 +299,29 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     DestinationConnectionError.wrap
 
+    def form_elasticsearch_doc_dict(self, data_dict, index_name=None, doc_id=None):
+        if index_name is None:
+            index_name = self.connector_config.index_name
+
+        if doc_id is None:
+            doc_id = str(uuid.uuid4())
+
+        return {
+            "_index": index_name,
+            "_id": doc_id,
+            "_source": data_dict,
+        }
+
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
             f"writing {len(element_dicts)} documents to destination "
-            f"index named {self.connector_config.index_name}",
-            f"at {self.connector_config.url}",
+            f"index named {self.connector_config.index_name} "
+            f"at {self.connector_config.url}"
         )
         from elasticsearch.helpers import bulk
 
         # TODO-dest batch management (size control etc) here
-        bulk_data = element_dicts
+        bulk_data = [self.form_elasticsearch_doc_dict(elmnt_dict) for elmnt_dict in element_dicts]
         bulk(self.client, bulk_data)
 
     def conform_dict(self, element_dict):
@@ -323,7 +347,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                 ]
                 logger.info(
                     f"appending {len(element_dicts_one_doc)} elements from "
-                    "content in doc: {local_path}"
+                    f"content in doc: {local_path}"
                 )
                 element_dicts_all_docs.extend(element_dicts_one_doc)
         self.write_dict(element_dicts=element_dicts_all_docs)
