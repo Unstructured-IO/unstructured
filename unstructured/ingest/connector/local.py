@@ -20,7 +20,7 @@ class SimpleLocalConfig(BaseConnectorConfig):
     # Local specific options
     input_path: str
     recursive: bool = False
-    file_glob: t.Optional[str] = None
+    file_glob: t.Optional[t.List[str]] = None
 
     def __post_init__(self):
         if os.path.isfile(self.input_path):
@@ -119,7 +119,7 @@ class LocalSourceConnector(BaseSourceConnector):
     def does_path_match_glob(self, path: str) -> bool:
         if self.connector_config.file_glob is None:
             return True
-        patterns = self.connector_config.file_glob.split(",")
+        patterns = self.connector_config.file_glob
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True
