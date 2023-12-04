@@ -1,0 +1,423 @@
+{
+    "class": "Elements",
+    "invertedIndexConfig": {
+        "bm25": {
+            "b": 0.75,
+            "k1": 1.2
+        },
+        "cleanupIntervalSeconds": 60,
+        "stopwords": {
+            "additions": null,
+            "preset": "en",
+            "removals": null
+        }
+    },
+    "multiTenancyConfig": {
+        "enabled": false
+    },
+    "properties": [
+        {
+            "dataType": [
+                "text"
+            ],
+            "indexFilterable": true,
+            "indexSearchable": true,
+            "name": "element_id",
+            "tokenization": "word"
+        },
+        {
+            "dataType": [
+                "text"
+            ],
+            "indexFilterable": true,
+            "indexSearchable": true,
+            "name": "text",
+            "tokenization": "word"
+        },
+        {
+            "dataType": [
+                "text"
+            ],
+            "indexFilterable": true,
+            "indexSearchable": true,
+            "name": "type",
+            "tokenization": "word"
+        },
+        {
+            "dataType": [
+                "object"
+            ],
+            "indexFilterable": true,
+            "indexSearchable": false,
+            "name": "metadata",
+            "nestedProperties": [
+                {
+                    "dataType": [
+                        "int"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "category_depth"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "parent_id",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "attached_to_filename",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "filetype",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "date"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "last_modified"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "file_directory",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "filename",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "object"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "data_source",
+                    "nestedProperties": [
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "url",
+                            "tokenization": "word"
+                        },
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "version",
+                            "tokenization": "word"
+                        },
+                        {
+                            "dataType": [
+                                "date"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": false,
+                            "name": "date_created"
+                        },
+                        {
+                            "dataType": [
+                                "date"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": false,
+                            "name": "date_modified"
+                        },
+                        {
+                            "dataType": [
+                                "date"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": false,
+                            "name": "date_processed"
+                        },
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "record_locator",
+                            "tokenization": "word"
+                        },
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "permissions_data",
+                            "tokenization": "word"
+                        }
+
+                    ]
+                },
+                {
+                    "dataType": [
+                        "object"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "coordinates",
+                    "nestedProperties": [
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "system",
+                            "tokenization": "word"
+                        },
+                        {
+                            "dataType": [
+                                "number"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": false,
+                            "name": "layout_width"
+                        },
+                        {
+                            "dataType": [
+                                "number"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": false,
+                            "name": "layout_height"
+                        },
+                        {
+                            "dataType": [
+                                "text"
+                            ],
+                            "indexFilterable": true,
+                            "indexSearchable": true,
+                            "name": "points",
+                            "tokenization": "word"
+                        }
+                    ]
+                },
+                {
+                    "dataType": [
+                        "text[]"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "languages",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "page_number"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "page_name",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "url",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "links",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text[]"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "link_urls",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text[]"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "link_texts",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "sent_from",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "sent_to",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "subject",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "section",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "header_footer_type",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text[]"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "emphasized_text_contents",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text[]"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "emphasized_text_tags",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "text_as_html",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "text"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": true,
+                    "name": "regex_metadata",
+                    "tokenization": "word"
+                },
+                {
+                    "dataType": [
+                        "number"
+                    ],
+                    "indexFilterable": true,
+                    "indexSearchable": false,
+                    "name": "detection_class_prob"
+                }
+            ]
+        }
+    ],
+    "replicationConfig": {
+        "factor": 1
+    },
+    "shardingConfig": {
+        "virtualPerPhysical": 128,
+        "desiredCount": 1,
+        "actualCount": 1,
+        "desiredVirtualCount": 128,
+        "actualVirtualCount": 128,
+        "key": "_id",
+        "strategy": "hash",
+        "function": "murmur3"
+    },
+    "vectorIndexConfig": {
+        "skip": false,
+        "cleanupIntervalSeconds": 300,
+        "maxConnections": 64,
+        "efConstruction": 128,
+        "ef": -1,
+        "dynamicEfMin": 100,
+        "dynamicEfMax": 500,
+        "dynamicEfFactor": 8,
+        "vectorCacheMaxObjects": 1000000000000,
+        "flatSearchCutoff": 40000,
+        "distance": "cosine",
+        "pq": {
+            "enabled": false,
+            "bitCompression": false,
+            "segments": 0,
+            "centroids": 256,
+            "trainingLimit": 100000,
+            "encoder": {
+                "type": "kmeans",
+                "distribution": "log-normal"
+            }
+        }
+    },
+    "vectorIndexType": "hnsw",
+    "vectorizer": "none"
+}
