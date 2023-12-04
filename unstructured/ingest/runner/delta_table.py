@@ -38,9 +38,7 @@ class DeltaTableRunner(Runner):
             connector_config=SimpleDeltaTableConfig(
                 table_uri=table_uri,
                 version=version,
-                storage_options=SimpleDeltaTableConfig.storage_options_from_str(storage_options)
-                if storage_options
-                else None,
+                storage_options=storage_options if storage_options else None,
                 without_files=without_files,
             ),
             read_config=self.read_config,
