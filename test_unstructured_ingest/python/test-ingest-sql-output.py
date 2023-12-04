@@ -12,7 +12,7 @@ N_ELEMENTS = 5
 
 
 def create_connection(db_name, database=None):
-    if db_name == "postgresql":
+    if db_name == "postgresql" or db_name == "pgvector":
         from psycopg2 import connect
 
         return connect(
@@ -52,9 +52,21 @@ if __name__ == "__main__":
     cursor.execute(query)
     count = cursor.fetchone()[0]
 
+    if database_name == "pgvector":
+        query = "SELECT AVG(embeddings) FROM elements;"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        res = cursor.fetchone()
+        print(f"Result of {query} against pgvector with embeddings")
+        print(res)
+
     try:
         assert count == N_ELEMENTS
     except AssertionError:
         print(f"{database_name} dest check failed: got {count}, expected {N_ELEMENTS}")
         raise
+    finally:
+        cursor.close()
+        conn.close()
+
     print(f"SUCCESS: {database_name} dest check")
