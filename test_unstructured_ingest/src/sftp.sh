@@ -27,16 +27,16 @@ function cleanup() {
     cleanup_dir "$DOWNLOAD_DIR"
   fi
 }
-# trap cleanup EXIT
+trap cleanup EXIT
 
 # shellcheck source=/dev/null
-# scripts/sftp-test-helpers/create-and-check-sftp.sh
-# wait
+scripts/sftp-test-helpers/create-and-check-sftp.sh
+wait
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     sftp \
-    --num-processes "1" \
+    --num-processes "$max_processes" \
     --download-dir "$DOWNLOAD_DIR" \
     --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.data_source.version \
     --preserve-downloads \

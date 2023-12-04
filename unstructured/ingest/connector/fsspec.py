@@ -185,7 +185,6 @@ class FsspecSourceConnector(
 
         """Verify that can get metadata for an object, validates connections info."""
         ls_output = self.fs.ls(self.connector_config.path_without_protocol)
-        ###### path without protocol may have the filename in it.  This is a problem
         if len(ls_output) < 1:
             raise ValueError(
                 f"No objects found in {self.connector_config.remote_url}.",
@@ -193,8 +192,6 @@ class FsspecSourceConnector(
 
     def _list_files(self):
         if not self.connector_config.recursive:
-            ###### path without protocol may have the filename in it.  This is a problem
-
             # fs.ls does not walk directories
             # directories that are listed in cloud storage can cause problems
             # because they are seen as 0 byte files
