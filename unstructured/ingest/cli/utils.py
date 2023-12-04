@@ -38,6 +38,14 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
     """
 
     def conform_dict(inner_d: dict, inner_config: t.Type[BaseConfig]):
+        # Catch edge cases (i.e. Dict[str, ...]) where underlying type is not a concrete Class,
+        # causing 'issubclass() arg 1 must be a class' errors, return False
+        def is_subclass(instance, class_type) -> bool:
+            try:
+                return issubclass(instance, class_type)
+            except Exception:
+                return False
+
         dd = inner_d.copy()
         for field in fields(inner_config):
             f_type = field.type
@@ -49,7 +57,7 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
                     t.get_args(u)[0] if t.get_origin(u) is list else u for u in union_values
                 ]
                 # Ignore injected NoneType when optional
-                concrete_union_values = [v for v in union_values if not issubclass(v, type(None))]
+                concrete_union_values = [v for v in union_values if is_subclass(v, type(None))]
                 dataclass_union_values = [v for v in concrete_union_values if is_dataclass(v)]
                 non_dataclass_union_values = [
                     v for v in concrete_union_values if not is_dataclass(v)
@@ -71,12 +79,11 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
             origin = t.get_origin(f_type)
             if origin:
                 f_type = origin
-            if issubclass(f_type, BaseConfig):
+            if is_subclass(f_type, BaseConfig):
                 dd[field.name] = conform_dict(inner_d=dd, inner_config=f_type)
         return dd
 
     adjusted_dict = conform_dict(inner_d=flat_data, inner_config=config)
-    print(adjusted_dict)
     config.from_dict(adjusted_dict)
     return config.from_dict(adjusted_dict, apply_name_overload=False)
 

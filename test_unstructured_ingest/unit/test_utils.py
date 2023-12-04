@@ -87,3 +87,15 @@ def test_extract_config_dataclass_list():
     c = extract_config(flat_data=flat_data, config=C)
     expected_result = {"b": [], "c": True}
     assert c.to_json(sort_keys=True) == json.dumps(expected_result, sort_keys=True)
+
+
+def test_extract_config_dict():
+    @dataclass
+    class C(BaseConfig):
+        c: bool
+        b: t.Dict[str, B] = field(default_factory=dict)
+
+    flat_data = {"c": True}
+    c = extract_config(flat_data=flat_data, config=C)
+    expected_result = {"c": True, "b": {}}
+    assert c.to_json(sort_keys=True) == json.dumps(expected_result, sort_keys=True)
