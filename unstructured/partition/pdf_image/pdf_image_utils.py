@@ -1,7 +1,8 @@
 import os
 import tempfile
 from pathlib import PurePath
-from typing import Union, Optional, List, cast, BinaryIO, TYPE_CHECKING
+from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
+
 import cv2
 import numpy as np
 import pdf2image
@@ -75,7 +76,7 @@ def extract_images_from_elements(
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
-    output_dir_path: Optional[str] = None
+    output_dir_path: Optional[str] = None,
 ):
     """
     Extract and save images from the page. This method iterates through the layout elements
@@ -96,8 +97,7 @@ def extract_images_from_elements(
         )
         image_paths = cast(List[str], _image_paths)
 
-        figure_number = 0
-        for el in elements:
+        for i, el in enumerate(elements):
             coordinates = el.metadata.coordinates
             if not coordinates or not coordinates.points or el.category != ElementType.IMAGE:
                 continue
@@ -107,7 +107,7 @@ def extract_images_from_elements(
             x2, y2 = points[2]
             page_number = el.metadata.page_number
 
-            figure_number += 1
+            figure_number = i + 1
             try:
                 output_f_path = os.path.join(
                     output_dir_path,
