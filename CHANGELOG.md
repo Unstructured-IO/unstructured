@@ -1,11 +1,5 @@
 ## 0.11.4-dev3
 
-### Fixes
-
-* **Fix Azure destination directory** Solves a bug where Azure destination test was failing.
-
-## 0.11.4-dev2
-
 ### Enhancements
 
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
@@ -14,8 +8,9 @@
 
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 
-
 ### Fixes
+
+* **Fix Azure destination test directory** Solves a bug where Azure destination test was was looking in the wrong directory.
 
 ## 0.11.3
 
