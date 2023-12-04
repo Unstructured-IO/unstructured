@@ -110,7 +110,11 @@ def extract_configs(
         for k, conf in extras.items():
             res[k] = extract_config(flat_data=data, config=conf)
     for v in validate:
-        v.from_dict(data)
+        try:
+            v.from_dict(data)
+        except Exception as e:
+            raise Exception(f"failed to validate config {v.__name__}") from e
+
     return res
 
 
