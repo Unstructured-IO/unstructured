@@ -1,6 +1,5 @@
 import os
 import tempfile
-from typing import List
 
 import pytest
 from PIL import Image as PILImg
@@ -32,9 +31,7 @@ def test_write_image(image_type, mock_pil_image, mock_numpy_image):
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
 @pytest.mark.parametrize("path_only", [True, False])
 def test_convert_pdf_to_image(
-    file_mode,
-    path_only,
-    filename=example_doc_path("embedded-images.pdf")
+    file_mode, path_only, filename=example_doc_path("embedded-images.pdf")
 ):
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
