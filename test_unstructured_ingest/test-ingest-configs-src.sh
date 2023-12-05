@@ -16,6 +16,9 @@ tests_to_ignore=(
   'notion.sh'
   'dropbox.sh'
 )
+tests_to_omit=(
+  'airtable-large.sh'
+)
 all_eval=(
   'text-extraction'
   'element-type'

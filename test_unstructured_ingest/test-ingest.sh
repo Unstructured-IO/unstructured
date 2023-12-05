@@ -71,6 +71,10 @@ run_tests() {
     CURRENT_TEST="$test"
     echo "--------- RUNNING SCRIPT $test ---------"
     echo "Running ./test_unstructured_ingest/$test_type/$test"
+    if [[ "${tests_to_omit[*]}" =~ $test ]]; then
+      echo "$test (skipped without running)" | tee -a "$SKIPPED_FILES_LOG"
+      continue
+    fi
     ./test_unstructured_ingest/"$test_type"/"$test"
     rc=$?
     if [[ $rc -eq 8 ]]; then

@@ -11,4 +11,5 @@ tests_to_ignore=(
   'dropbox.sh'
   'sharepoint.sh'
 )
+tests_to_omit=()
 all_eval=()
