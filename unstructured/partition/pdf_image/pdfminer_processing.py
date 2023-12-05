@@ -95,7 +95,7 @@ def get_regions_by_pdfminer(
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
+    for page, page_layout in open_pdfminer_pages_generator(fp):
         height = page_layout.height
 
         layout: List["TextRegion"] = []
@@ -124,6 +124,10 @@ def get_regions_by_pdfminer(
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
+
+        for i in range(1, len(layout)):
+            if abs(layout[i].bbox.y1 - layout[i - 1].bbox.y1) < 20:
+                layout[i].bbox.y1 = layout[i - 1].bbox.y1
 
         layout = order_layout(layout)
         layouts.append(layout)
