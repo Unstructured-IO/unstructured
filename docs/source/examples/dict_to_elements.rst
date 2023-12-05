@@ -22,7 +22,8 @@ Install the `unstructured` package with S3 support.
 
 .. code-block:: python
 
-   !pip install "unstructured[s3]"
+   pip install "unstructured[s3]"
+
 
 Step 2: Import Libraries
 ========================
