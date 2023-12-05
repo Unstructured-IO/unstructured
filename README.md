@@ -99,7 +99,7 @@ Once in the running container, you can try things directly in Python interpreter
 # this will drop you into a python console so you can run the below partition functions
 python3
 
->>> from unstructured.partition.pdf import partition_pdf
+>>> from unstructured.partition.pdf_image.pdf import partition_pdf
 >>> elements = partition_pdf(filename="example-docs/layout-parser-paper-fast.pdf")
 
 >>> from unstructured.partition.text import partition_text
