@@ -10,8 +10,6 @@
 
 ### Fixes
 
-* **Fix Azure destination test directory** Solves a bug where Azure destination test was was looking in the wrong directory.
-
 ## 0.11.3
 
 ### Enhancements
