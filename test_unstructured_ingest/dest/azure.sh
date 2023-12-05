@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-exit 1
 set -e
 
 DEST_PATH=$(dirname "$(realpath "$0")")
