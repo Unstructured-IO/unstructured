@@ -312,7 +312,7 @@
     "type": "Header"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -429,7 +429,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ba559032c2f9f98c24e4c547af135b8e",
+    "element_id": "901957096dcd5ada8f3d7ba969e532a2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -438,7 +438,7 @@
       ],
       "page_number": 2
     },
-    "text": "30  10g 8g 6g 4g 2g Control  ) g m  (     s s o  20  l     t h g e W  i  10  48  96  144  192 ",
+    "text": "30  10g 8g 6g 4g 2g Control  ) g m  (  s s o     20  l     t h g e W  i  10  48  96  144  192 ",
     "type": "Image"
   },
   {
@@ -585,7 +585,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "00c6c21aa97f59dc84190f023eaaf769",
+    "element_id": "eda305619cbc859547d4355a3fbda5b7",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -594,7 +594,7 @@
       ],
       "page_number": 3
     },
-    "text": "90  2g 4g 6g 8g 10g  80  )  %  70  (     y c n e c i f f  60  i  50  E n o i t i b h n I     40  i  30  20  10  0  20  40  60  80  100  120  140  160  180 ",
+    "text": "90  2g 4g 6g 8g 10g  80  )  %  70  (  y c n e c i f f     60  i  50  E n o i t i b h n I     40  i  30  20  10  0  20  40  60  80  100  120  140  160  180 ",
     "type": "Image"
   },
   {
@@ -715,7 +715,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "150b064badb909ac7549f8064cf2caba",
+    "element_id": "a31f676a690660014de4c38544212163",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -724,7 +724,7 @@
       ],
       "page_number": 4
     },
-    "text": "icorr (A/cm2) Polarization resistance (Ω) Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) (cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356 0 2 4 6 8 10 0.0335 1.9460 0.0163 0.3233 0.1240 0.0382 0.0409 0.0596 0.2369 0.0540 0.0556 0.0086 0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05 24.0910 121.440 42.121 373.180 305.650 246.080 2.8163 1.5054 0.9476 0.4318 0.3772 0.0919",
+    "text": "Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm2) Polarization resistance (Ω) 0 2 4 6 8 10 0.0335 1.9460 0.0163 0.3233 0.1240 0.0382 0.0409 0.0596 0.2369 0.0540 0.0556 0.0086 (cid:3) 0.9393 (cid:3) 0.8276 (cid:3) 0.8825 (cid:3) 0.8027 (cid:3) 0.5896 (cid:3) 0.5356 0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05 24.0910 121.440 42.121 373.180 305.650 246.080 2.8163 1.5054 0.9476 0.4318 0.3772 0.0919",
     "type": "Table"
   },
   {
@@ -1092,7 +1092,7 @@
     "type": "Formula"
   },
   {
-    "element_id": "aa63e6aba52eb53a896d01e2c7ccc133",
+    "element_id": "039d1760cf440a35e9dbadf34b8656b6",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1101,7 +1101,7 @@
       ],
       "page_number": 6
     },
-    "text": "IE ð%Þ ¼ CRo (cid:3) CR 100 1 x CRo",
+    "text": "IE ð%Þ ¼ CRo (cid:3) CR 100 1 CRo x",
     "type": "Formula"
   },
   {
@@ -1287,7 +1287,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "2782a9a4dd48cfa04cdbcadbb4463ae1",
+    "element_id": "dac7329c6a8ce58c7752649af5a79dc5",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1296,7 +1296,7 @@
       ],
       "page_number": 7
     },
-    "text": "[2] O. Sanni, A.P.I. Popoola, A. Kolesnikov, Constitutive modeling for prediction of optimal process parameters in corrosion inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1–15.",
+    "text": "inhibition of austenitic stainless steel (Type 316)/acidic medium, Mater. Res. Express. 5 (10) (2018) 1–15.",
     "type": "ListItem"
   },
   {

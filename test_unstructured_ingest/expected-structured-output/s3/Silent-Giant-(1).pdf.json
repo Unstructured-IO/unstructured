@@ -1071,7 +1071,7 @@
     "type": "Title"
   },
   {
-    "element_id": "196f551acb55f0373a9d7fac6c9dbeab",
+    "element_id": "a2f8b79a9870281d838e2ae330ab100a",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1088,7 +1088,7 @@
       ],
       "page_number": 7
     },
-    "text": "300  250  200  150  100  50  0  O nshore Wind  Offshore Wind  N uclear  m ercial Photovoltaic  C oal  C C G T  C o m ",
+    "text": "300  250  200  150  100  50  0  O nshore Wind  Offshore Wind  N uclear  C C G T  C oal  m ercial Photovoltaic  C o m ",
     "type": "Image"
   },
   {
@@ -1281,7 +1281,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "577fd212dac38df299e478d6b7ce5d74",
+    "element_id": "999ca16e301f6c9575bdb3529b901994",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1298,7 +1298,7 @@
       ],
       "page_number": 8
     },
-    "text": "120  120  99.5  100  71.9  80  60  40  20  8.5  1.78  0.245  <0.01  0  Offshore wind  O nshore wind (G erm any)  C oal  Oil  N atural gas  N uclear*  S olar P V  (U K) ",
+    "text": "120  120  99.5  100  71.9  80  60  40  20  8.5  1.78  0.245  <0.01  0  C oal  Oil  N atural gas  Offshore wind  (U K)  O nshore wind (G erm any)  S olar P V  N uclear* ",
     "type": "Image"
   },
   {
@@ -1323,27 +1323,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3f79bb7b435b05321651daefd374cdc6",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8
-    },
-    "text": "e",
-    "type": "Title"
-  },
-  {
     "element_id": "f83714d89302473e0e4f5399bd50e7a9",
     "metadata": {
       "data_source": {
@@ -1365,7 +1344,7 @@
     "type": "Title"
   },
   {
-    "element_id": "380918b946a526640a40df5dced65167",
+    "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1382,8 +1361,8 @@
       ],
       "page_number": 8
     },
-    "text": "=",
-    "type": "UncategorizedText"
+    "text": "e",
+    "type": "Title"
   },
   {
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
