@@ -1,23 +1,29 @@
 import logging
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import FsspecBaseRunner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.azure import SimpleAzureBlobStorageConfig
 
+
+@dataclass
 class AzureRunner(FsspecBaseRunner):
+    fsspec_config: t.Optional["SimpleAzureBlobStorageConfig"] = None
+
     def run(
         self,
-        account_name: t.Optional[str] = None,
-        account_key: t.Optional[str] = None,
-        connection_string: t.Optional[str] = None,
-        recursive: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
-        if not account_name and not connection_string:
+        if (
+            not self.fsspec_config.access_config.account_name
+            and not self.fsspec_config.access_config.connection_string
+        ):
             raise ValueError(
                 "missing either account-name or connection-string",
             )
@@ -31,25 +37,11 @@ class AzureRunner(FsspecBaseRunner):
 
         from unstructured.ingest.connector.azure import (
             AzureBlobStorageSourceConnector,
-            SimpleAzureBlobStorageConfig,
         )
 
-        if account_name:
-            access_kwargs = {
-                "account_name": account_name,
-                "account_key": account_key,
-            }
-        elif connection_string:
-            access_kwargs = {"connection_string": connection_string}
-        else:
-            access_kwargs = {}
-        connector_config = SimpleAzureBlobStorageConfig.from_dict(
-            self.fsspec_config.to_dict(),  # type: ignore
-        )
-        connector_config.access_kwargs = access_kwargs
         source_doc_connector = AzureBlobStorageSourceConnector(  # type: ignore
             processor_config=self.processor_config,
-            connector_config=connector_config,
+            connector_config=self.fsspec_config,
             read_config=self.read_config,
         )
 

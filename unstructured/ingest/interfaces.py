@@ -11,12 +11,14 @@ from datetime import datetime
 from pathlib import Path
 
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import Json, _asdict, _decode_dataclass
+from dataclasses_json.core import Json, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.partition.api import partition_via_api
@@ -43,7 +45,8 @@ class BaseSessionHandle(ABC):
     e.g., a connection for making a request for fetching documents."""
 
 
-class BaseConfig(DataClassJsonMixin, ABC):
+@dataclass
+class BaseConfig(EnhancedDataClassJsonMixin, ABC):
     pass
 
 
@@ -86,7 +89,7 @@ class PartitionConfig(BaseConfig):
     metadata_include: t.List[str] = field(default_factory=list)
     partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
-    api_key: t.Optional[str] = None
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     hi_res_model_name: t.Optional[str] = None
 
 
@@ -108,15 +111,24 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
+class AccessConfig(BaseConfig):
+    # Meant to designate holding any sensitive information associated with other configs
+    pass
+
+
+@dataclass
 class FsspecConfig(FileStorageConfig):
-    access_kwargs: dict = field(default_factory=dict)
+    access_config: AccessConfig = None
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
 
-    def get_access_kwargs(self) -> dict:
-        return self.access_kwargs
+    def get_access_config(self) -> dict:
+        if self.access_config:
+            return self.access_config.to_dict(apply_name_overload=False)
+        else:
+            return {}
 
     def __post_init__(self):
         self.protocol, self.path_without_protocol = self.remote_url.split("://")
@@ -171,7 +183,7 @@ class ReadConfig(BaseConfig):
 @dataclass
 class EmbeddingConfig(BaseConfig):
     provider: str
-    api_key: t.Optional[str] = None
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
@@ -209,8 +221,8 @@ class ChunkingConfig(BaseConfig):
 @dataclass
 class PermissionsConfig(BaseConfig):
     application_id: t.Optional[str]
-    client_cred: t.Optional[str]
     tenant: t.Optional[str]
+    client_cred: t.Optional[str] = enhanced_field(sensitive=True)
 
 
 # module-level variable to store session handle
@@ -219,27 +231,15 @@ global_write_session_handle: t.Optional[BaseSessionHandle] = None
 
 @dataclass
 class WriteConfig(BaseConfig):
-    def global_session(self):
-        try:
-            global global_write_session_handle
-            if isinstance(self, IngestDocSessionHandleMixin):
-                if global_write_session_handle is None:
-                    # create via write_config.session_handle, which is a property that creates a
-                    # session handle if one is not already defined
-                    global_write_session_handle = self.session_handle
-                else:
-                    self._session_handle = global_write_session_handle
-        except Exception as e:
-            logger.info("Global session handle creation error")
-            raise (e)
+    pass
 
 
-class BaseConnectorConfig(ABC):
+class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
 @dataclass
-class SourceMetadata(DataClassJsonMixin, ABC):
+class SourceMetadata(EnhancedDataClassJsonMixin, ABC):
     date_created: t.Optional[str] = None
     date_modified: t.Optional[str] = None
     version: t.Optional[str] = None
@@ -248,7 +248,7 @@ class SourceMetadata(DataClassJsonMixin, ABC):
     permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
 
 
-class IngestDocJsonMixin(DataClassJsonMixin):
+class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
     """
     Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
     created from the dataclass. This explicitly sets properties to look for on the IngestDoc
@@ -282,16 +282,20 @@ class IngestDocJsonMixin(DataClassJsonMixin):
                 val = val.to_dict(encode_json=False)
             as_dict[prop] = val
 
-    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
-        as_dict = _asdict(self, encode_json=encode_json)
+    def to_dict(self, **kwargs) -> t.Dict[str, Json]:
+        as_dict = _asdict(self, **kwargs)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         if getattr(self, "_source_metadata") is not None:
             self.add_props(as_dict=as_dict, props=self.metadata_properties)
         return as_dict
 
     @classmethod
-    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
-        doc = _decode_dataclass(cls, kvs, infer_missing)
+    def from_dict(
+        cls: t.Type[A], kvs: Json, *, infer_missing=False, apply_name_overload: bool = True
+    ) -> A:
+        doc = super().from_dict(
+            kvs=kvs, infer_missing=infer_missing, apply_name_overload=apply_name_overload
+        )
         if meta := kvs.get("_source_metadata"):
             setattr(doc, "_source_metadata", SourceMetadata.from_dict(meta))
         if date_processed := kvs.get("_date_processed"):
@@ -299,7 +303,7 @@ class IngestDocJsonMixin(DataClassJsonMixin):
         return doc
 
 
-class BatchIngestDocJsonMixin(DataClassJsonMixin):
+class BatchIngestDocJsonMixin(EnhancedDataClassJsonMixin):
     """
     Inherently, DataClassJsonMixin does not add in any @property fields to the json/dict
     created from the dataclass. This explicitly sets properties to look for on the IngestDoc
@@ -590,7 +594,7 @@ class BaseIngestDocBatch(BaseIngestDoc, BatchIngestDocJsonMixin, ABC):
 
 
 @dataclass
-class BaseConnector(DataClassJsonMixin, ABC):
+class BaseConnector(EnhancedDataClassJsonMixin, ABC):
     @abstractmethod
     def check_connection(self):
         pass
