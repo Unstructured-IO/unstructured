@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -97,7 +96,6 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self.update_source_metadata()
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
