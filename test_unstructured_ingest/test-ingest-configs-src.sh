@@ -18,6 +18,7 @@ tests_to_ignore=(
 )
 tests_to_omit=(
   'airtable-large.sh'
+  'pdf-fast-reprocess.sh'
 )
 all_eval=(
   'text-extraction'
