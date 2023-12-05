@@ -315,6 +315,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "0576a32295e0e7552ac92df9eebb31ef",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-14T07:31:28",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "265756457651539296174748931590365722430"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "Monetary policy starts to bite. Signs are apparent",
+    "type": "Title"
+  },
+  {
     "element_id": "c140ad5c30b6075c1a553eddacd8eca5",
     "metadata": {
       "data_source": {
@@ -1197,7 +1218,7 @@
     "type": "Title"
   },
   {
-    "element_id": "429d7ccdab398bfb2107fa00f9054272",
+    "element_id": "2b2e9f8cd9c3fa54f283307f1ad803d2",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -2310,7 +2331,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "5ad3e97ac0a2d759e059893765b81954",
+    "element_id": "f1234b234d9638b6ae41fc43822ca551",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -2327,7 +2348,7 @@
       ],
       "page_number": 11
     },
-    "text": "United States Euro area China Other AEs Other EMs  7  October 2022  GFSR  6  5  4  3  2  1  0  –1  –2  –3  2006     08 08  10   10    12   12    14      16   14    18   18     20     22 22  06  16  20 ",
+    "text": "7  United States Euro area China Other AEs Other EMs  October 2022  GFSR  6  5  4  3  2  1  0  –1  –2  –3  2006     08 08  06  10   10    12   12    14      16   14  16    18   18     20     22 22  20 ",
     "type": "Image"
   },
   {
@@ -2394,7 +2415,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5728dbbab19d146278a6a3387e8e40d5",
+    "element_id": "ecab4cfd476d2d32726bcb7e6e4a5e61",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28",
@@ -2411,7 +2432,7 @@
       ],
       "page_number": 11
     },
-    "text": "Latest  October 2022 GFSR  5  6  2. Euro area  1. United States  5  4  4  3  3  2  2  1  1  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26 ",
+    "text": "Latest  October 2022 GFSR  6  1. United States  2. Euro area  5  5  4  4  3  3  2  2  1  1  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26 ",
     "type": "Image"
   },
   {
