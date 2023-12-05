@@ -331,7 +331,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        ./test_unstructured_ingest/test-ingest-src.sh src core
+        ./test_unstructured_ingest/test-ingest.sh src core
 
   test_ingest_src_non_core:
     strategy:
@@ -409,7 +409,7 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        ./test_unstructured_ingest/test-ingest-src.sh src non-core
+        ./test_unstructured_ingest/test-ingest.sh src non-core
 
 
   test_ingest_dest:
