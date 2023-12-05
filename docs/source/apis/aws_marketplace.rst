@@ -2,6 +2,10 @@
 AWS Marketplace Deployment Guide
 ================================
 
+Introduction
+------------
+This guide provides step-by-step instructions for deploying Unstructured API from AWS Marketplace.
+
 Requirements
 ------------
 1. **AWS Account**: Register at `AWS Registration Page <https://aws.amazon.com/>`_, if you don't have an AWS account.
@@ -11,8 +15,67 @@ Requirements
    - Refer to this `AWS blog post <https://blog.awsfundamentals.com/aws-iam-roles-with-aws-cloudformation#heading-creating-iam-roles-with-aws-cloudformation>`_ to create IAM Roles with CloudFormation.
 
 3. **SSH KeyPair**: Create or use an existing KeyPair for secure access.
+
    - Follow the ``Create Key Pairs`` in the Amazon EC2 `User Guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_.
 
+
+Creating a VPC with Subnets
+---------------------------
+
+1. **Access VPC Dashboard**:
+
+   - In the AWS Management Console, navigate to the VPC service.
+   - Click on “Your VPCs” in the left navigation pane, then “Create VPC.”
+
+2. **Create VPC**:
+
+   - Enter a Name tag for your VPC.
+   - Specify the IPv4 CIDR block (e.g., 10.0.0.0/16).
+   - Leave the IPv6 CIDR block and Tenancy settings as default.
+   - Click “Create.”
+
+3. **Create Subnets**:
+
+   - After creating the VPC, click on “Subnets” in the left navigation pane.
+   - Click “Create subnet” and select the VPC you just created.
+   - For the first public subnet:
+
+     - Enter a Name tag.
+     - Select an Availability Zone.
+     - Specify the IPv4 CIDR block (e.g., 10.0.1.0/24).
+     - Click “Create.”
+   - Repeat the process for the second public subnet with a different CIDR block (e.g., 10.0.2.0/24).
+   - For the private subnet:
+
+     - Follow the same steps, but choose a different Availability Zone and CIDR block (e.g., 10.0.3.0/24).
+
+4. **Enable Public Access for Public Subnets**:
+
+   - Navigate to “Subnets,” select each public subnet.
+   - Under “Actions,” choose “Modify auto-assign IP settings.”
+   - Check “Auto-assign IPv4” to enable public internet access.
+   - Repeat for the second public subnet.
+
+5. **Create Internet Gateway (for Public Subnets)**:
+
+   - Go to “Internet Gateways” in the VPC dashboard.
+   - Click “Create internet gateway,” enter a name, and create.
+   - Attach the newly created internet gateway to your VPC.
+
+6. **Set Up Route Tables**:
+
+   - For public subnets: Create a new route table in your VPC, add a route to the internet gateway, and associate it with both public subnets.
+   - For the private subnet: Use the main route table or create a new one without a route to the internet gateway.
+   - Fill in the required fields:
+
+     - **Stack Name**: Name your stack.
+     - **KeyName**: SSH Key Pair. Create or use an existing keypair (`Create Key Pairs <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_).
+     - **LoadBalancerScheme**: Choose between internal or public-facing. Ensure subnets match the scheme.
+     - **Subnets**: Specify subnets for the load balancer and autoscaling group.
+     - **VPC**: Provide the ID of your VPC.
+     - **SSHLocation**: Define the source IP range for SSH traffic to instances.
+
+   - Proceed through the dialogs and submit to deploy.
 
 Deploying via AWS Console
 -------------------------
@@ -24,15 +87,7 @@ Deploying via AWS Console
 2. **Create New Stack**:
 
    - Use the S3 URL: `https://utic-public-cf.s3.amazonaws.com/api-marketplace.yaml <https://utic-public-cf.s3.amazonaws.com/api-marketplace.yaml>`_ to create a new stack.
-   - Fill in the required fields:
 
-     - **Stack Name**: Name your stack.
-     - **KeyName**: SSH Key Pair. Create or use an existing keypair (`Create Key Pairs <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_).
-     - **LoadBalancerScheme**: Choose between internal or public-facing. Ensure subnets match the scheme.
-     - **Subnets**: Specify subnets for the load balancer and autoscaling group.
-     - **VPC**: Provide the ID of your VPC.
-     - **SSHLocation**: Define the source IP range for SSH traffic to instances.
-   - Proceed through the dialogs and submit to deploy.
 
 Deploying via AWS CLI
 ---------------------
