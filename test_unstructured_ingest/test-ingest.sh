@@ -32,7 +32,7 @@ CURRENT_TEST="none"
 
 # Pull in variables specific to each
 # shellcheck disable=SC1090
-source "$SCRIPT_DIR"/"$test_type"-test-configs.sh
+source "$SCRIPT_DIR"/test-ingest-configs-"$test_type".sh
 
 
 get_tests() {

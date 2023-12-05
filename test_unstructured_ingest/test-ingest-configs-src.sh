@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034
+
 core_tests=(
   'sharepoint.sh'
   'local.sh'
