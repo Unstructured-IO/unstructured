@@ -26,31 +26,32 @@ class AzureCliConfig(AzureAccessConfig, CliConfig):
                 default=None,
                 help="The storage account key. This is used for shared key "
                 "authentication. If any of account key, sas token or "
-                "client_id is specified, anonymous access will be used.",
+                "client_id are not specified, anonymous access will be used.",
             ),
             click.Option(
                 ["--account-name"],
                 default=None,
                 help="The storage account name. This is used to authenticate "
-                "requests signed with an account key and to construct the "
-                "storage endpoint. It is required unless a connection string "
-                "is given, or if a custom domain is used with anonymous authentication.",
+                "requests signed with an account key and to construct "
+                "the storage endpoint. It is required unless a connection "
+                "string is given, or if a custom domain is used with "
+                "anonymous authentication.",
             ),
             click.Option(
                 ["--connection-string"],
                 default=None,
-                help="If specified, this will override all other parameters besides "
-                "request session. See http://azure.microsoft.com/en-us/"
-                "documentation/articles/storage-configure-connection-string/ "
+                help="If specified, this will override all other parameters. See "
+                "http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/ "  # noqa: E501
                 "for the connection string format.",
             ),
             click.Option(
                 ["--sas_token"],
                 default=None,
-                help="A shared access signature token to use to authenticate requests "
-                "instead of the account key. If account key and sas token are both "
-                "specified, account key will be used to sign. If any of account key, "
-                "sas token or client_id are specified, anonymous access will be used.",
+                help="A shared access signature token to use to authenticate "
+                "requests instead of the account key. If account key and "
+                "sas token are both specified, account key will be used "
+                "to sign. If any of account key, sas token or client_id "
+                "are not specified, anonymous access will be used.",
             ),
         ]
         return options
