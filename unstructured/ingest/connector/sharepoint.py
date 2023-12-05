@@ -438,8 +438,8 @@ class SharepointPermissionsConnector:
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request failed with status code {response.status_code}:")
-            print(response.text)
+            logger.info(f"Request failed with status code {response.status_code}:")
+            logger.info(response.text)
 
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_sites(self):
@@ -529,14 +529,14 @@ class SharepointPermissionsConnector:
         sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
         drive_ids = []
 
-        print("Obtaining drive data for sites for permissions (rbac)")
+        logger.info("Obtaining drive data for sites for permissions (rbac)")
         for site_id, site_url in sites:
             drives = self.get_drives(site_id)
             if drives:
                 drives_for_site = drives["value"]
                 drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
 
-        print("Obtaining item data from drives for permissions (rbac)")
+        logger.info("Obtaining item data from drives for permissions (rbac)")
         item_ids = []
         for site, drive_id in drive_ids:
             drive_items = self.get_drive_items(site, drive_id)
@@ -550,7 +550,7 @@ class SharepointPermissionsConnector:
 
         permissions_dir = Path(output_dir) / "permissions_data"
 
-        print("Writing permissions data to disk")
+        logger.info("Writing permissions data to disk")
         for site, drive_id, item_id, item_name, item_web_url in item_ids:
             res = self.get_permissions_for_drive_item(site, drive_id, item_id)
             if res:
