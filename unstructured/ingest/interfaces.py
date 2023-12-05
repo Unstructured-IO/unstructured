@@ -230,7 +230,7 @@ class WriteConfig(BaseConfig):
                 else:
                     self._session_handle = global_write_session_handle
         except Exception as e:
-            print("Global session handle creation error")
+            logger.info("Global session handle creation error")
             raise (e)
 
 

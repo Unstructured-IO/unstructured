@@ -339,7 +339,7 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version
+check: check-ruff check-black check-flake8 check-version check-flake8-print
 
 .PHONY: check-black
 check-black:
@@ -348,6 +348,12 @@ check-black:
 .PHONY: check-flake8
 check-flake8:
 	flake8 .
+
+# Check for print statements in ingest since anything going to console should be using the ingest logger
+# as it has a built in filter to redact sensitive information
+.PHONY: check-flake8-print
+check-flake8-print:
+	flake8 --per-file-ignores "" ./unstructured/ingest
 
 .PHONY: check-ruff
 check-ruff:
