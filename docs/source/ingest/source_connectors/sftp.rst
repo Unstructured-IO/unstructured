@@ -2,7 +2,7 @@ Sftp
 ==========
 Connect Sftp to your preprocessing pipeline, and batch process all your documents using ``unstructured-ingest`` to store structured outputs locally on your filesystem.
 
-We are NOT currently supporting downloading individual files by filename. Only by directory.
+For downloading an individual file specifically, the filename must have an extension. Otherwise it will be treated as a directory.
 
 First you'll need to install the Sftp dependencies as shown below .
 
