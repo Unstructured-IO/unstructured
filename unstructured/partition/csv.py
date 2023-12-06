@@ -36,7 +36,8 @@ def get_delimiter(file_path=None, file=None):
         data = file.read(num_bytes).decode("utf-8")
         file.seek(0)
     else:
-        data = open(file_path).read(num_bytes)
+        with open(file_path) as f:
+            data = f.read(num_bytes)
 
     return sniffer.sniff(data).delimiter
 
