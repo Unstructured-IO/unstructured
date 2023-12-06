@@ -193,15 +193,6 @@ def sort_bboxes_by_xy_cut(
 ):
     """Sort bounding boxes using XY-cut algorithm."""
 
-    shrink_factor = float(
-        os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
-    )
-
-    xy_cut_primary_direction = os.environ.get(
-        "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
-        xy_cut_primary_direction,
-    )
-
     shrunken_bboxes = []
     for bbox in bboxes:
         shrunken_bbox = shrink_bbox(bbox, shrink_factor)
@@ -249,6 +240,15 @@ def sort_text_regions(
     if sort_mode == SORT_MODE_XY_CUT:
         if not _bboxes_ok(strict_points=True):
             return elements
+
+        shrink_factor = float(
+            os.environ.get("UNSTRUCTURED_XY_CUT_BBOX_SHRINK_FACTOR", shrink_factor),
+        )
+
+        xy_cut_primary_direction = os.environ.get(
+            "UNSTRUCTURED_XY_CUT_PRIMARY_DIRECTION",
+            xy_cut_primary_direction,
+        )
 
         res = sort_bboxes_by_xy_cut(
             bboxes=bboxes,
