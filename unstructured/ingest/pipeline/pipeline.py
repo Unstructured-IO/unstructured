@@ -106,6 +106,10 @@ class Pipeline(DataClassJsonMixin):
         copier(iterable=partitioned_jsons)
 
         if self.write_node:
+            logger.info(
+                f"uploading elements from {len(partitioned_jsons)} "
+                "document(s) to the destination"
+            )
             self.write_node(iterable=partitioned_jsons)
 
         if self.permissions_node:

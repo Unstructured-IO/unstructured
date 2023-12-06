@@ -1,3 +1,4 @@
+import typing as t
 from dataclasses import dataclass
 from typing import Type
 
@@ -5,15 +6,30 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import AccessConfig
 from unstructured.utils import requires_dependencies
 
 
 @dataclass
-class SimpleGcsConfig(SimpleFsspecConfig):
+class GcsAccessConfig(AccessConfig):
+    token: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="service_account_key"
+    )
+
+
+@dataclass
+class GcsWriteConfig(FsspecWriteConfig):
     pass
+
+
+@dataclass
+class SimpleGcsConfig(SimpleFsspecConfig):
+    access_config: GcsAccessConfig = None
 
 
 @dataclass
@@ -39,3 +55,4 @@ class GcsSourceConnector(FsspecSourceConnector):
 @dataclass
 class GcsDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleGcsConfig
+    write_config: GcsWriteConfig

@@ -15,15 +15,15 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==41.0.5
+cryptography==41.0.7
     # via
     #   msal
     #   pyjwt
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
-msal==1.25.0
+msal==1.26.0
     # via
     #   -r ingest/sharepoint.in
     #   office365-rest-python-client

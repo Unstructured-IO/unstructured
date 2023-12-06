@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/jira.txt ingest/jira.in
 #
-atlassian-python-api==3.41.3
+atlassian-python-api==3.41.4
     # via -r ingest/jira.in
 certifi==2023.11.17
     # via
@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     #   requests
 deprecated==1.2.14
     # via atlassian-python-api
-idna==3.4
+idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests

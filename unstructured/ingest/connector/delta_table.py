@@ -7,6 +7,7 @@ from multiprocessing import Process
 from pathlib import Path
 
 import pandas as pd
+from dataclasses_json.core import Json
 
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -33,7 +34,16 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
     without_files: bool = False
-    columns: t.Optional[t.List[str]] = None
+
+    @classmethod
+    def from_dict(cls, kvs: Json, **kwargs):
+        if (
+            isinstance(kvs, dict)
+            and "storage_options" in kvs
+            and isinstance(kvs["storage_options"], str)
+        ):
+            kvs["storage_options"] = cls.storage_options_from_str(kvs["storage_options"])
+        return super().from_dict(kvs=kvs, **kwargs)
 
     @staticmethod
     def storage_options_from_str(options_str: str) -> t.Dict[str, str]:
@@ -100,7 +110,6 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         df = self._get_df(filesystem=fs)
 

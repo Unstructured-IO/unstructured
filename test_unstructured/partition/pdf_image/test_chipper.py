@@ -1,6 +1,6 @@
 import pytest
 
-from unstructured.partition import pdf
+from unstructured.partition.pdf_image import pdf
 from unstructured.partition.utils.constants import PartitionStrategy
 
 

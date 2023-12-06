@@ -15,4 +15,5 @@ numpy
 rapidfuzz
 backoff
 typing-extensions
+unstructured-client
 wrapt

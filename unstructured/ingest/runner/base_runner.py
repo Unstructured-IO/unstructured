@@ -2,6 +2,7 @@ import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSourceConnector,
@@ -15,15 +16,15 @@ from unstructured.ingest.interfaces import (
     RetryStrategyConfig,
 )
 from unstructured.ingest.processor import process_documents
-from unstructured.ingest.runner.writers import writer_map
+from unstructured.ingest.runner.writers.base_writer import Writer
 
 
 @dataclass
-class Runner(ABC):
+class Runner(EnhancedDataClassJsonMixin, ABC):
     processor_config: ProcessorConfig
     read_config: ReadConfig
     partition_config: PartitionConfig
-    writer_type: t.Optional[str] = None
+    writer: t.Optional[Writer] = None
     writer_kwargs: t.Optional[dict] = None
     embedding_config: t.Optional[EmbeddingConfig] = None
     chunking_config: t.Optional[ChunkingConfig] = None
@@ -36,9 +37,8 @@ class Runner(ABC):
 
     def get_dest_doc_connector(self) -> t.Optional[BaseDestinationConnector]:
         writer_kwargs = self.writer_kwargs if self.writer_kwargs else {}
-        if self.writer_type:
-            writer = writer_map[self.writer_type]
-            return writer(**writer_kwargs)
+        if self.writer:
+            return self.writer.get_connector(**writer_kwargs)
         return None
 
     def get_permissions_config(self) -> t.Optional[PermissionsConfig]:

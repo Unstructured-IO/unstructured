@@ -7,8 +7,8 @@ SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
 # If the file already exists, reset it
 if [ -f "$SKIPPED_FILES_LOG" ]; then
   rm "$SKIPPED_FILES_LOG"
-  touch "$SKIPPED_FILES_LOG"
 fi
+touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
 
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
@@ -22,7 +22,9 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   'mongodb.sh'
+  'pinecone.sh'
   's3.sh'
+  'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
 )
 
@@ -38,6 +40,8 @@ function print_last_run() {
   if [ "$CURRENT_TEST" != "none" ]; then
     echo "Last ran script: $CURRENT_TEST"
   fi
+  echo "######## SKIPPED TESTS: ########"
+  cat "$SKIPPED_FILES_LOG"
 }
 
 trap print_last_run EXIT
