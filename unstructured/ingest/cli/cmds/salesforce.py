@@ -9,15 +9,11 @@ from unstructured.ingest.cli.interfaces import (
     CliRecursiveConfig,
     DelimitedString,
 )
+from unstructured.ingest.connector.salesforce import SimpleSalesforceConfig
 
 
 @dataclass
-class SalesforceCliConfig(CliConfig):
-    username: str
-    consumer_key: str
-    private_key_path: str
-    categories: t.List[str]
-
+class SalesforceCliConfig(SimpleSalesforceConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         possible_categories = ["Account", "Case", "Campaign", "EmailMessage", "Lead"]
@@ -58,5 +54,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="salesforce",
         cli_config=SalesforceCliConfig,
         additional_cli_options=[CliRecursiveConfig],
+        addition_configs={
+            "connector_config": SimpleSalesforceConfig,
+        },
     )
     return cmd_cls
