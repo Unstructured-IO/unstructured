@@ -45,7 +45,7 @@ class SimpleGitHubConfig(SimpleGitConfig):
     def get_repo(self) -> "Repository":
         from github import Github
 
-        github = Github(self.access_token)
+        github = Github(self.access_config.access_token)
         return github.get_repo(self.repo_path)
 
 
@@ -122,7 +122,6 @@ class GitHubIngestDoc(GitIngestDoc):
             f.write(contents)
 
 
-@requires_dependencies(["github"], extras="github")
 @dataclass
 class GitHubSourceConnector(GitSourceConnector):
     connector_config: SimpleGitHubConfig
@@ -135,7 +134,7 @@ class GitHubSourceConnector(GitSourceConnector):
 
         try:
             requester = Requester(
-                auth=self.connector_config.access_token,
+                auth=self.connector_config.access_config.access_token,
                 base_url=Consts.DEFAULT_BASE_URL,
                 timeout=Consts.DEFAULT_TIMEOUT,
                 user_agent=Consts.DEFAULT_USER_AGENT,
