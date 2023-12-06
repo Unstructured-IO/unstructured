@@ -6,17 +6,11 @@ import click
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.pinecone import SimplePineconeConfig
+from unstructured.ingest.connector.pinecone import PineconeWriteConfig, SimplePineconeConfig
 
 
 @dataclass
-class PineconeCliWriteConfig(SimplePineconeConfig, CliConfig):
-    api_key: str
-    index_name: str
-    environment: str
-    batch_size: int
-    num_processes: int
-
+class PineconeCliConfig(SimplePineconeConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -40,6 +34,15 @@ class PineconeCliWriteConfig(SimplePineconeConfig, CliConfig):
                 type=str,
                 help="The environment where the index lives. Eg. 'gcp-starter' or 'us-east1-gcp'",
             ),
+        ]
+        return options
+
+
+@dataclass
+class PineconeCliWriteConfig(PineconeWriteConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
             click.Option(
                 ["--batch-size"],
                 default=50,
@@ -61,6 +64,11 @@ def get_base_dest_cmd():
 
     cmd_cls = BaseDestCmd(
         cmd_name="pinecone",
-        cli_config=PineconeCliWriteConfig,
+        cli_config=PineconeCliConfig,
+        additional_cli_options=[PineconeCliWriteConfig],
+        addition_configs={
+            "connector_config": SimplePineconeConfig,
+            "write_config": PineconeWriteConfig,
+        },
     )
     return cmd_cls

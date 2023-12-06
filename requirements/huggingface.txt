@@ -31,7 +31,7 @@ huggingface-hub==0.19.4
     # via
     #   tokenizers
     #   transformers
-idna==3.4
+idna==3.6
     # via
     #   -c base.txt
     #   requests

@@ -3,6 +3,7 @@ from enum import Enum
 
 
 class Source(Enum):
+    PDFMINER = "pdfminer"
     OCR_TESSERACT = "ocr_tesseract"
     OCR_PADDLE = "ocr_paddle"
 

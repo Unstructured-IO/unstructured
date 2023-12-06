@@ -155,6 +155,7 @@ setup(
         "salesforce": load_requirements("requirements/ingest/salesforce.in"),
         "slack": load_requirements("requirements/ingest/slack.in"),
         "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
+        "weaviate": load_requirements("requirements/ingest/weaviate.in"),
         "chroma": load_requirements("requirements/ingest/chroma.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),

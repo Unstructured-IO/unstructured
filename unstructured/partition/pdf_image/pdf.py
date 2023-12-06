@@ -2,7 +2,6 @@ import contextlib
 import io
 import os
 import re
-import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -21,21 +20,15 @@ from typing import (
 
 import numpy as np
 import pdf2image
-import pikepdf
-import pypdf
 import wrapt
-from pdfminer.converter import PDFPageAggregator
+from pdfminer import psparser
 from pdfminer.layout import (
-    LAParams,
     LTChar,
     LTContainer,
     LTImage,
     LTItem,
     LTTextBox,
 )
-from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
-from pdfminer.pdfpage import PDFPage
-from pdfminer.pdfparser import PSSyntaxError
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -77,9 +70,10 @@ from unstructured.partition.lang import (
     check_languages,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.ocr import (
-    get_layout_elements_from_ocr,
-    get_ocr_agent,
+from unstructured.partition.pdf_image.pdf_image_utils import extract_images_from_elements
+from unstructured.partition.pdf_image.pdfminer_utils import (
+    open_pdfminer_pages_generator,
+    rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
@@ -96,10 +90,16 @@ from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
 )
+from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     pass
+
+
+# NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
+# the bug: https://github.com/pdfminer/pdfminer.six/pull/885
+psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -353,9 +353,13 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.ocr import (
+    from unstructured.partition.pdf_image.ocr import (
         process_data_with_ocr,
         process_file_with_ocr,
+    )
+    from unstructured.partition.pdf_image.pdfminer_processing import (
+        process_data_with_pdfminer,
+        process_file_with_pdfminer,
     )
 
     if languages is None:
@@ -373,22 +377,27 @@ def _partition_pdf_or_image_local(
         )
 
     if file is None:
-        # NOTE(christine): out_layout = extracted_layout + inferred_layout
-        out_layout = process_file_with_model(
+        inferred_document_layout = process_file_with_model(
             filename,
             is_image=is_image,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            extract_images_in_pdf=extract_images_in_pdf,
-            image_output_dir_path=image_output_dir_path,
         )
+
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+        merged_document_layout = process_file_with_pdfminer(
+            inferred_document_layout,
+            filename,
+            is_image,
+        )
+
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_layout = out_layout
+            final_document_layout = merged_document_layout
         else:
-            final_layout = process_file_with_ocr(
+            final_document_layout = process_file_with_ocr(
                 filename,
-                out_layout,
+                merged_document_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
@@ -396,23 +405,31 @@ def _partition_pdf_or_image_local(
                 pdf_image_dpi=pdf_image_dpi,
             )
     else:
-        out_layout = process_data_with_model(
+        inferred_document_layout = process_data_with_model(
             file,
             is_image=is_image,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            extract_images_in_pdf=extract_images_in_pdf,
-            image_output_dir_path=image_output_dir_path,
         )
+        if hasattr(file, "seek"):
+            file.seek(0)
+
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+        merged_document_layout = process_data_with_pdfminer(
+            inferred_document_layout,
+            file,
+            is_image,
+        )
+
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_layout = out_layout
+            final_document_layout = merged_document_layout
         else:
             if hasattr(file, "seek"):
                 file.seek(0)
-            final_layout = process_data_with_ocr(
+            final_document_layout = process_data_with_ocr(
                 file,
-                out_layout,
+                merged_document_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
@@ -424,9 +441,9 @@ def _partition_pdf_or_image_local(
     if model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
-    final_layout = clean_pdfminer_inner_elements(final_layout)
+    final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
     elements = document_to_element_list(
-        final_layout,
+        final_document_layout,
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
@@ -437,6 +454,15 @@ def _partition_pdf_or_image_local(
         languages=languages,
         **kwargs,
     )
+
+    if extract_images_in_pdf:
+        extract_images_from_elements(
+            elements=elements,
+            filename=filename,
+            file=file,
+            pdf_image_dpi=pdf_image_dpi,
+            output_dir_path=image_output_dir_path,
+        )
 
     out_elements = []
     for el in elements:
@@ -545,69 +571,6 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     return wrapped(resources)
 
 
-def get_page_data(fp: BinaryIO, page_number: int):
-    """Find the binary data for a given page number from a PDF binary file."""
-    pdf_reader = pypdf.PdfReader(fp)
-    pdf_writer = pypdf.PdfWriter()
-    page = pdf_reader.pages[page_number]
-    pdf_writer.add_page(page)
-    page_data = io.BytesIO()
-    pdf_writer.write(page_data)
-    return page_data
-
-
-def _open_pdfminer_pages_generator(
-    fp: BinaryIO,
-):
-    """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
-
-    rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
-    device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    try:
-        i = 0
-        pages = PDFPage.get_pages(fp)
-        # Detect invalid dictionary construct for entire PDF
-        for page in pages:
-            try:
-                # Detect invalid dictionary construct for one page
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-            except PSSyntaxError:
-                logger.info("Detected invalid dictionary construct for PDFminer")
-                logger.info(f"Repairing the PDF page {i+1} ...")
-                # find the error page from binary data fp
-                error_page_data = get_page_data(fp, page_number=i)
-                # repair the error page with pikepdf
-                with tempfile.NamedTemporaryFile() as tmp:
-                    with pikepdf.Pdf.open(error_page_data) as pdf:
-                        pdf.save(tmp.name)
-                    page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
-                    try:
-                        interpreter.process_page(page)
-                        page_layout = device.get_result()
-                    except Exception:
-                        logger.warning(
-                            f"PDFMiner failed to process PDF page {i+1} after repairing it."
-                        )
-                        break
-            i += 1
-            yield page, page_layout
-    except PSSyntaxError:
-        logger.info("Detected invalid dictionary construct for PDFminer")
-        logger.info("Repairing the PDF document ...")
-        # repair the entire doc with pikepdf
-        with tempfile.NamedTemporaryFile() as tmp:
-            with pikepdf.Pdf.open(fp) as pdf:
-                pdf.save(tmp.name)
-            pages = PDFPage.get_pages(open(tmp.name, "rb"))  # noqa: SIM115
-            for page in pages:
-                interpreter.process_page(page)
-                page_layout = device.get_result()
-                yield page, page_layout
-
-
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str,
@@ -620,7 +583,7 @@ def _process_pdfminer_pages(
     """Uses PDFMiner to split a document into pages and process them."""
     elements: List[Element] = []
 
-    for i, (page, page_layout) in enumerate(_open_pdfminer_pages_generator(fp)):
+    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
         width, height = page_layout.width, page_layout.height
 
         page_elements = []
@@ -842,6 +805,11 @@ def _partition_pdf_or_image_with_ocr_from_image(
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
+    from unstructured.partition.pdf_image.ocr import (
+        get_layout_elements_from_ocr,
+        get_ocr_agent,
+    )
+
     ocr_agent = get_ocr_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -1033,29 +1001,6 @@ def try_resolve(annot: PDFObjRef):
         return annot.resolve()
     except Exception:
         return annot
-
-
-def rect_to_bbox(
-    rect: Tuple[float, float, float, float],
-    height: float,
-) -> Tuple[float, float, float, float]:
-    """
-    Converts a PDF rectangle coordinates (x1, y1, x2, y2) to a bounding box in the specified
-    coordinate system where the vertical axis is measured from the top of the page.
-
-    Args:
-        rect (Tuple[float, float, float, float]): A tuple representing a PDF rectangle
-            coordinates (x1, y1, x2, y2).
-        height (float): The height of the page in the specified coordinate system.
-
-    Returns:
-        Tuple[float, float, float, float]: A tuple representing the bounding box coordinates
-        (x1, y1, x2, y2) with the y-coordinates adjusted to be measured from the top of the page.
-    """
-    x1, y2, x2, y1 = rect
-    y1 = height - y1
-    y2 = height - y2
-    return (x1, y1, x2, y2)
 
 
 def calculate_intersection_area(

@@ -30,13 +30,13 @@ docutils==0.18.1
     #   sphinx-tabs
 furo==2023.7.26
     # via -r build.in
-idna==3.4
+idna==3.6
     # via
     #   -c base.txt
     #   requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via sphinx
 jinja2==3.1.2
     # via

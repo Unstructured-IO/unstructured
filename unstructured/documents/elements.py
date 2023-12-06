@@ -555,6 +555,44 @@ def _add_regex_metadata(
     return elements
 
 
+class ElementType:
+    TITLE = "Title"
+    TEXT = "Text"
+    UNCATEGORIZED_TEXT = "UncategorizedText"
+    NARRATIVE_TEXT = "NarrativeText"
+    BULLETED_TEXT = "BulletedText"
+    ABSTRACT = "Abstract"
+    THREADING = "Threading"
+    FORM = "Form"
+    FIELD_NAME = "Field-Name"
+    VALUE = "Value"
+    LINK = "Link"
+    COMPOSITE_ELEMENT = "CompositeElement"
+    IMAGE = "Image"
+    PICTURE = "Picture"
+    FIGURE_CAPTION = "FigureCaption"
+    FIGURE = "Figure"
+    CAPTION = "Caption"
+    LIST = "List"
+    LIST_ITEM = "ListItem"
+    LIST_ITEM_OTHER = "List-item"
+    CHECKED = "Checked"
+    UNCHECKED = "Unchecked"
+    ADDRESS = "Address"
+    EMAIL_ADDRESS = "EmailAddress"
+    PAGE_BREAK = "PageBreak"
+    FORMULA = "Formula"
+    TABLE = "Table"
+    HEADER = "Header"
+    HEADLINE = "Headline"
+    SUB_HEADLINE = "Subheadline"
+    PAGE_HEADER = "Page-header"  # Title?
+    SECTION_HEADER = "Section-header"
+    FOOTER = "Footer"
+    FOOTNOTE = "Footnote"
+    PAGE_FOOTER = "Page-footer"
+
+
 class Element(abc.ABC):
     """An element is a section of a page in the document."""
 
@@ -764,7 +802,7 @@ class EmailAddress(Text):
 class Image(Text):
     """A text element for capturing image metadata."""
 
-    category = "Image"
+    category = ElementType.IMAGE
 
 
 class PageBreak(Text):
@@ -795,44 +833,6 @@ class Footer(Text):
     """An element for capturing document footers."""
 
     category = "Footer"
-
-
-class ElementType:
-    TITLE = "Title"
-    TEXT = "Text"
-    UNCATEGORIZED_TEXT = "UncategorizedText"
-    NARRATIVE_TEXT = "NarrativeText"
-    BULLETED_TEXT = "BulletedText"
-    ABSTRACT = "Abstract"
-    THREADING = "Threading"
-    FORM = "Form"
-    FIELD_NAME = "Field-Name"
-    VALUE = "Value"
-    LINK = "Link"
-    COMPOSITE_ELEMENT = "CompositeElement"
-    IMAGE = "Image"
-    PICTURE = "Picture"
-    FIGURE_CAPTION = "FigureCaption"
-    FIGURE = "Figure"
-    CAPTION = "Caption"
-    LIST = "List"
-    LIST_ITEM = "ListItem"
-    LIST_ITEM_OTHER = "List-item"
-    CHECKED = "Checked"
-    UNCHECKED = "Unchecked"
-    ADDRESS = "Address"
-    EMAIL_ADDRESS = "EmailAddress"
-    PAGE_BREAK = "PageBreak"
-    FORMULA = "Formula"
-    TABLE = "Table"
-    HEADER = "Header"
-    HEADLINE = "Headline"
-    SUB_HEADLINE = "Subheadline"
-    PAGE_HEADER = "Page-header"  # Title?
-    SECTION_HEADER = "Section-header"
-    FOOTER = "Footer"
-    FOOTNOTE = "Footnote"
-    PAGE_FOOTER = "Page-footer"
 
 
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {

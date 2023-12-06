@@ -6,10 +6,11 @@ services:
       - 9200:9200
       - 9300:9300
     environment:
-      - xpack.security.enabled=false
+      - xpack.security.enabled=true
       - discovery.type=single-node
+      - ELASTIC_PASSWORD=DkIedPPSCb
     healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
-      interval: 30s
+      test: ["CMD-SHELL", "curl --silent --fail -u elastic:DkIedPPSCb localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
       timeout: 30s
       retries: 3

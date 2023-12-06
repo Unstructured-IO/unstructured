@@ -8,6 +8,7 @@ coverage
 click>=8.1
 types-click
 flake8
+flake8-print
 freezegun
 label_studio_sdk
 mypy
