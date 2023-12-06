@@ -9,17 +9,11 @@ from unstructured.ingest.cli.interfaces import (
     CliRecursiveConfig,
     DelimitedString,
 )
+from unstructured.ingest.connector.outlook import SimpleOutlookConfig
 
 
 @dataclass
-class OutlookCliConfig(CliConfig):
-    client_id: str
-    user_email: str
-    tenant: t.Optional[str] = "common"
-    outlook_folders: t.Optional[t.List[str]] = None
-    client_cred: t.Optional[str] = None
-    authority_url: t.Optional[str] = "https://login.microsoftonline.com"
-
+class OutlookCliConfig(SimpleOutlookConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -69,5 +63,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="outlook",
         cli_config=OutlookCliConfig,
         additional_cli_options=[CliRecursiveConfig],
+        addition_configs={
+            "connector_config": SimpleOutlookConfig,
+        },
     )
     return cmd_cls
