@@ -6,19 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.discord import SimpleDiscordConfig
+
 
 class DiscordRunner(Runner):
+    connector_config: "SimpleDiscordConfig"
+
     def run(
         self,
-        channels: t.List[str],
-        token: str,
-        period: t.Optional[int] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            ",".join(channels).encode("utf-8"),
+            ",".join(self.connector_config.channels).encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -30,15 +32,10 @@ class DiscordRunner(Runner):
 
         from unstructured.ingest.connector.discord import (
             DiscordSourceConnector,
-            SimpleDiscordConfig,
         )
 
         source_doc_connector = DiscordSourceConnector(  # type: ignore
-            connector_config=SimpleDiscordConfig(
-                channels=channels,
-                days=period,
-                token=token,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )
