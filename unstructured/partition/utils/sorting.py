@@ -217,3 +217,46 @@ def sort_bboxes_by_xy_cut(
         res,
     )
     return res
+
+
+def sort_text_regions(
+    elements: List["TextRegion"],
+    sort_mode: str = SORT_MODE_XY_CUT,
+    shrink_factor: float = 0.9,
+    xy_cut_primary_direction: str = "x",
+) -> List["TextRegion"]:
+    """Sort a list of TextRegion elements based on the specified sorting mode."""
+
+    bboxes = [(el.bbox.x1, el.bbox.y1, el.bbox.x2, el.bbox.y2) for el in elements]
+
+    def _bboxes_ok(strict_points: bool):
+        warned = False
+
+        for bbox in bboxes:
+            if bbox is None:
+                trace_logger.detail(  # type: ignore
+                    "some or all elements are missing bboxes, skipping sort",
+                )
+                return False
+            elif not bbox_is_valid(bbox):
+                if not warned:
+                    trace_logger.detail(f"bbox {bbox} does not have valid values")  # type: ignore
+                    warned = True
+                if strict_points:
+                    return False
+        return True
+
+    if sort_mode == SORT_MODE_XY_CUT:
+        if not _bboxes_ok(strict_points=True):
+            return elements
+
+        res = sort_bboxes_by_xy_cut(
+            bboxes=bboxes,
+            shrink_factor=shrink_factor,
+            xy_cut_primary_direction=xy_cut_primary_direction,
+        )
+        sorted_elements = [elements[i] for i in res]
+    else:
+        sorted_elements = elements
+
+    return sorted_elements
