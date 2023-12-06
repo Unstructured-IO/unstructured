@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import (
+    BaseConnectorConfig,
     BaseDestinationConnector,
     BaseSourceConnector,
     ChunkingConfig,
@@ -21,6 +22,7 @@ from unstructured.ingest.runner.writers.base_writer import Writer
 
 @dataclass
 class Runner(EnhancedDataClassJsonMixin, ABC):
+    connector_config: BaseConnectorConfig
     processor_config: ProcessorConfig
     read_config: ReadConfig
     partition_config: PartitionConfig
