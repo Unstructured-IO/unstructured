@@ -60,7 +60,7 @@ def test_convert_pdf_to_image(
             assert isinstance(images[0], PILImg.Image)
 
 
-def test_extract_images_from_elements(filename=example_doc_path("embedded-images.pdf")):
+def test_save_elements(filename=example_doc_path("embedded-images.pdf")):
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = [
             Image(
@@ -98,7 +98,7 @@ def test_extract_images_from_elements(filename=example_doc_path("embedded-images
             ),
         ]
 
-        pdf_image_utils.extract_images_from_elements(
+        pdf_image_utils.save_elements(
             elements=elements, pdf_image_dpi=200, filename=filename, output_dir_path=str(tmpdir)
         )
 

@@ -71,8 +71,9 @@ def convert_pdf_to_image(
     return images
 
 
-def extract_images_from_elements(
+def save_elements(
     elements: List["Element"],
+    element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -99,8 +100,11 @@ def extract_images_from_elements(
 
         figure_number = 0
         for el in elements:
+            if el.category != element_category_to_save:
+                continue
+
             coordinates = el.metadata.coordinates
-            if not coordinates or not coordinates.points or el.category != ElementType.IMAGE:
+            if not coordinates or not coordinates.points:
                 continue
 
             points = coordinates.points
