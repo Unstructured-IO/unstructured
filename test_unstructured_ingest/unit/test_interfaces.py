@@ -260,11 +260,13 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
 
 
 def test_post_init_invalid_protocol():
+    """Validate that an invalid protocol raises a ValueError"""
     with pytest.raises(ValueError):
         FsspecConfig(remote_url="ftp://example.com/path/to/file.txt")
 
 
 def test_fsspec_path_extraction_dropbox_root():
+    """Validate that the path extraction works for dropbox root"""
     config = FsspecConfig(remote_url="dropbox:// /")
     assert config.protocol == "dropbox"
     assert config.path_without_protocol == " /"
@@ -273,6 +275,7 @@ def test_fsspec_path_extraction_dropbox_root():
 
 
 def test_fsspec_path_extraction_dropbox_subfolder():
+    """Validate that the path extraction works for dropbox subfolder"""
     config = FsspecConfig(remote_url="dropbox://path")
     assert config.protocol == "dropbox"
     assert config.path_without_protocol == "path"
@@ -281,6 +284,7 @@ def test_fsspec_path_extraction_dropbox_subfolder():
 
 
 def test_fsspec_path_extraction_s3_bucket_only():
+    """Validate that the path extraction works for s3 bucket without filename"""
     config = FsspecConfig(remote_url="s3://bucket-name")
     assert config.protocol == "s3"
     assert config.path_without_protocol == "bucket-name"
@@ -289,6 +293,7 @@ def test_fsspec_path_extraction_s3_bucket_only():
 
 
 def test_fsspec_path_extraction_s3_valid_path():
+    """Validate that the path extraction works for s3 bucket with filename"""
     config = FsspecConfig(remote_url="s3://bucket-name/path/to/file.txt")
     assert config.protocol == "s3"
     assert config.path_without_protocol == "bucket-name/path/to/file.txt"
@@ -297,12 +302,14 @@ def test_fsspec_path_extraction_s3_valid_path():
 
 
 def test_fsspec_path_extraction_s3_invalid_path():
-    ######## Add COMMENTS
+    """Validate that an invalid s3 path (that mimics triple slash for dropbox)
+    raises a ValueError"""
     with pytest.raises(ValueError):
         FsspecConfig(remote_url="s3:///bucket-name/path/to")
 
 
 def test_sftp_path_extraction_post_init_with_extension():
+    """Validate that the path extraction works for sftp with file extension"""
     config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/file.txt")
     assert config.file_path == "file.txt"
     assert config.dir_path == "path/to"
@@ -312,6 +319,7 @@ def test_sftp_path_extraction_post_init_with_extension():
 
 
 def test_sftp_path_extraction_without_extension():
+    """Validate that the path extraction works for sftp without extension"""
     config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/directory")
     assert config.file_path == ""
     assert config.dir_path == "path/to/directory"
@@ -321,6 +329,7 @@ def test_sftp_path_extraction_without_extension():
 
 
 def test_sftp_path_extraction_with_port():
+    """Validate that the path extraction works for sftp with a non-default port"""
     config = SimpleSftpConfig(remote_url="sftp://example.com:47474/path/to/file.txt")
     assert config.file_path == "file.txt"
     assert config.dir_path == "path/to"
