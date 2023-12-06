@@ -7,15 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.sftp import SftpAccessConfig, SimpleSftpConfig
 
 CMD_NAME = "sftp"
 
 
 @dataclass
-class SftpCliConfig(CliConfig):
-    username: str
-    password: str
-
+class SftpCliConfig(SftpAccessConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -36,5 +34,6 @@ class SftpCliConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=SftpCliConfig, is_fsspec=True)
+    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=SftpCliConfig, 
+    addition_configs={"fsspec_config": SimpleSftpConfig}, is_fsspec=True)
     return cmd_cls

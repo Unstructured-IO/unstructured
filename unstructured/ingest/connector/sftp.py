@@ -9,17 +9,28 @@ from unstructured.ingest.connector.fsspec import (
     FsspecSourceConnector,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import AccessConfig
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+@dataclass
+class SftpAccessConfig(AccessConfig):
+    username: str
+    password: str = enhanced_field(sensitive=True)
+    host: str = ""
+    port: int = 22
 
 
 @dataclass
 class SimpleSftpConfig(SimpleFsspecConfig):
-    host: str = ""
-    port: int = 22
+    access_config: SftpAccessConfig = None
+
 
     def __post_init__(self):
         super().__post_init__()
+        # breakpoint()
 
         _, ext = os.path.splitext(self.remote_url)
         parsed_url = urlparse(self.remote_url)
@@ -33,7 +44,10 @@ class SimpleSftpConfig(SimpleFsspecConfig):
             self.dir_path = parsed_url.path.lstrip("/")
             self.path_without_protocol = self.dir_path
         self.host = parsed_url.hostname
+        self.access_config.host = parsed_url.hostname
         self.port = parsed_url.port or self.port
+        self.access_config.port = parsed_url.port or self.port
+
 
 
 @dataclass
@@ -50,6 +64,8 @@ class SftpIngestDoc(FsspecIngestDoc):
 @dataclass
 class SftpSourceConnector(FsspecSourceConnector):
     connector_config: SimpleSftpConfig
+
+    ##### check_connection
 
     def __post_init__(self):
         self.ingest_doc_cls: Type[SftpIngestDoc] = SftpIngestDoc
