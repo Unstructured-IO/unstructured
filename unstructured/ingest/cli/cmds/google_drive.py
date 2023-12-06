@@ -9,14 +9,11 @@ from unstructured.ingest.cli.interfaces import (
     CliRecursiveConfig,
     FileOrJson,
 )
+from unstructured.ingest.connector.google_drive import SimpleGoogleDriveConfig
 
 
 @dataclass
-class GoogleDriveCliConfig(CliConfig):
-    drive_id: str
-    service_account_key: t.Union[dict, str]
-    extension: t.Optional[str] = None
-
+class GoogleDriveCliConfig(SimpleGoogleDriveConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -48,5 +45,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="google-drive",
         cli_config=GoogleDriveCliConfig,
         additional_cli_options=[CliRecursiveConfig],
+        addition_configs={
+            "connector_config": SimpleGoogleDriveConfig,
+        },
     )
     return cmd_cls

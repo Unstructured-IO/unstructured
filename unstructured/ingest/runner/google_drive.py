@@ -6,20 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.google_drive import SimpleGoogleDriveConfig
+
 
 class GoogleDriveRunner(Runner):
+    connector_config: "SimpleGoogleDriveConfig"
+
     def run(
         self,
-        service_account_key: t.Union[str, dict],
-        drive_id: str,
-        recursive: bool = False,
-        extension: t.Optional[str] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            drive_id.encode("utf-8"),
+            self.connector_config.drive_id.encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -31,16 +32,10 @@ class GoogleDriveRunner(Runner):
 
         from unstructured.ingest.connector.google_drive import (
             GoogleDriveSourceConnector,
-            SimpleGoogleDriveConfig,
         )
 
         source_doc_connector = GoogleDriveSourceConnector(  # type: ignore
-            connector_config=SimpleGoogleDriveConfig(
-                drive_id=drive_id,
-                service_account_key=service_account_key,
-                recursive=recursive,
-                extension=extension,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )
