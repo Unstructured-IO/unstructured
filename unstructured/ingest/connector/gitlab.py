@@ -34,7 +34,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
     def get_project(self) -> "Project":
         from gitlab import Gitlab
 
-        gitlab = Gitlab(self.base_url, private_token=self.access_token)
+        gitlab = Gitlab(self.base_url, private_token=self.access_config.access_token)
         return gitlab.projects.get(self.repo_path)
 
 
@@ -98,7 +98,6 @@ class GitLabIngestDoc(GitIngestDoc):
             f.write(contents)
 
 
-@requires_dependencies(["gitlab"], extras="gitlab")
 @dataclass
 class GitLabSourceConnector(GitSourceConnector):
     connector_config: SimpleGitLabConfig
@@ -110,7 +109,8 @@ class GitLabSourceConnector(GitSourceConnector):
 
         try:
             gitlab = Gitlab(
-                self.connector_config.base_url, private_token=self.connector_config.access_token
+                self.connector_config.base_url,
+                private_token=self.connector_config.access_config.access_token,
             )
             gitlab.auth()
         except GitlabError as gitlab_error:
