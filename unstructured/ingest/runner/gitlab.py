@@ -6,20 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.gitlab import SimpleGitLabConfig
+
 
 class GitlabRunner(Runner):
+    connector_config: "SimpleGitLabConfig"
+
     def run(
         self,
-        url: str,
-        git_branch: str,
-        git_access_token: t.Optional[str] = None,
-        git_file_glob: t.Optional[str] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            f"{url}_{git_branch}".encode(
+            f"{self.connector_config.url}_{self.connector_config.branch}".encode(
                 "utf-8",
             ),
         )
@@ -33,16 +34,10 @@ class GitlabRunner(Runner):
 
         from unstructured.ingest.connector.gitlab import (
             GitLabSourceConnector,
-            SimpleGitLabConfig,
         )
 
         source_doc_connector = GitLabSourceConnector(  # type: ignore
-            connector_config=SimpleGitLabConfig(
-                url=url,
-                access_token=git_access_token,
-                branch=git_branch,
-                file_glob=git_file_glob,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )
