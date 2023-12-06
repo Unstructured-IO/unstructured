@@ -1,8 +1,8 @@
 import hashlib
-import logging
 import typing as t
 
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.interfaces import BaseSourceConnector
+from unstructured.ingest.logger import logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
@@ -13,12 +13,7 @@ if t.TYPE_CHECKING:
 class HubSpotRunner(Runner):
     connector_config: "SimpleHubSpotConfig"
 
-    def run(
-        self,
-        **kwargs,
-    ):
-        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
-
+    def update_read_config(self):
         hashed_dir_name = hashlib.sha256(
             self.connector_config.access_config.api_token.encode("utf-8"),
         )
@@ -30,16 +25,9 @@ class HubSpotRunner(Runner):
             logger=logger,
         )
 
+    def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
         from unstructured.ingest.connector.hubspot import (
             HubSpotSourceConnector,
         )
 
-        source_doc_connector = HubSpotSourceConnector(  # type: ignore
-            connector_config=self.connector_config,
-            read_config=self.read_config,
-            processor_config=self.processor_config,
-        )
-
-        self.process_documents(
-            source_doc_connector=source_doc_connector,
-        )
+        return HubSpotSourceConnector

@@ -69,7 +69,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=S3CliConfig,
-        addition_configs={"fsspec_config": SimpleS3Config, "write_config": S3WriteConfig},
+        addition_configs={"connector_config": SimpleS3Config, "write_config": S3WriteConfig},
         is_fsspec=True,
     )
     return cmd_cls

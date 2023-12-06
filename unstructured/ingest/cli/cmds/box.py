@@ -43,7 +43,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=BoxCliConfig,
-        addition_configs={"fsspec_config": SimpleBoxConfig, "write_config": BoxWriteConfig},
+        addition_configs={"connector_config": SimpleBoxConfig, "write_config": BoxWriteConfig},
         is_fsspec=True,
     )
     return cmd_cls
