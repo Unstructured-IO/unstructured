@@ -11,7 +11,7 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_PATH=$SCRIPT_DIR/chroma-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-CI=${CI:-"false"}o
+CI=${CI:-"false"}
 
 # FIX THIS!!!
 COLLECTION_NAME="chroma-test-output-$(date +%s)"
@@ -32,7 +32,7 @@ trap cleanup EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
     local \
-    --num-processes "$max_processes" \
+    --num-processes "2" \
     --output-dir "$OUTPUT_DIR" \
     --strategy fast \
     --verbose \
@@ -43,7 +43,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
     --embedding-provider "langchain-huggingface" \
     chroma \
     --db-path "$DESTINATION_PATH" \
-    --collection-name "$COLLECTION_NAME"
+    --collection-name "$COLLECTION_NAME" \
+    --num-processes "2" 
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --db-path "$DESTINATION_PATH" --collection-name "$COLLECTION_NAME"
 

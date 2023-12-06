@@ -4,16 +4,13 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.connector.chroma import ChromaWriteConfig, SimpleChromaConfig
 
 
 @dataclass
-class ChromaCliWriteConfig(BaseConfig, CliMixin):
-    db_path: str
-    collection_name: str
-
+class ChromaCliConfig(SimpleChromaConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -32,12 +29,30 @@ class ChromaCliWriteConfig(BaseConfig, CliMixin):
         ]
         return options
 
+@dataclass
+class ChromaCliWriteConfig(ChromaWriteConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--num-processes"],
+                default=2,
+                type=int,
+                help="Number of parallel processes with which to upload elements",
+            ),
+        ]
+        return options
 
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
     cmd_cls = BaseDestCmd(
         cmd_name="chroma",
-        cli_config=ChromaCliWriteConfig,
+        cli_config=ChromaCliConfig,
+        additional_cli_options=[ChromaCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleChromaConfig,
+            "write_config": ChromaWriteConfig,
+        },
     )
     return cmd_cls

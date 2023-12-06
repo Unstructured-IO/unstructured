@@ -134,6 +134,7 @@ setup(
         ),
         "biomed": load_requirements("requirements/ingest/biomed.in"),
         "box": load_requirements("requirements/ingest/box.in"),
+        "chroma": load_requirements("requirements/ingest/chroma.in"),
         "confluence": load_requirements("requirements/ingest/confluence.in"),
         "delta-table": load_requirements("requirements/ingest/delta-table.in"),
         "discord": load_requirements("requirements/ingest/discord.in"),
@@ -156,7 +157,6 @@ setup(
         "slack": load_requirements("requirements/ingest/slack.in"),
         "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
         "weaviate": load_requirements("requirements/ingest/weaviate.in"),
-        "chroma": load_requirements("requirements/ingest/chroma.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,

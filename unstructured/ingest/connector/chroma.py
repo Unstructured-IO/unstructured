@@ -8,39 +8,56 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
-    BaseSessionHandle,
     ConfigSessionHandleMixin,
-    WriteConfig,
     IngestDocSessionHandleMixin,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 from unstructured.staging.base import flatten_dict
 
+# if t.TYPE_CHECKING:
+#     from pinecone import Index as PineconeIndex
+
 
 @dataclass
-class ChromaSessionHandle(BaseSessionHandle):
-    service: "ChromaIndex"
-
-@DestinationConnectionError.wrap
-@requires_dependencies(["chromadb"], extras="chroma")
-def create_chroma_object(self, db_path, collection_name): #api_key, index_name, environment): # maybe chroma client?
-    import chromadb
-
-    chroma_client = chromadb.PersistentClient(path=db_path)
-    print("** getting client **")
-    print(chroma_client)
-    collection = chroma_client.get_or_create_collection(name=collection_name)
-
-    # chroma.init(api_key=api_key, environment=environment)
-    # index = pinecone.Index(index_name)
-    # logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
-    return collection
-
-@dataclass
-class ChromaWriteConfig(ConfigSessionHandleMixin, WriteConfig):
-    db_path: str # RENAME CLIENT
+class SimpleChromaConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
+    # index_name: str
+    # environment: str
+    # api_key: str = enhanced_field(sensitive=True)
+    db_path: str
     collection_name: str
+
+
+@dataclass
+class ChromaWriteConfig(WriteConfig):
+    # breakpoint()
+    # batch_size: int = 50
+    num_processes: int = 1
+
+# @dataclass
+# class ChromaSessionHandle(BaseSessionHandle):
+#     service: "ChromaIndex"
+
+# @DestinationConnectionError.wrap
+# @requires_dependencies(["chromadb"], extras="chroma")
+# def create_chroma_object(self, db_path, collection_name): #api_key, index_name, environment): # maybe chroma client?
+#     import chromadb
+
+#     chroma_client = chromadb.PersistentClient(path=db_path)
+#     print("** getting client **")
+#     print(chroma_client)
+#     collection = chroma_client.get_or_create_collection(name=collection_name)
+
+#     # chroma.init(api_key=api_key, environment=environment)
+#     # index = pinecone.Index(index_name)
+#     # logger.debug(f"Connected to index: {pinecone.describe_index(index_name)}")
+#     return collection
+
+# @dataclass
+# class ChromaWriteConfig(ConfigSessionHandleMixin, WriteConfig):
+#     db_path: str # RENAME CLIENT
+#     collection_name: str
     # api_key: str
     # index_name: str
     # environment: str
@@ -49,29 +66,22 @@ class ChromaWriteConfig(ConfigSessionHandleMixin, WriteConfig):
     # rather than with each process
 
 
-    def create_session_handle(self) -> ChromaSessionHandle:
-        service = self.create_chroma_object(self.db_path, self.collection_name)
-        return ChromaSessionHandle(service=service)
+    # def create_session_handle(self) -> ChromaSessionHandle:
+    #     service = self.create_chroma_object(self.db_path, self.collection_name)
+    #     return ChromaSessionHandle(service=service)
 
-    @requires_dependencies(["chromadb"], extras="chroma")
-    def upsert_batch(self, batch):
-        # import pinecone.core.client.exceptions
+    # @requires_dependencies(["chromadb"], extras="chroma")
+    # def upsert_batch(self, batch):
 
-        collection = self.session_handle.service
-        print(collection)
+    #     collection = self.session_handle.service
+    #     print(collection)
 
-        # try:
-        #     response = index.upsert(batch)
-        # except pinecone.core.client.exceptions.ApiException as api_error:
-        #     raise WriteError(f"http error: {api_error}") from api_error
-
-        # collection = self.create_chroma_object(self.client, self.collection_name)
-        try:
-            # Chroma wants lists even if there is only one element
-            response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
-        except Exception as e:
-            raise WriteError(f"chroma error: {e}") from e
-        logger.debug(f"results: {response}")
+    #     try:
+    #         # Chroma wants lists even if there is only one element
+    #         response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
+    #     except Exception as e:
+    #         raise WriteError(f"chroma error: {e}") from e
+    #     logger.debug(f"results: {response}")
 
 
 @dataclass
@@ -84,17 +94,66 @@ class SimpleChromaConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ChromaDestinationConnector(BaseDestinationConnector):
-    write_config: WriteConfig
+class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHandleMixin,
+    write_config: ChromaWriteConfig
     connector_config: SimpleChromaConfig
+    _collection = None# : t.Optional["PineconeIndex"] = None
+
+    @property
+    def chroma_collection(self):
+        if self._collection is None:
+            self._collection = self.create_collection()
+        return self._collection
 
     def initialize(self):
         pass
+
     @DestinationConnectionError.wrap
     def check_connection(self):
         create_chroma_object(
             self.db_path, self.collection_name
         )
+
+    @requires_dependencies(["chromadb"], extras="chroma")
+    def create_collection(self): #### -> "PineconeIndex":
+        import chromadb
+        chroma_client = chromadb.PersistentClient(path=self.connector_config.db_path)
+        print("** getting client **")
+        print(chroma_client)
+        # breakpoint()
+        collection = chroma_client.get_or_create_collection(name=self.connector_config.collection_name)
+        print(collection)
+        return collection
+
+    # def create_index(self): #### -> "PineconeIndex":
+    #     import chromadb
+
+    #     pinecone.init(
+    #         api_key=self.connector_config.api_key, environment=self.connector_config.environment
+    #     )
+    #     index = pinecone.Index(self.connector_config.index_name)
+    #     logger.debug(
+    #         f"Connected to index: {pinecone.describe_index(self.connector_config.index_name)}"
+    #     )
+    #     return index
+
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["chromadb"], extras="chroma")
+    def upsert_batch(self, batch):
+
+        collection = self.chroma_collection
+        print("%%%%%%%%%%%%% Upserting Batch %%%%%%%%%%%%%%")
+        print(collection)
+
+        try:
+            # breakpoint()
+            # Chroma wants lists even if there is only one element
+            response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
+        except Exception as e:
+            raise WriteError(f"chroma error: {e}") from e
+        logger.debug(f"results: {response}")
+
+
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["chromadb"], extras="chroma")
@@ -111,19 +170,20 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         #THIS IS THE REAL WRITE SPOT. We are not sub batching.
         # pinecone_batch_size = 10
 
-        num_processes = 1
-        if num_processes == 1:
+        # num_processes = 1
+        # breakpoint()
+        if self.write_config.num_processes == 1:
+            print(f"len dict list: {len(dict_list)}")
             for i in range(0, len(dict_list)):
-                # breakpoint()
-                self.write_config.upsert_batch(dict_list[i])  
+                self.upsert_batch(dict_list[i])  
 
         else:
             print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
             with mp.Pool(
-                processes=num_processes,
+                processes=self.write_config.num_processes,
             ) as pool:
                 pool.map(
-                    self.write_config.upsert_batch,
+                    self.upsert_batch,
                     [
                         dict_list[i]  # noqa: E203
                         for i in range(0, len(dict_list))

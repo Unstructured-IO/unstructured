@@ -4,7 +4,7 @@ from .azure import AzureWriter
 from .azure_cognitive_search import AzureCognitiveSearchWriter
 from .base_writer import Writer
 from .box import BoxWriter
-from .chroma import chroma_writer
+from .chroma import ChromaWriter
 from .delta_table import DeltaTableWriter
 from .dropbox import DropboxWriter
 from .gcs import GcsWriter
@@ -17,7 +17,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "azure": AzureWriter,
     "azure_cognitive_search": AzureCognitiveSearchWriter,
     "box": BoxWriter,
-    "chroma": chroma_writer,
+    "chroma": ChromaWriter,
     "delta_table": DeltaTableWriter,
     "dropbox": DropboxWriter,
     "gcs": GcsWriter,
