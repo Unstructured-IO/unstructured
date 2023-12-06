@@ -5,8 +5,7 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliMixin, DelimitedString, Dict
-from unstructured.ingest.connector.hubspot import HubSpotObjectTypes
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.connector.hubspot import HubSpotObjectTypes, SimpleHubSpotConfig
 
 OBJECT_TYPES = {t.value for t in HubSpotObjectTypes}
 
@@ -21,11 +20,7 @@ def validate_custom_property(ctx, param, value) -> t.Dict[str, t.List[str]]:
 
 
 @dataclass
-class HubSpotCliConfig(BaseConfig, CliMixin):
-    api_token: str
-    object_types: t.Optional[t.List[str]] = None
-    custom_properties: t.Optional[t.Dict[str, t.List[str]]] = None
-
+class HubSpotCliConfig(SimpleHubSpotConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -69,5 +64,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="hubspot",
         cli_config=HubSpotCliConfig,
+        addition_configs={
+            "connector_config": SimpleHubSpotConfig,
+        },
     )
     return cmd_cls
