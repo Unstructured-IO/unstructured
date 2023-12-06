@@ -11,7 +11,12 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliFilesStorageConfig,
 )
-from unstructured.ingest.cli.utils import add_options, conform_click_options, extract_configs
+from unstructured.ingest.cli.utils import (
+    add_options,
+    conform_click_options,
+    extract_config,
+    extract_configs,
+)
 from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.writers import writer_map
@@ -39,7 +44,7 @@ class BaseDestCmd(BaseCmd):
         return runner
 
     def check_dest_options(self, options: dict):
-        self.cli_config.from_dict(options)
+        extract_config(flat_data=options, config=self.cli_config)
 
     def dest(self, ctx: click.Context, **options):
         if not ctx.parent:

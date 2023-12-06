@@ -4,28 +4,25 @@ import typing as t
 from unstructured.ingest.logger import ingest_log_streaming_init
 from unstructured.ingest.runner.base_runner import Runner
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.local import SimpleLocalConfig
+
 
 class LocalRunner(Runner):
+    connector_config: "SimpleLocalConfig"
+
     def run(
         self,
-        input_path: str,
-        recursive: bool = False,
-        file_glob: t.Optional[str] = None,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         from unstructured.ingest.connector.local import (
             LocalSourceConnector,
-            SimpleLocalConfig,
         )
 
         source_doc_connector = LocalSourceConnector(  # type: ignore
-            connector_config=SimpleLocalConfig(
-                input_path=input_path,
-                recursive=recursive,
-                file_glob=file_glob,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )

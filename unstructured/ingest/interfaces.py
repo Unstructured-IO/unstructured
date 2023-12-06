@@ -52,6 +52,12 @@ class BaseConfig(EnhancedDataClassJsonMixin, ABC):
 
 
 @dataclass
+class AccessConfig(BaseConfig):
+    # Meant to designate holding any sensitive information associated with other configs
+    pass
+
+
+@dataclass
 class RetryStrategyConfig(BaseConfig):
     """
     Contains all info needed for decorator to pull from `self` for backoff
@@ -109,12 +115,6 @@ class FileStorageConfig(BaseConfig):
     remote_url: str
     uncompress: bool = False
     recursive: bool = False
-
-
-@dataclass
-class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
 
 
 @dataclass
@@ -235,7 +235,7 @@ class WriteConfig(BaseConfig):
     pass
 
 
-class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
+class BaseConnectorConfig(BaseConfig, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
