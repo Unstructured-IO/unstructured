@@ -6,7 +6,7 @@ from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
-from unstructured.partition.utils.constants import TESSERACT_LANGUAGES_SPLITER
+from unstructured.partition.utils.constants import TESSERACT_LANGUAGES_SPLITTER
 
 # pytesseract.get_languages(config="") only shows user installed language packs,
 # so manually include the list of all currently supported Tesseract languages
@@ -161,7 +161,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
         )
         return "eng"
 
-    return TESSERACT_LANGUAGES_SPLITER.join(converted_languages)
+    return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
 def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
@@ -197,7 +197,7 @@ def convert_old_ocr_languages_to_languages(ocr_languages: str):
     Assumption: ocr_languages is in tesseract plus sign format
     """
 
-    return ocr_languages.split(TESSERACT_LANGUAGES_SPLITER)
+    return ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
 
 
 def convert_language_to_tesseract(lang: str) -> str:
@@ -224,17 +224,17 @@ def convert_language_to_tesseract(lang: str) -> str:
     # try to match ISO 639-3 code
     if lang_iso639.part3 in pytesseract_langs_3:
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part3)
-        return TESSERACT_LANGUAGES_SPLITER.join(matched_langcodes)
+        return TESSERACT_LANGUAGES_SPLITTER.join(matched_langcodes)
 
     # try to match ISO 639-2b
     elif lang_iso639.part2b in pytesseract_langs_3:
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2b)
-        return TESSERACT_LANGUAGES_SPLITER.join(matched_langcodes)
+        return TESSERACT_LANGUAGES_SPLITTER.join(matched_langcodes)
 
     # try to match ISO 639-2t
     elif lang_iso639.part2t in pytesseract_langs_3:
         matched_langcodes = _get_all_tesseract_langcodes_with_prefix(lang_iso639.part2t)
-        return TESSERACT_LANGUAGES_SPLITER.join(matched_langcodes)
+        return TESSERACT_LANGUAGES_SPLITTER.join(matched_langcodes)
 
     else:
         logger.warning(f"{lang} is not a language supported by Tesseract.")
