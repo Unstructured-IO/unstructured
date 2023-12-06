@@ -3,7 +3,7 @@ from typing import Type
 
 from .airtable import AirtableRunner
 from .azure import AzureRunner
-from .base_runner import FsspecBaseRunner, Runner
+from .base_runner import Runner
 from .biomed import BiomedRunner
 from .box import BoxRunner
 from .confluence import ConfluenceRunner
@@ -87,5 +87,4 @@ __all__ = [
     "WikipediaRunner",
     "runner_map",
     "Runner",
-    "FsspecBaseRunner",
 ]
