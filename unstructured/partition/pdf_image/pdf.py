@@ -669,20 +669,8 @@ def _process_pdfminer_pages(
                         points=points,
                         system=coordinate_system,
                     )
+                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
-                    links: List[Link] = []
-                    for url in urls_metadata:
-                        with contextlib.suppress(IndexError):
-                            links.append(
-                                {
-                                    "text": url["text"],
-                                    "url": url["uri"],
-                                    "start_index": index_adjustment_after_clean_extra_whitespace(
-                                        url["start_index"],
-                                        moved_indices,
-                                    ),
-                                },
-                            )
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
@@ -749,6 +737,23 @@ def _process_pdfminer_pages(
             elements.append(PageBreak(text=""))
 
     return elements
+
+
+def _get_links_from_urls_metadata(urls_metadata, moved_indices):
+    links: List[Link] = []
+    for url in urls_metadata:
+        with contextlib.suppress(IndexError):
+            links.append(
+                {
+                    "text": url["text"],
+                    "url": url["uri"],
+                    "start_index": index_adjustment_after_clean_extra_whitespace(
+                        url["start_index"],
+                        moved_indices,
+                    ),
+                },
+            )
+    return links
 
 
 def convert_pdf_to_images(
