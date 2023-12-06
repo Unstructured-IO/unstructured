@@ -114,9 +114,10 @@ def save_elements(
 
             figure_number += 1
             try:
+                basename = "table" if el.category == ElementType.TABLE else "figure"
                 output_f_path = os.path.join(
                     output_dir_path,
-                    f"figure-{page_number}-{figure_number}.jpg",
+                    f"{basename}-{page_number}-{figure_number}.jpg",
                 )
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
