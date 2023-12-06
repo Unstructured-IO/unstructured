@@ -47,7 +47,10 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=DropboxCliConfig,
-        addition_configs={"fsspec_config": SimpleDropboxConfig, "write_config": DropboxWriteConfig},
+        addition_configs={
+            "connector_config": SimpleDropboxConfig,
+            "write_config": DropboxWriteConfig,
+        },
         is_fsspec=True,
     )
     return cmd_cls
