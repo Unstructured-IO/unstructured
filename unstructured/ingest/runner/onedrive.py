@@ -6,23 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.onedrive import SimpleOneDriveConfig
+
 
 class OneDriveRunner(Runner):
+    connector_config: "SimpleOneDriveConfig"
+
     def run(
         self,
-        tenant: str,
-        user_pname: str,
-        client_id: str,
-        client_cred: str,
-        authority_url: t.Optional[str] = None,
-        path: t.Optional[str] = None,
-        recursive: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            f"{tenant}_{user_pname}".encode("utf-8"),
+            f"{self.connector_config.tenant}_{self.connector_config.user_pname}".encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -34,19 +32,10 @@ class OneDriveRunner(Runner):
 
         from unstructured.ingest.connector.onedrive import (
             OneDriveSourceConnector,
-            SimpleOneDriveConfig,
         )
 
         source_doc_connector = OneDriveSourceConnector(  # type: ignore
-            connector_config=SimpleOneDriveConfig(
-                client_id=client_id,
-                client_credential=client_cred,
-                user_pname=user_pname,
-                tenant=tenant,
-                authority_url=authority_url,
-                path=path,
-                recursive=recursive,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )
