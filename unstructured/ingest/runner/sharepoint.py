@@ -6,25 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.sharepoint import SimpleSharepointConfig
+
 
 class SharePointRunner(Runner):
+    connector_config: "SimpleSharepointConfig"
+
     def run(
         self,
-        site: str,
-        client_id: str,
-        client_cred: str,
-        permissions_application_id: t.Optional[str],
-        permissions_client_cred: t.Optional[str],
-        permissions_tenant: t.Optional[str],
-        path: str,
-        files_only: bool = False,
-        recursive: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            f"{site}_{path}".encode("utf-8"),
+            f"{self.connector_config.site}_{self.connector_config.path}".encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -35,28 +31,12 @@ class SharePointRunner(Runner):
         )
 
         from unstructured.ingest.connector.sharepoint import (
-            SharepointPermissionsConfig,
             SharepointSourceConnector,
-            SimpleSharepointConfig,
-        )
-
-        permissions_config = SharepointPermissionsConfig(
-            application_id=permissions_application_id,
-            client_cred=permissions_client_cred,
-            tenant=permissions_tenant,
         )
 
         source_doc_connector = SharepointSourceConnector(  # type: ignore
             processor_config=self.processor_config,
-            connector_config=SimpleSharepointConfig(
-                client_id=client_id,
-                client_credential=client_cred,
-                site_url=site,
-                path=path,
-                process_pages=(not files_only),
-                recursive=recursive,
-                permissions_config=permissions_config,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
         )
 
