@@ -52,6 +52,12 @@ class BaseConfig(EnhancedDataClassJsonMixin, ABC):
 
 
 @dataclass
+class AccessConfig(BaseConfig):
+    # Meant to designate holding any sensitive information associated with other configs
+    pass
+
+
+@dataclass
 class RetryStrategyConfig(BaseConfig):
     """
     Contains all info needed for decorator to pull from `self` for backoff
@@ -110,12 +116,6 @@ class FileStorageConfig(BaseConfig):
     uncompress: bool = False
     recursive: bool = False
     file_glob: t.Optional[t.List[str]] = None
-
-
-@dataclass
-class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
 
 
 @dataclass
@@ -236,7 +236,7 @@ class WriteConfig(BaseConfig):
     pass
 
 
-class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
+class BaseConnectorConfig(BaseConfig, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
