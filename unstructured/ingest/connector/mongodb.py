@@ -1,6 +1,9 @@
 import json
 import typing as t
 from dataclasses import dataclass, field
+from urllib.parse import unquote_plus
+
+from dataclasses_json.core import Json
 
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
@@ -19,11 +22,64 @@ if t.TYPE_CHECKING:
 SERVER_API_VERSION = "1"
 
 
+def parse_userinfo(userinfo: str) -> tuple[str, str]:
+    user, _, passwd = userinfo.partition(":")
+    return unquote_plus(user), unquote_plus(passwd)
+
+
+def redact(uri: str, redacted_text="***REDACTED***") -> str:
+    """
+    Cherry pick code from pymongo.uri_parser.parse_uri to only extract password and
+    redact without needing to import pymongo library
+    """
+
+    SCHEME = "mongodb://"
+    SRV_SCHEME = "mongodb+srv://"
+    if uri.startswith(SCHEME):
+        scheme_free = uri[len(SCHEME) :]  # noqa: E203
+    elif uri.startswith(SRV_SCHEME):
+        scheme_free = uri[len(SRV_SCHEME) :]  # noqa: E203
+    else:
+        raise ValueError(f"Invalid URI scheme: URI must begin with '{SCHEME}' or '{SRV_SCHEME}'")
+
+    passwd = None
+
+    host_part, _, path_part = scheme_free.partition("/")
+    if not host_part:
+        host_part = path_part
+        path_part = ""
+
+    if not path_part:
+        # There was no slash in scheme_free, check for a sole "?".
+        host_part, _, _ = host_part.partition("?")
+
+    if "@" in host_part:
+        userinfo, _, hosts = host_part.rpartition("@")
+        _, passwd = parse_userinfo(userinfo)
+
+    if passwd:
+        uri = uri.replace(passwd, redacted_text)
+    return uri
+
+
 @dataclass
 class SimpleMongoDBStorageConfig(BaseConnectorConfig):
     uri: t.Optional[str] = None
     host: t.Optional[str] = None
     port: int = 27017
+
+    def to_dict(
+        self, redact_sensitive=False, redacted_text="***REDACTED***", **kwargs
+    ) -> t.Dict[str, Json]:
+        d = super().to_dict(
+            redact_sensitive=redact_sensitive, redacted_text=redacted_text, **kwargs
+        )
+        if redact_sensitive:
+            if self.host:
+                d["host"] = redact(uri=self.host, redacted_text=redacted_text)
+            if self.uri:
+                d["uri"] = redact(uri=self.uri, redacted_text=redacted_text)
+        return d
 
 
 @dataclass
