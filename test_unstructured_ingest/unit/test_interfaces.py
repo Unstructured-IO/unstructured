@@ -6,6 +6,7 @@ from typing import Any, Dict
 import pytest
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.ingest.connector.sftp import SimpleSftpConfig
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
@@ -14,7 +15,6 @@ from unstructured.ingest.interfaces import (
     ProcessorConfig,
     ReadConfig,
 )
-from unstructured.ingest.connector.sftp import SimpleSftpConfig
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
 
@@ -297,8 +297,10 @@ def test_fsspec_path_extraction_s3_valid_path():
 
 
 def test_fsspec_path_extraction_s3_invalid_path():
+    ######## Add COMMENTS
     with pytest.raises(ValueError):
         FsspecConfig(remote_url="s3:///bucket-name/path/to")
+
 
 def test_sftp_path_extraction_post_init_with_extension():
     config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/file.txt")
@@ -308,6 +310,7 @@ def test_sftp_path_extraction_post_init_with_extension():
     assert config.host == "example.com"
     assert config.port == 22
 
+
 def test_sftp_path_extraction_without_extension():
     config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/directory")
     assert config.file_path == ""
@@ -316,6 +319,7 @@ def test_sftp_path_extraction_without_extension():
     assert config.host == "example.com"
     assert config.port == 22
 
+
 def test_sftp_path_extraction_with_port():
     config = SimpleSftpConfig(remote_url="sftp://example.com:47474/path/to/file.txt")
     assert config.file_path == "file.txt"
@@ -323,4 +327,3 @@ def test_sftp_path_extraction_with_port():
     assert config.path_without_protocol == "path/to"
     assert config.host == "example.com"
     assert config.port == 47474
-

@@ -8,8 +8,10 @@ from unstructured.ingest.runner.utils import update_download_dir_remote_url
 if t.TYPE_CHECKING:
     from unstructured.ingest.connector.sftp import SimpleSftpConfig
 
+
 class SftpRunner(FsspecBaseRunner):
     fsspec_config: t.Optional["SimpleSftpConfig"] = None
+
     def run(
         self,
         **kwargs,

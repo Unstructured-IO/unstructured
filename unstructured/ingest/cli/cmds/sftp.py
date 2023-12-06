@@ -34,6 +34,10 @@ class SftpCliConfig(SftpAccessConfig, CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=SftpCliConfig, 
-    addition_configs={"fsspec_config": SimpleSftpConfig}, is_fsspec=True)
+    cmd_cls = BaseSrcCmd(
+        cmd_name=CMD_NAME,
+        cli_config=SftpCliConfig,
+        addition_configs={"fsspec_config": SimpleSftpConfig},
+        is_fsspec=True,
+    )
     return cmd_cls

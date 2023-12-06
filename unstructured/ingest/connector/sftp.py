@@ -15,6 +15,7 @@ from unstructured.ingest.interfaces import AccessConfig
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
+
 @dataclass
 class SftpAccessConfig(AccessConfig):
     username: str
@@ -27,10 +28,8 @@ class SftpAccessConfig(AccessConfig):
 class SimpleSftpConfig(SimpleFsspecConfig):
     access_config: SftpAccessConfig = None
 
-
     def __post_init__(self):
         super().__post_init__()
-        # breakpoint()
 
         _, ext = os.path.splitext(self.remote_url)
         parsed_url = urlparse(self.remote_url)
@@ -49,7 +48,6 @@ class SimpleSftpConfig(SimpleFsspecConfig):
         self.access_config.port = parsed_url.port or self.port
 
 
-
 @dataclass
 class SftpIngestDoc(FsspecIngestDoc):
     connector_config: SimpleSftpConfig
@@ -65,7 +63,15 @@ class SftpIngestDoc(FsspecIngestDoc):
 class SftpSourceConnector(FsspecSourceConnector):
     connector_config: SimpleSftpConfig
 
-    ##### check_connection
+    @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
+    def check_connection(self):
+        from fsspec.implementations.sftp import SFTPFileSystem
+
+        try:
+            SFTPFileSystem(**self.connector_config.get_access_config())
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def __post_init__(self):
         self.ingest_doc_cls: Type[SftpIngestDoc] = SftpIngestDoc
