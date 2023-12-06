@@ -13,7 +13,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class ElasticSearchRunner(Runner):
-    connector_config: t.Optional["SimpleElasticsearchConfig"] = None
+    connector_config: "SimpleElasticsearchConfig"
 
     def run(
         self,
