@@ -8,16 +8,11 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     CliRecursiveConfig,
 )
+from unstructured.ingest.connector.sharepoint import SimpleSharepointConfig
 
 
 @dataclass
-class SharepointCliConfig(CliConfig):
-    client_id: t.Optional[str] = None
-    client_cred: t.Optional[str] = None
-    site: t.Optional[str] = None
-    path: str = "Shared Documents"
-    files_only: bool = False
-
+class SharepointCliConfig(SimpleSharepointConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -67,5 +62,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="sharepoint",
         cli_config=SharepointCliConfig,
         additional_cli_options=[CliRecursiveConfig],
+        addition_configs={
+            "connector_config": SimpleSharepointConfig,
+        },
     )
     return cmd_cls
