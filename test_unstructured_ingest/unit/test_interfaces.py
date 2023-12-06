@@ -14,6 +14,7 @@ from unstructured.ingest.interfaces import (
     ProcessorConfig,
     ReadConfig,
 )
+from unstructured.ingest.connector.sftp import SimpleSftpConfig
 from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict
 
@@ -263,7 +264,7 @@ def test_post_init_invalid_protocol():
         FsspecConfig(remote_url="ftp://example.com/path/to/file.txt")
 
 
-def test_path_extraction_dropbox_root():
+def test_fsspec_path_extraction_dropbox_root():
     config = FsspecConfig(remote_url="dropbox:// /")
     assert config.protocol == "dropbox"
     assert config.path_without_protocol == " /"
@@ -271,7 +272,7 @@ def test_path_extraction_dropbox_root():
     assert config.file_path == ""
 
 
-def test_path_extraction_dropbox_subfolder():
+def test_fsspec_path_extraction_dropbox_subfolder():
     config = FsspecConfig(remote_url="dropbox://path")
     assert config.protocol == "dropbox"
     assert config.path_without_protocol == "path"
@@ -279,7 +280,7 @@ def test_path_extraction_dropbox_subfolder():
     assert config.file_path == ""
 
 
-def test_path_extraction_s3_bucket_only():
+def test_fsspec_path_extraction_s3_bucket_only():
     config = FsspecConfig(remote_url="s3://bucket-name")
     assert config.protocol == "s3"
     assert config.path_without_protocol == "bucket-name"
@@ -287,7 +288,7 @@ def test_path_extraction_s3_bucket_only():
     assert config.file_path == ""
 
 
-def test_path_extraction_s3_valid_path():
+def test_fsspec_path_extraction_s3_valid_path():
     config = FsspecConfig(remote_url="s3://bucket-name/path/to/file.txt")
     assert config.protocol == "s3"
     assert config.path_without_protocol == "bucket-name/path/to/file.txt"
@@ -295,6 +296,31 @@ def test_path_extraction_s3_valid_path():
     assert config.file_path == "path/to/file.txt"
 
 
-def test_path_extraction_s3_invalid_path():
+def test_fsspec_path_extraction_s3_invalid_path():
     with pytest.raises(ValueError):
         FsspecConfig(remote_url="s3:///bucket-name/path/to")
+
+def test_sftp_path_extraction_post_init_with_extension():
+    config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/file.txt")
+    assert config.file_path == "file.txt"
+    assert config.dir_path == "path/to"
+    assert config.path_without_protocol == "path/to"
+    assert config.host == "example.com"
+    assert config.port == 22
+
+def test_sftp_path_extraction_without_extension():
+    config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/directory")
+    assert config.file_path == ""
+    assert config.dir_path == "path/to/directory"
+    assert config.path_without_protocol == "path/to/directory"
+    assert config.host == "example.com"
+    assert config.port == 22
+
+def test_sftp_path_extraction_with_port():
+    config = SimpleSftpConfig(remote_url="sftp://example.com:47474/path/to/file.txt")
+    assert config.file_path == "file.txt"
+    assert config.dir_path == "path/to"
+    assert config.path_without_protocol == "path/to"
+    assert config.host == "example.com"
+    assert config.port == 47474
+
