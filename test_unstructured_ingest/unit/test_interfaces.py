@@ -6,7 +6,7 @@ from typing import Any, Dict
 import pytest
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.connector.sftp import SimpleSftpConfig
+from unstructured.ingest.connector.sftp import SftpAccessConfig, SimpleSftpConfig
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
@@ -310,29 +310,38 @@ def test_fsspec_path_extraction_s3_invalid_path():
 
 def test_sftp_path_extraction_post_init_with_extension():
     """Validate that the path extraction works for sftp with file extension"""
-    config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/file.txt")
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com/path/to/file.txt",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
     assert config.file_path == "file.txt"
     assert config.dir_path == "path/to"
     assert config.path_without_protocol == "path/to"
-    assert config.host == "example.com"
-    assert config.port == 22
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 22
 
 
 def test_sftp_path_extraction_without_extension():
     """Validate that the path extraction works for sftp without extension"""
-    config = SimpleSftpConfig(remote_url="sftp://example.com/path/to/directory")
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com/path/to/directory",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
     assert config.file_path == ""
     assert config.dir_path == "path/to/directory"
     assert config.path_without_protocol == "path/to/directory"
-    assert config.host == "example.com"
-    assert config.port == 22
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 22
 
 
 def test_sftp_path_extraction_with_port():
     """Validate that the path extraction works for sftp with a non-default port"""
-    config = SimpleSftpConfig(remote_url="sftp://example.com:47474/path/to/file.txt")
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com:47474/path/to/file.txt",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
     assert config.file_path == "file.txt"
     assert config.dir_path == "path/to"
     assert config.path_without_protocol == "path/to"
-    assert config.host == "example.com"
-    assert config.port == 47474
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 47474

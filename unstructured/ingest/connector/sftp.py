@@ -42,10 +42,8 @@ class SimpleSftpConfig(SimpleFsspecConfig):
             self.file_path = ""
             self.dir_path = parsed_url.path.lstrip("/")
             self.path_without_protocol = self.dir_path
-        self.host = parsed_url.hostname
-        self.access_config.host = parsed_url.hostname
-        self.port = parsed_url.port or self.port
-        self.access_config.port = parsed_url.port or self.port
+        self.access_config.host = parsed_url.hostname or self.access_config.host
+        self.access_config.port = parsed_url.port or self.access_config.port
 
 
 @dataclass
