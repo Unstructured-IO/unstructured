@@ -36,3 +36,5 @@ DEFAULT_PADDLE_LANG = os.getenv("DEFAULT_PADDLE_LANG", "en")
 
 # this field is defined by pytesseract/unstructured.pytesseract
 TESSERACT_TEXT_HEIGHT = "height"
+
+TESSERACT_LANGUAGES_SPLITER = "+"
