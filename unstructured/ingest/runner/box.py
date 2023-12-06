@@ -2,15 +2,15 @@ import logging
 import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
-from unstructured.ingest.runner.base_runner import FsspecBaseRunner
+from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 if t.TYPE_CHECKING:
     from unstructured.ingest.connector.box import SimpleBoxConfig
 
 
-class BoxRunner(FsspecBaseRunner):
-    fsspec_config: t.Optional["SimpleBoxConfig"] = None
+class BoxRunner(Runner):
+    connector_config: t.Optional["SimpleBoxConfig"] = None
 
     def run(
         self,
@@ -21,7 +21,7 @@ class BoxRunner(FsspecBaseRunner):
         self.read_config.download_dir = update_download_dir_remote_url(
             connector_name="box",
             read_config=self.read_config,
-            remote_url=self.fsspec_config.remote_url,  # type: ignore
+            remote_url=self.connector_config.remote_url,  # type: ignore
             logger=logger,
         )
 
@@ -29,7 +29,7 @@ class BoxRunner(FsspecBaseRunner):
 
         source_doc_connector = BoxSourceConnector(  # type: ignore
             read_config=self.read_config,
-            connector_config=self.fsspec_config,
+            connector_config=self.connector_config,
             processor_config=self.processor_config,
         )
 

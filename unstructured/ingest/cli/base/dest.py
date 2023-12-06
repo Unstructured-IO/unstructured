@@ -17,7 +17,6 @@ from unstructured.ingest.cli.utils import (
     extract_config,
     extract_configs,
 )
-from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.writers import writer_map
 
@@ -29,8 +28,6 @@ class BaseDestCmd(BaseCmd):
         src_cmd = src_cmd_fn()
         runner = src_cmd.get_source_runner(options=parent_options)
         addition_configs = self.addition_configs
-        if self.is_fsspec and "fsspec_config" not in addition_configs:
-            addition_configs["fsspec_config"] = FsspecConfig
         configs = extract_configs(
             options,
             validate=[self.cli_config] if self.cli_config else None,

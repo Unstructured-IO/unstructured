@@ -77,7 +77,7 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=AzureCliConfig,
-        addition_configs={"fsspec_config": SimpleAzureBlobStorageConfig},
+        addition_configs={"connector_config": SimpleAzureBlobStorageConfig},
         is_fsspec=True,
     )
     return cmd_cls
@@ -90,7 +90,7 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=AzureCliConfig,
         addition_configs={
-            "fsspec_config": SimpleAzureBlobStorageConfig,
+            "connector_config": SimpleAzureBlobStorageConfig,
             "write_config": AzureWriteTextConfig,
         },
         is_fsspec=True,
