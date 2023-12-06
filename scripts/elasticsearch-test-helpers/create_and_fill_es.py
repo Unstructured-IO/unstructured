@@ -12,7 +12,7 @@ from es_cluster_config import (
 )
 
 print("Connecting to the Elasticsearch cluster.")
-es = Elasticsearch(CLUSTER_URL, request_timeout=30)
+es = Elasticsearch(CLUSTER_URL, basic_auth=("elastic", "DkIedPPSCb"), request_timeout=30)
 print(es.info())
 df = pd.read_csv(DATA_PATH).dropna().reset_index()
 
@@ -30,4 +30,4 @@ bulk(es, bulk_data)
 es.indices.refresh(index=INDEX_NAME)
 response = es.cat.count(index=INDEX_NAME, format="json")
 
-print("Succesfully created and filled an Elasticsearch index for testing elasticsearch ingest.")
+print("Successfully created and filled an Elasticsearch index for testing elasticsearch ingest.")

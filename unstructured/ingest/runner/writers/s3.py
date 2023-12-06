@@ -1,29 +1,24 @@
 import typing as t
+from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.s3 import S3WriteConfig, SimpleS3Config
 
 
-def s3_writer(
-    remote_url: str,
-    anonymous: bool,
-    endpoint_url: t.Optional[str] = None,
-    verbose: bool = False,
-    **kwargs,
-) -> BaseDestinationConnector:
-    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
-    from unstructured.ingest.connector.s3 import (
-        S3DestinationConnector,
-        SimpleS3Config,
-    )
+@dataclass
+class S3Writer(Writer, EnhancedDataClassJsonMixin):
+    fsspec_config: "SimpleS3Config"
+    write_config: "S3WriteConfig"
 
-    access_kwargs: t.Dict[str, t.Any] = {"anon": anonymous}
-    if endpoint_url:
-        access_kwargs["endpoint_url"] = endpoint_url
+    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.s3 import (
+            S3DestinationConnector,
+        )
 
-    return S3DestinationConnector(
-        write_config=FsspecWriteConfig(),
-        connector_config=SimpleS3Config(
-            remote_url=remote_url,
-            access_kwargs=access_kwargs,
-        ),
-    )
+        return S3DestinationConnector(
+            write_config=self.write_config, connector_config=self.fsspec_config
+        )

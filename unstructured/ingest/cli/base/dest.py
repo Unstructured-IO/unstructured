@@ -11,8 +11,10 @@ from unstructured.ingest.cli.common import (
 from unstructured.ingest.cli.interfaces import (
     CliFilesStorageConfig,
 )
-from unstructured.ingest.cli.utils import add_options, conform_click_options
+from unstructured.ingest.cli.utils import add_options, conform_click_options, extract_configs
+from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.runner.writers import writer_map
 
 
 @dataclass
@@ -21,7 +23,18 @@ class BaseDestCmd(BaseCmd):
         src_cmd_fn = get_src_cmd(cmd_name=source_cmd)
         src_cmd = src_cmd_fn()
         runner = src_cmd.get_source_runner(options=parent_options)
-        runner.writer_type = self.cmd_name_key
+        addition_configs = self.addition_configs
+        if self.is_fsspec and "fsspec_config" not in addition_configs:
+            addition_configs["fsspec_config"] = FsspecConfig
+        configs = extract_configs(
+            options,
+            validate=[self.cli_config] if self.cli_config else None,
+            extras=addition_configs,
+            add_defaults=False,
+        )
+        writer_cls = writer_map[self.cmd_name_key]
+        writer = writer_cls(**configs)  # type: ignore
+        runner.writer = writer
         runner.writer_kwargs = options
         return runner
 

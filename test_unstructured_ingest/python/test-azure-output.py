@@ -36,7 +36,7 @@ def check(connection_string: str, container: str, blob_path: str, expected_files
     )
     blob_json_list = [
         b.name
-        for b in list(container_client.list_blobs(name_starts_with="test"))
+        for b in list(container_client.list_blobs(name_starts_with=blob_path))
         if b.name.endswith("json")
     ]
     found = len(blob_json_list)

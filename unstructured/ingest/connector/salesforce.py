@@ -7,7 +7,6 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
-import os
 import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -187,8 +186,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
-
         record = self.record
 
         self.update_source_metadata()

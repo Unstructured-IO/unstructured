@@ -7,43 +7,58 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.azure import (
+    AzureAccessConfig,
+    AzureWriteTextConfig,
+    SimpleAzureBlobStorageConfig,
+)
 
 CMD_NAME = "azure"
 
 
 @dataclass
-class AzureCliConfig(CliConfig):
-    account_id: t.Optional[str] = None
-    account_name: t.Optional[str] = None
-    connection_string: t.Optional[str] = None
-
+class AzureCliConfig(AzureAccessConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
                 ["--account-key"],
                 default=None,
-                help="Azure Blob Storage or DataLake account key (not required if "
-                "`azure_account_name` is public).",
+                help="The storage account key. This is used for shared key "
+                "authentication. If any of account key, sas token or "
+                "client_id are not specified, anonymous access will be used.",
             ),
             click.Option(
                 ["--account-name"],
                 default=None,
-                help="Azure Blob Storage or DataLake account name.",
+                help="The storage account name. This is used to authenticate "
+                "requests signed with an account key and to construct "
+                "the storage endpoint. It is required unless a connection "
+                "string is given, or if a custom domain is used with "
+                "anonymous authentication.",
             ),
             click.Option(
                 ["--connection-string"],
                 default=None,
-                help="Azure Blob Storage or DataLake connection string.",
+                help="If specified, this will override all other parameters. See "
+                "http://azure.microsoft.com/en-us/documentation/articles/storage-configure-connection-string/ "  # noqa: E501
+                "for the connection string format.",
+            ),
+            click.Option(
+                ["--sas_token"],
+                default=None,
+                help="A shared access signature token to use to authenticate "
+                "requests instead of the account key. If account key and "
+                "sas token are both specified, account key will be used "
+                "to sign. If any of account key, sas token or client_id "
+                "are not specified, anonymous access will be used.",
             ),
         ]
         return options
 
 
 @dataclass
-class AzureCliWriteConfig(CliConfig):
-    overwrite: bool = False
-
+class AzureCliWriteConfig(AzureWriteTextConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -59,7 +74,12 @@ class AzureCliWriteConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=AzureCliConfig, is_fsspec=True)
+    cmd_cls = BaseSrcCmd(
+        cmd_name=CMD_NAME,
+        cli_config=AzureCliConfig,
+        addition_configs={"fsspec_config": SimpleAzureBlobStorageConfig},
+        is_fsspec=True,
+    )
     return cmd_cls
 
 
@@ -69,6 +89,10 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=AzureCliConfig,
+        addition_configs={
+            "fsspec_config": SimpleAzureBlobStorageConfig,
+            "write_config": AzureWriteTextConfig,
+        },
         is_fsspec=True,
         additional_cli_options=[AzureCliWriteConfig],
     )

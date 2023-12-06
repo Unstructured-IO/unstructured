@@ -13,8 +13,8 @@ from unstructured_inference.inference.layoutelement import (
 )
 
 from unstructured.documents.elements import ElementType
-from unstructured.partition import ocr
-from unstructured.partition.ocr import pad_element_bboxes
+from unstructured.partition.pdf_image import ocr
+from unstructured.partition.pdf_image.ocr import pad_element_bboxes
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,

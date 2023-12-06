@@ -451,7 +451,6 @@ def test_document_to_element_list_handles_parent():
     page = PageLayout(
         number=1,
         image=MockImage(),
-        layout=None,
     )
     page.elements = [block1, block2]
     doc = DocumentLayout.from_pages([page])
@@ -477,7 +476,6 @@ def test_document_to_element_list_doesnt_sort_on_sort_method(sort_mode, call_cou
     page = PageLayout(
         number=1,
         image=MockImage(),
-        layout=None,
     )
     page.elements = [block1, block2]
     doc = DocumentLayout.from_pages([page])

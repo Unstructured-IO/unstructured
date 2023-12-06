@@ -7,7 +7,7 @@ from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
-from dataclasses_json.core import Json, _decode_dataclass
+from dataclasses_json.core import Json
 
 from unstructured.ingest.interfaces import (
     BaseConfig,
@@ -46,6 +46,9 @@ class Dict(click.ParamType):
 class FileOrJson(click.ParamType):
     name = "file-or-json"
 
+    def __init__(self, allow_raw_str: bool = False):
+        self.allow_raw_str = allow_raw_str
+
     def convert(
         self,
         value: t.Any,
@@ -60,7 +63,8 @@ class FileOrJson(click.ParamType):
             try:
                 return json.loads(value)
             except json.JSONDecodeError:
-                pass
+                if self.allow_raw_str:
+                    return value
         self.fail(
             gettext(
                 "{value} is not a valid json string nor an existing filepath.",
@@ -155,12 +159,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Return None if none of the fields are being populated
         """
@@ -169,7 +168,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
             field_values = [kvs.get(n) for n in field_names if kvs.get(n)]
             if not field_values:
                 return None
-        return _decode_dataclass(cls, kvs, infer_missing)
+        return super().from_dict(kvs=kvs, **kwargs)
 
 
 class CliProcessorConfig(ProcessorConfig, CliMixin):
@@ -428,12 +427,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with embedding_ during CLI invocation but
@@ -449,8 +443,8 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
                 return None
             if not new_kvs.get("provider", None):
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(new_kvs, **kwargs)
+        return super().from_dict(kvs, **kwargs)
 
 
 class CliChunkingConfig(ChunkingConfig, CliMixin):
@@ -489,18 +483,14 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with chunking_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
+            kvs = kvs.copy()
             new_kvs = {}
             if "chunk_elements" in kvs:
                 chunk_elements = kvs.pop("chunk_elements")
@@ -516,8 +506,8 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
             )
             if len(new_kvs.keys()) == 0:
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(kvs=new_kvs, **kwargs)
+        return super().from_dict(kvs=kvs, **kwargs)
 
 
 class CliPermissionsConfig(PermissionsConfig, CliMixin):
@@ -543,12 +533,7 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with permissions_ during CLI invocation but
@@ -580,5 +565,5 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(kvs=new_kvs, **kwargs)
+        return super().from_dict(kvs=kvs, **kwargs)

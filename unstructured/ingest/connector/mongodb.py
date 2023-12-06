@@ -24,7 +24,6 @@ class SimpleMongoDBStorageConfig(BaseConnectorConfig):
     uri: t.Optional[str] = None
     host: t.Optional[str] = None
     port: int = 27017
-    client_params: t.Dict[str, t.Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -46,16 +45,13 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
 
         if self.connector_config.uri:
             return MongoClient(
-                self.connector_config.uri,
-                server_api=ServerApi(version=SERVER_API_VERSION),
-                **self.connector_config.client_params,
+                self.connector_config.uri, server_api=ServerApi(version=SERVER_API_VERSION)
             )
         else:
             return MongoClient(
                 host=self.connector_config.host,
                 port=self.connector_config.port,
                 server_api=ServerApi(version=SERVER_API_VERSION),
-                **self.connector_config.client_params,
             )
 
     @property

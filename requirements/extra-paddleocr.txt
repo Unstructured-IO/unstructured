@@ -8,7 +8,7 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.13.1
     # via flask-babel
-bce-python-sdk==0.8.96
+bce-python-sdk==0.8.97
     # via visualdl
 blinker==1.7.0
     # via flask
@@ -35,7 +35,7 @@ cssutils==2.9.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
-cython==3.0.5
+cython==3.0.6
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
@@ -45,11 +45,11 @@ flask==3.0.0
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.45.0
+fonttools==4.46.0
     # via matplotlib
 future==0.18.3
     # via bce-python-sdk
-idna==3.4
+idna==3.6
     # via
     #   -c base.txt
     #   requests
@@ -59,7 +59,7 @@ imageio==2.33.0
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-metadata==6.8.0
+importlib-metadata==7.0.0
     # via flask
 importlib-resources==6.1.1
     # via matplotlib
@@ -163,6 +163,7 @@ pyparsing==3.0.9
     #   matplotlib
 python-dateutil==2.8.2
     # via
+    #   -c base.txt
     #   matplotlib
     #   pandas
 pytz==2023.3.post1

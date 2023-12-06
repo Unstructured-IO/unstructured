@@ -78,13 +78,13 @@ if dependency_exists("msg_parser"):
 
 pdf_imports = ["pdf2image", "pdfminer", "PIL"]
 if all(dependency_exists(dep) for dep in pdf_imports):
-    from unstructured.partition.pdf import partition_pdf
+    from unstructured.partition.pdf_image.pdf import partition_pdf
 
     PARTITION_WITH_EXTRAS_MAP["pdf"] = partition_pdf
 
 
 if dependency_exists("unstructured_inference"):
-    from unstructured.partition.image import partition_image
+    from unstructured.partition.pdf_image.image import partition_image
 
     PARTITION_WITH_EXTRAS_MAP["image"] = partition_image
 
