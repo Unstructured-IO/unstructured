@@ -643,46 +643,29 @@ def _process_pdfminer_pages(
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
-        list_item = 0
+        list_item_present = False
         updated_page_elements = []  # type: ignore
-        for page_element in page_elements:
-            if isinstance(page_element, ListItem):
-                list_item += 1
-                list_page_element = page_element
-                list_item_text = page_element.text
-                list_item_coords = page_element.metadata.coordinates
-            elif list_item > 0 and check_coords_within_boundary(
-                page_element.metadata.coordinates,
-                list_item_coords,
+        for element in page_elements:
+            if isinstance(element, ListItem):
+                list_item_present, parent_element = True, element
+                parent_element_text = element.text
+                parent_element_coords = element.metadata.coordinates
+            elif list_item_present and check_coords_within_boundary(
+                coordinates=element.metadata.coordinates,
+                boundary=parent_element_coords,
             ):
-                text = page_element.text  # type: ignore
-                list_item_text = list_item_text + " " + text
-                x1 = min(
-                    list_page_element.metadata.coordinates.points[0][0],
-                    page_element.metadata.coordinates.points[0][0],
+                parent_element_text = f"{parent_element_text} {element.text}"
+                parent_element.text = parent_element_text
+                _update_coordinates(
+                    element1=parent_element,
+                    element2=element,
+                    coordinate_system=coordinate_system,
                 )
-                x2 = max(
-                    list_page_element.metadata.coordinates.points[2][0],
-                    page_element.metadata.coordinates.points[2][0],
-                )
-                y1 = min(
-                    list_page_element.metadata.coordinates.points[0][1],
-                    page_element.metadata.coordinates.points[0][1],
-                )
-                y2 = max(
-                    list_page_element.metadata.coordinates.points[1][1],
-                    page_element.metadata.coordinates.points[1][1],
-                )
-                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                list_page_element.text = list_item_text
-                list_page_element.metadata.coordinates = CoordinatesMetadata(
-                    points=points,
-                    system=coordinate_system,
-                )
-                page_element = list_page_element
+                element = parent_element
                 updated_page_elements.pop()
-
-            updated_page_elements.append(page_element)
+            else:
+                list_item_present = False
+            updated_page_elements.append(element)
 
         page_elements = updated_page_elements
         del updated_page_elements
@@ -716,6 +699,30 @@ def _get_links_from_urls_metadata(urls_metadata, moved_indices):
                 },
             )
     return links
+
+
+def _update_coordinates(element1, element2, coordinate_system):
+    x1 = min(
+        element1.metadata.coordinates.points[0][0],
+        element2.metadata.coordinates.points[0][0],
+    )
+    x2 = max(
+        element1.metadata.coordinates.points[2][0],
+        element2.metadata.coordinates.points[2][0],
+    )
+    y1 = min(
+        element1.metadata.coordinates.points[0][1],
+        element2.metadata.coordinates.points[0][1],
+    )
+    y2 = max(
+        element1.metadata.coordinates.points[1][1],
+        element2.metadata.coordinates.points[1][1],
+    )
+    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+    element1.metadata.coordinates = CoordinatesMetadata(
+        points=points,
+        system=coordinate_system,
+    )
 
 
 def convert_pdf_to_images(
