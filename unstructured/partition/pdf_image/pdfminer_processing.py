@@ -18,6 +18,8 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.utils.constants import Source
+from unstructured.partition.utils.sorting import shrink_bbox
+from unstructured.partition.utils.xycut import recursive_xy_cut, recursive_xy_cut_swapped
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
@@ -92,6 +94,8 @@ def get_regions_by_pdfminer(
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
 
+    import numpy as np
+
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
@@ -125,11 +129,31 @@ def get_regions_by_pdfminer(
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
 
-        for i in range(1, len(layout)):
-            if abs(layout[i].bbox.y1 - layout[i - 1].bbox.y1) < 20:
-                layout[i].bbox.y1 = layout[i - 1].bbox.y1
-
         layout = order_layout(layout)
+
+        shrink_factor = 0.9
+        xy_cut_primary_direction = "x"
+
+        bboxes = [
+            (text_region.bbox.x1, text_region.bbox.y1, text_region.bbox.x2, text_region.bbox.y2)
+            for text_region in layout
+        ]
+
+        shrunken_bboxes = []
+        for bbox in bboxes:
+            shrunken_bbox = shrink_bbox(bbox, shrink_factor)
+            shrunken_bboxes.append(shrunken_bbox)
+
+        res: List[int] = []
+        xy_cut_sorting_func = (
+            recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
+        )
+        xy_cut_sorting_func(
+            np.asarray(shrunken_bboxes).astype(int),
+            np.arange(len(shrunken_bboxes)),
+            res,
+        )
+        layout = [layout[i] for i in res]
         layouts.append(layout)
 
     return layouts
