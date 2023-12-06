@@ -1,4 +1,4 @@
-## 0.11.4-dev4
+## 0.11.4-dev5
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 
 ### Fixes
+
+* **Update partition_csv to handle different delimiters** CSV files containing both non-comma delimiters and commas in the data were throwing an error in Pandas. `partition_csv` now identifies the correct delimiter before the file is processed.
 
 ## 0.11.3
 
