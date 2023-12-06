@@ -6,24 +6,21 @@ from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.confluence import SimpleConfluenceConfig
+
 
 class ConfluenceRunner(Runner):
+    connector_config: "SimpleConfluenceConfig"
+
     def run(
         self,
-        url: str,
-        user_email: str,
-        api_token: str,
-        max_num_of_spaces: int = 500,
-        max_num_of_docs_from_each_space: int = 100,
-        spaces: t.Optional[t.List[str]] = None,
         **kwargs,
     ):
-        spaces = spaces if spaces else []
-
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            url.encode("utf-8"),
+            self.connector_config.url.encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -35,19 +32,11 @@ class ConfluenceRunner(Runner):
 
         from unstructured.ingest.connector.confluence import (
             ConfluenceSourceConnector,
-            SimpleConfluenceConfig,
         )
 
         source_doc_connector = ConfluenceSourceConnector(  # type: ignore
             processor_config=self.processor_config,
-            connector_config=SimpleConfluenceConfig(
-                url=url,
-                user_email=user_email,
-                api_token=api_token,
-                spaces=spaces,
-                max_number_of_spaces=max_num_of_spaces,
-                max_number_of_docs_from_each_space=max_num_of_docs_from_each_space,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
         )
 
