@@ -222,9 +222,9 @@ class ChunkingConfig(BaseConfig):
 
 @dataclass
 class PermissionsConfig(BaseConfig):
-    application_id: t.Optional[str]
-    tenant: t.Optional[str]
-    client_cred: t.Optional[str] = enhanced_field(sensitive=True)
+    application_id: t.Optional[str] = None
+    tenant: t.Optional[str] = None
+    client_cred: t.Optional[str] = enhanced_field(default=None, sensitive=True)
 
 
 # module-level variable to store session handle

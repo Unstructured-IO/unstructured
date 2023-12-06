@@ -146,7 +146,11 @@ def _decode_dataclass(cls, kvs, infer_missing, apply_name_overload: bool = True)
         if not field.init:
             continue
 
-        field_value = kvs[field.name]
+        try:
+            field_value = kvs[field.name]
+        except KeyError as e:
+            print(f"failed parsing config: {cls}, keys in dict: {kvs.keys()}")
+            raise e
         field_type = types[field.name]
         if field_value is None:
             if not _is_optional(field_type):
