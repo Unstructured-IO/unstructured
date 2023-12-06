@@ -30,9 +30,9 @@ touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
 CURRENT_TEST="none"
 
-# Pull in variables specific to each
+# Pull in variables specific to each test scenario
 # shellcheck disable=SC1090
-source "$SCRIPT_DIR"/test-ingest-configs-"$test_type".sh
+source "$SCRIPT_DIR"/configs/"$test_type".sh
 
 
 get_tests() {
@@ -76,6 +76,7 @@ run_tests() {
       continue
     fi
     ./test_unstructured_ingest/"$test_type"/"$test"
+    # Get the response code from the script invocation on the previous line
     rc=$?
     if [[ $rc -eq 8 ]]; then
       echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
