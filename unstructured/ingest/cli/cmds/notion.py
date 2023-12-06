@@ -9,16 +9,11 @@ from unstructured.ingest.cli.interfaces import (
     CliRecursiveConfig,
     DelimitedString,
 )
+from unstructured.ingest.connector.notion.connector import SimpleNotionConfig
 
 
 @dataclass
-class NotionCliConfig(CliConfig):
-    notion_api_key: str
-    page_ids: t.Optional[t.List[str]]
-    database_ids: t.Optional[t.List[str]]
-    max_retries: t.Optional[int] = None
-    max_time: t.Optional[float] = None
-
+class NotionCliConfig(SimpleNotionConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -49,5 +44,8 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="notion",
         cli_config=NotionCliConfig,
         additional_cli_options=[CliRecursiveConfig],
+        addition_configs={
+            "connector_config": SimpleNotionConfig,
+        },
     )
     return cmd_cls
