@@ -1,5 +1,4 @@
 import datetime as dt
-import os
 import typing as t
 from dataclasses import dataclass
 from pathlib import Path
@@ -120,8 +119,6 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         self._create_full_tmp_dir_path()
-        if self.processor_config.verbose:
-            logger.debug(f"fetching {self} - PID: {os.getpid()}")
 
         messages, jump_url = self._get_messages()
         self.update_source_metadata(messages_tuple=(messages, jump_url))

@@ -5,8 +5,10 @@
       "data_source": {
         "record_locator": {
           "document_id": "9",
-          "index_name": "movies",
-          "url": "http://localhost:9200"
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
         },
         "version": 1
       },
@@ -24,8 +26,10 @@
       "data_source": {
         "record_locator": {
           "document_id": "9",
-          "index_name": "movies",
-          "url": "http://localhost:9200"
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
         },
         "version": 1
       },
@@ -43,8 +47,10 @@
       "data_source": {
         "record_locator": {
           "document_id": "9",
-          "index_name": "movies",
-          "url": "http://localhost:9200"
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
         },
         "version": 1
       },

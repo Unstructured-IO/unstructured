@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -139,7 +138,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         import pandas as pd
 
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         rows, table_url = self._get_table_rows()
         self.update_source_metadata(rows_tuple=(rows, table_url))
         if rows is None:

@@ -1,8 +1,10 @@
-## 0.11.4-dev3
+## 0.11.4-dev4
 
 ### Enhancements
 
+* **Refactor image extraction code.** The image extraction code is moved from `unstructured-inference` to `unstructured`. 
 * **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
+* **Improve handling of auth data for fsspec connectors** Leverage an extension of the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
 
 ### Features
 

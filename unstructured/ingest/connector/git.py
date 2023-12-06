@@ -1,5 +1,4 @@
 import fnmatch
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -59,7 +58,6 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
 
     def _fetch_content(self) -> None:

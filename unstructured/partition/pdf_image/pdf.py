@@ -70,6 +70,7 @@ from unstructured.partition.lang import (
     check_languages,
     prepare_languages_for_tesseract,
 )
+from unstructured.partition.pdf_image.pdf_image_utils import extract_images_from_elements
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
@@ -381,8 +382,6 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            extract_images_in_pdf=extract_images_in_pdf,
-            image_output_dir_path=image_output_dir_path,
         )
 
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
@@ -411,8 +410,6 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
-            extract_images_in_pdf=extract_images_in_pdf,
-            image_output_dir_path=image_output_dir_path,
         )
         if hasattr(file, "seek"):
             file.seek(0)
@@ -457,6 +454,15 @@ def _partition_pdf_or_image_local(
         languages=languages,
         **kwargs,
     )
+
+    if extract_images_in_pdf:
+        extract_images_from_elements(
+            elements=elements,
+            filename=filename,
+            file=file,
+            pdf_image_dpi=pdf_image_dpi,
+            output_dir_path=image_output_dir_path,
+        )
 
     out_elements = []
     for el in elements:
