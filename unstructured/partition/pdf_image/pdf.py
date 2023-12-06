@@ -657,7 +657,6 @@ def _process_pdfminer_pages(
                     page_elements.append(element)
         list_item = 0
         updated_page_elements = []  # type: ignore
-        coordinate_system = PixelSpace(width=width, height=height)
         for page_element in page_elements:
             if isinstance(page_element, ListItem):
                 list_item += 1
