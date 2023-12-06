@@ -218,6 +218,9 @@ def sort_text_regions(
 ) -> List["TextRegion"]:
     """Sort a list of TextRegion elements based on the specified sorting mode."""
 
+    if not elements:
+        return elements
+
     bboxes = [(el.bbox.x1, el.bbox.y1, el.bbox.x2, el.bbox.y2) for el in elements]
 
     def _bboxes_ok(strict_points: bool):
