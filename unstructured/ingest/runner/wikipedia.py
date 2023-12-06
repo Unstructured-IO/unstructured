@@ -1,22 +1,26 @@
 import hashlib
 import logging
+import typing as t
 
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.wikipedia import SimpleWikipediaConfig
+
 
 class WikipediaRunner(Runner):
+    connector_config: "SimpleWikipediaConfig"
+
     def run(
         self,
-        page_title: str,
-        auto_suggest: bool = False,
         **kwargs,
     ):
         ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
 
         hashed_dir_name = hashlib.sha256(
-            page_title.encode("utf-8"),
+            self.connector_config.page_title.encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -27,15 +31,11 @@ class WikipediaRunner(Runner):
         )
 
         from unstructured.ingest.connector.wikipedia import (
-            SimpleWikipediaConfig,
             WikipediaSourceConnector,
         )
 
         source_doc_connector = WikipediaSourceConnector(  # type: ignore
-            connector_config=SimpleWikipediaConfig(
-                title=page_title,
-                auto_suggest=auto_suggest,
-            ),
+            connector_config=self.connector_config,
             read_config=self.read_config,
             processor_config=self.processor_config,
         )
