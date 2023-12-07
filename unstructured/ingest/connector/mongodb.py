@@ -22,7 +22,7 @@ if t.TYPE_CHECKING:
 SERVER_API_VERSION = "1"
 
 
-def parse_userinfo(userinfo: str) -> tuple[str, str]:
+def parse_userinfo(userinfo: str) -> t.Tuple[str, str]:
     user, _, passwd = userinfo.partition(":")
     return unquote_plus(user), unquote_plus(passwd)
 
