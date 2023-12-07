@@ -7,13 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.box import BoxAccessConfig, BoxWriteConfig
+from unstructured.ingest.connector.fsspec.box import BoxWriteConfig, SimpleBoxConfig
 
 CMD_NAME = "box"
 
 
 @dataclass
-class BoxCliConfig(BoxAccessConfig, CliConfig):
+class BoxCliConfig(SimpleBoxConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
