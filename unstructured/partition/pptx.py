@@ -374,7 +374,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         def sort_key(shape: BaseShape) -> Tuple[int, int]:
             return shape.top or 0, shape.left or 0
 
-        return slide.shapes.page_title, sorted(iter_shapes(slide.shapes), key=sort_key)
+        return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
 
     @property
     def _page_number(self) -> Optional[int]:
