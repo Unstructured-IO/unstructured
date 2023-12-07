@@ -8,13 +8,13 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     FileOrJson,
 )
-from unstructured.ingest.connector.gcs import GcsAccessConfig, GcsWriteConfig
+from unstructured.ingest.connector.fsspec.gcs import GcsWriteConfig, SimpleGcsConfig
 
 CMD_NAME = "gcs"
 
 
 @dataclass
-class GcsCliConfig(GcsAccessConfig, CliConfig):
+class GcsCliConfig(SimpleGcsConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         help_string = """

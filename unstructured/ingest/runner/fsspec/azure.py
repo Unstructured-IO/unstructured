@@ -7,7 +7,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.azure import SimpleAzureBlobStorageConfig
+    from unstructured.ingest.connector.fsspec.azure import SimpleAzureBlobStorageConfig
 
 
 @dataclass
@@ -23,7 +23,7 @@ class AzureRunner(Runner):
         )
 
     def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
-        from unstructured.ingest.connector.azure import (
+        from unstructured.ingest.connector.fsspec.azure import (
             AzureBlobStorageSourceConnector,
         )
 

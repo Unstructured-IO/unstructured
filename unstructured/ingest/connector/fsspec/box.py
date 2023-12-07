@@ -11,7 +11,7 @@ REAUTHORIZE app after making any of the above changes
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
@@ -93,6 +93,10 @@ class BoxSourceConnector(FsspecSourceConnector):
 class BoxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleBoxConfig
     write_config: BoxWriteConfig
+
+    @requires_dependencies(["boxfs", "fsspec"], extras="box")
+    def initialize(self):
+        super().initialize()
 
     @requires_dependencies(["boxfs"], extras="box")
     def check_connection(self):

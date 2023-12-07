@@ -7,7 +7,10 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.azure import AzureWriteConfig, SimpleAzureBlobStorageConfig
+from unstructured.ingest.connector.fsspec.azure import (
+    AzureWriteConfig,
+    SimpleAzureBlobStorageConfig,
+)
 
 CMD_NAME = "azure"
 
