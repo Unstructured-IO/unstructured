@@ -23,8 +23,6 @@ from dataclasses_json.core import (
     is_dataclass,
 )
 
-from unstructured.ingest.logger import logger
-
 
 def _recursive_repr(user_function):
     # Copied from dataclasses as this method isn't exposed for importing
@@ -148,11 +146,7 @@ def _decode_dataclass(cls, kvs, infer_missing, apply_name_overload: bool = True)
         if not field.init:
             continue
 
-        try:
-            field_value = kvs[field.name]
-        except KeyError as e:
-            logger.error(f"failed parsing config {cls} from dictionary: {kvs}")
-            raise e
+        field_value = kvs[field.name]
         field_type = types[field.name]
         if field_value is None:
             if not _is_optional(field_type):
