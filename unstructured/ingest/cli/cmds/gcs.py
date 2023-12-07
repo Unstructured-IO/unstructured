@@ -54,7 +54,7 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=GcsCliConfig,
-        addition_configs={"fsspec_config": SimpleGcsConfig},
+        addition_configs={"connector_config": SimpleGcsConfig},
         is_fsspec=True,
     )
     return cmd_cls
