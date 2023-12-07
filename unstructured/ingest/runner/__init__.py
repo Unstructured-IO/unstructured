@@ -1,6 +1,8 @@
 import typing as t
 from typing import Type
 
+from unstructured.ingest.runner.fsspec.sftp import SftpRunner
+
 from .airtable import AirtableRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
@@ -25,7 +27,6 @@ from .onedrive import OneDriveRunner
 from .outlook import OutlookRunner
 from .reddit import RedditRunner
 from .salesforce import SalesforceRunner
-from .sftp import SftpRunner
 from .sharepoint import SharePointRunner
 from .slack import SlackRunner
 from .wikipedia import WikipediaRunner

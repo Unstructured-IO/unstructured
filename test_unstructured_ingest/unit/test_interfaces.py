@@ -6,7 +6,7 @@ from typing import Any, Dict
 import pytest
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.connector.sftp import SftpAccessConfig, SimpleSftpConfig
+from unstructured.ingest.connector.fsspec.sftp import SftpAccessConfig, SimpleSftpConfig
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
