@@ -1,6 +1,8 @@
+import itertools
 import json
 import multiprocessing as mp
 import typing as t
+import uuid
 from dataclasses import dataclass
 
 from unstructured.ingest.error import DestinationConnectionError, WriteError
@@ -142,8 +144,6 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
     def upsert_batch(self, batch):
 
         collection = self.chroma_collection
-        print("%%%%%%%%%%%%% Upserting Batch %%%%%%%%%%%%%%")
-        print(collection)
 
         try:
             # breakpoint()
@@ -151,12 +151,18 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
             response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
         except Exception as e:
             raise WriteError(f"chroma error: {e}") from e
-        logger.debug(f"results: {response}")
+        logger.debug(f"results: {response}") # Does this do anything?????
 
 
+    @staticmethod
+    def chunks(iterable, batch_size=2):
+        """A helper function to break an iterable into chunks of size batch_size."""
+        it = iter(iterable)
+        chunk = tuple(itertools.islice(it, batch_size))
+        while chunk:
+            yield chunk
+            chunk = tuple(itertools.islice(it, batch_size))
 
-    @DestinationConnectionError.wrap
-    @requires_dependencies(["chromadb"], extras="chroma")
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"Inserting / updating {len(dict_list)} documents to destination "
@@ -173,9 +179,12 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
         # num_processes = 1
         # breakpoint()
         if self.write_config.num_processes == 1:
-            print(f"len dict list: {len(dict_list)}")
-            for i in range(0, len(dict_list)):
-                self.upsert_batch(dict_list[i])  
+            for chunk in self.chunks(dict_list):# , pinecone_batch_size):
+                print(f"len dict list: {len(chunk)}")
+                # breakpoint()
+                # Here we need to parse out the batch into 4 lists (ids, documents, embeddings, metadatas)
+                for i in range(0, len(chunk)):
+                    self.upsert_batch(chunk[i])  
 
         else:
             print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
@@ -210,10 +219,12 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
                 # assign everything else to "metadata" field
                 dict_content = [
                     {
-                        "ids": element.pop("element_id", None),
+                        # is element id right id?
+                        # "ids": element.pop("element_id", None),
+                        "ids": str(uuid.uuid4()),
                         "embeddings": element.pop("embeddings", None),
                         "documents": element.pop("text", None),
-                        "metadatas": flatten_dict({k: v for k, v in element.items()},flatten_lists=True),
+                        "metadatas": flatten_dict({k: v for k, v in element.items()},separator="-",flatten_lists=True),
                     }
                     for element in dict_content
                 ]

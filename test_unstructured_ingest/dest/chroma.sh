@@ -11,10 +11,12 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_PATH=$SCRIPT_DIR/chroma-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+writer_processes=$(( (max_processes - 1) > 1 ? (max_processes - 1) : 2 ))
 CI=${CI:-"false"}
 
-# FIX THIS!!!
-COLLECTION_NAME="chroma-test-output-$(date +%s)"
+RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
+
+COLLECTION_NAME="chroma-test-output-$RANDOM_SUFFIX"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -28,23 +30,23 @@ function cleanup() {
   fi
 }
 
-trap cleanup EXIT
+# trap cleanup EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    local \
-    --num-processes "2" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --input-path example-docs/multiple-docs \
-    --work-dir "$WORK_DIR" \
-    --chunk-elements \
-    --chunk-multipage-sections \
-    --embedding-provider "langchain-huggingface" \
-    chroma \
-    --db-path "$DESTINATION_PATH" \
-    --collection-name "$COLLECTION_NAME" \
-    --num-processes "2" 
+  local \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --input-path example-docs/book-war-and-peace-1p.txt \
+  --work-dir "$WORK_DIR" \
+  --chunk-elements \
+  --chunk-multipage-sections \
+  --embedding-provider "langchain-huggingface" \
+  chroma \
+  --db-path "$DESTINATION_PATH" \
+  --collection-name "$COLLECTION_NAME" \
+  --num-processes "1"
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --db-path "$DESTINATION_PATH" --collection-name "$COLLECTION_NAME"
 
