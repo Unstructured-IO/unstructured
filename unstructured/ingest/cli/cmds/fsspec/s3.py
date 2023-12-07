@@ -7,7 +7,7 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.s3 import S3WriteConfig, SimpleS3Config
+from unstructured.ingest.connector.fsspec.s3 import S3WriteConfig, SimpleS3Config
 
 CMD_NAME = "s3"
 

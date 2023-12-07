@@ -2,7 +2,7 @@ import typing as t
 from dataclasses import dataclass
 from typing import Type
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
@@ -46,6 +46,10 @@ class GcsIngestDoc(FsspecIngestDoc):
 @dataclass
 class GcsSourceConnector(FsspecSourceConnector):
     connector_config: SimpleGcsConfig
+
+    @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
+    def initialize(self):
+        super().initialize()
 
     def __post_init__(self):
         self.ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc

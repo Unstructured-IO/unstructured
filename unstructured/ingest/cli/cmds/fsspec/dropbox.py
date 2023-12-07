@@ -7,16 +7,16 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.dropbox import (
-    DropboxAccessConfig,
+from unstructured.ingest.connector.fsspec.dropbox import (
     DropboxWriteConfig,
+    SimpleDropboxConfig,
 )
 
 CMD_NAME = "dropbox"
 
 
 @dataclass
-class DropboxCliConfig(DropboxAccessConfig, CliConfig):
+class DropboxCliConfig(SimpleDropboxConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

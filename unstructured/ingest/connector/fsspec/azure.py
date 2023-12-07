@@ -1,7 +1,7 @@
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
@@ -72,6 +72,10 @@ class AzureBlobStorageSourceConnector(FsspecSourceConnector):
 class AzureBlobStorageDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleAzureBlobStorageConfig
     write_config: AzureWriteConfig
+
+    @requires_dependencies(["adlfs", "fsspec"], extras="azure")
+    def initialize(self):
+        super().initialize()
 
     @requires_dependencies(["adlfs"], extras="azure")
     def check_connection(self):
