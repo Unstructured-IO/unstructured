@@ -643,32 +643,8 @@ def _process_pdfminer_pages(
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
-        list_item_present = False
-        updated_page_elements = []  # type: ignore
-        for element in page_elements:
-            if isinstance(element, ListItem):
-                list_item_present = True
-                parent_element = element
-                parent_element_text = element.text
-                parent_element_coords = element.metadata.coordinates
-            elif list_item_present and check_coords_within_boundary(
-                coordinates=element.metadata.coordinates,
-                boundary=parent_element_coords,
-            ):
-                parent_element.text = f"{parent_element_text} {element.text}"
-                _update_coordinates(
-                    element1=parent_element,
-                    element2=element,
-                    coordinate_system=coordinate_system,
-                )
-                element = parent_element
-                updated_page_elements.pop()
-            else:
-                list_item_present = False
-            updated_page_elements.append(element)
 
-        page_elements = updated_page_elements
-        del updated_page_elements
+        page_elements = _combine_list_elements(page_elements, coordinate_system)
 
         # NOTE(crag, christine): always do the basic sort first for determinsitic order across
         # python versions.
@@ -682,6 +658,33 @@ def _process_pdfminer_pages(
             elements.append(PageBreak(text=""))
 
     return elements
+
+
+def _combine_list_elements(elements, coordinate_system):
+    """Combine elements that should be considered a single ListItem element."""
+    tmp_element = None
+    updated_elements = []
+    for element in elements:
+        if isinstance(element, ListItem):
+            tmp_element = element
+            tmp_text = element.text
+            tmp_coords = element.metadata.coordinates
+        elif tmp_element and check_coords_within_boundary(
+            coordinates=element.metadata.coordinates,
+            boundary=tmp_coords,
+        ):
+            tmp_element.text = f"{tmp_text} {element.text}"
+            _combine_coordinates_into_element1(
+                element1=tmp_element,
+                element2=element,
+                coordinate_system=coordinate_system,
+            )
+            # replace "element" with the corrected element
+            element = tmp_element
+            # remove previously added ListItem element with incomplete text
+            updated_elements.pop()
+        updated_elements.append(element)
+    return updated_elements
 
 
 def _get_links_from_urls_metadata(urls_metadata, moved_indices):
@@ -701,7 +704,8 @@ def _get_links_from_urls_metadata(urls_metadata, moved_indices):
     return links
 
 
-def _update_coordinates(element1, element2, coordinate_system):
+def _combine_coordinates_into_element1(element1, element2, coordinate_system):
+    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
     x1 = min(
         element1.metadata.coordinates.points[0][0],
         element2.metadata.coordinates.points[0][0],
