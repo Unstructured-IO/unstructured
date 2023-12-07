@@ -57,7 +57,7 @@ def get_base_src_cmd():
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=S3CliConfig,
-        addition_configs={"fsspec_config": SimpleS3Config},
+        addition_configs={"connector_config": SimpleS3Config},
         is_fsspec=True,
     )
     return cmd_cls
