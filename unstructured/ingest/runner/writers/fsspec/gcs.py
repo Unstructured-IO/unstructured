@@ -6,19 +6,17 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.s3 import S3WriteConfig, SimpleS3Config
+    from unstructured.ingest.connector.gcs import GcsWriteConfig, SimpleGcsConfig
 
 
 @dataclass
-class S3Writer(Writer, EnhancedDataClassJsonMixin):
-    connector_config: "SimpleS3Config"
-    write_config: "S3WriteConfig"
+class GcsWriter(Writer, EnhancedDataClassJsonMixin):
+    connector_config: "SimpleGcsConfig"
+    write_config: "GcsWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
-        from unstructured.ingest.connector.s3 import (
-            S3DestinationConnector,
-        )
+        from unstructured.ingest.connector.fsspec.gcs import GcsDestinationConnector
 
-        return S3DestinationConnector(
+        return GcsDestinationConnector(
             write_config=self.write_config, connector_config=self.connector_config
         )

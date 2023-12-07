@@ -6,7 +6,7 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.azure import (
+    from unstructured.ingest.connector.fsspec.azure import (
         AzureWriteTextConfig,
         SimpleAzureBlobStorageConfig,
     )
@@ -18,7 +18,7 @@ class AzureWriter(Writer, EnhancedDataClassJsonMixin):
     write_config: "AzureWriteTextConfig"
 
     def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
-        from unstructured.ingest.connector.azure import (
+        from unstructured.ingest.connector.fsspec.azure import (
             AzureBlobStorageDestinationConnector,
             AzureWriteConfig,
         )
