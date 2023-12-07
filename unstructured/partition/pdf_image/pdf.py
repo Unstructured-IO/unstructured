@@ -647,15 +647,15 @@ def _process_pdfminer_pages(
         updated_page_elements = []  # type: ignore
         for element in page_elements:
             if isinstance(element, ListItem):
-                list_item_present, parent_element = True, element
+                list_item_present = True
+                parent_element = element
                 parent_element_text = element.text
                 parent_element_coords = element.metadata.coordinates
             elif list_item_present and check_coords_within_boundary(
                 coordinates=element.metadata.coordinates,
                 boundary=parent_element_coords,
             ):
-                parent_element_text = f"{parent_element_text} {element.text}"
-                parent_element.text = parent_element_text
+                parent_element.text = f"{parent_element_text} {element.text}"
                 _update_coordinates(
                     element1=parent_element,
                     element2=element,
