@@ -7,7 +7,7 @@ from PIL import Image as PILImg
 
 from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import ElementMetadata, Image
+from unstructured.documents.elements import ElementMetadata, ElementType, Image
 from unstructured.partition.pdf_image import pdf_image_utils
 
 
@@ -99,7 +99,11 @@ def test_save_elements(filename=example_doc_path("embedded-images.pdf")):
         ]
 
         pdf_image_utils.save_elements(
-            elements=elements, pdf_image_dpi=200, filename=filename, output_dir_path=str(tmpdir)
+            elements=elements,
+            element_category_to_save=ElementType.IMAGE,
+            pdf_image_dpi=200,
+            filename=filename,
+            output_dir_path=str(tmpdir),
         )
 
         for i, el in enumerate(elements):
