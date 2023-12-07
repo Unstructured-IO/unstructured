@@ -15,6 +15,7 @@ from unstructured.ingest.connector.fsspec.box import BoxIngestDoc
 from unstructured.ingest.connector.fsspec.dropbox import DropboxIngestDoc
 from unstructured.ingest.connector.fsspec.gcs import GcsIngestDoc
 from unstructured.ingest.connector.fsspec.s3 import S3IngestDoc
+from unstructured.ingest.connector.fsspec.sftp import SftpIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
@@ -29,7 +30,6 @@ from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
-from unstructured.ingest.connector.sftp import SftpIngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
 from unstructured.ingest.connector.wikipedia import (

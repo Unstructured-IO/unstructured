@@ -4,6 +4,7 @@ import collections
 import typing as t
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
+from unstructured.ingest.cli.cmds.fsspec.sftp import get_base_src_cmd as sftp_base_src_cmd
 
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
@@ -38,7 +39,6 @@ from .outlook import get_base_src_cmd as outlook_base_src_cmd
 from .pinecone import get_base_dest_cmd as pinecone_base_dest_cmd
 from .reddit import get_base_src_cmd as reddit_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
-from .sftp import get_base_src_cmd as sftp_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
 from .weaviate import get_base_dest_cmd as weaviate_dest_cmd
