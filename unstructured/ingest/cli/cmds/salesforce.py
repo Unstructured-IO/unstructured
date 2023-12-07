@@ -54,8 +54,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="salesforce",
         cli_config=SalesforceCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleSalesforceConfig,
-        },
     )
     return cmd_cls

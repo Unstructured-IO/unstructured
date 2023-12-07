@@ -48,6 +48,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="biomed",
         cli_config=BiomedCliConfig,
-        addition_configs={"connector_config": SimpleBiomedConfig},
     )
     return cmd_cls

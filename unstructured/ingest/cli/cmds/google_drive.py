@@ -45,8 +45,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="google-drive",
         cli_config=GoogleDriveCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleGoogleDriveConfig,
-        },
     )
     return cmd_cls

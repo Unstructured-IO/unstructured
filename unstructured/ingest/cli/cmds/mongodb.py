@@ -51,9 +51,6 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=MongoDBCliConfig,
         additional_cli_options=[MongoDBCliWriteConfig],
-        addition_configs={
-            "connector_config": SimpleMongoDBStorageConfig,
-            "write_config": MongoDBWriteConfig,
-        },
+        write_config=MongoDBWriteConfig,
     )
     return cmd_cls

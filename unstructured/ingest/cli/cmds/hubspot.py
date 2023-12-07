@@ -64,8 +64,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="hubspot",
         cli_config=HubSpotCliConfig,
-        addition_configs={
-            "connector_config": SimpleHubSpotConfig,
-        },
     )
     return cmd_cls
