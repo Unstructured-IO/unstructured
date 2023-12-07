@@ -11,7 +11,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class BoxWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: "SimpleBoxConfig"
+    connector_config: "SimpleBoxConfig"
     write_config: "BoxWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
@@ -21,5 +21,5 @@ class BoxWriter(Writer, EnhancedDataClassJsonMixin):
 
         return BoxDestinationConnector(
             write_config=self.write_config,
-            connector_config=self.write_config,
+            connector_config=self.connector_config,
         )

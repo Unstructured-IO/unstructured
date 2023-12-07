@@ -52,8 +52,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="slack",
         cli_config=SlackCliConfig,
-        addition_configs={
-            "connector_config": SimpleSlackConfig,
-        },
     )
     return cmd_cls

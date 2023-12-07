@@ -63,8 +63,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="outlook",
         cli_config=OutlookCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleOutlookConfig,
-        },
     )
     return cmd_cls

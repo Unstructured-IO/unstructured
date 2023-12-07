@@ -65,6 +65,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="confluence",
         cli_config=ConfluenceCliConfig,
-        addition_configs={"connector_config": SimpleConfluenceConfig},
     )
     return cmd_cls

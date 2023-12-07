@@ -11,7 +11,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class S3Writer(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: "SimpleS3Config"
+    connector_config: "SimpleS3Config"
     write_config: "S3WriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
@@ -20,5 +20,5 @@ class S3Writer(Writer, EnhancedDataClassJsonMixin):
         )
 
         return S3DestinationConnector(
-            write_config=self.write_config, connector_config=self.fsspec_config
+            write_config=self.write_config, connector_config=self.connector_config
         )

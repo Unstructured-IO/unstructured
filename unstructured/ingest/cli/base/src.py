@@ -17,6 +17,8 @@ from unstructured.ingest.runner import runner_map
 class BaseSrcCmd(BaseCmd):
     def get_source_runner(self, options: dict):
         addition_configs = self.addition_configs
+        if "connector_config" not in addition_configs:
+            addition_configs["connector_config"] = self.cli_config
         configs = extract_configs(
             options,
             validate=[self.cli_config] if self.cli_config else None,

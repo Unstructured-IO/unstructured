@@ -50,8 +50,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="gitlab",
         cli_config=GitlabCliConfig,
-        addition_configs={
-            "connector_config": SimpleGitLabConfig,
-        },
     )
     return cmd_cls

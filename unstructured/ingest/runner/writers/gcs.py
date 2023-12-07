@@ -11,12 +11,12 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class GcsWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: "SimpleGcsConfig"
+    connector_config: "SimpleGcsConfig"
     write_config: "GcsWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.gcs import GcsDestinationConnector
 
         return GcsDestinationConnector(
-            write_config=self.write_config, connector_config=self.fsspec_config
+            write_config=self.write_config, connector_config=self.connector_config
         )

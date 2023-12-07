@@ -7,7 +7,7 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.box import BoxAccessConfig, BoxWriteConfig, SimpleBoxConfig
+from unstructured.ingest.connector.box import BoxAccessConfig, BoxWriteConfig
 
 CMD_NAME = "box"
 
@@ -31,7 +31,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=BoxCliConfig,
-        addition_configs={"connector_config": SimpleBoxConfig},
         is_fsspec=True,
     )
     return cmd_cls
@@ -43,7 +42,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=BoxCliConfig,
-        addition_configs={"connector_config": SimpleBoxConfig, "write_config": BoxWriteConfig},
+        write_config=BoxWriteConfig,
         is_fsspec=True,
     )
     return cmd_cls
