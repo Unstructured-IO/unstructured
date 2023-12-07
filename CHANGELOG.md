@@ -10,6 +10,7 @@
 
 * **Save tables in PDF's separately as images.** The "table" elements are saved as `table-<pageN>-<tableN>.jpg`. This filename is presented in the `image_path` metadata field for the Table element. The default would be to not do this.
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
+* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
 
 ### Fixes
 
