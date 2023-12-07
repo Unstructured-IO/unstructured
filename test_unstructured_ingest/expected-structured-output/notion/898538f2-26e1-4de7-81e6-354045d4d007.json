@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "94efbf7307081f8f45b11a183ad99254",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "Mission, Vision, Values"
+    "text": "Mission, Vision, Values",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "f116dc480f737022b3eef55d2095d808",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: A company mission provides direction and purpose, aligning actions and decisions towards a common goal. It also helps attract like-minded individuals who share the same values and vision for the company."
+    "text": "💡\n      \n      Notion Tip: A company mission provides direction and purpose, aligning actions and decisions towards a common goal. It also helps attract like-minded individuals who share the same values and vision for the company.",
+    "type": "NarrativeText"
   }
 ]
