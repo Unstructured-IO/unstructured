@@ -6,20 +6,20 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.box import BoxWriteConfig, SimpleBoxConfig
+    from unstructured.ingest.connector.dropbox import DropboxWriteConfig, SimpleDropboxConfig
 
 
 @dataclass
-class BoxWriter(Writer, EnhancedDataClassJsonMixin):
-    connector_config: "SimpleBoxConfig"
-    write_config: "BoxWriteConfig"
+class DropboxWriter(Writer, EnhancedDataClassJsonMixin):
+    connector_config: "SimpleDropboxConfig"
+    write_config: "DropboxWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
-        from unstructured.ingest.connector.box import (
-            BoxDestinationConnector,
+        from unstructured.ingest.connector.fsspec.dropbox import (
+            DropboxDestinationConnector,
         )
 
-        return BoxDestinationConnector(
+        return DropboxDestinationConnector(
             write_config=self.write_config,
             connector_config=self.connector_config,
         )
