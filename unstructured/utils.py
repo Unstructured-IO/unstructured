@@ -7,7 +7,7 @@ import platform
 import subprocess
 from datetime import datetime
 from functools import wraps
-from itertools import combinations
+from itertools import combinations, islice
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -186,6 +186,30 @@ def save_as_jsonl(data: List[Dict], filename: str) -> None:
 def read_from_jsonl(filename: str) -> List[Dict]:
     with open(filename) as input_file:
         return [json.loads(line) for line in input_file]
+
+
+def generator_batching(iterable, batch_size=100):
+    """Generator function to yield batches based on a specified size limit in items."""
+    while chunk := tuple(islice(iter(iterable), batch_size)):
+        yield chunk
+
+
+def generator_batching_wbytes(iterable, batch_size_limit_bytes=15_000_000):
+    """Generator function to yield batches based on a specified size limit in bytes."""
+    current_batch, current_batch_size = [], 0
+
+    for item in iterable:
+        item_size_bytes = len(json.dumps(item).encode("utf-8"))
+
+        if current_batch_size + item_size_bytes <= batch_size_limit_bytes:
+            current_batch.append(item)
+            current_batch_size += item_size_bytes
+        else:
+            yield current_batch
+            current_batch, current_batch_size = [item], item_size_bytes
+
+    if current_batch:
+        yield current_batch
 
 
 def requires_dependencies(
@@ -480,12 +504,7 @@ def identify_overlapping_case(
     type1, type2 = label_pair
     text1, text2 = text_pair
     ix_element1, ix_element2 = ix_pair
-    (
-        overlap_percentage,
-        max_area,
-        min_area,
-        total_area,
-    ) = calculate_overlap_percentage(
+    (overlap_percentage, max_area, min_area, total_area) = calculate_overlap_percentage(
         box1,
         box2,
         intersection_ratio_method="partial",

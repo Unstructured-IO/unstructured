@@ -26,4 +26,4 @@ if __name__ == "__main__":
             "Elasticsearch dest check failed:"
             f"got {count} items in index, expected {N_ELEMENTS} items in index."
         )
-    print("Elasticsearch destination test was successful")
+    print(f"Elasticsearch destination test was successful with {count} items being uploaded.")

@@ -5,6 +5,7 @@ import sys
 import typing as t
 import uuid
 from dataclasses import dataclass, field
+from itertools import chain
 from pathlib import Path
 
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
@@ -21,7 +22,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
-from unstructured.utils import requires_dependencies
+from unstructured.utils import generator_batching_wbytes, requires_dependencies
 
 if t.TYPE_CHECKING:
     from elasticsearch import Elasticsearch
@@ -299,30 +300,31 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     DestinationConnectionError.wrap
 
-    def form_elasticsearch_doc_dict(self, data_dict, index_name=None, doc_id=None):
+    def form_es_doc_dict(self, data_dict, index_name=None, element_es_id=None):
         if index_name is None:
             index_name = self.connector_config.index_name
 
-        if doc_id is None:
-            doc_id = str(uuid.uuid4())
+        if element_es_id is None:
+            element_es_id = str(uuid.uuid4())
 
         return {
             "_index": index_name,
-            "_id": doc_id,
+            "_id": element_es_id,
             "_source": data_dict,
         }
 
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
-            f"writing {len(element_dicts)} documents to destination "
+            f"writing document batches to destination "
             f"index named {self.connector_config.index_name} "
             f"at {self.connector_config.url}"
         )
         from elasticsearch.helpers import bulk
 
-        # TODO-dest batch management (size control etc) here
-        bulk_data = [self.form_elasticsearch_doc_dict(elmnt_dict) for elmnt_dict in element_dicts]
-        bulk(self.client, bulk_data)
+        es_elem_dicts = (self.form_es_doc_dict(element_dict) for element_dict in element_dicts)
+
+        for batch in generator_batching_wbytes(es_elem_dicts, batch_size_limit_bytes=15_000_000):
+            bulk(self.client, batch)
 
     def conform_dict(self, element_dict):
         return {
@@ -337,17 +339,12 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        element_dicts_all_docs: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                element_dicts_one_doc = json.load(json_file)
-                element_dicts_one_doc = [
-                    self.conform_dict(element_dict) for element_dict in element_dicts_one_doc
-                ]
-                logger.info(
-                    f"appending {len(element_dicts_one_doc)} elements from "
-                    f"content in doc: {local_path}"
+        def generate_element_dicts(doc):
+            with open(doc._output_filename) as json_file:
+                element_dicts_one_doc = (
+                    self.conform_dict(element_dict) for element_dict in json.load(json_file)
                 )
-                element_dicts_all_docs.extend(element_dicts_one_doc)
-        self.write_dict(element_dicts=element_dicts_all_docs)
+                yield from element_dicts_one_doc
+
+        # We chain to unite the generators into one generator
+        self.write_dict(chain(*(generate_element_dicts(doc) for doc in docs)))
