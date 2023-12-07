@@ -36,6 +36,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "gcs",
     "box",
     "dropbox",
+    "sftp",
 ]
 
 

@@ -29,6 +29,7 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    source_connectors/reddit
    source_connectors/s3
    source_connectors/salesforce
+   source_connectors/sftp
    source_connectors/sharepoint
    source_connectors/slack
    source_connectors/wikipedia
