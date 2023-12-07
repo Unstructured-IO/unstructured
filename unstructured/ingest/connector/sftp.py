@@ -62,6 +62,10 @@ class SftpSourceConnector(FsspecSourceConnector):
     connector_config: SimpleSftpConfig
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
+    def initialize(self):
+        super().initialize()
+
+    @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def check_connection(self):
         from fsspec.implementations.sftp import SFTPFileSystem
 
