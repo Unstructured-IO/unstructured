@@ -31,7 +31,7 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=BoxCliConfig,
-        addition_configs={"fsspec_config": SimpleBoxConfig},
+        addition_configs={"connector_config": SimpleBoxConfig},
         is_fsspec=True,
     )
     return cmd_cls
