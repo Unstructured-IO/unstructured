@@ -7,13 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.s3 import S3AccessConfig, S3WriteConfig, SimpleS3Config
+from unstructured.ingest.connector.s3 import S3WriteConfig, SimpleS3Config
 
 CMD_NAME = "s3"
 
 
 @dataclass
-class S3CliConfig(S3AccessConfig, CliConfig):
+class S3CliConfig(SimpleS3Config, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -57,7 +57,6 @@ def get_base_src_cmd():
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=S3CliConfig,
-        addition_configs={"connector_config": SimpleS3Config},
         is_fsspec=True,
     )
     return cmd_cls
@@ -69,7 +68,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=S3CliConfig,
-        addition_configs={"connector_config": SimpleS3Config, "write_config": S3WriteConfig},
+        write_config=S3WriteConfig,
         is_fsspec=True,
     )
     return cmd_cls

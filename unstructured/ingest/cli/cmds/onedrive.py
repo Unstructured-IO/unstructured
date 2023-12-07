@@ -62,8 +62,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="onedrive",
         cli_config=OnedriveCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleOneDriveConfig,
-        },
     )
     return cmd_cls

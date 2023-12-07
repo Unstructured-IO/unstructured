@@ -7,17 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.azure import (
-    AzureAccessConfig,
-    AzureWriteTextConfig,
-    SimpleAzureBlobStorageConfig,
-)
+from unstructured.ingest.connector.azure import AzureWriteConfig, SimpleAzureBlobStorageConfig
 
 CMD_NAME = "azure"
 
 
 @dataclass
-class AzureCliConfig(AzureAccessConfig, CliConfig):
+class AzureCliConfig(SimpleAzureBlobStorageConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -58,7 +54,7 @@ class AzureCliConfig(AzureAccessConfig, CliConfig):
 
 
 @dataclass
-class AzureCliWriteConfig(AzureWriteTextConfig, CliConfig):
+class AzureCliWriteConfig(AzureWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -77,7 +73,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=AzureCliConfig,
-        addition_configs={"connector_config": SimpleAzureBlobStorageConfig},
         is_fsspec=True,
     )
     return cmd_cls
@@ -89,10 +84,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=AzureCliConfig,
-        addition_configs={
-            "connector_config": SimpleAzureBlobStorageConfig,
-            "write_config": AzureWriteTextConfig,
-        },
+        write_config=AzureCliWriteConfig,
         is_fsspec=True,
         additional_cli_options=[AzureCliWriteConfig],
     )

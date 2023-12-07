@@ -14,16 +14,16 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class AzureWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: "SimpleAzureBlobStorageConfig"
+    connector_config: "SimpleAzureBlobStorageConfig"
     write_config: "AzureWriteTextConfig"
 
     def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
         from unstructured.ingest.connector.azure import (
             AzureBlobStorageDestinationConnector,
+            AzureWriteConfig,
         )
-        from unstructured.ingest.connector.fsspec import FsspecWriteConfig
 
         return AzureBlobStorageDestinationConnector(
-            write_config=FsspecWriteConfig(write_text_config=self.write_config),
-            connector_config=self.fsspec_config,
+            write_config=AzureWriteConfig(write_text_config=self.write_config),
+            connector_config=self.connector_config,
         )

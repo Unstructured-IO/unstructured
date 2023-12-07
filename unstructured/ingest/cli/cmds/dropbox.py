@@ -10,7 +10,6 @@ from unstructured.ingest.cli.interfaces import (
 from unstructured.ingest.connector.dropbox import (
     DropboxAccessConfig,
     DropboxWriteConfig,
-    SimpleDropboxConfig,
 )
 
 CMD_NAME = "dropbox"
@@ -35,7 +34,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=DropboxCliConfig,
-        addition_configs={"connector_config": SimpleDropboxConfig},
         is_fsspec=True,
     )
     return cmd_cls
@@ -47,10 +45,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=DropboxCliConfig,
-        addition_configs={
-            "connector_config": SimpleDropboxConfig,
-            "write_config": DropboxWriteConfig,
-        },
+        write_config=DropboxWriteConfig,
         is_fsspec=True,
     )
     return cmd_cls

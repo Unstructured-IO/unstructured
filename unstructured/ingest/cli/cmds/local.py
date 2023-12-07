@@ -38,8 +38,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="local",
         cli_config=LocalCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleLocalConfig,
-        },
     )
     return cmd_cls

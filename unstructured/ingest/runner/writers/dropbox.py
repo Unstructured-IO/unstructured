@@ -11,7 +11,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class DropboxWriter(Writer, EnhancedDataClassJsonMixin):
-    fsspec_config: "SimpleDropboxConfig"
+    connector_config: "SimpleDropboxConfig"
     write_config: "DropboxWriteConfig"
 
     def get_connector(self, **kwargs) -> BaseDestinationConnector:
@@ -21,5 +21,5 @@ class DropboxWriter(Writer, EnhancedDataClassJsonMixin):
 
         return DropboxDestinationConnector(
             write_config=self.write_config,
-            connector_config=self.fsspec_config,
+            connector_config=self.connector_config,
         )

@@ -78,9 +78,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=DeltaTableCliConfig,
-        addition_configs={
-            "connector_config": SimpleDeltaTableConfig,
-        },
     )
     return cmd_cls
 
@@ -92,9 +89,6 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=DeltaTableCliConfig,
         additional_cli_options=[DeltaTableCliWriteConfig],
-        addition_configs={
-            "connector_config": SimpleDeltaTableConfig,
-            "write_config": DeltaTableWriteConfig,
-        },
+        write_config=DeltaTableWriteConfig,
     )
     return cmd_cls

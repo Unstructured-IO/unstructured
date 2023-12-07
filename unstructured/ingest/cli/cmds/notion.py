@@ -44,8 +44,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="notion",
         cli_config=NotionCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleNotionConfig,
-        },
     )
     return cmd_cls

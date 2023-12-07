@@ -65,6 +65,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="airtable",
         cli_config=AirtableCliConfig,
-        addition_configs={"connector_config": SimpleAirtableConfig},
     )
     return cmd_cls
