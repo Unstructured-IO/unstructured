@@ -268,6 +268,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
 @dataclass
 class ElasticsearchWriteConfig(WriteConfig):
     batch_size: int
+    num_processes: int
 
 
 @dataclass
@@ -319,12 +320,16 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             f"index named {self.connector_config.index_name} "
             f"at {self.connector_config.url}"
         )
-        from elasticsearch.helpers import bulk
+        from elasticsearch.helpers import parallel_bulk
 
         es_elem_dicts = (self.form_es_doc_dict(element_dict) for element_dict in element_dicts)
 
         for batch in generator_batching_wbytes(es_elem_dicts, batch_size_limit_bytes=15_000_000):
-            bulk(self.client, batch)
+            for success, info in parallel_bulk(
+                self.client, batch, thread_count=self.write_config.num_processes
+            ):
+                if not success:
+                    print("A batch failed:", info)
 
     def conform_dict(self, element_dict):
         return {

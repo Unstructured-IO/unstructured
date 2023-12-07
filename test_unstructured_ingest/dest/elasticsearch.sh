@@ -53,5 +53,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   elasticsearch \
   --url http://localhost:9200 \
   --index-name ingest-test-destination \
+  --num-processes "$max_processes"
 
 scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py

@@ -46,7 +46,8 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
 
 @dataclass
 class ElasticsearchCliWriteConfig(CliConfig):
-    batch_size: t.Optional[str] = None
+    batch_size: t.Optional[int] = None
+    num_processes: t.Optional[int] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -55,8 +56,15 @@ class ElasticsearchCliWriteConfig(CliConfig):
                 ["--batch-size-upload"],
                 required=True,
                 default=10,
-                type=str,
+                type=int,
                 help="Number of items to be uploaded each time",
+            ),
+            click.Option(
+                ["--num-processes"],
+                required=True,
+                default=2,
+                type=int,
+                help="Number of processes to be used while uploading content",
             ),
         ]
         return options
