@@ -67,8 +67,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="jira",
         cli_config=JiraCliConfig,
-        addition_configs={
-            "connector_config": SimpleJiraConfig,
-        },
     )
     return cmd_cls

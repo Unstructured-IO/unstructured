@@ -62,8 +62,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
         cmd_name="sharepoint",
         cli_config=SharepointCliConfig,
         additional_cli_options=[CliRecursiveConfig],
-        addition_configs={
-            "connector_config": SimpleSharepointConfig,
-        },
     )
     return cmd_cls

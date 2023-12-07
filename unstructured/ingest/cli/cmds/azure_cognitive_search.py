@@ -60,9 +60,6 @@ def get_base_dest_cmd():
         cmd_name="azure-cognitive-search",
         cli_config=AzureCognitiveSearchCliConfig,
         additional_cli_options=[AzureCognitiveSearchCliWriteConfig],
-        addition_configs={
-            "connector_config": SimpleAzureCognitiveSearchStorageConfig,
-            "write_config": AzureCognitiveSearchCliWriteConfig,
-        },
+        write_config=AzureCognitiveSearchCliWriteConfig,
     )
     return cmd_cls

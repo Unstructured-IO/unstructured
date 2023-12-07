@@ -63,8 +63,5 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="reddit",
         cli_config=RedditCliConfig,
-        addition_configs={
-            "connector_config": SimpleRedditConfig,
-        },
     )
     return cmd_cls

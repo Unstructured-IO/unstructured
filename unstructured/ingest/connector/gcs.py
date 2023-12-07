@@ -51,7 +51,6 @@ class GcsSourceConnector(FsspecSourceConnector):
         self.ingest_doc_cls: Type[GcsIngestDoc] = GcsIngestDoc
 
 
-@requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
 @dataclass
 class GcsDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleGcsConfig
