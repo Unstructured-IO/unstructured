@@ -146,9 +146,11 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
         collection = self.chroma_collection
 
         try:
+            print("%%%%%%%%%%%%% Upserting Batch %%%%%%%%%%%%%%")
             # breakpoint()
+            print(batch)
             # Chroma wants lists even if there is only one element
-            response = collection.add(ids=[batch["ids"]], documents=[batch["documents"]], embeddings=[batch["embeddings"]], metadatas=[batch["metadatas"]])
+            response = collection.add(ids=batch["ids"], documents=batch["documents"], embeddings=batch["embeddings"], metadatas=batch["metadatas"])
         except Exception as e:
             raise WriteError(f"chroma error: {e}") from e
         logger.debug(f"results: {response}") # Does this do anything?????
@@ -162,6 +164,20 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
         while chunk:
             yield chunk
             chunk = tuple(itertools.islice(it, batch_size))
+
+    @staticmethod
+    def prepare_chroma_dict(chunk: t.Tuple[t.Dict[str, t.Any]])-> t.Dict[str, t.List[t.Any]]:
+        """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
+        ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
+        # breakpoint()
+        chroma_dict = {}
+        chroma_dict["ids"] = [x.get("id") for x in chunk]
+        chroma_dict["documents"] = [x.get("document") for x in chunk]
+        chroma_dict["embeddings"] = [x.get("embedding") for x in chunk]
+        chroma_dict["metadatas"] = [x.get("metadata") for x in chunk]
+        assert len(chroma_dict["ids"]) == len(chroma_dict["documents"]) == len(chroma_dict["embeddings"]) == len(chroma_dict["metadatas"])
+        # print(chroma_dict)
+        return chroma_dict
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
@@ -183,21 +199,32 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
                 print(f"len dict list: {len(chunk)}")
                 # breakpoint()
                 # Here we need to parse out the batch into 4 lists (ids, documents, embeddings, metadatas)
-                for i in range(0, len(chunk)):
-                    self.upsert_batch(chunk[i])  
+                # and also check that the lengths match.
+                
+                # upsert_batch expects a dict with 4 lists (ids, documents, embeddings, metadatas)
+               
+                self.upsert_batch(self.prepare_chroma_dict(chunk))
+
+                # for i in range(0, len(chunk)):
+                #     self.upsert_batch(chunk[i])  
 
         else:
+            # breakpoint()
             print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
             with mp.Pool(
                 processes=self.write_config.num_processes,
             ) as pool:
-                pool.map(
-                    self.upsert_batch,
-                    [
-                        dict_list[i]  # noqa: E203
-                        for i in range(0, len(dict_list))
-                    ],  # noqa: E203
-                )
+                # Prepare the list of lists for multiprocessing
+                # pool.map expects a list of dicts with 4 lists (ids, documents, embeddings, metadatas)
+
+                # Prepare the list of chunks for multiprocessing
+                chunk_list = list(self.chunks(self.prepare_chroma_dict(dict_list)))
+                ########## this is nor workiing above ^
+                print(f"len chunk list: {len(chunk_list)}")
+                print(chunk_list)
+                # Upsert each chunk using multiprocessing
+                with mp.Pool(processes=self.write_config.num_processes) as pool:
+                    pool.map(self.upsert_batch, chunk_list)
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
@@ -221,10 +248,10 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
                     {
                         # is element id right id?
                         # "ids": element.pop("element_id", None),
-                        "ids": str(uuid.uuid4()),
-                        "embeddings": element.pop("embeddings", None),
-                        "documents": element.pop("text", None),
-                        "metadatas": flatten_dict({k: v for k, v in element.items()},separator="-",flatten_lists=True),
+                        "id": str(uuid.uuid4()),
+                        "embedding": element.pop("embeddings", None),
+                        "document": element.pop("text", None),
+                        "metadata": flatten_dict({k: v for k, v in element.items()},separator="-",flatten_lists=True),
                     }
                     for element in dict_content
                 ]
