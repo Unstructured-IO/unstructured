@@ -222,9 +222,11 @@ class ChunkingConfig(BaseConfig):
 
 @dataclass
 class PermissionsConfig(BaseConfig):
-    application_id: t.Optional[str] = None
-    tenant: t.Optional[str] = None
-    client_cred: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    application_id: t.Optional[str] = enhanced_field(overload_name="permissions_application_id")
+    tenant: t.Optional[str] = enhanced_field(overload_name="permissions_tenant")
+    client_cred: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="permissions_client_cred"
+    )
 
 
 # module-level variable to store session handle
@@ -694,7 +696,7 @@ class PermissionsCleanupMixin:
         """Recursively clean up downloaded files and directories."""
         if cur_dir is None:
             cur_dir = Path(self.processor_config.output_dir, "permissions_data")
-        if cur_dir is None:
+        if not Path(cur_dir).exists():
             return
         if Path(cur_dir).is_file():
             cur_file = cur_dir
