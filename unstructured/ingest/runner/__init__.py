@@ -2,17 +2,18 @@ import typing as t
 from typing import Type
 
 from .airtable import AirtableRunner
-from .azure import AzureRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
-from .box import BoxRunner
 from .confluence import ConfluenceRunner
 from .delta_table import DeltaTableRunner
 from .discord import DiscordRunner
-from .dropbox import DropboxRunner
 from .elasticsearch import ElasticSearchRunner
-from .fsspec import FsspecRunner
-from .gcs import GCSRunner
+from .fsspec.azure import AzureRunner
+from .fsspec.box import BoxRunner
+from .fsspec.dropbox import DropboxRunner
+from .fsspec.fsspec import FsspecRunner
+from .fsspec.gcs import GCSRunner
+from .fsspec.s3 import S3Runner
 from .github import GithubRunner
 from .gitlab import GitlabRunner
 from .google_drive import GoogleDriveRunner
@@ -23,7 +24,6 @@ from .notion import NotionRunner
 from .onedrive import OneDriveRunner
 from .outlook import OutlookRunner
 from .reddit import RedditRunner
-from .s3 import S3Runner
 from .salesforce import SalesforceRunner
 from .sftp import SftpRunner
 from .sharepoint import SharePointRunner

@@ -8,7 +8,7 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_remote_url
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.fsspec import SimpleFsspecConfig
+    from unstructured.ingest.connector.fsspec.fsspec import SimpleFsspecConfig
 
 
 class FsspecRunner(Runner):
@@ -31,7 +31,7 @@ class FsspecRunner(Runner):
         )
 
     def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
-        from unstructured.ingest.connector.fsspec import (
+        from unstructured.ingest.connector.fsspec.fsspec import (
             FsspecSourceConnector,
         )
 
