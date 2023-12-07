@@ -35,7 +35,7 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=DropboxCliConfig,
-        addition_configs={"fsspec_config": SimpleDropboxConfig},
+        addition_configs={"connector_config": SimpleDropboxConfig},
         is_fsspec=True,
     )
     return cmd_cls
