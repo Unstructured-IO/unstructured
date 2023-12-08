@@ -441,7 +441,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "27a3cde643219ef7662f032684e06bd4",
+    "element_id": "d5e389eb1b6b367ac5cf6e12acccfcbc",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -458,7 +458,7 @@
       ],
       "page_number": 4
     },
-    "text": "  Marine    CSP  40,000    Solar PV  35,000    Geothermal  30,000    Wind    Bioenergy  25,000    Hydro  20,000    Nuclear  15,000    Gas  10,000    Oil    Coal  5,000  0 ",
+    "text": "  Marine  40,000    CSP  35,000    Solar PV    Geothermal  30,000    Wind  25,000    Bioenergy  20,000    Hydro    Nuclear  15,000    Gas  10,000    Oil  5,000    Coal  0 ",
     "type": "Image"
   },
   {
@@ -1071,7 +1071,7 @@
     "type": "Title"
   },
   {
-    "element_id": "196f551acb55f0373a9d7fac6c9dbeab",
+    "element_id": "2a5e6485f55769e5d4c820cb79f018d7",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1088,7 +1088,7 @@
       ],
       "page_number": 7
     },
-    "text": "300  250  200  150  100  50  0  O nshore Wind  Offshore Wind  N uclear  m ercial Photovoltaic  C oal  C C G T  C o m ",
+    "text": "300  250  200  150  100  50  0  m ercial Photovoltaic  C o m  O nshore Wind  Offshore Wind  N uclear  C C G T  C oal ",
     "type": "Image"
   },
   {
@@ -1281,7 +1281,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "577fd212dac38df299e478d6b7ce5d74",
+    "element_id": "2d52b4cb071eb1384e8f64581d907335",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1298,7 +1298,7 @@
       ],
       "page_number": 8
     },
-    "text": "120  120  99.5  100  71.9  80  60  40  20  8.5  1.78  0.245  <0.01  0  Offshore wind  O nshore wind (G erm any)  C oal  Oil  N atural gas  N uclear*  S olar P V  (U K) ",
+    "text": "120  100  120  99.5  80  60  71.9  40  20  0  C oal  Oil  N atural gas  8.5  1.78  Offshore wind  O nshore wind (G erm any)  (U K)  0.245  S olar P V  <0.01  N uclear* ",
     "type": "Image"
   },
   {
@@ -1533,7 +1533,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "1459b67becac6e70efecfcbc9312d3f0",
+    "element_id": "67ff7489d537e35454934b9dc3a725f9",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1550,7 +1550,7 @@
       ],
       "page_number": 8
     },
-    "text": "  Coal  90    Gas/Oil  80    Biofuels/Waste    Wind/Solar  70    Hydro  60    Nuclear  50  40  30  20  10 ",
+    "text": "90    Coal    Gas/Oil  80    Biofuels/Waste  70    Wind/Solar  60    Hydro    Nuclear  50  40  30  20  10 ",
     "type": "Image"
   },
   {
@@ -1659,7 +1659,7 @@
     "type": "FigureCaption"
   },
   {
-    "element_id": "ff963f0df99d82f7c343649121217117",
+    "element_id": "dddeec4eec1ff6db9e832ed00fea1b7e",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36",
@@ -1676,7 +1676,7 @@
       ],
       "page_number": 9
     },
-    "text": "600    Non-hydro  500     ren. & waste    Nuclear  400    Natural gas  300    Hydro    Oil  200    Coal  100  0 ",
+    "text": "600  500    Non-hydro     ren. & waste  400    Nuclear    Natural gas  300    Hydro  200    Oil    Coal  100  0 ",
     "type": "Image"
   },
   {

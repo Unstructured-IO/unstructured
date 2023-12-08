@@ -416,7 +416,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4e5faed345ed29d23513a466e412ec0a",
+    "element_id": "d022b06e927bb8ee92ff9034e08e62de",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -425,7 +425,7 @@
       ],
       "page_number": 2
     },
-    "text": "i , a start location, ls i , and an end location, le i , i , an end time, te and",
+    "text": "i , a start location, ls i , an end time, te i , and an end location, le i , and",
     "type": "NarrativeText"
   },
   {
@@ -637,7 +637,7 @@
     "type": "Title"
   },
   {
-    "element_id": "ff667ddf988229560eaac54fc38ddc66",
+    "element_id": "cf21fea12c5e4fac7b8606af479c6edf",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -646,7 +646,7 @@
       ],
       "page_number": 4
     },
-    "text": "Number of lines Number of columns in each line Description 1 1 n 3 m 4 The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j. i , the start i , the end location le l l",
+    "text": "Number of lines Number of columns in each line Description 1 1 n l 3 m 4 l The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i ¼ 1; 2; …; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, δij; where i; j A 1; 2; …; l, refers to the travel time between location i and location j. i , the start i , the end location le",
     "type": "Table"
   },
   {
