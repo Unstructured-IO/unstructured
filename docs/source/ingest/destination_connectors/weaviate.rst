@@ -29,6 +29,8 @@ running locally.
             --num-processes 2 \
             --verbose \
             --strategy fast \
+            --chunk-elements \
+            --embedding-provider <an unstructured embedding provider, ie. langchain-huggingface> \
             weaviate \
             --host-url http://localhost:8080 \
             --class-name elements \
@@ -51,6 +53,12 @@ running locally.
                 ),
                 read_config=ReadConfig(),
                 partition_config=PartitionConfig(),
+                chunking_config=ChunkingConfig(
+                  chunk_elements=True
+                ),
+                embedding_config=EmbeddingConfig(
+                  provider="langchain-huggingface",
+                ),
                 writer_type="weaviate",
                 writer_kwargs={
                     "host_url": os.getenv("WEAVIATE_HOST_URL"),
