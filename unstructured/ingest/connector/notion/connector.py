@@ -1,6 +1,7 @@
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
+from uuid import UUID
 
 import httpx
 
@@ -38,6 +39,13 @@ class SimpleNotionConfig(BaseConnectorConfig):
     page_ids: t.Optional[t.List[str]] = None
     database_ids: t.Optional[t.List[str]] = None
     recursive: bool = False
+
+    def __post_init__(self):
+        if self.page_ids:
+            self.page_ids = [str(UUID(p.strip())) for p in self.page_ids]
+
+        if self.database_ids:
+            self.database_ids = [str(UUID(d.strip())) for d in self.database_ids]
 
 
 @dataclass
