@@ -237,6 +237,7 @@ class WriteConfig(BaseConfig):
     pass
 
 
+@dataclass
 class BaseConnectorConfig(BaseConfig, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
