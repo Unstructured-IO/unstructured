@@ -15,7 +15,7 @@ def run_check(db_path, collection_name):
     number_of_embeddings = collection.count()
     expected_embeddings = 3
     print(
-        f"Number of embeddings in collection vs expected: {number_of_embeddings}/{expected_embeddings}"
+        f"# of embeddings in collection vs expected: {number_of_embeddings}/{expected_embeddings}"
     )
 
     assert number_of_embeddings == expected_embeddings, (

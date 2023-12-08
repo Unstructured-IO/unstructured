@@ -47,7 +47,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        create_chroma_object(self.db_path, self.collection_name)
+        _ = self.chroma_collection
 
     @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self):  #### -> "PineconeIndex":
@@ -123,9 +123,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
                         "id": str(uuid.uuid4()),
                         "embedding": element.pop("embeddings", None),
                         "document": element.pop("text", None),
-                        "metadata": flatten_dict(
-                            {k: v for k, v in element.items()}, separator="-", flatten_lists=True
-                        ),
+                        "metadata": flatten_dict(element, separator="-", flatten_lists=True),
                     }
                     for element in dict_content
                 ]

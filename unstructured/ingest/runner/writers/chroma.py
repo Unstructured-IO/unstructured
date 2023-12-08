@@ -6,7 +6,7 @@ from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 if t.TYPE_CHECKING:
-    pass
+    from unstructured.ingest.connector.chroma import ChromaWriteConfig, SimpleChromaConfig
 
 
 @dataclass
