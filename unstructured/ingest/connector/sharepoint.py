@@ -43,8 +43,9 @@ class SimpleSharepointConfig(BaseConnectorConfig):
     client_id: str
     site: str
     path: str
-    process_pages: bool = False
+    process_pages: bool = enhanced_field(default=True, init=False)
     recursive: bool = False
+    files_only: bool = False
     permissions_config: t.Optional[SharepointPermissionsConfig] = None
 
     def __post_init__(self):
@@ -53,6 +54,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
                 "Please provide one of the following mandatory values:"
                 "\n--client-id\n--client-cred\n--site",
             )
+        self.process_pages = not self.files_only
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def get_site_client(self, site_url: str = "") -> "ClientContext":
