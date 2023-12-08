@@ -396,33 +396,102 @@ def test_convert_to_coco():
 
 
 def test_flatten_dict():
-    dictionary = {
-        "data_source": {
-            "url": "example-docs/book-war-and-peace-1p.txt",
-            "date_created": "2023-10-25 10:05:44.916316",
-            "date_modified": "2023-10-25 10:05:44.916316",
-            "permissions_data": [{"mode": 33188}],
-        },
-        "filetype": "text/plain",
-        "languages": ["eng", "french"],
-    }
-    expected_output = {
-        "data_source.url": "example-docs/book-war-and-peace-1p.txt",
-        "data_source.date_created": "2023-10-25 10:05:44.916316",
-        "data_source.date_modified": "2023-10-25 10:05:44.916316",
-        "data_source.permissions_data.0.mode": 33188,
-        "filetype": "text/plain",
-        "languages.0": "eng",
-        "languages.1": "french",
-    }
-    assert base.flatten_dict(dictionary, separator=".", flatten_lists=True) == expected_output
+    """Flattening a simple dictionary"""
+    dictionary = {"a": 1, "b": 2, "c": 3}
+    expected_result = {"a": 1, "b": 2, "c": 3}
+    assert base.flatten_dict(dictionary) == expected_result
 
-    # Test with keys to omit
-    keys_to_omit = ["filetype", "languages"]
-    expected_output = {
-        "data_source.url": "example-docs/book-war-and-peace-1p.txt",
-        "data_source.date_created": "2023-10-25 10:05:44.916316",
-        "data_source.date_modified": "2023-10-25 10:05:44.916316",
-        "data_source.permissions_data.0.mode": 33188,
-    }
-    assert base.flatten_dict(dictionary, separator=".",flatten_lists=True,keys_to_omit=keys_to_omit) == expected_output
+
+def test_flatten_nested_dict():
+    """Flattening a nested dictionary"""
+    dictionary = {"a": 1, "b": {"c": 2, "d": 3}, "e": 4}
+    expected_result = {"a": 1, "b_c": 2, "b_d": 3, "e": 4}
+    assert base.flatten_dict(dictionary) == expected_result
+
+
+def test_flatten_dict_with_lists():
+    """Flattening a dictionary with lists"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
+    expected_result = {"a": 1, "b": [2, 3, 4], "c_d": 5, "c_e": [6, 7]}
+    assert base.flatten_dict(dictionary) == expected_result
+
+
+def test_flatten_dict_with_omit_keys():
+    """Flattening a dictionary with keys to omit"""
+    dictionary = {"a": 1, "b": {"c": 2, "d": 3}, "e": 3}
+    keys_to_omit = ["b"]
+    expected_result = {"a": 1, "b": {"c": 2, "d": 3}, "e": 3}
+    assert base.flatten_dict(dictionary, keys_to_omit=keys_to_omit) == expected_result
+
+
+def test_flatten_dict_alt_separator():
+    """Flattening a dictionary with separator other than "_" """
+    dictionary = {"a": 1, "b": {"c": 2, "d": 3}, "e": 4}
+    separator = "-"
+    expected_result = {"a": 1, "b-c": 2, "b-d": 3, "e": 4}
+    assert base.flatten_dict(dictionary, separator=separator) == expected_result
+
+
+def test_flatten_dict_flatten_list():
+    """Flattening a dictionary with flatten_lists set to True"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c_d": 5, "c_e_0": 6, "c_e_1": 7}
+    assert base.flatten_dict(dictionary, flatten_lists=True) == expected_result
+
+
+def test_flatten_dict_flatten_list_omit_keys():
+    """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
+    keys_to_omit = ["c"]
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c": {"d": 5, "e": [6, 7]}}
+    assert (
+        base.flatten_dict(dictionary, keys_to_omit=keys_to_omit, flatten_lists=True)
+        == expected_result
+    )
+
+
+def test_flatten_dict_flatten_list_omit_keys2():
+    """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
+    keys_to_omit = ["b"]
+    expected_result = {"a": 1, "b": [2, 3, 4], "c_d": 5, "c_e_0": 6, "c_e_1": 7}
+    assert (
+        base.flatten_dict(dictionary, keys_to_omit=keys_to_omit, flatten_lists=True)
+        == expected_result
+    )
+
+
+def test_flatten_dict_flatten_list_omit_keys3():
+    """Flattening a dictionary with flatten_lists set to True and also omitting nested keys"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
+    keys_to_omit = ["c_e"]
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c_d": 5, "c_e": [6, 7]}
+    assert (
+        base.flatten_dict(dictionary, keys_to_omit=keys_to_omit, flatten_lists=True)
+        == expected_result
+    )
+
+
+def test_flatten_dict_flatten_list_omit_keys4():
+    """Flattening a dictionary with flatten_lists set to True and also omitting nested keys"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": {"f": 6, "g": 7}}}
+    keys_to_omit = ["c_e"]
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c_d": 5, "c_e": {"f": 6, "g": 7}}
+    assert (
+        base.flatten_dict(dictionary, keys_to_omit=keys_to_omit, flatten_lists=True)
+        == expected_result
+    )
+
+
+def test_flatten_empty_dict():
+    """Flattening an empty dictionary"""
+    dictionary = {}
+    expected_result = {}
+    assert base.flatten_dict(dictionary) == expected_result
+
+
+def test_flatten_dict_empty_lists():
+    """Flattening a dictionary with empty lists"""
+    dictionary = {"a": [], "b": {"c": []}}
+    expected_result = {"a": [], "b_c": []}
+    assert base.flatten_dict(dictionary) == expected_result
