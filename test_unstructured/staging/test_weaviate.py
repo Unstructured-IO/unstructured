@@ -7,7 +7,8 @@ import pytest
 # NOTE(robinson) - allows tests that do not require the weaviate client to
 # run for the docker container
 with contextlib.suppress(ModuleNotFoundError):
-    from weaviate.schema.validate_schema import validate_schema
+    from weaviate import Client
+    from weaviate.embedded import EmbeddedOptions
 
 from unstructured.partition.json import partition_json
 from unstructured.staging.weaviate import (
@@ -56,4 +57,5 @@ def test_stage_for_weaviate(filename="example-docs/layout-parser-paper-fast.pdf"
 def test_weaviate_schema_is_valid():
     unstructured_class = create_unstructured_weaviate_class()
     schema = {"classes": [unstructured_class]}
-    validate_schema(schema)
+    client = Client(embedded_options=EmbeddedOptions())
+    client.schema.create(schema)

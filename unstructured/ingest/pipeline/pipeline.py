@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 
 from dataclasses_json import DataClassJsonMixin
 
+from unstructured.ingest.connector.registry import create_ingest_doc_from_dict
+from unstructured.ingest.interfaces import BaseIngestDocBatch, BaseSingleIngestDoc
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.pipeline.copy import Copier
 from unstructured.ingest.pipeline.interfaces import (
@@ -40,6 +42,21 @@ class Pipeline(DataClassJsonMixin):
         nodes.append(Copier(pipeline_context=self.pipeline_context))
         return " -> ".join([node.__class__.__name__ for node in nodes])
 
+    def expand_batch_docs(self, dict_docs: t.List[dict]) -> t.List[dict]:
+        expanded_docs = []
+        for d in dict_docs:
+            doc = create_ingest_doc_from_dict(d)
+            if isinstance(doc, BaseSingleIngestDoc):
+                expanded_docs.append(doc.to_dict())
+            elif isinstance(doc, BaseIngestDocBatch):
+                expanded_docs.extend([single_doc.to_dict() for single_doc in doc.ingest_docs])
+            else:
+                raise ValueError(
+                    f"type of doc ({type(doc)}) is not a recognized type: "
+                    f"BaseSingleIngestDoc or BaseSingleIngestDoc"
+                )
+        return expanded_docs
+
     def run(self):
         logger.info(
             f"running pipeline: {self.get_nodes_str()} "
@@ -59,13 +76,16 @@ class Pipeline(DataClassJsonMixin):
         )
         for doc in dict_docs:
             self.pipeline_context.ingest_docs_map[get_ingest_doc_hash(doc)] = doc
+        fetched_filenames = self.source_node(iterable=dict_docs)
         if self.source_node.read_config.download_only:
             logger.info("stopping pipeline after downloading files")
             return
-        fetched_filenames = self.source_node(iterable=dict_docs)
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
+        # To support batches ingest docs, expand those into the populated single ingest
+        # docs after downloading content
+        dict_docs = self.expand_batch_docs(dict_docs=dict_docs)
         if self.partition_node is None:
             raise ValueError("partition node not set")
         partitioned_jsons = self.partition_node(iterable=dict_docs)
@@ -86,6 +106,10 @@ class Pipeline(DataClassJsonMixin):
         copier(iterable=partitioned_jsons)
 
         if self.write_node:
+            logger.info(
+                f"uploading elements from {len(partitioned_jsons)} "
+                "document(s) to the destination"
+            )
             self.write_node(iterable=partitioned_jsons)
 
         if self.permissions_node:

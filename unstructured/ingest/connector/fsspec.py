@@ -1,20 +1,22 @@
+import fnmatch
 import json
 import os
 import typing as t
+from abc import ABC
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePath
 
-from unstructured.ingest.compression_support import (
-    TAR_FILE_EXT,
-    ZIP_FILE_EXT,
-    CompressionSourceConnectorMixin,
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
 )
-from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     FsspecConfig,
     IngestDocCleanupMixin,
@@ -23,6 +25,11 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.compression import (
+    TAR_FILE_EXT,
+    ZIP_FILE_EXT,
+    CompressionSourceConnectorMixin,
+)
 from unstructured.utils import (
     requires_dependencies,
 )
@@ -36,6 +43,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "gcs",
     "box",
     "dropbox",
+    "sftp",
 ]
 
 
@@ -45,7 +53,7 @@ class SimpleFsspecConfig(FsspecConfig, BaseConnectorConfig):
 
 
 @dataclass
-class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -65,35 +73,48 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @property
     def _output_filename(self):
-        return (
-            Path(self.processor_config.output_dir)
-            / f"{self.remote_file_path.replace(f'{self.connector_config.dir_path}/', '')}.json"
-        )
+        # Dynamically parse filename , can change if remote path was pointing to the single
+        # file, a directory, or nested directory
+        if self.remote_file_path == self.connector_config.path_without_protocol:
+            file = self.remote_file_path.split("/")[-1]
+            filename = f"{file}.json"
+        else:
+            path_without_protocol = (
+                self.connector_config.path_without_protocol
+                if self.connector_config.path_without_protocol.endswith("/")
+                else f"{self.connector_config.path_without_protocol}/"
+            )
+            filename = f"{self.remote_file_path.replace(path_without_protocol, '')}.json"
+        return Path(self.processor_config.output_dir) / filename
 
     def _create_full_tmp_dir_path(self):
         """Includes "directories" in the object path"""
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the file from the current filesystem and stores it locally."""
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self._create_full_tmp_dir_path()
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
+        self._get_file(fs=fs)
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
         self.update_source_metadata()
+
+    @SourceConnectionNetworkError.wrap
+    def _get_file(self, fs):
+        fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
 
     @requires_dependencies(["fsspec"])
     def update_source_metadata(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         date_created = None
@@ -142,6 +163,18 @@ class FsspecSourceConnector(
 
     connector_config: SimpleFsspecConfig
 
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_config(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
     def __post_init__(self):
         self.ingest_doc_cls: t.Type[FsspecIngestDoc] = FsspecIngestDoc
 
@@ -149,7 +182,7 @@ class FsspecSourceConnector(
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         """Verify that can get metadata for an object, validates connections info."""
@@ -181,13 +214,25 @@ class FsspecSourceConnector(
                 if v.get("size") > 0
             ]
 
+    def does_path_match_glob(self, path: str) -> bool:
+        if self.connector_config.file_glob is None:
+            return True
+        patterns = self.connector_config.file_glob
+        for pattern in patterns:
+            if fnmatch.filter([path], pattern):
+                return True
+        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        return False
+
     def get_ingest_docs(self):
-        files = self._list_files()
+        raw_files = self._list_files()
+        # If glob filters provided, use to fiter on filepaths
+        files = [f for f in raw_files if self.does_path_match_glob(f)]
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
         uncompressed_files = []
-        docs: t.List[BaseIngestDoc] = []
+        docs: t.List[BaseSingleIngestDoc] = []
         for file in files:
             if any(file.endswith(ext) for ext in compressed_file_ext):
                 compressed_files.append(file)
@@ -223,8 +268,18 @@ class FsspecSourceConnector(
 
 
 @dataclass
+class WriteTextConfig(EnhancedDataClassJsonMixin, ABC):
+    pass
+
+
+@dataclass
 class FsspecWriteConfig(WriteConfig):
-    write_text_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+    write_text_config: t.Optional[WriteTextConfig] = None
+
+    def get_write_text_config(self) -> t.Dict[str, t.Any]:
+        if write_text_kwargs := self.write_text_config:
+            return write_text_kwargs.to_dict()
+        return {}
 
 
 @dataclass
@@ -236,13 +291,25 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
+
+    def check_connection(self):
+        from fsspec import get_filesystem_class
+
+        try:
+            fs = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_config(),
+            )
+            fs.ls(path=self.connector_config.path_without_protocol)
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     def write_dict(
         self,
         *args,
-        json_list: t.List[t.Dict[str, t.Any]],
+        elements_dict: t.List[t.Dict[str, t.Any]],
         filename: t.Optional[str] = None,
         indent: int = 4,
         encoding: str = "utf-8",
@@ -251,7 +318,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
@@ -262,20 +329,21 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             filename.strip(os.sep) if filename else filename
         )  # Make sure filename doesn't begin with file seperator
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
-        full_dest_path = f"{self.connector_config.protocol}://{output_path}"
-        logger.debug(f"uploading content to {full_dest_path}")
+        full_output_path = f"{self.connector_config.protocol}://{output_path}"
+        logger.debug(f"uploading content to {full_output_path}")
+        write_text_configs = self.write_config.get_write_text_config() if self.write_config else {}
         fs.write_text(
-            full_dest_path,
-            json.dumps(json_list, indent=indent),
+            full_output_path,
+            json.dumps(elements_dict, indent=indent),
             encoding=encoding,
-            **self.write_config.write_text_kwargs,
+            **write_text_configs,
         )
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
             file_path = doc.base_output_filename
             filename = file_path if file_path else None
             with open(doc._output_filename) as json_file:
                 logger.debug(f"uploading content from {doc._output_filename}")
                 json_list = json.load(json_file)
-                self.write_dict(json_list=json_list, filename=filename)
+                self.write_dict(elements_dict=json_list, filename=filename)

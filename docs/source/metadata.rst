@@ -56,7 +56,39 @@ the source file:
 :raw-html:`<br />`
 Notes on common metadata fields:
 
-Coordinates
+Metadata for Document Hierarchy: ``parent_id`` and ``category_depth``
+----------------------------------------------------------------------
+
+*Parent ID* and *Category Depth* enhance hierarchy detection to identify the document structure in various file formats. It measures the relative depth of an element within its category. This is especially useful in documents with native hierarchies like HTML or Word files, where elements like headings or list items inherently define structure.
+
+**Implementations:**
+
+- **Parent ID:** Introduction of a ``parent_id`` metadata, identifying the parent element.
+- **Category Depth:** Introduction of a ``category_depth`` metadata, identifying the element's depth level.
+- **Rule set for hierarchy assignment:** Elements are sequentially processed against a ruleset, which set the Parent IDs and Category Depths, based on predetermined or custom rules.
+
+
+Hierarchy in DOCX Files
+***********************
+
+The process of enhancing hierarchy detection by determining ``category_depth`` includes:
+
+1. Evaluating the paragraph item for an indentation level (ilvl) xpath, commonly found in list bullet/number formats. If an indentation level is present, it is used as the category depth.
+2. Inspecting the paragraph style name for any indications of category depth, such as differences between 'Heading 1' and 'Heading 2' or various list bullet styles. The detected category depth is used, or it defaults to 0 if none is found.
+3. The paragraph's indentation level (ilvl) is assessed based on its style name. This involves a detailed lookup beyond the paragraph's metadata, as docx files have predefined ilvls for different style names. This aspect is in development, with the existing methods sufficiently addressing most scenarios.
+
+
+Hierarchy in PPTX Files
+***********************
+
+The enhancement of hierarchy detection in determining category depth is achieved as follows:
+
+1. Examining if the paragraph within the ``python-pptx`` document has a level parameter. When present, this level is adopted as the ``category_depth``.
+2. In cases where the evaluated shape is a title and the content is neither a bullet nor an email, the element is designated as a ``Title``. The depth is assigned based on the paragraph's sequence (e.g., the first line in the title shape is depth 0, the second line is depth 1, and so on).
+3. For situations where the shape is not a title but the paragraph is, the depth is set to the level plus one. This ensures that paragraph titles have a minimum depth of 1, positioning them appropriately under the main slide title element.
+
+
+coordinates
 -----------
 
 Some document types support location data for the elements, usually in the form of bounding boxes.

@@ -9,11 +9,11 @@ from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
     BaseSessionHandle,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     ConfigSessionHandleMixin,
     IngestDocCleanupMixin,
@@ -26,6 +26,7 @@ from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from googleapiclient.discovery import Resource as GoogleAPIResource
+    from googleapiclient.http import MediaIoBaseDownload
 
 FILE_FORMAT = "{id}-{name}{ext}"
 DIRECTORY_FORMAT = "{id}-{name}"
@@ -37,7 +38,7 @@ class GoogleDriveSessionHandle(BaseSessionHandle):
 
 
 @requires_dependencies(["googleapiclient"], extras="google-drive")
-def create_service_account_object(key_path, id=None):
+def create_service_account_object(key_path: t.Union[str, dict], id=None):
     """
     Creates a service object for interacting with Google Drive.
 
@@ -52,12 +53,21 @@ def create_service_account_object(key_path, id=None):
         Service account object
     """
     from google.auth import default, exceptions
+    from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
 
     try:
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
-        creds, _ = default()
+        if isinstance(key_path, dict):
+            creds = service_account.Credentials.from_service_account_info(key_path)
+        elif isinstance(key_path, str):
+            os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = key_path
+            creds, _ = default()
+        else:
+            raise ValueError(
+                f"key path not recognized as a dictionary or a file path: "
+                f"[{type(key_path)}] {key_path}",
+            )
         service = build("drive", "v3", credentials=creds)
 
         if id:
@@ -84,7 +94,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
     # Google Drive Specific Options
     drive_id: str
-    service_account_key: str
+    service_account_key: t.Union[str, dict]
     extension: t.Optional[str] = None
     recursive: bool = False
 
@@ -103,7 +113,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 
 
 @dataclass
-class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseIngestDoc):
+class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleGoogleDriveConfig
     meta: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "google_drive"
@@ -167,11 +177,17 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
             exists=True,
         )
 
+    @SourceConnectionNetworkError.wrap
+    def _run_downloader(self, downloader: "MediaIoBaseDownload") -> bool:
+        downloaded = False
+        while downloaded is False:
+            _, downloaded = downloader.next_chunk()
+        return downloaded
+
     @requires_dependencies(["googleapiclient"], extras="google-drive")
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
-        from googleapiclient.errors import HttpError
         from googleapiclient.http import MediaIoBaseDownload
 
         if self.meta.get("mimeType", "").startswith("application/vnd.google-apps"):
@@ -195,12 +211,7 @@ class GoogleDriveIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, B
         file = io.BytesIO()
         downloader = MediaIoBaseDownload(file, request)
         self.update_source_metadata()
-        downloaded = False
-        try:
-            while downloaded is False:
-                _, downloaded = downloader.next_chunk()
-        except HttpError:
-            pass
+        downloaded = self._run_downloader(downloader=downloader)
 
         saved = False
         if downloaded and file:
@@ -312,6 +323,13 @@ class GoogleDriveSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnecto
 
     def initialize(self):
         pass
+
+    def check_connection(self):
+        try:
+            self.connector_config.create_session_handle().service
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def get_ingest_docs(self):
         files = self._list_objects(self.connector_config.drive_id, self.connector_config.recursive)

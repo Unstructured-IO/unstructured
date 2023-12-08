@@ -1,11 +1,11 @@
 from collections import defaultdict
-from typing import Tuple
 
-from unstructured_inference.constants import Source
 from unstructured_inference.inference.layout import DocumentLayout
 
+from unstructured.partition.utils.constants import Source
 
-def clean_pdfminer_inner_elements(document: DocumentLayout) -> Tuple[DocumentLayout, dict]:
+
+def clean_pdfminer_inner_elements(document: DocumentLayout) -> DocumentLayout:
     """Clean pdfminer elements from inside tables and stores them in extra_info dictionary
     with the table id as key"""
     defaultdict(list)

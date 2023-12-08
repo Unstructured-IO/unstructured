@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import quopri
 import re
 import sys
@@ -132,8 +134,8 @@ def group_bullet_paragraph(paragraph: str) -> list:
 
 def group_broken_paragraphs(
     text: str,
-    line_split: re.Pattern = PARAGRAPH_PATTERN_RE,
-    paragraph_split: re.Pattern = DOUBLE_PARAGRAPH_PATTERN_RE,
+    line_split: re.Pattern[str] = PARAGRAPH_PATTERN_RE,
+    paragraph_split: re.Pattern[str] = DOUBLE_PARAGRAPH_PATTERN_RE,
 ) -> str:
     """Groups paragraphs that have line breaks for visual/formatting purposes.
     For example:
@@ -174,7 +176,7 @@ def group_broken_paragraphs(
 
 def new_line_grouper(
     text: str,
-    paragraph_split: re.Pattern = LINE_BREAK_RE,
+    paragraph_split: re.Pattern[str] = LINE_BREAK_RE,
 ) -> str:
     """
     Concatenates text document that has one-line paragraph break pattern
@@ -221,7 +223,7 @@ def blank_line_grouper(
 
 def auto_paragraph_grouper(
     text: str,
-    line_split: re.Pattern = LINE_BREAK_RE,
+    line_split: re.Pattern[str] = LINE_BREAK_RE,
     max_line_count: int = 2000,
     threshold: float = 0.1,
 ) -> str:
@@ -256,7 +258,7 @@ def auto_paragraph_grouper(
 # TODO(robinson) - There's likely a cleaner was to accomplish this and get all of the
 # unicode characters instead of just the quotes. Doing this for now since quotes are
 # an issue that are popping up in the SEC filings tests
-def replace_unicode_quotes(text) -> str:
+def replace_unicode_quotes(text: str) -> str:
     """Replaces unicode bullets in text with the expected character
 
     Example

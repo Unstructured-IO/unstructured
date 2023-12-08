@@ -8,10 +8,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -71,7 +71,7 @@ class SimpleSharepointConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleSharepointConfig
     site_url: str
     server_path: str
@@ -118,7 +118,7 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
             "site_url": self.site_url,
         }
 
-    @SourceConnectionError.wrap
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(["office365"], extras="sharepoint")
     def _fetch_file(self, properties_only: bool = False):
         """Retrieves the actual page/file from the Sharepoint instance"""
@@ -276,7 +276,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
                 file.download(f).execute_query()
         logger.info(f"File downloaded: {self.filename}")
 
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
+    @SourceConnectionError.wrap
     @requires_dependencies(["office365"])
     def get_file(self):
         if self.is_page:
@@ -289,6 +290,14 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 @dataclass
 class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSharepointConfig
+
+    def check_connection(self):
+        try:
+            site_client = self.connector_config.get_site_client()
+            site_client.site_pages.pages.get().execute_query()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def _list_files(self, folder, recursive) -> t.List["File"]:
@@ -373,7 +382,15 @@ class SharepointSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
     def get_ingest_docs(self):
         base_site_client = self.connector_config.get_site_client()
 
-        if self.connector_config.permissions_config:
+        if not all(
+            getattr(self.connector_config.permissions_config, attr, False)
+            for attr in ["application_id", "client_cred", "tenant"]
+        ):
+            logger.info(
+                "Permissions config is not fed with 'application_id', 'client_cred' and 'tenant'."
+                "Skipping permissions ingestion.",
+            )
+        else:
             permissions_client = self.connector_config.get_permissions_client()
             if permissions_client:
                 permissions_client.write_all_permissions(self.processor_config.output_dir)
@@ -421,8 +438,8 @@ class SharepointPermissionsConnector:
         if response.status_code == 200:
             return response.json()
         else:
-            print(f"Request failed with status code {response.status_code}:")
-            print(response.text)
+            logger.info(f"Request failed with status code {response.status_code}:")
+            logger.info(response.text)
 
     @requires_dependencies(["requests"], extras="sharepoint")
     def get_sites(self):
@@ -512,14 +529,14 @@ class SharepointPermissionsConnector:
         sites = [(site["id"], site["webUrl"]) for site in self.get_sites()["value"]]
         drive_ids = []
 
-        print("Obtaining drive data for sites for permissions (rbac)")
+        logger.info("Obtaining drive data for sites for permissions (rbac)")
         for site_id, site_url in sites:
             drives = self.get_drives(site_id)
             if drives:
                 drives_for_site = drives["value"]
                 drive_ids.extend([(site_id, drive["id"]) for drive in drives_for_site])
 
-        print("Obtaining item data from drives for permissions (rbac)")
+        logger.info("Obtaining item data from drives for permissions (rbac)")
         item_ids = []
         for site, drive_id in drive_ids:
             drive_items = self.get_drive_items(site, drive_id)
@@ -533,7 +550,7 @@ class SharepointPermissionsConnector:
 
         permissions_dir = Path(output_dir) / "permissions_data"
 
-        print("Writing permissions data to disk")
+        logger.info("Writing permissions data to disk")
         for site, drive_id, item_id, item_name, item_web_url in item_ids:
             res = self.get_permissions_for_drive_item(site, drive_id, item_id)
             if res:

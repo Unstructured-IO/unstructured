@@ -1,0 +1,107 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "0",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "0d15a8bf4961deb609a392a8444e3520",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "0",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Cecil Hepworth",
+    "type": "Title"
+  },
+  {
+    "element_id": "a1515877c1c63770057b2615cce25c5d",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "0",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Alice follows a large white rabbit down a \"Rabbit-hole\". She finds a tiny door. When she finds a bottle labeled \"Drink me\", she does, and shrinks, but not enough to pass through the door. She then eats something labeled \"Eat me\" and grows larger. She finds a fan when enables her to shrink enough to get into the \"Garden\" and try to get a \"Dog\" to play with her. She enters the \"White Rabbit's tiny House,\" but suddenly resumes her normal size. In order to get out, she has to use the \"magic fan.\"",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "58ec505c394f8af4fc5c62bad6973652",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "0",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "She enters a kitchen, in which there is a cook and a woman holding a baby. She persuades the woman to give her the child and takes the infant outside after the cook starts throwing things around. The baby then turns into a pig and squirms out of her grip. \"The Duchess's Cheshire Cat\" appears and disappears a couple of times to Alice and directs her to the Mad Hatter's \"Mad Tea-Party.\" After a while, she leaves.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "fffac28d27f8cea00e96f1e876a1d1f8",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "0",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The Queen invites Alice to join the \"ROYAL PROCESSION\": a parade of marching playing cards and others headed by the White Rabbit. When Alice \"unintentionally offends the Queen\", the latter summons the \"Executioner\". Alice \"boxes the ears\", then flees when all the playing cards come for her. Then she wakes up and realizes it was all a dream.",
+    "type": "NarrativeText"
+  }
+]

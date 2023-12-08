@@ -6,9 +6,11 @@ from typing import Any, Dict
 import pytest
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.ingest.connector.sftp import SftpAccessConfig, SimpleSftpConfig
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
+    FsspecConfig,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
@@ -40,7 +42,7 @@ TEST_DATE_PROCESSSED = "2022-12-13T15:44:08"
 
 
 @dataclass
-class TestIngestDoc(BaseIngestDoc):
+class TestIngestDoc(BaseSingleIngestDoc):
     connector_config: TestConfig
 
     @property
@@ -241,7 +243,7 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         return_value=partition_test_results,
     )
     partition_config = PartitionConfig(
-        metadata_include=["filename", "data_source"],
+        metadata_include=["filename", "file_directory", "filetype"],
         flatten_metadata=True,
     )
     test_ingest_doc = TestIngestDoc(
@@ -252,6 +254,94 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
         ),
     )
     isd_elems = test_ingest_doc.process_file(partition_config=partition_config)
-    expected_keys = {"element_id", "text", "type", "filename", "data_source"}
+    expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
+
+
+def test_post_init_invalid_protocol():
+    """Validate that an invalid protocol raises a ValueError"""
+    with pytest.raises(ValueError):
+        FsspecConfig(remote_url="ftp://example.com/path/to/file.txt")
+
+
+def test_fsspec_path_extraction_dropbox_root():
+    """Validate that the path extraction works for dropbox root"""
+    config = FsspecConfig(remote_url="dropbox:// /")
+    assert config.protocol == "dropbox"
+    assert config.path_without_protocol == " /"
+    assert config.dir_path == " "
+    assert config.file_path == ""
+
+
+def test_fsspec_path_extraction_dropbox_subfolder():
+    """Validate that the path extraction works for dropbox subfolder"""
+    config = FsspecConfig(remote_url="dropbox://path")
+    assert config.protocol == "dropbox"
+    assert config.path_without_protocol == "path"
+    assert config.dir_path == "path"
+    assert config.file_path == ""
+
+
+def test_fsspec_path_extraction_s3_bucket_only():
+    """Validate that the path extraction works for s3 bucket without filename"""
+    config = FsspecConfig(remote_url="s3://bucket-name")
+    assert config.protocol == "s3"
+    assert config.path_without_protocol == "bucket-name"
+    assert config.dir_path == "bucket-name"
+    assert config.file_path == ""
+
+
+def test_fsspec_path_extraction_s3_valid_path():
+    """Validate that the path extraction works for s3 bucket with filename"""
+    config = FsspecConfig(remote_url="s3://bucket-name/path/to/file.txt")
+    assert config.protocol == "s3"
+    assert config.path_without_protocol == "bucket-name/path/to/file.txt"
+    assert config.dir_path == "bucket-name"
+    assert config.file_path == "path/to/file.txt"
+
+
+def test_fsspec_path_extraction_s3_invalid_path():
+    """Validate that an invalid s3 path (that mimics triple slash for dropbox)
+    raises a ValueError"""
+    with pytest.raises(ValueError):
+        FsspecConfig(remote_url="s3:///bucket-name/path/to")
+
+
+def test_sftp_path_extraction_post_init_with_extension():
+    """Validate that the path extraction works for sftp with file extension"""
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com/path/to/file.txt",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
+    assert config.file_path == "file.txt"
+    assert config.dir_path == "path/to"
+    assert config.path_without_protocol == "path/to"
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 22
+
+
+def test_sftp_path_extraction_without_extension():
+    """Validate that the path extraction works for sftp without extension"""
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com/path/to/directory",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
+    assert config.file_path == ""
+    assert config.dir_path == "path/to/directory"
+    assert config.path_without_protocol == "path/to/directory"
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 22
+
+
+def test_sftp_path_extraction_with_port():
+    """Validate that the path extraction works for sftp with a non-default port"""
+    config = SimpleSftpConfig(
+        remote_url="sftp://example.com:47474/path/to/file.txt",
+        access_config=SftpAccessConfig(username="username", password="password", host="", port=22),
+    )
+    assert config.file_path == "file.txt"
+    assert config.dir_path == "path/to"
+    assert config.path_without_protocol == "path/to"
+    assert config.access_config.host == "example.com"
+    assert config.access_config.port == 47474

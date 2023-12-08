@@ -1,24 +1,28 @@
 import typing as t
-from pathlib import Path
+from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
 
-
-def delta_table_writer(
-    table_uri: t.Union[str, Path],
-    write_column: str,
-    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error",
-    **kwargs,
-) -> BaseDestinationConnector:
+if t.TYPE_CHECKING:
     from unstructured.ingest.connector.delta_table import (
-        DeltaTableDestinationConnector,
         DeltaTableWriteConfig,
         SimpleDeltaTableConfig,
     )
 
-    return DeltaTableDestinationConnector(
-        write_config=DeltaTableWriteConfig(write_column=write_column, mode=mode),
-        connector_config=SimpleDeltaTableConfig(
-            table_uri=table_uri,
-        ),
-    )
+
+@dataclass
+class DeltaTableWriter(Writer, EnhancedDataClassJsonMixin):
+    write_config: "DeltaTableWriteConfig"
+    connector_config: "SimpleDeltaTableConfig"
+
+    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.delta_table import (
+            DeltaTableDestinationConnector,
+        )
+
+        return DeltaTableDestinationConnector(
+            write_config=self.write_config,
+            connector_config=self.connector_config,
+        )

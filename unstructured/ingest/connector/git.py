@@ -1,5 +1,4 @@
 import fnmatch
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -7,7 +6,7 @@ from pathlib import Path
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -18,14 +17,14 @@ from unstructured.ingest.logger import logger
 @dataclass
 class SimpleGitConfig(BaseConnectorConfig):
     url: str
-    access_token: t.Optional[str]
-    branch: t.Optional[str]
-    file_glob: t.Optional[str]
+    access_token: t.Optional[str] = None
+    branch: t.Optional[str] = None
+    file_glob: t.Optional[str] = None
     repo_path: str = field(init=False, repr=False)
 
 
 @dataclass
-class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class GitIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleGitConfig = field(repr=False)
     path: str
 
@@ -55,11 +54,10 @@ class GitIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         raise NotImplementedError()
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._fetch_and_write()
 
     def _fetch_content(self) -> None:
@@ -74,6 +72,9 @@ class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleGitConfig
 
     def initialize(self):
+        pass
+
+    def check_connection(self):
         pass
 
     def is_file_type_supported(self, path: str) -> bool:

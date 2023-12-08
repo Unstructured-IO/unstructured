@@ -5,20 +5,15 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
-    CliMixin,
+    CliConfig,
 )
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig, SimpleDeltaTableConfig
 
 CMD_NAME = "delta-table"
 
 
 @dataclass
-class DeltaTableCliConfig(BaseConfig, CliMixin):
-    table_uri: str
-    version: t.Optional[int] = None
-    storage_options: t.Optional[str] = None
-    without_files: bool = False
-
+class DeltaTableCliConfig(SimpleDeltaTableConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -51,18 +46,21 @@ class DeltaTableCliConfig(BaseConfig, CliMixin):
 
 
 @dataclass
-class DeltaTableCliWriteConfig(BaseConfig, CliMixin):
-    write_column: str
-    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
-
+class DeltaTableCliWriteConfig(DeltaTableWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--write-column"],
-                required=True,
-                type=str,
-                help="column in delta table to write json content",
+                ["--overwrite-schema"],
+                is_flag=True,
+                default=False,
+                help="Flag to overwrite schema of destination table",
+            ),
+            click.Option(
+                ["--drop-empty-cols"],
+                is_flag=True,
+                default=False,
+                help="Flag to drop any columns that have no content",
             ),
             click.Option(
                 ["--mode"],
@@ -89,5 +87,9 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=DeltaTableCliConfig,
         additional_cli_options=[DeltaTableCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleDeltaTableConfig,
+            "write_config": DeltaTableWriteConfig,
+        },
     )
     return cmd_cls

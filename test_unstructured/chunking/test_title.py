@@ -22,8 +22,10 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     ListItem,
+    PageBreak,
     RegexMetadata,
     Table,
+    TableChunk,
     Text,
     Title,
 )
@@ -188,7 +190,7 @@ def test_split_elements_by_title_and_table():
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -207,7 +209,7 @@ def test_split_elements_by_title_and_table():
 
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
@@ -215,11 +217,11 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _TableSection)
-    assert section.table == Table("<table></table>")
+    assert section._table == Table("Heading\nCell text")
     # ==
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -227,7 +229,7 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _TextSection)
-    assert section.elements == [
+    assert section._elements == [
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
@@ -235,7 +237,6 @@ def test_split_elements_by_title_and_table():
     # --
     section = next(sections)
     assert isinstance(section, _NonTextSection)
-    assert section.element == CheckBox()
     # --
     with pytest.raises(StopIteration):
         next(sections)
@@ -246,7 +247,7 @@ def test_chunk_by_title():
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
         Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -260,20 +261,20 @@ def test_chunk_by_title():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
         CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
         CheckBox(),
     ]
-
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
         regex_metadata={"a": [RegexMetadata(text="A", start=11, end=12)]},
@@ -285,7 +286,7 @@ def test_chunk_by_title_respects_section_change():
         Title("A Great Day", metadata=ElementMetadata(section="first")),
         Text("Today is a great day.", metadata=ElementMetadata(section="second")),
         Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -299,6 +300,7 @@ def test_chunk_by_title_respects_section_change():
         Text("It is storming outside."),
         CheckBox(),
     ]
+
     chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
 
     assert chunks == [
@@ -308,7 +310,7 @@ def test_chunk_by_title_respects_section_change():
         CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -322,7 +324,7 @@ def test_chunk_by_title_separates_by_page_number():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -345,7 +347,7 @@ def test_chunk_by_title_separates_by_page_number():
         CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -443,7 +445,7 @@ def test_chunk_by_title_groups_across_pages():
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
@@ -463,7 +465,7 @@ def test_chunk_by_title_groups_across_pages():
         CompositeElement(
             "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
-        Table("<table></table>"),
+        Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
@@ -704,34 +706,422 @@ def test_it_considers_separator_length_when_sectioning():
 class Describe_NonTextSection:
     """Unit-test suite for `unstructured.chunking.title._NonTextSection objects."""
 
-    def it_provides_access_to_its_element(self):
+    def it_iterates_its_element_as_the_sole_chunk(self):
         checkbox = CheckBox()
         section = _NonTextSection(checkbox)
-        assert section.element is checkbox
+
+        chunk_iter = section.iter_chunks(maxlen=500)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, CheckBox)
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
 
 class Describe_TableSection:
     """Unit-test suite for `unstructured.chunking.title._TableSection objects."""
 
-    def it_provides_access_to_its_table(self):
-        table = Table("<table></table>")
-        section = _TableSection(table)
-        assert section.table is table
+    def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
+        html_table = (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+        text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
+        section = _TableSection(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=175)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.text == "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        assert chunk.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1 </th><th>Header Col 2 </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum  </td><td>adipiscing   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+        # fixed-overhead = 8+8+9+8+9+8 = 50
+        # per-row overhead = 27
+        html_table = (
+            "<table>\n"  # 8
+            "<thead>\n"  # 8
+            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"  # 9
+            "<tbody>\n"  # 8
+            "<tr><td>Lorem ipsum    </td><td>A Link example</td></tr>\n"
+            "<tr><td>Consectetur    </td><td>adipiscing elit</td></tr>\n"
+            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
+            "<tr><td>Vivamus quis   </td><td>nunc ipsum donec ac fermentum</td></tr>\n"
+            "</tbody>\n"  # 9
+            "</table>"  # 8
+        )
+        text_table = (
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliquam   id enim nec molestie\n"
+            "Vivamus quis   nunc ipsum donec ac fermentum"
+        )
+        section = _TableSection(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=100)
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == (
+            "Header Col 1   Header Col 2\n"
+            "Lorem ipsum    dolor sit amet\n"
+            "Consectetur    adipiscing elit\n"
+            "Nunc aliqua"
+        )
+        assert chunk.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1   </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lo"
+        )
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert (
+            chunk.text == "m   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
+        )
+        assert chunk.metadata.text_as_html == (
+            "rem ipsum    </td><td>A Link example</td></tr>\n"
+            "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
+        )
+        # -- note that text runs out but HTML continues because it's significantly longer. So two
+        # -- of these chunks have HTML but no text.
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == ""
+        assert chunk.metadata.text_as_html == (
+            "/tr>\n"
+            "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
+            "<tr><td>Vivamus quis   </td><td>"
+        )
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == ""
+        assert chunk.metadata.text_as_html == (
+            "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
+        )
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
 
 class Describe_TextSection:
     """Unit-test suite for `unstructured.chunking.title._TextSection objects."""
 
-    def it_provides_access_to_its_elements(self):
-        elements: List[Element] = [
-            Title("Introduction"),
-            Text(
-                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                "lectus porta volutpat.",
-            ),
-        ]
+    def it_can_combine_itself_with_another_TextSection_instance(self):
+        """.combine() produces a new section by appending the elements of `other_section`.
+
+        Note that neither the original or other section are mutated.
+        """
+        section = _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+            ]
+        )
+        other_section = _TextSection(
+            [
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+
+        new_section = section.combine(other_section)
+
+        assert new_section == _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+        assert section == _TextSection(
+            [
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+                Text("In rhoncus ipsum sed lectus porta volutpat."),
+            ]
+        )
+        assert other_section == _TextSection(
+            [
+                Text("Donec semper facilisis metus finibus malesuada."),
+                Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
+            ]
+        )
+
+    def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
+        section = _TextSection(
+            [
+                Title("Introduction"),
+                Text(
+                    "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                    "lectus porta volutpat.",
+                ),
+            ]
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=200)
+
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
+            " In rhoncus ipsum sedlectus porta volutpat.",
+        )
+        assert chunk.metadata is section._consolidated_metadata
+
+    def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
+        # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
+        # -- The sectioner will isolate that element in a section of its own.
+        section = _TextSection(
+            [
+                Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+                    " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+                    " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
+                    " commodo consequat."
+                ),
+            ]
+        )
+
+        chunk_iter = section.iter_chunks(maxlen=200)
+
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement(
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut a"
+        )
+        assert chunk.metadata is section._consolidated_metadata
+        # --
+        chunk = next(chunk_iter)
+        assert chunk == CompositeElement("liquip ex ea commodo consequat.")
+        assert chunk.metadata is section._consolidated_metadata
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
+        """.text_length is the size of chunk this section will produce (before any splitting)."""
+        section = _TextSection([PageBreak(""), Text("foo"), Text("bar")])
+        assert section.text_length == 8
+
+    def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
+        section = _TextSection(
+            [
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        category_depth=0,
+                        filename="foo.docx",
+                        languages=["lat"],
+                        parent_id="f87731e0",
+                    ),
+                ),
+                Text(
+                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                    metadata=ElementMetadata(
+                        category_depth=1,
+                        filename="foo.docx",
+                        image_path="sprite.png",
+                        languages=["lat", "eng"],
+                    ),
+                ),
+            ]
+        )
+
+        assert section._all_metadata_values == {
+            # -- scalar values are accumulated in a list in element order --
+            "category_depth": [0, 1],
+            # -- all values are accumulated, not only unique ones --
+            "filename": ["foo.docx", "foo.docx"],
+            # -- list-type fields produce a list of lists --
+            "languages": [["lat"], ["lat", "eng"]],
+            # -- fields that only appear in some elements are captured --
+            "image_path": ["sprite.png"],
+            "parent_id": ["f87731e0"],
+            # -- A `None` value never appears, neither does a field-name with an empty list --
+        }
+
+    def but_it_discards_ad_hoc_metadata_fields_during_consolidation(self):
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+        metadata.coefficient = 0.62
+        metadata_2 = ElementMetadata(
+            category_depth=1,
+            filename="foo.docx",
+            image_path="sprite.png",
+            languages=["lat", "eng"],
+        )
+        metadata_2.quotient = 1.74
+
+        section = _TextSection(
+            [
+                Title("Lorem Ipsum", metadata=metadata),
+                Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
+            ]
+        )
+
+        # -- ad-hoc fields "coefficient" and "quotient" do not appear --
+        assert section._all_metadata_values == {
+            "category_depth": [0, 1],
+            "filename": ["foo.docx", "foo.docx"],
+            "image_path": ["sprite.png"],
+            "languages": [["lat"], ["lat", "eng"]],
+            "parent_id": ["f87731e0"],
+        }
+
+    def it_consolidates_regex_metadata_in_a_field_specific_way(self):
+        """regex_metadata of chunk is combined regex_metadatas of its elements.
+
+        Also, the `start` and `end` offsets of each regex-match are adjusted to reflect their new
+        position in the chunk after element text has been concatenated.
+        """
+        section = _TextSection(
+            [
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+                    ),
+                ),
+                Text(
+                    "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+                    metadata=ElementMetadata(
+                        regex_metadata={
+                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
+                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
+                        },
+                    ),
+                ),
+                Text(
+                    "In rhoncus ipsum sed lectus porta volutpat.",
+                    metadata=ElementMetadata(
+                        regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
+                    ),
+                ),
+            ]
+        )
+
+        regex_metadata = section._consolidated_regex_meta
+
+        assert regex_metadata == {
+            "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+            "ipsum": [
+                RegexMetadata(text="Ipsum", start=6, end=11),
+                RegexMetadata(text="ipsum", start=19, end=24),
+                RegexMetadata(text="ipsum", start=81, end=86),
+            ],
+        }
+
+    def it_forms_ElementMetadata_constructor_kwargs_by_applying_consolidation_strategies(self):
+        """._meta_kwargs is used like `ElementMetadata(**self._meta_kwargs)` to construct metadata.
+
+        Only non-None fields should appear in the dict and each field value should be the
+        consolidation of the values across the section elements.
+        """
+        section = _TextSection(
+            [
+                PageBreak(""),
+                Title(
+                    "Lorem Ipsum",
+                    metadata=ElementMetadata(
+                        filename="foo.docx",
+                        # -- category_depth has DROP strategy so doesn't appear in result --
+                        category_depth=0,
+                        emphasized_text_contents=["Lorem", "Ipsum"],
+                        emphasized_text_tags=["b", "i"],
+                        languages=["lat"],
+                        regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
+                    ),
+                ),
+                Text(
+                    "'Lorem ipsum dolor' means 'Thank you very much' in Latin.",
+                    metadata=ElementMetadata(
+                        # -- filename change doesn't happen IRL but demonstrates FIRST strategy --
+                        filename="bar.docx",
+                        # -- emphasized_text_contents has LIST_CONCATENATE strategy, so "Lorem"
+                        # -- appears twice in consolidated-meta (as it should) and length matches
+                        # -- that of emphasized_text_tags both before and after consolidation.
+                        emphasized_text_contents=["Lorem", "ipsum"],
+                        emphasized_text_tags=["i", "b"],
+                        # -- languages has LIST_UNIQUE strategy, so "lat(in)" appears only once --
+                        languages=["eng", "lat"],
+                        # -- regex_metadata has its own dedicated consolidation-strategy (REGEX) --
+                        regex_metadata={
+                            "dolor": [RegexMetadata(text="dolor", start=12, end=17)],
+                            "ipsum": [RegexMetadata(text="ipsum", start=6, end=11)],
+                        },
+                    ),
+                ),
+            ]
+        )
+
+        meta_kwargs = section._meta_kwargs
+
+        assert meta_kwargs == {
+            "filename": "foo.docx",
+            "emphasized_text_contents": ["Lorem", "Ipsum", "Lorem", "ipsum"],
+            "emphasized_text_tags": ["b", "i", "i", "b"],
+            "languages": ["lat", "eng"],
+            "regex_metadata": {
+                "ipsum": [
+                    RegexMetadata(text="Ipsum", start=6, end=11),
+                    RegexMetadata(text="ipsum", start=19, end=24),
+                ],
+                "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+            },
+        }
+
+    @pytest.mark.parametrize(
+        ("elements", "expected_value"),
+        [
+            ([Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), PageBreak(""), Text("bar")], "foo\n\nbar"),
+            ([PageBreak(""), Text("foo"), Text("bar")], "foo\n\nbar"),
+            ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
+        ],
+    )
+    def it_knows_the_concatenated_text_of_the_section(
+        self, elements: List[Text], expected_value: str
+    ):
+        """._text is the "joined" text of the section elements.
+
+        The text-segment contributed by each element is separated from the next by a blank line
+        ("\n\n"). An element that contributes no text does not give rise to a separator.
+        """
         section = _TextSection(elements)
-        assert section.elements == elements
+        assert section._text == expected_value
 
 
 class Describe_TextSectionBuilder:
@@ -772,7 +1162,7 @@ class Describe_TextSectionBuilder:
         section = next(builder.flush())
 
         assert isinstance(section, _TextSection)
-        assert section.elements == [
+        assert section._elements == [
             Title("Introduction"),
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
@@ -858,7 +1248,7 @@ class Describe_SectionCombiner:
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 ]
             ),
-            _TableSection(Table("<table></table>")),
+            _TableSection(Table("Heading\nCell text")),
             _TextSection(
                 [
                     Title("Mauris Nec"),
@@ -887,7 +1277,7 @@ class Describe_SectionCombiner:
         # --
         section = next(section_iter)
         assert isinstance(section, _TableSection)
-        assert section.table == Table("<table></table>")
+        assert section._table == Table("Heading\nCell text")
         # --
         section = next(section_iter)
         assert isinstance(section, _TextSection)
@@ -898,7 +1288,6 @@ class Describe_SectionCombiner:
         # --
         section = next(section_iter)
         assert isinstance(section, _NonTextSection)
-        assert section.element == CheckBox()
         # --
         section = next(section_iter)
         assert isinstance(section, _TextSection)

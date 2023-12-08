@@ -1,16 +1,21 @@
+"""Table-related docx proxy-objects."""
+
+from __future__ import annotations
+
 from typing import Sequence
 
 from docx.blkcntnr import BlockItemContainer
-from docx.oxml.table import CT_Tbl, CT_Tc
+from docx.oxml.table import CT_Row, CT_Tbl, CT_Tc
 from docx.shared import Parented
-from docx.text.paragraph import Paragraph
 
 class _Cell(BlockItemContainer):
     _tc: CT_Tc
+    def __init__(self, tc: CT_Tc, parent: Parented) -> None: ...
     @property
-    def paragraphs(self) -> Sequence[Paragraph]: ...
+    def text(self) -> str: ...
 
-class _Row:
+class _Row(Parented):
+    _tr: CT_Row
     @property
     def cells(self) -> Sequence[_Cell]: ...
 

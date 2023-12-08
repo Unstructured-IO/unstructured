@@ -1,0 +1,65 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "8",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "b764cdc0eab7137467211272fa539f12",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "8",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Unknown",
+    "type": "Title"
+  },
+  {
+    "element_id": "7ddfc82896f749f2c5b5c5baac5a93bf",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "8",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "No prints of the first American film adaptation of A Christmas Carol are known to exist,[1] but The Moving Picture World magazine provided a scene-by-scene description before the film's release. [2] Scrooge goes into his office and begins working. His nephew, along with three women who wish for Scrooge to donate enter. However, Scrooge dismisses them. On the night of Christmas Eve, his long-dead partner Jacob Marley comes as a ghost, warning him of a horrible fate if he does not change his ways. Scrooge meets three spirits that show Scrooge the real meaning of Christmas, along with his grave, the result of his parsimonious ways. The next morning, he wakes and realizes the error of his ways. Scrooge was then euphoric and generous for the rest of his life.",
+    "type": "NarrativeText"
+  }
+]

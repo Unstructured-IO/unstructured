@@ -2,7 +2,8 @@ import csv
 import io
 import json
 from copy import deepcopy
-from typing import Any, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -115,10 +116,10 @@ def elements_to_json(
     element_dict = convert_to_dict(pre_processed_elements)
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
-            json.dump(element_dict, f, indent=indent)
+            json.dump(element_dict, f, indent=indent, sort_keys=True)
             return None
     else:
-        return json.dumps(element_dict, indent=indent)
+        return json.dumps(element_dict, indent=indent, sort_keys=True)
 
 
 def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
@@ -175,12 +176,30 @@ def elements_from_json(
         return dict_to_elements(element_dict)
 
 
-def flatten_dict(dictionary, parent_key="", separator="_"):
+def flatten_dict(
+    dictionary, parent_key="", separator="_", flatten_lists=False, keys_to_omit: List[str] = None
+):
+    keys_to_omit = keys_to_omit if keys_to_omit else []
     flattened_dict = {}
     for key, value in dictionary.items():
         new_key = f"{parent_key}{separator}{key}" if parent_key else key
-        if isinstance(value, dict):
-            flattened_dict.update(flatten_dict(value, new_key, separator))
+        if new_key in keys_to_omit:
+            flattened_dict[new_key] = value
+        elif isinstance(value, dict):
+            flattened_dict.update(
+                flatten_dict(value, new_key, separator, flatten_lists, keys_to_omit=keys_to_omit),
+            )
+        elif isinstance(value, list) and flatten_lists:
+            for index, item in enumerate(value):
+                flattened_dict.update(
+                    flatten_dict(
+                        {f"{new_key}{separator}{index}": item},
+                        "",
+                        separator,
+                        flatten_lists,
+                        keys_to_omit=keys_to_omit,
+                    )
+                )
         else:
             flattened_dict[new_key] = value
     return flattened_dict
@@ -228,7 +247,61 @@ def convert_to_csv(elements: List[Element]) -> str:
 
 
 @requires_dependencies(["pandas"])
-def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) -> "pd.DataFrame":
+def get_default_pandas_dtypes() -> dict:
+    return {
+        "text": pd.StringDtype(),
+        "type": pd.StringDtype(),
+        "element_id": pd.StringDtype(),
+        "filename": pd.StringDtype(),  # Optional[str]
+        "filetype": pd.StringDtype(),  # Optional[str]
+        "file_directory": pd.StringDtype(),  # Optional[str]
+        "last_modified": pd.StringDtype(),  # Optional[str]
+        "attached_to_filename": pd.StringDtype(),  # Optional[str]
+        "parent_id": pd.StringDtype(),  # Optional[str],
+        "category_depth": "Int64",  # Optional[int]
+        "image_path": pd.StringDtype(),  # Optional[str]
+        "languages": object,  # Optional[List[str]]
+        "page_number": "Int64",  # Optional[int]
+        "page_name": pd.StringDtype(),  # Optional[str]
+        "url": pd.StringDtype(),  # Optional[str]
+        "link_urls": pd.StringDtype(),  # Optional[str]
+        "link_texts": object,  # Optional[List[str]]
+        "links": object,
+        "sent_from": object,  # Optional[List[str]],
+        "sent_to": object,  # Optional[List[str]]
+        "subject": pd.StringDtype(),  # Optional[str]
+        "section": pd.StringDtype(),  # Optional[str]
+        "header_footer_type": pd.StringDtype(),  # Optional[str]
+        "emphasized_text_contents": object,  # Optional[List[str]]
+        "emphasized_text_tags": object,  # Optional[List[str]]
+        "text_as_html": pd.StringDtype(),  # Optional[str]
+        "regex_metadata": object,
+        "max_characters": "Int64",  # Optional[int]
+        "is_continuation": "boolean",  # Optional[bool]
+        "detection_class_prob": float,  # Optional[float],
+        "sender": pd.StringDtype(),
+        "coordinates_points": object,
+        "coordinates_system": pd.StringDtype(),
+        "coordinates_layout_width": float,
+        "coordinates_layout_height": float,
+        "data_source_url": pd.StringDtype(),  # Optional[str]
+        "data_source_version": pd.StringDtype(),  # Optional[str]
+        "data_source_record_locator": object,
+        "data_source_date_created": pd.StringDtype(),  # Optional[str]
+        "data_source_date_modified": pd.StringDtype(),  # Optional[str]
+        "data_source_date_processed": pd.StringDtype(),  # Optional[str]
+        "data_source_permissions_data": object,
+        "embeddings": object,
+        "regex_metadata_key": object,
+    }
+
+
+@requires_dependencies(["pandas"])
+def convert_to_dataframe(
+    elements: List[Element],
+    drop_empty_cols: bool = True,
+    set_dtypes=False,
+) -> "pd.DataFrame":
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
         text: the element text
@@ -236,9 +309,16 @@ def convert_to_dataframe(elements: List[Element], drop_empty_cols: bool = True) 
 
     Output is pd.DataFrame
     """
-    csv_string = convert_to_isd_csv(elements)
-    csv_string_io = io.StringIO(csv_string)
-    df = pd.read_csv(csv_string_io, sep=",")
+    elements_as_dict = convert_to_dict(elements)
+    for d in elements_as_dict:
+        if metadata := d.pop("metadata", None):
+            d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
+    df = pd.DataFrame.from_dict(
+        elements_as_dict,
+    )
+    if set_dtypes:
+        dt = {k: v for k, v in get_default_pandas_dtypes().items() if k in df.columns}
+        df = df.astype(dt)
     if drop_empty_cols:
         df.dropna(axis=1, how="all", inplace=True)
     return df
@@ -271,3 +351,96 @@ def filter_element_types(
         return filtered_elements
 
     return elements
+
+
+def convert_to_coco(
+    elements: List[Element],
+    dataset_description: Optional[str] = None,
+    dataset_version: str = "1.0",
+    contributors: Tuple[str] = ("Unstructured Developers",),
+) -> List[Dict[str, Any]]:
+    coco_dataset = {}
+    # Handle Info
+    coco_dataset["info"] = {
+        "description": (
+            dataset_description
+            if dataset_description
+            else f"Unstructured COCO Dataset {datetime.now().strftime('%Y-%m-%d')}"
+        ),
+        "version": dataset_version,
+        "year": datetime.now().year,
+        "contributors": ",".join(contributors),
+        "date_created": datetime.now().date().isoformat(),
+    }
+    elements_dict = convert_to_dict(elements)
+    # Handle Images
+    images = [
+        {
+            "width": (
+                el["metadata"]["coordinates"]["layout_width"]
+                if el["metadata"].get("coordinates")
+                else None
+            ),
+            "height": (
+                el["metadata"]["coordinates"]["layout_height"]
+                if el["metadata"].get("coordinates")
+                else None
+            ),
+            "file_directory": el["metadata"].get("file_directory", ""),
+            "file_name": el["metadata"].get("filename", ""),
+            "page_number": el["metadata"].get("page_number", ""),
+        }
+        for el in elements_dict
+    ]
+    images = list({tuple(sorted(d.items())): d for d in images}.values())
+    for index, d in enumerate(images):
+        d["id"] = index + 1
+    coco_dataset["images"] = images
+    # Handle Categories
+    categories = sorted(set(TYPE_TO_TEXT_ELEMENT_MAP.keys()))
+    categories = [{"id": i + 1, "name": cat} for i, cat in enumerate(categories)]
+    coco_dataset["categories"] = categories
+    # Handle Annotations
+    annotations = [
+        {
+            "id": el["element_id"],
+            "category_id": [x["id"] for x in categories if x["name"] == el["type"]][0],
+            "bbox": [
+                float(el["metadata"].get("coordinates")["points"][0][0]),
+                float(el["metadata"].get("coordinates")["points"][0][1]),
+                float(
+                    abs(
+                        el["metadata"].get("coordinates")["points"][0][0]
+                        - el["metadata"].get("coordinates")["points"][2][0]
+                    )
+                ),
+                float(
+                    abs(
+                        el["metadata"].get("coordinates")["points"][0][1]
+                        - el["metadata"].get("coordinates")["points"][1][1]
+                    )
+                ),
+            ]
+            if el["metadata"].get("coordinates")
+            else [],
+            "area": (
+                float(
+                    abs(
+                        el["metadata"].get("coordinates")["points"][0][0]
+                        - el["metadata"].get("coordinates")["points"][2][0]
+                    )
+                )
+                * float(
+                    abs(
+                        el["metadata"].get("coordinates")["points"][0][1]
+                        - el["metadata"].get("coordinates")["points"][1][1]
+                    )
+                )
+            )
+            if el["metadata"].get("coordinates")
+            else None,
+        }
+        for el in elements_dict
+    ]
+    coco_dataset["annotations"] = annotations
+    return coco_dataset

@@ -1,24 +1,22 @@
 import typing as t
+from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.gcs import GcsWriteConfig, SimpleGcsConfig
 
 
-def gcs_writer(
-    remote_url: str,
-    token: t.Optional[str],
-    verbose: bool = False,
-    **kwargs,
-) -> BaseDestinationConnector:
-    from unstructured.ingest.connector.fsspec import FsspecWriteConfig
-    from unstructured.ingest.connector.gcs import (
-        GcsDestinationConnector,
-        SimpleGcsConfig,
-    )
+@dataclass
+class GcsWriter(Writer, EnhancedDataClassJsonMixin):
+    fsspec_config: "SimpleGcsConfig"
+    write_config: "GcsWriteConfig"
 
-    return GcsDestinationConnector(
-        write_config=FsspecWriteConfig(),
-        connector_config=SimpleGcsConfig(
-            remote_url=remote_url,
-            access_kwargs={"token": token},
-        ),
-    )
+    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.gcs import GcsDestinationConnector
+
+        return GcsDestinationConnector(
+            write_config=self.write_config, connector_config=self.fsspec_config
+        )

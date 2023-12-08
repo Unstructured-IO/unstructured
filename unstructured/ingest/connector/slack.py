@@ -1,14 +1,13 @@
-import os
 import typing as t
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -53,7 +52,7 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class SlackIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing!).
 
@@ -91,29 +90,25 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
     def _create_full_tmp_dir_path(self):
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
+    @SourceConnectionNetworkError.wrap
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def _fetch_messages(self):
         from slack_sdk import WebClient
-        from slack_sdk.errors import SlackApiError
 
         self.client = WebClient(token=self.token)
-        try:
-            oldest = "0"
-            latest = "0"
-            if self.oldest:
-                oldest = self.convert_datetime(self.oldest)
+        oldest = "0"
+        latest = "0"
+        if self.oldest:
+            oldest = self.convert_datetime(self.oldest)
 
-            if self.latest:
-                latest = self.convert_datetime(self.latest)
+        if self.latest:
+            latest = self.convert_datetime(self.latest)
 
-            result = self.client.conversations_history(
-                channel=self.channel,
-                oldest=oldest,
-                latest=latest,
-            )
-        except SlackApiError as e:
-            logger.error(e)
-            return None
+        result = self.client.conversations_history(
+            channel=self.channel,
+            oldest=oldest,
+            latest=latest,
+        )
         return result
 
     def update_source_metadata(self, **kwargs):
@@ -140,7 +135,7 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         )
 
     @SourceConnectionError.wrap
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
     def get_file(self):
         from slack_sdk.errors import SlackApiError
@@ -148,9 +143,6 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
-
-        if self.processor_config.verbose:
-            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         result = self._fetch_messages()
         self.update_source_metadata(result=result)
@@ -201,6 +193,18 @@ class SlackSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from"""
 
     connector_config: SimpleSlackConfig
+
+    @requires_dependencies(dependencies=["slack_sdk"], extras="slack")
+    def check_connection(self):
+        from slack_sdk import WebClient
+        from slack_sdk.errors import SlackClientError
+
+        try:
+            client = WebClient(token=self.connector_config.token)
+            client.users_identity()
+        except SlackClientError as slack_error:
+            logger.error(f"failed to validate connection: {slack_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {slack_error}")
 
     def initialize(self):
         """Verify that can get metadata for an object, validates connections info."""

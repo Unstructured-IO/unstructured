@@ -1,0 +1,45 @@
+
+name: 'Base Cache Build'
+description: 'Restore the base python cache for CI to use, recreate if not found'
+inputs:
+  python-version:
+    description: 'python version associated with the cache'
+    required: true
+  check-only:
+    description: 'if set, will not restore the cache if it exists'
+    default: "false"
+runs:
+  using: "composite"
+  steps:
+    - name: Check for/restore base cache
+      uses: actions/cache/restore@v3
+      id: virtualenv-cache-restore
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
+        lookup-only: ${{ inputs.check-only }}
+    - name: Set up Python ${{ inputs.python-version }}
+      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+    - name: Setup virtual environment (no cache hit)
+      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        python${{ inputs.python-version }} -m venv .venv
+        source .venv/bin/activate
+        [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
+        make install-ci
+    - name: Save Cache
+      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
+      id: virtualenv-cache-save
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          .venv
+          nltk_data
+        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
+

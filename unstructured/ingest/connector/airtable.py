@@ -1,13 +1,14 @@
-import os
 import typing as t
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
+
+import requests
 
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
@@ -15,6 +16,9 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
+
+if t.TYPE_CHECKING:
+    from pyairtable import Api
 
 
 @dataclass
@@ -41,7 +45,7 @@ class AirtableTableMeta:
 
 
 @dataclass
-class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
+class AirtableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     """Class encapsulating fetching a doc and writing processed results (but not
     doing the processing).
 
@@ -130,11 +134,10 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseIngestDoc):
 
     @SourceConnectionError.wrap
     @requires_dependencies(["pandas"])
-    @BaseIngestDoc.skip_if_file_exists
+    @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
         import pandas as pd
 
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         rows, table_url = self._get_table_rows()
         self.update_source_metadata(rows_tuple=(rows, table_url))
         if rows is None:
@@ -200,6 +203,24 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches tables or views from an Airtable org."""
 
     connector_config: SimpleAirtableConfig
+    _api: t.Optional["Api"] = field(init=False, default=None)
+
+    @property
+    def api(self):
+        if self._api is None:
+            self._api = Api(self.connector_config.personal_access_token)
+        return self._api
+
+    @api.setter
+    def api(self, api: "Api"):
+        self._api = api
+
+    def check_connection(self):
+        try:
+            self.api.request(method="HEAD", url=self.api.build_url("meta", "bases"))
+        except requests.HTTPError as http_error:
+            logger.error(f"failed to validate connection: {http_error}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {http_error}")
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def initialize(self):

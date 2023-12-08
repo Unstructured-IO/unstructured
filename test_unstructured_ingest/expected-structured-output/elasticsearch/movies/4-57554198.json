@@ -1,0 +1,65 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "4",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "9abdc842ab4bacbaa4da45cec2ef7e0d",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "4",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "D. W. Griffith",
+    "type": "Title"
+  },
+  {
+    "element_id": "b8004022d0994669c5fdb4ec8a5088a9",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "4",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "On a beautiful summer day a father and mother take their daughter Dollie on an outing to the river. The mother refuses to buy a gypsy's wares. The gypsy tries to rob the mother, but the father drives him off. The gypsy returns to the camp and devises a plan. They return and kidnap Dollie while her parents are distracted. A rescue crew is organized, but the gypsy takes Dollie to his camp. They gag Dollie and hide her in a barrel before the rescue party gets to the camp. Once they leave the gypsies and escapes in their wagon. As the wagon crosses the river, the barrel falls into the water. Still sealed in the barrel, Dollie is swept downstream in dangerous currents. A boy who is fishing in the river finds the barrel, and Dollie is reunited safely with her parents.",
+    "type": "NarrativeText"
+  }
+]

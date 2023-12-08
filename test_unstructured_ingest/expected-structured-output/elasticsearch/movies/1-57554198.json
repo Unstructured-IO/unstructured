@@ -1,0 +1,65 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "1",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "576608bb13aa67420e79d575e0e26071",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "1",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Wallace McCutcheon and Ediwin S. Porter",
+    "type": "Title"
+  },
+  {
+    "element_id": "d30707943c5b8e45088e21b0a9ba6f1a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "1",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Boone's daughter befriends an Indian maiden as Boone and his companion start out on a hunting expedition. While he is away, Boone's cabin is attacked by the Indians, who set it on fire and abduct Boone's daughter. Boone returns, swears vengeance, then heads out on the trail to the Indian camp. His daughter escapes but is chased. The Indians encounter Boone, which sets off a huge fight on the edge of a cliff. A burning arrow gets shot into the Indian camp. Boone gets tied to the stake and tortured. The burning arrow sets the Indian camp on fire, causing panic. Boone is rescued by his horse, and Boone has a knife fight in which he kills the Indian chief. [2]",
+    "type": "NarrativeText"
+  }
+]

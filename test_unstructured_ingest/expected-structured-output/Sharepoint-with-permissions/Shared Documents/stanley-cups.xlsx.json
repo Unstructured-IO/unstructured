@@ -1,0 +1,450 @@
+[
+  {
+    "element_id": "c37e2cb941a2e20a9f728fbea5f9e400",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05",
+        "date_modified": "2023-06-16T05:05:05",
+        "permissions_data": [
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "inheritedFrom": {},
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "inheritedFrom": {},
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
+          }
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups",
+      "page_number": 1
+    },
+    "text": "Stanley Cups",
+    "type": "Title"
+  },
+  {
+    "element_id": "c00fc0e5ac303c40f9089791e5e485b1",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05",
+        "date_modified": "2023-06-16T05:05:05",
+        "permissions_data": [
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "inheritedFrom": {},
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "inheritedFrom": {},
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
+          }
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups",
+      "page_number": 1
+    },
+    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n",
+    "type": "Table"
+  },
+  {
+    "element_id": "98656277bdadc9ef7d1a9e1bc969579b",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05",
+        "date_modified": "2023-06-16T05:05:05",
+        "permissions_data": [
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "inheritedFrom": {},
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "inheritedFrom": {},
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
+          }
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups Since 67",
+      "page_number": 2
+    },
+    "text": "Stanley Cups Since 67",
+    "type": "Title"
+  },
+  {
+    "element_id": "31421b5cd94fedb10dc82738503b4505",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05",
+        "date_modified": "2023-06-16T05:05:05",
+        "permissions_data": [
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Owners"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Owners",
+                "id": "3",
+                "loginName": "Communication site Owners"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Visitors"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Visitors",
+                "id": "4",
+                "loginName": "Communication site Visitors"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz",
+            "inheritedFrom": {},
+            "roles": [
+              "read"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Communication site Members"
+              }
+            },
+            "grantedToV2": {
+              "siteGroup": {
+                "displayName": "Communication site Members",
+                "id": "5",
+                "loginName": "Communication site Members"
+              }
+            },
+            "id": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM",
+            "inheritedFrom": {},
+            "roles": [
+              "write"
+            ],
+            "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
+          },
+          {
+            "grantedTo": {
+              "user": {
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "grantedToV2": {
+              "group": {
+                "@odata.type": "#microsoft.graph.sharePointIdentity",
+                "displayName": "Global Administrator",
+                "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              },
+              "siteUser": {
+                "displayName": "Global Administrator",
+                "id": "7",
+                "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
+              }
+            },
+            "id": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE",
+            "inheritedFrom": {},
+            "roles": [
+              "owner"
+            ],
+            "shareId": "YzowdC5jfHRlbmFudHxmYzA5NTU5Mi1jMjVhLTRhYzctYjJhMS0zMWUwZDAxZTRiNTE"
+          }
+        ],
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups Since 67",
+      "page_number": 2
+    },
+    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n",
+    "type": "Table"
+  }
+]

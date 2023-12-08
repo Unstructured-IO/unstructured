@@ -146,9 +146,48 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     if languages is None:
         raise ValueError("`languages` can not be `None`")
     converted_languages = list(
-        filter(None, [convert_language_to_tesseract(lang) for lang in languages]),
+        filter(
+            lambda x: x is not None and x != "",
+            [convert_language_to_tesseract(lang) for lang in languages],
+        ),
     )
+    # Remove duplicates from the list but keep the original order
+    converted_languages = list(dict.fromkeys(converted_languages))
+    if len(converted_languages) == 0:
+        logger.warning(
+            "Failed to find any valid standard language code from "
+            f"languages: {languages}, proceed with `eng` instead.",
+        )
+        return "eng"
+
     return "+".join(converted_languages)
+
+
+def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
+    """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
+    converting `ocr_languages` if needed"""
+    if languages is None:
+        languages = ["eng"]
+
+    if not isinstance(languages, list):
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
+
+    if ocr_languages is not None:
+        if languages != ["eng"]:
+            raise ValueError(
+                "Only one of languages and ocr_languages should be specified. "
+                "languages is preferred. ocr_languages is marked for deprecation.",
+            )
+
+        else:
+            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            logger.warning(
+                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+                "Please use languages instead.",
+            )
+    return languages
 
 
 def convert_old_ocr_languages_to_languages(ocr_languages: str):

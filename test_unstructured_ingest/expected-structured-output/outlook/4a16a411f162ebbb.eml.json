@@ -1,24 +1,23 @@
 [
   {
-    "type": "NarrativeText",
     "element_id": "007ec3bff83ee17497e490b86a36e0dd",
     "metadata": {
       "data_source": {
-        "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATzq5sAADZYn%2FlfnvLSqIcW%2FYsN8ebAAATzrolAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
-        "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAATxicu",
+        "date_created": "2023-07-10T03:39:04",
+        "date_modified": "2023-07-15T22:36:12",
         "record_locator": {
           "message_id": "AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn-lfnvLSqIcW-YsN8ebAAATzq5sAADZYn-lfnvLSqIcW-YsN8ebAAATzrolAAA=",
           "user_email": "devops@unstructuredio.onmicrosoft.com"
         },
-        "date_created": "2023-07-10T03:39:04",
-        "date_modified": "2023-07-15T22:36:12"
+        "url": "https://outlook.office365.com/owa/?ItemID=AAMkAGE2MmEwNzFlLWVjYzAtNDNhZS04ZGM1LTFjYmMzZDhiMmI0MABGAAAAAADc1MfJYetSQ6QZntYrI9k4BwDZYn%2FlfnvLSqIcW%2FYsN8ebAAATzq5sAADZYn%2FlfnvLSqIcW%2FYsN8ebAAATzrolAAA%3D&exvsurl=1&viewmodel=ReadMessageItem",
+        "version": "CQAAABYAAADZYn/lfnvLSqIcW/YsN8ebAAATxicu"
       },
       "filename": "4a16a411f162ebbb.eml",
-      "last_modified": "2023-07-09T20:38:47-07:00",
       "filetype": "message/rfc822",
       "languages": [
         "eng"
       ],
+      "last_modified": "2023-07-09T20:38:47-07:00",
       "sent_from": [
         "David Potter <potterdavidm@gmail.com>"
       ],
@@ -27,6 +26,7 @@
       ],
       "subject": "message for subfolder"
     },
-    "text": "this is a message for the subfolder"
+    "text": "this is a message for the subfolder",
+    "type": "NarrativeText"
   }
 ]

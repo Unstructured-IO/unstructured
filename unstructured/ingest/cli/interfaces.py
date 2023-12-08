@@ -1,11 +1,13 @@
+import json
+import os.path
 import typing as t
 from abc import abstractmethod
 from dataclasses import fields
-from gettext import ngettext
+from gettext import gettext, ngettext
 from pathlib import Path
 
 import click
-from dataclasses_json.core import Json, _decode_dataclass
+from dataclasses_json.core import Json
 
 from unstructured.ingest.interfaces import (
     BaseConfig,
@@ -18,6 +20,58 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
     RetryStrategyConfig,
 )
+
+
+class Dict(click.ParamType):
+    name = "dict"
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            self.fail(
+                gettext(
+                    "{value} is not a valid json value.",
+                ).format(value=value),
+                param,
+                ctx,
+            )
+
+
+class FileOrJson(click.ParamType):
+    name = "file-or-json"
+
+    def __init__(self, allow_raw_str: bool = False):
+        self.allow_raw_str = allow_raw_str
+
+    def convert(
+        self,
+        value: t.Any,
+        param: t.Optional[click.Parameter],
+        ctx: t.Optional[click.Context],
+    ) -> t.Any:
+        # check if valid file
+        full_path = os.path.abspath(os.path.expanduser(value))
+        if os.path.isfile(full_path):
+            return str(Path(full_path).resolve())
+        if isinstance(value, str):
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                if self.allow_raw_str:
+                    return value
+        self.fail(
+            gettext(
+                "{value} is not a valid json string nor an existing filepath.",
+            ).format(value=value),
+            param,
+            ctx,
+        )
 
 
 class DelimitedString(click.ParamType):
@@ -79,6 +133,10 @@ class CliMixin:
                 cmd.params.append(param)
 
 
+class CliConfig(BaseConfig, CliMixin):
+    pass
+
+
 class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -101,12 +159,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Return None if none of the fields are being populated
         """
@@ -115,7 +168,7 @@ class CliRetryStrategyConfig(RetryStrategyConfig, CliMixin):
             field_values = [kvs.get(n) for n in field_names if kvs.get(n)]
             if not field_values:
                 return None
-        return _decode_dataclass(cls, kvs, infer_missing)
+        return super().from_dict(kvs=kvs, **kwargs)
 
 
 class CliProcessorConfig(ProcessorConfig, CliMixin):
@@ -207,16 +260,10 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--skip-infer-table-types"],
-                type=DelimitedString(),
-                default=None,
-                help="Optional list of document types to skip table extraction on",
-            ),
-            click.Option(
                 ["--pdf-infer-table-structure"],
+                is_flag=True,
                 default=False,
-                help="If set to True, partition will include the table's text "
-                "content in the response.",
+                help="Partition will include the table's text_as_html " "in the response metadata.",
             ),
             click.Option(
                 ["--strategy"],
@@ -238,6 +285,17 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="Text encoding to use when reading documents. By default the encoding is "
                 "detected automatically.",
+            ),
+            click.Option(
+                ["--skip-infer-table-types"],
+                type=DelimitedString(),
+                default=None,
+                help="Optional list of document types to skip table extraction on",
+            ),
+            click.Option(
+                ["--additional-partition-args"],
+                type=Dict(),
+                help="A json string representation of values to pass through to partition()",
             ),
             click.Option(
                 ["--fields-include"],
@@ -286,11 +344,16 @@ class CliPartitionConfig(PartitionConfig, CliMixin):
                 default=None,
                 help="API Key for partition endpoint.",
             ),
+            click.Option(
+                ["--hi-res-model-name"],
+                default=None,
+                help="Model name for hi-res strategy.",
+            ),
         ]
         return options
 
 
-class CliRecursiveConfig(BaseConfig, CliMixin):
+class CliRecursiveConfig(CliConfig):
     recursive: bool
 
     @staticmethod
@@ -331,6 +394,13 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
                 help="Recursively download files in their respective folders "
                 "otherwise stop at the files in provided folder level.",
             ),
+            click.Option(
+                ["--file-glob"],
+                default=None,
+                type=DelimitedString(),
+                help="A comma-separated list of file globs to limit which types of "
+                "local files are accepted, e.g. '*.html,*.txt'",
+            ),
         ]
         return options
 
@@ -338,13 +408,25 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
 class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
+        from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
+
         options = [
             click.Option(
+                ["--embedding-provider"],
+                help="Type of the embedding class to be used. Can be one of: "
+                f"{list(EMBEDDING_PROVIDER_TO_CLASS_MAP)}",
+                type=click.Choice(list(EMBEDDING_PROVIDER_TO_CLASS_MAP)),
+            ),
+            click.Option(
                 ["--embedding-api-key"],
-                help="openai api key",
+                help="API key for the embedding model, for the case an API key is needed.",
+                type=str,
+                default=None,
             ),
             click.Option(
                 ["--embedding-model-name"],
+                help="Embedding model name, if needed. "
+                "Chooses a particular LLM between different options, to embed with it.",
                 type=str,
                 default=None,
             ),
@@ -352,12 +434,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with embedding_ during CLI invocation but
@@ -371,10 +448,10 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            if not new_kvs.get("api_key", None):
+            if not new_kvs.get("provider", None):
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(new_kvs, **kwargs)
+        return super().from_dict(kvs, **kwargs)
 
 
 class CliChunkingConfig(ChunkingConfig, CliMixin):
@@ -392,7 +469,7 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 default=False,
             ),
             click.Option(
-                ["--chunk-combine-under-n-chars"],
+                ["--chunk-combine-text-under-n-chars"],
                 type=int,
                 default=500,
                 show_default=True,
@@ -403,22 +480,24 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 default=1500,
                 show_default=True,
             ),
+            click.Option(
+                ["--chunk-max-characters"],
+                type=int,
+                default=1500,
+                show_default=True,
+            ),
         ]
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with chunking_ during CLI invocation but
         doesn't require that as part of the field names in this class
         """
         if isinstance(kvs, dict):
+            kvs = kvs.copy()
             new_kvs = {}
             if "chunk_elements" in kvs:
                 chunk_elements = kvs.pop("chunk_elements")
@@ -427,15 +506,15 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 new_kvs["chunk_elements"] = chunk_elements
             new_kvs.update(
                 {
-                    k[len("chunking_") :]: v  # noqa: E203
+                    k[len("chunk_") :]: v  # noqa: E203
                     for k, v in kvs.items()
-                    if k.startswith("chunking_")
+                    if k.startswith("chunk_")
                 },
             )
             if len(new_kvs.keys()) == 0:
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(kvs=new_kvs, **kwargs)
+        return super().from_dict(kvs=kvs, **kwargs)
 
 
 class CliPermissionsConfig(PermissionsConfig, CliMixin):
@@ -461,18 +540,14 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
         return options
 
     @classmethod
-    def from_dict(
-        cls,
-        kvs: Json,
-        *,
-        infer_missing=False,
-    ):
+    def from_dict(cls, kvs: Json, **kwargs):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with permissions_ during CLI invocation but
         doesn't require that as part of the field names in this class. It also checks if the
         CLI params are provided as intended.
         """
+
         if isinstance(kvs, dict):
             permissions_application_id = kvs.get("permissions_application_id")
             permissions_client_cred = kvs.get("permissions_client_cred")
@@ -497,5 +572,5 @@ class CliPermissionsConfig(PermissionsConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            return _decode_dataclass(cls, new_kvs, infer_missing)
-        return _decode_dataclass(cls, kvs, infer_missing)
+            return super().from_dict(kvs=new_kvs, **kwargs)
+        return super().from_dict(kvs=kvs, **kwargs)

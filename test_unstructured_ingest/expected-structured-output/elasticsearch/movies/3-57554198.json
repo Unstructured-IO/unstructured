@@ -1,0 +1,65 @@
+[
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "3",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "9496aba3ea633310e2d669820269ad00",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "3",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Edwin Stanton Porter",
+    "type": "Title"
+  },
+  {
+    "element_id": "6ead4aca7b509813147c41699dd1a7d4",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "document_id": "3",
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies"
+        },
+        "version": 1
+      },
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.",
+    "type": "NarrativeText"
+  }
+]

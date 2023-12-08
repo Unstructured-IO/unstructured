@@ -202,7 +202,7 @@ def test_bag_of_words(text, expected):
         (
             "We saw 23% improvement in this quarter.",
             "We saw 23% improvement in sales this quarter.",
-            0.12,
+            0.125,
         ),
         (
             "no",

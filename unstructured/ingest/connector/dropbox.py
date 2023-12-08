@@ -17,9 +17,13 @@ from unstructured.ingest.connector.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
+    FsspecWriteConfig,
     SimpleFsspecConfig,
 )
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.interfaces import AccessConfig
+from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 
@@ -28,8 +32,18 @@ class MissingFolderError(Exception):
 
 
 @dataclass
-class SimpleDropboxConfig(SimpleFsspecConfig):
+class DropboxAccessConfig(AccessConfig):
+    token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
+class DropboxWriteConfig(FsspecWriteConfig):
     pass
+
+
+@dataclass
+class SimpleDropboxConfig(SimpleFsspecConfig):
+    access_config: DropboxAccessConfig = None
 
 
 @dataclass
@@ -90,12 +104,16 @@ class DropboxSourceConnector(FsspecSourceConnector):
     def initialize(self):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
-        self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
-        )
-        # Dropbox requires a forward slash at the front of the folder path. This
-        # creates some complications in path joining so a custom path is created here.
-        ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
+        try:
+            self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
+                **self.connector_config.get_access_config(),
+            )
+            # Dropbox requires a forward slash at the front of the folder path. This
+            # creates some complications in path joining so a custom path is created here.
+            ls_output = self.fs.ls(f"/{self.connector_config.path_without_protocol}")
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
         if ls_output and len(ls_output) >= 1:
             return
         elif ls_output:
@@ -139,3 +157,4 @@ class DropboxSourceConnector(FsspecSourceConnector):
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig
+    write_config: DropboxWriteConfig

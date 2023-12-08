@@ -1,0 +1,94 @@
+[
+  {
+    "element_id": "0540311f6c077fe8f797080918b8d74b",
+    "metadata": {
+      "data_source": {
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "example-docs/fake-html-cp1252.html"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "page_number": 1
+    },
+    "text": "My First Heading",
+    "type": "Title"
+  },
+  {
+    "element_id": "399af454cb1368b8257ed406b430de84",
+    "metadata": {
+      "data_source": {
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "example-docs/fake-html-cp1252.html"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "page_number": 1
+    },
+    "text": "My first paragraph.",
+    "type": "Title"
+  },
+  {
+    "element_id": "b4cf0d13edfa976816649971bd640a66",
+    "metadata": {
+      "data_source": {
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "example-docs/fake-html-cp1252.html"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "page_number": 1
+    },
+    "text": "Some CP1252-specific characters:",
+    "type": "Title"
+  },
+  {
+    "element_id": "24dc2ef4b79651e2c0434d2724b48fc1",
+    "metadata": {
+      "data_source": {
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "example-docs/fake-html-cp1252.html"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "page_number": 1
+    },
+    "text": "¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯\n°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿\nÀ\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ\nÐ\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß\nà\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï\nð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ",
+    "type": "NarrativeText"
+  }
+]

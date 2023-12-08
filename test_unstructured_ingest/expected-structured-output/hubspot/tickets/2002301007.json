@@ -1,0 +1,154 @@
+[
+  {
+    "element_id": "36722a7c11e617010eaa29230dbc6c7d",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Another testing ticket",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "2ddbd32c8a988408e123dbe8ff929b35",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This is another testing ticket:",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "75d904d865ae505a5930bfad2d478005",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "So far there are a couple of tickets",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "a60a169ceeafc5f539c1dd4dc3b4d04b",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "This and 'New testing ticket'",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "4c8e4c4d8dd8c248534573ea650fbe1e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Adding text to the multiline custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "4c8e4c4d8dd8c248534573ea650fbe1e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Adding text to the multiline custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "4c8e4c4d8dd8c248534573ea650fbe1e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Adding text to the multiline custom property.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "4c8e4c4d8dd8c248534573ea650fbe1e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-10-11T00:58:08.261000+00:00",
+        "date_modified": "2023-10-17T02:57:01.636000+00:00",
+        "record_locator": {
+          "hubspot_id": "2002301007"
+        }
+      },
+      "filename": "2002301007.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Adding text to the multiline custom property.",
+    "type": "NarrativeText"
+  }
+]

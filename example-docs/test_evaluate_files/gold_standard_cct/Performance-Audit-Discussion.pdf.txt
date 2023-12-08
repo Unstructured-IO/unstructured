@@ -1,0 +1,205 @@
+Page 1
+The introductory chapter of Government Auditing Standards (GAGAS)1
+outlines five concepts describing how public officials are to provide
+functions and services: effectively, efficiently, economically, ethically, and 
+equitably. When planning, gathering and assessing evidence, and 
+reporting audit results, auditors may focus on one or more of these 
+concepts. The following discussion is intended to assist auditors when 
+developing audit objectives for performance audits of government 
+programs and activities.2
+This discussion is designed to help auditors understand
+and apply the concepts cited above for performance audits 
+conducted in accordance with GAGAS. This discussion
+does not contain requirements, does not amend GAGAS,
+and is not considered interpretive guidance, as defined in 
+chapter 2 of GAGAS. 
+Paragraph 1.02:
+The concept of accountability for use of public resources 
+and government authority is key to our nation’s governing 
+processes. Management and officials entrusted with public 
+resources are responsible for carrying out public functions 
+and providing service to the public effectively, efficiently, 
+economically, ethically, and equitably within the context 
+of the statutory boundaries of the specific government 
+program. [Emphasis added.]
+Paragraph 1.03:
+As reflected in applicable laws, regulations, agreements, 
+and standards, management and officials of government 
+programs are responsible for providing reliable, useful, and 
+timely information for transparency and accountability of 
+these programs and their operations. Legislators, oversight 
+ 1GAO, Government Auditing Standards: 2018 Revision, GAO-21-368G (Washington, 
+D.C.: April 2021)
+2The concepts cited may also be applicable to other GAGAS engagements, based on the 
+auditors’ judgments. This discussion is limited to considering these concepts in 
+performance audits.
+GAGAS Performance Audits: Discussion of 
+Concepts to Consider When Auditing Public 
+Functions and Services
+GAGAS Paragraphs
+Page 2
+bodies, those charged with governance, and the public 
+need to know whether (1) management and officials 
+manage government resources and use their authority 
+properly and in compliance with laws and regulations; (2) 
+government programs are achieving their objectives and 
+desired outcomes; and (3) government services are 
+provided effectively, efficiently, economically, ethically, 
+and equitably. [Emphasis added.]
+Government administration best serves the collective interest of the public 
+when it is effective, efficient, economical, ethical, and equitable. Auditors 
+help inform legislators, oversight bodies, those charged with governance, 
+and the public about whether public services are being provided 
+consistent with these concepts. Government auditing can contribute to 
+accountability and can help improve government administration by 
+identifying deficiencies and recommending enhancements to achieve 
+effective, efficient, economical, ethical, and equitable outcomes, when 
+appropriate within the context of the audit objectives. As such, it is 
+important for auditors to understand the concepts below as they relate to 
+administering government programs or activities and how they can 
+assess or address these expectations of government performance in 
+conducting their performance audits.
+The examples that follow the discussion of each concept illustrate the
+distinctions between these concepts. In a performance audit, it is 
+common practice to incorporate more than one of these concepts when 
+conducting the audit.
+The administration of a government program or activity is effective when 
+it achieves the intended results. A performance audit that focuses on the 
+effectiveness of a program or activity seeks to establish a cause-andeffect relationship between the operation of the program or activity and 
+achieving its stated objectives. Achieving the objectives does not 
+guarantee that the program or activity was effective unless the auditors 
+can establish that the program or activity caused, or contributed to, the 
+desired outcome.
+Example: In a performance audit examining how effective a 
+housing voucher program was in achieving its goal of improving 
+economic outcomes for recipients, auditors may determine 
+whether receiving housing vouchers led to better subsequent 
+economic outcomes for recipients than those of similarly situated 
+individuals who did not receive vouchers.
+Discussion
+Effective
+Page 3
+Example: In a performance audit assessing the effectiveness of 
+an after-school program targeted at helping students improve their 
+reading proficiency, auditors may examine the extent to which 
+participants’ reading levels improved relative to baseline data from 
+before they joined the program.
+The administration of a government program or activity is efficient when 
+it gets the most value from available resources. When a performance 
+audit focuses on efficiency, auditors examine whether the resources used 
+to administer a program or activity have been put to optimal or 
+satisfactory use, or whether the same or similar results could have been 
+achieved more timely or with fewer resources. 
+Example: In a performance audit assessing a disaster relief 
+agency’s mobilization of resources to respond to a disaster, 
+auditors may assess the disaster relief agency’s timeliness in 
+providing relief compared to its own previous performance or the 
+performance of other similarly situated agencies that have 
+responded to comparable disasters. 
+Example: In a performance audit assessing a consumer protection 
+agency’s response to consumer complaints, auditors may assess 
+whether the agency’s efforts to streamline its processes resulted 
+in improved timely resolution of complaints.
+Example: In a performance audit assessing the time a state needs
+to process unemployment benefits targeted at helping those in 
+need, auditors may assess how long the process takes from 
+receipt of the unemployment application to the applicant’s receipt 
+of the benefit, including steps such as verifying required 
+information.
+The administration of a government program or activity is economical
+when it minimizes the costs of resources used in performing its functions 
+while meeting timeliness and quality considerations for those resources. 
+When auditing economy, auditors primarily focus on the costs of inputs 
+rather than on the outcomes achieved.
+Example: In a performance audit examining an agency’s 
+international travel expenses, in addition to assessing the design 
+of internal controls and compliance with expense guidelines, 
+auditors may test whether, for a sample of trips, bookings of 
+Efficient
+Economical
+Page 4
+equivalent airline tickets and hotel rooms could be found at a 
+lower cost.
+Example: In a performance audit assessing an agency’s 
+acquisition practices, auditors may examine whether the agency’s 
+decisions regarding purchasing, leasing, or reimbursing 
+employees for the costs of acquiring various supplies or 
+equipment achieved the lowest cost while meeting applicable 
+requirements.
+The administration of a government program or activity is ethical when it 
+advances the collective interest of the public rather than private gain and 
+is conducted with honesty, integrity, and impartiality. Laws and 
+regulations often specify rules of ethical conduct. Therefore, audits 
+examining the ethical administration of a program or activity may involve
+assessing compliance with such laws and regulations. Fraud in 
+administering a government program or activity betrays the public trust 
+and is, by definition, unethical. In addition, auditors may identify instances 
+of unethical conduct that result in waste and abuse during testing of 
+internal controls as part of a performance audit.
+Example: In a performance audit assessing agency officials’ 
+compliance with conflict-of-interest requirements, auditors may 
+compare a sample of financial disclosure reports filed against 
+requirements in statute or regulation.
+Example: In a performance audit assessing potential regulatory 
+capture related to a particular industry, auditors may assess the 
+extent to which the regulatory agency has sufficient controls to 
+reasonably assure its employees’ independence from the entities 
+subject to the agency’s regulation.
+Example: In a performance audit assessing an office’s policies 
+and procedures for purchase cards, auditors’ testing of the 
+program’s controls to identify deficiencies may identify fraud,
+waste, or abuse in its administration. 
+The administration of a government program or activity is equitable when 
+it consistently serves members of the public, distributes public services, 
+and implements public policy in a manner that promotes fairness, justice, 
+and equality. Auditing whether the administration of a government 
+program or activity is equitable may include assessing the 
+Ethical
+Equitable
+Page 5
+• equality of access to and provision of services;
+• procedural fairness and equal treatment of individuals in 
+government programs and policies;
+• causes of disparate outcomes;
+• or distributional impacts of public policies, programs, resources, 
+and services.
+Disaggregating data by social groups or communities that share a 
+particular characteristic (e.g., gender, race, ethnicity, age, or income) 
+can help illuminate differences. Reporting on such differences, when 
+appropriate within the context of the audit objectives, can increase 
+understanding of the effects of policies and programs on issues of 
+equity.
+Example: In a performance audit assessing the granting of 
+waivers from particular requirements, auditors may use 
+disaggregated data about waiver recipients to assess whether 
+different groups or communities were treated fairly and equally in 
+the process.
+Example: In a performance audit assessing a grant program 
+aimed at expanding internet access, auditors may assess the 
+extent to which formulas, criteria, or other factors (such as 
+matching funds or capital requirements) considered in the 
+distribution of grant funds may be to the specific advantage or
+disadvantage of certain groups, regions, or communities, thereby 
+causing inequities.
+Example: In a performance audit assessing scholarship outcomes 
+in higher education programs, auditors may report on the 
+distribution of scholarships by race, gender identity, and income to 
+illuminate potential disparities among scholarship recipients.
+These concepts may overlap. For example, efficiency may also be a 
+component of effectiveness. Similarly, when appropriate within the 
+context of the program and audit objectives, auditors may disaggregate
+the results of performance audits that focus on efficiency or effectiveness 
+Page 6
+issues to illuminate inequities in program administration or in distribution 
+of public services. 
+While all of these concepts are important to administering government 
+programs responsibly, it is up to the professional judgment of the auditors 
+to determine the specific concepts that are relevant in conducting the 
+performance audit and reporting the results. Auditors’ professional 
+judgments are informed by, among other things, the needs of the users of 
+the audit reports; the nature, context, and objectives of the program or 
+activity under audit; and the public interest.
+To view the current Yellow Book, visit https://www.gao.gov/yellowbook.
+For technical assistance, call (202) 512-9535 or email 
+yellowbook@gao.gov. 
+For More Information

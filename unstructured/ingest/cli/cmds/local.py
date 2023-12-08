@@ -4,15 +4,11 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliMixin,
-    CliRecursiveConfig,
-)
-from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.cli.interfaces import CliConfig, CliRecursiveConfig, DelimitedString
 
 
 @dataclass
-class LocalCliConfig(BaseConfig, CliMixin):
+class LocalCliConfig(CliConfig):
     input_path: str
     file_glob: t.Optional[str] = None
 
@@ -28,7 +24,7 @@ class LocalCliConfig(BaseConfig, CliMixin):
             click.Option(
                 ["--file-glob"],
                 default=None,
-                type=str,
+                type=DelimitedString(),
                 help="A comma-separated list of file globs to limit which types of "
                 "local files are accepted, e.g. '*.html,*.txt'",
             ),
