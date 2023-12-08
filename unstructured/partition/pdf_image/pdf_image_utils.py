@@ -127,3 +127,25 @@ def save_elements(
                 el.metadata.image_path = output_f_path
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
+
+
+def check_element_types_to_extract(
+    extract_element_types: Optional[List[str]],
+) -> List[str]:
+    """Check and normalize the provided list of element types to extract."""
+
+    if extract_element_types is None:
+        return []
+
+    if not isinstance(extract_element_types, list):
+        raise TypeError(
+            "The extract_element_types parameter must be a list of element types as strings, "
+            "ex. ['Table', 'Image']",
+        )
+
+    normalized_extract_element_types = []
+    for el_type in extract_element_types:
+        normalized_el_type = el_type.lower().capitalize()
+        normalized_extract_element_types.append(normalized_el_type)
+
+    return normalized_extract_element_types

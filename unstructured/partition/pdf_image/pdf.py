@@ -70,7 +70,10 @@ from unstructured.partition.lang import (
     check_languages,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.pdf_image.pdf_image_utils import save_elements
+from unstructured.partition.pdf_image.pdf_image_utils import (
+    check_element_types_to_extract,
+    save_elements,
+)
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
@@ -131,7 +134,7 @@ def partition_pdf(
     chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
     extract_images_in_pdf: bool = False,
-    extract_tables_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -186,7 +189,7 @@ def partition_pdf(
         languages=languages,
         metadata_last_modified=metadata_last_modified,
         extract_images_in_pdf=extract_images_in_pdf,
-        extract_tables_in_pdf=extract_tables_in_pdf,
+        extract_element_types=extract_element_types,
         image_output_dir_path=image_output_dir_path,
         **kwargs,
     )
@@ -236,7 +239,7 @@ def _partition_pdf_or_image_local(
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
-    extract_tables_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
     **kwargs,
@@ -349,6 +352,9 @@ def _partition_pdf_or_image_local(
         **kwargs,
     )
 
+    extract_element_types = check_element_types_to_extract(extract_element_types)
+    #  NOTE(christine): `extract_images_in_pdf` would deprecate
+    #  (but continue to support for a while)
     if extract_images_in_pdf:
         save_elements(
             elements=elements,
@@ -359,10 +365,13 @@ def _partition_pdf_or_image_local(
             output_dir_path=image_output_dir_path,
         )
 
-    if extract_tables_in_pdf:
+    for el_type in extract_element_types:
+        if extract_images_in_pdf and el_type == ElementType.IMAGE:
+            continue
+
         save_elements(
             elements=elements,
-            element_category_to_save=ElementType.TABLE,
+            element_category_to_save=el_type,
             filename=filename,
             file=file,
             pdf_image_dpi=pdf_image_dpi,
@@ -408,7 +417,7 @@ def partition_pdf_or_image(
     languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
-    extract_tables_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -468,7 +477,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 extract_images_in_pdf=extract_images_in_pdf,
-                extract_tables_in_pdf=extract_tables_in_pdf,
+                extract_element_types=extract_element_types,
                 image_output_dir_path=image_output_dir_path,
                 **kwargs,
             )
