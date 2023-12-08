@@ -1,7 +1,6 @@
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
@@ -13,17 +12,13 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
-class AzureWriter(Writer, EnhancedDataClassJsonMixin):
+class AzureWriter(Writer):
     connector_config: "SimpleAzureBlobStorageConfig"
     write_config: "AzureWriteTextConfig"
 
-    def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.fsspec.azure import (
             AzureBlobStorageDestinationConnector,
-            AzureWriteConfig,
         )
 
-        return AzureBlobStorageDestinationConnector(
-            write_config=AzureWriteConfig(write_text_config=self.write_config),
-            connector_config=self.connector_config,
-        )
+        return AzureBlobStorageDestinationConnector
