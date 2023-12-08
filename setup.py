@@ -154,6 +154,7 @@ setup(
         "s3": load_requirements("requirements/ingest/s3.in"),
         "sharepoint": load_requirements("requirements/ingest/sharepoint.in"),
         "salesforce": load_requirements("requirements/ingest/salesforce.in"),
+        "sftp": load_requirements("requirements/ingest/sftp.in"),
         "slack": load_requirements("requirements/ingest/slack.in"),
         "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
         "weaviate": load_requirements("requirements/ingest/weaviate.in"),

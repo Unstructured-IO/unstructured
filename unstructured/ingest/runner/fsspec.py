@@ -25,7 +25,7 @@ class FsspecRunner(FsspecBaseRunner):
         warnings.warn(
             f"`fsspec` protocol {protocol} is not directly supported by `unstructured`,"
             " so use it at your own risk. Supported protocols are `gcs`, `gs`, `s3`, `s3a`,"
-            "`dropbox`, `abfs` and `az`.",
+            "`dropbox`, `abfs`, `az` and `sftp`.",
             UserWarning,
         )
 
