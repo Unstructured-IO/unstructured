@@ -25,6 +25,7 @@ from .outlook import OutlookRunner
 from .reddit import RedditRunner
 from .s3 import S3Runner
 from .salesforce import SalesforceRunner
+from .sftp import SftpRunner
 from .sharepoint import SharePointRunner
 from .slack import SlackRunner
 from .wikipedia import WikipediaRunner
@@ -54,6 +55,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "reddit": RedditRunner,
     "s3": S3Runner,
     "salesforce": SalesforceRunner,
+    "sftp": SftpRunner,
     "sharepoint": SharePointRunner,
     "slack": SlackRunner,
     "wikipedia": WikipediaRunner,

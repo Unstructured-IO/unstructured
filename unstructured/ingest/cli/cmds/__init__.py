@@ -38,6 +38,7 @@ from .reddit import get_base_src_cmd as reddit_base_src_cmd
 from .s3 import get_base_dest_cmd as s3_base_dest_cmd
 from .s3 import get_base_src_cmd as s3_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
+from .sftp import get_base_src_cmd as sftp_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
 from .weaviate import get_base_dest_cmd as weaviate_dest_cmd
@@ -69,6 +70,7 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     outlook_base_src_cmd,
     reddit_base_src_cmd,
     salesforce_base_src_cmd,
+    sftp_base_src_cmd,
     sharepoint_base_src_cmd,
     slack_base_src_cmd,
     s3_base_src_cmd,

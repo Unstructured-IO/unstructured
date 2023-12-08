@@ -213,7 +213,11 @@ install-ingest-jira:
 
 .PHONY: install-ingest-hubspot
 install-ingest-hubspot:
-	python3 -m pip install -r requirements/ingest-hubspot.txt
+	python3 -m pip install -r requirements/ingest/hubspot.txt
+
+.PHONY: install-ingest-sftp
+install-ingest-sftp:
+	python3 -m pip install -r requirements/ingest/sftp.txt
 
 .PHONY: install-ingest-pinecone
 install-ingest-pinecone:
