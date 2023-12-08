@@ -143,9 +143,12 @@ def check_element_types_to_extract(
             "ex. ['Table', 'Image']",
         )
 
+    available_element_types = list(ElementType.to_dict().values())
     normalized_extract_element_types = []
     for el_type in extract_element_types:
         normalized_el_type = el_type.lower().capitalize()
+        if normalized_el_type not in available_element_types:
+            logger.warning(f"The requested type ({el_type}) doesn't match any available type")
         normalized_extract_element_types.append(normalized_el_type)
 
     return normalized_extract_element_types
