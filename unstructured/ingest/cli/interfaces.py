@@ -394,6 +394,13 @@ class CliFilesStorageConfig(FileStorageConfig, CliMixin):
                 help="Recursively download files in their respective folders "
                 "otherwise stop at the files in provided folder level.",
             ),
+            click.Option(
+                ["--file-glob"],
+                default=None,
+                type=DelimitedString(),
+                help="A comma-separated list of file globs to limit which types of "
+                "local files are accepted, e.g. '*.html,*.txt'",
+            ),
         ]
         return options
 
