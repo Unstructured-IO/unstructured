@@ -30,7 +30,7 @@ function cleanup() {
   fi
 }
 
-# trap cleanup EXIT
+trap cleanup EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -38,7 +38,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
-  --input-path example-docs/book-war-and-peace-1p.txt \
+  --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-multipage-sections \
@@ -46,7 +46,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   chroma \
   --db-path "$DESTINATION_PATH" \
   --collection-name "$COLLECTION_NAME" \
-  --num-processes "1"
+  --batch-size 80
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --db-path "$DESTINATION_PATH" --collection-name "$COLLECTION_NAME"
 

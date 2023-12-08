@@ -35,11 +35,17 @@ class ChromaCliWriteConfig(ChromaWriteConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--num-processes"],
-                default=2,
+                ["--batch-size"],
+                default=100,
                 type=int,
-                help="Number of parallel processes with which to upload elements",
+                help="Number of records per batch",
             ),
+            # click.Option(
+            #     ["--num-processes"],
+            #     default=2,
+            #     type=int,
+            #     help="Number of parallel processes with which to upload elements",
+            # ),
         ]
         return options
 

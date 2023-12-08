@@ -34,8 +34,8 @@ class SimpleChromaConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
 @dataclass
 class ChromaWriteConfig(WriteConfig):
     # breakpoint()
-    # batch_size: int = 50
-    num_processes: int = 1
+    batch_size: int = 100
+    # num_processes: int = 1
 
 # @dataclass
 # class ChromaSessionHandle(BaseSessionHandle):
@@ -102,7 +102,6 @@ class SimpleChromaConfig(BaseConnectorConfig):
     db_path: str
     collection_name: str
 
-
 @dataclass
 class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHandleMixin,
     write_config: ChromaWriteConfig
@@ -132,7 +131,7 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
         print(chroma_client)
         # breakpoint()
         collection = chroma_client.get_or_create_collection(name=self.connector_config.collection_name)
-        print(collection)
+        # print(collection)
         return collection
 
     # def create_index(self): #### -> "PineconeIndex":
@@ -157,19 +156,21 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
             print("%%%%%%%%%%%%% Upserting Batch %%%%%%%%%%%%%%")
             # breakpoint()
             # print(batch)
-            batch2=self.prepare_chroma_dict(batch)
-            print("***** ready batch *****")
-            print(batch)
-            batch2=aaa
+            # batch2=self.prepare_chroma_dict(batch)
+            # print("***** ready batch *****")
+            # print(batch)
+            # batch2=aaa
+            print("***** batch ids *****")
+            print(len(batch["ids"]))
             # Chroma wants lists even if there is only one element
-            response = collection.add(ids=batch2["ids"], documents=batch2["documents"], embeddings=batch2["embeddings"], metadatas=batch2["metadatas"])
+            response = collection.add(ids=batch["ids"], documents=batch["documents"], embeddings=batch["embeddings"], metadatas=batch["metadatas"])
         except Exception as e:
             raise WriteError(f"chroma error: {e}") from e
         logger.debug(f"results: {response}") # Does this do anything?????
 
 
     @staticmethod
-    def chunks(iterable, batch_size=1):
+    def chunks(iterable, batch_size=100):
         """A helper function to break an iterable into chunks of size batch_size."""
         it = iter(iterable)
         chunk = tuple(itertools.islice(it, batch_size))
@@ -204,42 +205,43 @@ class ChromaDestinationConnector(BaseDestinationConnector): # IngestDocSessionHa
 
         #THIS IS THE REAL WRITE SPOT. We are not sub batching.
         # pinecone_batch_size = 10
+        chroma_batch_size = self.write_config.batch_size
 
         # num_processes = 1
         # breakpoint()
-        if self.write_config.num_processes == 1:
-            for chunk in self.chunks(dict_list):# , pinecone_batch_size):
-                print(f"len dict list: {len(chunk)}")
-                print(chunk)
-                # breakpoint()
-                # Here we need to parse out the batch into 4 lists (ids, documents, embeddings, metadatas)
-                # and also check that the lengths match.
-                
-                # upsert_batch expects a dict with 4 lists (ids, documents, embeddings, metadatas)
-                # breakpoint()
-               
-                self.upsert_batch(chunk)
+        # if self.write_config.num_processes == 1:
+        for chunk in self.chunks(dict_list, chroma_batch_size):# , pinecone_batch_size):
+            print(f"len dict list: {len(chunk)}")
+            # print(chunk)
+            # breakpoint()
+            # Here we need to parse out the batch into 4 lists (ids, documents, embeddings, metadatas)
+            # and also check that the lengths match.
+            
+            # upsert_batch expects a dict with 4 lists (ids, documents, embeddings, metadatas)
+            # breakpoint()
+            
+            self.upsert_batch(self.prepare_chroma_dict(chunk))
 
-                # for i in range(0, len(chunk)):
-                #     self.upsert_batch(chunk[i])  
+            # for i in range(0, len(chunk)):
+            #     self.upsert_batch(chunk[i])  
 
-        else:
-            print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
-            with mp.Pool(
-                processes=self.write_config.num_processes,
-            ) as pool:
-                # Prepare the list of lists for multiprocessing
-                # pool.map expects a list of dicts with 4 lists (ids, documents, embeddings, metadatas)
+        # else:
+        #     print("%%%%%%%%%%%%% Multiprocessing %%%%%%%%%%%%%%")
+        #     with mp.Pool(
+        #         processes=self.write_config.num_processes,
+        #     ) as pool:
+        #         # Prepare the list of lists for multiprocessing
+        #         # pool.map expects a list of dicts with 4 lists (ids, documents, embeddings, metadatas)
 
-                # Prepare the list of chunks for multiprocessing
-                # chunk_list = list(self.chunks(self.prepare_chroma_dict(dict_list)))
-                ######### this is nor workiing above ^
-                # print(f"len chunk list: {len(chunk_list)}")
-                # print(chunk_list)
-                # Upsert each chunk using multiprocessing
-                with mp.Pool(processes=self.write_config.num_processes) as pool:
-                    # pool.map(self.upsert_batch, chunk_list)
-                    pool.map(self.upsert_batch, list(self.chunks(dict_list)))
+        #         # Prepare the list of chunks for multiprocessing
+        #         # chunk_list = list(self.chunks(self.prepare_chroma_dict(dict_list)))
+        #         ######### this is nor workiing above ^
+        #         # print(f"len chunk list: {len(chunk_list)}")
+        #         # print(chunk_list)
+        #         # Upsert each chunk using multiprocessing
+        #         with mp.Pool(processes=self.write_config.num_processes) as pool:
+        #             # pool.map(self.upsert_batch, chunk_list)
+        #             pool.map(self.upsert_batch, list(self.chunks(dict_list)))
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []

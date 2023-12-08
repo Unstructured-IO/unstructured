@@ -34,7 +34,8 @@ def chroma_writer(
     # environment: str,
     db_path: str,
     collection_name: str,
-    num_processes: int, # maybe
+    batch_size: int,
+    # num_processes: int, # maybe
     **kwargs,
 ) -> BaseDestinationConnector:
     from unstructured.ingest.connector.chroma import (
@@ -59,6 +60,7 @@ def chroma_writer(
             # environment=environment,
             db_path=db_path,
             collection_name=collection_name,
-            num_processes=num_processes, # maybe
+            batch_size=batch_size,
+            # num_processes=num_processes, # maybe
         ),
     )
