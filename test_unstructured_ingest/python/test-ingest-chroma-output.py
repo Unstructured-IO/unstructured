@@ -1,5 +1,5 @@
-import click
 import chromadb
+import click
 
 
 @click.command()
@@ -24,7 +24,6 @@ def run_check(db_path, collection_name):
     )
 
     print("Table check complete")
-
 
 
 if __name__ == "__main__":

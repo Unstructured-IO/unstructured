@@ -29,6 +29,7 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
         ]
         return options
 
+
 @dataclass
 class ChromaCliWriteConfig(ChromaWriteConfig, CliConfig):
     @staticmethod
@@ -40,14 +41,9 @@ class ChromaCliWriteConfig(ChromaWriteConfig, CliConfig):
                 type=int,
                 help="Number of records per batch",
             ),
-            # click.Option(
-            #     ["--num-processes"],
-            #     default=2,
-            #     type=int,
-            #     help="Number of parallel processes with which to upload elements",
-            # ),
         ]
         return options
+
 
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd

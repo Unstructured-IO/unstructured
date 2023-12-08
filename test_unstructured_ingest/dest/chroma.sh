@@ -11,7 +11,6 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_PATH=$SCRIPT_DIR/chroma-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-writer_processes=$(( (max_processes - 1) > 1 ? (max_processes - 1) : 2 ))
 CI=${CI:-"false"}
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
@@ -38,7 +37,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
-  --input-path example-docs/book-war-and-peace-1225p.txt \
+  --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-multipage-sections \
