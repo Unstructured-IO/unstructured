@@ -32,7 +32,7 @@ class WeaviateCliConfig(SimpleWeaviateConfig, CliConfig):
                 help=(
                     "String representing a JSON-like dict with key,value containing "
                     "the required parameters to create an authentication object. "
-                    "example: \'{\"api_key\":\"123abc!\"}\' "
+                    'example: \'{"api_key":"123abc!"}\' '
                     "The connector resolves the authentication object from the parameters. "
                     "See https://weaviate.io/developers/weaviate/client-libraries/python_v3"
                     "#api-key-authentication "

@@ -50,7 +50,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
         _ = self.chroma_collection
 
     @requires_dependencies(["chromadb"], extras="chroma")
-    def create_collection(self):  #### -> "PineconeIndex":
+    def create_collection(self):  # -> "PineconeIndex":
         import chromadb
 
         chroma_client = chromadb.PersistentClient(path=self.connector_config.db_path)
@@ -94,7 +94,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
         chroma_dict["documents"] = [x.get("document") for x in chunk]
         chroma_dict["embeddings"] = [x.get("embedding") for x in chunk]
         chroma_dict["metadatas"] = [x.get("metadata") for x in chunk]
-        ###### See if this is a good idea or try/except instead
+        # See if this is a good idea or try/except instead
         assert (
             len(chroma_dict["ids"])
             == len(chroma_dict["documents"])
