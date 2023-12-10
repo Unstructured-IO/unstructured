@@ -18,6 +18,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.utils.constants import Source
+from unstructured.partition.utils.sorting import sort_text_regions
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
@@ -95,7 +96,7 @@ def get_regions_by_pdfminer(
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
+    for page, page_layout in open_pdfminer_pages_generator(fp):
         height = page_layout.height
 
         layout: List["TextRegion"] = []
@@ -125,7 +126,13 @@ def get_regions_by_pdfminer(
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
 
+        # NOTE(christine): always do the basic sort first for deterministic order across
+        # python versions.
         layout = order_layout(layout)
+
+        # apply the current default sorting to the layout elements extracted by pdfminer
+        layout = sort_text_regions(layout)
+
         layouts.append(layout)
 
     return layouts

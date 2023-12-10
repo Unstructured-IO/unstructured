@@ -1,3 +1,4 @@
+import fnmatch
 import json
 import os
 import typing as t
@@ -42,6 +43,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "gcs",
     "box",
     "dropbox",
+    "sftp",
 ]
 
 
@@ -212,8 +214,20 @@ class FsspecSourceConnector(
                 if v.get("size") > 0
             ]
 
+    def does_path_match_glob(self, path: str) -> bool:
+        if self.connector_config.file_glob is None:
+            return True
+        patterns = self.connector_config.file_glob
+        for pattern in patterns:
+            if fnmatch.filter([path], pattern):
+                return True
+        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        return False
+
     def get_ingest_docs(self):
-        files = self._list_files()
+        raw_files = self._list_files()
+        # If glob filters provided, use to fiter on filepaths
+        files = [f for f in raw_files if self.does_path_match_glob(f)]
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
