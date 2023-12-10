@@ -31,7 +31,7 @@ def get_delimiter(file_path=None, file=None):
     """
     sniffer = csv.Sniffer()
 
-    num_bytes = 2048
+    num_bytes = 8192
     if file:
         data = file.read(num_bytes).decode("utf-8")
         file.seek(0)
