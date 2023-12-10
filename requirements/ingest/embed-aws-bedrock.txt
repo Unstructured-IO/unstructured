@@ -64,11 +64,11 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.344
+langchain==0.0.345
     # via -r ingest/embed-aws-bedrock.in
-langchain-core==0.0.8
+langchain-core==0.0.9
     # via langchain
-langsmith==0.0.68
+langsmith==0.0.69
     # via
     #   langchain
     #   langchain-core

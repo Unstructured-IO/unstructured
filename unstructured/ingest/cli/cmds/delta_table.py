@@ -7,18 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig
+from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig, SimpleDeltaTableConfig
 
 CMD_NAME = "delta-table"
 
 
 @dataclass
-class DeltaTableCliConfig(CliConfig):
-    table_uri: str
-    version: t.Optional[int] = None
-    storage_options: t.Optional[str] = None
-    without_files: bool = False
-
+class DeltaTableCliConfig(SimpleDeltaTableConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -92,5 +87,9 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=DeltaTableCliConfig,
         additional_cli_options=[DeltaTableCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleDeltaTableConfig,
+            "write_config": DeltaTableWriteConfig,
+        },
     )
     return cmd_cls

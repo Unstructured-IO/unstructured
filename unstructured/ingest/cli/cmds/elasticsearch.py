@@ -22,10 +22,9 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
                 help="Name of the Elasticsearch index to pull data from, or upload data to.",
             ),
             click.Option(
-                ["--url"],
-                required=True,
-                type=str,
-                help='URL to the Elasticsearch cluster, e.g. "http://localhost:9200"',
+                ["--hosts"],
+                type=DelimitedString(),
+                help='List of the Elasticsearch hosts to connect to, e.g. "http://localhost:9200"',
             ),
             click.Option(
                 ["--fields"],
@@ -33,6 +32,45 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
                 default=[],
                 help="If provided, will limit the fields returned by Elasticsearch "
                 "to this comma-delimited list",
+            ),
+            click.Option(
+                ["--username"], type=str, default=None, help="username when using basic auth"
+            ),
+            click.Option(
+                ["--password"],
+                type=str,
+                default=None,
+                help="password when using basic auth or connecting to a cloud instance",
+            ),
+            click.Option(
+                ["--cloud-id"], type=str, default=None, help="id used to connect to Elastic Cloud"
+            ),
+            click.Option(
+                ["--es-api-key"], type=str, default=None, help="api key used for authentication"
+            ),
+            click.Option(
+                ["--api-key-id"],
+                type=str,
+                default=None,
+                help="id associated with api key used for authentication: "
+                "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html",  # noqa: E501
+            ),
+            click.Option(
+                ["--bearer-auth"],
+                type=str,
+                default=None,
+                help="bearer token used for HTTP bearer authentication",
+            ),
+            click.Option(
+                ["--ca-certs"],
+                type=click.Path(),
+                default=None,
+            ),
+            click.Option(
+                ["--ssl-assert-fingerprint"],
+                type=str,
+                default=None,
+                help="SHA256 fingerprint value",
             ),
             click.Option(
                 ["--batch-size"],
@@ -71,7 +109,11 @@ class ElasticsearchCliWriteConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=ElasticsearchCliConfig)
+    cmd_cls = BaseSrcCmd(
+        cmd_name="elasticsearch",
+        cli_config=ElasticsearchCliConfig,
+        addition_configs={"connector_config": SimpleElasticsearchConfig},
+    )
     return cmd_cls
 
 
@@ -79,8 +121,11 @@ def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
     cmd_cls = BaseDestCmd(
-        cmd_name=CMD_NAME,
+        cmd_name="elasticsearch",
         cli_config=ElasticsearchCliConfig,
-        additional_cli_options=[ElasticsearchCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleElasticsearchConfig,
+            "write_config": ElasticsearchCliWriteConfig,
+        },
     )
     return cmd_cls

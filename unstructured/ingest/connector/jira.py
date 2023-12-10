@@ -1,5 +1,4 @@
 import math
-import os
 import typing as t
 from collections import abc
 from dataclasses import dataclass, field
@@ -326,8 +325,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSing
     @requires_dependencies(["atlassian"], extras="jira")
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
         document = form_templated_string(self.issue, self.parsed_fields)
         self.update_source_metadata()
         self.filename.parent.mkdir(parents=True, exist_ok=True)

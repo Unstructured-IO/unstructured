@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -80,7 +79,6 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
         post = self.get_post()
         self.update_source_metadata(post=post)

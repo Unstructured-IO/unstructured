@@ -1,4 +1,3 @@
-import os
 import typing as t
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -144,9 +143,6 @@ class SlackIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         """Fetches the data from a slack channel and stores it locally."""
 
         self._create_full_tmp_dir_path()
-
-        if self.processor_config.verbose:
-            logger.debug(f"fetching channel {self.channel} - PID: {os.getpid()}")
 
         result = self._fetch_messages()
         self.update_source_metadata(result=result)

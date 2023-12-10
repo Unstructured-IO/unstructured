@@ -1,8 +1,6 @@
 import json
 from typing import Dict, Type, cast
 
-from dataclasses_json import DataClassJsonMixin
-
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
@@ -31,6 +29,7 @@ from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.s3 import S3IngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
+from unstructured.ingest.connector.sftp import SftpIngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
 from unstructured.ingest.connector.wikipedia import (
@@ -38,9 +37,10 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaIngestSummaryDoc,
     WikipediaIngestTextDoc,
 )
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseIngestDoc
 
-INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
+INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "airtable": AirtableIngestDoc,
     "azure": AzureBlobStorageIngestDoc,
     "biomed": BiomedIngestDoc,
@@ -65,6 +65,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
     "salesforce": SalesforceIngestDoc,
+    "sftp": SftpIngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,

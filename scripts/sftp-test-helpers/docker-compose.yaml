@@ -1,0 +1,12 @@
+services:
+  sftp:
+    image: atmoz/sftp
+    container_name: sftp-test
+    ports:
+      - "47474:22"  # rarely used port in case standard port is used in CI
+    command: foo:bar:::upload
+    healthcheck:
+      test: ["CMD-SHELL", "ssh -o 'BatchMode=true' -o 'StrictHostKeyChecking=no' healthcheck-invalid@localhost 2>&1 | grep -q 'Permission denied'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

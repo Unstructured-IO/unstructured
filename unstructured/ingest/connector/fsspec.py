@@ -1,10 +1,13 @@
+import fnmatch
 import json
 import os
 import typing as t
+from abc import ABC
 from contextlib import suppress
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path, PurePath
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.error import (
     DestinationConnectionError,
     SourceConnectionError,
@@ -40,6 +43,7 @@ SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "gcs",
     "box",
     "dropbox",
+    "sftp",
 ]
 
 
@@ -95,9 +99,8 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         self._create_full_tmp_dir_path()
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self._get_file(fs=fs)
         fs.get(rpath=self.remote_file_path, lpath=self._tmp_download_file().as_posix())
         self.update_source_metadata()
@@ -111,7 +114,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         date_created = None
@@ -165,7 +168,7 @@ class FsspecSourceConnector(
 
         try:
             fs = get_filesystem_class(self.connector_config.protocol)(
-                **self.connector_config.get_access_kwargs(),
+                **self.connector_config.get_access_config(),
             )
             fs.ls(path=self.connector_config.path_without_protocol)
         except Exception as e:
@@ -179,7 +182,7 @@ class FsspecSourceConnector(
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         """Verify that can get metadata for an object, validates connections info."""
@@ -211,8 +214,20 @@ class FsspecSourceConnector(
                 if v.get("size") > 0
             ]
 
+    def does_path_match_glob(self, path: str) -> bool:
+        if self.connector_config.file_glob is None:
+            return True
+        patterns = self.connector_config.file_glob
+        for pattern in patterns:
+            if fnmatch.filter([path], pattern):
+                return True
+        logger.debug(f"The file {path!r} is discarded as it does not match any given glob.")
+        return False
+
     def get_ingest_docs(self):
-        files = self._list_files()
+        raw_files = self._list_files()
+        # If glob filters provided, use to fiter on filepaths
+        files = [f for f in raw_files if self.does_path_match_glob(f)]
         # remove compressed files
         compressed_file_ext = TAR_FILE_EXT + ZIP_FILE_EXT
         compressed_files = []
@@ -253,8 +268,18 @@ class FsspecSourceConnector(
 
 
 @dataclass
+class WriteTextConfig(EnhancedDataClassJsonMixin, ABC):
+    pass
+
+
+@dataclass
 class FsspecWriteConfig(WriteConfig):
-    write_text_kwargs: t.Dict[str, t.Any] = field(default_factory=dict)
+    write_text_config: t.Optional[WriteTextConfig] = None
+
+    def get_write_text_config(self) -> t.Dict[str, t.Any]:
+        if write_text_kwargs := self.write_text_config:
+            return write_text_kwargs.to_dict()
+        return {}
 
 
 @dataclass
@@ -266,7 +291,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
     def check_connection(self):
@@ -274,7 +299,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
 
         try:
             fs = get_filesystem_class(self.connector_config.protocol)(
-                **self.connector_config.get_access_kwargs(),
+                **self.connector_config.get_access_config(),
             )
             fs.ls(path=self.connector_config.path_without_protocol)
         except Exception as e:
@@ -293,7 +318,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         from fsspec import AbstractFileSystem, get_filesystem_class
 
         fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
-            **self.connector_config.get_access_kwargs(),
+            **self.connector_config.get_access_config(),
         )
 
         logger.info(f"Writing content using filesystem: {type(fs).__name__}")
@@ -306,11 +331,12 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         output_path = str(PurePath(output_folder, filename)) if filename else output_folder
         full_output_path = f"{self.connector_config.protocol}://{output_path}"
         logger.debug(f"uploading content to {full_output_path}")
+        write_text_configs = self.write_config.get_write_text_config() if self.write_config else {}
         fs.write_text(
             full_output_path,
             json.dumps(elements_dict, indent=indent),
             encoding=encoding,
-            **self.write_config.write_text_kwargs,
+            **write_text_configs,
         )
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:

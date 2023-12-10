@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -82,8 +81,6 @@ class NotionPageIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         from unstructured.ingest.connector.notion.helpers import extract_page_html
 
         self._create_full_tmp_dir_path()
-
-        logger.debug(f"fetching page {self.page_id} - PID: {os.getpid()}")
 
         client = self.get_client()
 
@@ -205,8 +202,6 @@ class NotionDatabaseIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         from unstructured.ingest.connector.notion.helpers import extract_database_html
 
         self._create_full_tmp_dir_path()
-
-        logger.debug(f"fetching database {self.database_id} - PID: {os.getpid()}")
 
         client = self.get_client()
 
