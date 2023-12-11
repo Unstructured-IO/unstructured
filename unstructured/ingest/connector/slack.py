@@ -35,8 +35,8 @@ class SimpleSlackConfig(BaseConnectorConfig):
 
     access_config: SlackAccessConfig
     channels: t.List[str]
-    start_date: t.Optional[str]
-    end_date: t.Optional[str]
+    start_date: t.Optional[str] = None
+    end_date: t.Optional[str] = None
 
     def validate_inputs(self):
         oldest_valid = True

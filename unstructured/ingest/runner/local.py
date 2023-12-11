@@ -1,4 +1,5 @@
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseSourceConnector
 from unstructured.ingest.runner.base_runner import Runner
@@ -7,6 +8,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.local import SimpleLocalConfig
 
 
+@dataclass
 class LocalRunner(Runner):
     connector_config: "SimpleLocalConfig"
 

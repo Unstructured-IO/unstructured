@@ -34,7 +34,7 @@ class SimpleDiscordConfig(BaseConnectorConfig):
     # Discord Specific Options
     access_config: DiscordAccessConfig
     channels: t.List[str]
-    period: t.Optional[int]
+    period: t.Optional[int] = None
 
 
 @dataclass
@@ -47,7 +47,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     connector_config: SimpleDiscordConfig
     channel: str
-    days: t.Optional[int]
+    days: t.Optional[int] = None
     registry_name: str = "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file

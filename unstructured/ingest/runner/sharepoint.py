@@ -1,5 +1,6 @@
 import hashlib
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseSourceConnector
 from unstructured.ingest.logger import logger
@@ -10,6 +11,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.sharepoint import SimpleSharepointConfig
 
 
+@dataclass
 class SharePointRunner(Runner):
     connector_config: "SimpleSharepointConfig"
 

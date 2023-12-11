@@ -1,5 +1,6 @@
 import hashlib
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseSourceConnector
 from unstructured.ingest.logger import logger
@@ -10,6 +11,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.wikipedia import SimpleWikipediaConfig
 
 
+@dataclass
 class WikipediaRunner(Runner):
     connector_config: "SimpleWikipediaConfig"
 

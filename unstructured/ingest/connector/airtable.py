@@ -38,7 +38,7 @@ class SimpleAirtableConfig(BaseConnectorConfig):
     """
 
     access_config: AirtableAccessConfig
-    list_of_paths: t.Optional[str]
+    list_of_paths: t.Optional[str] = None
 
 
 @dataclass
