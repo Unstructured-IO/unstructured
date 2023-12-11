@@ -621,6 +621,8 @@ class ElementType:
 class Element(abc.ABC):
     """An element is a section of a page in the document."""
 
+    text: str
+
     def __init__(
         self,
         element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
@@ -636,6 +638,9 @@ class Element(abc.ABC):
                 points=coordinates, system=coordinate_system
             )
         self.metadata.detection_origin = detection_origin
+        # -- all `Element` instances get a `text` attribute, defaults to the empty string if not
+        # -- defined in a subclass.
+        self.text = self.text if hasattr(self, "text") else ""
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
