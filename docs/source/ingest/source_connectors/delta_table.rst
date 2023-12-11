@@ -16,38 +16,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-            delta-table \
-            --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-            --output-dir delta-table-example \
-            --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
-            --verbose
+      .. literalinclude:: ./code/bash/delta_table.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import DeltaTableRunner
-
-        if __name__ == "__main__":
-            runner = DeltaTableRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="delta-table-example",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-            )
-            runner.run(
-                table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
-                storage_options="AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
-            )
+      .. literalinclude:: ./code/python/delta_table.py
+         :language: python
 
 
 Run via the API
@@ -59,43 +34,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          delta-table \
-          --table-uri s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/ \
-          --output-dir delta-table-example \
-          --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
-          --verbose
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/delta_table_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import DeltaTableRunner
-
-        if __name__ == "__main__":
-            runner = DeltaTableRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="delta-table-example",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-            )
-            runner.run(
-                table_uri="s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/",
-                storage_options="AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY",
-            )
+      .. literalinclude:: ./code/python/delta_table_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

@@ -1,14 +1,17 @@
 import os
 
-from unstructured.ingest.connector.confluence import ConfluenceAccessConfig, SimpleConfluenceConfig
+from unstructured.ingest.connector.elasticsearch import (
+    ElasticsearchAccessConfig,
+    SimpleElasticsearchConfig,
+)
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-from unstructured.ingest.runner import ConfluenceRunner
+from unstructured.ingest.runner import ElasticSearchRunner
 
 if __name__ == "__main__":
-    runner = ConfluenceRunner(
+    runner = ElasticSearchRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="confluence-ingest-output",
+            output_dir="elasticsearch-ingest-output",
             num_processes=2,
         ),
         read_config=ReadConfig(),
@@ -17,12 +20,10 @@ if __name__ == "__main__":
             partition_by_api=True,
             api_key=os.getenv("UNSTRUCTURED_API_KEY"),
         ),
-        connector_config=SimpleConfluenceConfig(
-            access_config=ConfluenceAccessConfig(
-                api_token="ABCDE1234ABDE1234ABCDE1234",
-            ),
-            user_email="12345678@unstructured.io",
-            url="https://unstructured-ingest-test.atlassian.net",
+        connector_config=SimpleElasticsearchConfig(
+            access_config=ElasticsearchAccessConfig(hosts=["http://localhost:9200"]),
+            index_name="movies",
+            fields=["ethnicity", "director", "plot"],
         ),
     )
     runner.run()

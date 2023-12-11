@@ -15,40 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          discord \
-          --channels 12345678 \
-          --token "$DISCORD_TOKEN" \
-          --download-dir discord-ingest-download \
-          --output-dir discord-example \
-          --preserve-downloads \
-          --verbose
+      .. literalinclude:: ./code/bash/discord.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import DiscordRunner
-
-        if __name__ == "__main__":
-            runner = DiscordRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="discord-ingest-example",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-            )
-            runner.run(
-                channels=["12345678"],
-                token=os.getenv("DISCORD_TOKEN"),
-            )
+      .. literalinclude:: ./code/python/discord.py
+         :language: python
 
 Run via the API
 ---------------
@@ -59,45 +32,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          discord \
-          --channels 12345678 \
-          --token "$DISCORD_TOKEN" \
-          --download-dir discord-ingest-download \
-          --output-dir discord-example \
-          --preserve-downloads \
-          --verbose \
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/discord_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import DiscordRunner
-
-        if __name__ == "__main__":
-            runner = DiscordRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="discord-ingest-example",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-            )
-            runner.run(
-                channels=["12345678"],
-                token=os.getenv("DISCORD_TOKEN"),
-            )
+      .. literalinclude:: ./code/python/discord_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 
