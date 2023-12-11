@@ -10,7 +10,7 @@
 ### Features
 
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
-* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
+* **Sftp Source Connector.** New source connector added to support downloading/partitioning files from SFTP.
 
 ### Fixes
 
