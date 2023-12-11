@@ -287,7 +287,6 @@ def _partition_pdf_or_image_local(
             merged_document_layout = process_file_with_pdfminer(
                 inferred_document_layout,
                 filename,
-                is_image,
             )
         else:
             merged_document_layout = inferred_document_layout
@@ -319,7 +318,6 @@ def _partition_pdf_or_image_local(
             merged_document_layout = process_data_with_pdfminer(
                 inferred_document_layout,
                 file,
-                is_image,
             )
         else:
             merged_document_layout = inferred_document_layout
@@ -345,6 +343,11 @@ def _partition_pdf_or_image_local(
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
+
+    for page in final_document_layout.pages:
+        for el in page.elements:
+            el.text = el.text or ""
+
     elements = document_to_element_list(
         final_document_layout,
         sortable=True,

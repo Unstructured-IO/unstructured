@@ -27,14 +27,12 @@ if TYPE_CHECKING:
 def process_file_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     filename: str = "",
-    is_image: bool = False,
 ) -> "DocumentLayout":
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         inferred_document_layout = process_data_with_pdfminer(
             inferred_document_layout=inferred_document_layout,
             file=fp,
-            is_image=is_image,
         )
         return inferred_document_layout
 
@@ -42,13 +40,7 @@ def process_file_with_pdfminer(
 def process_data_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     file: Optional[Union[bytes, BinaryIO]] = None,
-    is_image: bool = False,
 ) -> "DocumentLayout":
-    if is_image:
-        for page in inferred_document_layout.pages:
-            for el in page.elements:
-                el.text = el.text or ""
-        return inferred_document_layout
 
     extracted_layouts = get_regions_by_pdfminer(file)
 
