@@ -30,7 +30,7 @@ class MissingFolderError(Exception):
 
 
 @dataclass
-class OneDriveAccessConfig(AccessConfig):
+class OutlookAccessConfig(AccessConfig):
     client_credential: str = enhanced_field(repr=False, sensitive=True, overload_name="client_cred")
 
 
@@ -38,7 +38,7 @@ class OneDriveAccessConfig(AccessConfig):
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 
-    access_config: OneDriveAccessConfig
+    access_config: OutlookAccessConfig
     user_email: str
     client_id: str
     tenant: t.Optional[str] = field(repr=False, default="common")
