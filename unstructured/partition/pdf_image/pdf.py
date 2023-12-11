@@ -71,6 +71,7 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import extract_images_from_elements
+from unstructured.partition.pdf_image.pdfminer_processing import check_pdfminer_generates_pages
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
@@ -383,13 +384,19 @@ def _partition_pdf_or_image_local(
             model_name=model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
+        with open_filename(filename, "rb") as fp:
+            fp = cast(BinaryIO, fp)
+            pdfminer_generates_pages = check_pdfminer_generates_pages(fp)
 
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = process_file_with_pdfminer(
-            inferred_document_layout,
-            filename,
-            is_image,
-        )
+        if pdfminer_generates_pages:
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = process_file_with_pdfminer(
+                inferred_document_layout,
+                filename,
+                is_image,
+            )
+        else:
+            pass
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -413,13 +420,18 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = process_data_with_pdfminer(
-            inferred_document_layout,
-            file,
-            is_image,
-        )
+        pdfminer_generates_pages = check_pdfminer_generates_pages(file)
+        if hasattr(file, "seek"):
+            file.seek(0)
+        if pdfminer_generates_pages:
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = process_data_with_pdfminer(
+                inferred_document_layout,
+                file,
+                is_image,
+            )
+        else:
+            pass
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -516,14 +528,20 @@ def _partition_pdf_with_pdfminer(
     if filename:
         with open_filename(filename, "rb") as fp:
             fp = cast(BinaryIO, fp)
-            elements = _process_pdfminer_pages(
-                fp=fp,
-                filename=filename,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified,
-                **kwargs,
-            )
+            pdfminer_generates_pages = check_pdfminer_generates_pages(fp)
+            if hasattr(fp, "seek"):
+                fp.seek(0)
+            if pdfminer_generates_pages:
+                elements = _process_pdfminer_pages(
+                    fp=fp,
+                    filename=filename,
+                    include_page_breaks=include_page_breaks,
+                    languages=languages,
+                    metadata_last_modified=metadata_last_modified,
+                    **kwargs,
+                )
+            else:
+                pass
 
     elif file:
         fp = cast(BinaryIO, file)
