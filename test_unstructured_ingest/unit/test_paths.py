@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from unstructured.ingest.connector.dropbox import (
+from unstructured.ingest.connector.fsspec.dropbox import (
     DropboxIngestDoc,
 )
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecIngestDoc,
 )
 

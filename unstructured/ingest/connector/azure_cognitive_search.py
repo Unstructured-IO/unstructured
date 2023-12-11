@@ -3,8 +3,10 @@ import typing as t
 import uuid
 from dataclasses import dataclass, field
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseSingleIngestDoc,
@@ -18,9 +20,14 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class AzureCognitiveSearchAccessConfig(AccessConfig):
+    key: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleAzureCognitiveSearchStorageConfig(BaseConnectorConfig):
     endpoint: str
-    key: str
+    access_config: AzureCognitiveSearchAccessConfig
 
 
 @dataclass
@@ -34,12 +41,13 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleAzureCognitiveSearchStorageConfig
     _client: t.Optional["SearchClient"] = field(init=False, default=None)
 
+    @requires_dependencies(["azure.search"], extras="azure-cognitive-search")
     def generate_client(self) -> "SearchClient":
         from azure.core.credentials import AzureKeyCredential
         from azure.search.documents import SearchClient
 
         # Create a client
-        credential = AzureKeyCredential(self.connector_config.key)
+        credential = AzureKeyCredential(self.connector_config.access_config.key)
         return SearchClient(
             endpoint=self.connector_config.endpoint,
             index_name=self.write_config.index,

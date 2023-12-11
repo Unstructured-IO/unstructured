@@ -8,13 +8,13 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     FileOrJson,
 )
-from unstructured.ingest.connector.gcs import GcsAccessConfig, GcsWriteConfig, SimpleGcsConfig
+from unstructured.ingest.connector.fsspec.gcs import GcsWriteConfig, SimpleGcsConfig
 
 CMD_NAME = "gcs"
 
 
 @dataclass
-class GcsCliConfig(GcsAccessConfig, CliConfig):
+class GcsCliConfig(SimpleGcsConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         help_string = """
@@ -54,7 +54,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=GcsCliConfig,
-        addition_configs={"fsspec_config": SimpleGcsConfig},
         is_fsspec=True,
     )
     return cmd_cls
@@ -66,7 +65,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=GcsCliConfig,
-        addition_configs={"fsspec_config": SimpleGcsConfig, "write_config": GcsWriteConfig},
+        write_config=GcsWriteConfig,
         is_fsspec=True,
     )
     return cmd_cls

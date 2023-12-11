@@ -2,12 +2,32 @@ import json
 import typing as t
 from dataclasses import fields
 
+import dataclasses_json.core as dataclasses_json_core
 from dataclasses_json import DataClassJsonMixin
-from dataclasses_json.core import Json, _ExtendedEncoder
 
-from unstructured.ingest.enhanced_dataclass.core import _asdict, _decode_dataclass
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 
 A = t.TypeVar("A", bound="EnhancedDataClassJsonMixin")
+
+# Monkey-patch _decode_dataclass class to support name override
+og_decode_dataclass = dataclasses_json_core._decode_dataclass
+
+
+def custom_decode_dataclass(cls, kvs, infer_missing):
+    dataclass_fields = fields(cls)
+    for f in [
+        field
+        for field in dataclass_fields
+        if hasattr(field, "overload_name") and getattr(field, "overload_name", None)
+    ]:
+        field_name = f.name
+        overload_name = getattr(f, "overload_name")
+        if isinstance(kvs, dict) and overload_name in kvs:
+            kvs[field_name] = kvs.pop(overload_name)
+    return og_decode_dataclass(cls, kvs, infer_missing)
+
+
+dataclasses_json_core._decode_dataclass = custom_decode_dataclass
 
 
 class EnhancedDataClassJsonMixin(DataClassJsonMixin):
@@ -34,7 +54,7 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
                 redacted_text=redacted_text,
                 apply_name_overload=apply_name_overload,
             ),
-            cls=_ExtendedEncoder,
+            cls=dataclasses_json_core._ExtendedEncoder,
             skipkeys=skipkeys,
             ensure_ascii=ensure_ascii,
             check_circular=check_circular,
@@ -48,16 +68,13 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
 
     @classmethod
     def from_dict(
-        cls: t.Type[A], kvs: Json, *, infer_missing=False, apply_name_overload: bool = True
+        cls: t.Type[A],
+        kvs: dataclasses_json_core.Json,
+        *,
+        infer_missing=False,
+        apply_name_overload=False
     ) -> A:
-        dataclass_fields = fields(cls)
-        for f in [field for field in dataclass_fields if hasattr(field, "overload_name")]:
-            field_name = f.name
-            overload_name = getattr(f, "overload_name")
-            if isinstance(kvs, dict) and overload_name in kvs and apply_name_overload:
-                kvs[field_name] = kvs.pop(overload_name)
-
-        return _decode_dataclass(cls, kvs, infer_missing)
+        return dataclasses_json_core._decode_dataclass(cls, kvs, infer_missing)
 
     def to_dict(
         self,
@@ -65,7 +82,7 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         redact_sensitive=False,
         redacted_text="***REDACTED***",
         apply_name_overload: bool = True,
-    ) -> t.Dict[str, Json]:
+    ) -> t.Dict[str, dataclasses_json_core.Json]:
         return _asdict(
             self,
             encode_json=encode_json,
