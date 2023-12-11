@@ -72,7 +72,6 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                 embeddings=batch["embeddings"],
                 metadatas=batch["metadatas"],
             )
-            breakpoint()
         except Exception as e:
             raise ValueError(f"chroma error: {e}") from e
 
