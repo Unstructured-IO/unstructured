@@ -7,11 +7,11 @@ from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
 if t.TYPE_CHECKING:
-    from unstructured.ingest.connector.gitlab import SimpleGitLabConfig
+    from unstructured.ingest.connector.gitlab import SimpleGitlabConfig
 
 
 class GitlabRunner(Runner):
-    connector_config: "SimpleGitLabConfig"
+    connector_config: "SimpleGitlabConfig"
 
     def update_read_config(self):
         hashed_dir_name = hashlib.sha256(

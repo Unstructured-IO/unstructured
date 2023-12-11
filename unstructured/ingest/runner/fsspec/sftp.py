@@ -1,4 +1,5 @@
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseSourceConnector
 from unstructured.ingest.logger import logger
@@ -9,6 +10,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.fsspec.sftp import SimpleSftpConfig
 
 
+@dataclass
 class SftpRunner(Runner):
     connector_config: "SimpleSftpConfig"
 

@@ -5,11 +5,11 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.gitlab import SimpleGitLabConfig
+from unstructured.ingest.connector.gitlab import SimpleGitlabConfig
 
 
 @dataclass
-class GitlabCliConfig(SimpleGitLabConfig, CliConfig):
+class GitlabCliConfig(SimpleGitlabConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

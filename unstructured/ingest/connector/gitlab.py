@@ -17,7 +17,7 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
-class SimpleGitLabConfig(SimpleGitConfig):
+class SimpleGitlabConfig(SimpleGitConfig):
     base_url: str = "https://gitlab.com"
 
     def __post_init__(self):
@@ -40,7 +40,7 @@ class SimpleGitLabConfig(SimpleGitConfig):
 
 @dataclass
 class GitLabIngestDoc(GitIngestDoc):
-    connector_config: SimpleGitLabConfig
+    connector_config: SimpleGitlabConfig
     registry_name: str = "gitlab"
 
     @property
@@ -100,7 +100,7 @@ class GitLabIngestDoc(GitIngestDoc):
 
 @dataclass
 class GitLabSourceConnector(GitSourceConnector):
-    connector_config: SimpleGitLabConfig
+    connector_config: SimpleGitlabConfig
 
     @requires_dependencies(["gitlab"], extras="gitlab")
     def check_connection(self):

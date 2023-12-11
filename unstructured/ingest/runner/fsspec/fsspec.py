@@ -1,5 +1,6 @@
 import typing as t
 import warnings
+from dataclasses import dataclass
 from urllib.parse import urlparse
 
 from unstructured.ingest.interfaces import BaseSourceConnector
@@ -11,6 +12,7 @@ if t.TYPE_CHECKING:
     from unstructured.ingest.connector.fsspec.fsspec import SimpleFsspecConfig
 
 
+@dataclass
 class FsspecRunner(Runner):
     connector_config: "SimpleFsspecConfig"
 

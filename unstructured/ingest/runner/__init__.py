@@ -1,8 +1,6 @@
 import typing as t
 from typing import Type
 
-from unstructured.ingest.runner.fsspec.sftp import SftpRunner
-
 from .airtable import AirtableRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
@@ -16,6 +14,7 @@ from .fsspec.dropbox import DropboxRunner
 from .fsspec.fsspec import FsspecRunner
 from .fsspec.gcs import GCSRunner
 from .fsspec.s3 import S3Runner
+from .fsspec.sftp import SftpRunner
 from .github import GithubRunner
 from .gitlab import GitlabRunner
 from .google_drive import GoogleDriveRunner
