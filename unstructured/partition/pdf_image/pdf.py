@@ -458,7 +458,7 @@ def partition_pdf_or_image(
                 isinstance(el, Text) and el.text.strip() for el in extracted_elements
             )
         except Exception as e:
-            logger.error(e, exc_info=True)
+            logger.error(e)
             logger.warning("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
@@ -666,8 +666,20 @@ def _process_pdfminer_pages(
                         points=points,
                         system=coordinate_system,
                     )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
+                    links: List[Link] = []
+                    for url in urls_metadata:
+                        with contextlib.suppress(IndexError):
+                            links.append(
+                                {
+                                    "text": url["text"],
+                                    "url": url["uri"],
+                                    "start_index": index_adjustment_after_clean_extra_whitespace(
+                                        url["start_index"],
+                                        moved_indices,
+                                    ),
+                                },
+                            )
                     element.metadata = ElementMetadata(
                         filename=filename,
                         page_number=i + 1,
@@ -678,8 +690,50 @@ def _process_pdfminer_pages(
                     )
                     element.metadata.detection_origin = "pdfminer"
                     page_elements.append(element)
+        list_item = 0
+        updated_page_elements = []  # type: ignore
+        coordinate_system = PixelSpace(width=width, height=height)
+        for page_element in page_elements:
+            if isinstance(page_element, ListItem):
+                list_item += 1
+                list_page_element = page_element
+                list_item_text = page_element.text
+                list_item_coords = page_element.metadata.coordinates
+            elif list_item > 0 and check_coords_within_boundary(
+                page_element.metadata.coordinates,
+                list_item_coords,
+            ):
+                text = page_element.text  # type: ignore
+                list_item_text = list_item_text + " " + text
+                x1 = min(
+                    list_page_element.metadata.coordinates.points[0][0],
+                    page_element.metadata.coordinates.points[0][0],
+                )
+                x2 = max(
+                    list_page_element.metadata.coordinates.points[2][0],
+                    page_element.metadata.coordinates.points[2][0],
+                )
+                y1 = min(
+                    list_page_element.metadata.coordinates.points[0][1],
+                    page_element.metadata.coordinates.points[0][1],
+                )
+                y2 = max(
+                    list_page_element.metadata.coordinates.points[1][1],
+                    page_element.metadata.coordinates.points[1][1],
+                )
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                list_page_element.text = list_item_text
+                list_page_element.metadata.coordinates = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                page_element = list_page_element
+                updated_page_elements.pop()
 
-        page_elements = _combine_list_elements(page_elements, coordinate_system)
+            updated_page_elements.append(page_element)
+
+        page_elements = updated_page_elements
+        del updated_page_elements
 
         # NOTE(crag, christine): always do the basic sort first for determinsitic order across
         # python versions.
@@ -693,75 +747,6 @@ def _process_pdfminer_pages(
             elements.append(PageBreak(text=""))
 
     return elements
-
-
-def _combine_list_elements(elements, coordinate_system):
-    """Combine elements that should be considered a single ListItem element."""
-    tmp_element = None
-    updated_elements = []
-    for element in elements:
-        if isinstance(element, ListItem):
-            tmp_element = element
-            tmp_text = element.text
-            tmp_coords = element.metadata.coordinates
-        elif tmp_element and check_coords_within_boundary(
-            coordinates=element.metadata.coordinates,
-            boundary=tmp_coords,
-        ):
-            tmp_element.text = f"{tmp_text} {element.text}"
-            _combine_coordinates_into_element1(
-                element1=tmp_element,
-                element2=element,
-                coordinate_system=coordinate_system,
-            )
-            # replace "element" with the corrected element
-            element = tmp_element
-            # remove previously added ListItem element with incomplete text
-            updated_elements.pop()
-        updated_elements.append(element)
-    return updated_elements
-
-
-def _get_links_from_urls_metadata(urls_metadata, moved_indices):
-    links: List[Link] = []
-    for url in urls_metadata:
-        with contextlib.suppress(IndexError):
-            links.append(
-                {
-                    "text": url["text"],
-                    "url": url["uri"],
-                    "start_index": index_adjustment_after_clean_extra_whitespace(
-                        url["start_index"],
-                        moved_indices,
-                    ),
-                },
-            )
-    return links
-
-
-def _combine_coordinates_into_element1(element1, element2, coordinate_system):
-    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
-    x1 = min(
-        element1.metadata.coordinates.points[0][0],
-        element2.metadata.coordinates.points[0][0],
-    )
-    x2 = max(
-        element1.metadata.coordinates.points[2][0],
-        element2.metadata.coordinates.points[2][0],
-    )
-    y1 = min(
-        element1.metadata.coordinates.points[0][1],
-        element2.metadata.coordinates.points[0][1],
-    )
-    y2 = max(
-        element1.metadata.coordinates.points[1][1],
-        element2.metadata.coordinates.points[1][1],
-    )
-    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-    element1.metadata.coordinates = CoordinatesMetadata(
-        points=points,
-        system=coordinate_system,
-    )
 
 
 def convert_pdf_to_images(
