@@ -43,8 +43,8 @@ def check_pdfminer_generates_pages(fp):
     _generator = open_pdfminer_pages_generator(fp)
     try:
         next(_generator)
-    except TypeError:
-        return False
+    except TypeError as e:
+        return e
     return True
 
 

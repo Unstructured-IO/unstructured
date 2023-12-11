@@ -388,7 +388,7 @@ def _partition_pdf_or_image_local(
             fp = cast(BinaryIO, fp)
             pdfminer_generates_pages = check_pdfminer_generates_pages(fp)
 
-        if pdfminer_generates_pages:
+        if pdfminer_generates_pages is True:
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = process_file_with_pdfminer(
                 inferred_document_layout,
@@ -423,7 +423,7 @@ def _partition_pdf_or_image_local(
         pdfminer_generates_pages = check_pdfminer_generates_pages(file)
         if hasattr(file, "seek"):
             file.seek(0)
-        if pdfminer_generates_pages:
+        if pdfminer_generates_pages is True:
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = process_data_with_pdfminer(
                 inferred_document_layout,
@@ -531,7 +531,8 @@ def _partition_pdf_with_pdfminer(
             pdfminer_generates_pages = check_pdfminer_generates_pages(fp)
             if hasattr(fp, "seek"):
                 fp.seek(0)
-            if pdfminer_generates_pages:
+
+            if pdfminer_generates_pages is True:
                 elements = _process_pdfminer_pages(
                     fp=fp,
                     filename=filename,
@@ -541,19 +542,28 @@ def _partition_pdf_with_pdfminer(
                     **kwargs,
                 )
             else:
-                pass
+                logger.error(pdfminer_generates_pages, exc_info=True)
+                logger.warning("PDF text extraction failed, skipping text extraction...")
+                elements = []
 
     elif file:
         fp = cast(BinaryIO, file)
-        elements = _process_pdfminer_pages(
-            fp=fp,
-            filename=filename,
-            include_page_breaks=include_page_breaks,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified,
-            **kwargs,
-        )
-
+        pdfminer_generates_pages = check_pdfminer_generates_pages(fp)
+        if hasattr(fp, "seek"):
+            fp.seek(0)
+        if pdfminer_generates_pages is True:
+            elements = _process_pdfminer_pages(
+                fp=fp,
+                filename=filename,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified,
+                **kwargs,
+            )
+        else:
+            logger.error(pdfminer_generates_pages, exc_info=True)
+            logger.warning("PDF text extraction failed, skipping text extraction...")
+            elements = []
     return elements
 
 
