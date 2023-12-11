@@ -36,7 +36,7 @@ if __name__ == "__main__":
     runner = LocalRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="local-output-to-s3",
+            output_dir="local-output-to-pinecone",
             num_processes=2,
         ),
         connector_config=SimpleLocalConfig(
