@@ -39,15 +39,6 @@ def process_file_with_pdfminer(
         return inferred_document_layout
 
 
-def check_pdfminer_generates_pages(fp):
-    _generator = open_pdfminer_pages_generator(fp)
-    try:
-        next(_generator)
-    except TypeError as e:
-        return e
-    return True
-
-
 def process_data_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     file: Optional[Union[bytes, BinaryIO]] = None,
