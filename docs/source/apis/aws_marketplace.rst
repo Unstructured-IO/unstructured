@@ -19,8 +19,8 @@ Requirements
    - Follow the ``Create Key Pairs`` in the Amazon EC2 `User Guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_.
 
 
-Creating a VPC with Subnets
----------------------------
+Creating a Virtual Private Cloud (VPC)
+--------------------------------------
 
 1. **Access VPC Dashboard**:
 
@@ -31,8 +31,11 @@ Creating a VPC with Subnets
 
    - Enter a Name tag for your VPC.
    - Specify the IPv4 CIDR block (e.g., 10.0.0.0/16).
-   - Leave the IPv6 CIDR block and Tenancy settings as default.
-   - Click “Create.”
+
+     - You may leave the IPv6 CIDR block and Tenancy settings as default.
+   - Click “Create VPC” button
+
+
 
 3. **Create Subnets**:
 

@@ -14,7 +14,7 @@ This guide provides step-by-step instructions for deploying a service on Azure u
 - Navigate to the Azure Marketplace using `this URL <https://azuremarketplace.microsoft.com/en-us/marketplace/apps/unstructured1691024866136.customer_api_v1?tab=Overview/>`__.
 
 
-.. image:: imgs/Azure_Step2.png
+.. image:: imgs/Azure/Azure_Step2.png
   :align: center
   :alt: Azure Marketplace
 
@@ -26,7 +26,7 @@ This guide provides step-by-step instructions for deploying a service on Azure u
 - Click **Create** button.
 
 
-.. image:: imgs/Azure_Step3.png
+.. image:: imgs/Azure/Azure_Step3.png
   :align: center
   :alt: Deployment Process
 
@@ -40,7 +40,7 @@ On the **Create a virtual machine** page, go to **Basics** tab and follow the st
     - Select **Subscription** and **Resource group** from dropdown menu.
     - Or, you can also ``Create New`` resource group.
 
-.. image:: imgs/Azure_Step4a.png
+.. image:: imgs/Azure/Azure_Step4a.png
   :align: center
   :alt: project details
 
@@ -50,7 +50,7 @@ On the **Create a virtual machine** page, go to **Basics** tab and follow the st
     - **Image**: Select ``Unstructured Customer Hosted API Hourly - x64 Gen2`` (*default*)
     - **Size**: Select VM size from dropdown menu.
 
-.. image:: imgs/Azure_Step4b.png
+.. image:: imgs/Azure/Azure_Step4b.png
   :align: center
   :alt: instance details
 
@@ -58,7 +58,7 @@ On the **Create a virtual machine** page, go to **Basics** tab and follow the st
     - **Authentication type**: Select ``Password`` or ``SSH public key``.
     - Enter the ``credentials``.
 
-.. image:: imgs/Azure_Step4c.png
+.. image:: imgs/Azure/Azure_Step4c.png
   :align: center
   :alt: administrator account
 
@@ -80,7 +80,7 @@ On the **Create a virtual machine** page, go to **Networking** tab and follow th
         - **Protococl**: Select ``TCP`` or ``UDP``
         - **Port** and **Backend Port**: Set to ``port 80``
 
-.. image:: imgs/Azure_Step5.png
+.. image:: imgs/Azure/Azure_Step5.png
   :align: center
   :alt: load balancer
 
@@ -91,7 +91,7 @@ On the **Create a virtual machine** page, go to **Networking** tab and follow th
 - Wait for validation.
 - Click **Create**.
 
-.. image:: imgs/Azure_Step6.png
+.. image:: imgs/Azure/Azure_Step6.png
   :align: center
   :alt: deployment
 
@@ -102,7 +102,7 @@ On the **Create a virtual machine** page, go to **Networking** tab and follow th
 - Retrieve the **Load balancer public IP address**
 - The deployed endpoint is **http://<load-balancer-public-IP-address>/general/v0/general**
 
-.. image:: imgs/Azure_Step7.png
+.. image:: imgs/Azure/Azure_Step7.png
   :align: center
   :alt: retrieve public ip
 
@@ -116,6 +116,6 @@ On the **Create a virtual machine** page, go to **Networking** tab and follow th
 
   curl -q -X POST http://<you-IP-address>/general/v0/general -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F files=@english-and-korean.png -o /tmp/english-and-korean.png.json
 
-.. image:: imgs/Azure_Step8.png
+.. image:: imgs/Azure/Azure_Step8.png
   :align: center
   :alt: testing
