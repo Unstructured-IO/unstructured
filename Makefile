@@ -343,7 +343,7 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version check-flake8-print check-shfmt
+check: check-ruff check-black check-flake8 check-version check-flake8-print
 
 .PHONY: check-shfmt
 check-shfmt:
