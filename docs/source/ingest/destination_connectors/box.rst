@@ -1,13 +1,13 @@
-Pinecone
+Box
 ===========
 
-Batch process all your records using ``unstructured-ingest`` to store structured outputs and embeddings locally on your filesystem and upload those to a Pinecone index.
+Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a Box folder.
 
-First you'll need to install the Pinecone dependencies as shown here.
+First you'll need to install the Box dependencies as shown here.
 
 .. code:: shell
 
-  pip install "unstructured[pinecone]"
+  pip install "unstructured[box]"
 
 Run Locally
 -----------
@@ -18,15 +18,15 @@ upstream local connector.
 
    .. tab:: Shell
 
-      .. literalinclude:: ./code/bash/mongodb.sh
+      .. literalinclude:: ./code/bash/box.sh
          :language: bash
 
    .. tab:: Python
 
-      .. literalinclude:: ./code/python/mongodb.py
+      .. literalinclude:: ./code/python/box.py
          :language: python
 
 
-For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> pinecone --help``.
+For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> s3 --help``.
 
 NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
