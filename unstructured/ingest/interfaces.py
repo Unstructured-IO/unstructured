@@ -109,6 +109,7 @@ class FileStorageConfig(BaseConfig):
     remote_url: str
     uncompress: bool = False
     recursive: bool = False
+    file_glob: t.Optional[t.List[str]] = None
 
 
 @dataclass
