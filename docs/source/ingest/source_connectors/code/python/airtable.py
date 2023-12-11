@@ -8,15 +8,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.runner import AirtableRunner
 
-
-def get_connector_config() -> SimpleAirtableConfig:
-    return SimpleAirtableConfig(
-        access_config=AirtableAccessConfig(
-            personal_access_token=os.getenv("AIRTABLE_PERSONAL_ACCESS_TOKEN")
-        ),
-    )
-
-
 if __name__ == "__main__":
     runner = AirtableRunner(
         processor_config=ProcessorConfig(
@@ -26,6 +17,10 @@ if __name__ == "__main__":
         ),
         read_config=ReadConfig(),
         partition_config=PartitionConfig(),
-        connector_config=get_connector_config(),
+        connector_config=SimpleAirtableConfig(
+            access_config=AirtableAccessConfig(
+                personal_access_token=os.getenv("AIRTABLE_PERSONAL_ACCESS_TOKEN")
+            ),
+        ),
     )
     runner.run()

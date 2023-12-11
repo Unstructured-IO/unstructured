@@ -1,18 +1,17 @@
 import os
 
-from unstructured.ingest.connector.fsspec.azure import (
-    AzureAccessConfig,
-    SimpleAzureBlobStorageConfig,
+from unstructured.ingest.connector.biomed import (
+    SimpleBiomedConfig,
 )
 from unstructured.ingest.interfaces import (
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
 )
-from unstructured.ingest.runner import AzureRunner
+from unstructured.ingest.runner import BiomedRunner
 
 if __name__ == "__main__":
-    runner = AzureRunner(
+    runner = BiomedRunner(
         processor_config=ProcessorConfig(
             verbose=True,
             output_dir="azure-ingest-output",
@@ -23,11 +22,6 @@ if __name__ == "__main__":
             partition_by_api=True,
             api_key=os.getenv("UNSTRUCTURED_API_KEY"),
         ),
-        connector_config=SimpleAzureBlobStorageConfig(
-            access_config=AzureAccessConfig(
-                account_name="azureunstructured1",
-            ),
-            remote_url="abfs://container1/",
-        ),
+        connector_config=SimpleBiomedConfig(path="oa_pdf/07/07/sbaa031.073.PMC7234218.pdf"),
     )
     runner.run()
