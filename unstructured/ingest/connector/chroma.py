@@ -15,8 +15,8 @@ from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
-# if t.TYPE_CHECKING:
-#     from pinecone import Index as PineconeIndex
+if t.TYPE_CHECKING:
+    from chromadb import Collection as ChromaCollection
 
 
 @dataclass
@@ -31,10 +31,10 @@ class SimpleChromaConfig(BaseConnectorConfig):
 
 
 @dataclass
-class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionHandleMixin,
+class ChromaDestinationConnector(BaseDestinationConnector):
     write_config: ChromaWriteConfig
     connector_config: SimpleChromaConfig
-    _collection = None  # : t.Optional["PineconeIndex"] = None
+    _collection: t.Optional["ChromaCollection"] = None
 
     @property
     def chroma_collection(self):
@@ -50,7 +50,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
         _ = self.chroma_collection
 
     @requires_dependencies(["chromadb"], extras="chroma")
-    def create_collection(self):  # -> "PineconeIndex":
+    def create_collection(self) -> "ChromaCollection":
         import chromadb
 
         chroma_client = chromadb.PersistentClient(path=self.connector_config.db_path)
@@ -66,15 +66,15 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
 
         try:
             # Chroma wants lists even if there is only one element
-            response = collection.add(
+            collection.add(
                 ids=batch["ids"],
                 documents=batch["documents"],
                 embeddings=batch["embeddings"],
                 metadatas=batch["metadatas"],
             )
+            breakpoint()
         except Exception as e:
-            raise WriteError(f"chroma error: {e}") from e
-        logger.debug(f"results: {response}")  # Does this do anything?????
+            raise ValueError(f"chroma error: {e}") from e
 
     @staticmethod
     def chunks(iterable, batch_size=100):
@@ -94,7 +94,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):  # IngestDocSessionH
         chroma_dict["documents"] = [x.get("document") for x in chunk]
         chroma_dict["embeddings"] = [x.get("embedding") for x in chunk]
         chroma_dict["metadatas"] = [x.get("metadata") for x in chunk]
-        # See if this is a good idea or try/except instead
+        # Make sure all lists are of the same length
         assert (
             len(chroma_dict["ids"])
             == len(chroma_dict["documents"])
