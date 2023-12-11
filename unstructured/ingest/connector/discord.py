@@ -3,8 +3,10 @@ import typing as t
 from dataclasses import dataclass
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -19,22 +21,20 @@ from unstructured.utils import (
 
 
 @dataclass
+class DiscordAccessConfig(AccessConfig):
+    token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleDiscordConfig(BaseConnectorConfig):
     """Connector config where channels is a comma separated list of
     Discord channels to pull messages from.
     """
 
     # Discord Specific Options
+    access_config: DiscordAccessConfig
     channels: t.List[str]
-    token: str
-    days: t.Optional[int]
-
-    def __post_init__(self):
-        if self.days:
-            try:
-                self.days = int(self.days)
-            except ValueError:
-                raise ValueError("--discord-period must be an integer")
+    period: t.Optional[int] = None
 
 
 @dataclass
@@ -47,8 +47,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     connector_config: SimpleDiscordConfig
     channel: str
-    days: t.Optional[int]
-    token: str
+    days: t.Optional[int] = None
     registry_name: str = "discord"
 
     # NOTE(crag): probably doesn't matter,  but intentionally not defining tmp_download_file
@@ -95,7 +94,7 @@ class DiscordIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 await bot.close()
                 raise
 
-        bot.run(self.token)
+        bot.run(self.connector_config.access_config.token)
         jump_url = None if len(jumpurl) < 1 else jumpurl[0]
         return messages, jump_url
 
@@ -163,7 +162,7 @@ class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         intents = discord.Intents.default()
         try:
             client = Client(intents=intents)
-            asyncio.run(client.start(token=self.connector_config.token))
+            asyncio.run(client.start(token=self.connector_config.access_config.token))
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
@@ -175,8 +174,7 @@ class DiscordSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 processor_config=self.processor_config,
                 read_config=self.read_config,
                 channel=channel,
-                days=self.connector_config.days,
-                token=self.connector_config.token,
+                days=self.connector_config.period,
             )
             for channel in self.connector_config.channels
         ]

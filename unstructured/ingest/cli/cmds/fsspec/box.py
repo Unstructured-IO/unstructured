@@ -7,25 +7,21 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
-from unstructured.ingest.connector.dropbox import (
-    DropboxAccessConfig,
-    DropboxWriteConfig,
-    SimpleDropboxConfig,
-)
+from unstructured.ingest.connector.fsspec.box import BoxWriteConfig, SimpleBoxConfig
 
-CMD_NAME = "dropbox"
+CMD_NAME = "box"
 
 
 @dataclass
-class DropboxCliConfig(DropboxAccessConfig, CliConfig):
+class BoxCliConfig(SimpleBoxConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--token"],
-                required=True,
-                type=str,
-                help="Dropbox access token.",
+                ["--box-app-config"],
+                default=None,
+                type=click.Path(),
+                help="Path to Box app credentials as json file.",
             ),
         ]
         return options
@@ -34,8 +30,7 @@ class DropboxCliConfig(DropboxAccessConfig, CliConfig):
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
-        cli_config=DropboxCliConfig,
-        addition_configs={"fsspec_config": SimpleDropboxConfig},
+        cli_config=BoxCliConfig,
         is_fsspec=True,
     )
     return cmd_cls
@@ -46,8 +41,8 @@ def get_base_dest_cmd():
 
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
-        cli_config=DropboxCliConfig,
-        addition_configs={"fsspec_config": SimpleDropboxConfig, "write_config": DropboxWriteConfig},
+        cli_config=BoxCliConfig,
+        write_config=BoxWriteConfig,
         is_fsspec=True,
     )
     return cmd_cls

@@ -11,7 +11,10 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-DESTINATION_INDEX="utic-test-ingest-fixtures-output-$(uuidgen)"
+random_id=$(uuidgen)
+# index name must be all lowercase
+random_id=$(echo "$random_id" | tr '[:upper:]' '[:lower:]')
+DESTINATION_INDEX="utic-test-ingest-fixtures-output-$random_id"
 # The vector configs on the schema currently only exist on versions:
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
 API_VERSION=2023-07-01-Preview
@@ -48,16 +51,18 @@ trap cleanup EXIT
 
 # Create index
 echo "Creating index $DESTINATION_INDEX"
-response_code=$(curl -s -o /dev/null -w "%{http_code}" -X PUT \
-"https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
---header "api-key: $AZURE_SEARCH_API_KEY" \
---header 'content-type: application/json' \
---data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json")
+response=$(curl -X PUT -s -w "\n%{http_code}" \
+  "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+  --header "api-key: $AZURE_SEARCH_API_KEY" \
+  --header 'content-type: application/json' \
+  --data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json");
+response_code=$(tail -n1 <<< "$response")  # get the last line
+content=$(sed '$ d' <<< "$response")   # get all but the last line which contains the status code
 
 if [ "$response_code" -lt 400 ]; then
   echo "Index creation success: $response_code"
 else
-  echo "Index creation failure: $response_code"
+  echo "Index creation failure [$response_code]: $content"
   exit 1
 fi
 

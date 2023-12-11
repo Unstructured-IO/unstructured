@@ -2,8 +2,10 @@ import json
 import typing as t
 from dataclasses import dataclass, field
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
@@ -17,10 +19,15 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class WeaviateAccessConfig(AccessConfig):
+    auth_keys: t.Optional[t.Dict[str, str]] = enhanced_field(default=None, sensitive=True)
+
+
+@dataclass
 class SimpleWeaviateConfig(BaseConnectorConfig):
+    access_config: WeaviateAccessConfig
     host_url: str
     class_name: str
-    auth_keys: t.Optional[t.Dict[str, str]] = None
 
 
 @dataclass
@@ -58,34 +65,29 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def _resolve_auth_method(self):
-        if self.connector_config.auth_keys is None:
+        auth_keys = self.connector_config.access_config.auth_keys
+        if auth_keys is None:
             return None
 
-        if access_token := self.connector_config.auth_keys.get("access_token"):
+        if access_token := auth_keys.get("access_token"):
             from weaviate.auth import AuthBearerToken
 
             return AuthBearerToken(
                 access_token=access_token,
-                refresh_token=self.connector_config.auth_keys.get("refresh_token"),
+                refresh_token=auth_keys.get("refresh_token"),
             )
-        elif api_key := self.connector_config.auth_keys.get("api_key"):
+        elif api_key := auth_keys.get("api_key"):
             from weaviate.auth import AuthApiKey
 
             return AuthApiKey(api_key=api_key)
-        elif client_secret := self.connector_config.auth_keys.get("client_secret"):
+        elif client_secret := auth_keys.get("client_secret"):
             from weaviate.auth import AuthClientCredentials
 
-            return AuthClientCredentials(
-                client_secret=client_secret, scope=self.connector_config.auth_keys.get("scope")
-            )
-        elif (username := self.connector_config.auth_keys.get("username")) and (
-            pwd := self.connector_config.auth_keys.get("password")
-        ):
+            return AuthClientCredentials(client_secret=client_secret, scope=auth_keys.get("scope"))
+        elif (username := auth_keys.get("username")) and (pwd := auth_keys.get("password")):
             from weaviate.auth import AuthClientPassword
 
-            return AuthClientPassword(
-                username=username, password=pwd, scope=self.connector_config.auth_keys.get("scope")
-            )
+            return AuthClientPassword(username=username, password=pwd, scope=auth_keys.get("scope"))
         return None
 
     def conform_dict(self, data: dict) -> None:

@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "c911244e369f9ee203656a820c260e4d",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "Vacation Policy"
+    "text": "Vacation Policy",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "94bc9e2e465cfac3060a7f7ab8082e89",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: Vacation policies are crucial for employee well-being and productivity. They provide rest and recharge, reduce burnout and increase job satisfaction."
+    "text": "💡\n      \n      Notion Tip: Vacation policies are crucial for employee well-being and productivity. They provide rest and recharge, reduce burnout and increase job satisfaction.",
+    "type": "NarrativeText"
   }
 ]
