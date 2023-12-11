@@ -6,7 +6,7 @@ from unstructured.ingest.runner.writers.base_writer import Writer
 
 if t.TYPE_CHECKING:
     from unstructured.ingest.connector.fsspec.azure import (
-        AzureWriteTextConfig,
+        AzureWriteConfig,
         SimpleAzureBlobStorageConfig,
     )
 
@@ -14,7 +14,7 @@ if t.TYPE_CHECKING:
 @dataclass
 class AzureWriter(Writer):
     connector_config: "SimpleAzureBlobStorageConfig"
-    write_config: "AzureWriteTextConfig"
+    write_config: "AzureWriteConfig"
 
     def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.fsspec.azure import (
