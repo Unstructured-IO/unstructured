@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "f931bdb912a40a788890924578a0cff7",
     "metadata": {
       "data_source": {
@@ -13,6 +12,7 @@
       ],
       "page_number": 1
     },
-    "text": "Sprint 1"
+    "text": "Sprint 1",
+    "type": "Title"
   }
 ]

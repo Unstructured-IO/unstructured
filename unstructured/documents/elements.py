@@ -592,6 +592,20 @@ class ElementType:
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
 
+    @classmethod
+    def to_dict(cls):
+        """
+        Convert class attributes to a dictionary.
+
+        Returns:
+            dict: A dictionary where keys are attribute names and values are attribute values.
+        """
+        return {
+            attr: getattr(cls, attr)
+            for attr in dir(cls)
+            if not callable(getattr(cls, attr)) and not attr.startswith("__")
+        }
+
 
 class Element(abc.ABC):
     """An element is a section of a page in the document."""

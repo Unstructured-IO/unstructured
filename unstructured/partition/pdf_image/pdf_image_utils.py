@@ -71,8 +71,9 @@ def convert_pdf_to_image(
     return images
 
 
-def extract_images_from_elements(
+def save_elements(
     elements: List["Element"],
+    element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
@@ -99,8 +100,11 @@ def extract_images_from_elements(
 
         figure_number = 0
         for el in elements:
+            if el.category != element_category_to_save:
+                continue
+
             coordinates = el.metadata.coordinates
-            if not coordinates or not coordinates.points or el.category != ElementType.IMAGE:
+            if not coordinates or not coordinates.points:
                 continue
 
             points = coordinates.points
@@ -110,9 +114,10 @@ def extract_images_from_elements(
 
             figure_number += 1
             try:
+                basename = "table" if el.category == ElementType.TABLE else "figure"
                 output_f_path = os.path.join(
                     output_dir_path,
-                    f"figure-{page_number}-{figure_number}.jpg",
+                    f"{basename}-{page_number}-{figure_number}.jpg",
                 )
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
@@ -122,3 +127,28 @@ def extract_images_from_elements(
                 el.metadata.image_path = output_f_path
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
+
+
+def check_element_types_to_extract(
+    extract_element_types: Optional[List[str]],
+) -> List[str]:
+    """Check and normalize the provided list of element types to extract."""
+
+    if extract_element_types is None:
+        return []
+
+    if not isinstance(extract_element_types, list):
+        raise TypeError(
+            "The extract_element_types parameter must be a list of element types as strings, "
+            "ex. ['Table', 'Image']",
+        )
+
+    available_element_types = list(ElementType.to_dict().values())
+    normalized_extract_element_types = []
+    for el_type in extract_element_types:
+        normalized_el_type = el_type.lower().capitalize()
+        if normalized_el_type not in available_element_types:
+            logger.warning(f"The requested type ({el_type}) doesn't match any available type")
+        normalized_extract_element_types.append(normalized_el_type)
+
+    return normalized_extract_element_types

@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
@@ -24,10 +25,15 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class PineconeAccessConfig(AccessConfig):
+    api_key: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimplePineconeConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     index_name: str
     environment: str
-    api_key: str = enhanced_field(sensitive=True)
+    access_config: PineconeAccessConfig
 
 
 @dataclass
@@ -56,7 +62,8 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
         import pinecone
 
         pinecone.init(
-            api_key=self.connector_config.api_key, environment=self.connector_config.environment
+            api_key=self.connector_config.access_config.api_key,
+            environment=self.connector_config.environment,
         )
         index = pinecone.Index(self.connector_config.index_name)
         logger.debug(

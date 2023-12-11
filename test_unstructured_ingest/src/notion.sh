@@ -34,7 +34,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
     notion \
     --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
     --download-dir "$DOWNLOAD_DIR" \
-    --api-key "$NOTION_API_KEY" \
+    --notion-api-key "$NOTION_API_KEY" \
     --output-dir "$OUTPUT_DIR" \
     --database-ids "122b2c22996b435b9de2ee0e9d2b04bc" \
     --num-processes "$max_processes" \
