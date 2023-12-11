@@ -4,7 +4,7 @@ import typing as t
 import uuid
 from dataclasses import dataclass
 
-from unstructured.ingest.error import DestinationConnectionError, WriteError
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
