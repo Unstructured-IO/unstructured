@@ -752,18 +752,3 @@ class IngestDocSessionHandleMixin:
     @session_handle.setter
     def session_handle(self, session_handle: BaseSessionHandle):
         self._session_handle = session_handle
-
-
-class WriteConfigSessionHandleMixin(ConfigSessionHandleMixin):
-    _session_handle: t.Optional[BaseSessionHandle] = None
-
-    @property
-    def session_handle(self):
-        """If a session handle is not assigned, creates a new one and assigns it."""
-        if self._session_handle is None:
-            self._session_handle = self.create_session_handle()
-        return self._session_handle
-
-    @session_handle.setter
-    def session_handle(self, session_handle: BaseSessionHandle):
-        self._session_handle = session_handle
