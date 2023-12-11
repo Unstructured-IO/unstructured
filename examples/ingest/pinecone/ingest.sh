@@ -17,8 +17,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--output-dir local-to-pinecone \
 	--strategy fast \
 	--chunk-elements \
-	--embedding-provider unstructured embedding provider, ie. langchain-huggingface \
-	2 \
+	--embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
+	--num-processes 2 \
 	--verbose \
 	--work-dir "<directory for intermediate outputs to be saved>" \
 	pinecone \
@@ -26,4 +26,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--index-name "<Pinecone index name, ie: ingest-test>" \
 	--environment "<Pinecone index name, ie: ingest-test>" \
 	--batch-size "<Number of elements to be uploaded per batch, ie. 80>" \
-	--num-processes "<Number of processes to be used to upload, ie. 2>" <an >--num-processes
+	--num-processes "<Number of processes to be used to upload, ie. 2>"
