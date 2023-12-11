@@ -43,8 +43,8 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     user_email: str
     access_config: ConfluenceAccessConfig
     url: str
-    max_num_of_spaces: int
-    max_num_of_docs_from_each_space: int
+    max_num_of_spaces: int = 500
+    max_num_of_docs_from_each_space: int = 100
     spaces: t.List[str] = field(default_factory=list)
 
 
