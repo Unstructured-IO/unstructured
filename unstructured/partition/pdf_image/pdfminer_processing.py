@@ -41,6 +41,7 @@ def process_data_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     file: Optional[Union[bytes, BinaryIO]] = None,
 ) -> "DocumentLayout":
+    """Process document data using PDFMiner to extract layout information."""
 
     extracted_layouts = get_regions_by_pdfminer(file)
 
