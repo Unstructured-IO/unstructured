@@ -7,7 +7,7 @@ from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.sql.connector import SqlWriteConfig
 
 CMD_NAME = "sql"
-SQL_DRIVERS = {"postgresql", "sqlite", "mysql"}
+SQL_DRIVERS = {"postgresql", "sqlite"}
 
 
 @dataclass

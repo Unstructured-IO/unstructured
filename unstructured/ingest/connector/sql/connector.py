@@ -41,8 +41,6 @@ class SimpleSqlConfig(BaseConnectorConfig):
     def connection(self):
         if self.db_name == "postgresql":
             return self._make_psycopg_connection
-        elif self.db_name == "mysql":
-            return self._make_mysql_connection
         elif self.db_name == "sqlite":
             return self._make_sqlite_connection
         raise ValueError(f"Unsupported database {self.db_name} connection.")
@@ -60,18 +58,6 @@ class SimpleSqlConfig(BaseConnectorConfig):
             user=self.username,
             password=self.password,
             dbname=self.database,
-            host=self.host,
-            port=self.port,
-        )
-
-    @requires_dependencies(["mysql"])
-    def _make_mysql_connection(self):
-        import mysql.connector
-
-        return mysql.connector.connect(
-            user=self.username,
-            password=self.password,
-            database=self.database,
             host=self.host,
             port=self.port,
         )
