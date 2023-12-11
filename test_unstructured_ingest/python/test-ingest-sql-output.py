@@ -22,16 +22,6 @@ def create_connection(db_name, database=None):
             host=DB_HOST,
             port=DB_PORT,
         )
-    elif db_name == "mysql":
-        import mysql.connector
-
-        return mysql.connector.connect(
-            user=DB_USERNAME,
-            password=DB_PASSWORD,
-            database=DB_DATABASE,
-            host=DB_HOST,
-            port=DB_PORT,
-        )
     elif db_name == "sqlite":
         from sqlite3 import connect
 
