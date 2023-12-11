@@ -27,6 +27,6 @@ upstream local connector.
          :language: python
 
 
-For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> s3 --help``.
+For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> box --help``.
 
 NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.

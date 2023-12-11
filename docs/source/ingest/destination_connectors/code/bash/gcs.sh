@@ -10,6 +10,6 @@ unstructured-ingest \
     --num-processes 2 \
     --verbose \
     --work-dir "<directory for intermediate outputs to be saved>" \
-    dropbox \
+    gcs \
     --service-account-key  "$SERVICE_ACCOUNT_KEY" \
     --remote-url "<your destination path here, ie 'gcs://unstructured/war-and-peace-output'>"
