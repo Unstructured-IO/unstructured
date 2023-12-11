@@ -70,7 +70,10 @@ from unstructured.partition.lang import (
     check_languages,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.pdf_image.pdf_image_utils import extract_images_from_elements
+from unstructured.partition.pdf_image.pdf_image_utils import (
+    check_element_types_to_extract,
+    save_elements,
+)
 from unstructured.partition.pdf_image.pdfminer_processing import check_pdfminer_generates_pages
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
@@ -132,6 +135,7 @@ def partition_pdf(
     chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
     extract_images_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
@@ -165,9 +169,12 @@ def partition_pdf(
     extract_images_in_pdf
         If True and strategy=hi_res, any detected images will be saved in the path specified by
         image_output_dir_path.
+    extract_tables_in_pdf
+        If True and strategy=hi_res, any detected tables will be saved in the path specified by
+        image_output_dir_path.
     image_output_dir_path
-        If extract_images_in_pdf=True and strategy=hi_res, any detected images will be saved in the
-        given path
+        If extract_images_in_pdf=True (or extract_tables_in_pdf=True) and strategy=hi_res, any
+        detected images or tables will be saved in the given path
     """
 
     exactly_one(filename=filename, file=file)
@@ -183,6 +190,7 @@ def partition_pdf(
         languages=languages,
         metadata_last_modified=metadata_last_modified,
         extract_images_in_pdf=extract_images_in_pdf,
+        extract_element_types=extract_element_types,
         image_output_dir_path=image_output_dir_path,
         **kwargs,
     )
@@ -220,118 +228,6 @@ def get_the_last_modification_date_pdf_or_img(
     return last_modification_date
 
 
-def partition_pdf_or_image(
-    filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    is_image: bool = False,
-    include_page_breaks: bool = False,
-    strategy: str = PartitionStrategy.AUTO,
-    infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = None,
-    metadata_last_modified: Optional[str] = None,
-    extract_images_in_pdf: bool = False,
-    image_output_dir_path: Optional[str] = None,
-    **kwargs,
-) -> List[Element]:
-    """Parses a pdf or image document into a list of interpreted elements."""
-    # TODO(alan): Extract information about the filetype to be processed from the template
-    # route. Decoding the routing should probably be handled by a single function designed for
-    # that task so as routing design changes, those changes are implemented in a single
-    # function.
-
-    validate_strategy(strategy, is_image)
-
-    languages = check_languages(languages, ocr_languages)
-
-    last_modification_date = get_the_last_modification_date_pdf_or_img(
-        file=file,
-        filename=filename,
-    )
-
-    extracted_elements = []
-    pdf_text_extractable = False
-    if not is_image:
-        try:
-            extracted_elements = extractable_elements(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                **kwargs,
-            )
-            pdf_text_extractable = any(
-                isinstance(el, Text) and el.text.strip() for el in extracted_elements
-            )
-        except Exception as e:
-            logger.error(e, exc_info=True)
-            logger.warning("PDF text extraction failed, skip text extraction...")
-
-    strategy = determine_pdf_or_image_strategy(
-        strategy,
-        file=file,
-        is_image=is_image,
-        infer_table_structure=infer_table_structure,
-        pdf_text_extractable=pdf_text_extractable,
-        extract_images_in_pdf=extract_images_in_pdf,
-    )
-
-    if strategy == PartitionStrategy.HI_RES:
-        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            elements = _partition_pdf_or_image_local(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                is_image=is_image,
-                infer_table_structure=infer_table_structure,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                extract_images_in_pdf=extract_images_in_pdf,
-                image_output_dir_path=image_output_dir_path,
-                **kwargs,
-            )
-            out_elements = _process_uncategorized_text_elements(elements)
-
-    elif strategy == PartitionStrategy.FAST:
-        return extracted_elements
-
-    elif strategy == PartitionStrategy.OCR_ONLY:
-        # NOTE(robinson): Catches file conversion warnings when running with PDFs
-        with warnings.catch_warnings():
-            elements = _partition_pdf_or_image_with_ocr(
-                filename=filename,
-                file=file,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                is_image=is_image,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                **kwargs,
-            )
-            out_elements = _process_uncategorized_text_elements(elements)
-
-    return out_elements
-
-
-def _process_uncategorized_text_elements(elements: List[Element]):
-    """Processes a list of elements, creating a new list where elements with the
-    category `UncategorizedText` are replaced with corresponding
-    elements created from their text content."""
-
-    out_elements = []
-    for el in elements:
-        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-            new_el = element_from_text(cast(Text, el).text)
-            new_el.metadata = el.metadata
-        else:
-            new_el = el
-        out_elements.append(new_el)
-
-    return out_elements
-
-
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -344,6 +240,7 @@ def _partition_pdf_or_image_local(
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     extract_images_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
     **kwargs,
@@ -467,9 +364,26 @@ def _partition_pdf_or_image_local(
         **kwargs,
     )
 
+    extract_element_types = check_element_types_to_extract(extract_element_types)
+    #  NOTE(christine): `extract_images_in_pdf` would deprecate
+    #  (but continue to support for a while)
     if extract_images_in_pdf:
-        extract_images_from_elements(
+        save_elements(
             elements=elements,
+            element_category_to_save=ElementType.IMAGE,
+            filename=filename,
+            file=file,
+            pdf_image_dpi=pdf_image_dpi,
+            output_dir_path=image_output_dir_path,
+        )
+
+    for el_type in extract_element_types:
+        if extract_images_in_pdf and el_type == ElementType.IMAGE:
+            continue
+
+        save_elements(
+            elements=elements,
+            element_category_to_save=el_type,
             filename=filename,
             file=file,
             pdf_image_dpi=pdf_image_dpi,
@@ -500,6 +414,120 @@ def _partition_pdf_or_image_local(
             # filter those out and leave the children orphaned.
             if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
+
+    return out_elements
+
+
+def partition_pdf_or_image(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    is_image: bool = False,
+    include_page_breaks: bool = False,
+    strategy: str = PartitionStrategy.AUTO,
+    infer_table_structure: bool = False,
+    ocr_languages: Optional[str] = None,
+    languages: Optional[List[str]] = None,
+    metadata_last_modified: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    extract_element_types: Optional[List[str]] = None,
+    image_output_dir_path: Optional[str] = None,
+    **kwargs,
+) -> List[Element]:
+    """Parses a pdf or image document into a list of interpreted elements."""
+    # TODO(alan): Extract information about the filetype to be processed from the template
+    # route. Decoding the routing should probably be handled by a single function designed for
+    # that task so as routing design changes, those changes are implemented in a single
+    # function.
+
+    validate_strategy(strategy, is_image)
+
+    languages = check_languages(languages, ocr_languages)
+
+    last_modification_date = get_the_last_modification_date_pdf_or_img(
+        file=file,
+        filename=filename,
+    )
+
+    extracted_elements = []
+    pdf_text_extractable = False
+    if not is_image:
+        try:
+            extracted_elements = extractable_elements(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            pdf_text_extractable = any(
+                isinstance(el, Text) and el.text.strip() for el in extracted_elements
+            )
+        except Exception as e:
+            logger.error(e, exc_info=True)
+            logger.warning("PDF text extraction failed, skip text extraction...")
+
+    strategy = determine_pdf_or_image_strategy(
+        strategy,
+        file=file,
+        is_image=is_image,
+        infer_table_structure=infer_table_structure,
+        pdf_text_extractable=pdf_text_extractable,
+        extract_images_in_pdf=extract_images_in_pdf,
+    )
+
+    if strategy == PartitionStrategy.HI_RES:
+        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            elements = _partition_pdf_or_image_local(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                extract_images_in_pdf=extract_images_in_pdf,
+                extract_element_types=extract_element_types,
+                image_output_dir_path=image_output_dir_path,
+                **kwargs,
+            )
+            out_elements = _process_uncategorized_text_elements(elements)
+
+    elif strategy == PartitionStrategy.FAST:
+        return extracted_elements
+
+    elif strategy == PartitionStrategy.OCR_ONLY:
+        # NOTE(robinson): Catches file conversion warnings when running with PDFs
+        with warnings.catch_warnings():
+            elements = _partition_pdf_or_image_with_ocr(
+                filename=filename,
+                file=file,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                is_image=is_image,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            out_elements = _process_uncategorized_text_elements(elements)
+
+    return out_elements
+
+
+def _process_uncategorized_text_elements(elements: List[Element]):
+    """Processes a list of elements, creating a new list where elements with the
+    category `UncategorizedText` are replaced with corresponding
+    elements created from their text content."""
+
+    out_elements = []
+    for el in elements:
+        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
+            new_el = element_from_text(cast(Text, el).text)
+            new_el.metadata = el.metadata
+        else:
+            new_el = el
+        out_elements.append(new_el)
 
     return out_elements
 
