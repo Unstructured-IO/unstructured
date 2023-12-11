@@ -15,6 +15,8 @@
 
 ### Fixes
 
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
+
 ## 0.11.3
 
 ### Enhancements
