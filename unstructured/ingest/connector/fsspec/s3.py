@@ -2,7 +2,7 @@ import typing as t
 from dataclasses import dataclass
 from typing import Type
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
@@ -52,8 +52,11 @@ class S3SourceConnector(FsspecSourceConnector):
         self.ingest_doc_cls: Type[S3IngestDoc] = S3IngestDoc
 
 
-@requires_dependencies(["s3fs", "fsspec"], extras="s3")
 @dataclass
 class S3DestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleS3Config
     write_config: S3WriteConfig
+
+    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
+    def initialize(self):
+        super().initialize()

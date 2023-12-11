@@ -84,7 +84,6 @@ def extract_config(flat_data: dict, config: t.Type[BaseConfig]) -> BaseConfig:
         return dd
 
     adjusted_dict = conform_dict(inner_d=flat_data, inner_config=config)
-    config.from_dict(adjusted_dict)
     return config.from_dict(adjusted_dict, apply_name_overload=False)
 
 
@@ -115,10 +114,14 @@ def extract_configs(
     )
     if extras:
         for k, conf in extras.items():
-            res[k] = extract_config(flat_data=data, config=conf)
+            try:
+                res[k] = extract_config(flat_data=data, config=conf)
+            except Exception as e:
+                logger.error(f"failed to extract config from {conf.__name__}")
+                raise e
     for v in validate:
         try:
-            v.from_dict(data)
+            extract_config(flat_data=data, config=v)
         except Exception as e:
             raise Exception(f"failed to validate config {v.__name__}") from e
 

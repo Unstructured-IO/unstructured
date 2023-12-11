@@ -1,26 +1,29 @@
+import logging
 import typing as t
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import (
+    BaseConnectorConfig,
     BaseDestinationConnector,
     BaseSourceConnector,
     ChunkingConfig,
     EmbeddingConfig,
-    FsspecConfig,
     PartitionConfig,
     PermissionsConfig,
     ProcessorConfig,
     ReadConfig,
     RetryStrategyConfig,
 )
+from unstructured.ingest.logger import ingest_log_streaming_init
 from unstructured.ingest.processor import process_documents
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 
 @dataclass
 class Runner(EnhancedDataClassJsonMixin, ABC):
+    connector_config: BaseConnectorConfig
     processor_config: ProcessorConfig
     read_config: ReadConfig
     partition_config: PartitionConfig
@@ -31,9 +34,29 @@ class Runner(EnhancedDataClassJsonMixin, ABC):
     permissions_config: t.Optional[PermissionsConfig] = None
     retry_strategy_config: t.Optional[RetryStrategyConfig] = None
 
-    @abstractmethod
     def run(self, *args, **kwargs):
+        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
+        self.update_read_config()
+        source_connector = self.get_source_connector()
+        self.process_documents(
+            source_doc_connector=source_connector,
+        )
+
+    @abstractmethod
+    def update_read_config(self):
         pass
+
+    @abstractmethod
+    def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
+        pass
+
+    def get_source_connector(self) -> BaseSourceConnector:
+        source_connector_cls = self.get_source_connector_cls()
+        return source_connector_cls(
+            processor_config=self.processor_config,
+            connector_config=self.connector_config,
+            read_config=self.read_config,
+        )
 
     def get_dest_doc_connector(self) -> t.Optional[BaseDestinationConnector]:
         writer_kwargs = self.writer_kwargs if self.writer_kwargs else {}
@@ -64,15 +87,3 @@ class Runner(EnhancedDataClassJsonMixin, ABC):
             permissions_config=self.get_permissions_config(),
             retry_strategy_config=self.retry_strategy_config,
         )
-
-
-@dataclass
-class FsspecBaseRunner(Runner):
-    # TODO make this field required when python3.8 no longer supported
-    # python3.8 dataclass doesn't support default values in child classes, but this
-    # fsspec_config should be required in this class.
-    fsspec_config: t.Optional[FsspecConfig] = None
-
-    def __post_init__(self):
-        if self.fsspec_config is None:
-            raise ValueError("fsspec_config must exist")

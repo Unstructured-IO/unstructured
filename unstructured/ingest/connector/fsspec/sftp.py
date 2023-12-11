@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Type
 from urllib.parse import urlparse
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecIngestDoc,
     FsspecSourceConnector,
     SimpleFsspecConfig,

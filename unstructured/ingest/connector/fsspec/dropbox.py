@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Type
 
-from unstructured.ingest.connector.fsspec import (
+from unstructured.ingest.connector.fsspec.fsspec import (
     FsspecDestinationConnector,
     FsspecIngestDoc,
     FsspecSourceConnector,
@@ -153,7 +153,6 @@ class DropboxSourceConnector(FsspecSourceConnector):
             ]
 
 
-@requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
 @dataclass
 class DropboxDestinationConnector(FsspecDestinationConnector):
     connector_config: SimpleFsspecConfig
