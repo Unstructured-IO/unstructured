@@ -12,7 +12,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class BoxRunner(Runner):
-    connector_config: t.Optional["SimpleBoxConfig"] = None
+    connector_config: "SimpleBoxConfig"
 
     def update_read_config(self):
         self.read_config.download_dir = update_download_dir_remote_url(
