@@ -18,12 +18,12 @@ upstream local connector.
 
    .. tab:: Shell
 
-      .. literalinclude:: ./code/bash/mongodb.sh
+      .. literalinclude:: ./code/bash/pinecone.sh
          :language: bash
 
    .. tab:: Python
 
-      .. literalinclude:: ./code/python/mongodb.py
+      .. literalinclude:: ./code/python/pinecone.py
          :language: python
 
 
