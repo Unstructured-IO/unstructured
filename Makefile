@@ -343,7 +343,11 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version check-flake8-print
+check: check-ruff check-black check-flake8 check-version check-flake8-print check-shfmt
+
+.PHONY: check-shfmt
+check-shfmt:
+	shfmt -d .
 
 .PHONY: check-black
 check-black:
@@ -382,7 +386,14 @@ check-version:
 
 ## tidy:                    run black
 .PHONY: tidy
-tidy:
+tidy: tidy-python
+
+.PHONY: tidy_shell
+tidy-shell:
+	shfmt -l -w .
+
+.PHONY: tidy-python
+tidy-python:
 	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
 	autoflake --in-place .
 	black  .
