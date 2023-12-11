@@ -11,8 +11,7 @@ unstructured-ingest \
     --verbose \
     --work-dir "<directory for intermediate outputs to be saved>" \
     pinecone \
-    --api-key <your pinecone api key here> \
-    --index-name <your index name here, ie. ingest-test> \
-    --environment <your environment name here, ie. gcp-starter> \
-    --batch-size <number of elements to be uploaded per batch, ie. 80> \
-    --num-processes <number of processes to be used to upload, ie. 2>
+    --api-key "$PINECONE_API_KEY" \
+    --index-name "$PINECONE_INDEX_NAME" \
+    --environment "$PINECONE_ENVIRONMENT" \
+    --batch-size 80

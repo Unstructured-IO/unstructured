@@ -12,4 +12,4 @@ unstructured-ingest \
     --strategy fast \
     weaviate \
     --host-url http://localhost:8080 \
-    --class-name elements \
+    --class-name elements
