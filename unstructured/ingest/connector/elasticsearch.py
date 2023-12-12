@@ -310,7 +310,7 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
 
 @dataclass
 class ElasticsearchWriteConfig(WriteConfig):
-    batch_size: int
+    batch_size_bytes: int
     num_processes: int
 
 
@@ -355,13 +355,16 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
-            f"writing document batches to destination "
-            f"index named {self.connector_config.index_name} "
-            f"at {self.connector_config.access_config.hosts}"
+            f"writing document batches to destination"
+            f" index named {self.connector_config.index_name}"
+            f" at {self.connector_config.access_config.hosts}"
+            f" with batch size (in bytes) {self.write_config.batch_size_bytes}"
         )
         from elasticsearch.helpers import parallel_bulk
 
-        for batch in generator_batching_wbytes(element_dicts, batch_size_limit_bytes=15_000_000):
+        for batch in generator_batching_wbytes(
+            element_dicts, batch_size_limit_bytes=self.write_config.batch_size_bytes
+        ):
             for success, info in parallel_bulk(
                 self.client, batch, thread_count=self.write_config.num_processes
             ):

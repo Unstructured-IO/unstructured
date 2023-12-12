@@ -54,6 +54,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index-name ingest-test-destination \
   --username $ELASTICSEARCH_USER \
 	--password $ELASTICSEARCH_PASSWORD \
+  --batch-size-bytes 15000000 \
   --num-processes "$max_processes"
 
 scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py

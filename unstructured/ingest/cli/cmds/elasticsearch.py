@@ -84,18 +84,20 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
 
 @dataclass
 class ElasticsearchCliWriteConfig(CliConfig):
-    batch_size: t.Optional[int] = None
+    batch_size_bytes: t.Optional[int] = None
     num_processes: t.Optional[int] = None
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--batch-size-upload"],
+                ["--batch-size-bytes"],
                 required=True,
-                default=10,
+                default=15_000_000,
                 type=int,
-                help="Number of items to be uploaded each time",
+                help="Size limit (in bytes) for each batch of items to be uploaded. Check"
+                " https://www.elastic.co/guide/en/elasticsearch/guide/current/bulk.html"
+                "#_how_big_is_too_big for more information.",
             ),
             click.Option(
                 ["--num-processes"],
