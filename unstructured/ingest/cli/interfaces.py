@@ -28,8 +28,8 @@ class Dict(click.ParamType):
     def convert(
         self,
         value: t.Any,
-        param: t.Optional[click.Parameter],
-        ctx: t.Optional[click.Context],
+        param: t.Optional[click.Parameter] = None,
+        ctx: t.Optional[click.Context] = None,
     ) -> t.Any:
         try:
             return json.loads(value)
@@ -52,8 +52,8 @@ class FileOrJson(click.ParamType):
     def convert(
         self,
         value: t.Any,
-        param: t.Optional[click.Parameter],
-        ctx: t.Optional[click.Context],
+        param: t.Optional[click.Parameter] = None,
+        ctx: t.Optional[click.Context] = None,
     ) -> t.Any:
         # check if valid file
         full_path = os.path.abspath(os.path.expanduser(value))
@@ -84,8 +84,8 @@ class DelimitedString(click.ParamType):
     def convert(
         self,
         value: t.Any,
-        param: t.Optional[click.Parameter],
-        ctx: t.Optional[click.Context],
+        param: t.Optional[click.Parameter] = None,
+        ctx: t.Optional[click.Context] = None,
     ) -> t.Any:
         # In case a list is provided as the default, will not break
         if isinstance(value, list):

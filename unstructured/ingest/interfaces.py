@@ -52,6 +52,12 @@ class BaseConfig(EnhancedDataClassJsonMixin, ABC):
 
 
 @dataclass
+class AccessConfig(BaseConfig):
+    # Meant to designate holding any sensitive information associated with other configs
+    pass
+
+
+@dataclass
 class RetryStrategyConfig(BaseConfig):
     """
     Contains all info needed for decorator to pull from `self` for backoff
@@ -110,12 +116,6 @@ class FileStorageConfig(BaseConfig):
     uncompress: bool = False
     recursive: bool = False
     file_glob: t.Optional[t.List[str]] = None
-
-
-@dataclass
-class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
 
 
 @dataclass
@@ -222,9 +222,11 @@ class ChunkingConfig(BaseConfig):
 
 @dataclass
 class PermissionsConfig(BaseConfig):
-    application_id: t.Optional[str]
-    tenant: t.Optional[str]
-    client_cred: t.Optional[str] = enhanced_field(sensitive=True)
+    application_id: t.Optional[str] = enhanced_field(overload_name="permissions_application_id")
+    tenant: t.Optional[str] = enhanced_field(overload_name="permissions_tenant")
+    client_cred: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="permissions_client_cred"
+    )
 
 
 # module-level variable to store session handle
@@ -236,7 +238,8 @@ class WriteConfig(BaseConfig):
     pass
 
 
-class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
+@dataclass
+class BaseConnectorConfig(BaseConfig, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
@@ -694,7 +697,7 @@ class PermissionsCleanupMixin:
         """Recursively clean up downloaded files and directories."""
         if cur_dir is None:
             cur_dir = Path(self.processor_config.output_dir, "permissions_data")
-        if cur_dir is None:
+        if not Path(cur_dir).exists():
             return
         if Path(cur_dir).is_file():
             cur_file = cur_dir

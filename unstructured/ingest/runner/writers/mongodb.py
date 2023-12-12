@@ -1,7 +1,6 @@
 import typing as t
 from dataclasses import dataclass
 
-from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
 from unstructured.ingest.runner.writers.base_writer import Writer
 
@@ -10,16 +9,13 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
-class MongodbWriter(Writer, EnhancedDataClassJsonMixin):
+class MongodbWriter(Writer):
     write_config: "MongoDBWriteConfig"
     connector_config: "SimpleMongoDBStorageConfig"
 
-    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.mongodb import (
             MongoDBDestinationConnector,
         )
 
-        return MongoDBDestinationConnector(
-            write_config=self.write_config,
-            connector_config=self.connector_config,
-        )
+        return MongoDBDestinationConnector

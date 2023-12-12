@@ -16,31 +16,31 @@ CI=${CI:-"false"}
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  cleanup_dir "$DESTINATION_TABLE"
-  cleanup_dir "$OUTPUT_DIR"
-  cleanup_dir "$WORK_DIR"
+	cleanup_dir "$DESTINATION_TABLE"
+	cleanup_dir "$OUTPUT_DIR"
+	cleanup_dir "$WORK_DIR"
 }
 
 trap cleanup EXIT
 
 # Make sure directory doesn't exist at the beginning of script as this will cause it to break
 if [ -d "$DESTINATION_TABLE" ]; then
-  echo "cleaning up directory: $DESTINATION_TABLE"
-  rm -rf "$DESTINATION_TABLE"
+	echo "cleaning up directory: $DESTINATION_TABLE"
+	rm -rf "$DESTINATION_TABLE"
 else
-  echo "$DESTINATION_TABLE does not exist or is not a directory, skipping deletion"
+	echo "$DESTINATION_TABLE does not exist or is not a directory, skipping deletion"
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    local \
-    --num-processes "$max_processes" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/fake-memo.pdf \
-    --work-dir "$WORK_DIR" \
-    delta-table \
-    --table-uri "$DESTINATION_TABLE"
+	local \
+	--num-processes "$max_processes" \
+	--output-dir "$OUTPUT_DIR" \
+	--strategy fast \
+	--verbose \
+	--reprocess \
+	--input-path example-docs/fake-memo.pdf \
+	--work-dir "$WORK_DIR" \
+	delta-table \
+	--table-uri "$DESTINATION_TABLE"
 
 python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"
