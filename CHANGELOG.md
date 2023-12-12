@@ -16,6 +16,8 @@
 
 ### Fixes
 
+* **Fix a bug where image can be scaled too large for tesseract** Adds a limit to prevent auto-scaling an image beyond the maximum size `tesseract` can handle for ocr layout detection
+
 ## 0.11.3
 
 ### Enhancements
