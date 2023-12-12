@@ -38,3 +38,6 @@ DEFAULT_PADDLE_LANG = os.getenv("DEFAULT_PADDLE_LANG", "en")
 TESSERACT_TEXT_HEIGHT = "height"
 
 TESSERACT_LANGUAGES_SPLITTER = "+"
+
+# 2 ** 31 - 1, max byte size for image data
+TESSERACT_MAX_SIZE = 2147483647
