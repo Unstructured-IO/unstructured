@@ -15,8 +15,20 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
+                ["--host"],
+                required=False,
+                type=str,
+                help="bla bla",
+            ),
+            click.Option(
+                ["--port"],
+                required=False,
+                type=int,
+                help="bla bla",
+            ),
+            click.Option(
                 ["--db-path"],
-                required=True,
+                required=False,
                 type=str,
                 help="Location where Chroma is persisted.",
             ),

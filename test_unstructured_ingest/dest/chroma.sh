@@ -47,9 +47,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   chroma \
-  --db-path "$DESTINATION_PATH" \
+  --host "localhost" \
+  --port 8000 \
   --collection-name "$COLLECTION_NAME" \
   --batch-size 80
 
-python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --db-path "$DESTINATION_PATH" --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --collection-name "$COLLECTION_NAME"
 

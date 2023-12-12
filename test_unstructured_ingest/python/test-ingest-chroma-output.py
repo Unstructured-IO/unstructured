@@ -3,12 +3,10 @@ import click
 
 
 @click.command()
-@click.option("--db-path", type=str)
 @click.option("--collection-name", type=str)
-def run_check(db_path, collection_name):
+def run_check(collection_name):
     print(f"Checking contents of Chroma collection: {collection_name}")
 
-    # chroma_client = chromadb.PersistentClient(path=db_path)
     chroma_client = chromadb.HttpClient(host="localhost", port=8000)
 
     collection = chroma_client.get_or_create_collection(name=collection_name)

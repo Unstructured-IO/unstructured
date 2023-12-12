@@ -14,7 +14,7 @@ class ChromaWriter(Writer, EnhancedDataClassJsonMixin):
     write_config: "ChromaWriteConfig"
     connector_config: "SimpleChromaConfig"
 
-    def get_connector_cls(self) -> type[BaseDestinationConnector]:
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.chroma import (
             ChromaDestinationConnector,
         )
@@ -32,28 +32,28 @@ class ChromaWriter(Writer, EnhancedDataClassJsonMixin):
     #     )
 
 
-def chroma_writer(
-    db_path: str,
-    collection_name: str,
-    batch_size: int,
-    **kwargs,
-) -> BaseDestinationConnector:
-    from unstructured.ingest.connector.chroma import (
-        ChromaDestinationConnector,
-        ChromaWriteConfig,
-        SimpleChromaConfig,
-    )
+# def chroma_writer(
+#     db_path: str,
+#     collection_name: str,
+#     batch_size: int,
+#     **kwargs,
+# ) -> BaseDestinationConnector:
+#     from unstructured.ingest.connector.chroma import (
+#         ChromaDestinationConnector,
+#         ChromaWriteConfig,
+#         SimpleChromaConfig,
+#     )
 
-    connector_config = SimpleChromaConfig(
-        db_path=db_path,
-        collection_name=collection_name,
-    )
+#     connector_config = SimpleChromaConfig(
+#         db_path=db_path,
+#         collection_name=collection_name,
+#     )
 
-    return ChromaDestinationConnector(
-        connector_config=connector_config,
-        write_config=ChromaWriteConfig(
-            db_path=db_path,
-            collection_name=collection_name,
-            batch_size=batch_size,
-        ),
-    )
+#     return ChromaDestinationConnector(
+#         connector_config=connector_config,
+#         write_config=ChromaWriteConfig(
+#             db_path=db_path,
+#             collection_name=collection_name,
+#             batch_size=batch_size,
+#         ),
+#     )

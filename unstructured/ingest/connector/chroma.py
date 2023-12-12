@@ -21,6 +21,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class SimpleChromaConfig(BaseConnectorConfig):
+    host: str
+    port: int
     db_path: str
     collection_name: str
 
@@ -56,7 +58,9 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         # If persistent client choose this if http client choose this
 
         # chroma_client = chromadb.PersistentClient(path=self.connector_config.db_path)
-        chroma_client = chromadb.HttpClient(host="localhost", port=8000)
+        chroma_client = chromadb.HttpClient(
+            host=self.connector_config.host, port=self.connector_config.port
+        )
         collection = chroma_client.get_or_create_collection(
             name=self.connector_config.collection_name
         )
