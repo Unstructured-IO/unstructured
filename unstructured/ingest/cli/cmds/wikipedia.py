@@ -7,13 +7,11 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.wikipedia import SimpleWikipediaConfig
 
 
 @dataclass
-class WikipediaCliConfig(CliConfig):
-    page_title: str
-    auto_suggest: bool = True
-
+class WikipediaCliConfig(SimpleWikipediaConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -35,5 +33,8 @@ class WikipediaCliConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="wikipedia", cli_config=WikipediaCliConfig)
+    cmd_cls = BaseSrcCmd(
+        cmd_name="wikipedia",
+        cli_config=WikipediaCliConfig,
+    )
     return cmd_cls

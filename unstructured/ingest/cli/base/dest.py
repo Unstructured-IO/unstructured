@@ -1,4 +1,5 @@
 import logging
+import typing as t
 from dataclasses import dataclass
 
 import click
@@ -8,24 +9,30 @@ from unstructured.ingest.cli.cmd_factory import get_src_cmd
 from unstructured.ingest.cli.common import (
     log_options,
 )
-from unstructured.ingest.cli.interfaces import (
-    CliFilesStorageConfig,
+from unstructured.ingest.cli.interfaces import BaseConfig, CliFilesStorageConfig
+from unstructured.ingest.cli.utils import (
+    add_options,
+    conform_click_options,
+    extract_config,
+    extract_configs,
 )
-from unstructured.ingest.cli.utils import add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner.writers import writer_map
 
 
 @dataclass
 class BaseDestCmd(BaseCmd):
+    write_config: t.Optional[t.Type[BaseConfig]] = None
+
     def get_dest_runner(self, source_cmd: str, options: dict, parent_options: dict):
         src_cmd_fn = get_src_cmd(cmd_name=source_cmd)
         src_cmd = src_cmd_fn()
         runner = src_cmd.get_source_runner(options=parent_options)
         addition_configs = self.addition_configs
-        if self.is_fsspec and "fsspec_config" not in addition_configs:
-            addition_configs["fsspec_config"] = FsspecConfig
+        if "connector_config" not in addition_configs:
+            addition_configs["connector_config"] = self.cli_config
+        if self.write_config:
+            addition_configs["write_config"] = self.write_config
         configs = extract_configs(
             options,
             validate=[self.cli_config] if self.cli_config else None,
@@ -39,7 +46,7 @@ class BaseDestCmd(BaseCmd):
         return runner
 
     def check_dest_options(self, options: dict):
-        self.cli_config.from_dict(options)
+        extract_config(flat_data=options, config=self.cli_config)
 
     def dest(self, ctx: click.Context, **options):
         if not ctx.parent:
