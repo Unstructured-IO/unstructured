@@ -10,7 +10,7 @@ from es_cluster_config import (
     USER,
 )
 
-N_ELEMENTS = 11933
+N_ELEMENTS = 1404
 
 if __name__ == "__main__":
     print(f"Checking contents of index" f"{INDEX_NAME} at {CLUSTER_URL}")
