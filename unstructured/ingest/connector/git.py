@@ -3,8 +3,10 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -15,11 +17,18 @@ from unstructured.ingest.logger import logger
 
 
 @dataclass
+class GitAccessConfig(AccessConfig):
+    access_token: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="git_access_token"
+    )
+
+
+@dataclass
 class SimpleGitConfig(BaseConnectorConfig):
     url: str
-    access_token: t.Optional[str] = None
-    branch: t.Optional[str] = None
-    file_glob: t.Optional[str] = None
+    access_config: GitAccessConfig
+    branch: t.Optional[str] = enhanced_field(default=None, overload_name="git_branch")
+    file_glob: t.Optional[t.List[str]] = enhanced_field(default=None, overload_name="git_file_glob")
     repo_path: str = field(init=False, repr=False)
 
 
@@ -105,7 +114,7 @@ class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def does_path_match_glob(self, path: str) -> bool:
         if not self.connector_config.file_glob:
             return True
-        patterns = self.connector_config.file_glob.split(",")
+        patterns = self.connector_config.file_glob
         for pattern in patterns:
             if fnmatch.filter([path], pattern):
                 return True

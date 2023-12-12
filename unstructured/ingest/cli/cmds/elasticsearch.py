@@ -112,7 +112,6 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="elasticsearch",
         cli_config=ElasticsearchCliConfig,
-        addition_configs={"connector_config": SimpleElasticsearchConfig},
     )
     return cmd_cls
 

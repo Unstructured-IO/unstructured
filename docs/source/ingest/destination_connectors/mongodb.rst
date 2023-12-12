@@ -18,49 +18,13 @@ upstream local connector.
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-            local \
-            --input-path example-docs/fake-memo.pdf \
-            --anonymous \
-            --output-dir local-output-to-mongo \
-            --num-processes 2 \
-            --verbose \
-            --strategy fast \
-            mongodb \
-            --uri "$MONGODB_URI" \
-            --database "$MONGODB_DATABASE_NAME" \
-            --collection "$DESTINATION_MONGO_COLLECTION"
+      .. literalinclude:: ./code/bash/mongodb.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import LocalRunner
-
-        if __name__ == "__main__":
-            runner = LocalRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="local-output-to-mongo",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                writer_type="mongodb",
-                writer_kwargs={
-                    "uri": os.getenv("MONGODB_URI"),
-                    "database": os.getenv("MONGODB_DATABASE_NAME"),
-                    "collection": os.getenv("DESTINATION_MONGO_COLLECTION")
-                }
-            )
-            runner.run(
-                input_path="example-docs/fake-memo.pdf",
-            )
+      .. literalinclude:: ./code/python/mongodb.py
+         :language: python
 
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> mongodb --help``.

@@ -6,8 +6,10 @@ from dataclasses import dataclass, field
 from itertools import chain
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -28,20 +30,25 @@ class MissingFolderError(Exception):
 
 
 @dataclass
+class OutlookAccessConfig(AccessConfig):
+    client_credential: str = enhanced_field(repr=False, sensitive=True, overload_name="client_cred")
+
+
+@dataclass
 class SimpleOutlookConfig(BaseConnectorConfig):
     """This class is getting the token."""
 
+    access_config: OutlookAccessConfig
     user_email: str
     client_id: str
-    client_credential: str = field(repr=False)
     tenant: t.Optional[str] = field(repr=False, default="common")
     authority_url: t.Optional[str] = field(repr=False, default="https://login.microsoftonline.com")
-    ms_outlook_folders: t.List[str] = field(default_factory=list)
+    outlook_folders: t.List[str] = field(default_factory=list)
     recursive: bool = False
     registry_name: str = "outlook"
 
     def __post_init__(self):
-        if not (self.client_id and self.client_credential and self.user_email):
+        if not (self.client_id and self.access_config.client_credential and self.user_email):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
                 "\nclient_id\nclient_cred\nuser_email",
@@ -56,7 +63,7 @@ class SimpleOutlookConfig(BaseConnectorConfig):
             app = ConfidentialClientApplication(
                 authority=f"{self.authority_url}/{self.tenant}",
                 client_id=self.client_id,
-                client_credential=self.client_credential,
+                client_credential=self.access_config.client_credential,
             )
             token = app.acquire_token_for_client(
                 scopes=["https://graph.microsoft.com/.default"],
@@ -241,14 +248,14 @@ class OutlookSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 [
                     v
                     for k, v in self.root_folders.items()
-                    if k.lower() in [x.lower() for x in self.connector_config.ms_outlook_folders]
+                    if k.lower() in [x.lower() for x in self.connector_config.outlook_folders]
                 ],
             ),
         )
         if not self.selected_folder_ids:
             raise MissingFolderError(
                 "There are no root folders with the names: "
-                f"{self.connector_config.ms_outlook_folders}",
+                f"{self.connector_config.outlook_folders}",
             )
 
     def get_ingest_docs(self):

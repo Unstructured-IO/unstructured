@@ -18,8 +18,10 @@ from textwrap import dedent
 
 from dateutil import parser  # type: ignore
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -59,12 +61,17 @@ $htmlbody
 
 
 @dataclass
+class SalesforceAccessConfig(AccessConfig):
+    consumer_key: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
 
+    access_config: SalesforceAccessConfig
     categories: t.List[str]
     username: str
-    consumer_key: str
     private_key_path: str
     recursive: bool = False
 
@@ -74,7 +81,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
         return Salesforce(
             username=self.username,
-            consumer_key=self.consumer_key,
+            consumer_key=self.access_config.consumer_key,
             privatekey_file=self.private_key_path,
             version=SALESFORCE_API_VERSION,
         )
