@@ -340,31 +340,17 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        if not self.client.ping():
-            raise Exception(
-                "Cannot pass connection check for Elasticsearch destination,"
-                " failed to connect. Check auth variables."
-            )
-        return
+        try:
+            assert self.client.ping()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     def get_document_size(doc):
         # Convert the document to JSON and get its size in bytes
         json_data = json.dumps(doc)
         size_bytes = sys.getsizeof(json_data)
         return size_bytes
-
-    def form_es_doc_dict(self, data_dict, index_name=None, entry_id=None):
-        if index_name is None:
-            index_name = self.connector_config.index_name
-
-        if entry_id is None:
-            entry_id = str(uuid.uuid4())
-
-        return {
-            "_index": index_name,
-            "_id": entry_id,
-            "_source": data_dict,
-        }
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
@@ -375,9 +361,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         )
         from elasticsearch.helpers import parallel_bulk
 
-        es_elem_dicts = (self.form_es_doc_dict(element_dict) for element_dict in element_dicts)
-
-        for batch in generator_batching_wbytes(es_elem_dicts, batch_size_limit_bytes=15_000_000):
+        for batch in generator_batching_wbytes(element_dicts, batch_size_limit_bytes=15_000_000):
             for success, info in parallel_bulk(
                 self.client, batch, thread_count=self.write_config.num_processes
             ):
@@ -388,13 +372,17 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     def conform_dict(self, element_dict):
         return {
-            "element_id": element_dict.pop("element_id", None),
-            "embeddings": element_dict.pop("embeddings", None),
-            "text": element_dict.pop("text", None),
-            "metadata": flatten_dict(
-                element_dict.pop("metadata", None),
-                separator="-",
-            ),
+            "_index": self.connector_config.index_name,
+            "_id": str(uuid.uuid4()),
+            "_source": {
+                "element_id": element_dict.pop("element_id", None),
+                "embeddings": element_dict.pop("embeddings", None),
+                "text": element_dict.pop("text", None),
+                "metadata": flatten_dict(
+                    element_dict.pop("metadata", None),
+                    separator="-",
+                ),
+            },
         }
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
