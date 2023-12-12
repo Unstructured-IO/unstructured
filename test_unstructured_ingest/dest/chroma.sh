@@ -21,6 +21,7 @@ COLLECTION_NAME="chroma-test-output-$RANDOM_SUFFIX"
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
+  pgrep -f chroma | xargs kill
   cleanup_dir "$DESTINATION_PATH"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -30,6 +31,9 @@ function cleanup() {
 }
 
 trap cleanup EXIT
+
+scripts/chroma-test-helpers/create-and-check-chroma.sh $DESTINATION_PATH
+wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \

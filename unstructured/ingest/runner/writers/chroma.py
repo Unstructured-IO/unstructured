@@ -14,15 +14,21 @@ class ChromaWriter(Writer, EnhancedDataClassJsonMixin):
     write_config: "ChromaWriteConfig"
     connector_config: "SimpleChromaConfig"
 
-    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+    def get_connector_cls(self) -> type[BaseDestinationConnector]:
         from unstructured.ingest.connector.chroma import (
             ChromaDestinationConnector,
         )
+        return ChromaDestinationConnector
 
-        return ChromaDestinationConnector(
-            connector_config=self.connector_config,
-            write_config=self.write_config,
-        )
+    # def get_connector(self, **kwargs) -> BaseDestinationConnector:
+    #     from unstructured.ingest.connector.chroma import (
+    #         ChromaDestinationConnector,
+    #     )
+
+    #     return ChromaDestinationConnector(
+    #         connector_config=self.connector_config,
+    #         write_config=self.write_config,
+    #     )
 
 
 def chroma_writer(

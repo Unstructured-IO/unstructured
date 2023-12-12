@@ -52,9 +52,10 @@ def get_base_dest_cmd():
         cmd_name="chroma",
         cli_config=ChromaCliConfig,
         additional_cli_options=[ChromaCliWriteConfig],
-        addition_configs={
-            "connector_config": SimpleChromaConfig,
-            "write_config": ChromaWriteConfig,
-        },
+        write_config=ChromaWriteConfig,
+        # addition_configs={
+        #     "connector_config": SimpleChromaConfig,
+        #     "write_config": ChromaWriteConfig,
+        # },
     )
     return cmd_cls
