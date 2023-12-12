@@ -15,6 +15,32 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
+                ["--path"],
+                required=False,
+                type=str,
+                help="Location where Chroma is persisted.",
+            ),
+            click.Option(
+                ["--settings"],
+                required=False,
+                type=dict,
+                help="bla bla",
+            ),
+            click.Option(
+                ["--tenant"],
+                required=False,
+                default="default_tenant",
+                type=str,
+                help="bla bla",
+            ),
+            click.Option(
+                ["--database"],
+                required=False,
+                default="default_database",
+                type=str,
+                help="bla bla",
+            ),
+            click.Option(
                 ["--host"],
                 required=False,
                 type=str,
@@ -27,10 +53,17 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
                 help="bla bla",
             ),
             click.Option(
-                ["--db-path"],
+                ["--ssl"],
                 required=False,
-                type=str,
-                help="Location where Chroma is persisted.",
+                default=False,
+                type=bool,
+                help="bla bla",
+            ),
+            click.Option(
+                ["--headers"],
+                required=False,
+                type=dict,
+                help="bla bla",
             ),
             click.Option(
                 ["--collection-name"],

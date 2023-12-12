@@ -17,14 +17,19 @@ from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from chromadb import Collection as ChromaCollection
-
+    # from chromadb.config import Settings as ChromaSettings
 
 @dataclass
 class SimpleChromaConfig(BaseConnectorConfig):
-    host: str
-    port: int
-    db_path: str
     collection_name: str
+    path: t.Optional[str] = None
+    settings: t.Optional[t.Dict[str, str]] = None
+    tenant: t.Optional[str] = None
+    database: t.Optional[str] = None
+    host: t.Optional[str] = None
+    port: t.Optional[int] = None
+    ssl: bool= False
+    headers: t.Optional[t.Dict[str, str]] = {},
 
 
 @dataclass
@@ -55,12 +60,27 @@ class ChromaDestinationConnector(BaseDestinationConnector):
     def create_collection(self) -> "ChromaCollection":
         import chromadb
 
-        # If persistent client choose this if http client choose this
+        if self.connector_config.path:
+            chroma_client = chromadb.PersistentClient(
+                path=self.connector_config.path,
+                settings=self.connector_config.settings,
+                tenant=self.connector_config.tenant,
+                database=self.connector_config.database,
+            )
 
-        # chroma_client = chromadb.PersistentClient(path=self.connector_config.db_path)
-        chroma_client = chromadb.HttpClient(
-            host=self.connector_config.host, port=self.connector_config.port
-        )
+        elif self.connector_config.host and self.connector_config.port:
+            chroma_client = chromadb.HttpClient(
+                host=self.connector_config.host,
+                port=self.connector_config.port,
+                ssl=self.connector_config.ssl,
+                headers=self.connector_config.headers,
+                settings=self.connector_config.settings,
+                tenant=self.connector_config.tenant,
+                database=self.connector_config.database,
+            )
+        else:
+            raise ValueError("Chroma connector requires either path or host and port to be set.")
+
         collection = chroma_client.get_or_create_collection(
             name=self.connector_config.collection_name
         )
