@@ -17,7 +17,9 @@ from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from chromadb import Collection as ChromaCollection
+
     # from chromadb.config import Settings as ChromaSettings
+
 
 @dataclass
 class SimpleChromaConfig(BaseConnectorConfig):
@@ -28,8 +30,8 @@ class SimpleChromaConfig(BaseConnectorConfig):
     database: t.Optional[str] = None
     host: t.Optional[str] = None
     port: t.Optional[int] = None
-    ssl: bool= False
-    headers: t.Optional[t.Dict[str, str]] = {},
+    ssl: bool = False
+    headers: t.Optional[t.Dict[str, str]] = ({},)
 
 
 @dataclass
