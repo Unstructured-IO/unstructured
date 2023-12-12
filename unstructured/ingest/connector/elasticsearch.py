@@ -338,10 +338,9 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
 
     def initialize(self):
         _ = self.client
-        pass
 
     def check_connection(self):
-        pass
+        return self.client
 
     def get_document_size(doc):
         # Convert the document to JSON and get its size in bytes
@@ -378,7 +377,9 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                 self.client, batch, thread_count=self.write_config.num_processes
             ):
                 if not success:
-                    print("A batch failed:", info)
+                    logger.error(
+                        "upload failed for a batch in elasticsearch destination connector:", info
+                    )
 
     def conform_dict(self, element_dict):
         return {
