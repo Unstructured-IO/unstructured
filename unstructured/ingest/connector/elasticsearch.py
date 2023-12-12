@@ -10,7 +10,7 @@ from pathlib import Path
 from dataclasses_json.core import Json
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
+from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -320,15 +320,16 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleElasticsearchConfig
     _client: t.Optional["Elasticsearch"] = field(init=False, default=None)
 
+    # DestinationConnectionError.wrap
+    # @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     @property
     def client(self):
         from elasticsearch import Elasticsearch
 
         if self._client is None:
-            self._client = Elasticsearch(self.connector_config.url)
+            self._client = Elasticsearch(self.connector_config.access_config.hosts[0])
         return self._client
 
-    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def initialize(self):
         _ = self.client
         pass
@@ -341,8 +342,6 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         json_data = json.dumps(doc)
         size_bytes = sys.getsizeof(json_data)
         return size_bytes
-
-    DestinationConnectionError.wrap
 
     def form_es_doc_dict(self, data_dict, index_name=None, element_es_id=None):
         if index_name is None:
@@ -357,11 +356,12 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             "_source": data_dict,
         }
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
             f"writing document batches to destination "
             f"index named {self.connector_config.index_name} "
-            f"at {self.connector_config.url}"
+            f"at {self.connector_config.access_config.hosts}"
         )
         from elasticsearch.helpers import parallel_bulk
 
@@ -385,7 +385,6 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             ),
         }
 
-    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         def generate_element_dicts(doc):
             with open(doc._output_filename) as json_file:

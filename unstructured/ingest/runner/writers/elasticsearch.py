@@ -1,26 +1,28 @@
+import typing as t
+from dataclasses import dataclass
+
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
 
-
-def elasticsearch_writer(
-    url: str,
-    index_name: str,
-    batch_size: int,
-    num_processes: int,
-    **kwargs,
-) -> BaseDestinationConnector:
+if t.TYPE_CHECKING:
     from unstructured.ingest.connector.elasticsearch import (
-        ElasticsearchDestinationConnector,
         ElasticsearchWriteConfig,
         SimpleElasticsearchConfig,
     )
 
-    return ElasticsearchDestinationConnector(
-        write_config=ElasticsearchWriteConfig(
-            batch_size=batch_size,
-            num_processes=num_processes,
-        ),
-        connector_config=SimpleElasticsearchConfig(
-            url=url,
-            index_name=index_name,
-        ),
-    )
+
+@dataclass
+class ElasticsearchWriter(Writer, EnhancedDataClassJsonMixin):
+    connector_config: "SimpleElasticsearchConfig"
+    write_config: "ElasticsearchWriteConfig"
+
+    def get_connector(self, **kwargs) -> BaseDestinationConnector:
+        from unstructured.ingest.connector.elasticsearch import (
+            ElasticsearchDestinationConnector,
+        )
+
+        return ElasticsearchDestinationConnector(
+            write_config=self.write_config,
+            connector_config=self.connector_config,
+        )

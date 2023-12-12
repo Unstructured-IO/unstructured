@@ -123,6 +123,7 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name="elasticsearch",
         cli_config=ElasticsearchCliConfig,
+        additional_cli_options=[ElasticsearchCliWriteConfig],
         addition_configs={
             "connector_config": SimpleElasticsearchConfig,
             "write_config": ElasticsearchCliWriteConfig,

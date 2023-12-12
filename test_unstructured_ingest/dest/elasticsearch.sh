@@ -51,7 +51,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   elasticsearch \
-  --url http://localhost:9200 \
+  --hosts http://localhost:9200 \
   --index-name ingest-test-destination \
   --num-processes "$max_processes"
 
