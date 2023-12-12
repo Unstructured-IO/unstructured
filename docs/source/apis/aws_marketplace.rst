@@ -106,13 +106,13 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
   :align: center
   :alt: connect public subnet to route table
 
-7. **Inspect VPC Resource Map**:
-
-   You can check the configurations from the Resource Maps on the VPC Details dashboard.
-
 .. image:: imgs/AWS/VPC_Step7.png
   :align: center
   :alt: VPC Resource Maps
+
+7. **Inspect VPC Resource Map**:
+
+   You can check the configurations from the Resource Maps on the VPC Details dashboard.
 
 Part 2: Deploying Unstructured API from AWS Marketplace
 -------------------------------------------------------
@@ -193,6 +193,7 @@ Part 2: Deploying Unstructured API from AWS Marketplace
 11. **Get the Unstructured API Endpoint**
 
     - Check the status of the CloudFormation stack.
+
       - A successful deployment will show ``CREATE_COMPLETE`` status.
     - Click ``Resources`` tab and find ``ApplicationLoadBalancer``.
     - Copy the ``DNS Name`` from the Load Balancer dashboard.
