@@ -1,27 +1,21 @@
 import typing as t
+from dataclasses import dataclass
 
-from unstructured.utils import requires_dependencies
+from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig, WeaviateWriteConfig
 
 
-@requires_dependencies(["weaviate"], extras="weaviate")
-def weaviate_writer(
-    host_url: str,
-    class_name: str,
-    batch_size: int = 100,
-    auth_keys: t.Optional[t.List[str]] = None,
-    **kwargs,
-):
-    from unstructured.ingest.connector.weaviate import (
-        SimpleWeaviateConfig,
-        WeaviateDestinationConnector,
-        WeaviateWriteConfig,
-    )
+@dataclass
+class WeaviateWriter(Writer):
+    write_config: "WeaviateWriteConfig"
+    connector_config: "SimpleWeaviateConfig"
 
-    return WeaviateDestinationConnector(
-        write_config=WeaviateWriteConfig(batch_size=batch_size),
-        connector_config=SimpleWeaviateConfig(
-            host_url=host_url,
-            class_name=class_name,
-            auth_keys=auth_keys,
-        ),
-    )
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
+        from unstructured.ingest.connector.weaviate import (
+            WeaviateDestinationConnector,
+        )
+
+        return WeaviateDestinationConnector

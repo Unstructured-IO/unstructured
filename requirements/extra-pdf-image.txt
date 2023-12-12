@@ -37,7 +37,7 @@ filelock==3.13.1
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.45.1
+fonttools==4.46.0
     # via matplotlib
 fsspec==2023.9.1
     # via
@@ -134,7 +134,7 @@ pdfminer-six==20221105
     #   pdfplumber
 pdfplumber==0.10.3
     # via layoutparser
-pikepdf==8.7.1
+pikepdf==8.8.0
     # via -r extra-pdf-image.in
 pillow==10.0.1
     # via
@@ -250,7 +250,7 @@ typing-extensions==4.8.0
     #   torch
 tzdata==2023.3
     # via pandas
-unstructured-inference==0.7.17
+unstructured-inference==0.7.18
     # via -r extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

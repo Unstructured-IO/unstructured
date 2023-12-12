@@ -7,7 +7,6 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
-import os
 import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -19,8 +18,10 @@ from textwrap import dedent
 
 from dateutil import parser  # type: ignore
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -60,12 +61,17 @@ $htmlbody
 
 
 @dataclass
+class SalesforceAccessConfig(AccessConfig):
+    consumer_key: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
 
+    access_config: SalesforceAccessConfig
     categories: t.List[str]
     username: str
-    consumer_key: str
     private_key_path: str
     recursive: bool = False
 
@@ -75,7 +81,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
         return Salesforce(
             username=self.username,
-            consumer_key=self.consumer_key,
+            consumer_key=self.access_config.consumer_key,
             privatekey_file=self.private_key_path,
             version=SALESFORCE_API_VERSION,
         )
@@ -187,8 +193,6 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Writing file {self.record_id} - PID: {os.getpid()}")
-
         record = self.record
 
         self.update_source_metadata()

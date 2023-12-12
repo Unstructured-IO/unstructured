@@ -4,21 +4,14 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliConfig,
-)
-from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig
+from unstructured.ingest.cli.interfaces import CliConfig, Dict
+from unstructured.ingest.connector.delta_table import DeltaTableWriteConfig, SimpleDeltaTableConfig
 
 CMD_NAME = "delta-table"
 
 
 @dataclass
-class DeltaTableCliConfig(CliConfig):
-    table_uri: str
-    version: t.Optional[int] = None
-    storage_options: t.Optional[str] = None
-    without_files: bool = False
-
+class DeltaTableCliConfig(SimpleDeltaTableConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -36,9 +29,10 @@ class DeltaTableCliConfig(CliConfig):
             click.Option(
                 ["--storage_options"],
                 required=False,
-                type=str,
+                type=Dict(),
+                default=None,
                 help="a dictionary of the options to use for the storage backend, "
-                "format='value1=key1,value2=key2'",
+                "passed in as a json string",
             ),
             click.Option(
                 ["--without-files"],
@@ -81,7 +75,10 @@ class DeltaTableCliWriteConfig(DeltaTableWriteConfig, CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name=CMD_NAME, cli_config=DeltaTableCliConfig)
+    cmd_cls = BaseSrcCmd(
+        cmd_name=CMD_NAME,
+        cli_config=DeltaTableCliConfig,
+    )
     return cmd_cls
 
 
@@ -92,5 +89,6 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=DeltaTableCliConfig,
         additional_cli_options=[DeltaTableCliWriteConfig],
+        write_config=DeltaTableWriteConfig,
     )
     return cmd_cls

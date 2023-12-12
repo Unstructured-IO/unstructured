@@ -1,27 +1,24 @@
 import typing as t
-from pathlib import Path
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
 
-
-def delta_table_writer(
-    table_uri: t.Union[str, Path],
-    drop_empty_cols: bool = False,
-    overwrite_schema: bool = False,
-    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error",
-    **kwargs,
-) -> BaseDestinationConnector:
+if t.TYPE_CHECKING:
     from unstructured.ingest.connector.delta_table import (
-        DeltaTableDestinationConnector,
         DeltaTableWriteConfig,
         SimpleDeltaTableConfig,
     )
 
-    return DeltaTableDestinationConnector(
-        write_config=DeltaTableWriteConfig(
-            mode=mode, drop_empty_cols=drop_empty_cols, overwrite_schema=overwrite_schema
-        ),
-        connector_config=SimpleDeltaTableConfig(
-            table_uri=table_uri,
-        ),
-    )
+
+@dataclass
+class DeltaTableWriter(Writer):
+    write_config: "DeltaTableWriteConfig"
+    connector_config: "SimpleDeltaTableConfig"
+
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
+        from unstructured.ingest.connector.delta_table import (
+            DeltaTableDestinationConnector,
+        )
+
+        return DeltaTableDestinationConnector

@@ -64,5 +64,6 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=WeaviateCliConfig,
         additional_cli_options=[WeaviateCliWriteConfig],
+        write_config=WeaviateWriteConfig,
     )
     return cmd_cls

@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -21,7 +20,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class SimpleWikipediaConfig(BaseConnectorConfig):
-    title: str
+    page_title: str
     auto_suggest: bool = False
 
 
@@ -35,12 +34,12 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         import wikipedia
 
         return wikipedia.page(
-            self.connector_config.title,
+            self.connector_config.page_title,
             auto_suggest=self.connector_config.auto_suggest,
         )
 
     def get_filename_prefix(self) -> str:
-        title: str = str(self.connector_config.title)
+        title: str = str(self.connector_config.page_title)
         title = " ".join(title.split()).replace(" ", "-")
         return title
 
@@ -67,7 +66,7 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @property
     def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
         return {
-            "page_title": self.connector_config.title,
+            "page_title": self.connector_config.page_title,
             "page_url": self.source_metadata.source_url,  # type: ignore
         }
 
@@ -97,7 +96,6 @@ class WikipediaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         self.update_source_metadata()
         with open(self.filename, "w", encoding="utf8") as f:
             f.write(self.text)
@@ -183,7 +181,7 @@ class WikipediaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector)
 
         try:
             wikipedia.page(
-                self.connector_config.title,
+                self.connector_config.page_title,
                 auto_suggest=self.connector_config.auto_suggest,
             )
         except Exception as e:

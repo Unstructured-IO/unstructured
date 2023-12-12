@@ -1,5 +1,4 @@
 import math
-import os
 import typing as t
 from collections import abc
 from dataclasses import dataclass, field
@@ -7,8 +6,10 @@ from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSessionHandle,
     BaseSingleIngestDoc,
@@ -67,6 +68,11 @@ def create_jira_object(url, user_email, api_token):
 
 
 @dataclass
+class JiraAccessConfig(AccessConfig):
+    api_token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where:
     user_email is the email to authenticate into Atlassian (Jira) Cloud,
@@ -79,7 +85,7 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """
 
     user_email: str
-    api_token: str
+    access_config: JiraAccessConfig
     url: str
     projects: t.Optional[t.List[str]] = None
     boards: t.Optional[t.List[str]] = None
@@ -88,7 +94,9 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     def create_session_handle(
         self,
     ) -> JiraSessionHandle:
-        service = create_jira_object(self.url, self.user_email, self.api_token)
+        service = create_jira_object(
+            url=self.url, user_email=self.user_email, api_token=self.access_config.api_token
+        )
         return JiraSessionHandle(service=service)
 
 
@@ -326,8 +334,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSing
     @requires_dependencies(["atlassian"], extras="jira")
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
-
         document = form_templated_string(self.issue, self.parsed_fields)
         self.update_source_metadata()
         self.filename.parent.mkdir(parents=True, exist_ok=True)
@@ -336,7 +342,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSing
             f.write(document)
 
 
-@requires_dependencies(["atlassian"], extras="jira")
 @dataclass
 class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches issues from projects in an Atlassian (Jira) Cloud instance."""

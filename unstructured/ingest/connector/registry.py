@@ -1,21 +1,21 @@
 import json
 from typing import Dict, Type, cast
 
-from dataclasses_json import DataClassJsonMixin
-
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
-from unstructured.ingest.connector.azure import AzureBlobStorageIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
-from unstructured.ingest.connector.box import BoxIngestDoc
 from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
 from unstructured.ingest.connector.delta_table import DeltaTableIngestDoc
 from unstructured.ingest.connector.discord import DiscordIngestDoc
-from unstructured.ingest.connector.dropbox import DropboxIngestDoc
 from unstructured.ingest.connector.elasticsearch import (
     ElasticsearchIngestDoc,
     ElasticsearchIngestDocBatch,
 )
-from unstructured.ingest.connector.gcs import GcsIngestDoc
+from unstructured.ingest.connector.fsspec.azure import AzureBlobStorageIngestDoc
+from unstructured.ingest.connector.fsspec.box import BoxIngestDoc
+from unstructured.ingest.connector.fsspec.dropbox import DropboxIngestDoc
+from unstructured.ingest.connector.fsspec.gcs import GcsIngestDoc
+from unstructured.ingest.connector.fsspec.s3 import S3IngestDoc
+from unstructured.ingest.connector.fsspec.sftp import SftpIngestDoc
 from unstructured.ingest.connector.github import GitHubIngestDoc
 from unstructured.ingest.connector.gitlab import GitLabIngestDoc
 from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
@@ -29,7 +29,6 @@ from unstructured.ingest.connector.notion.connector import (
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
-from unstructured.ingest.connector.s3 import S3IngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
 from unstructured.ingest.connector.sharepoint import SharepointIngestDoc
 from unstructured.ingest.connector.slack import SlackIngestDoc
@@ -38,9 +37,10 @@ from unstructured.ingest.connector.wikipedia import (
     WikipediaIngestSummaryDoc,
     WikipediaIngestTextDoc,
 )
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.interfaces import BaseIngestDoc
 
-INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
+INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "airtable": AirtableIngestDoc,
     "azure": AzureBlobStorageIngestDoc,
     "biomed": BiomedIngestDoc,
@@ -65,6 +65,7 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[DataClassJsonMixin]] = {
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
     "salesforce": SalesforceIngestDoc,
+    "sftp": SftpIngestDoc,
     "sharepoint": SharepointIngestDoc,
     "slack": SlackIngestDoc,
     "wikipedia_html": WikipediaIngestHTMLDoc,

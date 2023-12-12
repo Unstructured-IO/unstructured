@@ -1,11 +1,12 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -21,12 +22,17 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class RedditAccessConfig(AccessConfig):
+    client_secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+
+
+@dataclass
 class SimpleRedditConfig(BaseConnectorConfig):
+    access_config: RedditAccessConfig
     subreddit_name: str
     num_posts: int
     user_agent: str
     client_id: str
-    client_secret: t.Optional[str] = None
     search_query: t.Optional[str] = None
 
     def __post_init__(self):
@@ -51,7 +57,7 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         reddit = Reddit(
             client_id=self.connector_config.client_id,
-            client_secret=self.connector_config.client_secret,
+            client_secret=self.connector_config.access_config.client_secret,
             user_agent=self.connector_config.user_agent,
         )
         post = Submission(reddit, self.post_id)
@@ -80,7 +86,6 @@ class RedditIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         """Fetches the "remote" doc and stores it locally on the filesystem."""
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         # Write the title plus the body, if any
         post = self.get_post()
         self.update_source_metadata(post=post)
@@ -122,7 +127,7 @@ class RedditSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         if self._reddit is None:
             self._reddit = Reddit(
                 client_id=self.connector_config.client_id,
-                client_secret=self.connector_config.client_secret,
+                client_secret=self.connector_config.access_config.client_secret,
                 user_agent=self.connector_config.user_agent,
             )
         return self._reddit

@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "a3bc48c9c0c00bd86bfcefcb833d3fd4",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "Morale Events"
+    "text": "Morale Events",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "89f7608e949e257e04b601964f7fab2d",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: Morale events increase employee satisfaction, motivation, and well-being, while promoting community and teamwork, resulting in higher productivity and retention rates."
+    "text": "💡\n      \n      Notion Tip: Morale events increase employee satisfaction, motivation, and well-being, while promoting community and teamwork, resulting in higher productivity and retention rates.",
+    "type": "NarrativeText"
   }
 ]

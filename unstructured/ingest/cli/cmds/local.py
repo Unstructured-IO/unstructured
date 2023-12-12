@@ -7,14 +7,13 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
     CliRecursiveConfig,
+    DelimitedString,
 )
+from unstructured.ingest.connector.local import SimpleLocalConfig
 
 
 @dataclass
-class LocalCliConfig(CliConfig):
-    input_path: str
-    file_glob: t.Optional[str] = None
-
+class LocalCliConfig(SimpleLocalConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -27,7 +26,7 @@ class LocalCliConfig(CliConfig):
             click.Option(
                 ["--file-glob"],
                 default=None,
-                type=str,
+                type=DelimitedString(),
                 help="A comma-separated list of file globs to limit which types of "
                 "local files are accepted, e.g. '*.html,*.txt'",
             ),

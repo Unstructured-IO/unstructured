@@ -1,33 +1,21 @@
+import typing as t
+from dataclasses import dataclass
+
 from unstructured.ingest.interfaces import BaseDestinationConnector
-from unstructured.utils import requires_dependencies
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.pinecone import PineconeWriteConfig, SimplePineconeConfig
 
 
-@requires_dependencies(["pinecone"], extras="pinecone")
-def pinecone_writer(
-    api_key: str,
-    index_name: str,
-    environment: str,
-    batch_size: int,
-    num_processes: int,
-    **kwargs,
-) -> BaseDestinationConnector:
-    from unstructured.ingest.connector.pinecone import (
-        PineconeDestinationConnector,
-        PineconeWriteConfig,
-        SimplePineconeConfig,
-    )
+@dataclass
+class PineconeWriter(Writer):
+    write_config: "PineconeWriteConfig"
+    connector_config: "SimplePineconeConfig"
 
-    connector_config = SimplePineconeConfig(
-        api_key=api_key,
-        index_name=index_name,
-        environment=environment,
-    )
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
+        from unstructured.ingest.connector.pinecone import (
+            PineconeDestinationConnector,
+        )
 
-    return PineconeDestinationConnector(
-        connector_config=connector_config,
-        write_config=PineconeWriteConfig(
-            connector_config=connector_config,
-            batch_size=batch_size,
-            num_processes=num_processes,
-        ),
-    )
+        return PineconeDestinationConnector
