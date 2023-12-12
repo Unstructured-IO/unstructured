@@ -1,6 +1,10 @@
+import os
+
 DATA_PATH = "scripts/elasticsearch-test-helpers/source_connector/wiki_movie_plots_small.csv"
 CLUSTER_URL = "http://localhost:9200"
 INDEX_NAME = "movies"
+USER = os.environ["ELASTICSEARCH_USER"]
+PASSWORD = os.environ["ELASTICSEARCH_PASSWORD"]
 
 MAPPINGS = {
     "properties": {
