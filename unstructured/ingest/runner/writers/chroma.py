@@ -18,6 +18,7 @@ class ChromaWriter(Writer, EnhancedDataClassJsonMixin):
         from unstructured.ingest.connector.chroma import (
             ChromaDestinationConnector,
         )
+
         return ChromaDestinationConnector
 
     # def get_connector(self, **kwargs) -> BaseDestinationConnector:
