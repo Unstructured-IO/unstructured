@@ -348,16 +348,16 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         size_bytes = sys.getsizeof(json_data)
         return size_bytes
 
-    def form_es_doc_dict(self, data_dict, index_name=None, element_es_id=None):
+    def form_es_doc_dict(self, data_dict, index_name=None, entry_id=None):
         if index_name is None:
             index_name = self.connector_config.index_name
 
-        if element_es_id is None:
-            element_es_id = str(uuid.uuid4())
+        if entry_id is None:
+            entry_id = str(uuid.uuid4())
 
         return {
             "_index": index_name,
-            "_id": element_es_id,
+            "_id": entry_id,
             "_source": data_dict,
         }
 
