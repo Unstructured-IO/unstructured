@@ -53,6 +53,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   elasticsearch \
   --hosts http://localhost:9200 \
   --index-name ingest-test-destination \
+  --username $ELASTICSEARCH_USER \
+	--password $ELASTICSEARCH_PASSWORD \
   --num-processes "$max_processes"
 
 scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py

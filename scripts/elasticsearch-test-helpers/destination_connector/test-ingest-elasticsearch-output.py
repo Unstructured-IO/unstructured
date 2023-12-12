@@ -6,6 +6,8 @@ from elasticsearch import Elasticsearch
 from es_cluster_config import (
     CLUSTER_URL,
     INDEX_NAME,
+    PASSWORD,
+    USER,
 )
 
 N_ELEMENTS = 11933
@@ -14,7 +16,7 @@ if __name__ == "__main__":
     print(f"Checking contents of index" f"{INDEX_NAME} at {CLUSTER_URL}")
 
     print("Connecting to the Elasticsearch cluster.")
-    client = Elasticsearch(CLUSTER_URL, request_timeout=30)
+    client = Elasticsearch(CLUSTER_URL, basic_auth=(USER, PASSWORD), request_timeout=30)
     print(client.info())
 
     # es.indices.refresh(index=INDEX_NAME)

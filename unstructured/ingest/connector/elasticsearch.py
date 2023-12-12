@@ -327,7 +327,13 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         from elasticsearch import Elasticsearch
 
         if self._client is None:
-            self._client = Elasticsearch(self.connector_config.access_config.hosts[0])
+            self._client = Elasticsearch(
+                self.connector_config.access_config.hosts[0],
+                basic_auth=(
+                    self.connector_config.access_config.username,
+                    self.connector_config.access_config.password,
+                ),
+            )
         return self._client
 
     def initialize(self):
