@@ -359,6 +359,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             f" index named {self.connector_config.index_name}"
             f" at {self.connector_config.access_config.hosts}"
             f" with batch size (in bytes) {self.write_config.batch_size_bytes}"
+            f" with {self.write_config.num_processes} (number of) processes"
         )
         from elasticsearch.helpers import parallel_bulk
 

@@ -19,7 +19,6 @@ if __name__ == "__main__":
     client = Elasticsearch(CLUSTER_URL, basic_auth=(USER, PASSWORD), request_timeout=30)
     print(client.info())
 
-    # es.indices.refresh(index=INDEX_NAME)
     count = int(client.cat.count(index=INDEX_NAME, format="json")[0]["count"])
     try:
         assert count == N_ELEMENTS
