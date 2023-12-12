@@ -33,7 +33,7 @@ function cleanup() {
 trap cleanup EXIT
 
 # Run chroma from different script so it can be forced into background
-scripts/chroma-test-helpers/create-and-check-chroma.sh $DESTINATION_PATH
+scripts/chroma-test-helpers/create-and-check-chroma.sh "$DESTINATION_PATH"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
