@@ -71,6 +71,15 @@ jobs:
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
 
+  shfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup shfmt
+        uses: mfinelli/setup-shfmt@v3
+      - name: Run shfmt
+        run: shfmt -d .
+
 
   test_unit:
     strategy:
