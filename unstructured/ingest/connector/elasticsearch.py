@@ -10,7 +10,7 @@ from pathlib import Path
 from dataclasses_json.core import Json
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -320,27 +320,32 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleElasticsearchConfig
     _client: t.Optional["Elasticsearch"] = field(init=False, default=None)
 
-    # DestinationConnectionError.wrap
-    # @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    @property
-    def client(self):
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def generate_client(self) -> "Elasticsearch":
         from elasticsearch import Elasticsearch
 
+        return Elasticsearch(
+            **self.connector_config.access_config.to_dict(apply_name_overload=False)
+        )
+
+    @property
+    def client(self):
         if self._client is None:
-            self._client = Elasticsearch(
-                self.connector_config.access_config.hosts[0],
-                basic_auth=(
-                    self.connector_config.access_config.username,
-                    self.connector_config.access_config.password,
-                ),
-            )
+            self._client = self.generate_client()
         return self._client
 
     def initialize(self):
         _ = self.client
 
+    @DestinationConnectionError.wrap
     def check_connection(self):
-        return self.client
+        if not self.client.ping():
+            raise Exception(
+                "Cannot pass connection check for Elasticsearch destination,"
+                " failed to connect. Check auth variables."
+            )
+        return
 
     def get_document_size(doc):
         # Convert the document to JSON and get its size in bytes
