@@ -5,24 +5,32 @@
 
 # Structured outputs are stored in s3-small-batch-output-to-pinecone/
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
-
 
 # As an example we're using the s3 source connector,
 # however ingesting from any supported source connector is possible.
+# shellcheck disable=2094
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        s3 \
-         --remote-url "<s3 URL to ingest from, ie: s3://utic-dev-tech-fixtures/small-pdf-set/" \
-         --anonymous \
-         --output-dir s3-small-batch-output-to-pinecone \
-         --num-processes 2 \
-         --verbose \
-         --strategy fast \
-         --chunk-elements \
-         --chunk-multipage-sections \
-         --embedding-api-key "<OpenAI API Key to embed ingested elements>" \
-        pinecone \
-        --api-key "<Pinecone API Key to write into a Pinecone index>" \
-        --index-name "<Pinecone index name, ie: ingest-test>" \
-        --environment "<Pinecone environment name, ie: gcp-starter>"
+	local \
+	--input-path example-docs/book-war-and-peace-1225p.txt \
+	--output-dir local-to-pinecone \
+	--strategy fast \
+	--chunk-elements \
+	--embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
+	--num-processes 2 \
+	--verbose \
+	--work-dir "<directory for intermediate outputs to be saved>" \
+	elasticsearch \
+	--hosts "<List of URLs where elasticsearch index is served>" \
+	--index-name "<Index name to upload data in>" \
+	--username "<Username to authenticate into the index>" \
+	--password "<Password to authenticate into the index>" \
+	--batch-size-bytes "<Size limit for any batch to be uploaded, in bytes, ie. 15000000>" \
+	--num-processes "<Number of processes to be used to upload, ie. 2>" \
+	--cloud-id "<Id used to connect to Elastic Cloud>" \
+	--es-api-key "<Api key used for authentication>" \
+	--api-key-id "<Id associated with api key used for authentication: https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>" \
+	--bearer-auth "<Bearer token used for HTTP bearer authentication>" \
+	--ca-certs "<path/to/ca/certs>" \
+	--ssl-assert-fingerprint "<SHA256 fingerprint value>"
