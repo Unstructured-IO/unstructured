@@ -164,7 +164,7 @@ Part 2: Deploying Unstructured API from AWS Marketplace
 
     - Provide ``stack name``
     - In the **Parameters** section, provide the ``KeyName``, ``Subnets``, and ``VPC`` from Part 1 above.
-    - Specify, ``LoadBalancerScheme`` to *internet-facing* and ``SSHLocation`` to  *0.0.0.0/0*
+    - Specify, ``LoadBalancerScheme`` to **internet-facing** and ``SSHLocation`` to  **0.0.0.0/0**
     - Click ``Next`` button.
 
     .. image:: imgs/AWS/Marketplace_Step10b.png
