@@ -48,7 +48,7 @@ On the **Create a virtual machine** page, go to **Basics** tab and follow the st
     - Provide a name in the **Virtual machine name** field.
     - Select a **Region** from the dropdown menu.
     - **Image**: Select ``Unstructured Customer Hosted API Hourly - x64 Gen2`` (*default*)
-    - **Size**: Select VM size from dropdown menu.
+    - **Size**: Select VM size from dropdown menu. Refer to this page for `Azure VM comparisons <https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/>`_
 
 .. image:: imgs/Azure/Azure_Step4b.png
   :align: center
@@ -66,16 +66,17 @@ On the **Create a virtual machine** page, go to **Basics** tab and follow the st
 5. Set Up Load Balancer
 -----------------------
 
-On the **Create a virtual machine** page, go to **Networking** tab and follow the steps below.
+Before you click ``Review + create`` button, go to **Networking** tab and follow the steps below.
 
 - Networking interface (required fields)
-    - **Virtual network**: Select from dropdown menu or create new
-    - **Subnet**: Select from dropdown menu
-    - **Configure network security group**: Select from dropdown menu or create new
+    - **Virtual network**: Click ``Create new`` link or select a ``Virtual network`` from dropdown menu, if you have created one. Refer to  `Quickstart: Use the Azure portal to create a virtual network <https://learn.microsoft.com/en-us/azure/virtual-network/quick-create-portal>`_.
+    - **Subnet**: Click ``Manage subnet configuration`` link or select a subnet from dropdown menu, if you have created one. Refer to  `Add, change, or delete a virtual network subnet <https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet?tabs=azure-portal>`_
+    - **Configure network security group**: Click ``Create new`` link or select a security group from dropdown menu, if you have created one. Refer to  `Create, change, or delete a network security group <https://learn.microsoft.com/en-us/azure/virtual-network/manage-network-security-group?tabs=network-security-group-portal>`_.
 
 - Load balancing
     - **Load balancing option**: Select ``Azure load balancer``
-    - **Select a load balance**: Select from dropdown menu or create new
+    - **Select a load balancer**: If you have created a load balancer, select from dropdown menu, or click ``Create a load balancer` and fill out the following fields in the pop-up window.
+        - Enter **Load balancer name**
         - **Type**: Select ``Public`` or ``Internal``
         - **Protococl**: Select ``TCP`` or ``UDP``
         - **Port** and **Backend Port**: Set to ``port 80``
@@ -114,7 +115,11 @@ On the **Create a virtual machine** page, go to **Networking** tab and follow th
 
 .. code-block:: bash
 
-  curl -q -X POST http://<you-IP-address>/general/v0/general -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F files=@english-and-korean.png -o /tmp/english-and-korean.png.json
+  curl -q -X POST http://<you-IP-address>/general/v0/general
+       -H 'accept: application/json'
+       -H 'Content-Type: multipart/form-data'
+       -F files=@<<FILENAME>>
+       -o <<PATH/OUTPUT>>.json
 
 .. image:: imgs/Azure/Azure_Step8.png
   :align: center

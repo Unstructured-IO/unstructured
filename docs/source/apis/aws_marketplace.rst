@@ -204,29 +204,41 @@ Part 2: Deploying Unstructured API from AWS Marketplace
 Healthcheck
 -----------
 
-* Perform a health check using the curl command:
+Perform a health check using the curl command:
 
 .. code-block:: bash
 
     curl https://<api_url>/healthcheck
 
+.. image:: imgs/AWS/healthcheck.png
+  :align: center
+  :alt: Healthcheck
 
 Data Processing
 ---------------
 
-* Data processing can be performed using curl commands below:
+Data processing can be performed using curl commands.
+
+- Note: you will need to add the suffix to the endpoint: **/general/v0/general**
 
 .. code-block:: bash
 
-    curl -X 'POST' 'https://<api_url>' -H 'accept: application/json' -H 'Content-Type: multipart/form-data' -F 'files=@sample-docs/family-day.eml' | jq -C . | less -R
+    curl -X 'POST' 'https://<api_url>/general/v0/general'
+         -H 'accept: application/json'
+         -H 'Content-Type: multipart/form-data'
+         -F 'files=@sample-docs/family-day.eml'
+         | jq -C . | less -R
 
+.. image:: imgs/AWS/endpoint.png
+  :align: center
+  :alt: Data Processing Endpoint
 
 Getting Started with Unstructured
 ---------------------------------
 
-* Explore examples in the Unstructured GitHub repository: `Unstructured GitHub <https://github.com/Unstructured-IO/unstructured>`_.
+Explore examples in the Unstructured GitHub repository: `Unstructured GitHub <https://github.com/Unstructured-IO/unstructured>`_.
 
 Support
 -------
 
-* For support inquiries, contact: `support@unstructured.io <mailto:support@unstructured.io>`_
+For support inquiries, contact: `support@unstructured.io <mailto:support@unstructured.io>`_
