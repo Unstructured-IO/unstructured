@@ -1,4 +1,4 @@
-## 0.11.4-dev7
+## 0.11.4-dev9
 
 ### Enhancements
 
@@ -15,6 +15,8 @@
 * **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
 
 ### Fixes
+
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 
 ## 0.11.3
 
