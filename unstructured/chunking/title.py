@@ -21,12 +21,11 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Table,
     TableChunk,
-    Text,
     Title,
 )
 from unstructured.utils import lazyproperty
 
-_Section: TypeAlias = "_NonTextSection | _TableSection | _TextSection"
+_Section: TypeAlias = "_TableSection | _TextSection"
 
 # -- goes between text of each element when element-text is concatenated to form chunk --
 TEXT_SEPARATOR = "\n\n"
@@ -118,7 +117,7 @@ def _split_elements_by_title_and_table(
     multipage_sections: bool,
     new_after_n_chars: int,
     max_characters: int,
-) -> Iterator[_TextSection | _TableSection | _NonTextSection]:
+) -> Iterator[_TextSection | _TableSection]:
     """Implements "sectioner" responsibilities.
 
     A _section_ can be thought of as a "pre-chunk", generally determining the size and contents of a
@@ -155,9 +154,8 @@ def _split_elements_by_title_and_table(
 
         # -- start new section when necessary --
         if (
-            # -- Title, Table, and non-Text element (CheckBox) all start a new section --
+            # -- Title and Table both start a new section --
             isinstance(element, (Title, Table))
-            or not isinstance(element, Text)
             # -- adding this element would exceed hard-maxlen for section --
             or section_builder.remaining_space < len(str(element))
             # -- section already meets or exceeds soft-maxlen --
@@ -171,8 +169,6 @@ def _split_elements_by_title_and_table(
         # -- emit table and checkbox immediately since they are always isolated --
         if isinstance(element, Table):
             yield _TableSection(table=element)
-        elif not isinstance(element, Text):
-            yield _NonTextSection(element)
         # -- but accumulate text elements for consolidation into a composite chunk --
         else:
             section_builder.add_element(element)
@@ -262,20 +258,6 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
 # == Sections ====================================================================================
 
 
-class _NonTextSection:
-    """A section composed of a single `Element` that does not subclass `Text`.
-
-    Currently, only `CheckBox` fits that description
-    """
-
-    def __init__(self, element: Element) -> None:
-        self._element = element
-
-    def iter_chunks(self, maxlen: int) -> Iterator[Element]:
-        """Generate the non-text element of this section."""
-        yield self._element
-
-
 class _TableSection:
     """A section composed of a single Table element."""
 
@@ -324,7 +306,7 @@ class _TextSection:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Text]) -> None:
+    def __init__(self, elements: Iterable[Element]) -> None:
         self._elements = list(elements)
 
     def __eq__(self, other: Any) -> bool:
@@ -503,7 +485,7 @@ class _TextSectionBuilder:
     def __init__(self, maxlen: int) -> None:
         self._maxlen = maxlen
         self._separator_len = len(TEXT_SEPARATOR)
-        self._elements: List[Text] = []
+        self._elements: List[Element] = []
 
         # -- these mutable working values probably represent premature optimization but improve
         # -- performance and I expect will be welcome when processing a million elements
@@ -513,7 +495,7 @@ class _TextSectionBuilder:
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 
-    def add_element(self, element: Text) -> None:
+    def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
         self._elements.append(element)
         if element.text:
@@ -585,8 +567,8 @@ class _SectionCombiner:
         for section in self._sections:
             # -- start new section under these conditions --
             if (
-                # -- a table or checkbox section is never combined --
-                isinstance(section, (_TableSection, _NonTextSection))
+                # -- a table section is never combined --
+                isinstance(section, _TableSection)
                 # -- don't add another section once length has reached combination soft-max --
                 or accum.text_length >= self._combine_text_under_n_chars
                 # -- combining would exceed hard-max --
@@ -594,8 +576,8 @@ class _SectionCombiner:
             ):
                 yield from accum.flush()
 
-            # -- a table or checkbox section is never combined so don't accumulate --
-            if isinstance(section, (_TableSection, _NonTextSection)):
+            # -- a table section is never combined so don't accumulate --
+            if isinstance(section, _TableSection):
                 yield section
             else:
                 accum.add_section(section)
