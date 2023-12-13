@@ -24,24 +24,6 @@ from unstructured.partition.lang import apply_lang_metadata
 DETECTION_ORIGIN: str = "csv"
 
 
-def get_delimiter(file_path=None, file=None):
-    """
-    Use the standard csv sniffer to determine the delimiter.
-    Read just a small portion in case the file is large.
-    """
-    sniffer = csv.Sniffer()
-
-    num_bytes = 8192
-    if file:
-        data = file.read(num_bytes).decode("utf-8")
-        file.seek(0)
-    else:
-        with open(file_path) as f:
-            data = f.read(num_bytes)
-
-    return sniffer.sniff(data).delimiter
-
-
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
 @add_chunking_strategy()
@@ -122,3 +104,21 @@ def partition_csv(
     )
 
     return list(elements)
+
+
+def get_delimiter(file_path=None, file=None):
+    """
+    Use the standard csv sniffer to determine the delimiter.
+    Read just a small portion in case the file is large.
+    """
+    sniffer = csv.Sniffer()
+
+    num_bytes = 8192
+    if file:
+        data = file.read(num_bytes).decode("utf-8")
+        file.seek(0)
+    else:
+        with open(file_path) as f:
+            data = f.read(num_bytes)
+
+    return sniffer.sniff(data).delimiter
