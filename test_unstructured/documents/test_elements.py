@@ -209,6 +209,7 @@ def test_element_to_dict():
             },
         },
         "type": None,
+        "text": "",
         "element_id": "awt32t1",
     }
 

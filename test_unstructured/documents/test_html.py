@@ -2,7 +2,7 @@
 
 import os
 import pathlib
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import pytest
 from lxml import etree
@@ -218,7 +218,7 @@ def test_it_provides_parseable_HTML_in_text_as_html():
 def test_it_does_not_extract_text_in_script_tags():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
     doc = HTMLDocument.from_file(filename=filename)
-    assert all("function (" not in element.text for element in cast(List[Text], doc.elements))
+    assert all("function (" not in element.text for element in doc.elements)
 
 
 def test_it_does_not_extract_text_in_style_tags():
