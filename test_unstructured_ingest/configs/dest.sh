@@ -12,7 +12,7 @@ tests_to_ignore=(
 	'sharepoint.sh'
 )
 tests_to_omit=(
-  'box.sh'
-  'sharepoint-embed-cog-index.sh'
+	'box.sh'
+	'sharepoint-embed-cog-index.sh'
 )
 all_eval=()
