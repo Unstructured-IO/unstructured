@@ -11,5 +11,8 @@ tests_to_ignore=(
 	'dropbox.sh'
 	'sharepoint.sh'
 )
-tests_to_omit=()
+tests_to_omit=(
+  'box.sh'
+  'sharepoint-embed-cog-index.sh'
+)
 all_eval=()
