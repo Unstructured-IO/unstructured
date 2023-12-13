@@ -1,4 +1,4 @@
-## 0.11.4-dev7
+## 0.11.4-dev9
 
 ### Enhancements
 
@@ -16,6 +16,8 @@
 * **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Chroma vector database.
 
 ### Fixes
+
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 
 ## 0.11.3
 
