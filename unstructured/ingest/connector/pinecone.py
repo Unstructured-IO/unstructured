@@ -1,4 +1,3 @@
-import itertools
 import json
 import multiprocessing as mp
 import typing as t
@@ -87,7 +86,6 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
         except pinecone.core.client.exceptions.ApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
-
 
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(

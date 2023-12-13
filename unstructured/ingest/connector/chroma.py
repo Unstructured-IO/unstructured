@@ -1,4 +1,3 @@
-import itertools
 import json
 import typing as t
 import uuid
@@ -108,7 +107,6 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             )
         except Exception as e:
             raise ValueError(f"chroma error: {e}") from e
-
 
     @staticmethod
     def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
