@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata
 from unstructured.logger import logger
