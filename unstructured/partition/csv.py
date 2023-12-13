@@ -121,4 +121,4 @@ def get_delimiter(file_path=None, file=None):
         with open(file_path) as f:
             data = f.read(num_bytes)
 
-    return sniffer.sniff(data).delimiter
+    return sniffer.sniff(data, delimiters=[",", ";"]).delimiter
