@@ -17,14 +17,14 @@ DB_PATH=$SCRIPT_DIR/elements.db
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
-  # Local file cleanup
-  cleanup_dir "$WORK_DIR"
-  cleanup_dir "$OUTPUT_DIR"
-  rm -rf "$DB_PATH"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-    
-  fi
+	# Local file cleanup
+	cleanup_dir "$WORK_DIR"
+	cleanup_dir "$OUTPUT_DIR"
+	rm -rf "$DB_PATH"
+	if [ "$CI" == "true" ]; then
+		cleanup_dir "$DOWNLOAD_DIR"
+
+	fi
 }
 
 trap cleanup EXIT
@@ -36,17 +36,17 @@ scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_NAME" "$DB_PATH"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  local \
-    --num-processes "$max_processes" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/fake-memo.pdf \
-    --work-dir "$WORK_DIR" \
-  sql \
-    --db_name "$DATABASE_NAME" \
-    --username unstructured \
-    --database "$DB_PATH"
+	local \
+	--num-processes "$max_processes" \
+	--output-dir "$OUTPUT_DIR" \
+	--strategy fast \
+	--verbose \
+	--reprocess \
+	--input-path example-docs/fake-memo.pdf \
+	--work-dir "$WORK_DIR" \
+	sql \
+	--db_name "$DATABASE_NAME" \
+	--username unstructured \
+	--database "$DB_PATH"
 
 "$SCRIPT_DIR"/python/test-ingest-sql-output.py "sqlite" "$DB_PATH"

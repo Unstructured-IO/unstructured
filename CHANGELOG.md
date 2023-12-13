@@ -1,4 +1,4 @@
-## 0.11.4-dev10
+## 0.11.4-dev11
 
 ### Enhancements
 
@@ -11,9 +11,9 @@
 ### Features
 
 * **Save tables in PDF's separately as images.** The "table" elements are saved as `table-<pageN>-<tableN>.jpg`. This filename is presented in the `image_path` metadata field for the Table element. The default would be to not do this.
-**PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And embeddings to PostgreSQL pgvector database.
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 * **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
+* **PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
 
 ### Fixes
 

@@ -17,60 +17,15 @@ upstream local connector.
 
 .. tabs::
 
-   .. tab:: Shell - with parameters
-    
-    You can use the connectors with the same parameters used in `sqlalchemy.engine.URL.create <https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.engine.URL.create>`_
+   .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-            local \
-            --input-path example-docs/fake-memo.pdf \
-            --anonymous \
-            --output-dir local-output-to-mongo \
-            --num-processes 2 \
-            --verbose \
-            --strategy fast \
-            sql \
-            --db_name postgresql \
-            --username postgres \
-            --password test \
-            --host localhost \
-            --port 5432 \
-            --database elements
+      .. literalinclude:: ./code/bash/sql.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import LocalRunner
-
-        if __name__ == "__main__":
-            runner = LocalRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="local-output-to-postgres",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                writer_type="sql",
-                writer_kwargs={
-                    "db_name": os.getenv("DB_NAME"),
-                    "username": os.getenv("USERNAME"),
-                    "password": os.getenv("DB_PASSWORD"),
-                    "host": os.getenv("DB_HOST"),
-                    "port": os.getenv("DB_PORT"),
-                    "database": os.getenv("DB_DATABASE"),
-
-                }
-            )
-            runner.run(
-                input_path="example-docs/fake-memo.pdf",
-            )
+      .. literalinclude:: ./code/python/sql.py
+         :language: python
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> sql --help``.
 

@@ -4,23 +4,23 @@
 
 # Structured outputs are stored in a PostgreSQL instance/
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        local \
-        --input-path example-docs/book-war-and-peace-1225p.txt \
-        --output-dir local-to-pinecone \
-        --strategy fast \
-        --chunk-elements \
-        --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
-        --num-processes 2 \
-        --verbose \
-        --work-dir "<directory for intermediate outputs to be saved>" \
-        sql \
-        --db_name postgresql \
-        --username postgres \
-        --password test \
-        --host localhost \
-        --port 5432 \
-        --database elements
+	local \
+	--input-path example-docs/book-war-and-peace-1225p.txt \
+	--output-dir local-to-pinecone \
+	--strategy fast \
+	--chunk-elements \
+	--embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
+	--num-processes 2 \
+	--verbose \
+	--work-dir "<directory for intermediate outputs to be saved>" \
+	sql \
+	--db_name postgresql \
+	--username postgres \
+	--password test \
+	--host localhost \
+	--port 5432 \
+	--database elements
