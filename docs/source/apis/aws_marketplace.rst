@@ -18,13 +18,23 @@ Pre-Requirements
    - Follow the ``Create Key Pairs`` in the Amazon EC2 `User Guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_.
 
 
-Part 1: Setting-Up a Virtual Private Cloud (VPC)
+Part 1: Setting Up a Virtual Private Cloud (VPC)
 ------------------------------------------------
+
+In Part 1, we will construct a resilient and secure infrastructure within AWS by setting up a Virtual Private Cloud (VPC). Our VPC will encompass a dual-tiered subnet model consisting of both **public** and **private** subnets across multiple Availability Zones (AZs).
+
+We will establish the foundational network structure for deploying the Unstructured API by creating two public subnets and one private subnet within our VPC. The public subnets will host resources that require direct access to the internet, such as a load balancer, enabling them to communicate with external users. The private subnet is designed for resources that should not be directly accessible from the internet, like EC2 Compute Engine.
+
+.. image:: imgs/AWS/Infrastructure_Diagram.png
+  :align: center
+  :alt: Infrastructure Diagram
+
+**Step-by-Step Process:**
 
 1. **Access VPC Dashboard**:
 
    - In the AWS Management Console, navigate to the VPC service.
-   - Click on “Your VPCs” in the left navigation pane, then “Create VPC.”
+   - Click “Your VPCs” in the left navigation pane, then “Create VPC.”
 
 2. **Create VPC**:
 
@@ -32,7 +42,7 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
    - Enter a ``Name tag`` for your VPC.
    - Specify the IPv4 CIDR block (e.g., 10.0.0.0/16).
 
-     - You may leave the IPv6 CIDR block and Tenancy settings as default.
+     - You may leave the IPv6 CIDR block, Tenancy, and Tags settings as default.
    - Click “Create VPC” button
 
 .. image:: imgs/AWS/VPC_Step2.png
@@ -41,13 +51,15 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
 
 3. **Create Subnets**:
 
-   - After creating the VPC, click on “Subnets” in the left navigation pane.
+   - After creating the VPC, click “Subnets” in the left navigation pane.
    - Click “Create subnet” and select the VPC you just created from the dropdown menu.
    - For the first public subnet:
 
      - Enter a ``Name tag``.
      - Select an ``Availability Zone``.
-     - Specify the IPv4 CIDR block (e.g., 10.0.1.0/24).
+     - Specify the IPv4 CIDR block (e.g., 10.0.0.0/16).
+     - Specify the IPv4 subnet CIDR block (e.g., 10.0.1.0/24).
+     - You may the Tags settings as default.
      - Click ``Add new subnet``.
    - Repeat the process for the second public subnet with a different Availability Zone and CIDR block (e.g., 10.0.2.0/24).
 
@@ -55,7 +67,7 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
      - Ref: AWS documentation on `Subnet basics <https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html#subnet-basics>`_.
    - For the private subnet:
 
-     - Follow the same steps, but choose a different Availability Zone and CIDR block (e.g., 10.0.3.0/24).
+     - Follow the same steps, but choose a different Availability Zone and IPv4 subnet CIDR block (e.g., 10.0.3.0/24).
 
    - Click ``Create subnet``.
 
@@ -67,15 +79,17 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
 
    - Go to “Internet Gateways” in the VPC dashboard.
    - Click “Create internet gateway,” enter a name, and create.
-   - Attach the newly created internet gateway to your VPC.
+
+     - Note: we will attach the newly created internet gateway to your VPC in Step 6 - Edit Route.
 
 .. image:: imgs/AWS/VPC_Step4.png
   :align: center
   :alt: create internet gateway
 
-5. **Set Up Route Tables**:
+5. **Set Up Route Tables (for Public Subnets)**: *AWS automatically creates a default Route Table in Step 3 above. To tailor our network architecture, we will create a new Route Table specifically for our public subnets, which will include a route to the Internet Gateway from Step 4 above.*
 
-   - Go to “Route tables” in the VPC dashboard.
+   - Click "Route tables" in the left navigation pane.
+   - Click “Create route table” in the dashboard.
    - Enter a ``Name``.
    - Select the ``VPC`` from Step 2 above.
    - Click ``Create route table``
@@ -84,21 +98,28 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
   :align: center
   :alt: create route table
 
-6. **Connecting Route Tables and Internet Gateway**:
+6. **Associate Public Subnets to the Route Table and Internet Gateway**:
 
-   - Go to the VPC set up in Step 2.
+   - Click on “Your VPCs” in the left navigation pane.
+   - Select the VPC that you just created in Step 2.
    - Connect the **public subnets** to the **route table** from Step 5.
 
+     - Click the 'Subnets' page in the left navigation pane.
      - Select the public subnet from Step 3.
      - Click ``Actions`` button on the top right-hand corner
-     - Select ``Edit route table association``
-     - Repeat the process for the two public subnets.
+     - Select ``Edit route table association`` from the Actions dropdown menu
+     - On the ``Edit route table association`` page, select the route table designed for public subnets from Step 5 and save the changes.
+     - Repeat the process for the second public subnets.
 
-   - Connect the Route table to Internet Gateway
+   - Now, we'll ensure that the public subnets can access the internet by connecting the Route table to Internet Gateway
 
-     - Click the ``route table`` from VPC Details page.
-     - Click ``Edit route``
-     - Click ``Add route``:
+     - Click the 'Route tables' page in the left navigation pane.
+     - Select the ``route table`` that you created in Step 5.
+     - Click ``Actions`` button on the top right-hand corner
+     - Select ``Edit routes`` from the Actions dropdown menu
+     - Choose 'Add route', and in the destination box, enter **0.0.0.0/0** which represents all IP addresses.
+       - In the target box, select the ``Internet Gateway`` you've configured in Step 4.
+     - Click ``Save changes`` to establish the route, granting internet access to the public subnets.
 
    - For the **private subnet**, use the main route table or create a new one without a route to the internet gateway.
 
@@ -108,11 +129,16 @@ Part 1: Setting-Up a Virtual Private Cloud (VPC)
 
 .. image:: imgs/AWS/VPC_Step7.png
   :align: center
-  :alt: VPC Resource Maps
+  :alt: edit routes
 
 7. **Inspect VPC Resource Map**:
 
    You can check the configurations from the Resource Maps on the VPC Details dashboard.
+
+.. image:: imgs/AWS/VPC_Step8.png
+  :align: center
+  :alt: VPC Resource Maps
+
 
 Part 2: Deploying Unstructured API from AWS Marketplace
 -------------------------------------------------------
@@ -134,7 +160,7 @@ Part 2: Deploying Unstructured API from AWS Marketplace
    - Use the default ``Unstructured API`` template and software version.
    - Select the ``Region``
 
-     - *Note: select the same region where you set up the VPC in Part 1.*
+     - *Note: It is important to select the same region where you set up the VPC in Part 1.*
    - Click ``Continue to Launch`` button.
    - Select ``Launch CloudFormation`` from Choose Action dropdown menu.
    - Click ``Launch`` button.
@@ -163,8 +189,10 @@ Part 2: Deploying Unstructured API from AWS Marketplace
     **Step 2: Specify stack details**
 
     - Provide ``stack name``
-    - In the **Parameters** section, provide the ``KeyName``, ``Subnets``, and ``VPC`` from Part 1 above.
+    - In the **Parameters** section, provide the ``KeyName`` - see the Pre-Requirements, if you haven't created an EC2 Key Pair.
     - Specify, ``LoadBalancerScheme`` to **internet-facing** and ``SSHLocation`` to  **0.0.0.0/0**
+    - Select the ``Subnets`` and ``VPC`` from the Part 1 above.
+    - You can use the default values for other Parameter fields
     - Click ``Next`` button.
 
     .. image:: imgs/AWS/Marketplace_Step10b.png
@@ -195,8 +223,11 @@ Part 2: Deploying Unstructured API from AWS Marketplace
     - Check the status of the CloudFormation stack.
 
       - A successful deployment will show ``CREATE_COMPLETE`` status.
-    - Click ``Resources`` tab and find ``ApplicationLoadBalancer``.
-    - Copy the ``DNS Name`` from the Load Balancer dashboard.
+    - Click ``Resources`` tab and click the ``ApplicationLoadBalancer``.
+    - You will be redirected to ``EC2 Load Balancer`` page and click the Load Balancer created by the Cloud Formation from the previous step.
+    - On the Load Balance detail page, copy the ``DNS Name``, shown as ``A Record`` and suffix ``elb.amazonaws.com``.
+
+      - Note: You will use this ``DNS Name`` to replace the ``<api_url>`` for the next steps, i.e., Healthcheck and Data Processing.
 
 .. image:: imgs/AWS/Marketplace_Step11.png
   :align: center
