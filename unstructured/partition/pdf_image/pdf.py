@@ -727,7 +727,10 @@ def _combine_list_elements(
     return updated_elements
 
 
-def _get_links_from_urls_metadata(urls_metadata: List[Dict[str, Any]], moved_indices):
+def _get_links_from_urls_metadata(
+    urls_metadata: List[Dict[str, Any]], moved_indices: np.ndarray
+) -> List[Link]:
+    """Extracts links from a list of URL metadata."""
     links: List[Link] = []
     for url in urls_metadata:
         with contextlib.suppress(IndexError):
