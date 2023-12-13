@@ -488,6 +488,7 @@ def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
     )
 
     image = Image.new("RGB", (1000, 1000))
+    # tests that the code can run instead of oom and OCR results make sense
     assert [region.text for region in ocr.get_ocr_layout_tesseract(image)] == [
         "Hello",
         "World",

@@ -26,6 +26,7 @@ from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    IMAGE_COLOR_DEPTH,
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
     SUBREGION_THRESHOLD_FOR_OCR,
@@ -460,7 +461,9 @@ def get_ocr_layout_tesseract(
         text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
         or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
     ):
-        max_zoom = max(0, np.round(np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / 32), 1))
+        max_zoom = max(
+            0, np.round(np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH), 1)
+        )
         # rounding avoids unnecessary precision and potential numerical issues associated
         # with numbers very close to 1 inside cv2 image processing
         zoom = min(
