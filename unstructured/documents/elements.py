@@ -649,6 +649,7 @@ class Element(abc.ABC):
         return {
             "type": None,
             "element_id": self.id,
+            "text": self.text,
             "metadata": self.metadata.to_dict(),
         }
 
