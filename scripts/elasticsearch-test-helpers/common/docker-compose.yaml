@@ -8,9 +8,10 @@ services:
     environment:
       - xpack.security.enabled=true
       - discovery.type=single-node
-      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_USER=${ELASTIC_USER}
     healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTICSEARCH_USER}:${ELASTICSEARCH_PASSWORD} localhost:9200/_cluster/health || exit 1"]
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTIC_USER}:${ELASTIC_PASSWORD} localhost:9200/_cluster/health || exit 1"]
       interval: 10s
       timeout: 30s
       retries: 3

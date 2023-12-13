@@ -14,6 +14,7 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 function cleanup {
   # Index cleanup
   echo "Stopping Elasticsearch Docker container"
@@ -52,8 +53,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   elasticsearch \
   --hosts http://localhost:9200 \
   --index-name ingest-test-destination \
-  --username "$ELASTICSEARCH_USER" \
-	--password "$ELASTICSEARCH_PASSWORD" \
+  --username "$ELASTIC_USER" \
+	--password "$ELASTIC_PASSWORD" \
   --batch-size-bytes 15000000 \
   --num-processes "$max_processes"
 
