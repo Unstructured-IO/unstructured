@@ -213,7 +213,11 @@ install-ingest-jira:
 
 .PHONY: install-ingest-hubspot
 install-ingest-hubspot:
-	python3 -m pip install -r requirements/ingest-hubspot.txt
+	python3 -m pip install -r requirements/ingest/hubspot.txt
+
+.PHONY: install-ingest-sftp
+install-ingest-sftp:
+	python3 -m pip install -r requirements/ingest/sftp.txt
 
 .PHONY: install-ingest-pinecone
 install-ingest-pinecone:
@@ -343,7 +347,11 @@ test-extra-xlsx:
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
-check: check-ruff check-black check-flake8 check-version
+check: check-ruff check-black check-flake8 check-version check-flake8-print
+
+.PHONY: check-shfmt
+check-shfmt:
+	shfmt -d .
 
 .PHONY: check-black
 check-black:
@@ -352,6 +360,12 @@ check-black:
 .PHONY: check-flake8
 check-flake8:
 	flake8 .
+
+# Check for print statements in ingest since anything going to console should be using the ingest logger
+# as it has a built in filter to redact sensitive information
+.PHONY: check-flake8-print
+check-flake8-print:
+	flake8 --per-file-ignores "" ./unstructured/ingest
 
 .PHONY: check-ruff
 check-ruff:
@@ -376,7 +390,14 @@ check-version:
 
 ## tidy:                    run black
 .PHONY: tidy
-tidy:
+tidy: tidy-python
+
+.PHONY: tidy_shell
+tidy-shell:
+	shfmt -l -w .
+
+.PHONY: tidy-python
+tidy-python:
 	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
 	autoflake --in-place .
 	black  .

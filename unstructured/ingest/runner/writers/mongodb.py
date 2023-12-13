@@ -1,29 +1,21 @@
 import typing as t
+from dataclasses import dataclass
 
 from unstructured.ingest.interfaces import BaseDestinationConnector
+from unstructured.ingest.runner.writers.base_writer import Writer
+
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.mongodb import MongoDBWriteConfig, SimpleMongoDBStorageConfig
 
 
-def mongodb_writer(
-    database: str,
-    collection: str,
-    upsert: bool = False,
-    uri: t.Optional[str] = None,
-    host: t.Optional[str] = None,
-    port: int = 27017,
-    client_params: t.Optional[t.Dict[str, t.Any]] = None,
-    verbose: bool = False,
-    **kwargs,
-) -> BaseDestinationConnector:
-    client_params = client_params if client_params else {}
-    from unstructured.ingest.connector.mongodb import (
-        MongoDBDestinationConnector,
-        MongoDBWriteConfig,
-        SimpleMongoDBStorageConfig,
-    )
+@dataclass
+class MongodbWriter(Writer):
+    write_config: "MongoDBWriteConfig"
+    connector_config: "SimpleMongoDBStorageConfig"
 
-    return MongoDBDestinationConnector(
-        write_config=MongoDBWriteConfig(database=database, collection=collection),
-        connector_config=SimpleMongoDBStorageConfig(
-            uri=uri, host=host, port=port, client_params=client_params
-        ),
-    )
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
+        from unstructured.ingest.connector.mongodb import (
+            MongoDBDestinationConnector,
+        )
+
+        return MongoDBDestinationConnector

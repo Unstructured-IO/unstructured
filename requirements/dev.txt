@@ -91,7 +91,7 @@ idna==3.6
     #   anyio
     #   jsonschema
     #   requests
-importlib-metadata==6.9.0
+importlib-metadata==7.0.0
     # via
     #   build
     #   jupyter-client
@@ -167,7 +167,7 @@ jupyter-events==0.9.0
     # via jupyter-server
 jupyter-lsp==2.2.1
     # via jupyterlab
-jupyter-server==2.11.1
+jupyter-server==2.11.2
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -198,7 +198,7 @@ mistune==3.0.2
     # via nbconvert
 nbclient==0.9.0
     # via nbconvert
-nbconvert==7.11.0
+nbconvert==7.12.0
     # via
     #   jupyter
     #   jupyter-server
@@ -290,7 +290,7 @@ pyyaml==6.0.1
     #   -c test.txt
     #   jupyter-events
     #   pre-commit
-pyzmq==25.1.1
+pyzmq==25.1.2
     # via
     #   ipykernel
     #   jupyter-client
@@ -405,7 +405,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.6.4
+websocket-client==1.7.0
     # via jupyter-server
 wheel==0.42.0
     # via

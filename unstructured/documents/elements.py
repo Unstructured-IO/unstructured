@@ -12,9 +12,9 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, Dict, FrozenSet, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Sequence, Tuple, Union, cast
 
-from typing_extensions import ParamSpec, TypedDict
+from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
 from unstructured.documents.coordinates import (
     TYPE_TO_COORDINATE_SYSTEM_MAP,
@@ -23,6 +23,9 @@ from unstructured.documents.coordinates import (
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import lazyproperty
+
+Point: TypeAlias = Tuple[float, float]
+Points: TypeAlias = Tuple[Point, ...]
 
 
 class NoID(abc.ABC):
@@ -61,10 +64,10 @@ class DataSourceMetadata:
 class CoordinatesMetadata:
     """Metadata fields that pertain to the coordinates of the element."""
 
-    points: Tuple[Tuple[float, float], ...]
-    system: CoordinateSystem
+    points: Optional[Points]
+    system: Optional[CoordinateSystem]
 
-    def __init__(self, points, system):
+    def __init__(self, points: Optional[Points], system: Optional[CoordinateSystem]):
         # Both `points` and `system` must be present; one is not meaningful without the other.
         if (points is None and system is not None) or (points is not None and system is None):
             raise ValueError(
@@ -94,30 +97,38 @@ class CoordinatesMetadata:
     @classmethod
     def from_dict(cls, input_dict: Dict[str, Any]):
         # `input_dict` may contain a tuple of tuples or a list of lists
-        def convert_to_tuple_of_tuples(sequence_of_sequences):
-            subsequences = []
+        def convert_to_points(sequence_of_sequences: Sequence[Sequence[float]]) -> Points:
+            points: List[Point] = []
             for seq in sequence_of_sequences:
                 if isinstance(seq, list):
-                    subsequences.append(tuple(seq))
+                    points.append(cast(Point, tuple(seq)))
                 elif isinstance(seq, tuple):
-                    subsequences.append(seq)
-            return tuple(subsequences)
+                    points.append(cast(Point, seq))
+            return tuple(points)
 
-        input_points = input_dict.get("points", None)
-        points = convert_to_tuple_of_tuples(input_points) if input_points is not None else None
-        width = input_dict.get("layout_width", None)
-        height = input_dict.get("layout_height", None)
-        system = None
-        if input_dict.get("system", None) == "RelativeCoordinateSystem":
-            system = RelativeCoordinateSystem()
-        elif (
-            width is not None
-            and height is not None
-            and input_dict.get("system", None) in TYPE_TO_COORDINATE_SYSTEM_MAP
-        ):
-            system = TYPE_TO_COORDINATE_SYSTEM_MAP[input_dict["system"]](width, height)
-        constructor_args = {"points": points, "system": system}
-        return cls(**constructor_args)
+        # -- parse points --
+        input_points = input_dict.get("points")
+        points = convert_to_points(input_points) if input_points is not None else None
+
+        # -- parse system --
+        system_name = input_dict.get("system")
+        width = input_dict.get("layout_width")
+        height = input_dict.get("layout_height")
+        system = (
+            None
+            if system_name is None
+            else RelativeCoordinateSystem()
+            if system_name == "RelativeCoordinateSystem"
+            else TYPE_TO_COORDINATE_SYSTEM_MAP[system_name](width, height)
+            if (
+                width is not None
+                and height is not None
+                and system_name in TYPE_TO_COORDINATE_SYSTEM_MAP
+            )
+            else None
+        )
+
+        return cls(points=points, system=system)
 
 
 class RegexMetadata(TypedDict):
@@ -555,8 +566,62 @@ def _add_regex_metadata(
     return elements
 
 
+class ElementType:
+    TITLE = "Title"
+    TEXT = "Text"
+    UNCATEGORIZED_TEXT = "UncategorizedText"
+    NARRATIVE_TEXT = "NarrativeText"
+    BULLETED_TEXT = "BulletedText"
+    ABSTRACT = "Abstract"
+    THREADING = "Threading"
+    FORM = "Form"
+    FIELD_NAME = "Field-Name"
+    VALUE = "Value"
+    LINK = "Link"
+    COMPOSITE_ELEMENT = "CompositeElement"
+    IMAGE = "Image"
+    PICTURE = "Picture"
+    FIGURE_CAPTION = "FigureCaption"
+    FIGURE = "Figure"
+    CAPTION = "Caption"
+    LIST = "List"
+    LIST_ITEM = "ListItem"
+    LIST_ITEM_OTHER = "List-item"
+    CHECKED = "Checked"
+    UNCHECKED = "Unchecked"
+    ADDRESS = "Address"
+    EMAIL_ADDRESS = "EmailAddress"
+    PAGE_BREAK = "PageBreak"
+    FORMULA = "Formula"
+    TABLE = "Table"
+    HEADER = "Header"
+    HEADLINE = "Headline"
+    SUB_HEADLINE = "Subheadline"
+    PAGE_HEADER = "Page-header"  # Title?
+    SECTION_HEADER = "Section-header"
+    FOOTER = "Footer"
+    FOOTNOTE = "Footnote"
+    PAGE_FOOTER = "Page-footer"
+
+    @classmethod
+    def to_dict(cls):
+        """
+        Convert class attributes to a dictionary.
+
+        Returns:
+            dict: A dictionary where keys are attribute names and values are attribute values.
+        """
+        return {
+            attr: getattr(cls, attr)
+            for attr in dir(cls)
+            if not callable(getattr(cls, attr)) and not attr.startswith("__")
+        }
+
+
 class Element(abc.ABC):
     """An element is a section of a page in the document."""
+
+    text: str
 
     def __init__(
         self,
@@ -573,6 +638,9 @@ class Element(abc.ABC):
                 points=coordinates, system=coordinate_system
             )
         self.metadata.detection_origin = detection_origin
+        # -- all `Element` instances get a `text` attribute, defaults to the empty string if not
+        # -- defined in a subclass.
+        self.text = self.text if hasattr(self, "text") else ""
 
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
@@ -581,18 +649,24 @@ class Element(abc.ABC):
         return {
             "type": None,
             "element_id": self.id,
+            "text": self.text,
             "metadata": self.metadata.to_dict(),
         }
 
     def convert_coordinates_to_new_system(
-        self,
-        new_system: CoordinateSystem,
-        in_place=True,
-    ) -> Optional[Tuple[Tuple[Union[int, float], Union[int, float]], ...]]:
-        """Converts the element location coordinates to a new coordinate system. If inplace is true,
-        changes the coordinates in place and updates the coordinate system."""
-        if self.metadata.coordinates is None:
+        self, new_system: CoordinateSystem, in_place: bool = True
+    ) -> Optional[Points]:
+        """Converts the element location coordinates to a new coordinate system.
+
+        If inplace is true, changes the coordinates in place and updates the coordinate system.
+        """
+        if (
+            self.metadata.coordinates is None
+            or self.metadata.coordinates.system is None
+            or self.metadata.coordinates.points is None
+        ):
             return None
+
         new_coordinates = tuple(
             self.metadata.coordinates.system.convert_coordinates_to_new_system(
                 new_system=new_system,
@@ -601,15 +675,19 @@ class Element(abc.ABC):
             )
             for x, y in self.metadata.coordinates.points
         )
+
         if in_place:
             self.metadata.coordinates.points = new_coordinates
             self.metadata.coordinates.system = new_system
+
         return new_coordinates
 
 
 class CheckBox(Element):
-    """A checkbox with an attribute indicating whether its checked or not. Primarily used
-    in documents that are forms"""
+    """A checkbox with an attribute indicating whether its checked or not.
+
+    Primarily used in documents that are forms.
+    """
 
     def __init__(
         self,
@@ -630,12 +708,18 @@ class CheckBox(Element):
         )
         self.checked: bool = checked
 
-    def __eq__(self, other):
-        return (self.checked == other.checked) and (
-            self.metadata.coordinates == other.metadata.coordinates
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, CheckBox):
+            return False
+        return all(
+            (
+                self.checked == other.checked,
+                self.metadata.coordinates == other.metadata.coordinates,
+            )
         )
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
         out["type"] = "CheckBox"
         out["checked"] = self.checked
@@ -677,20 +761,23 @@ class Text(Element):
             detection_origin=detection_origin,
         )
 
+    def __eq__(self, other: object):
+        if not isinstance(other, Text):
+            return False
+        return all(
+            (
+                self.text == other.text,
+                self.metadata.coordinates == other.metadata.coordinates,
+                self.category == other.category,
+                self.embeddings == other.embeddings,
+            ),
+        )
+
     def __str__(self):
         return self.text
 
-    def __eq__(self, other):
-        return all(
-            [
-                (self.text == other.text),
-                (self.metadata.coordinates == other.metadata.coordinates),
-                (self.category == other.category),
-                (self.embeddings == other.embeddings),
-            ],
-        )
-
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
         out["element_id"] = self.id
         out["type"] = self.category
@@ -699,14 +786,17 @@ class Text(Element):
             out["embeddings"] = self.embeddings
         return out
 
-    def apply(self, *cleaners: Callable):
-        """Applies a cleaning brick to the text element. The function that's passed in
-        should take a string as input and produce a string as output."""
+    def apply(self, *cleaners: Callable[[str], str]):
+        """Applies a cleaning brick to the text element.
+
+        The function that's passed in should take a string as input and produce a string as
+        output.
+        """
         cleaned_text = self.text
         for cleaner in cleaners:
             cleaned_text = cleaner(cleaned_text)
 
-        if not isinstance(cleaned_text, str):
+        if not isinstance(cleaned_text, str):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
@@ -764,7 +854,7 @@ class EmailAddress(Text):
 class Image(Text):
     """A text element for capturing image metadata."""
 
-    category = "Image"
+    category = ElementType.IMAGE
 
 
 class PageBreak(Text):
@@ -795,44 +885,6 @@ class Footer(Text):
     """An element for capturing document footers."""
 
     category = "Footer"
-
-
-class ElementType:
-    TITLE = "Title"
-    TEXT = "Text"
-    UNCATEGORIZED_TEXT = "UncategorizedText"
-    NARRATIVE_TEXT = "NarrativeText"
-    BULLETED_TEXT = "BulletedText"
-    ABSTRACT = "Abstract"
-    THREADING = "Threading"
-    FORM = "Form"
-    FIELD_NAME = "Field-Name"
-    VALUE = "Value"
-    LINK = "Link"
-    COMPOSITE_ELEMENT = "CompositeElement"
-    IMAGE = "Image"
-    PICTURE = "Picture"
-    FIGURE_CAPTION = "FigureCaption"
-    FIGURE = "Figure"
-    CAPTION = "Caption"
-    LIST = "List"
-    LIST_ITEM = "ListItem"
-    LIST_ITEM_OTHER = "List-item"
-    CHECKED = "Checked"
-    UNCHECKED = "Unchecked"
-    ADDRESS = "Address"
-    EMAIL_ADDRESS = "EmailAddress"
-    PAGE_BREAK = "PageBreak"
-    FORMULA = "Formula"
-    TABLE = "Table"
-    HEADER = "Header"
-    HEADLINE = "Headline"
-    SUB_HEADLINE = "Subheadline"
-    PAGE_HEADER = "Page-header"  # Title?
-    SECTION_HEADER = "Section-header"
-    FOOTER = "Footer"
-    FOOTNOTE = "Footnote"
-    PAGE_FOOTER = "Page-footer"
 
 
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {

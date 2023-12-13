@@ -6,14 +6,14 @@ import click
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.azure_cognitive_search import (
+    AzureCognitiveSearchWriteConfig,
+    SimpleAzureCognitiveSearchStorageConfig,
+)
 
 
 @dataclass
-class AzureCognitiveSearchCliWriteConfig(CliConfig):
-    key: str
-    endpoint: str
-    index: str
-
+class AzureCognitiveSearchCliConfig(SimpleAzureCognitiveSearchStorageConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -34,6 +34,15 @@ class AzureCognitiveSearchCliWriteConfig(CliConfig):
                 envvar="AZURE_SEARCH_ENDPOINT",
                 show_envvar=True,
             ),
+        ]
+        return options
+
+
+@dataclass
+class AzureCognitiveSearchCliWriteConfig(AzureCognitiveSearchWriteConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
             click.Option(
                 ["--index"],
                 required=True,
@@ -49,6 +58,8 @@ def get_base_dest_cmd():
 
     cmd_cls = BaseDestCmd(
         cmd_name="azure-cognitive-search",
-        cli_config=AzureCognitiveSearchCliWriteConfig,
+        cli_config=AzureCognitiveSearchCliConfig,
+        additional_cli_options=[AzureCognitiveSearchCliWriteConfig],
+        write_config=AzureCognitiveSearchCliWriteConfig,
     )
     return cmd_cls

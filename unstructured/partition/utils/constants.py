@@ -36,3 +36,11 @@ DEFAULT_PADDLE_LANG = os.getenv("DEFAULT_PADDLE_LANG", "en")
 
 # this field is defined by pytesseract/unstructured.pytesseract
 TESSERACT_TEXT_HEIGHT = "height"
+
+TESSERACT_LANGUAGES_SPLITTER = "+"
+
+# 2 ** 31 - 1, max byte size for image data
+TESSERACT_MAX_SIZE = 2147483647
+
+# default image colors
+IMAGE_COLOR_DEPTH = 32

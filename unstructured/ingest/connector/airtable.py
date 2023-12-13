@@ -1,4 +1,3 @@
-import os
 import typing as t
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -6,8 +5,10 @@ from pathlib import Path
 
 import requests
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -23,6 +24,11 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class AirtableAccessConfig(AccessConfig):
+    personal_access_token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleAirtableConfig(BaseConnectorConfig):
     """Connector config where:
     auth_token is the authentication token to authenticate into Airtable.
@@ -31,8 +37,8 @@ class SimpleAirtableConfig(BaseConnectorConfig):
     for more info on authentication.
     """
 
-    personal_access_token: str
-    list_of_paths: t.Optional[str]
+    access_config: AirtableAccessConfig
+    list_of_paths: t.Optional[str] = None
 
 
 @dataclass
@@ -88,7 +94,7 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def _query_table(self):
         from pyairtable import Api
 
-        api = Api(self.connector_config.personal_access_token)
+        api = Api(self.connector_config.access_config.personal_access_token)
         table = api.table(self.table_meta.base_id, self.table_meta.table_id)
         table_url = table.url
         rows = table.all(
@@ -139,7 +145,6 @@ class AirtableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         import pandas as pd
 
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
         rows, table_url = self._get_table_rows()
         self.update_source_metadata(rows_tuple=(rows, table_url))
         if rows is None:
@@ -210,7 +215,7 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @property
     def api(self):
         if self._api is None:
-            self._api = Api(self.connector_config.personal_access_token)
+            self._api = Api(self.connector_config.access_config.personal_access_token)
         return self._api
 
     @api.setter
@@ -232,7 +237,7 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         if self.connector_config.list_of_paths:
             self.list_of_paths = self.connector_config.list_of_paths.split()
 
-        self.api = Api(self.connector_config.personal_access_token)
+        self.api = Api(self.connector_config.access_config.personal_access_token)
 
     @requires_dependencies(["pyairtable"], extras="airtable")
     def use_all_bases(self):

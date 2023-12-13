@@ -18,6 +18,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.utils.constants import Source
+from unstructured.partition.utils.sorting import sort_text_regions
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
@@ -26,14 +27,12 @@ if TYPE_CHECKING:
 def process_file_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     filename: str = "",
-    is_image: bool = False,
 ) -> "DocumentLayout":
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         inferred_document_layout = process_data_with_pdfminer(
             inferred_document_layout=inferred_document_layout,
             file=fp,
-            is_image=is_image,
         )
         return inferred_document_layout
 
@@ -41,13 +40,8 @@ def process_file_with_pdfminer(
 def process_data_with_pdfminer(
     inferred_document_layout: "DocumentLayout",
     file: Optional[Union[bytes, BinaryIO]] = None,
-    is_image: bool = False,
 ) -> "DocumentLayout":
-    if is_image:
-        for page in inferred_document_layout.pages:
-            for el in page.elements:
-                el.text = el.text or ""
-        return inferred_document_layout
+    """Process document data using PDFMiner to extract layout information."""
 
     extracted_layouts = get_regions_by_pdfminer(file)
 
@@ -95,7 +89,7 @@ def get_regions_by_pdfminer(
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
+    for page, page_layout in open_pdfminer_pages_generator(fp):
         height = page_layout.height
 
         layout: List["TextRegion"] = []
@@ -125,7 +119,13 @@ def get_regions_by_pdfminer(
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
 
+        # NOTE(christine): always do the basic sort first for deterministic order across
+        # python versions.
         layout = order_layout(layout)
+
+        # apply the current default sorting to the layout elements extracted by pdfminer
+        layout = sort_text_regions(layout)
+
         layouts.append(layout)
 
     return layouts

@@ -21,7 +21,7 @@ def _validate_language_code(language_code: str):
         )
 
 
-def translate_text(text, source_lang: Optional[str] = None, target_lang: str = "en") -> str:
+def translate_text(text: str, source_lang: Optional[str] = None, target_lang: str = "en") -> str:
     """Translates the foreign language text. If the source language is not specified, the
     function will attempt to detect it using langdetect.
 

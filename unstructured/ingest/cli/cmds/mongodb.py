@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString, Dict
+from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
 from unstructured.ingest.connector.mongodb import MongoDBWriteConfig, SimpleMongoDBStorageConfig
 
 CMD_NAME = "mongodb"
@@ -25,11 +25,6 @@ class MongoDBCliConfig(SimpleMongoDBStorageConfig, CliConfig):
                 "mongos instance to connect to, or a list of hostnames",
             ),
             click.Option(["--port"], type=int, default=27017),
-            click.Option(
-                ["--client-params"],
-                type=Dict(),
-                help="additional parameters to use when creating mongo client",
-            ),
         ]
         return options
 
@@ -56,5 +51,6 @@ def get_base_dest_cmd():
         cmd_name=CMD_NAME,
         cli_config=MongoDBCliConfig,
         additional_cli_options=[MongoDBCliWriteConfig],
+        write_config=MongoDBWriteConfig,
     )
     return cmd_cls

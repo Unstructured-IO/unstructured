@@ -33,11 +33,6 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
     without_files: bool = False
-    columns: t.Optional[t.List[str]] = None
-
-    @staticmethod
-    def storage_options_from_str(options_str: str) -> t.Dict[str, str]:
-        return {s.split("=")[0].strip(): s.split("=")[1].strip() for s in options_str.split(",")}
 
 
 @dataclass
@@ -100,7 +95,6 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
         self._create_full_tmp_dir_path()
-        logger.debug(f"Fetching {self} - PID: {os.getpid()}")
 
         df = self._get_df(filesystem=fs)
 

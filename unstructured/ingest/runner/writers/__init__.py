@@ -1,29 +1,30 @@
 import typing as t
 
-from .azure import azure_writer
-from .azure_cognitive_search import azure_cognitive_search_writer
-from .box import box_writer
-from .delta_table import delta_table_writer
-from .dropbox import dropbox_writer
-from .gcs import gcs_writer
-from .mongodb import mongodb_writer
-from .pinecone import pinecone_writer
-from .s3 import s3_writer
-from .sql import sql_writer
-from .weaviate import weaviate_writer
+from .azure_cognitive_search import AzureCognitiveSearchWriter
+from .base_writer import Writer
+from .delta_table import DeltaTableWriter
+from .fsspec.azure import AzureWriter
+from .fsspec.box import BoxWriter
+from .fsspec.dropbox import DropboxWriter
+from .fsspec.gcs import GcsWriter
+from .fsspec.s3 import S3Writer
+from .mongodb import MongodbWriter
+from .pinecone import PineconeWriter
+from .sql import SqlWriter
+from .weaviate import WeaviateWriter
 
-writer_map: t.Dict[str, t.Callable] = {
-    "azure": azure_writer,
-    "azure_cognitive_search": azure_cognitive_search_writer,
-    "box": box_writer,
-    "delta_table": delta_table_writer,
-    "dropbox": dropbox_writer,
-    "gcs": gcs_writer,
-    "mongodb": mongodb_writer,
-    "s3": s3_writer,
-    "sql": sql_writer,
-    "weaviate": weaviate_writer,
-    "pinecone": pinecone_writer,
+writer_map: t.Dict[str, t.Type[Writer]] = {
+    "azure": AzureWriter,
+    "azure_cognitive_search": AzureCognitiveSearchWriter,
+    "box": BoxWriter,
+    "delta_table": DeltaTableWriter,
+    "dropbox": DropboxWriter,
+    "gcs": GcsWriter,
+    "mongodb": MongodbWriter,
+    "pinecone": PineconeWriter,
+    "s3": S3Writer,
+    "sql": SqlWriter,
+    "weaviate": WeaviateWriter,
 }
 
 __all__ = ["writer_map"]
