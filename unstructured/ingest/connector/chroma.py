@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
@@ -108,14 +109,6 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             raise ValueError(f"chroma error: {e}") from e
 
-    @staticmethod
-    def chunks(iterable, batch_size=100):
-        """A helper function to break an iterable into chunks of size batch_size."""
-        it = iter(iterable)
-        chunk = tuple(itertools.islice(it, batch_size))
-        while chunk:
-            yield chunk
-            chunk = tuple(itertools.islice(it, batch_size))
 
     @staticmethod
     def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
@@ -140,7 +133,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
 
         chroma_batch_size = self.write_config.batch_size
 
-        for chunk in self.chunks(dict_list, chroma_batch_size):
+        for chunk in chunk_generator(dict_list, chroma_batch_size):
             self.upsert_batch(self.prepare_chroma_list(chunk))
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
