@@ -5,7 +5,6 @@ from typing import List
 import pytest
 
 from unstructured.chunking.title import (
-    _NonTextSection,
     _SectionCombiner,
     _split_elements_by_title_and_table,
     _TableSection,
@@ -235,9 +234,6 @@ def test_split_elements_by_title_and_table():
         Text("It is storming outside."),
     ]
     # --
-    section = next(sections)
-    assert isinstance(section, _NonTextSection)
-    # --
     with pytest.raises(StopIteration):
         next(sections)
 
@@ -273,7 +269,6 @@ def test_chunk_by_title():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
@@ -315,7 +310,6 @@ def test_chunk_by_title_respects_section_change():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
@@ -352,7 +346,6 @@ def test_chunk_by_title_separates_by_page_number():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
@@ -470,7 +463,6 @@ def test_chunk_by_title_groups_across_pages():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
@@ -701,21 +693,6 @@ def test_it_considers_separator_length_when_sectioning():
 
 
 # == Sections ====================================================================================
-
-
-class Describe_NonTextSection:
-    """Unit-test suite for `unstructured.chunking.title._NonTextSection objects."""
-
-    def it_iterates_its_element_as_the_sole_chunk(self):
-        checkbox = CheckBox()
-        section = _NonTextSection(checkbox)
-
-        chunk_iter = section.iter_chunks(maxlen=500)
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, CheckBox)
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
 
 
 class Describe_TableSection:
@@ -1240,7 +1217,7 @@ class Describe_SectionCombiner:
         with pytest.raises(StopIteration):
             next(section_iter)
 
-    def but_it_does_not_combine_table_or_non_text_sections(self):
+    def but_it_does_not_combine_table_sections(self):
         sections = [
             _TextSection(
                 [
@@ -1253,13 +1230,6 @@ class Describe_SectionCombiner:
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
-            ),
-            _NonTextSection(CheckBox()),
-            _TextSection(
-                [
-                    Title("Sed Orci"),
-                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
                 ]
             ),
         ]
@@ -1284,16 +1254,6 @@ class Describe_SectionCombiner:
         assert section._elements == [
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-        ]
-        # --
-        section = next(section_iter)
-        assert isinstance(section, _NonTextSection)
-        # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
-            Title("Sed Orci"),
-            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
         ]
         # --
         with pytest.raises(StopIteration):
