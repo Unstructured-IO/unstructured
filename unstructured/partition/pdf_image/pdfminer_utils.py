@@ -104,14 +104,8 @@ def open_pdfminer_pages_generator(
                     with pikepdf.Pdf.open(error_page_data) as pdf:
                         pdf.save(tmp.name)
                     page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
-                    try:
-                        interpreter.process_page(page)
-                        page_layout = device.get_result()
-                    except Exception:
-                        logger.warning(
-                            f"PDFMiner failed to process PDF page {i+1} after repairing it."
-                        )
-                        break
+                    interpreter.process_page(page)
+                    page_layout = device.get_result()
             i += 1
             yield page, page_layout
     except PSSyntaxError:

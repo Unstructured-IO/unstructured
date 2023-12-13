@@ -1,4 +1,4 @@
-## 0.11.4-dev7
+## 0.11.4-dev9
 
 ### Enhancements
 
@@ -16,6 +16,7 @@
 
 ### Fixes
 
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 * **partition returning cid code in `hi_res`** occasaionally pdfminer can fail to decode the text in an pdf file and return cid code as text. Now when this happens the text from OCR is used.
 
 ## 0.11.3
