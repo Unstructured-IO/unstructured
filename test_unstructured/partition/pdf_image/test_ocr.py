@@ -468,3 +468,28 @@ def test_get_table_tokens(mock_ocr_layout):
         ]
 
         assert table_tokens == expected_tokens
+
+
+@pytest.mark.parametrize(
+    ("text", "outcome"), [("", False), ("foo", True), (None, False), ("(cid:10)boo", False)]
+)
+def test_valid_text(text, outcome):
+    assert ocr.valid_text(text) == outcome
+
+
+def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
+    # the code should ignore this invalid text and use ocr region's text
+    mock_out_layout[0].text = "(cid:10)(cid:5)?"
+    ocr_elements = [
+        LayoutElement(text=r.text, source=None, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
+        for r in mock_ocr_regions
+    ]
+
+    final_layout = ocr.merge_out_layout_with_ocr_layout(mock_out_layout, mock_ocr_regions)
+
+    # Check if the out layout's text attribute is updated with aggregated OCR text
+    assert final_layout[0].text == mock_ocr_regions[2].text
+
+    # Check if the final layout contains both original elements and OCR-derived elements
+    assert all(element in final_layout for element in mock_out_layout)
+    assert any(element in final_layout for element in ocr_elements)

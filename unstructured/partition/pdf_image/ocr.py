@@ -595,6 +595,13 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
     return text_regions
 
 
+def valid_text(text: str) -> bool:
+    """a helper that determines if the text is valid ascii text"""
+    if not text:
+        return False
+    return "(cid:" not in text
+
+
 def merge_out_layout_with_ocr_layout(
     out_layout: List[LayoutElement],
     ocr_layout: List[TextRegion],
@@ -609,7 +616,7 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in out_layout if not region.text]
+    out_regions_without_text = [region for region in out_layout if not valid_text(region.text)]
 
     for out_region in out_regions_without_text:
         out_region.text = aggregate_ocr_text_by_block(
