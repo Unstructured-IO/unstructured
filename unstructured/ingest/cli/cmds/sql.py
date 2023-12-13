@@ -1,24 +1,23 @@
 import typing as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig, Dict
-from unstructured.ingest.connector.sql.connector import SqlWriteConfig
+from unstructured.ingest.connector.sql.connector import SimpleSqlConfig, SqlWriteConfig
 
-CMD_NAME = "sql"
 SQL_DRIVERS = {"postgresql", "sqlite"}
 
 
 @dataclass
-class SqlCliConfig(CliConfig):
-    db_name: t.Optional[str]
-    username: t.Optional[str]
-    password: t.Optional[str] = field(repr=False)
-    host: t.Optional[str]
-    database: t.Optional[str]
-    database_url: t.Optional[str] = None
-    port: t.Optional[int] = 5432
+class SqlCliConfig(SimpleSqlConfig, CliConfig):
+    # db_name: t.Optional[str]
+    # username: t.Optional[str]
+    # password: t.Optional[str] = field(repr=False)
+    # host: t.Optional[str]
+    # database: t.Optional[str]
+    # database_url: t.Optional[str] = None
+    # port: t.Optional[int] = 5432
 
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
@@ -99,6 +98,9 @@ def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
     cmd_cls = BaseDestCmd(
-        cmd_name=CMD_NAME, cli_config=SqlCliConfig, additional_cli_options=[SqlCliWriteConfig]
+        cmd_name="sql",
+        cli_config=SqlCliConfig,
+        additional_cli_options=[SqlCliWriteConfig],
+        write_config=SqlWriteConfig,
     )
     return cmd_cls
