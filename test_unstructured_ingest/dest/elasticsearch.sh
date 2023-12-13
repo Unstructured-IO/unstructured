@@ -14,6 +14,7 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC1091
 source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 function cleanup {
   # Index cleanup
