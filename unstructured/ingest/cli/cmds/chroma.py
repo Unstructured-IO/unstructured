@@ -22,7 +22,8 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
                 ["--settings"],
                 required=False,
                 type=Dict(),
-                help="A dictionary of settings to communicate with the chroma server.",
+                help="A dictionary of settings to communicate with the chroma server."
+                'example: \'{"persist_directory":"./chroma-persist"}\' ',
             ),
             click.Option(
                 ["--tenant"],
@@ -62,7 +63,8 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
                 ["--headers"],
                 required=False,
                 type=Dict(),
-                help="A dictionary of headers to send to the Chroma server.",
+                help="A dictionary of headers to send to the Chroma server."
+                'example: \'{"Authorization":"Basic()"}\' ',
             ),
             click.Option(
                 ["--collection-name"],
