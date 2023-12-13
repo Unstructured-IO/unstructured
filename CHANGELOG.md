@@ -1,4 +1,4 @@
-## 0.11.4-dev7
+## 0.11.4-dev9
 
 ### Enhancements
 
@@ -16,6 +16,7 @@
 
 ### Fixes
 
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 * **Fix a bug where image can be scaled too large for tesseract** Adds a limit to prevent auto-scaling an image beyond the maximum size `tesseract` can handle for ocr layout detection
 
 ## 0.11.3
