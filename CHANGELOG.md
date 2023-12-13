@@ -1,4 +1,4 @@
-## 0.11.4-dev8
+## 0.11.4-dev10
 
 ### Enhancements
 
@@ -17,6 +17,7 @@
 
 ### Fixes
 
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
 
 ## 0.11.3
