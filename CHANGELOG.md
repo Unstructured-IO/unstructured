@@ -18,6 +18,7 @@
 
 * **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
 * **Fix a bug where image can be scaled too large for tesseract** Adds a limit to prevent auto-scaling an image beyond the maximum size `tesseract` can handle for ocr layout detection
+* **Update partition_csv to handle different delimiters** CSV files containing both non-comma delimiters and commas in the data were throwing an error in Pandas. `partition_csv` now identifies the correct delimiter before the file is processed.
 
 ## 0.11.3
 
