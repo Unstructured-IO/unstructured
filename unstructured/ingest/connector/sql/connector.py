@@ -50,7 +50,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
         return connect(database=self.database)
 
-    @requires_dependencies(["psycopg2"])
+    @requires_dependencies(["psycopg2"], extras="postgresql")
     def _make_psycopg_connection(self):
         from psycopg2 import connect
 

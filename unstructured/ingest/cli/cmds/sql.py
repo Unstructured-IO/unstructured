@@ -31,7 +31,7 @@ class SqlCliConfig(CliConfig):
             ),
             click.Option(
                 ["--username"],
-                default="postgres",
+                default=None,
                 type=str,
                 help="DB username",
             ),

@@ -13,7 +13,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
         --output-dir local-to-pinecone \
         --strategy fast \
         --chunk-elements \
-        --embedding-provider <an unstructured embedding provider, ie. langchain-huggingface> \
+        --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
         --num-processes 2 \
         --verbose \
         --work-dir "<directory for intermediate outputs to be saved>" \

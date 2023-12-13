@@ -4,16 +4,16 @@ NOTE: At the moment, the connector only supports PostgreSQL and SQLite.
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a PostgreSQL or SQLite schema.
 
-First you'll need to install the sql dependencies as shown here.
+First you'll need to install the sql dependencies as shown here if you are using PostgreSQL.
 
 .. code:: shell
 
-  pip install "unstructured[sql]"
+  pip install "unstructured[postgres]"
 
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream s3 connector.
+upstream local connector.
 
 .. tabs::
 
