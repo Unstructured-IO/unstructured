@@ -16,6 +16,8 @@ CI=${CI:-"false"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
+# shellcheck disable=SC1091
+source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 
 function cleanup() {
 	# Kill the container so the script can be repeatedly run using the same ports
@@ -47,8 +49,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 	--verbose \
 	--index-name movies \
 	--hosts http://localhost:9200 \
-	--username "$ELASTICSEARCH_USER" \
-	--password "$ELASTICSEARCH_PASSWORD" \
+	--username "$ELASTIC_USER" \
+	--password "$ELASTIC_PASSWORD" \
 	--fields 'ethnicity,director,plot' \
 	--work-dir "$WORK_DIR" \
 	--batch-size 2
