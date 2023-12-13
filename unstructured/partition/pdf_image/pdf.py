@@ -700,7 +700,7 @@ def _process_pdfminer_pages(
 
 
 def _combine_list_elements(
-    elements: List[Element], coordinate_system: PixelSpace | PointSpace
+    elements: List[Element], coordinate_system: Union[PixelSpace, PointSpace]
 ) -> List[Element]:
     """Combine elements that should be considered a single ListItem element."""
     tmp_element = None
@@ -745,7 +745,7 @@ def _get_links_from_urls_metadata(urls_metadata: List[Dict[str, Any]], moved_ind
 
 
 def _combine_coordinates_into_element1(
-    element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
+    element1: Element, element2: Element, coordinate_system: Union[PixelSpace, PointSpace]
 ) -> Element:
     """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
     x1 = min(
