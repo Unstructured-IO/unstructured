@@ -9,6 +9,7 @@ from typing import (
     TYPE_CHECKING,
     Any,
     BinaryIO,
+    Dict,
     Iterator,
     List,
     Optional,
@@ -624,7 +625,7 @@ def _process_pdfminer_pages(
     for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
         width, height = page_layout.width, page_layout.height
 
-        page_elements = []
+        page_elements: List[Element] = []
         annotation_list = []
 
         coordinate_system = PixelSpace(
@@ -638,7 +639,7 @@ def _process_pdfminer_pages(
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
 
-            urls_metadata = []
+            urls_metadata: List[Dict[str, Any]] = []
 
             if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
                 annotations_within_element = check_annotations_within_element(
@@ -651,7 +652,7 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets = [obj.get_text()]
+                _text_snippets: List[str | Any] = [obj.get_text()]  # type: ignore
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
@@ -698,10 +699,12 @@ def _process_pdfminer_pages(
     return elements
 
 
-def _combine_list_elements(elements, coordinate_system):
+def _combine_list_elements(
+    elements: List[Element], coordinate_system: PixelSpace | PointSpace
+) -> List[Element]:
     """Combine elements that should be considered a single ListItem element."""
     tmp_element = None
-    updated_elements = []
+    updated_elements: List[Element] = []
     for element in elements:
         if isinstance(element, ListItem):
             tmp_element = element
@@ -712,20 +715,19 @@ def _combine_list_elements(elements, coordinate_system):
             boundary=tmp_coords,
         ):
             tmp_element.text = f"{tmp_text} {element.text}"
-            _combine_coordinates_into_element1(
+            # replace "element" with the corrected element
+            element = _combine_coordinates_into_element1(
                 element1=tmp_element,
                 element2=element,
                 coordinate_system=coordinate_system,
             )
-            # replace "element" with the corrected element
-            element = tmp_element
             # remove previously added ListItem element with incomplete text
             updated_elements.pop()
         updated_elements.append(element)
     return updated_elements
 
 
-def _get_links_from_urls_metadata(urls_metadata, moved_indices):
+def _get_links_from_urls_metadata(urls_metadata: List[Dict[str, Any]], moved_indices):
     links: List[Link] = []
     for url in urls_metadata:
         with contextlib.suppress(IndexError):
@@ -742,7 +744,9 @@ def _get_links_from_urls_metadata(urls_metadata, moved_indices):
     return links
 
 
-def _combine_coordinates_into_element1(element1, element2, coordinate_system):
+def _combine_coordinates_into_element1(
+    element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
+) -> Element:
     """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
     x1 = min(
         element1.metadata.coordinates.points[0][0],
@@ -765,6 +769,7 @@ def _combine_coordinates_into_element1(element1, element2, coordinate_system):
         points=points,
         system=coordinate_system,
     )
+    return element1
 
 
 def convert_pdf_to_images(
@@ -948,7 +953,7 @@ def get_uris(
     height: float,
     coordinate_system: Union[PixelSpace, PointSpace],
     page_number: int,
-) -> List[dict]:
+) -> List[Dict[str, Any]]:
     """
     Extracts URI annotations from a single or a list of PDF object references on a specific page.
     The type of annots (list or not) depends on the pdf formatting. The function detectes the type
@@ -979,7 +984,7 @@ def get_uris_from_annots(
     height: Union[int, float],
     coordinate_system: Union[PixelSpace, PointSpace],
     page_number: int,
-) -> List[dict]:
+) -> List[Dict[str, Any]]:
     """
     Extracts URI annotations from a list of PDF object references.
 
@@ -1107,16 +1112,16 @@ def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
 
 
 def check_annotations_within_element(
-    annotation_list: List[dict],
+    annotation_list: List[Dict[str, Any]],
     element_bbox: Tuple[float, float, float, float],
     page_number: int,
     threshold: float = 0.9,
-) -> List[dict]:
+) -> List[Dict[str, Any]]:
     """
     Filter annotations that are within or highly overlap with a specified element on a page.
 
     Args:
-        annotation_list (List[dict]): A list of dictionaries, each containing information
+        annotation_list (List[Dict[str,Any]]): A list of dictionaries, each containing information
             about an annotation.
         element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
@@ -1126,9 +1131,9 @@ def check_annotations_within_element(
             Default is 0.9.
 
     Returns:
-        List[dict]: A list of dictionaries containing information about annotations that are
-        within or highly overlap with the specified element on the given page, based on the
-        specified threshold.
+        List[Dict[str,Any]]: A list of dictionaries containing information about annotations
+        that are within or highly overlap with the specified element on the given page, based on
+        the specified threshold.
     """
     annotations_within_element = []
     for annotation in annotation_list:
@@ -1145,7 +1150,7 @@ def check_annotations_within_element(
 def get_word_bounding_box_from_element(
     obj: LTTextBox,
     height: float,
-) -> Tuple[List[LTChar], List[dict]]:
+) -> Tuple[List[LTChar], List[Dict[str, Any]]]:
     """
     Extracts characters and word bounding boxes from a PDF text element.
 
@@ -1154,10 +1159,10 @@ def get_word_bounding_box_from_element(
         height (float): The height of the page in the specified coordinate system.
 
     Returns:
-        Tuple[List[LTChar], List[dict]]: A tuple containing two lists:
+        Tuple[List[LTChar], List[Dict[str,Any]]]: A tuple containing two lists:
             - List[LTChar]: A list of LTChar objects representing individual characters.
-            - List[dict]: A list of dictionaries, each containing information about a word,
-              including its text, bounding box, and start index in the element's text.
+            - List[Dict[str,Any]]]: A list of dictionaries, each containing information about
+                a word, including its text, bounding box, and start index in the element's text.
     """
     characters = []
     words = []
@@ -1205,15 +1210,15 @@ def get_word_bounding_box_from_element(
     return characters, words
 
 
-def map_bbox_and_index(words: List[dict], annot: dict):
+def map_bbox_and_index(words: List[Dict[str, Any]], annot: Dict[str, Any]):
     """
     Maps a bounding box annotation to the corresponding text and start index within a list of words.
 
     Args:
-        words (List[dict]): A list of dictionaries, each containing information about a word,
-            including its text, bounding box, and start index.
-        annot (dict): The annotation dictionary to be mapped, which will be updated with "text" and
-            "start_index" fields.
+        words (List[Dict[str,Any]]): A list of dictionaries, each containing information about
+            a word, including its text, bounding box, and start index.
+        annot (Dict[str,Any]): The annotation dictionary to be mapped, which will be updated with
+        "text" and "start_index" fields.
 
     Returns:
         dict: The updated annotation dictionary with "text" representing the mapped text and
