@@ -3,9 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import (
-    CliConfig,
-)
+from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.chroma import ChromaWriteConfig, SimpleChromaConfig
 
 
@@ -23,7 +21,7 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
             click.Option(
                 ["--settings"],
                 required=False,
-                type=dict,
+                type=Dict(),
                 help="A dictionary of settings to communicate with the chroma server.",
             ),
             click.Option(
@@ -56,13 +54,14 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
                 ["--ssl"],
                 required=False,
                 default=False,
+                is_flag=True,
                 type=bool,
                 help="Whether to use SSL to connect to the Chroma server.",
             ),
             click.Option(
                 ["--headers"],
                 required=False,
-                type=dict,
+                type=Dict(),
                 help="A dictionary of headers to send to the Chroma server.",
             ),
             click.Option(
@@ -98,9 +97,5 @@ def get_base_dest_cmd():
         cli_config=ChromaCliConfig,
         additional_cli_options=[ChromaCliWriteConfig],
         write_config=ChromaWriteConfig,
-        # addition_configs={
-        #     "connector_config": SimpleChromaConfig,
-        #     "write_config": ChromaWriteConfig,
-        # },
     )
     return cmd_cls

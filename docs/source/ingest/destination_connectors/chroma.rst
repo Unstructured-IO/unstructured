@@ -12,62 +12,19 @@ First you'll need to install the Chroma dependencies as shown here.
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream local connector. This will create new files on your local. And then upload those to Chroma.
+upstream local connector. 
 
 .. tabs::
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-            local \
-            --input-path example-docs/book-war-and-peace-1225p.txt \
-            --output-dir local-to-pinecone \
-            --strategy fast \
-            --chunk-elements \
-            --embedding-provider <an unstructured embedding provider, ie. langchain-huggingface> \
-            --num-processes 2 \
-            --verbose \
-            --work-dir "<directory for intermediate outputs to be saved>" \
-            chroma \
-            --db-path "$DESTINATION_PATH" \
-            --collection-name "$COLLECTION_NAME" \
-            --batch-size 80
+      .. literalinclude:: ./code/bash/pinecone.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig, ChunkingConfig, EmbeddingConfig
-        from unstructured.ingest.runner import LocalRunner
-        if __name__ == "__main__":
-            runner = LocalRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="local-output-to-pinecone",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                chunking_config=ChunkingConfig(
-                  chunk_elements=True
-                ),
-                embedding_config=EmbeddingConfig(
-                  provider="langchain-huggingface",
-                ),
-                writer_type="chroma",
-                writer_kwargs={
-                    "db_path": os.getenv("DESTINATION_PATH"),
-                    "collection_name": os.getenv("COLLECTION_NAME"),
-                    "batch_size": 80,
-                }
-            )
-            runner.run(
-                input_path="example-docs/fake-memo.pdf",
-            )
+      .. literalinclude:: ./code/python/pinecone.py
+         :language: python
 
 
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> chroma --help``.

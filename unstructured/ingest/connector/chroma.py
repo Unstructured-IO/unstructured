@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
@@ -18,20 +19,23 @@ from unstructured.utils import requires_dependencies
 if t.TYPE_CHECKING:
     from chromadb import Collection as ChromaCollection
 
-    # from chromadb.config import Settings as ChromaSettings
+
+@dataclass
+class ChromaAccessConfig(AccessConfig):
+    settings: t.Optional[t.Dict[str, str]] = None
+    headers: t.Optional[t.Dict[str, str]] = None
 
 
 @dataclass
 class SimpleChromaConfig(BaseConnectorConfig):
+    access_config: ChromaAccessConfig
     collection_name: str
     path: t.Optional[str] = None
-    settings: t.Optional[t.Dict[str, str]] = None
     tenant: t.Optional[str] = None
     database: t.Optional[str] = None
     host: t.Optional[str] = None
     port: t.Optional[int] = None
     ssl: bool = False
-    headers: t.Optional[t.Dict[str, str]] = ({},)
 
 
 @dataclass
@@ -75,8 +79,8 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                 host=self.connector_config.host,
                 port=self.connector_config.port,
                 ssl=self.connector_config.ssl,
-                headers=self.connector_config.headers,
-                settings=self.connector_config.settings,
+                headers=self.connector_config.access_config.headers,
+                settings=self.connector_config.access_config.settings,
                 tenant=self.connector_config.tenant,
                 database=self.connector_config.database,
             )
@@ -114,7 +118,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             chunk = tuple(itertools.islice(it, batch_size))
 
     @staticmethod
-    def prepare_chroma_dict(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
+    def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
         """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
         ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
         chroma_dict = {}
@@ -137,7 +141,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         chroma_batch_size = self.write_config.batch_size
 
         for chunk in self.chunks(dict_list, chroma_batch_size):
-            self.upsert_batch(self.prepare_chroma_dict(chunk))
+            self.upsert_batch(self.prepare_chroma_list(chunk))
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
