@@ -21,6 +21,7 @@ COLLECTION_NAME="chroma-test-output-$RANDOM_SUFFIX"
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
+	# Kill chroma background process
 	pgrep -f chroma-dest | xargs kill
 	cleanup_dir "$DESTINATION_PATH"
 	cleanup_dir "$OUTPUT_DIR"

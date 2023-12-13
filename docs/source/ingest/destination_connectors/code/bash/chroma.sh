@@ -14,4 +14,4 @@ unstructured-ingest \
         --host "localhost" \
         --port 8000 \
         --collection-name "collection name" \
-        --batch-size 80 
+        --batch-size 80
