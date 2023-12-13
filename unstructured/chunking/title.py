@@ -21,7 +21,6 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Table,
     TableChunk,
-    Text,
     Title,
 )
 from unstructured.utils import lazyproperty
@@ -147,9 +146,6 @@ def _split_elements_by_title_and_table(
     prior_element = None
 
     for element in elements:
-        if not isinstance(element, Text):
-            continue
-
         metadata_differs = (
             _metadata_differs(element, prior_element, ignore_page_numbers=multipage_sections)
             if prior_element
@@ -310,7 +306,7 @@ class _TextSection:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Text]) -> None:
+    def __init__(self, elements: Iterable[Element]) -> None:
         self._elements = list(elements)
 
     def __eq__(self, other: Any) -> bool:
@@ -489,7 +485,7 @@ class _TextSectionBuilder:
     def __init__(self, maxlen: int) -> None:
         self._maxlen = maxlen
         self._separator_len = len(TEXT_SEPARATOR)
-        self._elements: List[Text] = []
+        self._elements: List[Element] = []
 
         # -- these mutable working values probably represent premature optimization but improve
         # -- performance and I expect will be welcome when processing a million elements
@@ -499,7 +495,7 @@ class _TextSectionBuilder:
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 
-    def add_element(self, element: Text) -> None:
+    def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
         self._elements.append(element)
         if element.text:

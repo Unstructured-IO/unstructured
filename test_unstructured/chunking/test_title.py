@@ -232,6 +232,7 @@ def test_split_elements_by_title_and_table():
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
+        CheckBox(),
     ]
     # --
     with pytest.raises(StopIteration):
