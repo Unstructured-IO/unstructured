@@ -18,9 +18,9 @@ CI=${CI:-"false"}
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  # Kill the container so the script can be repeatedly run using the same ports
-  echo "Stopping Elasticsearch Docker container"
-  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
+	# Kill the container so the script can be repeatedly run using the same ports
+	echo "Stopping Elasticsearch Docker container"
+	docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
 	cleanup_dir "$OUTPUT_DIR"
 	cleanup_dir "$WORK_DIR"
@@ -47,7 +47,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 	--verbose \
 	--index-name movies \
 	--hosts http://localhost:9200 \
-    --username "$ELASTICSEARCH_USER" \
+	--username "$ELASTICSEARCH_USER" \
 	--password "$ELASTICSEARCH_PASSWORD" \
 	--fields 'ethnicity,director,plot' \
 	--work-dir "$WORK_DIR" \

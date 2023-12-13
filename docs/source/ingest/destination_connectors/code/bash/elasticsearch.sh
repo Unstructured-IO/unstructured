@@ -15,4 +15,4 @@ unstructured-ingest \
 	--hosts "$ELASTICSEARCH_HOSTS" \
 	--username "$ELASTICSEARCH_USERNAME" \
 	--password "$ELASTICSEARCH_PASSWORD" \
-    --index-name "$ELASTICSEARCH_INDEX_NAME"
+	--index-name "$ELASTICSEARCH_INDEX_NAME"

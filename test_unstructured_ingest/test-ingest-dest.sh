@@ -15,18 +15,18 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  'azure.sh'
-  'azure-cognitive-search.sh'
-  'box.sh'
-  'delta-table.sh'
-  'dropbox.sh'
-  'elasticsearch.sh'
-  'gcs.sh'
-  'mongodb.sh'
-  'pinecone.sh'
-  's3.sh'
-  'weaviate.sh'
-  'sharepoint-embed-cog-index.sh'
+	'azure.sh'
+	'azure-cognitive-search.sh'
+	'box.sh'
+	'delta-table.sh'
+	'dropbox.sh'
+	'elasticsearch.sh'
+	'gcs.sh'
+	'mongodb.sh'
+	'pinecone.sh'
+	's3.sh'
+	'weaviate.sh'
+	'sharepoint-embed-cog-index.sh'
 )
 
 full_python_matrix_tests=(

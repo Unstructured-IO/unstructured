@@ -10,6 +10,5 @@ docker compose version
 docker compose --env-file "$ENV_FILE" -f "$SCRIPT_DIR"/common/docker-compose.yaml up --wait
 docker compose --env-file "$ENV_FILE" -f "$SCRIPT_DIR"/common/docker-compose.yaml ps
 
-
 echo "Cluster is live."
 python "$SCRIPT_DIR"/destination_connector/create_index.py
