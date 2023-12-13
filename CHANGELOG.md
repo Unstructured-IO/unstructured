@@ -16,6 +16,8 @@
 
 ### Fixes
 
+* **partition returning cid code in `hi_res`** occasaionally pdfminer can fail to decode the text in an pdf file and return cid code as text. Now when this happens the text from OCR is used.
+
 ## 0.11.3
 
 ### Enhancements
