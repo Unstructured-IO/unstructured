@@ -238,6 +238,7 @@ def _partition_pdf_or_image_local(
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    pdf_text_extractable: bool = False,
     extract_images_in_pdf: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
@@ -281,12 +282,14 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = process_file_with_pdfminer(
-            inferred_document_layout,
-            filename,
-            is_image,
-        )
+        if pdf_text_extractable is True:
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = process_file_with_pdfminer(
+                inferred_document_layout,
+                filename,
+            )
+        else:
+            merged_document_layout = inferred_document_layout
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -310,13 +313,14 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = process_data_with_pdfminer(
-            inferred_document_layout,
-            file,
-            is_image,
-        )
+        if pdf_text_extractable is True:
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = process_data_with_pdfminer(
+                inferred_document_layout,
+                file,
+            )
+        else:
+            merged_document_layout = inferred_document_layout
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -339,6 +343,11 @@ def _partition_pdf_or_image_local(
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
+
+    for page in final_document_layout.pages:
+        for el in page.elements:
+            el.text = el.text or ""
+
     elements = document_to_element_list(
         final_document_layout,
         sortable=True,
@@ -452,7 +461,7 @@ def partition_pdf_or_image(
                 isinstance(el, Text) and el.text.strip() for el in extracted_elements
             )
         except Exception as e:
-            logger.error(e, exc_info=True)
+            logger.error(e)
             logger.warning("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
@@ -476,6 +485,7 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                pdf_text_extractable=pdf_text_extractable,
                 extract_images_in_pdf=extract_images_in_pdf,
                 extract_element_types=extract_element_types,
                 image_output_dir_path=image_output_dir_path,
