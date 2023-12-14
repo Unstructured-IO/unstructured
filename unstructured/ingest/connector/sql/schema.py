@@ -16,6 +16,7 @@ TABLE_COLUMN_NAMES = {
         "last_modified",
         "file_directory",
         "filename",
+        "languages",
         "page_number",
         "links",
         "url",
@@ -77,6 +78,7 @@ class DatabaseSchema:
             f"INSERT INTO {table_name} ({','.join(columns)}) "
             f"VALUES ({','.join([self.placeholder for _ in values])})"
         )
+        # breakpoint()
 
         self.cursor.execute(query, values)
 

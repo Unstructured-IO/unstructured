@@ -40,7 +40,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--output-dir "$OUTPUT_DIR" \
 	--strategy fast \
 	--verbose \
-	--reprocess \
 	--input-path example-docs/fake-memo.pdf \
 	--work-dir "$WORK_DIR" \
 	--embedding-provider "langchain-huggingface" \
@@ -49,7 +48,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--username unstructured \
 	--password test \
 	--host localhost \
-	--port 5432 \
+	--port 5433 \
 	--database elements
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME" "5433"

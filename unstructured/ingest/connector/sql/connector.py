@@ -204,9 +204,10 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if (
             self.write_config.mode == "error" or self.write_config.mode == "ignore"
         ) and schema_exists:
+            breakpoint()
             raise ValueError(
                 f"There's already an elements schema ({str(self.write_config.table_name_mapping)}) "
-                f"at {self.connector_config.db_url}"
+                f"at {self.connector_config.db_name}"
             )
         if self.write_config.mode == "overwrite" and schema_exists:
             schema_helper.clear_schema()

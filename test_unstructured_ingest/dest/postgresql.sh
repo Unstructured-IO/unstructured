@@ -40,7 +40,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--output-dir "$OUTPUT_DIR" \
 	--strategy fast \
 	--verbose \
-	--reprocess \
 	--input-path example-docs/fake-memo.pdf \
 	--work-dir "$WORK_DIR" \
 	sql \
@@ -49,6 +48,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--password test \
 	--host localhost \
 	--port 5432 \
-	--database elements
+	--database elements \
+  --mode overwrite
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "postgresql"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "postgresql" "5432"

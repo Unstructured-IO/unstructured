@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 
-import os
 import sys
 
-DB_USERNAME = os.getenv("DB_USERNAME", "unstructured")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "test")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_HOST", 5432)
-DB_DATABASE = os.getenv("DB_DATABASE", "elements")
+# # none of these are in the environment
+# DB_USERNAME = os.getenv("DB_USERNAME", "unstructured")
+# DB_PASSWORD = os.getenv("DB_PASSWORD", "test")
+# DB_HOST = os.getenv("DB_HOST", "localhost")
+# DB_PORT = os.getenv("DB_PORT", 5432)
+# DB_DATABASE = os.getenv("DB_DATABASE", "elements")
 N_ELEMENTS = 5
 
 
-def create_connection(db_name, database=None):
+def create_connection(db_name, database=None, port=None):
     if db_name == "postgresql" or db_name == "pgvector":
         from psycopg2 import connect
 
         return connect(
-            user=DB_USERNAME,
-            password=DB_PASSWORD,
-            dbname=DB_DATABASE,
-            host=DB_HOST,
-            port=DB_PORT,
+            user="unstructured",
+            password="test",
+            dbname="elements",
+            host="localhost",
+            port=port,
         )
     elif db_name == "sqlite":
         from sqlite3 import connect
@@ -32,11 +32,14 @@ def create_connection(db_name, database=None):
 if __name__ == "__main__":
     database_name = sys.argv[1]
     db_url = None
+    port = None
     if database_name == "sqlite":
         db_url = sys.argv[2]
+    else: 
+        port = sys.argv[2]
 
     print(f"Running SQL output test for: {database_name}")
-    conn = create_connection(database_name, db_url)
+    conn = create_connection(database_name, db_url, port)
     query = "select count(*) from elements;"
     cursor = conn.cursor()
     cursor.execute(query)
