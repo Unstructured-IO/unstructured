@@ -71,14 +71,14 @@ class SqlCliWriteConfig(SqlWriteConfig, CliConfig):
                 ["--table-name-mapping"],
                 default=None,
                 type=Dict(),
-                help=("Name of the table(s) mapped to those defined in the example schema."),
+                help=("Dict of the table(s) mapped to those defined in the example schema."),
             ),
             click.Option(
                 ["--table-column-mapping"],
                 default=None,
                 type=Dict(),
                 help=(
-                    "Name of the table(s) column(s) mapped to those defined in the example schema."
+                    "Dict of the table(s) column(s) mapped to those defined in the example schema."
                 ),
             ),
             click.Option(

@@ -3,7 +3,9 @@ import typing as t
 import uuid
 from dataclasses import dataclass, field
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
@@ -22,13 +24,19 @@ from .schema import (
 
 
 @dataclass
+class SqlAccessConfig(AccessConfig):
+    password: t.Optional[str] = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleSqlConfig(BaseConnectorConfig):
     db_name: t.Optional[str]
     username: t.Optional[str]
-    password: t.Optional[str] = field(repr=False)
+    # password: t.Optional[str] = field(repr=False)
     host: t.Optional[str]
     database: t.Optional[str]
-    port: t.Optional[int] = 5432
+    port: t.Optional[int]
+    access_config: SqlAccessConfig
 
     def __post_init__(self):
         if (self.db_name == "sqlite") and (self.database is None):
@@ -56,7 +64,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
         return connect(
             user=self.username,
-            password=self.password,
+            password=self.access_config.password,
             dbname=self.database,
             host=self.host,
             port=self.port,
@@ -65,7 +73,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
 @dataclass
 class SqlWriteConfig(WriteConfig):
-    mode: t.Literal["error", "append", "overwrite"] = "error"
+    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
     table_name_mapping: t.Optional[t.Dict[str, str]] = None
     table_column_mapping: t.Optional[t.Dict[str, str]] = None
 
