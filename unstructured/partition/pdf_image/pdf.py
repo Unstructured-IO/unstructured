@@ -72,6 +72,7 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
+    annotate_layout_elements,
     check_element_types_to_extract,
     save_elements,
 )
@@ -247,6 +248,8 @@ def _partition_pdf_or_image_local(
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
+    analysis: bool = True,
+    analyzed_image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -294,6 +297,14 @@ def _partition_pdf_or_image_local(
                 dpi=pdf_image_dpi,
             )
 
+        if analysis:
+            annotate_layout_elements(
+                inferred_layout=inferred_document_layout,
+                filename=filename,
+                output_dir_path=analyzed_image_output_dir_path,
+                pdf_image_dpi=pdf_image_dpi,
+                is_image=is_image,
+            )
         merged_document_layout = merge_inferred_layout_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,

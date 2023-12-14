@@ -3,7 +3,7 @@ import pathlib
 import sys
 
 import pdf2image
-from unstructured_inference.inference.elements import Rectangle
+from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.visualize import draw_bbox
 
 from unstructured.documents.elements import PageBreak
@@ -29,11 +29,13 @@ def extract_element_coordinates(elements):
     return elements_coordinates
 
 
-def run_partition_pdf(f_path, strategy, images, output_dir):
+def run_partition_pdf(f_path, strategy, images, output_dir, output_f_basename):
     elements = partition_pdf(
         f_path,
         strategy=strategy,
         include_page_breaks=True,
+        analysis=True,
+        analyzed_image_output_dir_path=output_dir,
     )
 
     elements_coordinates = extract_element_coordinates(elements)
@@ -44,13 +46,12 @@ def run_partition_pdf(f_path, strategy, images, output_dir):
             points = coordinate.points
             x1, y1 = points[0]
             x2, y2 = points[2]
-            rect = Rectangle(x1, y1, x2, y2)
-            img = draw_bbox(img, rect, color="red")
+            el = TextRegion.from_coords(x1, y1, x2, y2)
+            img = draw_bbox(img, el, color="red")
 
-        output_image_path = os.path.join(output_dir, f"{strategy}-{idx + 1}.jpg")
-        print(f"output_image_path: {output_image_path}")
-
+        output_image_path = os.path.join(output_dir, f"{output_f_basename}_{idx + 1}_final.jpg")
         img.save(output_image_path)
+        print(f"output_image_path: {output_image_path}")
 
 
 def run(f_path, strategy):
@@ -59,7 +60,7 @@ def run(f_path, strategy):
     os.makedirs(output_dir_path, exist_ok=True)
 
     images = pdf2image.convert_from_path(f_path)
-    run_partition_pdf(f_path, strategy, images, output_dir_path)
+    run_partition_pdf(f_path, strategy, images, output_dir_path, f_basename)
 
 
 if __name__ == "__main__":

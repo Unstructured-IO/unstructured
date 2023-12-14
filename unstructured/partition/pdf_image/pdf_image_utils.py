@@ -159,3 +159,75 @@ def valid_text(text: str) -> bool:
     if not text:
         return False
     return "(cid:" not in text
+
+
+def annotate_layout_elements_with_image(
+    inferred_page_layout,
+    image: Image,
+    output_dir_path,
+    output_f_basename,
+    page_number,
+):
+    """"""
+
+    layout_map = {
+        "inferred": {"layout": inferred_page_layout, "color": "blue"},
+    }
+    for label, layout_data in layout_map.items():
+        page_layout = layout_data.get("layout")
+        color = layout_data.get("color")
+
+        page_layout.image = image
+        img = page_layout.annotate(colors=color)
+        output_f_path = os.path.join(
+            output_dir_path, f"{output_f_basename}_{page_number}_{label}.jpg"
+        )
+        write_image(img, output_f_path)
+        print(f"output_image_path: {output_f_path}")
+
+
+def annotate_layout_elements(
+    inferred_layout,
+    filename,
+    output_dir_path,
+    pdf_image_dpi: int,
+    is_image: bool = False,
+) -> None:
+    """"""
+
+    output_f_basename = os.path.splitext(os.path.basename(filename))[0]
+    images = []
+    try:
+        if is_image:
+            with Image.open(filename) as img:
+                images.append(img)
+                annotate_layout_elements_with_image(
+                    inferred_page_layout=inferred_layout.pages[0],
+                    image=img,
+                    output_dir_path=output_dir_path,
+                    output_f_basename=output_f_basename,
+                    page_number=1,
+                )
+        else:
+            with tempfile.TemporaryDirectory() as temp_dir:
+                _image_paths = pdf2image.convert_from_path(
+                    filename,
+                    dpi=pdf_image_dpi,
+                    output_folder=temp_dir,
+                    paths_only=True,
+                )
+                image_paths = cast(List[str], _image_paths)
+                for i, image_path in enumerate(image_paths):
+                    with Image.open(image_path) as img:
+                        annotate_layout_elements_with_image(
+                            inferred_page_layout=inferred_layout.pages[i],
+                            image=img,
+                            output_dir_path=output_dir_path,
+                            output_f_basename=output_f_basename,
+                            page_number=i + 1,
+                        )
+    except Exception as e:
+        if os.path.isdir(filename) or os.path.isfile(filename):
+            raise e
+        else:
+            raise FileNotFoundError(f'File "{filename}" not found!') from e
