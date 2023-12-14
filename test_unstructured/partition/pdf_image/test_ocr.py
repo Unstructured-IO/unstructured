@@ -470,13 +470,6 @@ def test_get_table_tokens(mock_ocr_layout):
         assert table_tokens == expected_tokens
 
 
-@pytest.mark.parametrize(
-    ("text", "outcome"), [("", False), ("foo", True), (None, False), ("(cid:10)boo", False)]
-)
-def test_valid_text(text, outcome):
-    assert ocr.valid_text(text) == outcome
-
-
 def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # the code should ignore this invalid text and use ocr region's text
     mock_out_layout[0].text = "(cid:10)(cid:5)?"

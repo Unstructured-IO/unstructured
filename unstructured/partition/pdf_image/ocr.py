@@ -24,6 +24,7 @@ from unstructured_pytesseract import Output
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
+from unstructured.partition.pdf_image.pdf_image_utils import valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE,
@@ -593,13 +594,6 @@ def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
                 text_regions.append(text_region)
 
     return text_regions
-
-
-def valid_text(text: str) -> bool:
-    """a helper that determines if the text is valid ascii text"""
-    if not text:
-        return False
-    return "(cid:" not in text
 
 
 def merge_out_layout_with_ocr_layout(
