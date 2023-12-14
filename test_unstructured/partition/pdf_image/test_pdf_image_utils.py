@@ -117,3 +117,10 @@ def test_save_elements(filename=example_doc_path("embedded-images.pdf")):
 def test_write_image_raises_error():
     with pytest.raises(ValueError):
         pdf_image_utils.write_image("invalid_type", "test_image.jpg")
+
+
+@pytest.mark.parametrize(
+    ("text", "outcome"), [("", False), ("foo", True), (None, False), ("(cid:10)boo", False)]
+)
+def test_valid_text(text, outcome):
+    assert pdf_image_utils.valid_text(text) == outcome
