@@ -246,7 +246,7 @@ def _partition_pdf_or_image_local(
     pdf_image_dpi: Optional[int] = None,
     **kwargs,
 ) -> List[Element]:
-    """Partition using package installed locally."""
+    """Partition using package installed locally"""
     from unstructured_inference.inference.layout import (
         process_data_with_model,
         process_file_with_model,
