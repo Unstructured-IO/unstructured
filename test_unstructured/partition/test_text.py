@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
-from typing import Optional, Sequence, Type, cast
+from typing import Optional, Type
 
 import pytest
 from pytest_mock import MockerFixture
@@ -13,7 +13,7 @@ from pytest_mock import MockerFixture
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import group_broken_paragraphs
-from unstructured.documents.elements import Address, ListItem, NarrativeText, Text, Title
+from unstructured.documents.elements import Address, ListItem, NarrativeText, Title
 from unstructured.partition.text import (
     _combine_paragraphs_less_than_min,
     _split_content_to_fit_max,
@@ -256,7 +256,7 @@ def test_partition_text_extract_regex_metadata():
 
 def test_partition_text_splits_long_text():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = cast(Sequence[Text], partition_text(filename=filename))
+    elements = partition_text(filename=filename)
     assert len(elements) > 0
     assert elements[0].text.startswith("Iwan Roberts")
     assert elements[-1].text.endswith("External links")
@@ -264,8 +264,8 @@ def test_partition_text_splits_long_text():
 
 def test_partition_text_splits_long_text_max_partition():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = cast(Sequence[Text], partition_text(filename=filename))
-    elements_max_part = cast(Sequence[Text], partition_text(filename=filename, max_partition=500))
+    elements = partition_text(filename=filename)
+    elements_max_part = partition_text(filename=filename, max_partition=500)
     # NOTE(klaijan) - I edited the operation here from < to <=
     # Please revert back if this does not make sense
     assert len(elements) <= len(elements_max_part)
@@ -278,11 +278,8 @@ def test_partition_text_splits_long_text_max_partition():
 
 def test_partition_text_splits_max_min_partition():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "norwich-city.txt")
-    elements = cast(Sequence[Text], partition_text(filename=filename))
-    elements_max_part = cast(
-        Sequence[Text],
-        partition_text(filename=filename, min_partition=1000, max_partition=1500),
-    )
+    elements = partition_text(filename=filename)
+    elements_max_part = partition_text(filename=filename, min_partition=1000, max_partition=1500)
     for i, element in enumerate(elements_max_part):
         # NOTE(robinson) - the last element does not have a next element to merge with,
         # so it can be short
@@ -314,27 +311,14 @@ def test_partition_text_splits_max_min_partition():
 
 
 def test_partition_text_min_max():
-    segments = cast(
-        Sequence[Text],
-        partition_text(
-            text=SHORT_PARAGRAPHS,
-            min_partition=6,
-        ),
-    )
+    segments = partition_text(text=SHORT_PARAGRAPHS, min_partition=6)
     for i, segment in enumerate(segments):
         # NOTE(robinson) - the last element does not have a next element to merge with,
         # so it can be short
         if i < len(segments) - 1:
             assert len(segment.text) >= 6
 
-    segments = cast(
-        Sequence[Text],
-        partition_text(
-            text=SHORT_PARAGRAPHS,
-            max_partition=20,
-            min_partition=7,
-        ),
-    )
+    segments = partition_text(text=SHORT_PARAGRAPHS, max_partition=20, min_partition=7)
     for i, segment in enumerate(segments):
         # NOTE(robinson) - the last element does not have a next element to merge with,
         # so it can be short
@@ -368,7 +352,7 @@ def test_combine_paragraphs_less_than_min():
 
 def test_partition_text_doesnt_get_page_breaks():
     text = "--------------------"
-    elements = cast(Sequence[Text], partition_text(text=text))
+    elements = partition_text(text=text)
     assert len(elements) == 1
     assert elements[0].text == text
     assert not isinstance(elements[0], ListItem)

@@ -27,9 +27,11 @@ from unstructured.logger import logger
 from unstructured.partition.pdf_image.pdf_image_utils import valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
+    IMAGE_COLOR_DEPTH,
     OCR_AGENT_PADDLE,
     OCR_AGENT_TESSERACT,
     SUBREGION_THRESHOLD_FOR_OCR,
+    TESSERACT_MAX_SIZE,
     TESSERACT_TEXT_HEIGHT,
     OCRMode,
     Source,
@@ -460,9 +462,15 @@ def get_ocr_layout_tesseract(
         text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
         or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
     ):
+        max_zoom = max(
+            0, np.round(np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH), 1)
+        )
         # rounding avoids unnecessary precision and potential numerical issues associated
         # with numbers very close to 1 inside cv2 image processing
-        zoom = np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1)
+        zoom = min(
+            np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
+            max_zoom,
+        )
         ocr_df = unstructured_pytesseract.image_to_data(
             np.array(zoom_image(image, zoom)),
             lang=ocr_languages,

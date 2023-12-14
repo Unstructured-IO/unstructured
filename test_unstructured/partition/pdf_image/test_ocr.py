@@ -470,6 +470,32 @@ def test_get_table_tokens(mock_ocr_layout):
         assert table_tokens == expected_tokens
 
 
+def test_auto_zoom_not_exceed_tesseract_limit(monkeypatch):
+    monkeypatch.setenv("TESSERACT_MIN_TEXT_HEIGHT", "1000")
+    monkeypatch.setenv("TESSERACT_OPTIMUM_TEXT_HEIGHT", "100000")
+    monkeypatch.setattr(
+        unstructured_pytesseract,
+        "image_to_data",
+        lambda *args, **kwargs: pd.DataFrame(
+            {
+                "left": [10, 20, 30, 0],
+                "top": [5, 15, 25, 0],
+                "width": [15, 25, 35, 0],
+                "height": [10, 20, 30, 0],
+                "text": ["Hello", "World", "!", ""],
+            },
+        ),
+    )
+
+    image = Image.new("RGB", (1000, 1000))
+    # tests that the code can run instead of oom and OCR results make sense
+    assert [region.text for region in ocr.get_ocr_layout_tesseract(image)] == [
+        "Hello",
+        "World",
+        "!",
+    ]
+
+
 def test_merge_out_layout_with_cid_code(mock_out_layout, mock_ocr_regions):
     # the code should ignore this invalid text and use ocr region's text
     mock_out_layout[0].text = "(cid:10)(cid:5)?"
