@@ -75,6 +75,9 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
     check_element_types_to_extract,
     save_elements,
 )
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    merge_inferred_layout_with_extracted_layout,
+)
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
@@ -283,14 +286,18 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
+        extracted_layout = []
         if pdf_text_extractable is True:
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = process_file_with_pdfminer(
-                inferred_document_layout,
-                filename,
+            extracted_layout = process_file_with_pdfminer(
+                filename=filename,
+                dpi=pdf_image_dpi,
             )
-        else:
-            merged_document_layout = inferred_document_layout
+
+        merged_document_layout = merge_inferred_layout_with_extracted_layout(
+            inferred_document_layout=inferred_document_layout,
+            extracted_layout=extracted_layout,
+        )
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -314,14 +321,19 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
+
+        extracted_layout = []
         if pdf_text_extractable is True:
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = process_data_with_pdfminer(
-                inferred_document_layout,
-                file,
+            extracted_layout = process_data_with_pdfminer(
+                file=file,
+                dpi=pdf_image_dpi,
             )
-        else:
-            merged_document_layout = inferred_document_layout
+
+        merged_document_layout = merge_inferred_layout_with_extracted_layout(
+            inferred_document_layout=inferred_document_layout,
+            extracted_layout=extracted_layout,
+        )
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
