@@ -14,7 +14,7 @@ from pptx.shapes.shapetree import _BaseGroupShapes  # pyright: ignore [reportPri
 from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,

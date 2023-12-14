@@ -34,7 +34,7 @@ from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
     clean_extra_whitespace_with_index_run,
     index_adjustment_after_clean_extra_whitespace,
