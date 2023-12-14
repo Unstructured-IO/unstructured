@@ -24,6 +24,7 @@ from unstructured_pytesseract import Output
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
+from unstructured.partition.pdf_image.pdf_image_utils import valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -617,7 +618,7 @@ def merge_out_layout_with_ocr_layout(
     supplemented with the OCR layout.
     """
 
-    out_regions_without_text = [region for region in out_layout if not region.text]
+    out_regions_without_text = [region for region in out_layout if not valid_text(region.text)]
 
     for out_region in out_regions_without_text:
         out_region.text = aggregate_ocr_text_by_block(
