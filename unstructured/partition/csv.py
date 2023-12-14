@@ -5,7 +5,7 @@ from typing import IO, BinaryIO, List, Optional, Union, cast
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
