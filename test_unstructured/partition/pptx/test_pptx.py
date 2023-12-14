@@ -4,7 +4,6 @@
 
 import os
 import pathlib
-from typing import Iterator, Sequence, cast
 
 import pptx
 import pytest
@@ -108,12 +107,9 @@ class DescribePptxPartitionerShapeOrderingBehaviors:
     """Tests related to shape inclusion and ordering based on position."""
 
     def it_recurses_into_group_shapes(self):
-        elements = cast(
-            Iterator[Text],
-            _PptxPartitioner(
-                get_test_file_path("group-shapes-nested.pptx"),
-            )._iter_presentation_elements(),
-        )
+        elements = _PptxPartitioner(
+            get_test_file_path("group-shapes-nested.pptx")
+        )._iter_presentation_elements()
 
         assert [e.text for e in elements] == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
@@ -254,7 +250,7 @@ EXPECTED_HTML_TABLE = """<table>
 
 def test_partition_pptx_grabs_tables():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
-    elements = cast(Sequence[Text], partition_pptx(filename=filename))
+    elements = partition_pptx(filename=filename)
 
     assert elements[1].text.startswith("Column 1")
     assert elements[1].text.strip().endswith("Aqua")
@@ -271,10 +267,7 @@ def test_partition_pptx_grabs_tables():
 )
 def test_partition_pptx_infer_table_structure(infer_table_structure):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
-    elements = cast(
-        Sequence[Text],
-        partition_pptx(filename=filename, infer_table_structure=infer_table_structure),
-    )
+    elements = partition_pptx(filename=filename, infer_table_structure=infer_table_structure)
     table_element_has_text_as_html_field = (
         hasattr(elements[1].metadata, "text_as_html")
         and elements[1].metadata.text_as_html is not None
@@ -284,7 +277,7 @@ def test_partition_pptx_infer_table_structure(infer_table_structure):
 
 def test_partition_pptx_malformed():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    elements = cast(Sequence[Text], partition_pptx(filename=filename))
+    elements = partition_pptx(filename=filename)
 
     assert elements[0].text == "Problem Date Placeholder"
     assert elements[1].text == "Test Slide"
