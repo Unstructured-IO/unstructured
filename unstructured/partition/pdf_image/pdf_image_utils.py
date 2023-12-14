@@ -152,3 +152,10 @@ def check_element_types_to_extract(
         normalized_extract_element_types.append(normalized_el_type)
 
     return normalized_extract_element_types
+
+
+def valid_text(text: str) -> bool:
+    """a helper that determines if the text is valid ascii text"""
+    if not text:
+        return False
+    return "(cid:" not in text
