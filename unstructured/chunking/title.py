@@ -7,11 +7,9 @@ from __future__ import annotations
 
 import collections
 import copy
-import functools
-import inspect
-from typing import Any, Callable, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
+from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
 
-from typing_extensions import ParamSpec, TypeAlias
+from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -195,64 +193,6 @@ def _metadata_differs(
     if ignore_page_numbers:
         return False
     return metadata1.page_number != metadata2.page_number
-
-
-_P = ParamSpec("_P")
-
-
-def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """Decorator for chunking text.
-
-    Uses title elements to identify sections within the document for chunking. Splits off a new
-    section when a title is detected or if metadata changes, which happens when page numbers or
-    sections change. Cuts off sections once they have exceeded a character length of
-    max_characters.
-    """
-
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
-        if func.__doc__ and (
-            "chunking_strategy" in func.__code__.co_varnames
-            and "chunking_strategy" not in func.__doc__
-        ):
-            func.__doc__ += (
-                "\nchunking_strategy"
-                + "\n\tStrategy used for chunking text into larger or smaller elements."
-                + "\n\tDefaults to `None` with optional arg of 'by_title'."
-                + "\n\tAdditional Parameters:"
-                + "\n\t\tmultipage_sections"
-                + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
-                + "\n\t\tcombine_text_under_n_chars"
-                + "\n\t\t\tCombines elements (for example a series of titles) until a section"
-                + "\n\t\t\treaches a length of n characters."
-                + "\n\t\tnew_after_n_chars"
-                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
-                + "\n\t\t\ta soft max."
-                + "\n\t\tmax_characters"
-                + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
-                + "\n\t\t\tof length n characters, a hard max."
-            )
-
-        @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
-            elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
-            if params.get("chunking_strategy") == "by_title":
-                elements = chunk_by_title(
-                    elements,
-                    multipage_sections=params.get("multipage_sections", True),
-                    combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
-                    new_after_n_chars=params.get("new_after_n_chars", 500),
-                    max_characters=params.get("max_characters", 500),
-                )
-            return elements
-
-        return wrapper
-
-    return decorator
 
 
 # == PreChunks ===================================================================================
