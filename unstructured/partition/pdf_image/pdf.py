@@ -652,7 +652,7 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets: List[str | Any] = [obj.get_text()]  # type: ignore
+                _text_snippets: List = [obj.get_text()]
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
