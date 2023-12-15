@@ -1,3 +1,13 @@
+## 0.11.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix `partition_pdf()` and `partition_image()` importation issue.** Reorganize `pdf.py` and `image.py` modules to be consistent with other types of document import code.
+
 ## 0.11.4
 
 ### Enhancements
