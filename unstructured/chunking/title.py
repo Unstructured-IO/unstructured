@@ -11,6 +11,7 @@ from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, T
 
 from typing_extensions import TypeAlias
 
+from unstructured.chunking.base import ChunkingOptions
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -24,9 +25,6 @@ from unstructured.documents.elements import (
 from unstructured.utils import lazyproperty
 
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
-
-# -- goes between text of each element when element-text is concatenated to form chunk --
-TEXT_SEPARATOR = "\n\n"
 
 
 def chunk_by_title(
@@ -64,57 +62,22 @@ def chunk_by_title(
         Chunks elements text and text_as_html (if present) into chunks of length
         n characters (hard max)
     """
-
-    # -- validation and arg pre-processing ---------------------------
-
-    # -- chunking window must have positive length --
-    if max_characters <= 0:
-        raise ValueError(f"'max_characters' argument must be > 0, got {max_characters}")
-
-    # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
-    # -- capped at max-chars
-    if combine_text_under_n_chars is None or combine_text_under_n_chars > max_characters:
-        combine_text_under_n_chars = max_characters
-
-    # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-    # -- but a negative value is not
-    if combine_text_under_n_chars < 0:
-        raise ValueError(
-            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}",
-        )
-
-    # -- same with `new_after_n_chars` --
-    if new_after_n_chars is None or new_after_n_chars > max_characters:
-        new_after_n_chars = max_characters
-
-    if new_after_n_chars < 0:
-        raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
-
-    # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-    if combine_text_under_n_chars > new_after_n_chars:
-        combine_text_under_n_chars = new_after_n_chars
-
-    # ----------------------------------------------------------------
+    opts = ChunkingOptions.new(
+        combine_text_under_n_chars=combine_text_under_n_chars,
+        max_characters=max_characters,
+        multipage_sections=multipage_sections,
+        new_after_n_chars=new_after_n_chars,
+    )
 
     pre_chunks = PreChunkCombiner(
-        _split_elements_by_title_and_table(
-            elements,
-            multipage_sections=multipage_sections,
-            new_after_n_chars=new_after_n_chars,
-            max_characters=max_characters,
-        ),
-        max_characters,
-        combine_text_under_n_chars,
+        _split_elements_by_title_and_table(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
-    return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks(max_characters)]
+    return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
 
 
 def _split_elements_by_title_and_table(
-    elements: List[Element],
-    multipage_sections: bool,
-    new_after_n_chars: int,
-    max_characters: int,
+    elements: List[Element], opts: ChunkingOptions
 ) -> Iterator[TextPreChunk | TablePreChunk]:
     """Implements "pre-chunker" responsibilities.
 
@@ -139,13 +102,13 @@ def _split_elements_by_title_and_table(
 
     A Table or Checkbox element is placed into a pre-chunk by itself.
     """
-    pre_chunk_builder = TextPreChunkBuilder(max_characters)
+    pre_chunk_builder = TextPreChunkBuilder(opts)
 
     prior_element = None
 
     for element in elements:
         metadata_differs = (
-            _metadata_differs(element, prior_element, ignore_page_numbers=multipage_sections)
+            _metadata_differs(element, prior_element, ignore_page_numbers=opts.multipage_sections)
             if prior_element
             else False
         )
@@ -157,7 +120,7 @@ def _split_elements_by_title_and_table(
             # -- adding this element would exceed hard-maxlen for pre_chunk --
             or pre_chunk_builder.remaining_space < len(str(element))
             # -- pre_chunk already meets or exceeds soft-maxlen --
-            or pre_chunk_builder.text_length >= new_after_n_chars
+            or pre_chunk_builder.text_length >= opts.soft_max
             # -- a semantic boundary is indicated by metadata change since prior element --
             or metadata_differs
         ):
@@ -166,7 +129,7 @@ def _split_elements_by_title_and_table(
 
         # -- emit table and checkbox immediately since they are always isolated --
         if isinstance(element, Table):
-            yield TablePreChunk(table=element)
+            yield TablePreChunk(table=element, opts=opts)
         # -- but accumulate text elements for consolidation into a composite chunk --
         else:
             pre_chunk_builder.add_element(element)
@@ -201,13 +164,15 @@ def _metadata_differs(
 class TablePreChunk:
     """A pre-chunk composed of a single Table element."""
 
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: Table, opts: ChunkingOptions) -> None:
         self._table = table
+        self._opts = opts
 
-    def iter_chunks(self, maxlen: int) -> Iterator[Table | TableChunk]:
+    def iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
         text = self._table.text
         html = self._table.metadata.text_as_html or ""
+        maxlen = self._opts.hard_max
 
         # -- only chunk a table when it's too big to swallow whole --
         if len(text) <= maxlen and len(html) <= maxlen:
@@ -246,8 +211,9 @@ class TextPreChunk:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Element]) -> None:
+    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions) -> None:
         self._elements = list(elements)
+        self._opts = opts
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, TextPreChunk):
@@ -256,12 +222,13 @@ class TextPreChunk:
 
     def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
         """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
-        return TextPreChunk(self._elements + other_pre_chunk._elements)
+        return TextPreChunk(self._elements + other_pre_chunk._elements, opts=self._opts)
 
-    def iter_chunks(self, maxlen: int) -> Iterator[CompositeElement]:
+    def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
         text = self._text
         text_len = len(text)
+        maxlen = self._opts.hard_max
         start = 0
         remaining = text_len
 
@@ -333,6 +300,7 @@ class TextPreChunk:
         offsets of each regex match are also adjusted for their new positions.
         """
         chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
+        separator_len = len(self._opts.text_separator)
         running_text_len = 0
         start_offset = 0
 
@@ -342,7 +310,7 @@ class TextPreChunk:
             if not text_len:
                 continue
             # -- account for blank line between "squashed" elements, but not before first element --
-            running_text_len += len(TEXT_SEPARATOR) if running_text_len else 0
+            running_text_len += separator_len if running_text_len else 0
             start_offset = running_text_len
             running_text_len += text_len
 
@@ -404,7 +372,8 @@ class TextPreChunk:
 
         Each element-text is separated from the next by a blank line ("\n\n").
         """
-        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
+        text_separator = self._opts.text_separator
+        return text_separator.join(e.text for e in self._elements if e.text)
 
 
 class TextPreChunkBuilder:
@@ -422,13 +391,10 @@ class TextPreChunkBuilder:
     clears the elements it contains so it is ready to build the next text-pre-chunk.
     """
 
-    def __init__(self, maxlen: int) -> None:
-        self._maxlen = maxlen
-        self._separator_len = len(TEXT_SEPARATOR)
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
+        self._separator_len = len(opts.text_separator)
         self._elements: List[Element] = []
-
-        # -- these mutable working values probably represent premature optimization but improve
-        # -- performance and I expect will be welcome when processing a million elements
 
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: List[str] = []
@@ -457,14 +423,14 @@ class TextPreChunkBuilder:
         self._elements.clear()
         self._text_segments.clear()
         self._text_len = 0
-        yield TextPreChunk(elements)
+        yield TextPreChunk(elements, self._opts)
 
     @property
     def remaining_space(self) -> int:
         """Maximum text-length of an element that can be added without exceeding maxlen."""
         # -- include length of trailing separator that will go before next element text --
         separators_len = self._separator_len * len(self._text_segments)
-        return self._maxlen - self._text_len - separators_len
+        return self._opts.hard_max - self._text_len - separators_len
 
     @property
     def text_length(self) -> int:
@@ -490,19 +456,14 @@ class TextPreChunkBuilder:
 class PreChunkCombiner:
     """Filters pre-chunk stream to combine small pre-chunks where possible."""
 
-    def __init__(
-        self,
-        pre_chunks: Iterable[PreChunk],
-        maxlen: int,
-        combine_text_under_n_chars: int,
-    ):
+    def __init__(self, pre_chunks: Iterable[PreChunk], opts: ChunkingOptions):
         self._pre_chunks = pre_chunks
-        self._maxlen = maxlen
-        self._combine_text_under_n_chars = combine_text_under_n_chars
+        self._opts = opts
 
     def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
         """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
-        accum = TextPreChunkAccumulator(self._maxlen)
+        accum = TextPreChunkAccumulator(self._opts)
+        combine_text_under_n_chars = self._opts.combine_text_under_n_chars
 
         for pre_chunk in self._pre_chunks:
             # -- start new pre-chunk under these conditions --
@@ -510,7 +471,7 @@ class PreChunkCombiner:
                 # -- a table pre-chunk is never combined --
                 isinstance(pre_chunk, TablePreChunk)
                 # -- don't add another pre-chunk once length has reached combination soft-max --
-                or accum.text_length >= self._combine_text_under_n_chars
+                or accum.text_length >= combine_text_under_n_chars
                 # -- combining would exceed hard-max --
                 or accum.remaining_space < pre_chunk.text_length
             ):
@@ -541,8 +502,8 @@ class TextPreChunkAccumulator:
     clears the pre-chunks it contains so it is ready to accept the next text-pre-chunk.
     """
 
-    def __init__(self, maxlen: int) -> None:
-        self._maxlen = maxlen
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
         self._pre_chunks: List[TextPreChunk] = []
 
     def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
@@ -569,19 +530,22 @@ class TextPreChunkAccumulator:
     @property
     def remaining_space(self) -> int:
         """Maximum size of pre-chunk that can be added without exceeding maxlen."""
+        maxlen = self._opts.hard_max
         return (
-            self._maxlen
+            maxlen
             if not self._pre_chunks
             # -- an additional pre-chunk will also incur an additional separator --
-            else self._maxlen - self.text_length - len(TEXT_SEPARATOR)
+            else maxlen - self.text_length - len(self._opts.text_separator)
         )
 
     @property
     def text_length(self) -> int:
         """Size of concatenated text in all pre-chunks in accumulator."""
         n = len(self._pre_chunks)
-        return (
-            0
-            if n == 0
-            else sum(s.text_length for s in self._pre_chunks) + len(TEXT_SEPARATOR) * (n - 1)
-        )
+
+        if n == 0:
+            return 0
+
+        total_text_length = sum(s.text_length for s in self._pre_chunks)
+        total_separator_length = len(self._opts.text_separator) * (n - 1)
+        return total_text_length + total_separator_length
