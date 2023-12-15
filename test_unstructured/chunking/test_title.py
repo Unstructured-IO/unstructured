@@ -4,6 +4,7 @@ from typing import List
 
 import pytest
 
+from unstructured.chunking.base import ChunkingOptions
 from unstructured.chunking.title import (
     PreChunkCombiner,
     TablePreChunk,
@@ -29,141 +30,6 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.html import partition_html
-
-# == chunk_by_title() validation behaviors =======================================================
-
-
-@pytest.mark.parametrize("max_characters", [0, -1, -42])
-def test_it_rejects_max_characters_not_greater_than_zero(max_characters: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'max_characters' argument must be > 0, got {max_characters}",
-    ):
-        chunk_by_title(elements, max_characters=max_characters)
-
-
-def test_it_does_not_complain_when_specifying_max_characters_by_itself():
-    """Caller can specify `max_characters` arg without specifying any others.
-
-    In particular, When `combine_text_under_n_chars` is not specified it defaults to the value of
-    `max_characters`; it has no fixed default value that can be greater than `max_characters` and
-    trigger an exception.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=50)
-    except ValueError:
-        pytest.fail("did not accept `max_characters` as option by itself")
-
-
-@pytest.mark.parametrize("n_chars", [-1, -42])
-def test_it_rejects_combine_text_under_n_chars_for_n_less_than_zero(n_chars: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
-    ):
-        chunk_by_title(elements, combine_text_under_n_chars=n_chars)
-
-
-def test_it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining():
-    """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    chunks = chunk_by_title(elements, max_characters=50, combine_text_under_n_chars=0)
-
-    assert chunks == [CompositeElement("Lorem ipsum dolor.")]
-
-
-def test_it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself():
-    """Caller can specify `combine_text_under_n_chars` arg without specifying any other options."""
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, combine_text_under_n_chars=50)
-    except ValueError:
-        pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
-
-
-def test_it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars():
-    """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-    So rather than raising an exception or warning, we just cap that value at `max_characters` which
-    is the behavioral equivalent.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=500, combine_text_under_n_chars=600)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
-
-
-@pytest.mark.parametrize("n_chars", [-1, -42])
-def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
-    ):
-        chunk_by_title(elements, new_after_n_chars=n_chars)
-
-
-def test_it_does_not_complain_when_specifying_new_after_n_chars_by_itself():
-    """Caller can specify `new_after_n_chars` arg without specifying any other options.
-
-    In particular, `combine_text_under_n_chars` value is adjusted down to the `new_after_n_chars`
-    value when the default for `combine_text_under_n_chars` exceeds the value of
-    `new_after_n_chars`.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, new_after_n_chars=50)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` as option by itself")
-
-
-def test_it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chunk():
-    """Specifying `new_after_n_chars=0` places each element into its own pre-chunk.
-
-    This puts each element into its own chunk, although long chunks are still split.
-    """
-    elements: List[Element] = [
-        Text("Lorem"),
-        Text("ipsum"),
-        Text("dolor"),
-    ]
-
-    chunks = chunk_by_title(elements, max_characters=50, new_after_n_chars=0)
-
-    assert chunks == [
-        CompositeElement("Lorem"),
-        CompositeElement("ipsum"),
-        CompositeElement("dolor"),
-    ]
-
-
-def test_it_silently_accepts_new_after_n_chars_greater_than_maxchars():
-    """`new_after_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-    So rather than raising an exception or warning, we just cap that value at `max_characters` which
-    is the behavioral equivalent.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=500, new_after_n_chars=600)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
-
-
-# ================================================================================================
 
 
 def test_it_splits_a_large_element_into_multiple_chunks():
@@ -199,12 +65,7 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = _split_elements_by_title_and_table(
-        elements,
-        multipage_sections=True,
-        new_after_n_chars=500,
-        max_characters=500,
-    )
+    pre_chunks = _split_elements_by_title_and_table(elements, opts=ChunkingOptions.new())
 
     pre_chunk = next(pre_chunks)
     assert isinstance(pre_chunk, TextPreChunk)
@@ -712,10 +573,11 @@ class DescribeTablePreChunk:
         )
         text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
         pre_chunk = TablePreChunk(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            opts=ChunkingOptions.new(max_characters=175),
         )
 
-        chunk_iter = pre_chunk.iter_chunks(maxlen=175)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, Table)
@@ -757,10 +619,11 @@ class DescribeTablePreChunk:
             "Vivamus quis   nunc ipsum donec ac fermentum"
         )
         pre_chunk = TablePreChunk(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            opts=ChunkingOptions.new(max_characters=100),
         )
 
-        chunk_iter = pre_chunk.iter_chunks(maxlen=100)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -818,17 +681,20 @@ class DescribeTextPreChunk:
 
         Note that neither the original or other pre_chunk are mutated.
         """
+        opts = ChunkingOptions.new()
         pre_chunk = TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
-            ]
+            ],
+            opts=opts,
         )
         other_pre_chunk = TextPreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
 
         new_pre_chunk = pre_chunk.combine(other_pre_chunk)
@@ -839,19 +705,22 @@ class DescribeTextPreChunk:
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
         assert pre_chunk == TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
-            ]
+            ],
+            opts=opts,
         )
         assert other_pre_chunk == TextPreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
 
     def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
@@ -862,10 +731,11 @@ class DescribeTextPreChunk:
                     "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
                     "lectus porta volutpat.",
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(max_characters=200),
         )
 
-        chunk_iter = pre_chunk.iter_chunks(maxlen=200)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
@@ -885,10 +755,11 @@ class DescribeTextPreChunk:
                     " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
                     " commodo consequat."
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(max_characters=200),
         )
 
-        chunk_iter = pre_chunk.iter_chunks(maxlen=200)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
@@ -907,7 +778,9 @@ class DescribeTextPreChunk:
 
     def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
         """.text_length is the size of chunk this pre-chunk will produce (before any splitting)."""
-        pre_chunk = TextPreChunk([PageBreak(""), Text("foo"), Text("bar")])
+        pre_chunk = TextPreChunk(
+            [PageBreak(""), Text("foo"), Text("bar")], opts=ChunkingOptions.new()
+        )
         assert pre_chunk.text_length == 8
 
     def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
@@ -931,7 +804,8 @@ class DescribeTextPreChunk:
                         languages=["lat", "eng"],
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
         assert pre_chunk._all_metadata_values == {
@@ -967,7 +841,8 @@ class DescribeTextPreChunk:
             [
                 Title("Lorem Ipsum", metadata=metadata),
                 Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
         # -- ad-hoc fields "coefficient" and "quotient" do not appear --
@@ -1008,7 +883,8 @@ class DescribeTextPreChunk:
                         regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
         regex_metadata = pre_chunk._consolidated_regex_meta
@@ -1062,7 +938,8 @@ class DescribeTextPreChunk:
                         },
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
         meta_kwargs = pre_chunk._meta_kwargs
@@ -1098,7 +975,7 @@ class DescribeTextPreChunk:
         The text-segment contributed by each element is separated from the next by a blank line
         ("\n\n"). An element that contributes no text does not give rise to a separator.
         """
-        pre_chunk = TextPreChunk(elements)
+        pre_chunk = TextPreChunk(elements, opts=ChunkingOptions.new())
         assert pre_chunk._text == expected_value
 
 
@@ -1106,13 +983,13 @@ class DescribeTextPreChunkBuilder:
     """Unit-test suite for `unstructured.chunking.title.TextPreChunkBuilder`."""
 
     def it_is_empty_on_construction(self):
-        builder = TextPreChunkBuilder(maxlen=50)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
 
         assert builder.text_length == 0
         assert builder.remaining_space == 50
 
     def it_accumulates_elements_added_to_it(self):
-        builder = TextPreChunkBuilder(maxlen=150)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         builder.add_element(Title("Introduction"))
         assert builder.text_length == 12
@@ -1128,7 +1005,7 @@ class DescribeTextPreChunkBuilder:
         assert builder.remaining_space == 36
 
     def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        builder = TextPreChunkBuilder(maxlen=150)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
         builder.add_element(Title("Introduction"))
         builder.add_element(
             Text(
@@ -1151,7 +1028,7 @@ class DescribeTextPreChunkBuilder:
         assert builder.remaining_space == 150
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
-        builder = TextPreChunkBuilder(maxlen=150)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         pre_chunks = list(builder.flush())
 
@@ -1160,7 +1037,7 @@ class DescribeTextPreChunkBuilder:
         assert builder.remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        builder = TextPreChunkBuilder(maxlen=50)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
         builder.add_element(Text("abcde"))
         builder.add_element(Text("fghij"))
 
@@ -1180,30 +1057,32 @@ class DescribePreChunkCombiner:
     """Unit-test suite for `unstructured.chunking.title.PreChunkCombiner`."""
 
     def it_combines_sequential_small_text_pre_chunks(self):
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
             TextPreChunk(
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
             TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
-        pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, maxlen=250, combine_text_under_n_chars=250
-        ).iter_combined_pre_chunks()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
         assert isinstance(pre_chunk, TextPreChunk)
@@ -1219,24 +1098,27 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def but_it_does_not_combine_table_pre_chunks(self):
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             ),
-            TablePreChunk(Table("Heading\nCell text")),
+            TablePreChunk(Table("Heading\nCell text"), opts=opts),
             TextPreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, maxlen=250, combine_text_under_n_chars=250
+            pre_chunks, ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1261,31 +1143,33 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_specified_combination_threshold(self):
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=80)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
             TextPreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 139
             TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
-        pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, maxlen=250, combine_text_under_n_chars=80
-        ).iter_combined_pre_chunks()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
         assert isinstance(pre_chunk, TextPreChunk)
@@ -1307,32 +1191,34 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_hard_maximum_window_length(self):
+        opts = ChunkingOptions.new(max_characters=200, combine_text_under_n_chars=200)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
             TextPreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 139
             TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 214
         ]
 
-        pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, maxlen=200, combine_text_under_n_chars=200
-        ).iter_combined_pre_chunks()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
         assert isinstance(pre_chunk, TextPreChunk)
@@ -1355,9 +1241,9 @@ class DescribePreChunkCombiner:
 
     def it_accommodates_and_isolates_an_oversized_pre_chunk(self):
         """Such as occurs when a single element exceeds the window size."""
-
+        opts = ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
         pre_chunks = [
-            TextPreChunk([Title("Lorem Ipsum")]),
+            TextPreChunk([Title("Lorem Ipsum")], opts=opts),
             TextPreChunk(  # 179
                 [
                     Text(
@@ -1365,13 +1251,14 @@ class DescribePreChunkCombiner:
                         " Mauris nec urna non augue vulputate consequat eget et nisi."  # 60
                         " Sed orci quam, eleifend sit amet vehicula, elementum ultricies."  # 64
                     )
-                ]
+                ],
+                opts=opts,
             ),
-            TextPreChunk([Title("Vulputate Consequat")]),
+            TextPreChunk([Title("Vulputate Consequat")], opts=opts),
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, maxlen=150, combine_text_under_n_chars=150
+            pre_chunks, ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1400,20 +1287,22 @@ class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.title.TextPreChunkAccumulator`."""
 
     def it_is_empty_on_construction(self):
-        accum = TextPreChunkAccumulator(maxlen=100)
+        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=100))
 
         assert accum.text_length == 0
         assert accum.remaining_space == 100
 
     def it_accumulates_pre_chunks_added_to_it(self):
-        accum = TextPreChunkAccumulator(maxlen=500)
+        opts = ChunkingOptions.new(max_characters=500)
+        accum = TextPreChunkAccumulator(opts=opts)
 
         accum.add_pre_chunk(
             TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             )
         )
         assert accum.text_length == 68
@@ -1424,20 +1313,23 @@ class DescribeTextPreChunkAccumulator:
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
+                ],
+                opts=opts,
             )
         )
         assert accum.text_length == 141
         assert accum.remaining_space == 357
 
     def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        accum = TextPreChunkAccumulator(maxlen=150)
+        opts = ChunkingOptions.new(max_characters=150)
+        accum = TextPreChunkAccumulator(opts=opts)
         accum.add_pre_chunk(
             TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             )
         )
         accum.add_pre_chunk(
@@ -1445,7 +1337,8 @@ class DescribeTextPreChunkAccumulator:
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
+                ],
+                opts=opts,
             )
         )
         accum.add_pre_chunk(
@@ -1453,7 +1346,8 @@ class DescribeTextPreChunkAccumulator:
                 [
                     Title("Sed Orci"),
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
-                ]
+                ],
+                opts=opts,
             )
         )
 
@@ -1477,7 +1371,7 @@ class DescribeTextPreChunkAccumulator:
         assert accum.remaining_space == 150
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
-        accum = TextPreChunkAccumulator(maxlen=150)
+        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=150))
 
         pre_chunks = list(accum.flush())
 
@@ -1486,9 +1380,10 @@ class DescribeTextPreChunkAccumulator:
         assert accum.remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        accum = TextPreChunkAccumulator(maxlen=100)
-        accum.add_pre_chunk(TextPreChunk([Text("abcde")]))
-        accum.add_pre_chunk(TextPreChunk([Text("fghij")]))
+        opts = ChunkingOptions.new(max_characters=100)
+        accum = TextPreChunkAccumulator(opts=opts)
+        accum.add_pre_chunk(TextPreChunk([Text("abcde")], opts=opts))
+        accum.add_pre_chunk(TextPreChunk([Text("fghij")], opts=opts))
 
         # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
         # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
