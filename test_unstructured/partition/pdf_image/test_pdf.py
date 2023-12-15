@@ -196,7 +196,7 @@ def test_partition_pdf_with_model_name_env_var(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
-        assert mock_process.call_args[1]["model_name"] == "checkbox"
+        assert mock_process.call_args[1]["hi_res_model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_model_name(
@@ -212,7 +212,7 @@ def test_partition_pdf_with_model_name(
         pdf.partition_pdf(
             filename=filename, strategy=PartitionStrategy.HI_RES, model_name="checkbox"
         )
-        assert mock_process.call_args[1]["model_name"] == "checkbox"
+        assert mock_process.call_args[1]["hi_res_model_name"] == "checkbox"
 
 
 def test_partition_pdf_with_hi_res_model_name(
