@@ -286,7 +286,7 @@
     "type": "Title"
   },
   {
-    "element_id": "f2fdefc49840022ffb3a88bd4a3512d0",
+    "element_id": "467d93043002622ce81acca3c0cb583c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -295,7 +295,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the",
+    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the",
     "type": "NarrativeText"
   },
   {
@@ -312,7 +312,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "69010f31402211bc0029986b9c2c2a27",
+    "element_id": "aaedb0d8a48db639a022b216035c56de",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -321,11 +321,11 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
+    "text": "© The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
     "type": "ListItem"
   },
   {
-    "element_id": "e69dab6e2bc16d11cfd2d80a804d89fb",
+    "element_id": "f3c5ed1c1de057195ad9a900adbbb7f3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -334,7 +334,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can",
+    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can",
     "type": "NarrativeText"
   },
   {
@@ -351,7 +351,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "1c1d6b35ac0925a35ea3bb4d018e675f",
+    "element_id": "7c65dd387d814178eedf5ad13d1cf394",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -360,7 +360,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes.",
+    "text": "© The dataset includes a program that can generate similar problem instances of different sizes.",
     "type": "NarrativeText"
   },
   {
@@ -429,7 +429,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f2506416c6fe350d3366f89be8d932cb",
+    "element_id": "eb21bd15b23d5be59290e5a063011a28",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -438,7 +438,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The travel time, δij, between any two locations i; j A 1; …; l.",
+    "text": "e The travel time, 6j, between any two locations i,j ¢1,...,1.",
     "type": "ListItem"
   },
   {
@@ -507,7 +507,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "5f9fb229a1da066e2639569d950c70b8",
+    "element_id": "6f8d7d65038065cc1b16faefa2230af4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -516,7 +516,7 @@
       ],
       "page_number": 3
     },
-    "text": "j , the vehicle must travel empty from le j (cid:3)te i Þ. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisﬁed:",
+    "text": "A trip j can be covered after trip i by the same vehicle, if t} > tf +5ee- If lh 4 f, the vehicle must travel empty from I; to hi. otherwise, the vehicle may require waiting at I; for the duration of (Gj —¢). Aschedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisfied:",
     "type": "NarrativeText"
   },
   {

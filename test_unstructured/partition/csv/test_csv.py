@@ -4,8 +4,10 @@ import pytest
 
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
+    EXPECTED_TABLE_SEMICOLON_DELIMITER,
     EXPECTED_TABLE_WITH_EMOJI,
     EXPECTED_TEXT,
+    EXPECTED_TEXT_SEMICOLON_DELIMITER,
     EXPECTED_TEXT_WITH_EMOJI,
     EXPECTED_TEXT_XLSX,
 )
@@ -24,6 +26,11 @@ EXPECTED_FILETYPE = "text/csv"
     [
         ("stanley-cups.csv", EXPECTED_TEXT, EXPECTED_TABLE),
         ("stanley-cups-with-emoji.csv", EXPECTED_TEXT_WITH_EMOJI, EXPECTED_TABLE_WITH_EMOJI),
+        (
+            "table-semicolon-delimiter.csv",
+            EXPECTED_TEXT_SEMICOLON_DELIMITER,
+            EXPECTED_TABLE_SEMICOLON_DELIMITER,
+        ),
     ],
 )
 def test_partition_csv_from_filename(filename, expected_text, expected_table):
