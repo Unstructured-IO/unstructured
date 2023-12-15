@@ -171,12 +171,9 @@ def partition_pdf(
     extract_images_in_pdf
         If True and strategy=hi_res, any detected images will be saved in the path specified by
         image_output_dir_path.
-    extract_tables_in_pdf
-        If True and strategy=hi_res, any detected tables will be saved in the path specified by
-        image_output_dir_path.
     image_output_dir_path
-        If extract_images_in_pdf=True (or extract_tables_in_pdf=True) and strategy=hi_res, any
-        detected images or tables will be saved in the given path
+        If extract_images_in_pdf=True and strategy=hi_res, any detected images or tables
+        will be saved in the given path
     """
 
     exactly_one(filename=filename, file=file)
