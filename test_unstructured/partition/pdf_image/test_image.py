@@ -304,7 +304,7 @@ def test_partition_image_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(filename=filename)
@@ -318,7 +318,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
@@ -334,7 +334,7 @@ def test_partition_image_metadata_date_custom_metadata_date(
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(
@@ -353,7 +353,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(
@@ -371,7 +371,7 @@ def test_partition_image_from_file_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
@@ -386,7 +386,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
@@ -404,7 +404,7 @@ def test_partition_image_from_file_metadata_date_custom_metadata_date(
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
@@ -424,7 +424,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
