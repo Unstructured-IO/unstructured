@@ -25,6 +25,7 @@ def partition_image(
     strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
+    hi_res_model_name: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -55,6 +56,8 @@ def partition_image(
         The default strategy is `hi_res`.
     metadata_last_modified
         The last modified date for the document.
+    hi_res_model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`.
     """
     exactly_one(filename=filename, file=file)
 
@@ -89,5 +92,6 @@ def partition_image(
         languages=languages,
         strategy=strategy,
         metadata_last_modified=metadata_last_modified,
+        hi_res_model_name=hi_res_model_name,
         **kwargs,
     )

@@ -356,6 +356,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         image_output_dir_path=ANY,
         strategy=PartitionStrategy.FAST,
         languages=None,
+        hi_res_model_name=None,
     )
 
 
