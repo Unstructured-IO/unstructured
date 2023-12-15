@@ -16,7 +16,7 @@ class ElasticsearchWriter(Writer):
     connector_config: "SimpleElasticsearchConfig"
     write_config: "ElasticsearchWriteConfig"
 
-    def get_connector_cls(self, **kwargs) -> BaseDestinationConnector:
+    def get_connector_cls(self) -> BaseDestinationConnector:
         from unstructured.ingest.connector.elasticsearch import (
             ElasticsearchDestinationConnector,
         )

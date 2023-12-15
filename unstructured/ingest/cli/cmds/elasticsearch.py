@@ -5,7 +5,10 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.elasticsearch import SimpleElasticsearchConfig
+from unstructured.ingest.connector.elasticsearch import (
+    ElasticsearchWriteConfig,
+    SimpleElasticsearchConfig,
+)
 
 CMD_NAME = "elasticsearch"
 
@@ -83,10 +86,7 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
 
 
 @dataclass
-class ElasticsearchCliWriteConfig(CliConfig):
-    batch_size_bytes: t.Optional[int] = None
-    num_processes: t.Optional[int] = None
-
+class ElasticsearchCliWriteConfig(ElasticsearchWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

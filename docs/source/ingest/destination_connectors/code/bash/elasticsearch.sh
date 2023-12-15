@@ -9,10 +9,11 @@ unstructured-ingest \
 	--strategy fast \
 	--chunk-elements \
 	--embedding-provider "$EMBEDDING_PROVIDER" \
-	--num-processes 2 \
+	--num-processes 4 \
 	--verbose \
 	elasticsearch \
 	--hosts "$ELASTICSEARCH_HOSTS" \
 	--username "$ELASTICSEARCH_USERNAME" \
 	--password "$ELASTICSEARCH_PASSWORD" \
-	--index-name "$ELASTICSEARCH_INDEX_NAME"
+	--index-name "$ELASTICSEARCH_INDEX_NAME" \
+	--num-processes 2
