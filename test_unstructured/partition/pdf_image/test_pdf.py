@@ -20,9 +20,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import strategies, pdf
-from unstructured.partition.pdf_image import ocr, pdfminer_processing
+from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
+from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -319,7 +319,7 @@ def test_partition_pdf_falls_back_to_fast(
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
-            pdf,
+        pdf,
         "extractable_elements",
         return_value=mock_return,
     ) as mock_partition:
@@ -341,7 +341,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
-            pdf,
+        pdf,
         "extractable_elements",
         return_value=mock_return,
     ) as mock_partition, mock.patch.object(
@@ -368,7 +368,7 @@ def test_partition_pdf_falls_back_to_hi_res_from_ocr_only(
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
-            pdf,
+        pdf,
         "_partition_pdf_or_image_local",
         return_value=mock_return,
     ) as mock_partition:
@@ -390,7 +390,7 @@ def test_partition_pdf_falls_back_to_ocr_only(
 
     mock_return = [Text("Hello there!")]
     with mock.patch.object(
-            pdf,
+        pdf,
         "_partition_pdf_or_image_with_ocr",
         return_value=mock_return,
     ) as mock_partition:
@@ -784,7 +784,7 @@ def test_partition_pdf_hyperlinks_multiple_lines(filename):
 
 def test_partition_pdf_uses_model_name():
     with mock.patch.object(
-            pdf,
+        pdf,
         "_partition_pdf_or_image_local",
     ) as mockpartition:
         pdf.partition_pdf(
