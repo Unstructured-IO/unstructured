@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Pinecone" href="pinecone.html" /><link rel="prev" title="Delta Table" href="delta_table.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Pinecone" href="pinecone.html" /><link rel="prev" title="Google Cloud Service" href="gcs.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>MongoDB - Unstructured 0.11.3 documentation</title>
+  <title>MongoDB - Unstructured 0.11.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -362,17 +362,23 @@
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/salesforce.html">Salesforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source_connectors/sftp.html">Sftp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/sharepoint.html">Sharepoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/slack.html">Slack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weaviate.html">Weaviate</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -477,44 +483,76 @@
 <p>The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
 upstream local connector.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--input-path<span class="w"> </span>example-docs/fake-memo.pdf<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--anonymous<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--output-dir<span class="w"> </span>local-output-to-mongo<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>mongodb<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--uri<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_URI</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--database<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_DATABASE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--collection<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DESTINATION_MONGO_COLLECTION</span><span class="s2">&quot;</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+<span class="nv">EMBEDDING_PROVIDER</span><span class="o">=</span><span class="si">${</span><span class="nv">EMBEDDING_PROVIDER</span><span class="k">:-</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="si">}</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--input-path<span class="w"> </span>example-docs/book-war-and-peace-1225p.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>local-output-to-mongodb<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--chunk-elements<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--embedding-provider<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$EMBEDDING_PROVIDER</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>mongodb<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--uri<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_URI</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--database<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$MONGODB_DATABASE_NAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--collection<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DESTINATION_MONGO_COLLECTION</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.local</span> <span class="kn">import</span> <span class="n">SimpleLocalConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.mongodb</span> <span class="kn">import</span> <span class="n">MongoDBWriteConfig</span><span class="p">,</span> <span class="n">SimpleMongoDBStorageConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkingConfig</span><span class="p">,</span>
+    <span class="n">EmbeddingConfig</span><span class="p">,</span>
+    <span class="n">PartitionConfig</span><span class="p">,</span>
+    <span class="n">ProcessorConfig</span><span class="p">,</span>
+    <span class="n">ReadConfig</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">LocalRunner</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.base_writer</span> <span class="kn">import</span> <span class="n">Writer</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.mongodb</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MongodbWriter</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_writer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Writer</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">MongodbWriter</span><span class="p">(</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleMongoDBStorageConfig</span><span class="p">(</span>
+            <span class="n">uri</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_URI&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">write_config</span><span class="o">=</span><span class="n">MongoDBWriteConfig</span><span class="p">(</span>
+            <span class="n">database</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_DATABASE_NAME&quot;</span><span class="p">),</span>
+            <span class="n">collection</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DESTINATION_MONGO_COLLECTION&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">get_writer</span><span class="p">()</span>
     <span class="n">runner</span> <span class="o">=</span> <span class="n">LocalRunner</span><span class="p">(</span>
         <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-mongo&quot;</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-mongodb&quot;</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleLocalConfig</span><span class="p">(</span>
+            <span class="n">input_path</span><span class="o">=</span><span class="s2">&quot;example-docs/book-war-and-peace-1225p.txt&quot;</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
         <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
-        <span class="n">writer_type</span><span class="o">=</span><span class="s2">&quot;mongodb&quot;</span><span class="p">,</span>
-        <span class="n">writer_kwargs</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;uri&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_URI&quot;</span><span class="p">),</span>
-            <span class="s2">&quot;database&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MONGODB_DATABASE_NAME&quot;</span><span class="p">),</span>
-            <span class="s2">&quot;collection&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DESTINATION_MONGO_COLLECTION&quot;</span><span class="p">)</span>
-        <span class="p">}</span>
+        <span class="n">chunking_config</span><span class="o">=</span><span class="n">ChunkingConfig</span><span class="p">(</span><span class="n">chunk_elements</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">embedding_config</span><span class="o">=</span><span class="n">EmbeddingConfig</span><span class="p">(</span>
+            <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">writer</span><span class="o">=</span><span class="n">writer</span><span class="p">,</span>
+        <span class="n">writer_kwargs</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">)</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">input_path</span><span class="o">=</span><span class="s2">&quot;example-docs/fake-memo.pdf&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -536,13 +574,13 @@ upstream local connector.</p>
               <div class="title">Pinecone</div>
             </div>
           </a>
-          <a class="prev-page" href="delta_table.html">
+          <a class="prev-page" href="gcs.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Delta Table</div>
+              <div class="title">Google Cloud Service</div>
               
             </div>
           </a>

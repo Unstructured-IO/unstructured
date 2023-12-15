@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Delta Table" href="delta_table.html" /><link rel="prev" title="Destination Connectors" href="../destination_connectors.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Box" href="box.html" /><link rel="prev" title="Azure" href="azure.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Azure Cognitive Search - Unstructured 0.11.3 documentation</title>
+  <title>Azure Cognitive Search - Unstructured 0.11.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -362,17 +362,23 @@
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/salesforce.html">Salesforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source_connectors/sftp.html">Sftp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/sharepoint.html">Sharepoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/slack.html">Slack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="azure.html">Azure</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="weaviate.html">Weaviate</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -475,51 +481,79 @@
 <section id="run-locally">
 <h2>Run Locally<a class="headerlink" href="#run-locally" title="Permalink to this heading"></a></h2>
 <p>The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream s3 connector.</p>
+upstream local connector.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>s3<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--remote-url<span class="w"> </span>s3://utic-dev-tech-fixtures/small-pdf-set/<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--anonymous<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--output-dir<span class="w"> </span>s3-small-batch-output-to-azure<span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">     </span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>azure-cognitive-search<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AZURE_SEARCH_API_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--endpoint<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AZURE_SEARCH_ENDPOINT</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--index<span class="w"> </span>utic-test-ingest-fixtures-output
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+<span class="nv">EMBEDDING_PROVIDER</span><span class="o">=</span><span class="si">${</span><span class="nv">EMBEDDING_PROVIDER</span><span class="k">:-</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="si">}</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--input-path<span class="w"> </span>example-docs/book-war-and-peace-1225p.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>local-output-to-azure-cog-search<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--chunk-elements<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--embedding-provider<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$EMBEDDING_PROVIDER</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>azure-cognitive-search<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AZURE_SEARCH_API_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--endpoint<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$AZURE_SEARCH_ENDPOINT</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--index<span class="w"> </span>utic-test-ingest-fixtures-output
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="n">command</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;unstructured-ingest&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;s3&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--remote-url&quot;</span><span class="p">,</span> <span class="s2">&quot;s3://utic-dev-tech-fixtures/small-pdf-set/&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--anonymous&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span> <span class="s2">&quot;s3-small-batch-output-to-azure&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--num-processes&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--strategy&quot;</span><span class="p">,</span> <span class="s2">&quot;fast&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;azure-cognitive-search&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;--key&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;AZURE_SEARCH_API_KEY&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;--endpoint&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;$AZURE_SEARCH_ENDPOINT&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;--index&quot;</span><span class="p">,</span> <span class="s2">&quot;utic-test-ingest-fixtures-output&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.azure_cognitive_search</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AzureCognitiveSearchAccessConfig</span><span class="p">,</span>
+    <span class="n">AzureCognitiveSearchWriteConfig</span><span class="p">,</span>
+    <span class="n">SimpleAzureCognitiveSearchStorageConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.local</span> <span class="kn">import</span> <span class="n">SimpleLocalConfig</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ChunkingConfig</span><span class="p">,</span>
+    <span class="n">EmbeddingConfig</span><span class="p">,</span>
+    <span class="n">PartitionConfig</span><span class="p">,</span>
+    <span class="n">ProcessorConfig</span><span class="p">,</span>
+    <span class="n">ReadConfig</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">LocalRunner</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.azure_cognitive_search</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AzureCognitiveSearchWriter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.base_writer</span> <span class="kn">import</span> <span class="n">Writer</span>
 
-<span class="c1"># Run the command</span>
-<span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-<span class="n">output</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
-<span class="c1"># Print output</span>
-<span class="k">if</span> <span class="n">process</span><span class="o">.</span><span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Command executed successfully. Output:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Command failed. Error:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">error</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+<span class="k">def</span> <span class="nf">get_writer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Writer</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">AzureCognitiveSearchWriter</span><span class="p">(</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleAzureCognitiveSearchStorageConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">AzureCognitiveSearchAccessConfig</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;AZURE_SEARCH_API_KEY&quot;</span><span class="p">)),</span>
+            <span class="n">endpoint</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;$AZURE_SEARCH_ENDPOINT&quot;</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">write_config</span><span class="o">=</span><span class="n">AzureCognitiveSearchWriteConfig</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="s2">&quot;utic-test-ingest-fixtures-output&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">get_writer</span><span class="p">()</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">LocalRunner</span><span class="p">(</span>
+        <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-azure-cog-search&quot;</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleLocalConfig</span><span class="p">(</span>
+            <span class="n">input_path</span><span class="o">=</span><span class="s2">&quot;example-docs/book-war-and-peace-1225p.txt&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
+        <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
+        <span class="n">chunking_config</span><span class="o">=</span><span class="n">ChunkingConfig</span><span class="p">(</span><span class="n">chunk_elements</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">embedding_config</span><span class="o">=</span><span class="n">EmbeddingConfig</span><span class="p">(</span>
+            <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">writer</span><span class="o">=</span><span class="n">writer</span><span class="p">,</span>
+        <span class="n">writer_kwargs</span><span class="o">=</span><span class="p">{},</span>
+    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -736,21 +770,21 @@ upstream s3 connector.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="delta_table.html">
+          <a class="next-page" href="box.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Delta Table</div>
+              <div class="title">Box</div>
             </div>
           </a>
-          <a class="prev-page" href="../destination_connectors.html">
+          <a class="prev-page" href="azure.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Destination Connectors</div>
+              <div class="title">Azure</div>
               
             </div>
           </a>

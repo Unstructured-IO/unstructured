@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Slack" href="slack.html" /><link rel="prev" title="Salesforce" href="salesforce.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Slack" href="slack.html" /><link rel="prev" title="Sftp" href="sftp.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Sharepoint - Unstructured 0.11.3 documentation</title>
+  <title>Sharepoint - Unstructured 0.11.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -362,17 +362,23 @@
 <li class="toctree-l3"><a class="reference internal" href="reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="salesforce.html">Salesforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sftp.html">Sftp</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Sharepoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="slack.html">Slack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -475,23 +481,28 @@
 <section id="run-locally">
 <h2>Run Locally<a class="headerlink" href="#run-locally" title="Permalink to this heading"></a></h2>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>sharepoint<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--client-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--site<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-application-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application id, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application credentials, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-tenant<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com (tenant URL) to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--files-only<span class="w"> </span><span class="s2">&quot;Flag to process only files within the site(s)&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-dir<span class="w"> </span>sharepoint-ingest-output<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--path<span class="w"> </span><span class="s2">&quot;Shared Documents&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--verbose
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>sharepoint<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--client-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--site<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-application-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application id, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application credentials, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-tenant<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com (tenant URL) to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--files-only<span class="w"> </span><span class="s2">&quot;Flag to process only files within the site(s)&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>sharepoint-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--path<span class="w"> </span><span class="s2">&quot;Shared Documents&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose
 </pre></div>
 </div>
-</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.connector.sharepoint</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SharepointAccessConfig</span><span class="p">,</span>
+    <span class="n">SharepointPermissionsConfig</span><span class="p">,</span>
+    <span class="n">SimpleSharepointConfig</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">SharePointRunner</span>
 
@@ -504,19 +515,25 @@
         <span class="p">),</span>
         <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
         <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleSharepointConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">SharepointAccessConfig</span><span class="p">(</span>
+                <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">permissions_config</span><span class="o">=</span><span class="n">SharepointPermissionsConfig</span><span class="p">(</span>
+                <span class="n">application_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application id&gt;&quot;</span><span class="p">,</span>
+                <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application credentials&gt;&quot;</span><span class="p">,</span>
+                <span class="n">tenant</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com to process &quot;</span>
+                <span class="s2">&quot;permission info within tenant&gt;&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="p">,</span>
+            <span class="n">site</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="p">,</span>
+            <span class="c1"># Credentials to process data about permissions (rbac) within the tenant</span>
+            <span class="c1"># Flag to process only files within the site(s)</span>
+            <span class="n">files_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="s2">&quot;Shared Documents&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="p">,</span>
-        <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="p">,</span>
-        <span class="n">site</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="p">,</span>
-        <span class="c1"># Credentials to process data about permissions (rbac) within the tenant</span>
-        <span class="n">permissions_application_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application id&gt;&quot;</span><span class="p">,</span>
-        <span class="n">permissions_client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application credentials&gt;&quot;</span><span class="p">,</span>
-        <span class="n">permissions_tenant</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com to process permission info within tenant&gt;&quot;</span><span class="p">,</span>
-        <span class="c1"># Flag to process only files within the site(s)</span>
-        <span class="n">files_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;Shared Documents&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -525,25 +542,32 @@
 <h2>Run via the API<a class="headerlink" href="#run-via-the-api" title="Permalink to this heading"></a></h2>
 <p>You can also use upstream connectors with the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API. For this you’ll need to use the <code class="docutils literal notranslate"><span class="pre">--partition-by-api</span></code> flag and pass in your API key with <code class="docutils literal notranslate"><span class="pre">--api-key</span></code>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>sharepoint<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--client-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--site<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-application-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application id, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application credentials, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--permissions-tenant<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com (tenant URL) to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--files-only<span class="w"> </span><span class="s2">&quot;Flag to process only files within the site(s)&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-dir<span class="w"> </span>sharepoint-ingest-output<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--path<span class="w"> </span><span class="s2">&quot;Shared Documents&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>sharepoint<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--client-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--site<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com or https://contoso.admin.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-application-id<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application id, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-client-cred<span class="w"> </span><span class="s2">&quot;&lt;Microsoft Graph API application credentials, to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--permissions-tenant<span class="w"> </span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com (tenant URL) to process per-file access permissions&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--files-only<span class="w"> </span><span class="s2">&quot;Flag to process only files within the site(s)&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>sharepoint-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--path<span class="w"> </span><span class="s2">&quot;Shared Documents&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--partition-by-api<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.sharepoint</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SharepointAccessConfig</span><span class="p">,</span>
+    <span class="n">SharepointPermissionsConfig</span><span class="p">,</span>
+    <span class="n">SimpleSharepointConfig</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">SharePointRunner</span>
 
@@ -559,19 +583,25 @@
             <span class="n">partition_by_api</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;UNSTRUCTURED_API_KEY&quot;</span><span class="p">),</span>
         <span class="p">),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleSharepointConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">SharepointAccessConfig</span><span class="p">(</span>
+                <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">permissions_config</span><span class="o">=</span><span class="n">SharepointPermissionsConfig</span><span class="p">(</span>
+                <span class="n">application_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application id&gt;&quot;</span><span class="p">,</span>
+                <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application credentials&gt;&quot;</span><span class="p">,</span>
+                <span class="n">tenant</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com to process permission &quot;</span>
+                <span class="s2">&quot;info within tenant&gt;&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="p">,</span>
+            <span class="n">site</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="p">,</span>
+            <span class="c1"># Credentials to process data about permissions (rbac) within the tenant</span>
+            <span class="c1"># Flag to process only files within the site(s)</span>
+            <span class="n">files_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="s2">&quot;Shared Documents&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">client_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-id&gt;&quot;</span><span class="p">,</span>
-        <span class="n">client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Sharepoint app client-secret&gt;&quot;</span><span class="p">,</span>
-        <span class="n">site</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.sharepoint.com to process all sites within tenant&gt;&quot;</span><span class="p">,</span>
-        <span class="c1"># Credentials to process data about permissions (rbac) within the tenant</span>
-        <span class="n">permissions_application_id</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application id&gt;&quot;</span><span class="p">,</span>
-        <span class="n">permissions_client_cred</span><span class="o">=</span><span class="s2">&quot;&lt;Microsoft Graph API application credentials&gt;&quot;</span><span class="p">,</span>
-        <span class="n">permissions_tenant</span><span class="o">=</span><span class="s2">&quot;&lt;e.g https://contoso.onmicrosoft.com to process permission info within tenant&gt;&quot;</span><span class="p">,</span>
-        <span class="c1"># Flag to process only files within the site(s)</span>
-        <span class="n">files_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">path</span><span class="o">=</span><span class="s2">&quot;Shared Documents&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -594,13 +624,13 @@
               <div class="title">Slack</div>
             </div>
           </a>
-          <a class="prev-page" href="salesforce.html">
+          <a class="prev-page" href="sftp.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">Salesforce</div>
+              <div class="title">Sftp</div>
               
             </div>
           </a>

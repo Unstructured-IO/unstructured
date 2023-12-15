@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Azure Cognitive Search" href="destination_connectors/azure_cognitive_search.html" /><link rel="prev" title="Wikipedia" href="source_connectors/wikipedia.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Azure" href="destination_connectors/azure.html" /><link rel="prev" title="Wikipedia" href="source_connectors/wikipedia.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Destination Connectors - Unstructured 0.11.3 documentation</title>
+  <title>Destination Connectors - Unstructured 0.11.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -361,17 +361,23 @@
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/salesforce.html">Salesforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="source_connectors/sftp.html">Sftp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/sharepoint.html">Sharepoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/slack.html">Slack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="source_connectors/wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
 <li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">Destination Connectors</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="destination_connectors/pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -471,11 +477,16 @@ We are constantly adding new data connectors and if you don’t see your favorit
 in our community <a class="reference external" href="https://short.unstructured.io/pzw05l7">Slack.</a></p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l1"><a class="reference internal" href="destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l1"><a class="reference internal" href="destination_connectors/box.html">Box</a></li>
 <li class="toctree-l1"><a class="reference internal" href="destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l1"><a class="reference internal" href="destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l1"><a class="reference internal" href="destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l1"><a class="reference internal" href="destination_connectors/pinecone.html">Pinecone</a></li>
 <li class="toctree-l1"><a class="reference internal" href="destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </div>
 </section>
@@ -485,12 +496,12 @@ in our community <a class="reference external" href="https://short.unstructured.
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="destination_connectors/azure_cognitive_search.html">
+          <a class="next-page" href="destination_connectors/azure.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Azure Cognitive Search</div>
+              <div class="title">Azure</div>
             </div>
           </a>
           <a class="prev-page" href="source_connectors/wikipedia.html">

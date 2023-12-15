@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Sharepoint" href="sharepoint.html" /><link rel="prev" title="S3" href="s3.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Sftp" href="sftp.html" /><link rel="prev" title="S3" href="s3.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Salesforce - Unstructured 0.11.3 documentation</title>
+  <title>Salesforce - Unstructured 0.11.4 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -362,17 +362,23 @@
 <li class="toctree-l3"><a class="reference internal" href="reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="s3.html">S3</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Salesforce</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sftp.html">Sftp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sharepoint.html">Sharepoint</a></li>
 <li class="toctree-l3"><a class="reference internal" href="slack.html">Slack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="wikipedia.html">Wikipedia</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../destination_connectors.html">Destination Connectors</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Destination Connectors</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../configs.html">Ingest Configuration</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Ingest Configuration</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -475,20 +481,23 @@
 <section id="run-locally">
 <h2>Run Locally<a class="headerlink" href="#run-locally" title="Permalink to this heading"></a></h2>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>salesforce<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--username<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--consumer-key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_CONSUMER_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--private-key-path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_PRIVATE_KEY_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--categories<span class="w"> </span><span class="s2">&quot;EmailMessage,Account,Lead,Case,Campaign&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-dir<span class="w"> </span>salesforce-output<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--recursive<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--verbose
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>salesforce<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--username<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--consumer-key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_CONSUMER_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--private-key-path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_PRIVATE_KEY_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--categories<span class="w"> </span><span class="s2">&quot;EmailMessage,Account,Lead,Case,Campaign&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>salesforce-output<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--recursive<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.salesforce</span> <span class="kn">import</span> <span class="n">SalesforceAccessConfig</span><span class="p">,</span> <span class="n">SimpleSalesforceConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">SalesforceRunner</span>
 
@@ -501,14 +510,17 @@
         <span class="p">),</span>
         <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
         <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleSalesforceConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">SalesforceAccessConfig</span><span class="p">(</span>
+                <span class="n">consumer_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_CONSUMER_KEY&quot;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_USERNAME&quot;</span><span class="p">),</span>
+            <span class="n">private_key_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_PRIVATE_KEY_PATH&quot;</span><span class="p">),</span>
+            <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EmailMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="s2">&quot;Lead&quot;</span><span class="p">,</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="s2">&quot;Campaign&quot;</span><span class="p">],</span>
+            <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_USERNAME&quot;</span><span class="p">),</span>
-        <span class="n">consumer_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_CONSUMER_KEY&quot;</span><span class="p">),</span>
-        <span class="n">private_key_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_PRIVATE_KEY_PATH&quot;</span><span class="p">),</span>
-        <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EmailMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="s2">&quot;Lead&quot;</span><span class="p">,</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="s2">&quot;Campaign&quot;</span><span class="p">],</span>
-        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -517,22 +529,25 @@
 <h2>Run via the API<a class="headerlink" href="#run-via-the-api" title="Permalink to this heading"></a></h2>
 <p>You can also use upstream connectors with the <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> API. For this you’ll need to use the <code class="docutils literal notranslate"><span class="pre">--partition-by-api</span></code> flag and pass in your API key with <code class="docutils literal notranslate"><span class="pre">--api-key</span></code>.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>salesforce<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--username<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--consumer-key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_CONSUMER_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--private-key-path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_PRIVATE_KEY_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--categories<span class="w"> </span><span class="s2">&quot;EmailMessage,Account,Lead,Case,Campaign&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-dir<span class="w"> </span>salesforce-output<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--recursive<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--verbose
-<span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
+
+unstructured-ingest<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>salesforce<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--username<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_USERNAME</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--consumer-key<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_CONSUMER_KEY</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--private-key-path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$SALESFORCE_PRIVATE_KEY_PATH</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--categories<span class="w"> </span><span class="s2">&quot;EmailMessage,Account,Lead,Case,Campaign&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--output-dir<span class="w"> </span>salesforce-output<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--recursive<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--partition-by-api<span class="w"> </span><span class="se">\</span>
+<span class="w">	</span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.salesforce</span> <span class="kn">import</span> <span class="n">SalesforceAccessConfig</span><span class="p">,</span> <span class="n">SimpleSalesforceConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="n">PartitionConfig</span><span class="p">,</span> <span class="n">ProcessorConfig</span><span class="p">,</span> <span class="n">ReadConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">SalesforceRunner</span>
 
@@ -548,14 +563,17 @@
             <span class="n">partition_by_api</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;UNSTRUCTURED_API_KEY&quot;</span><span class="p">),</span>
         <span class="p">),</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleSalesforceConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">SalesforceAccessConfig</span><span class="p">(</span>
+                <span class="n">consumer_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_CONSUMER_KEY&quot;</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_USERNAME&quot;</span><span class="p">),</span>
+            <span class="n">private_key_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_PRIVATE_KEY_PATH&quot;</span><span class="p">),</span>
+            <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EmailMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="s2">&quot;Lead&quot;</span><span class="p">,</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="s2">&quot;Campaign&quot;</span><span class="p">],</span>
+            <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">),</span>
     <span class="p">)</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-        <span class="n">username</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_USERNAME&quot;</span><span class="p">),</span>
-        <span class="n">consumer_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_CONSUMER_KEY&quot;</span><span class="p">),</span>
-        <span class="n">private_key_path</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;SALESFORCE_PRIVATE_KEY_PATH&quot;</span><span class="p">),</span>
-        <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;EmailMessage&quot;</span><span class="p">,</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="s2">&quot;Lead&quot;</span><span class="p">,</span> <span class="s2">&quot;Case&quot;</span><span class="p">,</span> <span class="s2">&quot;Campaign&quot;</span><span class="p">],</span>
-        <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 </div></div>
@@ -570,12 +588,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="sharepoint.html">
+          <a class="next-page" href="sftp.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Sharepoint</div>
+              <div class="title">Sftp</div>
             </div>
           </a>
           <a class="prev-page" href="s3.html">
