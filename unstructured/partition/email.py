@@ -353,6 +353,9 @@ def partition_email(
         if content_type.endswith("encrypted"):
             is_encrypted = True
 
+        # NOTE(andymli) - we can determine if text is base64 encoded via the
+        # content-transfer-encoding property of a part
+        # https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html
         if part.get_content_maintype() == 'text' and \
                 part.get('content-transfer-encoding', None) == 'base64':
             try:
