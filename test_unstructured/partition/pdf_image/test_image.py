@@ -10,7 +10,8 @@ from unstructured_inference.inference import layout
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType
-from unstructured.partition.pdf_image import image, ocr, pdf
+from unstructured.partition.pdf_image import ocr
+from unstructured.partition import pdf, image
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -526,7 +527,7 @@ def test_add_chunking_strategy_on_partition_image_hi_res(
 
 def test_partition_image_uses_model_name():
     with mock.patch.object(
-        pdf,
+            pdf,
         "_partition_pdf_or_image_local",
     ) as mockpartition:
         image.partition_image("example-docs/layout-parser-paper-fast.jpg", model_name="test")

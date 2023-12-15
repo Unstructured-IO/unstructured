@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-from unstructured.partition import strategies
-from unstructured.partition.pdf_image import pdf
+from unstructured.partition import strategies, pdf
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
