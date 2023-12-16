@@ -215,6 +215,40 @@ def test_partition_pdf_with_model_name(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+def test_partition_pdf_with_hi_res_model_name(
+    monkeypatch,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
+        )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
+def test_partition_pdf_or_image_with_hi_res_model_name(
+    monkeypatch,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf_or_image(
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
+        )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
 def test_partition_pdf_with_auto_strategy(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
