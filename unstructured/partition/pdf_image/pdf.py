@@ -286,7 +286,7 @@ def _partition_pdf_or_image_local(
         inferred_document_layout = process_file_with_model(
             filename,
             is_image=is_image,
-            hi_res_model_name=hi_res_model_name,
+            model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
 
@@ -316,7 +316,7 @@ def _partition_pdf_or_image_local(
         inferred_document_layout = process_data_with_model(
             file,
             is_image=is_image,
-            hi_res_model_name=hi_res_model_name,
+            model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
         if hasattr(file, "seek"):
