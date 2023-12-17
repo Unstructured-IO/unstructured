@@ -6,7 +6,7 @@ Natural Language Processing (NLP) encompasses a broad spectrum of tasks and meth
 Data Ingestion
 --------------
 
-Unstructured's ``upstream connectors`` make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you'd like to read more on our upstream connectors, you can find details `here <https://unstructured-io.github.io/unstructured/source_connectors.html>`__.
+Unstructured's ``upstream connectors`` make data ingestion easy. They ensure that your data is accessible, up to date, and usable for any downstream task. If you'd like to read more on our upstream connectors, you can find details `here <https://unstructured-io.github.io/unstructured/ingest/source_connectors.html>`__.
 
 Data Preprocessing
 ^^^^^^^^^^^^^^^^^^
