@@ -5,7 +5,7 @@ from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
 
 from lxml import etree
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
