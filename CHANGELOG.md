@@ -1,6 +1,8 @@
-## 0.11.7-dev0
+## 0.11.7-dev1
 
 ### Enhancements
+
+* **Add intra-chunk overlap capability.** Implement overlap for split-chunks where text-splitting is used to divide an oversized chunk into two or more chunks that fit in the chunking window. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap` kwarg on partition functions.
 
 ### Features
 
