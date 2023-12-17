@@ -195,7 +195,8 @@ Part II: Deploying Unstructured API from AWS Marketplace
     - Specify ``LoadBalancerScheme`` to **internet-facing**
     - Set the ``SSHLocation`` to  **0.0.0.0/0**, only if you allow public access on the Internet.
 
-      - Note: It is recommended to restrict access to a specific IP range. This can be achieved by setting ``SSHLocation`` to your organization's public IP address or IP range. AWS provides ``AWS Client VPN``, which is a managed client-based VPN service that enables secure access AWS resources and resources in your on-premises network. For more information, please refer to `AWS Client VPN documentation <https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html>`_.
+      - **Note**: It is generally recommended to limit SSH access to a specific IP range for enhanced security. This can be done by setting the ``SSHLocation`` to the IP address or range associated with your organization. Please consult your IT department or VPN vendor to obtain the correct IP information for these settings.
+      - AWS provides ``AWS Client VPN``, which is a managed client-based VPN service that enables secure access AWS resources and resources in your on-premises network. For more information, please refer to `Getting started with AWS Client VPN <https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/cvpn-getting-started.html>`_.
     - Select the ``Subnets`` and ``VPC`` from the Part 1 above.
     - You can use the default values for other Parameter fields
     - Click ``Next`` button.
