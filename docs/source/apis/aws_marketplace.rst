@@ -18,8 +18,10 @@ Pre-Requirements
    - Follow the ``Create Key Pairs`` in the Amazon EC2 `User Guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html>`_.
 
 
-Part 1: Setting Up a Virtual Private Cloud (VPC)
+Part I: Setting Up a Virtual Private Cloud (VPC)
 ------------------------------------------------
+
+*Note: If you have already configured a Virtual Private Cloud (VPC) for your organization that meets the requirements for deploying the Unstructured API, you may skip this part and proceed to the Part II. Ensure that your existing VPC setup includes the necessary subnets, Internet Gateway, and route tables as outlined in this guide.*
 
 In Part 1, we will construct a resilient and secure infrastructure within AWS by setting up a Virtual Private Cloud (VPC). Our VPC will encompass a dual-tiered subnet model consisting of both **public** and **private** subnets across multiple Availability Zones (AZs).
 
@@ -140,8 +142,8 @@ We will establish the foundational network structure for deploying the Unstructu
   :alt: VPC Resource Maps
 
 
-Part 2: Deploying Unstructured API from AWS Marketplace
--------------------------------------------------------
+Part II: Deploying Unstructured API from AWS Marketplace
+--------------------------------------------------------
 
 8. **Visit the Unstructured API page on AWS Marketplace**
 
@@ -190,7 +192,10 @@ Part 2: Deploying Unstructured API from AWS Marketplace
 
     - Provide ``stack name``
     - In the **Parameters** section, provide the ``KeyName`` - see the Pre-Requirements, if you haven't created an EC2 Key Pair.
-    - Specify, ``LoadBalancerScheme`` to **internet-facing** and ``SSHLocation`` to  **0.0.0.0/0**
+    - Specify ``LoadBalancerScheme`` to **internet-facing**
+    - Set the ``SSHLocation`` to  **0.0.0.0/0**, only if you allow public access on the Internet.
+
+      - Note: It is recommended to restrict access to a specific IP range. This can be achieved by setting ``SSHLocation`` to your organization's public IP address or IP range. AWS provides ``AWS Client VPN``, which is a managed client-based VPN service that enables secure access AWS resources and resources in your on-premises network. For more information, please refer to `AWS Client VPN documentation <https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html>`_.
     - Select the ``Subnets`` and ``VPC`` from the Part 1 above.
     - You can use the default values for other Parameter fields
     - Click ``Next`` button.
