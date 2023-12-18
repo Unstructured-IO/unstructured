@@ -79,7 +79,7 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
     save_elements,
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
-    merge_inferred_layout_with_extracted_layout,
+    merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
@@ -305,7 +305,7 @@ def _partition_pdf_or_image_local(
             )
 
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_layout_with_extracted_layout(
+        merged_document_layout = merge_inferred_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,
         )
@@ -338,7 +338,7 @@ def _partition_pdf_or_image_local(
         )
 
         # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_layout_with_extracted_layout(
+        merged_document_layout = merge_inferred_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,
         )

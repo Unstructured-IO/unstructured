@@ -7,7 +7,7 @@ from unstructured_inference.inference.elements import (
     TextRegion,
 )
 from unstructured_inference.inference.layoutelement import (
-    merge_inferred_layout_with_extracted_layout as merge_inferred_page_with_extracted_page,
+    merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
 )
 from unstructured_inference.inference.ordering import order_layout
 from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
@@ -89,8 +89,9 @@ def process_data_with_pdfminer(
     return layouts
 
 
-def merge_inferred_layout_with_extracted_layout(
-    inferred_document_layout: "DocumentLayout", extracted_layout: List[List[TextRegion]]
+def merge_inferred_with_extracted_layout(
+    inferred_document_layout: "DocumentLayout",
+    extracted_layout: List[List[TextRegion]],
 ) -> "DocumentLayout":
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
@@ -111,7 +112,7 @@ def merge_inferred_layout_with_extracted_layout(
         ):
             threshold_kwargs = {"same_region_threshold": 0.5, "subregion_threshold": 0.5}
 
-        merged_layout = merge_inferred_page_with_extracted_page(
+        merged_layout = merge_inferred_with_extracted_page(
             inferred_layout=inferred_layout,
             extracted_layout=extracted_page_layout,
             page_image_size=image_size,
