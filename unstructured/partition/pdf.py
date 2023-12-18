@@ -288,13 +288,11 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        extracted_layout = []
-        if pdf_text_extractable is True:
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            extracted_layout = process_file_with_pdfminer(
-                filename=filename,
-                dpi=pdf_image_dpi,
-            )
+        extracted_layout = (
+            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
+            if pdf_text_extractable
+            else []
+        )
 
         if analysis:
             annotate_layout_elements(
@@ -305,6 +303,8 @@ def _partition_pdf_or_image_local(
                 pdf_image_dpi=pdf_image_dpi,
                 is_image=is_image,
             )
+
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
         merged_document_layout = merge_inferred_layout_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,
@@ -333,14 +333,11 @@ def _partition_pdf_or_image_local(
         if hasattr(file, "seek"):
             file.seek(0)
 
-        extracted_layout = []
-        if pdf_text_extractable is True:
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            extracted_layout = process_data_with_pdfminer(
-                file=file,
-                dpi=pdf_image_dpi,
-            )
+        extracted_layout = (
+            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else []
+        )
 
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
         merged_document_layout = merge_inferred_layout_with_extracted_layout(
             inferred_document_layout=inferred_document_layout,
             extracted_layout=extracted_layout,
