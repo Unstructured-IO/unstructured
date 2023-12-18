@@ -247,7 +247,7 @@ def _partition_pdf_or_image_local(
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
-    analysis: bool = True,
+    analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
