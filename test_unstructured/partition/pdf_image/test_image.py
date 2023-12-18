@@ -536,6 +536,7 @@ def test_partition_image_uses_model_name():
 
 
 def test_partition_image_uses_hi_res_model_name():
+    """patch _partition_pdf_or_image_local and call image.partition_image()"""
     with mock.patch.object(
         pdf,
         "_partition_pdf_or_image_local",
