@@ -1,26 +1,22 @@
 CREATE EXTENSION vector;
 
-CREATE TABLE coordinates (
+CREATE TABLE elements (
     id UUID PRIMARY KEY,
+    element_id VARCHAR,
+    text TEXT,
+    embeddings vector(384),
+    type VARCHAR,
     system VARCHAR,
     layout_width DECIMAL,
     layout_height DECIMAL,
-    points TEXT
-);
-
-CREATE TABLE data_source (
-    id UUID PRIMARY KEY,
+    points TEXT,
     url TEXT,
     version VARCHAR,
     date_created TIMESTAMPTZ,
     date_modified TIMESTAMPTZ,
     date_processed TIMESTAMPTZ,
     permissions_data TEXT,
-    record_locator TEXT
-);
-
-CREATE TABLE metadata (
-    id UUID PRIMARY KEY,
+    record_locator TEXT,
     category_depth INTEGER,
     parent_id VARCHAR,
     attached_filename VARCHAR,
@@ -32,7 +28,6 @@ CREATE TABLE metadata (
     page_number VARCHAR,
     links TEXT,
     page_name VARCHAR,
-    url TEXT,
     link_urls VARCHAR [],
     link_texts VARCHAR [],
     sent_from VARCHAR [],
@@ -44,16 +39,6 @@ CREATE TABLE metadata (
     emphasized_text_tags VARCHAR [],
     text_as_html TEXT,
     regex_metadata TEXT,
-    detection_class_prob DECIMAL,
-    data_source_id UUID REFERENCES data_source(id),
-    coordinates_id UUID REFERENCES coordinates(id)
+    detection_class_prob DECIMAL
 );
 
-CREATE TABLE elements (
-    id UUID PRIMARY KEY,
-    element_id VARCHAR,
-    text TEXT,
-    embeddings vector(384),
-    type VARCHAR,
-    metadata_id UUID REFERENCES metadata(id)
-);

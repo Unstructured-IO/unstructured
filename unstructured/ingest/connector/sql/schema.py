@@ -1,3 +1,4 @@
+import json
 import typing as t
 
 ELEMENTS_TABLE_NAME = "elements"
@@ -6,9 +7,25 @@ DATA_SOURCE_TABLE_NAME = "data_source"
 COORDINATES_TABLE_NAME = "coordinates"
 
 TABLE_COLUMN_NAMES = {
-    ELEMENTS_TABLE_NAME: {"id", "element_id", "text", "embeddings", "type", "metadata_id"},
-    METADATA_TABLE_NAME: {
+    ELEMENTS_TABLE_NAME: {
         "id",
+        "element_id",
+        "text",
+        "embeddings",
+        "type",
+        # "metadata_id",
+        "system",
+        "layout_width",
+        "layout_height",
+        # "type",
+        "points",
+        "url",
+        "version",
+        "date_created",
+        "date_modified",
+        "date_processed",
+        "permissions_data",
+        "record_locator",
         "category_depth",
         "parent_id",
         "attached_filename",
@@ -19,7 +36,9 @@ TABLE_COLUMN_NAMES = {
         "languages",
         "page_number",
         "links",
-        "url",
+        "page_name",
+        # "url",
+        "link_urls",
         "link_texts",
         "sent_from",
         "sent_to",
@@ -27,23 +46,13 @@ TABLE_COLUMN_NAMES = {
         "section",
         "header_footer_type",
         "emphasized_text_contents",
+        "emphasized_text_tags",
         "text_as_html",
         "regex_metadata",
         "detection_class_prob",
-        "data_source_id",
-        "coordinates_id",
+        # "data_source_id",
+        # "coordinates_id",
     },
-    DATA_SOURCE_TABLE_NAME: {
-        "id",
-        "url",
-        "version",
-        "date_created",
-        "date_modified",
-        "date_processed",
-        "permissions_data",
-        "record_locator",
-    },
-    COORDINATES_TABLE_NAME: {"id", "system", "layout_width", "layout_height", "type", "points"},
 }
 
 
@@ -64,15 +73,20 @@ class DatabaseSchema:
         columns = []
         values = []
 
-        for c in TABLE_COLUMN_NAMES[table]:
-            if c in data:
+        for ccc in TABLE_COLUMN_NAMES[table]:
+            if ccc in data:
+                # if ccc == "languages":
+                #     breakpoint()
                 column_name = (
-                    c
+                    ccc
                     if (self.table_column_mapping is None)
-                    else self.table_column_mapping.get(c, c)
+                    else self.table_column_mapping.get(ccc, ccc)
                 )
                 columns.append(column_name)
-                values.append(data[c])
+                if self.db_name == "sqlite" and isinstance(data[ccc], list):
+                    values.append(json.dumps(data[ccc]))
+                else:
+                    values.append(data[ccc])
 
         query = (
             f"INSERT INTO {table_name} ({','.join(columns)}) "
@@ -86,9 +100,9 @@ class DatabaseSchema:
         tables = [
             self.table_name_mapping[v]
             for v in [
-                COORDINATES_TABLE_NAME,
-                DATA_SOURCE_TABLE_NAME,
-                METADATA_TABLE_NAME,
+                # COORDINATES_TABLE_NAME,
+                # DATA_SOURCE_TABLE_NAME,
+                # METADATA_TABLE_NAME,
                 ELEMENTS_TABLE_NAME,
             ]
         ]

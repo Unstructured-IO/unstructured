@@ -115,6 +115,8 @@ class SqlDestinationConnector(BaseDestinationConnector):
         """
         from datetime import datetime
 
+        # breakpoint()
+
         data["id"] = str(uuid.uuid4())
         data["metadata_id"] = None
         if data.get("metadata"):
@@ -165,8 +167,9 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if sent_to := data.get("metadata", {}).get("sent_to", {}):
             data["metadata"]["sent_to"] = str(json.dumps(sent_to))
 
-        if emphasized_text_contents := data.get("metadata", {}).get("emphasized_text_contents", {}):
-            data["metadata"]["emphasized_text_contents"] = str(json.dumps(emphasized_text_contents))
+        # Why is this done? It screws up
+        # if emphasized_text_contents := data.get("metadata", {}).get("emphasized_text_contents", {}):
+        #     data["metadata"]["emphasized_text_contents"] = str(json.dumps(emphasized_text_contents))
 
         # Datetime formatting
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
@@ -196,8 +199,14 @@ class SqlDestinationConnector(BaseDestinationConnector):
         data_source = data.get("metadata", {}).pop("data_source", None)
         coordinates = data.get("metadata", {}).pop("coordinates", None)
         metadata = data.pop("metadata", None)
+        if data_source:
+            data.update(data_source)
+        if coordinates:
+            data.update(coordinates)
+        if metadata:
+            data.update(metadata)
 
-        return data, metadata, data_source, coordinates
+        return data  # , metadata, data_source, coordinates
 
     def _resolve_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
         schema_exists = schema_helper.check_schema_exists()
@@ -229,27 +238,28 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
             self._resolve_mode(schema_helper)
             for e in json_list:
-                elem, mdata, dsource, coords = self.conform_dict(e)
-                if coords is not None:
-                    schema_helper.insert(
-                        COORDINATES_TABLE_NAME,
-                        self.write_config.table_name_mapping[COORDINATES_TABLE_NAME],
-                        coords,
-                    )
+                # elem, mdata, dsource, coords = self.conform_dict(e)
+                elem = self.conform_dict(e)
+                # if coords is not None:
+                #     schema_helper.insert(
+                #         COORDINATES_TABLE_NAME,
+                #         self.write_config.table_name_mapping[COORDINATES_TABLE_NAME],
+                #         coords,
+                #     )
 
-                if dsource is not None:
-                    schema_helper.insert(
-                        DATA_SOURCE_TABLE_NAME,
-                        self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME],
-                        dsource,
-                    )
+                # if dsource is not None:
+                #     schema_helper.insert(
+                #         DATA_SOURCE_TABLE_NAME,
+                #         self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME],
+                #         dsource,
+                #     )
 
-                if mdata is not None:
-                    schema_helper.insert(
-                        METADATA_TABLE_NAME,
-                        self.write_config.table_name_mapping[METADATA_TABLE_NAME],
-                        mdata,
-                    )
+                # if mdata is not None:
+                #     schema_helper.insert(
+                #         METADATA_TABLE_NAME,
+                #         self.write_config.table_name_mapping[METADATA_TABLE_NAME],
+                #         mdata,
+                #     )
 
                 schema_helper.insert(
                     ELEMENTS_TABLE_NAME,

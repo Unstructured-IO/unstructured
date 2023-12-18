@@ -35,7 +35,7 @@ if __name__ == "__main__":
     port = None
     if database_name == "sqlite":
         db_url = sys.argv[2]
-    else: 
+    else:
         port = sys.argv[2]
 
     print(f"Running SQL output test for: {database_name}")

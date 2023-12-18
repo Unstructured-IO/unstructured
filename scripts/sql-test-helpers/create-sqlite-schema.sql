@@ -1,24 +1,20 @@
-CREATE TABLE coordinates (
+CREATE TABLE elements (
     id TEXT PRIMARY KEY,
+    element_id TEXT,
+    text TEXT,
+    embeddings TEXT,
+    type TEXT,
     system TEXT,
     layout_width REAL,
     layout_height REAL,
-    points TEXT
-);
-
-CREATE TABLE data_source (
-    id TEXT PRIMARY KEY,
+    points TEXT,
     url TEXT,
     version TEXT,
     date_created TEXT,
     date_modified TEXT,
     date_processed TEXT,
     permissions_data TEXT,
-    record_locator TEXT
-);
-
-CREATE TABLE metadata (
-    id TEXT PRIMARY KEY,
+    record_locator TEXT,
     category_depth INTEGER,
     parent_id TEXT,
     attached_filename TEXT,
@@ -30,7 +26,6 @@ CREATE TABLE metadata (
     page_number TEXT,
     links TEXT,
     page_name TEXT,
-    url TEXT,
     link_urls TEXT,
     link_texts TEXT,
     sent_from TEXT,
@@ -42,16 +37,5 @@ CREATE TABLE metadata (
     emphasized_text_tags TEXT,
     text_as_html TEXT,
     regex_metadata TEXT,
-    detection_class_prob DECIMAL,
-    data_source_id TEXT REFERENCES data_source(id),
-    coordinates_id TEXT REFERENCES coordinates(id)
-);
-
-CREATE TABLE elements (
-    id TEXT PRIMARY KEY,
-    element_id TEXT,
-    text TEXT,
-    embeddings TEXT,
-    type TEXT,
-    metadata_id TEXT REFERENCES metadata(id)
+    detection_class_prob DECIMAL
 );
