@@ -13,8 +13,9 @@ from unstructured.logger import logger
 from unstructured.partition.common import convert_to_bytes
 
 if TYPE_CHECKING:
-    from unstructured.documents.elements import Element
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+
+    from unstructured.documents.elements import Element
 
 
 def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
@@ -164,7 +165,7 @@ def valid_text(text: str) -> bool:
 
 def annotate_layout_elements_with_image(
     inferred_page_layout: "PageLayout",
-    extracted_page_layout: "PageLayout",
+    extracted_page_layout: Optional["PageLayout"],
     output_dir_path: str,
     output_f_basename: str,
     page_number: int,
@@ -178,10 +179,10 @@ def annotate_layout_elements_with_image(
     These annotated images are saved to a specified directory.
     """
 
-    layout_map = {
-        "inferred": {"layout": inferred_page_layout, "color": "blue"},
-        "extracted": {"layout": extracted_page_layout, "color": "green"},
-    }
+    layout_map = {"inferred": {"layout": inferred_page_layout, "color": "blue"}}
+    if extracted_page_layout:
+        layout_map["extracted"] = {"layout": extracted_page_layout, "color": "green"}
+
     for label, layout_data in layout_map.items():
         page_layout = layout_data.get("layout")
         color = layout_data.get("color")
@@ -207,8 +208,8 @@ def annotate_layout_elements(
 
     This function processes a given document (PDF or image) and annotates layout elements based
     on the inferred and extracted layout information.
-    It handles both PDF documents and standalone image files. For PDFs, it converts each page into an image,
-    whereas for image files, it processes the single image.
+    It handles both PDF documents and standalone image files. For PDFs, it converts each page
+    into an image, whereas for image files, it processes the single image.
     """
 
     from unstructured_inference.inference.layout import PageLayout
@@ -218,12 +219,16 @@ def annotate_layout_elements(
     try:
         if is_image:
             with Image.open(filename) as img:
+                img = img.convert("RGB")
                 images.append(img)
-                extracted_page_layout = PageLayout(
-                    number=1,
-                    image=img,
-                )
-                extracted_page_layout.elements = extracted_layout[0]
+
+                extracted_page_layout = None
+                if extracted_layout:
+                    extracted_page_layout = PageLayout(
+                        number=1,
+                        image=img,
+                    )
+                    extracted_page_layout.elements = extracted_layout[0]
 
                 inferred_page_layout = inferred_document_layout.pages[0]
                 inferred_page_layout.image = img
@@ -247,11 +252,14 @@ def annotate_layout_elements(
                 for i, image_path in enumerate(image_paths):
                     with Image.open(image_path) as img:
                         page_number = i + 1
-                        extracted_page_layout = PageLayout(
-                            number=page_number,
-                            image=img,
-                        )
-                        extracted_page_layout.elements = extracted_layout[i]
+
+                        extracted_page_layout = None
+                        if extracted_layout:
+                            extracted_page_layout = PageLayout(
+                                number=page_number,
+                                image=img,
+                            )
+                            extracted_page_layout.elements = extracted_layout[i]
 
                         inferred_page_layout = inferred_document_layout.pages[i]
                         inferred_page_layout.image = img

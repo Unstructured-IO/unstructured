@@ -3,6 +3,7 @@ import pathlib
 import sys
 
 import pdf2image
+from PIL import Image
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.visualize import draw_bbox
 
@@ -29,10 +30,11 @@ def extract_element_coordinates(elements):
     return elements_coordinates
 
 
-def run_partition_pdf(f_path, strategy, images, output_dir, output_f_basename):
+def run_partition_pdf(f_path, strategy, images, output_dir, output_f_basename, is_image):
     elements = partition_pdf(
         f_path,
         strategy=strategy,
+        is_image=is_image,
         include_page_breaks=True,
         analysis=True,
         analyzed_image_output_dir_path=output_dir,
@@ -54,13 +56,20 @@ def run_partition_pdf(f_path, strategy, images, output_dir, output_f_basename):
         print(f"output_image_path: {output_image_path}")
 
 
-def run(f_path, strategy):
+def run(f_path, strategy, document_type):
     f_basename = os.path.splitext(os.path.basename(f_path))[0]
     output_dir_path = os.path.join(output_basedir_path, f_basename)
     os.makedirs(output_dir_path, exist_ok=True)
 
-    images = pdf2image.convert_from_path(f_path)
-    run_partition_pdf(f_path, strategy, images, output_dir_path, f_basename)
+    is_image = document_type == "image"
+    if is_image:
+        with Image.open(f_path) as img:
+            img = img.convert("RGB")
+            images = [img]
+    else:
+        images = pdf2image.convert_from_path(f_path)
+
+    run_partition_pdf(f_path, strategy, images, output_dir_path, f_basename, is_image)
 
 
 if __name__ == "__main__":
@@ -75,7 +84,11 @@ if __name__ == "__main__":
         print("Invalid strategy")
         sys.exit(1)
 
+    if sys.argv[3] not in ["pdf", "image"]:
+        print("Invalid document type")
+        sys.exit(1)
+
     output_basedir_path = os.path.join(CUR_DIR, "output")
     os.makedirs(output_basedir_path, exist_ok=True)
 
-    run(f_path=sys.argv[1], strategy=sys.argv[2])
+    run(f_path=sys.argv[1], strategy=sys.argv[2], document_type=sys.argv[3])
