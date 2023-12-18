@@ -7,7 +7,7 @@ from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.visualize import draw_bbox
 
 from unstructured.documents.elements import PageBreak
-from unstructured.partition.pdf_image.pdf import partition_pdf
+from unstructured.partition.pdf import partition_pdf
 
 CUR_DIR = pathlib.Path(__file__).parent.resolve()
 
