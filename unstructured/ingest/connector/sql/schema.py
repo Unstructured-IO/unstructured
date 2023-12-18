@@ -2,9 +2,6 @@ import json
 import typing as t
 
 ELEMENTS_TABLE_NAME = "elements"
-METADATA_TABLE_NAME = "metadata"
-DATA_SOURCE_TABLE_NAME = "data_source"
-COORDINATES_TABLE_NAME = "coordinates"
 
 TABLE_COLUMN_NAMES = {
     ELEMENTS_TABLE_NAME: {
@@ -13,11 +10,9 @@ TABLE_COLUMN_NAMES = {
         "text",
         "embeddings",
         "type",
-        # "metadata_id",
         "system",
         "layout_width",
         "layout_height",
-        # "type",
         "points",
         "url",
         "version",
@@ -37,7 +32,6 @@ TABLE_COLUMN_NAMES = {
         "page_number",
         "links",
         "page_name",
-        # "url",
         "link_urls",
         "link_texts",
         "sent_from",
@@ -50,72 +44,45 @@ TABLE_COLUMN_NAMES = {
         "text_as_html",
         "regex_metadata",
         "detection_class_prob",
-        # "data_source_id",
-        # "coordinates_id",
     },
 }
 
 
 class DatabaseSchema:
-    def __init__(self, conn, db_name, table_name_mapping, table_column_mapping) -> None:
+    def __init__(self, conn, db_name) -> None:
         self.db_name = db_name
         self.cursor = conn.cursor()
         self.placeholder = "?" if db_name == "sqlite" else "%s"
-        self.table_name_mapping = table_name_mapping
-        self.table_column_mapping = table_column_mapping
 
     def insert(
         self,
         table,
-        table_name: str,
         data: t.Dict[str, any],
     ) -> None:
         columns = []
         values = []
 
-        for ccc in TABLE_COLUMN_NAMES[table]:
-            if ccc in data:
-                # if ccc == "languages":
-                #     breakpoint()
-                column_name = (
-                    ccc
-                    if (self.table_column_mapping is None)
-                    else self.table_column_mapping.get(ccc, ccc)
-                )
-                columns.append(column_name)
-                if self.db_name == "sqlite" and isinstance(data[ccc], list):
-                    values.append(json.dumps(data[ccc]))
+        for col in TABLE_COLUMN_NAMES[table]:
+            if col in data:
+                columns.append(col)
+                if self.db_name == "sqlite" and isinstance(data[col], list):
+                    values.append(json.dumps(data[col]))
                 else:
-                    values.append(data[ccc])
+                    values.append(data[col])
 
         query = (
-            f"INSERT INTO {table_name} ({','.join(columns)}) "
+            f"INSERT INTO {table} ({','.join(columns)}) "
             f"VALUES ({','.join([self.placeholder for _ in values])})"
         )
-        # breakpoint()
 
         self.cursor.execute(query, values)
 
     def clear_schema(self):
-        tables = [
-            self.table_name_mapping[v]
-            for v in [
-                # COORDINATES_TABLE_NAME,
-                # DATA_SOURCE_TABLE_NAME,
-                # METADATA_TABLE_NAME,
-                ELEMENTS_TABLE_NAME,
-            ]
-        ]
-        query = "; ".join([f"DELETE FROM {x}" for x in tables])
+        query = f"DELETE FROM {ELEMENTS_TABLE_NAME}"
         self.cursor.execute(query)
 
     def check_schema_exists(self):
-        elements_table_name = (
-            ELEMENTS_TABLE_NAME
-            if (self.table_name_mapping is None)
-            else self.table_name_mapping.get(ELEMENTS_TABLE_NAME, ELEMENTS_TABLE_NAME)
-        )
-        query = f"SELECT id FROM {elements_table_name} LIMIT 1;"
+        query = f"SELECT id FROM {ELEMENTS_TABLE_NAME} LIMIT 1;"
         result = self.cursor.execute(query)
         result = self.cursor.fetchone()
         if not result:

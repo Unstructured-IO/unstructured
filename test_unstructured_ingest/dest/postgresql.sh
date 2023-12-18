@@ -49,6 +49,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--host localhost \
 	--port 5432 \
 	--database elements \
-  --mode overwrite
+	--mode overwrite
 
 "$SCRIPT_DIR"/python/test-ingest-sql-output.py "postgresql" "5432"

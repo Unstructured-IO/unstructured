@@ -47,6 +47,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	sql \
 	--db_name "$DATABASE_NAME" \
 	--username unstructured \
-	--database "$DB_PATH"
+	--database "$DB_PATH" \
+	--mode overwrite
 
 "$SCRIPT_DIR"/python/test-ingest-sql-output.py "sqlite" "$DB_PATH"

@@ -15,10 +15,7 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 from .schema import (
-    COORDINATES_TABLE_NAME,
-    DATA_SOURCE_TABLE_NAME,
     ELEMENTS_TABLE_NAME,
-    METADATA_TABLE_NAME,
     DatabaseSchema,
 )
 
@@ -32,7 +29,6 @@ class SqlAccessConfig(AccessConfig):
 class SimpleSqlConfig(BaseConnectorConfig):
     db_name: t.Optional[str]
     username: t.Optional[str]
-    # password: t.Optional[str] = field(repr=False)
     host: t.Optional[str]
     database: t.Optional[str]
     port: t.Optional[int]
@@ -74,19 +70,6 @@ class SimpleSqlConfig(BaseConnectorConfig):
 @dataclass
 class SqlWriteConfig(WriteConfig):
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
-    table_name_mapping: t.Optional[t.Dict[str, str]] = None
-    table_column_mapping: t.Optional[t.Dict[str, str]] = None
-
-    def __post_init__(self):
-        if self.table_name_mapping is None:
-            self.table_name_mapping = {
-                ELEMENTS_TABLE_NAME: ELEMENTS_TABLE_NAME,
-                METADATA_TABLE_NAME: METADATA_TABLE_NAME,
-                DATA_SOURCE_TABLE_NAME: DATA_SOURCE_TABLE_NAME,
-                COORDINATES_TABLE_NAME: COORDINATES_TABLE_NAME,
-            }
-        if self.table_column_mapping is None:
-            self.table_column_mapping = {}
 
 
 @dataclass
@@ -115,26 +98,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         """
         from datetime import datetime
 
-        # breakpoint()
-
         data["id"] = str(uuid.uuid4())
-        data["metadata_id"] = None
-        if data.get("metadata"):
-            metadata_id = str(uuid.uuid4())
-            data["metadata"]["id"] = metadata_id
-            data["metadata_id"] = metadata_id
-            data["data_source_id"] = None
-            data["coordinates_id"] = None
-
-            if data.get("metadata", {}).get("data_source"):
-                data_source_id = str(uuid.uuid4())
-                data["metadata"]["data_source"]["id"] = data_source_id
-                data["data_source_id"] = data_source_id
-
-            if data.get("metadata", {}).get("coordinates"):
-                coordinates_id = str(uuid.uuid4())
-                data["metadata"]["coordinates"]["id"] = coordinates_id
-                data["coordinates_id"] = coordinates_id
 
         # Dict as string formatting
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
@@ -167,10 +131,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if sent_to := data.get("metadata", {}).get("sent_to", {}):
             data["metadata"]["sent_to"] = str(json.dumps(sent_to))
 
-        # Why is this done? It screws up
-        # if emphasized_text_contents := data.get("metadata", {}).get("emphasized_text_contents", {}):
-        #     data["metadata"]["emphasized_text_contents"] = str(json.dumps(emphasized_text_contents))
-
         # Datetime formatting
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
             data["metadata"]["data_source"]["date_created"] = datetime.fromisoformat(date_created)
@@ -196,26 +156,22 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
 
-        data_source = data.get("metadata", {}).pop("data_source", None)
-        coordinates = data.get("metadata", {}).pop("coordinates", None)
-        metadata = data.pop("metadata", None)
-        if data_source:
-            data.update(data_source)
-        if coordinates:
-            data.update(coordinates)
-        if metadata:
-            data.update(metadata)
+        if data.get("metadata", {}).get("data_source", None):
+            data.update(data.get("metadata", {}).pop("data_source", None))
+        if data.get("metadata", {}).get("coordinates", None):
+            data.update(data.get("metadata", {}).pop("coordinates", None))
+        if data.get("metadata", {}):
+            data.update(data.pop("metadata", None))
 
-        return data  # , metadata, data_source, coordinates
+        return data
 
     def _resolve_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
         schema_exists = schema_helper.check_schema_exists()
         if (
             self.write_config.mode == "error" or self.write_config.mode == "ignore"
         ) and schema_exists:
-            breakpoint()
             raise ValueError(
-                f"There's already an elements schema ({str(self.write_config.table_name_mapping)}) "
+                f"There's already an elements schema ({ELEMENTS_TABLE_NAME}) "
                 f"at {self.connector_config.db_name}"
             )
         if self.write_config.mode == "overwrite" and schema_exists:
@@ -232,38 +188,14 @@ class SqlDestinationConnector(BaseDestinationConnector):
             schema_helper = DatabaseSchema(
                 conn=conn,
                 db_name=self.connector_config.db_name,
-                table_name_mapping=self.write_config.table_name_mapping,
-                table_column_mapping=self.write_config.table_column_mapping,
             )
 
             self._resolve_mode(schema_helper)
             for e in json_list:
-                # elem, mdata, dsource, coords = self.conform_dict(e)
                 elem = self.conform_dict(e)
-                # if coords is not None:
-                #     schema_helper.insert(
-                #         COORDINATES_TABLE_NAME,
-                #         self.write_config.table_name_mapping[COORDINATES_TABLE_NAME],
-                #         coords,
-                #     )
-
-                # if dsource is not None:
-                #     schema_helper.insert(
-                #         DATA_SOURCE_TABLE_NAME,
-                #         self.write_config.table_name_mapping[DATA_SOURCE_TABLE_NAME],
-                #         dsource,
-                #     )
-
-                # if mdata is not None:
-                #     schema_helper.insert(
-                #         METADATA_TABLE_NAME,
-                #         self.write_config.table_name_mapping[METADATA_TABLE_NAME],
-                #         mdata,
-                #     )
 
                 schema_helper.insert(
                     ELEMENTS_TABLE_NAME,
-                    self.write_config.table_name_mapping[ELEMENTS_TABLE_NAME],
                     elem,
                 )
 

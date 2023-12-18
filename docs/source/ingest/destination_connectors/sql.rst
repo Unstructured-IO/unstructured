@@ -1,6 +1,6 @@
 SQL
 ===========
-NOTE: At the moment, the connector only supports PostgreSQL and SQLite.
+NOTE: At the moment, the connector only supports PostgreSQL and SQLite. Vectors can be stored and searched in PostgreSQL with pgvector.
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a PostgreSQL or SQLite schema.
 

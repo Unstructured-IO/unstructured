@@ -2,12 +2,6 @@
 
 import sys
 
-# # none of these are in the environment
-# DB_USERNAME = os.getenv("DB_USERNAME", "unstructured")
-# DB_PASSWORD = os.getenv("DB_PASSWORD", "test")
-# DB_HOST = os.getenv("DB_HOST", "localhost")
-# DB_PORT = os.getenv("DB_PORT", 5432)
-# DB_DATABASE = os.getenv("DB_DATABASE", "elements")
 N_ELEMENTS = 5
 
 
