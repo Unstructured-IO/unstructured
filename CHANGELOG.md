@@ -1,4 +1,14 @@
-## 0.11.4-dev14
+## 0.11.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix `partition_pdf()` and `partition_image()` importation issue.** Reorganize `pdf.py` and `image.py` modules to be consistent with other types of document import code.
+
+## 0.11.4
 
 ### Enhancements
 
@@ -21,7 +31,7 @@
 * **Update partition_csv to handle different delimiters** CSV files containing both non-comma delimiters and commas in the data were throwing an error in Pandas. `partition_csv` now identifies the correct delimiter before the file is processed.
 * **partition returning cid code in `hi_res`** occasionally pdfminer can fail to decode the text in an pdf file and return cid code as text. Now when this happens the text from OCR is used.
 
-## 0.11.3
+## 0.11.2
 
 ### Enhancements
 
