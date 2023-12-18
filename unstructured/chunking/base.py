@@ -396,8 +396,8 @@ class TextPreChunk:
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
-    Provides monitoring properties like `.remaining_space` and `.text_length` a pre-chunker can use
-    to determine whether it should add the next element in the element stream.
+    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
+    the next element in the element stream.
 
     `.flush()` is used to build a PreChunk object from the accumulated elements. This method
     returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
@@ -426,7 +426,7 @@ class PreChunkBuilder:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 
-    def flush(self) -> Iterator[TextPreChunk]:
+    def flush(self) -> Iterator[PreChunk]:
         """Generate zero-or-one `PreChunk` object and clear the accumulator.
 
         Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
@@ -435,23 +435,62 @@ class PreChunkBuilder:
         """
         if not self._elements:
             return
+
+        pre_chunk = (
+            TablePreChunk(self._elements[0], self._opts)
+            if isinstance(self._elements[0], Table)
+            # -- copy list, don't use original or it may change contents as builder proceeds --
+            else TextPreChunk(list(self._elements), self._opts)
+        )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
-        # -- iterator is exhausted and can add eleemnts for the next pre-chunk immediately.
-        elements = self._elements[:]
-        self._elements.clear()
-        self._text_segments.clear()
-        self._text_len = 0
-        yield TextPreChunk(elements, self._opts)
+        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
+        self._reset_state()
+        yield pre_chunk
+
+    def will_fit(self, element: Element) -> bool:
+        """True when `element` can be added to this prechunk without violating its limits.
+
+        There are several limits:
+        - A `Table` element will never fit with any other element. It will only fit in an empty
+          pre-chunk.
+        - No element will fit in a pre-chunk that already contains a `Table` element.
+        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
+          (aka. new_after_n_chars).
+        - A text-element will not fit when together with the elements already present it would
+          exceed the hard-max (aka. max_characters).
+        """
+        # -- an empty pre-chunk will accept any element (including an oversized-element) --
+        if len(self._elements) == 0:
+            return True
+        # -- a `Table` will not fit in a non-empty pre-chunk --
+        if isinstance(element, Table):
+            return False
+        # -- no element will fit in a pre-chunk that already contains a `Table` element --
+        if self._elements and isinstance(self._elements[0], Table):
+            return False
+        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
+        if self._text_length > self._opts.soft_max:
+            return False
+        # -- don't add an element if it would increase total size beyond the hard-max --
+        if self._remaining_space < len(element.text):
+            return False
+        return True
 
     @property
-    def remaining_space(self) -> int:
+    def _remaining_space(self) -> int:
         """Maximum text-length of an element that can be added without exceeding maxlen."""
         # -- include length of trailing separator that will go before next element text --
         separators_len = self._separator_len * len(self._text_segments)
         return self._opts.hard_max - self._text_len - separators_len
 
+    def _reset_state(self) -> None:
+        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._elements.clear()
+        self._text_segments.clear()
+        self._text_len = 0
+
     @property
-    def text_length(self) -> int:
+    def _text_length(self) -> int:
         """Length of the text in this pre-chunk.
 
         This value represents the chunk-size that would result if this pre-chunk was flushed in its
@@ -502,10 +541,16 @@ class PreChunkCombiner:
 
 
 class TextPreChunkAccumulator:
-    """Accumulates, measures, and combines pre-chunk objects.
+    """Accumulates, measures, and combines text pre-chunks.
 
-    Provides monitoring properties `.remaining_space` and `.text_length` suitable for deciding
-    whether to add another pre-chunk.
+    Used for combining pre-chunks for chunking strategies like "by-title" that can potentially
+    produce undersized chunks and offer the `combine_text_under_n_chars` option. Note that only
+    sequential `TextPreChunk` objects can be combined. A `TablePreChunk` is never combined with
+    another pre-chunk.
+
+    Provides `.add_pre_chunk()` allowing a pre-chunk to be added to the chunk and provides
+    monitoring properties `.remaining_space` and `.text_length` suitable for deciding whether to add
+    another pre-chunk.
 
     `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
     This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
