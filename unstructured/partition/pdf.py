@@ -298,7 +298,8 @@ def _partition_pdf_or_image_local(
 
         if analysis:
             annotate_layout_elements(
-                inferred_layout=inferred_document_layout,
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
                 filename=filename,
                 output_dir_path=analyzed_image_output_dir_path,
                 pdf_image_dpi=pdf_image_dpi,

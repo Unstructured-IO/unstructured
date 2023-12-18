@@ -14,6 +14,7 @@ from unstructured.partition.common import convert_to_bytes
 
 if TYPE_CHECKING:
     from unstructured.documents.elements import Element
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
 
 
 def write_image(image: Union[Image.Image, np.ndarray], output_image_path: str):
@@ -162,22 +163,29 @@ def valid_text(text: str) -> bool:
 
 
 def annotate_layout_elements_with_image(
-    inferred_page_layout,
-    image: Image,
-    output_dir_path,
-    output_f_basename,
-    page_number,
+    inferred_page_layout: "PageLayout",
+    extracted_page_layout: "PageLayout",
+    output_dir_path: str,
+    output_f_basename: str,
+    page_number: int,
 ):
-    """"""
+    """
+     Annotates a page image with both inferred and extracted layout elements.
+
+    This function takes the layout elements of a single page, either extracted from or inferred
+    for the document, and annotates them on the page image. It creates two separate annotated
+    images, one for each set of layout elements: 'inferred' and 'extracted'.
+    These annotated images are saved to a specified directory.
+    """
 
     layout_map = {
         "inferred": {"layout": inferred_page_layout, "color": "blue"},
+        "extracted": {"layout": extracted_page_layout, "color": "green"},
     }
     for label, layout_data in layout_map.items():
         page_layout = layout_data.get("layout")
         color = layout_data.get("color")
 
-        page_layout.image = image
         img = page_layout.annotate(colors=color)
         output_f_path = os.path.join(
             output_dir_path, f"{output_f_basename}_{page_number}_{label}.jpg"
@@ -187,13 +195,23 @@ def annotate_layout_elements_with_image(
 
 
 def annotate_layout_elements(
-    inferred_layout,
-    filename,
-    output_dir_path,
+    inferred_document_layout: "DocumentLayout",
+    extracted_layout: List["TextRegion"],
+    filename: str,
+    output_dir_path: str,
     pdf_image_dpi: int,
     is_image: bool = False,
 ) -> None:
-    """"""
+    """
+    Annotates layout elements on images extracted from a PDF or an image file.
+
+    This function processes a given document (PDF or image) and annotates layout elements based
+    on the inferred and extracted layout information.
+    It handles both PDF documents and standalone image files. For PDFs, it converts each page into an image,
+    whereas for image files, it processes the single image.
+    """
+
+    from unstructured_inference.inference.layout import PageLayout
 
     output_f_basename = os.path.splitext(os.path.basename(filename))[0]
     images = []
@@ -201,9 +219,18 @@ def annotate_layout_elements(
         if is_image:
             with Image.open(filename) as img:
                 images.append(img)
-                annotate_layout_elements_with_image(
-                    inferred_page_layout=inferred_layout.pages[0],
+                extracted_page_layout = PageLayout(
+                    number=1,
                     image=img,
+                )
+                extracted_page_layout.elements = extracted_layout[0]
+
+                inferred_page_layout = inferred_document_layout.pages[0]
+                inferred_page_layout.image = img
+
+                annotate_layout_elements_with_image(
+                    inferred_page_layout=inferred_document_layout.pages[0],
+                    extracted_page_layout=extracted_page_layout,
                     output_dir_path=output_dir_path,
                     output_f_basename=output_f_basename,
                     page_number=1,
@@ -219,12 +246,22 @@ def annotate_layout_elements(
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
                     with Image.open(image_path) as img:
-                        annotate_layout_elements_with_image(
-                            inferred_page_layout=inferred_layout.pages[i],
+                        page_number = i + 1
+                        extracted_page_layout = PageLayout(
+                            number=page_number,
                             image=img,
+                        )
+                        extracted_page_layout.elements = extracted_layout[i]
+
+                        inferred_page_layout = inferred_document_layout.pages[i]
+                        inferred_page_layout.image = img
+
+                        annotate_layout_elements_with_image(
+                            inferred_page_layout=inferred_document_layout.pages[i],
+                            extracted_page_layout=extracted_page_layout,
                             output_dir_path=output_dir_path,
                             output_f_basename=output_f_basename,
-                            page_number=i + 1,
+                            page_number=page_number,
                         )
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):
