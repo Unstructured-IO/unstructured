@@ -20,17 +20,17 @@ CI=${CI:-"false"}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 }
 trap cleanup EXIT
 
 if [ -z "$CONFLUENCE_USER_EMAIL" ] || [ -z "$CONFLUENCE_API_TOKEN" ]; then
-	echo "Skipping Confluence ingest test because the CONFLUENCE_USER_EMAIL or CONFLUENCE_API_TOKEN env var is not set."
-	exit 8
+  echo "Skipping Confluence ingest test because the CONFLUENCE_USER_EMAIL or CONFLUENCE_API_TOKEN env var is not set."
+  exit 8
 fi
 
 # The test checks the scenario where --confluence-list-of-spaces and --confluence-num-of-spaces
@@ -39,21 +39,21 @@ fi
 # We expect the test to ignore --confluence-num-of-spaces and use --confluence-list-of-spaces.
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-	confluence \
-	--download-dir "$DOWNLOAD_DIR" \
-	--metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-	--num-processes "$max_processes" \
-	--preserve-downloads \
-	--reprocess \
-	--output-dir "$OUTPUT_DIR" \
-	--verbose \
-	--url https://unstructured-ingest-test.atlassian.net \
-	--user-email "$CONFLUENCE_USER_EMAIL" \
-	--api-token "$CONFLUENCE_API_TOKEN" \
-	--max-num-of-spaces 10 \
-	--spaces testteamsp1 \
-	--max-num-of-docs-from-each-space 250 \
-	--work-dir "$WORK_DIR"
+  confluence \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --url https://unstructured-ingest-test.atlassian.net \
+  --user-email "$CONFLUENCE_USER_EMAIL" \
+  --api-token "$CONFLUENCE_API_TOKEN" \
+  --max-num-of-spaces 10 \
+  --spaces testteamsp1 \
+  --max-num-of-docs-from-each-space 250 \
+  --work-dir "$WORK_DIR"
 
 OUTPUT_SUBFOLDER_NAME=testteamsp1
 
