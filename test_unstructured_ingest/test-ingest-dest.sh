@@ -22,13 +22,13 @@ all_tests=(
   'dropbox.sh'
   'gcs.sh'
   'mongodb.sh'
-  'pinecone.sh'
-  's3.sh'
-  'postgresql.sh'
   'pgvector.sh'
+  'pinecone.sh'
+  'postgresql.sh'
+  's3.sh'
+  'sharepoint-embed-cog-index.sh'
   'sqlite.sh'
   'weaviate.sh'
-  'sharepoint-embed-cog-index.sh'
 )
 
 full_python_matrix_tests=(

@@ -11,14 +11,6 @@ SQL_DRIVERS = {"postgresql", "sqlite"}
 
 @dataclass
 class SqlCliConfig(SimpleSqlConfig, CliConfig):
-    # db_name: t.Optional[str]
-    # username: t.Optional[str]
-    # password: t.Optional[str] = field(repr=False)
-    # host: t.Optional[str]
-    # database: t.Optional[str]
-    # database_url: t.Optional[str] = None
-    # port: t.Optional[int] = 5432
-
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -67,20 +59,6 @@ class SqlCliWriteConfig(SqlWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
-            click.Option(
-                ["--table-name-mapping"],
-                default=None,
-                type=Dict(),
-                help=("Dict of the table(s) mapped to those defined in the example schema."),
-            ),
-            click.Option(
-                ["--table-column-mapping"],
-                default=None,
-                type=Dict(),
-                help=(
-                    "Dict of the table(s) column(s) mapped to those defined in the example schema."
-                ),
-            ),
             click.Option(
                 ["--mode"],
                 default="error",

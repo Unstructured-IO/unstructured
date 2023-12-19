@@ -51,4 +51,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --database elements \
   --mode overwrite
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "postgresql" "5432"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME" "5432"

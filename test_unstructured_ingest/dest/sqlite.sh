@@ -50,4 +50,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --database "$DB_PATH" \
   --mode overwrite
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "sqlite" "$DB_PATH"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME" "$DB_PATH"
