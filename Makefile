@@ -221,7 +221,11 @@ install-ingest-sftp:
 
 .PHONY: install-ingest-pinecone
 install-ingest-pinecone:
-	python3 -m pip install -r requirements/ingest-pinecone.txt
+	python3 -m pip install -r requirements/ingest/pinecone.txt
+
+.PHONY: install-ingest-chroma
+install-ingest-chroma:
+	python3 -m pip install -r requirements/ingest/chroma.txt
 
 .PHONY: install-ingest-postgres
 install-ingest-postgres:
