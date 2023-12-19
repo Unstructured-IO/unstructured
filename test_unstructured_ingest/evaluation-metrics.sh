@@ -13,12 +13,12 @@ mkdir -p "$OUTPUT_DIR"
 EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
-	METRIC_STRATEGY="measure-text-extraction-accuracy-command"
+  METRIC_STRATEGY="measure-text-extraction-accuracy-command"
 elif [ "$EVAL_NAME" == "element-type" ]; then
-	METRIC_STRATEGY="measure-element-type-accuracy-command"
+  METRIC_STRATEGY="measure-element-type-accuracy-command"
 else
-	echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
-	exit 1
+  echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
+  exit 1
 fi
 
 # Download cct test from s3
@@ -33,23 +33,23 @@ EXPORT_DIR=$OUTPUT_ROOT/metrics-tmp/$EVAL_NAME
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-	cleanup_dir "$SOURCE_DIR"
+  cleanup_dir "$SOURCE_DIR"
 }
 trap cleanup EXIT
 
 # build args
 function generate_args() {
-	local argtype="$1"
-	local dirpath="$2"
-	local list=("${@:3}")
+  local argtype="$1"
+  local dirpath="$2"
+  local list=("${@:3}")
 
-	local -a args
+  local -a args
 
-	args=("--${argtype}_dir" "$dirpath")
-	for filename in "${list[@]}"; do
-		args+=("--${argtype}_list" "$filename")
-	done
-	echo "${args[@]}"
+  args=("--${argtype}_dir" "$dirpath")
+  for filename in "${list[@]}"; do
+    args+=("--${argtype}_list" "$filename")
+  done
+  echo "${args[@]}"
 }
 
 # List selected output as a subset of OUTPUT_DIR, if any
@@ -64,7 +64,7 @@ read -ra source_args <<<"$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@
 
 # mkdir export_dir is handled in python script
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
-	$METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
-	--export_dir "$EXPORT_DIR"
+  $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
+  --export_dir "$EXPORT_DIR"
 
 "$SCRIPT_DIR"/check-diff-evaluation-metrics.sh "$EVAL_NAME"

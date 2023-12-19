@@ -1,8 +1,12 @@
-## 0.11.6-dev1
+## 0.11.6-dev3
 
 ### Enhancements
 
+* **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
+
 ### Features
+
+* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
 
 ### Fixes
 

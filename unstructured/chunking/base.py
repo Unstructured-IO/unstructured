@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
+from typing import Any, Callable, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
 
 from typing_extensions import Self, TypeAlias
 
@@ -16,10 +16,15 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Table,
     TableChunk,
+    Title,
 )
 from unstructured.utils import lazyproperty
 
+BoundaryPredicate: TypeAlias = Callable[[Element], bool]
+"""Detects when element represents crossing a semantic boundary like section or page."""
+
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
+"""The kind of object produced by a pre-chunker."""
 
 
 class ChunkingOptions:
@@ -609,3 +614,118 @@ class TextPreChunkAccumulator:
         total_text_length = sum(s.text_length for s in self._pre_chunks)
         total_separator_length = len(self._opts.text_separator) * (n - 1)
         return total_text_length + total_separator_length
+
+
+# ================================================================================================
+# CHUNK BOUNDARY PREDICATES
+# ------------------------------------------------------------------------------------------------
+# A *boundary predicate* is a function that takes an element and returns True when the element
+# represents the start of a new semantic boundary (such as section or page) to be respected in
+# chunking.
+#
+# Some of the functions below *are* a boundary predicate and others *construct* a boundary
+# predicate.
+#
+# These can be mixed and matched to produce different chunking behaviors like "by_title" or left
+# out altogether to produce "by_element" behavior.
+#
+# The effective lifetime of the function that produce a predicate (rather than directly being one)
+# is limited to a single element-stream because these retain state (e.g. current page number) to
+# determine when a semantic boundary has been crossed.
+# ================================================================================================
+
+
+def is_in_next_section() -> BoundaryPredicate:
+    """Not a predicate itself, calling this returns a predicate that triggers on each new section.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (current section) that is particular to that element stream.
+
+    A "section" of this type is particular to the EPUB format (so far) and not to be confused with
+    a "section" composed of a section-heading (`Title` element) followed by content elements.
+
+    The returned predicate tracks the current section, starting at `None`. Calling with an element
+    with a different value for `metadata.section` returns True, indicating the element starts a new
+    section boundary, and updates the enclosed section name ready for the next transition.
+    """
+    current_section: Optional[str] = None
+    is_first: bool = True
+
+    def section_changed(element: Element) -> bool:
+        nonlocal current_section, is_first
+
+        section = element.metadata.section
+
+        # -- The first element never reports a section break, it starts the first section of the
+        # -- document. That section could be named (section is non-None) or anonymous (section is
+        # -- None). We don't really have to care.
+        if is_first:
+            current_section = section
+            is_first = False
+            return False
+
+        # -- An element with a `None` section is assumed to continue the current section. It never
+        # -- updates the current-section because once set, the current-section is "sticky" until
+        # -- replaced by another explicit section.
+        if section is None:
+            return False
+
+        # -- another element with the same section continues that section --
+        if section == current_section:
+            return False
+
+        current_section = section
+        return True
+
+    return section_changed
+
+
+def is_on_next_page() -> BoundaryPredicate:
+    """Not a predicate itself, calling this returns a predicate that triggers on each new page.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (current page-number) that is particular to that element stream.
+
+    The returned predicate tracks the "current" page-number, starting at 1. An element with a
+    greater page number returns True, indicating the element starts a new page boundary, and
+    updates the enclosed page-number ready for the next transition.
+
+    An element with `page_number == None` or a page-number lower than the stored value is ignored
+    and returns False.
+    """
+    current_page_number: int = 1
+    is_first: bool = True
+
+    def page_number_incremented(element: Element) -> bool:
+        nonlocal current_page_number, is_first
+
+        page_number = element.metadata.page_number
+
+        # -- The first element never reports a page break, it starts the first page of the
+        # -- document. That page could be numbered (page_number is non-None) or not. If it is not
+        # -- numbered we assign it page-number 1.
+        if is_first:
+            current_page_number = page_number or 1
+            is_first = False
+            return False
+
+        # -- An element with a `None` page-number is assumed to continue the current page. It never
+        # -- updates the current-page-number because once set, the current-page-number is "sticky"
+        # -- until replaced by a different explicit page-number.
+        if page_number is None:
+            return False
+
+        if page_number == current_page_number:
+            return False
+
+        # -- it's possible for a page-number to decrease. We don't expect that, but if it happens
+        # -- we consider it a page-break.
+        current_page_number = page_number
+        return True
+
+    return page_number_incremented
+
+
+def is_title(element: Element) -> bool:
+    """True when `element` is a `Title` element, False otherwise."""
+    return isinstance(element, Title)
