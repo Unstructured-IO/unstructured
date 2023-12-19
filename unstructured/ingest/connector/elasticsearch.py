@@ -1,6 +1,5 @@
 import hashlib
 import json
-import sys
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -345,12 +344,6 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
-
-    def get_document_size(doc):
-        # Convert the document to JSON and get its size in bytes
-        json_data = json.dumps(doc)
-        size_bytes = sys.getsizeof(json_data)
-        return size_bytes
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
