@@ -4,14 +4,14 @@ from typing import List
 
 import pytest
 
+from unstructured.chunking.base import ChunkingOptions
 from unstructured.chunking.title import (
-    _NonTextSection,
-    _SectionCombiner,
+    PreChunkCombiner,
+    TablePreChunk,
+    TextPreChunk,
+    TextPreChunkAccumulator,
+    TextPreChunkBuilder,
     _split_elements_by_title_and_table,
-    _TableSection,
-    _TextSection,
-    _TextSectionAccumulator,
-    _TextSectionBuilder,
     chunk_by_title,
 )
 from unstructured.documents.coordinates import CoordinateSystem
@@ -31,143 +31,8 @@ from unstructured.documents.elements import (
 )
 from unstructured.partition.html import partition_html
 
-# == chunk_by_title() validation behaviors =======================================================
 
-
-@pytest.mark.parametrize("max_characters", [0, -1, -42])
-def test_it_rejects_max_characters_not_greater_than_zero(max_characters: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'max_characters' argument must be > 0, got {max_characters}",
-    ):
-        chunk_by_title(elements, max_characters=max_characters)
-
-
-def test_it_does_not_complain_when_specifying_max_characters_by_itself():
-    """Caller can specify `max_characters` arg without specifying any others.
-
-    In particular, When `combine_text_under_n_chars` is not specified it defaults to the value of
-    `max_characters`; it has no fixed default value that can be greater than `max_characters` and
-    trigger an exception.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=50)
-    except ValueError:
-        pytest.fail("did not accept `max_characters` as option by itself")
-
-
-@pytest.mark.parametrize("n_chars", [-1, -42])
-def test_it_rejects_combine_text_under_n_chars_for_n_less_than_zero(n_chars: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
-    ):
-        chunk_by_title(elements, combine_text_under_n_chars=n_chars)
-
-
-def test_it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining():
-    """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    chunks = chunk_by_title(elements, max_characters=50, combine_text_under_n_chars=0)
-
-    assert chunks == [CompositeElement("Lorem ipsum dolor.")]
-
-
-def test_it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself():
-    """Caller can specify `combine_text_under_n_chars` arg without specifying any other options."""
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, combine_text_under_n_chars=50)
-    except ValueError:
-        pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
-
-
-def test_it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars():
-    """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-    So rather than raising an exception or warning, we just cap that value at `max_characters` which
-    is the behavioral equivalent.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=500, combine_text_under_n_chars=600)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
-
-
-@pytest.mark.parametrize("n_chars", [-1, -42])
-def test_it_rejects_new_after_n_chars_for_n_less_than_zero(n_chars: int):
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    with pytest.raises(
-        ValueError,
-        match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
-    ):
-        chunk_by_title(elements, new_after_n_chars=n_chars)
-
-
-def test_it_does_not_complain_when_specifying_new_after_n_chars_by_itself():
-    """Caller can specify `new_after_n_chars` arg without specifying any other options.
-
-    In particular, `combine_text_under_n_chars` value is adjusted down to the `new_after_n_chars`
-    value when the default for `combine_text_under_n_chars` exceeds the value of
-    `new_after_n_chars`.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, new_after_n_chars=50)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` as option by itself")
-
-
-def test_it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chunk():
-    """Specifying `new_after_n_chars=0` places each element into its own section.
-
-    This puts each element into its own chunk, although long chunks are still split.
-    """
-    elements: List[Element] = [
-        Text("Lorem"),
-        Text("ipsum"),
-        Text("dolor"),
-    ]
-
-    chunks = chunk_by_title(elements, max_characters=50, new_after_n_chars=0)
-
-    assert chunks == [
-        CompositeElement("Lorem"),
-        CompositeElement("ipsum"),
-        CompositeElement("dolor"),
-    ]
-
-
-def test_it_silently_accepts_new_after_n_chars_greater_than_maxchars():
-    """`new_after_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-    So rather than raising an exception or warning, we just cap that value at `max_characters` which
-    is the behavioral equivalent.
-    """
-    elements: List[Element] = [Text("Lorem ipsum dolor.")]
-
-    try:
-        chunk_by_title(elements, max_characters=500, new_after_n_chars=600)
-    except ValueError:
-        pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
-
-
-# ================================================================================================
-
-
-def test_it_splits_a_large_section_into_multiple_chunks():
+def test_it_splits_a_large_element_into_multiple_chunks():
     elements: List[Element] = [
         Title("Introduction"),
         Text(
@@ -200,46 +65,39 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    sections = _split_elements_by_title_and_table(
-        elements,
-        multipage_sections=True,
-        new_after_n_chars=500,
-        max_characters=500,
-    )
+    pre_chunks = _split_elements_by_title_and_table(elements, opts=ChunkingOptions.new())
 
-    section = next(sections)
-    assert isinstance(section, _TextSection)
-    assert section._elements == [
+    pre_chunk = next(pre_chunks)
+    assert isinstance(pre_chunk, TextPreChunk)
+    assert pre_chunk._elements == [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
     ]
     # --
-    section = next(sections)
-    assert isinstance(section, _TableSection)
-    assert section._table == Table("Heading\nCell text")
+    pre_chunk = next(pre_chunks)
+    assert isinstance(pre_chunk, TablePreChunk)
+    assert pre_chunk._table == Table("Heading\nCell text")
     # ==
-    section = next(sections)
-    assert isinstance(section, _TextSection)
-    assert section._elements == [
+    pre_chunk = next(pre_chunks)
+    assert isinstance(pre_chunk, TextPreChunk)
+    assert pre_chunk._elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
     ]
     # --
-    section = next(sections)
-    assert isinstance(section, _TextSection)
-    assert section._elements == [
+    pre_chunk = next(pre_chunks)
+    assert isinstance(pre_chunk, TextPreChunk)
+    assert pre_chunk._elements == [
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
+        CheckBox(),
     ]
     # --
-    section = next(sections)
-    assert isinstance(section, _NonTextSection)
-    # --
     with pytest.raises(StopIteration):
-        next(sections)
+        next(pre_chunks)
 
 
 def test_chunk_by_title():
@@ -273,7 +131,6 @@ def test_chunk_by_title():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
     assert chunks[0].metadata == ElementMetadata(emphasized_text_contents=["Day", "day"])
     assert chunks[3].metadata == ElementMetadata(
@@ -315,7 +172,6 @@ def test_chunk_by_title_respects_section_change():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
@@ -352,14 +208,13 @@ def test_chunk_by_title_separates_by_page_number():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
 def test_chunk_by_title_does_not_break_on_regex_metadata_change():
-    """Sectioner is insensitive to regex-metadata changes.
+    """PreChunker is insensitive to regex-metadata changes.
 
-    A regex-metadata match in an element does not signify a semantic boundary and a section should
+    A regex-metadata match in an element does not signify a semantic boundary and a pre-chunk should
     not be split based on such a difference.
     """
     elements: List[Element] = [
@@ -470,7 +325,6 @@ def test_chunk_by_title_groups_across_pages():
         CompositeElement(
             "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
         ),
-        CheckBox(),
     ]
 
 
@@ -679,8 +533,8 @@ def test_chunk_by_title_drops_extra_metadata():
     assert str(chunks[1]) == str(CompositeElement("An Okay Day\n\nToday is an okay day."))
 
 
-def test_it_considers_separator_length_when_sectioning():
-    """Sectioner includes length of separators when computing remaining space."""
+def test_it_considers_separator_length_when_pre_chunking():
+    """PreChunker includes length of separators when computing remaining space."""
     elements: List[Element] = [
         Title("Chunking Priorities"),  # 19 chars
         ListItem("Divide text into manageable chunks"),  # 34 chars
@@ -700,26 +554,11 @@ def test_it_considers_separator_length_when_sectioning():
     ]
 
 
-# == Sections ====================================================================================
+# == PreChunks ===================================================================================
 
 
-class Describe_NonTextSection:
-    """Unit-test suite for `unstructured.chunking.title._NonTextSection objects."""
-
-    def it_iterates_its_element_as_the_sole_chunk(self):
-        checkbox = CheckBox()
-        section = _NonTextSection(checkbox)
-
-        chunk_iter = section.iter_chunks(maxlen=500)
-
-        chunk = next(chunk_iter)
-        assert isinstance(chunk, CheckBox)
-        with pytest.raises(StopIteration):
-            next(chunk_iter)
-
-
-class Describe_TableSection:
-    """Unit-test suite for `unstructured.chunking.title._TableSection objects."""
+class DescribeTablePreChunk:
+    """Unit-test suite for `unstructured.chunking.title.TablePreChunk objects."""
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
@@ -733,11 +572,12 @@ class Describe_TableSection:
             "</table>"
         )
         text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
-        section = _TableSection(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        pre_chunk = TablePreChunk(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            opts=ChunkingOptions.new(max_characters=175),
         )
 
-        chunk_iter = section.iter_chunks(maxlen=175)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, Table)
@@ -778,11 +618,12 @@ class Describe_TableSection:
             "Nunc aliquam   id enim nec molestie\n"
             "Vivamus quis   nunc ipsum donec ac fermentum"
         )
-        section = _TableSection(
-            Table(text_table, metadata=ElementMetadata(text_as_html=html_table))
+        pre_chunk = TablePreChunk(
+            Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            opts=ChunkingOptions.new(max_characters=100),
         )
 
-        chunk_iter = section.iter_chunks(maxlen=100)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -832,74 +673,81 @@ class Describe_TableSection:
             next(chunk_iter)
 
 
-class Describe_TextSection:
-    """Unit-test suite for `unstructured.chunking.title._TextSection objects."""
+class DescribeTextPreChunk:
+    """Unit-test suite for `unstructured.chunking.title.TextPreChunk objects."""
 
-    def it_can_combine_itself_with_another_TextSection_instance(self):
-        """.combine() produces a new section by appending the elements of `other_section`.
+    def it_can_combine_itself_with_another_TextPreChunk_instance(self):
+        """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.
 
-        Note that neither the original or other section are mutated.
+        Note that neither the original or other pre_chunk are mutated.
         """
-        section = _TextSection(
+        opts = ChunkingOptions.new()
+        pre_chunk = TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
-            ]
+            ],
+            opts=opts,
         )
-        other_section = _TextSection(
+        other_pre_chunk = TextPreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
 
-        new_section = section.combine(other_section)
+        new_pre_chunk = pre_chunk.combine(other_pre_chunk)
 
-        assert new_section == _TextSection(
+        assert new_pre_chunk == TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
-        assert section == _TextSection(
+        assert pre_chunk == TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
-            ]
+            ],
+            opts=opts,
         )
-        assert other_section == _TextSection(
+        assert other_pre_chunk == TextPreChunk(
             [
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
-            ]
+            ],
+            opts=opts,
         )
 
     def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
-        section = _TextSection(
+        pre_chunk = TextPreChunk(
             [
                 Title("Introduction"),
                 Text(
                     "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
                     "lectus porta volutpat.",
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(max_characters=200),
         )
 
-        chunk_iter = section.iter_chunks(maxlen=200)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
             "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
             " In rhoncus ipsum sedlectus porta volutpat.",
         )
-        assert chunk.metadata is section._consolidated_metadata
+        assert chunk.metadata is pre_chunk._consolidated_metadata
 
     def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
         # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
-        # -- The sectioner will isolate that element in a section of its own.
-        section = _TextSection(
+        # -- The pre-chunker will isolate that element in a pre_chunk of its own.
+        pre_chunk = TextPreChunk(
             [
                 Text(
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
@@ -907,10 +755,11 @@ class Describe_TextSection:
                     " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
                     " commodo consequat."
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(max_characters=200),
         )
 
-        chunk_iter = section.iter_chunks(maxlen=200)
+        chunk_iter = pre_chunk.iter_chunks()
 
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
@@ -918,22 +767,24 @@ class Describe_TextSection:
             " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
             " veniam, quis nostrud exercitation ullamco laboris nisi ut a"
         )
-        assert chunk.metadata is section._consolidated_metadata
+        assert chunk.metadata is pre_chunk._consolidated_metadata
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("liquip ex ea commodo consequat.")
-        assert chunk.metadata is section._consolidated_metadata
+        assert chunk.metadata is pre_chunk._consolidated_metadata
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
     def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
-        """.text_length is the size of chunk this section will produce (before any splitting)."""
-        section = _TextSection([PageBreak(""), Text("foo"), Text("bar")])
-        assert section.text_length == 8
+        """.text_length is the size of chunk this pre-chunk will produce (before any splitting)."""
+        pre_chunk = TextPreChunk(
+            [PageBreak(""), Text("foo"), Text("bar")], opts=ChunkingOptions.new()
+        )
+        assert pre_chunk.text_length == 8
 
     def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
-        section = _TextSection(
+        pre_chunk = TextPreChunk(
             [
                 Title(
                     "Lorem Ipsum",
@@ -953,10 +804,11 @@ class Describe_TextSection:
                         languages=["lat", "eng"],
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
-        assert section._all_metadata_values == {
+        assert pre_chunk._all_metadata_values == {
             # -- scalar values are accumulated in a list in element order --
             "category_depth": [0, 1],
             # -- all values are accumulated, not only unique ones --
@@ -985,15 +837,16 @@ class Describe_TextSection:
         )
         metadata_2.quotient = 1.74
 
-        section = _TextSection(
+        pre_chunk = TextPreChunk(
             [
                 Title("Lorem Ipsum", metadata=metadata),
                 Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
         # -- ad-hoc fields "coefficient" and "quotient" do not appear --
-        assert section._all_metadata_values == {
+        assert pre_chunk._all_metadata_values == {
             "category_depth": [0, 1],
             "filename": ["foo.docx", "foo.docx"],
             "image_path": ["sprite.png"],
@@ -1007,7 +860,7 @@ class Describe_TextSection:
         Also, the `start` and `end` offsets of each regex-match are adjusted to reflect their new
         position in the chunk after element text has been concatenated.
         """
-        section = _TextSection(
+        pre_chunk = TextPreChunk(
             [
                 Title(
                     "Lorem Ipsum",
@@ -1030,10 +883,11 @@ class Describe_TextSection:
                         regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
-        regex_metadata = section._consolidated_regex_meta
+        regex_metadata = pre_chunk._consolidated_regex_meta
 
         assert regex_metadata == {
             "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
@@ -1048,9 +902,9 @@ class Describe_TextSection:
         """._meta_kwargs is used like `ElementMetadata(**self._meta_kwargs)` to construct metadata.
 
         Only non-None fields should appear in the dict and each field value should be the
-        consolidation of the values across the section elements.
+        consolidation of the values across the pre_chunk elements.
         """
-        section = _TextSection(
+        pre_chunk = TextPreChunk(
             [
                 PageBreak(""),
                 Title(
@@ -1084,10 +938,11 @@ class Describe_TextSection:
                         },
                     ),
                 ),
-            ]
+            ],
+            opts=ChunkingOptions.new(),
         )
 
-        meta_kwargs = section._meta_kwargs
+        meta_kwargs = pre_chunk._meta_kwargs
 
         assert meta_kwargs == {
             "filename": "foo.docx",
@@ -1112,29 +967,29 @@ class Describe_TextSection:
             ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
         ],
     )
-    def it_knows_the_concatenated_text_of_the_section(
+    def it_knows_the_concatenated_text_of_the_pre_chunk(
         self, elements: List[Text], expected_value: str
     ):
-        """._text is the "joined" text of the section elements.
+        """._text is the "joined" text of the pre-chunk elements.
 
         The text-segment contributed by each element is separated from the next by a blank line
         ("\n\n"). An element that contributes no text does not give rise to a separator.
         """
-        section = _TextSection(elements)
-        assert section._text == expected_value
+        pre_chunk = TextPreChunk(elements, opts=ChunkingOptions.new())
+        assert pre_chunk._text == expected_value
 
 
-class Describe_TextSectionBuilder:
-    """Unit-test suite for `unstructured.chunking.title._TextSectionBuilder`."""
+class DescribeTextPreChunkBuilder:
+    """Unit-test suite for `unstructured.chunking.title.TextPreChunkBuilder`."""
 
     def it_is_empty_on_construction(self):
-        builder = _TextSectionBuilder(maxlen=50)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
 
         assert builder.text_length == 0
         assert builder.remaining_space == 50
 
     def it_accumulates_elements_added_to_it(self):
-        builder = _TextSectionBuilder(maxlen=150)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         builder.add_element(Title("Introduction"))
         assert builder.text_length == 12
@@ -1149,8 +1004,8 @@ class Describe_TextSectionBuilder:
         assert builder.text_length == 112
         assert builder.remaining_space == 36
 
-    def it_generates_a_TextSection_when_flushed_and_resets_itself_to_empty(self):
-        builder = _TextSectionBuilder(maxlen=150)
+    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
         builder.add_element(Title("Introduction"))
         builder.add_element(
             Text(
@@ -1159,10 +1014,10 @@ class Describe_TextSectionBuilder:
             ),
         )
 
-        section = next(builder.flush())
+        pre_chunk = next(builder.flush())
 
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Introduction"),
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
@@ -1172,17 +1027,17 @@ class Describe_TextSectionBuilder:
         assert builder.text_length == 0
         assert builder.remaining_space == 150
 
-    def but_it_does_not_generate_a_TextSection_on_flush_when_empty(self):
-        builder = _TextSectionBuilder(maxlen=150)
+    def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
-        sections = list(builder.flush())
+        pre_chunks = list(builder.flush())
 
-        assert sections == []
+        assert pre_chunks == []
         assert builder.text_length == 0
         assert builder.remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        builder = _TextSectionBuilder(maxlen=50)
+        builder = TextPreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
         builder.add_element(Text("abcde"))
         builder.add_element(Text("fghij"))
 
@@ -1195,41 +1050,43 @@ class Describe_TextSectionBuilder:
         assert builder.remaining_space == 36
 
 
-# == SectionCombiner =============================================================================
+# == PreChunkCombiner =============================================================================
 
 
-class Describe_SectionCombiner:
-    """Unit-test suite for `unstructured.chunking.title._SectionCombiner`."""
+class DescribePreChunkCombiner:
+    """Unit-test suite for `unstructured.chunking.title.PreChunkCombiner`."""
 
-    def it_combines_sequential_small_text_sections(self):
-        sections = [
-            _TextSection(
+    def it_combines_sequential_small_text_pre_chunks(self):
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        pre_chunks = [
+            TextPreChunk(
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
-            _TextSection(
+            TextPreChunk(
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
-            _TextSection(
+            TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
-        section_iter = _SectionCombiner(
-            sections, maxlen=250, combine_text_under_n_chars=250
-        ).iter_combined_sections()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
             Title("Mauris Nec"),
@@ -1238,188 +1095,179 @@ class Describe_SectionCombiner:
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
         ]
         with pytest.raises(StopIteration):
-            next(section_iter)
+            next(pre_chunk_iter)
 
-    def but_it_does_not_combine_table_or_non_text_sections(self):
-        sections = [
-            _TextSection(
+    def but_it_does_not_combine_table_pre_chunks(self):
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        pre_chunks = [
+            TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             ),
-            _TableSection(Table("Heading\nCell text")),
-            _TextSection(
+            TablePreChunk(Table("Heading\nCell text"), opts=opts),
+            TextPreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
-            ),
-            _NonTextSection(CheckBox()),
-            _TextSection(
-                [
-                    Title("Sed Orci"),
-                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
-        section_iter = _SectionCombiner(
-            sections, maxlen=250, combine_text_under_n_chars=250
-        ).iter_combined_sections()
+        pre_chunk_iter = PreChunkCombiner(
+            pre_chunks, ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        ).iter_combined_pre_chunks()
 
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
         ]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TableSection)
-        assert section._table == Table("Heading\nCell text")
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._table == Table("Heading\nCell text")
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
         ]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _NonTextSection)
-        # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
-            Title("Sed Orci"),
-            Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
-        ]
-        # --
         with pytest.raises(StopIteration):
-            next(section_iter)
+            next(pre_chunk_iter)
 
     def it_respects_the_specified_combination_threshold(self):
-        sections = [
-            _TextSection(  # 68
+        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=80)
+        pre_chunks = [
+            TextPreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
-            _TextSection(  # 71
+            TextPreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 139
-            _TextSection(
+            TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
         ]
 
-        section_iter = _SectionCombiner(
-            sections, maxlen=250, combine_text_under_n_chars=80
-        ).iter_combined_sections()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
         ]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
         ]
         # --
         with pytest.raises(StopIteration):
-            next(section_iter)
+            next(pre_chunk_iter)
 
     def it_respects_the_hard_maximum_window_length(self):
-        sections = [
-            _TextSection(  # 68
+        opts = ChunkingOptions.new(max_characters=200, combine_text_under_n_chars=200)
+        pre_chunks = [
+            TextPreChunk(  # 68
                 [
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
-                ]
+                ],
+                opts=opts,
             ),
-            _TextSection(  # 71
+            TextPreChunk(  # 71
                 [
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 139
-            _TextSection(
+            TextPreChunk(
                 [
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
-                ]
+                ],
+                opts=opts,
             ),
             # -- len == 214
         ]
 
-        section_iter = _SectionCombiner(
-            sections, maxlen=200, combine_text_under_n_chars=200
-        ).iter_combined_sections()
+        pre_chunk_iter = PreChunkCombiner(pre_chunks, opts=opts).iter_combined_pre_chunks()
 
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
             Title("Mauris Nec"),
             Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
         ]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),
         ]
         # --
         with pytest.raises(StopIteration):
-            next(section_iter)
+            next(pre_chunk_iter)
 
-    def it_accommodates_and_isolates_an_oversized_section(self):
+    def it_accommodates_and_isolates_an_oversized_pre_chunk(self):
         """Such as occurs when a single element exceeds the window size."""
-
-        sections = [
-            _TextSection([Title("Lorem Ipsum")]),
-            _TextSection(  # 179
+        opts = ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+        pre_chunks = [
+            TextPreChunk([Title("Lorem Ipsum")], opts=opts),
+            TextPreChunk(  # 179
                 [
                     Text(
                         "Lorem ipsum dolor sit amet consectetur adipiscing elit."  # 55
                         " Mauris nec urna non augue vulputate consequat eget et nisi."  # 60
                         " Sed orci quam, eleifend sit amet vehicula, elementum ultricies."  # 64
                     )
-                ]
+                ],
+                opts=opts,
             ),
-            _TextSection([Title("Vulputate Consequat")]),
+            TextPreChunk([Title("Vulputate Consequat")], opts=opts),
         ]
 
-        section_iter = _SectionCombiner(
-            sections, maxlen=150, combine_text_under_n_chars=150
-        ).iter_combined_sections()
+        pre_chunk_iter = PreChunkCombiner(
+            pre_chunks, ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+        ).iter_combined_pre_chunks()
 
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [Title("Lorem Ipsum")]
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [Title("Lorem Ipsum")]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Text(
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit."
                 " Mauris nec urna non augue vulputate consequat eget et nisi."
@@ -1427,84 +1275,91 @@ class Describe_SectionCombiner:
             )
         ]
         # --
-        section = next(section_iter)
-        assert isinstance(section, _TextSection)
-        assert section._elements == [Title("Vulputate Consequat")]
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [Title("Vulputate Consequat")]
         # --
         with pytest.raises(StopIteration):
-            next(section_iter)
+            next(pre_chunk_iter)
 
 
-class Describe_TextSectionAccumulator:
-    """Unit-test suite for `unstructured.chunking.title._TextSectionAccumulator`."""
+class DescribeTextPreChunkAccumulator:
+    """Unit-test suite for `unstructured.chunking.title.TextPreChunkAccumulator`."""
 
     def it_is_empty_on_construction(self):
-        accum = _TextSectionAccumulator(maxlen=100)
+        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=100))
 
         assert accum.text_length == 0
         assert accum.remaining_space == 100
 
-    def it_accumulates_sections_added_to_it(self):
-        accum = _TextSectionAccumulator(maxlen=500)
+    def it_accumulates_pre_chunks_added_to_it(self):
+        opts = ChunkingOptions.new(max_characters=500)
+        accum = TextPreChunkAccumulator(opts=opts)
 
-        accum.add_section(
-            _TextSection(
+        accum.add_pre_chunk(
+            TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             )
         )
         assert accum.text_length == 68
         assert accum.remaining_space == 430
 
-        accum.add_section(
-            _TextSection(
+        accum.add_pre_chunk(
+            TextPreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
+                ],
+                opts=opts,
             )
         )
         assert accum.text_length == 141
         assert accum.remaining_space == 357
 
-    def it_generates_a_TextSection_when_flushed_and_resets_itself_to_empty(self):
-        accum = _TextSectionAccumulator(maxlen=150)
-        accum.add_section(
-            _TextSection(
+    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+        opts = ChunkingOptions.new(max_characters=150)
+        accum = TextPreChunkAccumulator(opts=opts)
+        accum.add_pre_chunk(
+            TextPreChunk(
                 [
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ]
+                ],
+                opts=opts,
             )
         )
-        accum.add_section(
-            _TextSection(
+        accum.add_pre_chunk(
+            TextPreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ]
+                ],
+                opts=opts,
             )
         )
-        accum.add_section(
-            _TextSection(
+        accum.add_pre_chunk(
+            TextPreChunk(
                 [
                     Title("Sed Orci"),
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
-                ]
+                ],
+                opts=opts,
             )
         )
 
-        section_iter = accum.flush()
+        pre_chunk_iter = accum.flush()
 
-        # -- iterator generates exactly one section --
-        section = next(section_iter)
+        # -- iterator generates exactly one pre_chunk --
+        pre_chunk = next(pre_chunk_iter)
         with pytest.raises(StopIteration):
-            next(section_iter)
-        # -- and it is a _TextSection containing all the elements --
-        assert isinstance(section, _TextSection)
-        assert section._elements == [
+            next(pre_chunk_iter)
+        # -- and it is a _TextPreChunk containing all the elements --
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
             Title("Lorem Ipsum"),
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
             Title("Mauris Nec"),
@@ -1515,24 +1370,25 @@ class Describe_TextSectionAccumulator:
         assert accum.text_length == 0
         assert accum.remaining_space == 150
 
-    def but_it_does_not_generate_a_TextSection_on_flush_when_empty(self):
-        accum = _TextSectionAccumulator(maxlen=150)
+    def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
+        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=150))
 
-        sections = list(accum.flush())
+        pre_chunks = list(accum.flush())
 
-        assert sections == []
+        assert pre_chunks == []
         assert accum.text_length == 0
         assert accum.remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        accum = _TextSectionAccumulator(maxlen=100)
-        accum.add_section(_TextSection([Text("abcde")]))
-        accum.add_section(_TextSection([Text("fghij")]))
+        opts = ChunkingOptions.new(max_characters=100)
+        accum = TextPreChunkAccumulator(opts=opts)
+        accum.add_pre_chunk(TextPreChunk([Text("abcde")], opts=opts))
+        accum.add_pre_chunk(TextPreChunk([Text("fghij")], opts=opts))
 
         # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
         # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
         assert accum.text_length == 12
         # -- .remaining_space is reduced by the length (2) of the trailing separator which would
-        # -- go between the current text and that of the next section if one was added.
+        # -- go between the current text and that of the next pre-chunk if one was added.
         # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
         assert accum.remaining_space == 86

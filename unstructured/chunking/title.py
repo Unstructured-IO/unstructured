@@ -7,12 +7,11 @@ from __future__ import annotations
 
 import collections
 import copy
-import functools
-import inspect
-from typing import Any, Callable, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
+from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
 
-from typing_extensions import ParamSpec, TypeAlias
+from typing_extensions import TypeAlias
 
+from unstructured.chunking.base import ChunkingOptions
 from unstructured.documents.elements import (
     CompositeElement,
     ConsolidationStrategy,
@@ -21,15 +20,11 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Table,
     TableChunk,
-    Text,
     Title,
 )
 from unstructured.utils import lazyproperty
 
-_Section: TypeAlias = "_NonTextSection | _TableSection | _TextSection"
-
-# -- goes between text of each element when element-text is concatenated to form chunk --
-TEXT_SEPARATOR = "\n\n"
+PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
 
 
 def chunk_by_title(
@@ -67,120 +62,82 @@ def chunk_by_title(
         Chunks elements text and text_as_html (if present) into chunks of length
         n characters (hard max)
     """
+    opts = ChunkingOptions.new(
+        combine_text_under_n_chars=combine_text_under_n_chars,
+        max_characters=max_characters,
+        multipage_sections=multipage_sections,
+        new_after_n_chars=new_after_n_chars,
+    )
 
-    # -- validation and arg pre-processing ---------------------------
+    pre_chunks = PreChunkCombiner(
+        _split_elements_by_title_and_table(elements, opts), opts=opts
+    ).iter_combined_pre_chunks()
 
-    # -- chunking window must have positive length --
-    if max_characters <= 0:
-        raise ValueError(f"'max_characters' argument must be > 0, got {max_characters}")
-
-    # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
-    # -- capped at max-chars
-    if combine_text_under_n_chars is None or combine_text_under_n_chars > max_characters:
-        combine_text_under_n_chars = max_characters
-
-    # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-    # -- but a negative value is not
-    if combine_text_under_n_chars < 0:
-        raise ValueError(
-            f"'combine_text_under_n_chars' argument must be >= 0, got {combine_text_under_n_chars}",
-        )
-
-    # -- same with `new_after_n_chars` --
-    if new_after_n_chars is None or new_after_n_chars > max_characters:
-        new_after_n_chars = max_characters
-
-    if new_after_n_chars < 0:
-        raise ValueError(f"'new_after_n_chars' argument must be >= 0, got {new_after_n_chars}")
-
-    # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-    if combine_text_under_n_chars > new_after_n_chars:
-        combine_text_under_n_chars = new_after_n_chars
-
-    # ----------------------------------------------------------------
-
-    sections = _SectionCombiner(
-        _split_elements_by_title_and_table(
-            elements,
-            multipage_sections=multipage_sections,
-            new_after_n_chars=new_after_n_chars,
-            max_characters=max_characters,
-        ),
-        max_characters,
-        combine_text_under_n_chars,
-    ).iter_combined_sections()
-
-    return [chunk for section in sections for chunk in section.iter_chunks(max_characters)]
+    return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
 
 
 def _split_elements_by_title_and_table(
-    elements: List[Element],
-    multipage_sections: bool,
-    new_after_n_chars: int,
-    max_characters: int,
-) -> Iterator[_TextSection | _TableSection | _NonTextSection]:
-    """Implements "sectioner" responsibilities.
+    elements: List[Element], opts: ChunkingOptions
+) -> Iterator[TextPreChunk | TablePreChunk]:
+    """Implements "pre-chunker" responsibilities.
 
     A _section_ can be thought of as a "pre-chunk", generally determining the size and contents of a
     chunk formed by the subsequent "chunker" process. The only exception occurs when a single
     element is too big to fit in the chunk window and the chunker splits it into two or more chunks
-    divided mid-text. The sectioner never divides an element mid-text.
+    divided mid-text. The pre-chunker never divides an element mid-text.
 
-    The sectioner's responsibilities are:
+    The pre-chunker's responsibilities are:
 
         * **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
-          either side of those boundaries into different sections. In this case, the primary
+          either side of those boundaries into different pre-chunks. In this case, the primary
           indicator of a semantic boundary is a `Title` element. A page-break (change in
           page-number) is also a semantic boundary when `multipage_sections` is `False`.
 
         * **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
-          into sections as big as possible without exceeding the chunk window size.
+          into pre-chunks as big as possible without exceeding the chunk window size.
 
         * **Minimize chunks that must be split mid-text.** Precompute the text length of each
-          section and only produce a section that exceeds the chunk window size when there is a
+          pre-chunk and only produce a pre-chunk that exceeds the chunk window size when there is a
           single element with text longer than that window.
 
-    A Table or Checkbox element is placed into a section by itself.
+    A Table or Checkbox element is placed into a pre-chunk by itself.
     """
-    section_builder = _TextSectionBuilder(max_characters)
+    pre_chunk_builder = TextPreChunkBuilder(opts)
 
     prior_element = None
 
     for element in elements:
         metadata_differs = (
-            _metadata_differs(element, prior_element, ignore_page_numbers=multipage_sections)
+            _metadata_differs(element, prior_element, ignore_page_numbers=opts.multipage_sections)
             if prior_element
             else False
         )
 
-        # -- start new section when necessary --
+        # -- start new pre_chunk when necessary --
         if (
-            # -- Title, Table, and non-Text element (CheckBox) all start a new section --
+            # -- Title and Table both start a new pre_chunk --
             isinstance(element, (Title, Table))
-            or not isinstance(element, Text)
-            # -- adding this element would exceed hard-maxlen for section --
-            or section_builder.remaining_space < len(str(element))
-            # -- section already meets or exceeds soft-maxlen --
-            or section_builder.text_length >= new_after_n_chars
+            # -- adding this element would exceed hard-maxlen for pre_chunk --
+            or pre_chunk_builder.remaining_space < len(str(element))
+            # -- pre_chunk already meets or exceeds soft-maxlen --
+            or pre_chunk_builder.text_length >= opts.soft_max
             # -- a semantic boundary is indicated by metadata change since prior element --
             or metadata_differs
         ):
-            # -- complete any work-in-progress section --
-            yield from section_builder.flush()
+            # -- complete any work-in-progress pre_chunk --
+            yield from pre_chunk_builder.flush()
 
         # -- emit table and checkbox immediately since they are always isolated --
         if isinstance(element, Table):
-            yield _TableSection(table=element)
-        elif not isinstance(element, Text):
-            yield _NonTextSection(element)
+            yield TablePreChunk(table=element, opts=opts)
         # -- but accumulate text elements for consolidation into a composite chunk --
         else:
-            section_builder.add_element(element)
+            pre_chunk_builder.add_element(element)
 
         prior_element = element
 
-    # -- flush "tail" section, any partially-filled section after last element is processed --
-    yield from section_builder.flush()
+    # -- flush "tail" pre_chunk, any partially-filled pre_chunk after last element is processed --
+    yield from pre_chunk_builder.flush()
 
 
 def _metadata_differs(
@@ -201,91 +158,21 @@ def _metadata_differs(
     return metadata1.page_number != metadata2.page_number
 
 
-_P = ParamSpec("_P")
+# == PreChunks ===================================================================================
 
 
-def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """Decorator for chunking text.
+class TablePreChunk:
+    """A pre-chunk composed of a single Table element."""
 
-    Uses title elements to identify sections within the document for chunking. Splits off a new
-    section when a title is detected or if metadata changes, which happens when page numbers or
-    sections change. Cuts off sections once they have exceeded a character length of
-    max_characters.
-    """
-
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
-        if func.__doc__ and (
-            "chunking_strategy" in func.__code__.co_varnames
-            and "chunking_strategy" not in func.__doc__
-        ):
-            func.__doc__ += (
-                "\nchunking_strategy"
-                + "\n\tStrategy used for chunking text into larger or smaller elements."
-                + "\n\tDefaults to `None` with optional arg of 'by_title'."
-                + "\n\tAdditional Parameters:"
-                + "\n\t\tmultipage_sections"
-                + "\n\t\t\tIf True, sections can span multiple pages. Defaults to True."
-                + "\n\t\tcombine_text_under_n_chars"
-                + "\n\t\t\tCombines elements (for example a series of titles) until a section"
-                + "\n\t\t\treaches a length of n characters."
-                + "\n\t\tnew_after_n_chars"
-                + "\n\t\t\tCuts off new sections once they reach a length of n characters"
-                + "\n\t\t\ta soft max."
-                + "\n\t\tmax_characters"
-                + "\n\t\t\tChunks elements text and text_as_html (if present) into chunks"
-                + "\n\t\t\tof length n characters, a hard max."
-            )
-
-        @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
-            elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
-            if params.get("chunking_strategy") == "by_title":
-                elements = chunk_by_title(
-                    elements,
-                    multipage_sections=params.get("multipage_sections", True),
-                    combine_text_under_n_chars=params.get("combine_text_under_n_chars", 500),
-                    new_after_n_chars=params.get("new_after_n_chars", 500),
-                    max_characters=params.get("max_characters", 500),
-                )
-            return elements
-
-        return wrapper
-
-    return decorator
-
-
-# == Sections ====================================================================================
-
-
-class _NonTextSection:
-    """A section composed of a single `Element` that does not subclass `Text`.
-
-    Currently, only `CheckBox` fits that description
-    """
-
-    def __init__(self, element: Element) -> None:
-        self._element = element
-
-    def iter_chunks(self, maxlen: int) -> Iterator[Element]:
-        """Generate the non-text element of this section."""
-        yield self._element
-
-
-class _TableSection:
-    """A section composed of a single Table element."""
-
-    def __init__(self, table: Table) -> None:
+    def __init__(self, table: Table, opts: ChunkingOptions) -> None:
         self._table = table
+        self._opts = opts
 
-    def iter_chunks(self, maxlen: int) -> Iterator[Table | TableChunk]:
-        """Split this section into one or more `Table` or `TableChunk` objects maxlen or smaller."""
+    def iter_chunks(self) -> Iterator[Table | TableChunk]:
+        """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
         text = self._table.text
         html = self._table.metadata.text_as_html or ""
+        maxlen = self._opts.hard_max
 
         # -- only chunk a table when it's too big to swallow whole --
         if len(text) <= maxlen and len(html) <= maxlen:
@@ -314,7 +201,7 @@ class _TableSection:
             is_continuation = True
 
 
-class _TextSection:
+class TextPreChunk:
     """A sequence of elements that belong to the same semantic unit within a document.
 
     The name "section" derives from the idea of a document-section, a heading followed by the
@@ -324,22 +211,24 @@ class _TextSection:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Text]) -> None:
+    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions) -> None:
         self._elements = list(elements)
+        self._opts = opts
 
     def __eq__(self, other: Any) -> bool:
-        if not isinstance(other, _TextSection):
+        if not isinstance(other, TextPreChunk):
             return False
         return self._elements == other._elements
 
-    def combine(self, other_section: _TextSection) -> _TextSection:
-        """Return new `_TextSection` that combines this and `other_section`."""
-        return _TextSection(self._elements + other_section._elements)
+    def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
+        """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
+        return TextPreChunk(self._elements + other_pre_chunk._elements, opts=self._opts)
 
-    def iter_chunks(self, maxlen: int) -> Iterator[CompositeElement]:
-        """Split this section into one or more `CompositeElement` objects maxlen or smaller."""
+    def iter_chunks(self) -> Iterator[CompositeElement]:
+        """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
         text = self._text
         text_len = len(text)
+        maxlen = self._opts.hard_max
         start = 0
         remaining = text_len
 
@@ -351,8 +240,8 @@ class _TextSection:
 
     @lazyproperty
     def text_length(self) -> int:
-        """Length of concatenated text of this section, including separators."""
-        # -- used by section-combiner to identify combination candidates --
+        """Length of concatenated text of this pre-chunk, including separators."""
+        # -- used by pre-chunk-combiner to identify combination candidates --
         return len(self._text)
 
     @lazyproperty
@@ -360,7 +249,7 @@ class _TextSection:
         """Collection of all populated metadata values across elements.
 
         The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
-        at least one of the elements in this section. The value of that key is a list of all those
+        at least one of the elements in this pre-chunk. The value of that key is a list of all those
         populated values, in element order, for example:
 
             {
@@ -392,13 +281,13 @@ class _TextSection:
 
     @lazyproperty
     def _consolidated_metadata(self) -> ElementMetadata:
-        """Metadata applicable to this section as a single chunk.
+        """Metadata applicable to this pre-chunk as a single chunk.
 
         Formed by applying consolidation rules to all metadata fields across the elements of this
-        section.
+        pre-chunk.
 
         For the sake of consistency, the same rules are applied (for example, for dropping values)
-        to a single-element section too, even though metadata for such a section is already
+        to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
         "consolidated".
         """
         return ElementMetadata(**self._meta_kwargs)
@@ -411,6 +300,7 @@ class _TextSection:
         offsets of each regex match are also adjusted for their new positions.
         """
         chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
+        separator_len = len(self._opts.text_separator)
         running_text_len = 0
         start_offset = 0
 
@@ -420,7 +310,7 @@ class _TextSection:
             if not text_len:
                 continue
             # -- account for blank line between "squashed" elements, but not before first element --
-            running_text_len += len(TEXT_SEPARATOR) if running_text_len else 0
+            running_text_len += separator_len if running_text_len else 0
             start_offset = running_text_len
             running_text_len += text_len
 
@@ -478,77 +368,75 @@ class _TextSection:
 
     @lazyproperty
     def _text(self) -> str:
-        """The concatenated text of all elements in this section.
+        """The concatenated text of all elements in this pre-chunk.
 
         Each element-text is separated from the next by a blank line ("\n\n").
         """
-        return TEXT_SEPARATOR.join(e.text for e in self._elements if e.text)
+        text_separator = self._opts.text_separator
+        return text_separator.join(e.text for e in self._elements if e.text)
 
 
-class _TextSectionBuilder:
-    """An element accumulator suitable for incrementally forming a section.
+class TextPreChunkBuilder:
+    """An element accumulator suitable for incrementally forming a pre-chunk.
 
-    Provides monitoring properties like `.remaining_space` and `.text_length` a sectioner can use
+    Provides monitoring properties like `.remaining_space` and `.text_length` a pre-chunker can use
     to determine whether it should add the next element in the element stream.
 
-    `.flush()` is used to build a `TextSection` object from the accumulated elements. This method
-    returns an interator that generates zero-or-one `TextSection` object and is used like so:
+    `.flush()` is used to build a `TextPreChunk` object from the accumulated elements. This method
+    returns an interator that generates zero-or-one `TextPreChunk` object and is used like so:
 
         yield from builder.flush()
 
-    If no elements have been accumulated, no `TextSection` is generated. Flushing the builder clears
-    the elements it contains so it is ready to build the next text-section.
+    If no elements have been accumulated, no `TextPreChunk` is generated. Flushing the builder
+    clears the elements it contains so it is ready to build the next text-pre-chunk.
     """
 
-    def __init__(self, maxlen: int) -> None:
-        self._maxlen = maxlen
-        self._separator_len = len(TEXT_SEPARATOR)
-        self._elements: List[Text] = []
-
-        # -- these mutable working values probably represent premature optimization but improve
-        # -- performance and I expect will be welcome when processing a million elements
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
+        self._separator_len = len(opts.text_separator)
+        self._elements: List[Element] = []
 
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: List[str] = []
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 
-    def add_element(self, element: Text) -> None:
+    def add_element(self, element: Element) -> None:
         """Add `element` to this section."""
         self._elements.append(element)
         if element.text:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 
-    def flush(self) -> Iterator[_TextSection]:
-        """Generate zero-or-one `Section` object and clear the accumulator.
+    def flush(self) -> Iterator[TextPreChunk]:
+        """Generate zero-or-one `PreChunk` object and clear the accumulator.
 
-        Suitable for use to emit a Section when the maximum size has been reached or a semantic
-        boundary has been reached. Also to clear out a terminal section at the end of an element
+        Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
+        boundary has been reached. Also to clear out a terminal pre-chunk at the end of an element
         stream.
         """
         if not self._elements:
             return
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
-        # -- iterator is exhausted and can add eleemnts for the next section immediately.
+        # -- iterator is exhausted and can add eleemnts for the next pre-chunk immediately.
         elements = self._elements[:]
         self._elements.clear()
         self._text_segments.clear()
         self._text_len = 0
-        yield _TextSection(elements)
+        yield TextPreChunk(elements, self._opts)
 
     @property
     def remaining_space(self) -> int:
         """Maximum text-length of an element that can be added without exceeding maxlen."""
         # -- include length of trailing separator that will go before next element text --
         separators_len = self._separator_len * len(self._text_segments)
-        return self._maxlen - self._text_len - separators_len
+        return self._opts.hard_max - self._text_len - separators_len
 
     @property
     def text_length(self) -> int:
-        """Length of the text in this section.
+        """Length of the text in this pre-chunk.
 
-        This value represents the chunk-size that would result if this section was flushed in its
+        This value represents the chunk-size that would result if this pre-chunk was flushed in its
         current state. In particular, it does not include the length of a trailing separator (since
         that would only appear if an additional element was added).
 
@@ -562,104 +450,102 @@ class _TextSectionBuilder:
         return self._text_len + (separator_count * self._separator_len)
 
 
-# == SectionCombiner =============================================================================
+# == PreChunkCombiner ============================================================================
 
 
-class _SectionCombiner:
-    """Filters section stream to combine small sections where possible."""
+class PreChunkCombiner:
+    """Filters pre-chunk stream to combine small pre-chunks where possible."""
 
-    def __init__(
-        self,
-        sections: Iterable[_Section],
-        maxlen: int,
-        combine_text_under_n_chars: int,
-    ):
-        self._sections = sections
-        self._maxlen = maxlen
-        self._combine_text_under_n_chars = combine_text_under_n_chars
+    def __init__(self, pre_chunks: Iterable[PreChunk], opts: ChunkingOptions):
+        self._pre_chunks = pre_chunks
+        self._opts = opts
 
-    def iter_combined_sections(self) -> Iterator[_Section]:
-        """Generate section objects, combining TextSection objects when they will fit in window."""
-        accum = _TextSectionAccumulator(self._maxlen)
+    def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
+        """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
+        accum = TextPreChunkAccumulator(self._opts)
+        combine_text_under_n_chars = self._opts.combine_text_under_n_chars
 
-        for section in self._sections:
-            # -- start new section under these conditions --
+        for pre_chunk in self._pre_chunks:
+            # -- start new pre-chunk under these conditions --
             if (
-                # -- a table or checkbox section is never combined --
-                isinstance(section, (_TableSection, _NonTextSection))
-                # -- don't add another section once length has reached combination soft-max --
-                or accum.text_length >= self._combine_text_under_n_chars
+                # -- a table pre-chunk is never combined --
+                isinstance(pre_chunk, TablePreChunk)
+                # -- don't add another pre-chunk once length has reached combination soft-max --
+                or accum.text_length >= combine_text_under_n_chars
                 # -- combining would exceed hard-max --
-                or accum.remaining_space < section.text_length
+                or accum.remaining_space < pre_chunk.text_length
             ):
                 yield from accum.flush()
 
-            # -- a table or checkbox section is never combined so don't accumulate --
-            if isinstance(section, (_TableSection, _NonTextSection)):
-                yield section
+            # -- a table pre-chunk is never combined so don't accumulate --
+            if isinstance(pre_chunk, TablePreChunk):
+                yield pre_chunk
             else:
-                accum.add_section(section)
+                accum.add_pre_chunk(pre_chunk)
 
         yield from accum.flush()
 
 
-class _TextSectionAccumulator:
-    """Accumulates, measures, and combines section objects.
+class TextPreChunkAccumulator:
+    """Accumulates, measures, and combines pre-chunk objects.
 
     Provides monitoring properties `.remaining_space` and `.text_length` suitable for deciding
-    whether to add another section.
+    whether to add another pre-chunk.
 
-    `.flush()` is used to combine the accumulated sections into a single `TextSection` object. This
-    method returns an interator that generates zero-or-one `TextSection` objects and is used like
-    so:
+    `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
+    This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
+    like so:
 
         yield from accum.flush()
 
-    If no sections have been accumulated, no `TextSection` is generated. Flushing the builder clears
-    the sections it contains so it is ready to accept the next text-section.
+    If no pre-chunks have been accumulated, no `TextPreChunk` is generated. Flushing the builder
+    clears the pre-chunks it contains so it is ready to accept the next text-pre-chunk.
     """
 
-    def __init__(self, maxlen: int) -> None:
-        self._maxlen = maxlen
-        self._sections: List[_TextSection] = []
+    def __init__(self, opts: ChunkingOptions) -> None:
+        self._opts = opts
+        self._pre_chunks: List[TextPreChunk] = []
 
-    def add_section(self, section: _TextSection) -> None:
-        """Add a section to the accumulator for possible combination with next section."""
-        self._sections.append(section)
+    def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
+        """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
+        self._pre_chunks.append(pre_chunk)
 
-    def flush(self) -> Iterator[_TextSection]:
-        """Generate all accumulated sections as a single combined section."""
-        sections = self._sections
+    def flush(self) -> Iterator[TextPreChunk]:
+        """Generate all accumulated pre-chunks as a single combined pre-chunk."""
+        pre_chunks = self._pre_chunks
 
-        # -- nothing to do if no sections have been accumulated --
-        if not sections:
+        # -- nothing to do if no pre-chunks have been accumulated --
+        if not pre_chunks:
             return
 
-        # -- otherwise combine all accumulated section into one --
-        section = sections[0]
-        for other_section in sections[1:]:
-            section = section.combine(other_section)
-        yield section
+        # -- otherwise combine all accumulated pre-chunk into one --
+        pre_chunk = pre_chunks[0]
+        for other_pre_chunk in pre_chunks[1:]:
+            pre_chunk = pre_chunk.combine(other_pre_chunk)
+        yield pre_chunk
 
         # -- and reset the accumulator (to empty) --
-        sections.clear()
+        pre_chunks.clear()
 
     @property
     def remaining_space(self) -> int:
-        """Maximum size of section that can be added without exceeding maxlen."""
+        """Maximum size of pre-chunk that can be added without exceeding maxlen."""
+        maxlen = self._opts.hard_max
         return (
-            self._maxlen
-            if not self._sections
-            # -- an additional section will also incur an additional separator --
-            else self._maxlen - self.text_length - len(TEXT_SEPARATOR)
+            maxlen
+            if not self._pre_chunks
+            # -- an additional pre-chunk will also incur an additional separator --
+            else maxlen - self.text_length - len(self._opts.text_separator)
         )
 
     @property
     def text_length(self) -> int:
-        """Size of concatenated text in all sections in accumulator."""
-        n = len(self._sections)
-        return (
-            0
-            if n == 0
-            else sum(s.text_length for s in self._sections) + len(TEXT_SEPARATOR) * (n - 1)
-        )
+        """Size of concatenated text in all pre-chunks in accumulator."""
+        n = len(self._pre_chunks)
+
+        if n == 0:
+            return 0
+
+        total_text_length = sum(s.text_length for s in self._pre_chunks)
+        total_separator_length = len(self._opts.text_separator) * (n - 1)
+        return total_text_length + total_separator_length
