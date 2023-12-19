@@ -169,11 +169,15 @@ def partition_pdf(
     metadata_last_modified
         The last modified date for the document.
     extract_images_in_pdf
-        If True and strategy=hi_res, any detected images will be saved in the path specified by
+        Only applicable if `strategy=hi_res`.
+        If `True`, any detected images will be saved in the path specified by
         image_output_dir_path.
+    extract_element_types
+        Only applicable if `strategy=hi_res`.
+        Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
     image_output_dir_path
-        If extract_images_in_pdf=True and strategy=hi_res, any detected images or tables
-        will be saved in the given path
+        Only applicable if `strategy=hi_res`.
+        The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
     """
 
     exactly_one(filename=filename, file=file)
