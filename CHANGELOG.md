@@ -6,6 +6,8 @@
 
 ### Features
 
+* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
+
 ### Fixes
 
 ## 0.11.5
