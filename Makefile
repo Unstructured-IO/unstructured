@@ -223,6 +223,10 @@ install-ingest-sftp:
 install-ingest-pinecone:
 	python3 -m pip install -r requirements/ingest/pinecone.txt
 
+.PHONY: install-ingest-chroma
+install-ingest-chroma:
+	python3 -m pip install -r requirements/ingest/chroma.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
