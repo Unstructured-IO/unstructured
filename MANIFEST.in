@@ -12,6 +12,7 @@ include requirements/ingest-wikipedia.in
 include requirements/ingest-google-drive.in
 include requirements/ingest-gcs.in
 include requirements/ingest-elasticsearch.in
+include requirements/ingest-opensearch.in
 include requirements/ingest-dropbox.in
 include requirements/ingest-box.in
 include requirements/ingest-onedrive.in

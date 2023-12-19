@@ -231,6 +231,10 @@ install-embed-huggingface:
 install-unstructured-inference:
 	python3 -m pip install -r requirements/ingest/local-inference.txt
 
+.PHONY: install-ingest-opensearch
+install-ingest-opensearch:
+	python3 -m pip install -r requirements/ingest/opensearch.txt
+
 ## install-local-inference: installs requirements for local inference
 .PHONY: install-local-inference
 install-local-inference: install install-all-docs

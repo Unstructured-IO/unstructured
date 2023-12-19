@@ -23,6 +23,7 @@ from .jira import JiraRunner
 from .local import LocalRunner
 from .notion import NotionRunner
 from .onedrive import OneDriveRunner
+from .opensearch import OpenSearchRunner
 from .outlook import OutlookRunner
 from .reddit import RedditRunner
 from .salesforce import SalesforceRunner
@@ -51,6 +52,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "local": LocalRunner,
     "notion": NotionRunner,
     "onedrive": OneDriveRunner,
+    "opensearch": OpenSearchRunner,
     "outlook": OutlookRunner,
     "reddit": RedditRunner,
     "s3": S3Runner,
