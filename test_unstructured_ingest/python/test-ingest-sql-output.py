@@ -40,12 +40,14 @@ if __name__ == "__main__":
     count = cursor.fetchone()[0]
 
     if database_name == "pgvector":
-        query = "SELECT AVG(embeddings) FROM elements;"
+        query = (
+            f"SELECT * FROM elements ORDER BY embeddings <-> '{[0.1 for i in range(384)]}' LIMIT 1;"
+        )
         cursor = conn.cursor()
         cursor.execute(query)
         res = cursor.fetchone()
-        print(f"Result of {query} against pgvector with embeddings")
-        print(res)
+        assert res[2] == "Mallori"
+        print("Result of vector search against pgvector with embeddings successful")
 
     try:
         assert count == N_ELEMENTS

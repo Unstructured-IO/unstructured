@@ -53,8 +53,8 @@ class BaseConfig(EnhancedDataClassJsonMixin, ABC):
 
 @dataclass
 class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
+    """Meant to designate holding any sensitive information associated with other configs
+    and also for access specific configs."""
 
 
 @dataclass

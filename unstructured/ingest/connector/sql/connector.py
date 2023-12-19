@@ -22,13 +22,13 @@ from .schema import (
 
 @dataclass
 class SqlAccessConfig(AccessConfig):
+    username: t.Optional[str]
     password: t.Optional[str] = enhanced_field(sensitive=True)
 
 
 @dataclass
 class SimpleSqlConfig(BaseConnectorConfig):
     db_type: t.Optional[str]
-    username: t.Optional[str]
     host: t.Optional[str]
     database: t.Optional[str]
     port: t.Optional[int]
@@ -59,7 +59,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
         from psycopg2 import connect
 
         return connect(
-            user=self.username,
+            user=self.access_config.username,
             password=self.access_config.password,
             dbname=self.database,
             host=self.host,
