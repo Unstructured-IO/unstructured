@@ -23,12 +23,12 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # WARNING: There are many documents in that path.
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	biomed \
-	--path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
-	--output-dir biomed-ingest-output-path \
-	--num-processes 2 \
-	--verbose \
-	--preserve-downloads
+  biomed \
+  --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
+  --output-dir biomed-ingest-output-path \
+  --num-processes 2 \
+  --verbose \
+  --preserve-downloads
 
 # Alternatively, you can call it using:
 # unstructured-ingest --biomed-path ...

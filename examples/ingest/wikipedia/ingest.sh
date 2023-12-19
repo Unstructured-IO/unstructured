@@ -9,11 +9,11 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	wikipedia \
-	--page-title "Open Source Software" \
-	--output-dir wikipedia-ingest-output \
-	--num-processes 2 \
-	--verbose
+  wikipedia \
+  --page-title "Open Source Software" \
+  --output-dir wikipedia-ingest-output \
+  --num-processes 2 \
+  --verbose
 
 # Alternatively, you can call it using:
 # unstructured-ingest wikipedia --page-title "..." ...

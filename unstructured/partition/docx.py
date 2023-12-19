@@ -37,7 +37,7 @@ from docx.text.run import Run
 from tabulate import tabulate
 from typing_extensions import TypeAlias
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
     Address,
