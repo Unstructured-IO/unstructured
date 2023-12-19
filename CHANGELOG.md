@@ -1,10 +1,12 @@
-## 0.11.6-dev2
+## 0.11.6-dev3
 
 ### Enhancements
 
 * **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
 
 ### Features
+
+* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
 
 ### Fixes
 
@@ -33,7 +35,6 @@
 * **Save tables in PDF's separately as images.** The "table" elements are saved as `table-<pageN>-<tableN>.jpg`. This filename is presented in the `image_path` metadata field for the Table element. The default would be to not do this.
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 * **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
-* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Chroma vector database.
 
 ### Fixes
 

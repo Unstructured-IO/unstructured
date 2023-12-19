@@ -21,14 +21,14 @@ COLLECTION_NAME="chroma-test-output-$RANDOM_SUFFIX"
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-	# Kill chroma background process
-	pgrep -f chroma-dest | xargs kill
-	cleanup_dir "$DESTINATION_PATH"
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+  # Kill chroma background process
+  pgrep -f chroma-dest | xargs kill
+  cleanup_dir "$DESTINATION_PATH"
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 }
 
 trap cleanup EXIT
@@ -38,20 +38,20 @@ scripts/chroma-test-helpers/create-and-check-chroma.sh "$DESTINATION_PATH"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	local \
-	--num-processes "$max_processes" \
-	--output-dir "$OUTPUT_DIR" \
-	--strategy fast \
-	--verbose \
-	--input-path example-docs/book-war-and-peace-1p.txt \
-	--work-dir "$WORK_DIR" \
-	--chunk-elements \
-	--chunk-multipage-sections \
-	--embedding-provider "langchain-huggingface" \
-	chroma \
-	--host "localhost" \
-	--port 8000 \
-	--collection-name "$COLLECTION_NAME" \
-	--batch-size 80
+  local \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --input-path example-docs/book-war-and-peace-1p.txt \
+  --work-dir "$WORK_DIR" \
+  --chunk-elements \
+  --chunk-multipage-sections \
+  --embedding-provider "langchain-huggingface" \
+  chroma \
+  --host "localhost" \
+  --port 8000 \
+  --collection-name "$COLLECTION_NAME" \
+  --batch-size 80
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --collection-name "$COLLECTION_NAME"
