@@ -15,6 +15,7 @@ for the presence of titles. When a title is detected, a new section is created.
 Tables and non-text elements (such as page breaks or images) are always their
 own section.
 
+Chunks have a set maximum length of ``max_characters``, which defaults to ``500``.
 New sections are also created if changes in metadata occure. Examples of when
 this occurs include when the section of the document or the page number changes
 or when an element comes from an attachment instead of from the main document.
