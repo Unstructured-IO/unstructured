@@ -526,18 +526,39 @@ class TextPreChunk:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions) -> None:
+    def __init__(
+        self, elements: Iterable[Element], overlap_prefix: str, opts: ChunkingOptions
+    ) -> None:
         self._elements = list(elements)
+        self._overlap_prefix = overlap_prefix
         self._opts = opts
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, TextPreChunk):
             return False
-        return self._elements == other._elements
+        return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
+
+    def can_combine(self, pre_chunk: TextPreChunk) -> bool:
+        """True when `pre_chunk` can be combined with this one without exceeding size limits."""
+        if len(self._text) >= self._opts.combine_text_under_n_chars:
+            return False
+        # -- avoid duplicating length computations by doing a trial-combine which is just as
+        # -- efficient and definitely more robust than hoping two different computations of combined
+        # -- length continue to get the same answer as the code evolves. Only possible because
+        # -- `.combine()` is non-mutating.
+        combined_len = len(self.combine(pre_chunk)._text)
+
+        return combined_len <= self._opts.hard_max
 
     def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
         """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
-        return TextPreChunk(self._elements + other_pre_chunk._elements, opts=self._opts)
+        # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
+        # -- is automatically incorporated at the end of the first chunk, where it originated.
+        return TextPreChunk(
+            self._elements + other_pre_chunk._elements,
+            overlap_prefix=self._overlap_prefix,
+            opts=self._opts,
+        )
 
     def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
@@ -549,6 +570,17 @@ class TextPreChunk:
         while remainder:
             s, remainder = split(remainder)
             yield CompositeElement(text=s, metadata=metadata)
+
+    @lazyproperty
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
     def text_length(self) -> int:
@@ -613,15 +645,15 @@ class TextPreChunk:
         """
         chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
         separator_len = len(self._opts.text_separator)
-        running_text_len = 0
-        start_offset = 0
+        running_text_len = len(self._overlap_prefix) if self._overlap_prefix else 0
+        start_offset = running_text_len
 
         for element in self._elements:
             text_len = len(element.text)
             # -- skip empty elements like `PageBreak("")` --
             if not text_len:
                 continue
-            # -- account for blank line between "squashed" elements, but not before first element --
+            # -- account for blank line between "squashed" elements, but not at start of text --
             running_text_len += separator_len if running_text_len else 0
             start_offset = running_text_len
             running_text_len += text_len
@@ -640,6 +672,18 @@ class TextPreChunk:
                 chunk_regex_metadata[regex_name] = chunk_matches
 
         return chunk_regex_metadata
+
+    def _iter_text_segments(self) -> Iterator[str]:
+        """Generate overlap text and each element text segment in order.
+
+        Empty text segments are not included.
+        """
+        if self._overlap_prefix:
+            yield self._overlap_prefix
+        for e in self._elements:
+            if not e.text:
+                continue
+            yield e.text
 
     @lazyproperty
     def _meta_kwargs(self) -> Dict[str, Any]:
@@ -685,7 +729,7 @@ class TextPreChunk:
         Each element-text is separated from the next by a blank line ("\n\n").
         """
         text_separator = self._opts.text_separator
-        return text_separator.join(e.text for e in self._elements if e.text)
+        return text_separator.join(self._iter_text_segments())
 
 
 # ================================================================================================
@@ -743,7 +787,7 @@ class PreChunkBuilder:
             TablePreChunk(self._elements[0], "", self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._opts)
+            else TextPreChunk(list(self._elements), "", self._opts)
         )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
