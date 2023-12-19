@@ -1,6 +1,8 @@
-## 0.11.6-dev1
+## 0.11.6-dev2
 
 ### Enhancements
+
+* **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
 
 ### Features
 
