@@ -19,7 +19,7 @@ TESTING_FILE_DIR = os.path.join(EXAMPLE_DOCS_DIRECTORY, "test_evaluate_files")
 UNSTRUCTURED_OUTPUT_DIRNAME = "unstructured_output"
 GOLD_CCT_DIRNAME = "gold_standard_cct"
 GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
-
+UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_text_extraction_evaluation():
@@ -34,6 +34,22 @@ def test_text_extraction_evaluation():
     assert len(df) == 3
     assert len(df.columns) == 5
     assert df.iloc[0].filename == "Bank Good Credit Loan.pptx"
+
+
+# @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+# def test_text_extraction_evaluation_type_txt():
+#     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_CCT_DIRNAME)
+#     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
+#     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+#     measure_text_extraction_accuracy(
+#         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="txt"
+#     )
+#     breakpoint()
+    # assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
+    # df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
+    # assert len(df) == 3
+    # assert len(df.columns) == 5
+    # assert df.iloc[0].filename == "Bank Good Credit Loan.pptx"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")

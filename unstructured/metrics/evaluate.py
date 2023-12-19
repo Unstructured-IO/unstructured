@@ -42,6 +42,7 @@ def measure_text_extraction_accuracy(
     grouping: Optional[str] = None,
     weights: Tuple[int, int, int] = (2, 1, 1),
     visualize: bool = False,
+    output_type: str = "json",
 ) -> None:
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -59,13 +60,18 @@ def measure_text_extraction_accuracy(
     if not output_list:
         print("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
+    if output_type not in ["json", "txt"]:
+        print(f"Specified file type under `output_dir` or `output_list` should be one of 'json' or 'txt'. The given file type is {output_type}, exiting.")
+        sys.exit(0)
+    if not all(_.endswith(output_type) for _ in output_list):
+        print("The directory contains file type inconsistent with the given input. Please note that some files will be skipped.")
 
     rows = []
 
     # assumption: output file name convention is name-of-file.doc.json
     # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
     for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
-        filename = (doc.split("/")[-1]).split(".json")[0]
+        filename = (doc.split("/")[-1]).split(f".{output_type}")[0]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
         connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
@@ -77,7 +83,7 @@ def measure_text_extraction_accuracy(
             fn_txt = fn + ".txt"
 
         if fn_txt in source_list:  # type: ignore
-            output_cct = elements_to_text(elements_from_json(os.path.join(output_dir, doc)))
+            output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
             source_cct = _read_text(os.path.join(source_dir, fn_txt))
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
@@ -165,6 +171,14 @@ def measure_element_type_accuracy(
     _display(agg_df)
 
 
+def _prepare_output_cct(docpath, output_type):
+    if output_type == "json":
+        output_cct = elements_to_text(elements_from_json(docpath))
+    elif output_type == "txt":
+        output_cct = _read_text(docpath)
+    return output_cct
+
+
 def _listdir_recursive(dir: str):
     listdir = []
     for dirpath, _, filenames in os.walk(dir):
@@ -203,7 +217,7 @@ def _display(df):
         )
 
 
-def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
+def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = False):
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):
@@ -212,7 +226,18 @@ def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w"):
         df["count"] = df["count"].astype(int)
     if "filename" in df.columns and "connector" in df.columns:
         df.sort_values(by=["connector", "filename"], inplace=True)
+    if not overwrite:
+        filename = _uniquity_file(dir, filename)
     df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
+
+
+def _uniquity_file(dir, filename):
+    counter = 1
+    original_filename, extension = filename.rsplit(".", 1)
+    while os.path.exists(os.path.join(dir, filename)):
+        filename = original_filename + " (" + str(counter) + ")." + extension
+        counter += 1
+    return filename
 
 
 def _mean(scores: Union[pd.Series, List[float]], rounding: Optional[int] = 3):
