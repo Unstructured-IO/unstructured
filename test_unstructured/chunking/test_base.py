@@ -18,6 +18,7 @@ from unstructured.chunking.base import (
 )
 from unstructured.documents.elements import (
     CompositeElement,
+    Element,
     ElementMetadata,
     PageBreak,
     RegexMetadata,
@@ -572,15 +573,15 @@ class DescribePreChunkBuilder:
     def it_is_empty_on_construction(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
 
-        assert builder.text_length == 0
-        assert builder.remaining_space == 50
+        assert builder._text_length == 0
+        assert builder._remaining_space == 50
 
     def it_accumulates_elements_added_to_it(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         builder.add_element(Title("Introduction"))
-        assert builder.text_length == 12
-        assert builder.remaining_space == 136
+        assert builder._text_length == 12
+        assert builder._remaining_space == 136
 
         builder.add_element(
             Text(
@@ -588,8 +589,67 @@ class DescribePreChunkBuilder:
                 "lectus porta volutpat.",
             ),
         )
-        assert builder.text_length == 112
-        assert builder.remaining_space == 36
+        assert builder._text_length == 112
+        assert builder._remaining_space == 36
+
+    @pytest.mark.parametrize("element", [Table("Heading\nCell text"), Text("abcd " * 200)])
+    def it_will_fit_a_Table_or_oversized_element_when_empty(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        assert builder.will_fit(element)
+
+    @pytest.mark.parametrize(
+        ("existing_element", "next_element"),
+        [
+            (Text("abcd"), Table("Fruits\nMango")),
+            (Text("abcd"), Text("abcd " * 200)),
+            (Table("Heading\nCell text"), Table("Fruits\nMango")),
+            (Table("Heading\nCell text"), Text("abcd " * 200)),
+        ],
+    )
+    def but_not_when_it_already_contains_an_element_of_any_kind(
+        self, existing_element: Element, next_element: Element
+    ):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder.add_element(existing_element)
+
+        assert not builder.will_fit(next_element)
+
+    @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
+    def it_will_not_fit_any_element_when_it_already_contains_a_table(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder.add_element(Table("Heading\nCell text"))
+
+        assert not builder.will_fit(element)
+
+    def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
+        builder = PreChunkBuilder(
+            opts=ChunkingOptions.new(max_characters=100, new_after_n_chars=50)
+        )
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        assert not builder.will_fit(Text("In rhoncus ipsum."))
+
+    def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 44 == 101 --
+        assert not builder.will_fit(
+            Text("In rhoncus ipsum sed lectus portos volutpat.")  # 44-chars
+        )
+
+    def but_it_will_fit_an_element_that_fits(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 43 == 100 --
+        assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
 
     def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
@@ -611,8 +671,24 @@ class DescribePreChunkBuilder:
                 "lectus porta volutpat.",
             ),
         ]
-        assert builder.text_length == 0
-        assert builder.remaining_space == 150
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+
+    def but_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder.add_element(Table("Heading\nCell text"))
+
+        pre_chunk = next(builder.flush())
+
+        # -- pre-chunk builder was reset before the yield, such that the iterator does not need to
+        # -- be exhausted before clearing out the old elements and a new pre-chunk can be
+        # -- accumulated immediately (first `next()` call is required however, to advance to the
+        # -- yield statement).
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+        # -- pre-chunk is a `TablePreChunk` --
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._table == Table("Heading\nCell text")
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
@@ -620,21 +696,21 @@ class DescribePreChunkBuilder:
         pre_chunks = list(builder.flush())
 
         assert pre_chunks == []
-        assert builder.text_length == 0
-        assert builder.remaining_space == 150
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
         builder.add_element(Text("abcde"))
         builder.add_element(Text("fghij"))
 
-        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
+        # -- ._text_length includes a separator ("\n\n", len==2) between each text-segment,
         # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
-        assert builder.text_length == 12
-        # -- .remaining_space is reduced by the length (2) of the trailing separator which would go
-        # -- between the current text and that of the next element if one was added.
+        assert builder._text_length == 12
+        # -- ._remaining_space is reduced by the length (2) of the trailing separator which would
+        # -- go between the current text and that of the next element if one was added.
         # -- So 50 - 12 - 2 = 36 here, not 50 - 12 = 38
-        assert builder.remaining_space == 36
+        assert builder._remaining_space == 36
 
 
 class DescribePreChunkCombiner:
