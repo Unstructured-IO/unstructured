@@ -27,7 +27,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
