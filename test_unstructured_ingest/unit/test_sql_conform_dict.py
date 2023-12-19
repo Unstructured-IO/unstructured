@@ -61,7 +61,7 @@ def test_conform_dict_1():
     # Mock the uuid.uuid4 function to return a fixed value
     with patch("uuid.uuid4", return_value="mocked_uuid"):
         # Call the conform_dict method
-        data_out, metadata, data_source, coordinates = connector.conform_dict(TEST_DATA_1)
+        data_out = connector.conform_dict(TEST_DATA_1)
 
     # Assert that the result matches the expected output
     assert data_out == {
@@ -69,34 +69,22 @@ def test_conform_dict_1():
         "text": "May 5, 2023",
         "type": "UncategorizedText",
         "id": "mocked_uuid",
-        "metadata_id": "mocked_uuid",
-        "data_source_id": "mocked_uuid",
-        "coordinates_id": "mocked_uuid",
-    }
-    assert metadata == {
         "file_directory": "example-docs",
         "filename": "fake-memo.pdf",
         "filetype": "application/pdf",
         "languages": ["eng"],
         "last_modified": datetime.datetime(2023, 10, 25, 10, 5, 44),
         "page_number": "1",
-        "id": "mocked_uuid",
-    }
-    assert data_source == {
         "date_created": datetime.datetime(2023, 10, 25, 10, 5, 44, 976775),
         "date_modified": datetime.datetime(2023, 10, 25, 10, 5, 44, 976775),
         "date_processed": datetime.datetime(2023, 12, 14, 17, 6, 33, 74057),
         "permissions_data": '[{"mode": 33188}]',
         "url": "example-docs/fake-memo.pdf",
-        "id": "mocked_uuid",
-    }
-    assert coordinates == {
         "layout_height": 792,
         "layout_width": 612,
         "points": "[[72.0, 72.69200000000001], [72.0, 83.69200000000001],"
         " [135.8, 83.69200000000001], [135.8, 72.69200000000001]]",
         "system": "PixelSpace",
-        "id": "mocked_uuid",
     }
 
 
@@ -108,28 +96,19 @@ def test_conform_dict_2():
     # Mock the uuid.uuid4 function to return a fixed value
     with patch("uuid.uuid4", return_value="mocked_uuid"):
         # Call the conform_dict method
-        data_out, metadata, data_source, coordinates = connector.conform_dict(TEST_DATA_2)
+        data_out = connector.conform_dict(TEST_DATA_2)
 
     # Assert that the result matches the expected output
     assert data_out == {
         "embeddings": "[0.1, 0.2, 0.3]",
         "id": "mocked_uuid",
-        "metadata_id": "mocked_uuid",
-        "data_source_id": "mocked_uuid",
-        "coordinates_id": "mocked_uuid",
-    }
-    assert metadata == {
         "links": '{"link1": "https://example.com", "link2": "https://example.org"}',
         "last_modified": datetime.datetime(2021, 1, 3, 0, 0),
         "page_number": "10",
         "regex_metadata": '{"pattern": "abc"}',
-        "id": "mocked_uuid",
-    }
-    assert data_source == {
         "date_created": datetime.datetime(2021, 1, 1, 0, 0),
         "date_modified": datetime.datetime(2021, 1, 2, 0, 0),
         "date_processed": datetime.datetime(2022, 12, 13, 15, 44, 8),
         "version": "1.1",
-        "id": "mocked_uuid",
+        "points": "[1, 2, 3]",
     }
-    assert coordinates == {"points": "[1, 2, 3]", "id": "mocked_uuid"}
