@@ -1,0 +1,15 @@
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.11.1
+    container_name: opensearch-test
+    ports:
+      - 9200:9200
+      - 9600:9600
+    environment:
+      - plugins.security.disabled=true
+      - discovery.type=single-node
+    healthcheck:
+      test: ["CMD-SHELL", "curl https://localhost:9200/_cluster/health -u 'admin:admin' --silent --fail --insecure || exit 1" ]
+      interval: 10s
+      timeout: 30s
+      retries: 3
