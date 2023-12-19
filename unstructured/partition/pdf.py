@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 import io
 import os
@@ -72,8 +74,12 @@ from unstructured.partition.lang import (
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
+    annotate_layout_elements,
     check_element_types_to_extract,
     save_elements,
+)
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
@@ -167,14 +173,15 @@ def partition_pdf(
     metadata_last_modified
         The last modified date for the document.
     extract_images_in_pdf
-        If True and strategy=hi_res, any detected images will be saved in the path specified by
+        Only applicable if `strategy=hi_res`.
+        If `True`, any detected images will be saved in the path specified by
         image_output_dir_path.
-    extract_tables_in_pdf
-        If True and strategy=hi_res, any detected tables will be saved in the path specified by
-        image_output_dir_path.
+    extract_element_types
+        Only applicable if `strategy=hi_res`.
+        Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
     image_output_dir_path
-        If extract_images_in_pdf=True (or extract_tables_in_pdf=True) and strategy=hi_res, any
-        detected images or tables will be saved in the given path
+        Only applicable if `strategy=hi_res`.
+        The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
     """
 
     exactly_one(filename=filename, file=file)
@@ -244,6 +251,8 @@ def _partition_pdf_or_image_local(
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
+    analysis: bool = False,
+    analyzed_image_output_dir_path: Optional[str] = None,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -283,14 +292,27 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        if pdf_text_extractable is True:
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = process_file_with_pdfminer(
-                inferred_document_layout,
-                filename,
+        extracted_layout = (
+            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
+            if pdf_text_extractable
+            else []
+        )
+
+        if analysis:
+            annotate_layout_elements(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+                filename=filename,
+                output_dir_path=analyzed_image_output_dir_path,
+                pdf_image_dpi=pdf_image_dpi,
+                is_image=is_image,
             )
-        else:
-            merged_document_layout = inferred_document_layout
+
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+        merged_document_layout = merge_inferred_with_extracted_layout(
+            inferred_document_layout=inferred_document_layout,
+            extracted_layout=extracted_layout,
+        )
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -314,14 +336,16 @@ def _partition_pdf_or_image_local(
         )
         if hasattr(file, "seek"):
             file.seek(0)
-        if pdf_text_extractable is True:
-            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-            merged_document_layout = process_data_with_pdfminer(
-                inferred_document_layout,
-                file,
-            )
-        else:
-            merged_document_layout = inferred_document_layout
+
+        extracted_layout = (
+            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else []
+        )
+
+        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+        merged_document_layout = merge_inferred_with_extracted_layout(
+            inferred_document_layout=inferred_document_layout,
+            extracted_layout=extracted_layout,
+        )
 
         if model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
@@ -652,7 +676,7 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets: List[str | Any] = [obj.get_text()]  # type: ignore
+                _text_snippets: List = [obj.get_text()]
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)

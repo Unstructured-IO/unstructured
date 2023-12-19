@@ -16,18 +16,18 @@ CI=${CI:-"false"}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 }
 trap cleanup EXIT
 
 if [ -z "$DROPBOX_APP_KEY" ] || [ -z "$DROPBOX_APP_SECRET" ] || [ -z "$DROPBOX_REFRESH_TOKEN" ]; then
-	echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"
-	echo "DROPBOX_APP_KEY, DROPBOX_APP_SECRET, DROPBOX_REFRESH_TOKEN"
-	exit 8
+  echo "Skipping Dropbox ingest test because one or more of these env vars is not set:"
+  echo "DROPBOX_APP_KEY, DROPBOX_APP_SECRET, DROPBOX_REFRESH_TOKEN"
+  exit 8
 fi
 
 # Get a new access token from Dropbox
@@ -36,17 +36,17 @@ DROPBOX_ACCESS_TOKEN=$(jq -r '.access_token' <<<"$DROPBOX_RESPONSE")
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-	dropbox \
-	--num-processes "$max_processes" \
-	--download-dir "$DOWNLOAD_DIR" \
-	--metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-	--preserve-downloads \
-	--reprocess \
-	--output-dir "$OUTPUT_DIR" \
-	--verbose \
-	--token "$DROPBOX_ACCESS_TOKEN" \
-	--recursive \
-	--remote-url "dropbox://test-input/" \
-	--work-dir "$WORK_DIR"
+  dropbox \
+  --num-processes "$max_processes" \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --token "$DROPBOX_ACCESS_TOKEN" \
+  --recursive \
+  --remote-url "dropbox://test-input/" \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

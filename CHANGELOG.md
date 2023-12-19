@@ -1,14 +1,25 @@
-## 0.11.5-dev1
+## 0.11.6-dev4
+
+### Enhancements
+
+* **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
+
+### Features
+* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
+* **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
+
+### Fixes
+* **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
+
+## 0.11.5
 
 ### Enhancements
 
 ### Features
 
-* **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
-
 ### Fixes
 
-* **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
+* **Fix `partition_pdf()` and `partition_image()` importation issue.** Reorganize `pdf.py` and `image.py` modules to be consistent with other types of document import code.
 
 ## 0.11.4
 

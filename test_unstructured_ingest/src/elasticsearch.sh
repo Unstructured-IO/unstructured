@@ -20,15 +20,15 @@ source "$SCRIPT_DIR"/cleanup.sh
 source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 
 function cleanup() {
-	# Kill the container so the script can be repeatedly run using the same ports
-	echo "Stopping Elasticsearch Docker container"
-	docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
+  # Kill the container so the script can be repeatedly run using the same ports
+  echo "Stopping Elasticsearch Docker container"
+  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 }
 
 trap cleanup EXIT
@@ -49,8 +49,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 	--verbose \
 	--index-name movies \
 	--hosts http://localhost:9200 \
-	--username "$ELASTIC_USER" \
-	--password "$ELASTIC_PASSWORD" \
+	--username elastic \
+	--password DkIedPPSCb \
 	--fields 'ethnicity,director,plot' \
 	--work-dir "$WORK_DIR" \
 	--batch-size 2

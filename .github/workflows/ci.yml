@@ -78,7 +78,7 @@ jobs:
       - name: setup shfmt
         uses: mfinelli/setup-shfmt@v3
       - name: Run shfmt
-        run: shfmt -d .
+        run: shfmt -i 2 -d .
 
 
   test_unit:
