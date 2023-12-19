@@ -17,13 +17,13 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	biomed \
-	--api-from "2019-01-02" \
-	--api-until "2019-01-02+00:03:10" \
-	--output-dir biomed-ingest-output-api \
-	--num-processes 2 \
-	--verbose \
-	--preserve-downloads
+  biomed \
+  --api-from "2019-01-02" \
+  --api-until "2019-01-02+00:03:10" \
+  --output-dir biomed-ingest-output-api \
+  --num-processes 2 \
+  --verbose \
+  --preserve-downloads
 
 # Alternatively, you can call it using:
 # unstructured-ingest --biomed-api ...
