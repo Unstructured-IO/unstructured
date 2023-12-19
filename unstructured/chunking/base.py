@@ -457,22 +457,24 @@ class BasePreChunker:
 class TablePreChunk:
     """A pre-chunk composed of a single Table element."""
 
-    def __init__(self, table: Table, opts: ChunkingOptions) -> None:
+    def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
         self._table = table
+        self._overlap_prefix = overlap_prefix
         self._opts = opts
 
     def iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
-        split = self._opts.split
-        text_remainder = self._table.text
-        html_remainder = self._table.metadata.text_as_html or ""
         maxlen = self._opts.hard_max
+        text_remainder = self._text
+        html_remainder = self._table.metadata.text_as_html or ""
 
         # -- only chunk a table when it's too big to swallow whole --
         if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
-            yield self._table
+            # -- but the overlap-prefix must be added to its text --
+            yield Table(text=text_remainder, metadata=copy.deepcopy(self._table.metadata))
             return
 
+        split = self._opts.split
         is_continuation = False
 
         while text_remainder or html_remainder:
@@ -493,6 +495,25 @@ class TablePreChunk:
             yield table_chunk
 
             is_continuation = True
+
+    @lazyproperty
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text[-overlap:].strip() if overlap else ""
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The text for this chunk, including the overlap-prefix when present."""
+        overlap_prefix = self._overlap_prefix
+        table_text = self._table.text
+        # -- use row-separator between overlap and table-text --
+        return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
 
 
 class TextPreChunk:
@@ -719,7 +740,7 @@ class PreChunkBuilder:
             return
 
         pre_chunk = (
-            TablePreChunk(self._elements[0], self._opts)
+            TablePreChunk(self._elements[0], "", self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
             else TextPreChunk(list(self._elements), self._opts)

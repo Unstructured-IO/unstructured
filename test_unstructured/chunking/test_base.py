@@ -336,6 +336,7 @@ class DescribeTablePreChunk:
         text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="ctus porta volutpat.",
             opts=ChunkingOptions.new(max_characters=175),
         )
 
@@ -343,7 +344,9 @@ class DescribeTablePreChunk:
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, Table)
-        assert chunk.text == "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        assert chunk.text == (
+            "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        )
         assert chunk.metadata.text_as_html == (
             "<table>\n"
             "<thead>\n"
@@ -382,6 +385,7 @@ class DescribeTablePreChunk:
         )
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="",
             opts=ChunkingOptions.new(max_characters=100, text_splitting_separators=("\n", " ")),
         )
 
@@ -432,6 +436,46 @@ class DescribeTablePreChunk:
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    @pytest.mark.parametrize(
+        ("text", "expected_value"),
+        [
+            # -- normally it splits exactly on overlap size  |------- 20 -------|
+            ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
+            # -- but it strips leading and trailing whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus   porta volutpat.  ", "porta volutpat."),
+        ],
+    )
+    def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
+        self, text: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix="", opts=ChunkingOptions.new(overlap=20, overlap_all=True)
+        )
+        assert pre_chunk.overlap_tail == expected_value
+
+    @pytest.mark.parametrize(
+        ("text", "overlap_prefix", "expected_value"),
+        [
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "",
+                "In rhoncus ipsum sed lectus porta volutpat.",
+            ),
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "ctus porta volutpat.",
+                "ctus porta volutpat.\nIn rhoncus ipsum sed lectus porta volutpat.",
+            ),
+        ],
+    )
+    def it_includes_its_overlap_prefix_in_its_text_when_present(
+        self, text: str, overlap_prefix: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions.new()
+        )
+        assert pre_chunk._text == expected_value
 
 
 class DescribeTextPreChunk:
@@ -945,7 +989,7 @@ class DescribePreChunkCombiner:
                 ],
                 opts=opts,
             ),
-            TablePreChunk(Table("Heading\nCell text"), opts=opts),
+            TablePreChunk(Table("Heading\nCell text"), overlap_prefix="", opts=opts),
             TextPreChunk(
                 [
                     Title("Mauris Nec"),
