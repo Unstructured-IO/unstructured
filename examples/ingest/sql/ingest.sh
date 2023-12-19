@@ -18,7 +18,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --verbose \
   --work-dir "<directory for intermediate outputs to be saved>" \
   sql \
-  --db_name postgresql \
+  --db_type postgresql \
   --username postgres \
   --password test \
   --host localhost \

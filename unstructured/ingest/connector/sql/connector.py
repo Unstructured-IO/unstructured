@@ -27,7 +27,7 @@ class SqlAccessConfig(AccessConfig):
 
 @dataclass
 class SimpleSqlConfig(BaseConnectorConfig):
-    db_name: t.Optional[str]
+    db_type: t.Optional[str]
     username: t.Optional[str]
     host: t.Optional[str]
     database: t.Optional[str]
@@ -35,7 +35,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
     access_config: SqlAccessConfig
 
     def __post_init__(self):
-        if (self.db_name == "sqlite") and (self.database is None):
+        if (self.db_type == "sqlite") and (self.database is None):
             raise ValueError(
                 "A sqlite connection requires a path to a *.db file "
                 "through the `database` argument"
@@ -43,11 +43,11 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
     @property
     def connection(self):
-        if self.db_name == "postgresql":
+        if self.db_type == "postgresql":
             return self._make_psycopg_connection
-        elif self.db_name == "sqlite":
+        elif self.db_type == "sqlite":
             return self._make_sqlite_connection
-        raise ValueError(f"Unsupported database {self.db_name} connection.")
+        raise ValueError(f"Unsupported database {self.db_type} connection.")
 
     def _make_sqlite_connection(self):
         from sqlite3 import connect
@@ -107,7 +107,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         # Array of items as string formatting
         if (embeddings := data.get("embeddings")) and (
-            self.connector_config.db_name != "postgresql"
+            self.connector_config.db_type != "postgresql"
         ):
             data["embeddings"] = str(json.dumps(embeddings))
 
@@ -172,7 +172,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         ) and schema_exists:
             raise ValueError(
                 f"There's already an elements schema ({ELEMENTS_TABLE_NAME}) "
-                f"at {self.connector_config.db_name}"
+                f"at {self.connector_config.db_type}"
             )
         if self.write_config.mode == "overwrite" and schema_exists:
             schema_helper.clear_schema()
@@ -187,7 +187,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         with self.client as conn:
             schema_helper = DatabaseSchema(
                 conn=conn,
-                db_name=self.connector_config.db_name,
+                db_type=self.connector_config.db_type,
             )
 
             self._resolve_mode(schema_helper)

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig, Dict
+from unstructured.ingest.cli.interfaces import CliConfig
 from unstructured.ingest.connector.sql.connector import SimpleSqlConfig, SqlWriteConfig
 
 SQL_DRIVERS = {"postgresql", "sqlite"}
@@ -15,10 +15,10 @@ class SqlCliConfig(SimpleSqlConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--db_name"],
+                ["--db_type"],
                 required=True,
                 type=click.Choice(SQL_DRIVERS),
-                help="Name of the database backend",
+                help="Type of the database backend",
             ),
             click.Option(
                 ["--username"],

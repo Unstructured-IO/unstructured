@@ -11,13 +11,13 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
-DATABASE_NAME="postgresql"
+DATABASE_TYPE="postgresql"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   echo "Stopping SQL DB Docker container"
-  docker-compose -f scripts/sql-test-helpers/docker-compose-"$DATABASE_NAME".yaml down --remove-orphans -v
+  docker-compose -f scripts/sql-test-helpers/docker-compose-"$DATABASE_TYPE".yaml down --remove-orphans -v
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
@@ -31,7 +31,7 @@ trap cleanup EXIT
 # Create sql instance and create `elements` class
 echo "Creating SQL DB instance"
 # shellcheck source=/dev/null
-scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_NAME"
+scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_TYPE"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -43,7 +43,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   sql \
-  --db_name "$DATABASE_NAME" \
+  --db_type "$DATABASE_TYPE" \
   --username unstructured \
   --password test \
   --host localhost \
@@ -51,4 +51,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --database elements \
   --mode overwrite
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME" "5432"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_TYPE" "5432"

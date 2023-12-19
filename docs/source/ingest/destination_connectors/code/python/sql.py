@@ -14,7 +14,7 @@ if __name__ == "__main__":
         partition_config=PartitionConfig(),
         writer_type="sql",
         writer_kwargs={
-            "db_name": os.getenv("DB_NAME"),
+            "db_type": os.getenv("DB_TYPE"),
             "username": os.getenv("USERNAME"),
             "password": os.getenv("DB_PASSWORD"),
             "host": os.getenv("DB_HOST"),

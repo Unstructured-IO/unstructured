@@ -11,7 +11,7 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
-DATABASE_NAME="sqlite"
+DATABASE_TYPE="sqlite"
 DB_PATH=$SCRIPT_DIR/elements.db
 
 # shellcheck disable=SC1091
@@ -32,7 +32,7 @@ trap cleanup EXIT
 # Create sql instance and create `elements` class
 echo "Creating SQL DB instance"
 # shellcheck source=/dev/null
-scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_NAME" "$DB_PATH"
+scripts/sql-test-helpers/create-sql-instance.sh "$DATABASE_TYPE" "$DB_PATH"
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
@@ -45,9 +45,9 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   sql \
-  --db_name "$DATABASE_NAME" \
+  --db_type "$DATABASE_TYPE" \
   --username unstructured \
   --database "$DB_PATH" \
   --mode overwrite
 
-"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_NAME" "$DB_PATH"
+"$SCRIPT_DIR"/python/test-ingest-sql-output.py "$DATABASE_TYPE" "$DB_PATH"

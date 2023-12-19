@@ -49,10 +49,10 @@ TABLE_COLUMN_NAMES = {
 
 
 class DatabaseSchema:
-    def __init__(self, conn, db_name) -> None:
-        self.db_name = db_name
+    def __init__(self, conn, db_type) -> None:
+        self.db_type = db_type
         self.cursor = conn.cursor()
-        self.placeholder = "?" if db_name == "sqlite" else "%s"
+        self.placeholder = "?" if db_type == "sqlite" else "%s"
 
     def insert(
         self,
@@ -65,7 +65,7 @@ class DatabaseSchema:
         for col in TABLE_COLUMN_NAMES[table]:
             if col in data:
                 columns.append(col)
-                if self.db_name == "sqlite" and isinstance(data[col], list):
+                if self.db_type == "sqlite" and isinstance(data[col], list):
                     values.append(json.dumps(data[col]))
                 else:
                     values.append(data[col])

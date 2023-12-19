@@ -5,8 +5,8 @@ import sys
 N_ELEMENTS = 5
 
 
-def create_connection(db_name, database=None, port=None):
-    if db_name == "postgresql" or db_name == "pgvector":
+def create_connection(db_type, database=None, port=None):
+    if db_type == "postgresql" or db_type == "pgvector":
         from psycopg2 import connect
 
         return connect(
@@ -16,11 +16,11 @@ def create_connection(db_name, database=None, port=None):
             host="localhost",
             port=port,
         )
-    elif db_name == "sqlite":
+    elif db_type == "sqlite":
         from sqlite3 import connect
 
         return connect(database=database)
-    raise ValueError(f"Unsupported database {db_name} connection.")
+    raise ValueError(f"Unsupported database {db_type} connection.")
 
 
 if __name__ == "__main__":
