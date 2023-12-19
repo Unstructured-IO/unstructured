@@ -17,17 +17,17 @@ CI=${CI:-"false"}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+  cleanup_dir "$OUTPUT_DIR"
+  cleanup_dir "$WORK_DIR"
+  if [ "$CI" == "true" ]; then
+    cleanup_dir "$DOWNLOAD_DIR"
+  fi
 }
 trap cleanup EXIT
 
 if [ -z "$JIRA_INGEST_USER_EMAIL" ] || [ -z "$JIRA_INGEST_API_TOKEN" ]; then
-	echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
-	exit 8
+  echo "Skipping Jira ingest test because the JIRA_INGEST_USER_EMAIL or JIRA_INGEST_API_TOKEN env var is not set."
+  exit 8
 fi
 
 # Required arguments:
@@ -52,20 +52,20 @@ fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-	jira \
-	--download-dir "$DOWNLOAD_DIR" \
-	--metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-	--num-processes "$max_processes" \
-	--preserve-downloads \
-	--reprocess \
-	--output-dir "$OUTPUT_DIR" \
-	--verbose \
-	--url https://unstructured-jira-connector-test.atlassian.net \
-	--user-email "$JIRA_INGEST_USER_EMAIL" \
-	--api-token "$JIRA_INGEST_API_TOKEN" \
-	--projects "JCTP3" \
-	--boards "1" \
-	--issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11" \
-	--work-dir "$WORK_DIR"
+  jira \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --url https://unstructured-jira-connector-test.atlassian.net \
+  --user-email "$JIRA_INGEST_USER_EMAIL" \
+  --api-token "$JIRA_INGEST_API_TOKEN" \
+  --projects "JCTP3" \
+  --boards "1" \
+  --issues "JCTP2-4,JCTP2-7,JCTP2-8,10012,JCTP2-11" \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

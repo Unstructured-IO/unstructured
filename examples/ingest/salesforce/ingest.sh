@@ -17,12 +17,12 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	salesforce \
-	--username "$SALESFORCE_USERNAME" \
-	--consumer-key "$SALESFORCE_CONSUMER_KEY" \
-	--private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
-	--categories "EmailMessage,Account,Lead,Case,Campaign" \
-	--output-dir salesforce-output \
-	--preserve-downloads \
-	--reprocess \
-	--verbose
+  salesforce \
+  --username "$SALESFORCE_USERNAME" \
+  --consumer-key "$SALESFORCE_CONSUMER_KEY" \
+  --private-key-path "$SALESFORCE_PRIVATE_KEY_PATH" \
+  --categories "EmailMessage,Account,Lead,Case,Campaign" \
+  --output-dir salesforce-output \
+  --preserve-downloads \
+  --reprocess \
+  --verbose

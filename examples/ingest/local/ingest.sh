@@ -17,12 +17,12 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	local \
-	--input-path example-docs \
-	--output-dir local-ingest-output \
-	--num-processes 2 \
-	--recursive \
-	--verbose
+  local \
+  --input-path example-docs \
+  --output-dir local-ingest-output \
+  --num-processes 2 \
+  --recursive \
+  --verbose
 
 # Alternatively, you can call it using:
 # unstructured-ingest local --input-path ...
