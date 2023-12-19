@@ -961,7 +961,7 @@ class DescribePreChunkBuilder:
         assert builder._text_length == 0
         assert builder._remaining_space == 150
 
-    def but_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
+    def and_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
         builder.add_element(Table("Heading\nCell text"))
 
@@ -977,7 +977,7 @@ class DescribePreChunkBuilder:
         assert isinstance(pre_chunk, TablePreChunk)
         assert pre_chunk._table == Table("Heading\nCell text")
 
-    def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
+    def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         pre_chunks = list(builder.flush())
@@ -985,6 +985,25 @@ class DescribePreChunkBuilder:
         assert pre_chunks == []
         assert builder._text_length == 0
         assert builder._remaining_space == 150
+
+    def it_computes_overlap_from_each_pre_chunk_and_applies_it_to_the_next(self):
+        opts = ChunkingOptions.new(overlap=15, overlap_all=True)
+        builder = PreChunkBuilder(opts=opts)
+
+        builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+
+        builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+
+        builder.add_element(Text("Donec semper facilisis metus finibus."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))

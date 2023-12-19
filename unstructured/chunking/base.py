@@ -761,6 +761,8 @@ class PreChunkBuilder:
         self._separator_len = len(opts.text_separator)
         self._elements: List[Element] = []
 
+        # -- overlap is only between pre-chunks so starts empty --
+        self._overlap_prefix: str = ""
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: List[str] = []
         # -- combined length of text-segments, not including separators --
@@ -784,14 +786,14 @@ class PreChunkBuilder:
             return
 
         pre_chunk = (
-            TablePreChunk(self._elements[0], "", self._opts)
+            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), "", self._opts)
+            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
         )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state()
+        self._reset_state(pre_chunk.overlap_tail)
         yield pre_chunk
 
     def will_fit(self, element: Element) -> bool:
@@ -813,7 +815,7 @@ class PreChunkBuilder:
         if isinstance(element, Table):
             return False
         # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if self._elements and isinstance(self._elements[0], Table):
+        if isinstance(self._elements[0], Table):
             return False
         # -- a pre-chunk that already exceeds the soft-max is considered "full" --
         if self._text_length > self._opts.soft_max:
@@ -830,11 +832,12 @@ class PreChunkBuilder:
         separators_len = self._separator_len * len(self._text_segments)
         return self._opts.hard_max - self._text_len - separators_len
 
-    def _reset_state(self) -> None:
+    def _reset_state(self, overlap_prefix: str) -> None:
         """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._overlap_prefix = overlap_prefix
         self._elements.clear()
-        self._text_segments.clear()
-        self._text_len = 0
+        self._text_segments = [overlap_prefix] if overlap_prefix else []
+        self._text_len = len(overlap_prefix)
 
     @property
     def _text_length(self) -> int:
