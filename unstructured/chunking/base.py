@@ -583,12 +583,6 @@ class TextPreChunk:
         return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
-    def text_length(self) -> int:
-        """Length of concatenated text of this pre-chunk, including separators."""
-        # -- used by pre-chunk-combiner to identify combination candidates --
-        return len(self._text)
-
-    @lazyproperty
     def _all_metadata_values(self) -> Dict[str, List[Any]]:
         """Collection of all populated metadata values across elements.
 
@@ -867,25 +861,19 @@ class PreChunkCombiner:
     def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
         """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
         accum = TextPreChunkAccumulator(self._opts)
-        combine_text_under_n_chars = self._opts.combine_text_under_n_chars
 
         for pre_chunk in self._pre_chunks:
-            # -- start new pre-chunk under these conditions --
-            if (
-                # -- a table pre-chunk is never combined --
-                isinstance(pre_chunk, TablePreChunk)
-                # -- don't add another pre-chunk once length has reached combination soft-max --
-                or accum.text_length >= combine_text_under_n_chars
-                # -- combining would exceed hard-max --
-                or accum.remaining_space < pre_chunk.text_length
-            ):
+            # -- a table pre-chunk is never combined --
+            if isinstance(pre_chunk, TablePreChunk):
+                yield from accum.flush()
+                yield pre_chunk
+                continue
+
+            # -- finish accumulating pre-chunk when it's full --
+            if not accum.will_fit(pre_chunk):
                 yield from accum.flush()
 
-            # -- a table pre-chunk is never combined so don't accumulate --
-            if isinstance(pre_chunk, TablePreChunk):
-                yield pre_chunk
-            else:
-                accum.add_pre_chunk(pre_chunk)
+            accum.add_pre_chunk(pre_chunk)
 
         yield from accum.flush()
 
@@ -914,51 +902,39 @@ class TextPreChunkAccumulator:
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunks: List[TextPreChunk] = []
+        self._pre_chunk: Optional[TextPreChunk] = None
 
     def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
-        self._pre_chunks.append(pre_chunk)
-
-    def flush(self) -> Iterator[TextPreChunk]:
-        """Generate all accumulated pre-chunks as a single combined pre-chunk."""
-        pre_chunks = self._pre_chunks
-
-        # -- nothing to do if no pre-chunks have been accumulated --
-        if not pre_chunks:
-            return
-
-        # -- otherwise combine all accumulated pre-chunk into one --
-        pre_chunk = pre_chunks[0]
-        for other_pre_chunk in pre_chunks[1:]:
-            pre_chunk = pre_chunk.combine(other_pre_chunk)
-        yield pre_chunk
-
-        # -- and reset the accumulator (to empty) --
-        pre_chunks.clear()
-
-    @property
-    def remaining_space(self) -> int:
-        """Maximum size of pre-chunk that can be added without exceeding maxlen."""
-        maxlen = self._opts.hard_max
-        return (
-            maxlen
-            if not self._pre_chunks
-            # -- an additional pre-chunk will also incur an additional separator --
-            else maxlen - self.text_length - len(self._opts.text_separator)
+        self._pre_chunk = (
+            pre_chunk if self._pre_chunk is None else self._pre_chunk.combine(pre_chunk)
         )
 
-    @property
-    def text_length(self) -> int:
-        """Size of concatenated text in all pre-chunks in accumulator."""
-        n = len(self._pre_chunks)
+    def flush(self) -> Iterator[TextPreChunk]:
+        """Generate accumulated pre-chunk as a single combined pre-chunk.
 
-        if n == 0:
-            return 0
+        Does not generate a pre-chunk when none has been accumulated.
+        """
+        # -- nothing to do if no pre-chunk has been accumulated --
+        if not self._pre_chunk:
+            return
+        # -- otherwise generate the combined pre-chunk --
+        yield self._pre_chunk
+        # -- and reset the accumulator (to empty) --
+        self._pre_chunk = None
 
-        total_text_length = sum(s.text_length for s in self._pre_chunks)
-        total_separator_length = len(self._opts.text_separator) * (n - 1)
-        return total_text_length + total_separator_length
+    def will_fit(self, pre_chunk: TextPreChunk) -> bool:
+        """True when there is room for `pre_chunk` in accumulator.
+
+        An empty accumulator always has room. Otherwise there is only room when `pre_chunk` can be
+        combined with any other pre-chunks in the accumulator without exceeding the combination
+        limits specified for the chunking run.
+        """
+        # -- an empty accumulator always has room --
+        if self._pre_chunk is None:
+            return True
+
+        return self._pre_chunk.can_combine(pre_chunk)
 
 
 # ================================================================================================

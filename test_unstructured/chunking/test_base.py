@@ -1264,75 +1264,42 @@ class DescribePreChunkCombiner:
 class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
 
-    def it_is_empty_on_construction(self):
-        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=100))
-
-        assert accum.text_length == 0
-        assert accum.remaining_space == 100
-
-    def it_accumulates_pre_chunks_added_to_it(self):
-        opts = ChunkingOptions.new(max_characters=500)
+    def it_generates_a_combined_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+        opts = ChunkingOptions.new()
         accum = TextPreChunkAccumulator(opts=opts)
 
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Lorem Ipsum"),
-                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ],
-                overlap_prefix="",
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Lorem Ipsum"),
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            ],
+            overlap_prefix="elementum.",
+            opts=opts,
         )
-        assert accum.text_length == 68
-        assert accum.remaining_space == 430
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Mauris Nec"),
-                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ],
-                overlap_prefix="",
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Mauris Nec"),
+                Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+            ],
+            overlap_prefix="sit amet.",
+            opts=opts,
         )
-        assert accum.text_length == 141
-        assert accum.remaining_space == 357
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
-    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        opts = ChunkingOptions.new(max_characters=150)
-        accum = TextPreChunkAccumulator(opts=opts)
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Lorem Ipsum"),
-                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ],
-                overlap_prefix="",
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Sed Orci"),
+                Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
+            ],
+            overlap_prefix="consequat.",
+            opts=opts,
         )
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Mauris Nec"),
-                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ],
-                overlap_prefix="",
-                opts=opts,
-            )
-        )
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Sed Orci"),
-                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
-                ],
-                overlap_prefix="",
-                opts=opts,
-            )
-        )
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
         pre_chunk_iter = accum.flush()
 
@@ -1350,31 +1317,15 @@ class DescribeTextPreChunkAccumulator:
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
         ]
-        assert accum.text_length == 0
-        assert accum.remaining_space == 150
+        # -- but only the first overlap-prefix --
+        assert pre_chunk._overlap_prefix == "elementum."
+        # -- and the prior flush emptied the accumulator --
+        with pytest.raises(StopIteration):
+            next(accum.flush())
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
         accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=150))
-
-        pre_chunks = list(accum.flush())
-
-        assert pre_chunks == []
-        assert accum.text_length == 0
-        assert accum.remaining_space == 150
-
-    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        opts = ChunkingOptions.new(max_characters=100)
-        accum = TextPreChunkAccumulator(opts=opts)
-        accum.add_pre_chunk(TextPreChunk([Text("abcde")], overlap_prefix="", opts=opts))
-        accum.add_pre_chunk(TextPreChunk([Text("fghij")], overlap_prefix="", opts=opts))
-
-        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
-        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
-        assert accum.text_length == 12
-        # -- .remaining_space is reduced by the length (2) of the trailing separator which would
-        # -- go between the current text and that of the next pre-chunk if one was added.
-        # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
-        assert accum.remaining_space == 86
+        assert list(accum.flush()) == []
 
 
 # ================================================================================================
