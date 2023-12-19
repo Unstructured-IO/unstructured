@@ -141,6 +141,15 @@ class DescribeChunkingOptions:
 
         assert opts.soft_max == 444
 
+    def it_knows_how_much_overlap_to_apply_to_split_chunks(self):
+        assert ChunkingOptions.new(overlap=10).overlap == 10
+
+    def and_it_uses_the_same_value_for_inter_chunk_overlap_when_asked_to_overlap_all_chunks(self):
+        assert ChunkingOptions.new(overlap=10, overlap_all=True).inter_chunk_overlap == 10
+
+    def but_it_does_not_overlap_pre_chunks_by_default(self):
+        assert ChunkingOptions.new(overlap=10).inter_chunk_overlap == 0
+
     def it_knows_the_text_separator_string(self):
         assert ChunkingOptions.new().text_separator == "\n\n"
 

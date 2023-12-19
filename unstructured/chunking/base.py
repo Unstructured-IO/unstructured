@@ -94,6 +94,7 @@ class ChunkingOptions:
         multipage_sections: bool = True,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
+        overlap_all: bool = False,
         text_splitting_separators: Sequence[str] = (),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
@@ -101,6 +102,7 @@ class ChunkingOptions:
         self._multipage_sections = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
         self._overlap = overlap
+        self._overlap_all = overlap_all
         self._text_splitting_separators = text_splitting_separators
 
     @classmethod
@@ -111,6 +113,7 @@ class ChunkingOptions:
         multipage_sections: bool = True,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
+        overlap_all: bool = False,
         text_splitting_separators: Sequence[str] = (),
     ) -> Self:
         """Construct validated instance.
@@ -123,6 +126,7 @@ class ChunkingOptions:
             multipage_sections,
             new_after_n_chars,
             overlap,
+            overlap_all,
             text_splitting_separators,
         )
         self._validate()
@@ -158,6 +162,15 @@ class ChunkingOptions:
         process.
         """
         return self._max_characters
+
+    @lazyproperty
+    def inter_chunk_overlap(self) -> int:
+        """Characters of overlap to add between chunks.
+
+        This applies only to boundaries between chunks formed from whole elements and not to
+        text-splitting boundaries that arise from splitting an oversized element.
+        """
+        return self.overlap if self._overlap_all else 0
 
     @lazyproperty
     def multipage_sections(self) -> bool:
