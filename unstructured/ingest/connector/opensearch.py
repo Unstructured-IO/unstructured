@@ -191,7 +191,7 @@ class OpenSearchIngestDocBatch(BaseIngestDocBatch):
         from opensearchpy import OpenSearch
         from opensearchpy.helpers import scan
 
-        es = OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
+        client = OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
         scan_query = {
             "_source": self.connector_config.fields,
             "version": True,
@@ -199,7 +199,7 @@ class OpenSearchIngestDocBatch(BaseIngestDocBatch):
         }
 
         result = scan(
-            es,
+            client,
             query=scan_query,
             scroll="1m",
             index=self.connector_config.index_name,
