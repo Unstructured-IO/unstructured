@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* **Add hi_res_model_name** Adds kwarg to relevant functions and add comments that model_name is to be deprecated.
+
 ## 0.11.5
 
 ### Enhancements
