@@ -12,13 +12,8 @@ from unstructured.chunking.base import (
     PreChunk,
     PreChunkBuilder,
     PreChunkCombiner,
-    TablePreChunk,
 )
-from unstructured.documents.elements import (
-    Element,
-    Table,
-    Title,
-)
+from unstructured.documents.elements import Element, Title
 
 
 def chunk_by_title(
@@ -109,24 +104,17 @@ def _split_elements_by_title_and_table(
 
         # -- start new pre_chunk when necessary --
         if (
-            # -- Title and Table both start a new pre_chunk --
-            isinstance(element, (Title, Table))
-            # -- adding this element would exceed hard-maxlen for pre_chunk --
-            or pre_chunk_builder.remaining_space < len(str(element))
-            # -- pre_chunk already meets or exceeds soft-maxlen --
-            or pre_chunk_builder.text_length >= opts.soft_max
+            # -- Title starts a new "section" and so a new pre_chunk --
+            isinstance(element, Title)
+            # -- start a new pre-chunk when the WIP pre-chunk is already full --
+            or not pre_chunk_builder.will_fit(element)
             # -- a semantic boundary is indicated by metadata change since prior element --
             or metadata_differs
         ):
             # -- complete any work-in-progress pre_chunk --
             yield from pre_chunk_builder.flush()
 
-        # -- emit table and checkbox immediately since they are always isolated --
-        if isinstance(element, Table):
-            yield TablePreChunk(table=element, opts=opts)
-        # -- but accumulate text elements for consolidation into a composite chunk --
-        else:
-            pre_chunk_builder.add_element(element)
+        pre_chunk_builder.add_element(element)
 
         prior_element = element
 
