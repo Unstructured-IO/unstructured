@@ -1,8 +1,22 @@
-## 0.11.6-dev6
+## 0.11.7-dev0
+
+### Enhancements
+
+
+### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+
+### Fixes
+
+## 0.11.6
 
 ### Enhancements
 
 * **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
+* **AWS Marketplace API documentation**: Added the user guide, including setting up VPC and CloudFormation, to deploy Unstructured API on AWS platform.
+* **Azure Marketplace API documentation**: Improved the user guide to deploy Azure Marketplace API by adding references to Azure documentation.
+* **Integration documentation**: Updated URLs for the `staging_for` bricks
 
 ### Features
 
