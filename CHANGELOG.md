@@ -1,7 +1,8 @@
-## 0.11.6-dev5
+## 0.11.6-dev6
 
 ### Enhancements
 
+* **Change pdf image extraction kwarg name.** Rename the kwarg `extract_images_in_pdf` to `extract_images` in `partition_pdf()` for consistency with `partition()`.
 * **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
 
 ### Features
@@ -11,6 +12,7 @@
 * **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
 
 ### Fixes
+
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
 
 ## 0.11.5
