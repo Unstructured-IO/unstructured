@@ -184,7 +184,7 @@ def partition_pdf(
         Only applicable if `strategy=hi_res`.
         The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
     hi_res_model_name
-        The layout detection model used when partitioning strategy is set to `hi_res`.        
+        The layout detection model used when partitioning strategy is set to `hi_res`.
     """
 
     exactly_one(filename=filename, file=file)
