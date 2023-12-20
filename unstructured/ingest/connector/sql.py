@@ -15,11 +15,6 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
-# from .schema import (
-#     ELEMENTS_TABLE_NAME,
-#     DatabaseSchema,
-# )
-
 ELEMENTS_TABLE_NAME = "elements"
 
 
@@ -214,7 +209,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
                 elem = self.conform_dict(e)
 
                 query = f"INSERT INTO {ELEMENTS_TABLE_NAME} ({','.join(elem.keys())}) \
-                VALUES({','.join(['?' if self.connector_config.db_type=='sqlite' else '%s' for x in elem])})" #noqa E501
+                VALUES({','.join(['?' if self.connector_config.db_type=='sqlite' else '%s' for x in elem])})"  # noqa E501
                 values = []
                 for v in elem.values():
                     if self.connector_config.db_type == "sqlite" and isinstance(v, list):
