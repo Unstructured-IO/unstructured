@@ -138,6 +138,7 @@ def partition(
     pdf_infer_table_structure: bool = False,
     pdf_extract_images: bool = False,
     pdf_image_output_dir_path: Optional[str] = None,
+    pdf_extract_to_payload: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
@@ -196,6 +197,10 @@ def partition(
     pdf_image_output_dir_path
         If pdf_extract_images=True and strategy=hi_res, any detected images will be saved in the
         given path
+    pdf_extract_to_payload
+        Only applicable if strategy=hi_res and extract_element_types is set.
+        If True, images of the element type(s) defined in the list `extract_element_types` will
+        be saved as base64 encoded data by two metadat fields `image_base64` and `image_mime_type`.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
@@ -391,6 +396,7 @@ def partition(
             languages=languages,
             extract_images_in_pdf=pdf_extract_images,
             image_output_dir_path=pdf_image_output_dir_path,
+            pdf_extract_to_payload=pdf_extract_to_payload,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
