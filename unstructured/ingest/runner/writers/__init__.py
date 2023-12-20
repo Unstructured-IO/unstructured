@@ -4,6 +4,7 @@ from .azure_cognitive_search import AzureCognitiveSearchWriter
 from .base_writer import Writer
 from .chroma import ChromaWriter
 from .delta_table import DeltaTableWriter
+from .elasticsearch import ElasticsearchWriter
 from .fsspec.azure import AzureWriter
 from .fsspec.box import BoxWriter
 from .fsspec.dropbox import DropboxWriter
@@ -20,6 +21,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "chroma": ChromaWriter,
     "delta_table": DeltaTableWriter,
     "dropbox": DropboxWriter,
+    "elasticsearch": ElasticsearchWriter,
     "gcs": GcsWriter,
     "mongodb": MongodbWriter,
     "pinecone": PineconeWriter,

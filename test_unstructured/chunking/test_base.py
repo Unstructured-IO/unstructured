@@ -15,6 +15,9 @@ from unstructured.chunking.base import (
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
+    is_in_next_section,
+    is_on_next_page,
+    is_title,
 )
 from unstructured.documents.elements import (
     CompositeElement,
@@ -1052,3 +1055,137 @@ class DescribeTextPreChunkAccumulator:
         # -- go between the current text and that of the next pre-chunk if one was added.
         # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
         assert accum.remaining_space == 86
+
+
+# ================================================================================================
+# (SEMANTIC) BOUNDARY PREDICATES
+# ================================================================================================
+
+
+class Describe_is_in_next_section:
+    """Unit-test suite for `unstructured.chunking.base.is_in_next_section()` function.
+
+    `is_in_next_section()` is not itself a predicate, rather it returns a predicate on Element
+    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
+    element stream.
+    """
+
+    def it_is_false_for_the_first_element_when_it_has_a_non_None_section(self):
+        """This is an explicit first-section; first-section does not represent a section break."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+
+    def and_it_is_false_for_the_first_element_when_it_has_a_None_section(self):
+        """This is an anonymous first-section; still doesn't represent a section break."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+
+    def it_is_false_for_None_section_elements_that_follow_an_explicit_first_section(self):
+        """A `None` section element is considered to continue the prior section."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def and_it_is_false_for_None_section_elements_that_follow_an_anonymous_first_section(self):
+        """A `None` section element is considered to continue the prior section."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def it_is_false_for_matching_section_elements_that_follow_an_explicit_first_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
+
+    def it_is_true_for_an_explicit_section_element_that_follows_an_anonymous_first_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh"))
+        assert pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
+
+    def and_it_is_true_for_a_different_explicit_section_that_follows_an_explicit_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert pred(Text("efgh", metadata=ElementMetadata(section="Summary")))
+
+    def it_is_true_whenever_the_section_explicitly_changes_except_at_the_start(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("ijkl"))
+        assert not pred(Text("mnop", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("qrst"))
+        assert pred(Text("uvwx", metadata=ElementMetadata(section="Summary")))
+        assert not pred(Text("yzab", metadata=ElementMetadata(section="Summary")))
+        assert not pred(Text("cdef"))
+        assert pred(Text("ghij", metadata=ElementMetadata(section="Appendix")))
+
+
+class Describe_is_on_next_page:
+    """Unit-test suite for `unstructured.chunking.base.is_on_next_page()` function.
+
+    `is_on_next_page()` is not itself a predicate, rather it returns a predicate on Element
+    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
+    element stream.
+    """
+
+    @pytest.mark.parametrize(
+        "element", [Text("abcd"), Text("efgh", metadata=ElementMetadata(page_number=4))]
+    )
+    def it_is_unconditionally_false_for_the_first_element(self, element: Element):
+        """The first page never represents a page-break."""
+        pred = is_on_next_page()
+        assert not pred(element)
+
+    def it_is_false_for_an_element_that_has_no_page_number(self):
+        """An element with a `None` page-number is assumed to continue the current page."""
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def it_is_false_for_an_element_with_the_current_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("mnop"))
+
+    def it_assigns_page_number_1_to_a_first_element_that_has_no_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh", metadata=ElementMetadata(page_number=1)))
+
+    def it_is_true_for_an_element_with_an_explicit_different_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert pred(Text("efgh", metadata=ElementMetadata(page_number=2)))
+
+    def and_it_is_true_even_when_that_page_number_is_lower(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=4)))
+        assert pred(Text("efgh", metadata=ElementMetadata(page_number=2)))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(page_number=2)))
+        assert not pred(Text("mnop"))
+        assert pred(Text("qrst", metadata=ElementMetadata(page_number=3)))
+
+
+class Describe_is_title:
+    """Unit-test suite for `unstructured.chunking.base.is_title()` predicate."""
+
+    def it_is_true_for_a_Title_element(self):
+        assert is_title(Title("abcd"))
+
+    @pytest.mark.parametrize(
+        "element",
+        [
+            PageBreak(""),
+            Table("Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"),
+            Text("abcd"),
+        ],
+    )
+    def and_it_is_false_for_any_other_element_subtype(self, element: Element):
+        assert not is_title(element)
