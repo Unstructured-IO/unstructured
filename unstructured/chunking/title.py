@@ -5,15 +5,19 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, Tuple
 
 from unstructured.chunking.base import (
+    BasePreChunker,
+    BoundaryPredicate,
     ChunkingOptions,
-    PreChunk,
-    PreChunkBuilder,
     PreChunkCombiner,
+    is_in_next_section,
+    is_on_next_page,
+    is_title,
 )
-from unstructured.documents.elements import Element, Title
+from unstructured.documents.elements import Element
+from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
@@ -59,82 +63,27 @@ def chunk_by_title(
     )
 
     pre_chunks = PreChunkCombiner(
-        _split_elements_by_title_and_table(elements, opts), opts=opts
+        _ByTitlePreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
 
 
-def _split_elements_by_title_and_table(
-    elements: List[Element], opts: ChunkingOptions
-) -> Iterator[PreChunk]:
-    """Implements "pre-chunker" responsibilities.
+class _ByTitlePreChunker(BasePreChunker):
+    """Pre-chunker for the "by_title" chunking strategy.
 
-    A _section_ can be thought of as a "pre-chunk", generally determining the size and contents of a
-    chunk formed by the subsequent "chunker" process. The only exception occurs when a single
-    element is too big to fit in the chunk window and the chunker splits it into two or more chunks
-    divided mid-text. The pre-chunker never divides an element mid-text.
-
-    The pre-chunker's responsibilities are:
-
-        * **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
-          either side of those boundaries into different pre-chunks. In this case, the primary
-          indicator of a semantic boundary is a `Title` element. A page-break (change in
-          page-number) is also a semantic boundary when `multipage_sections` is `False`.
-
-        * **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
-          into pre-chunks as big as possible without exceeding the chunk window size.
-
-        * **Minimize chunks that must be split mid-text.** Precompute the text length of each
-          pre-chunk and only produce a pre-chunk that exceeds the chunk window size when there is a
-          single element with text longer than that window.
-
-    A Table or Checkbox element is placed into a pre-chunk by itself.
+    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates a
+    new "section", hence the "by-title" designation.
     """
-    pre_chunk_builder = PreChunkBuilder(opts)
 
-    prior_element = None
+    @lazyproperty
+    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks."""
 
-    for element in elements:
-        metadata_differs = (
-            _metadata_differs(element, prior_element, ignore_page_numbers=opts.multipage_sections)
-            if prior_element
-            else False
-        )
+        def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
+            yield is_title
+            yield is_in_next_section()
+            if not self._opts.multipage_sections:
+                yield is_on_next_page()
 
-        # -- start new pre_chunk when necessary --
-        if (
-            # -- Title starts a new "section" and so a new pre_chunk --
-            isinstance(element, Title)
-            # -- start a new pre-chunk when the WIP pre-chunk is already full --
-            or not pre_chunk_builder.will_fit(element)
-            # -- a semantic boundary is indicated by metadata change since prior element --
-            or metadata_differs
-        ):
-            # -- complete any work-in-progress pre_chunk --
-            yield from pre_chunk_builder.flush()
-
-        pre_chunk_builder.add_element(element)
-
-        prior_element = element
-
-    # -- flush "tail" pre_chunk, any partially-filled pre_chunk after last element is processed --
-    yield from pre_chunk_builder.flush()
-
-
-def _metadata_differs(
-    element: Element,
-    preceding_element: Element,
-    ignore_page_numbers: bool,
-) -> bool:
-    """True when metadata differences between two elements indicate a semantic boundary.
-
-    Currently this is only a section change and optionally a page-number change.
-    """
-    metadata1 = preceding_element.metadata
-    metadata2 = element.metadata
-    if metadata1.section != metadata2.section:
-        return True
-    if ignore_page_numbers:
-        return False
-    return metadata1.page_number != metadata2.page_number
+        return tuple(iter_boundary_predicates())
