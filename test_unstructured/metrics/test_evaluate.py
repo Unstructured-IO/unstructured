@@ -1,5 +1,6 @@
 import os
 import pathlib
+import shutil
 
 import pandas as pd
 import pytest
@@ -25,7 +26,21 @@ GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
 UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
 
 
+@pytest.fixture()
+def _cleanup_after_test():
+    # This is where the test runs
+    yield
+
+    os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+
+    # Cleanup the directory and file
+    if os.path.exists(export_dir):
+        shutil.rmtree(export_dir)
+
+
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
@@ -41,6 +56,7 @@ def test_text_extraction_evaluation():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_evaluation_type_txt():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_CCT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
@@ -56,6 +72,7 @@ def test_text_extraction_evaluation_type_txt():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_element_type_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_ELEMENT_TYPE_DIRNAME)
@@ -71,6 +88,7 @@ def test_element_type_evaluation():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_takes_list():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     output_list = ["currency.csv.json"]
@@ -89,6 +107,7 @@ def test_text_extraction_takes_list():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_grouping():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
