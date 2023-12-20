@@ -21,6 +21,7 @@ all_tests=(
   'chroma.sh'
   'delta-table.sh'
   'dropbox.sh'
+  'elasticsearch.sh'
   'gcs.sh'
   'mongodb.sh'
   'pinecone.sh'
