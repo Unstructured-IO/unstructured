@@ -80,6 +80,7 @@ def test_text_extraction_takes_list():
         export_dir=export_dir,
     )
     # check that only the listed files are included
+    assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == len(output_list)
 
