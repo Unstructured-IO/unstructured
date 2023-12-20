@@ -23,8 +23,9 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.staging.base import flatten_dict
-from unstructured.utils import generator_batching_wbytes, requires_dependencies
+from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
     from elasticsearch import Elasticsearch
