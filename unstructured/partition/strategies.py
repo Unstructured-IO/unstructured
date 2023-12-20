@@ -28,7 +28,7 @@ def determine_pdf_or_image_strategy(
     is_image: bool = False,
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
-    extract_images_in_pdf: bool = False,
+    extract_images: bool = False,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
@@ -42,7 +42,7 @@ def determine_pdf_or_image_strategy(
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
                 infer_table_structure=infer_table_structure,
-                extract_images_in_pdf=extract_images_in_pdf,
+                extract_images=extract_images,
             )
 
     if file is not None:
@@ -97,13 +97,13 @@ def _determine_image_auto_strategy():
 def _determine_pdf_auto_strategy(
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
-    extract_images_in_pdf: bool = False,
+    extract_images: bool = False,
 ):
     """If "auto" is passed in as the strategy, determines what strategy to use
     for PDFs."""
     # NOTE(robinson) - Currently "hi_res" is the only strategy where
-    # infer_table_structure and extract_images_in_pdf are used.
-    if infer_table_structure or extract_images_in_pdf:
+    # infer_table_structure and extract_images are used.
+    if infer_table_structure or extract_images:
         return PartitionStrategy.HI_RES
 
     if pdf_text_extractable:

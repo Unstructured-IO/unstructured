@@ -140,7 +140,7 @@ def partition_pdf(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
-    extract_images_in_pdf: bool = False,
+    extract_images: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     **kwargs,
@@ -172,7 +172,7 @@ def partition_pdf(
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     metadata_last_modified
         The last modified date for the document.
-    extract_images_in_pdf
+    extract_images
         Only applicable if `strategy=hi_res`.
         If `True`, any detected images will be saved in the path specified by
         image_output_dir_path.
@@ -181,7 +181,7 @@ def partition_pdf(
         Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
     image_output_dir_path
         Only applicable if `strategy=hi_res`.
-        The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
+        The path for saving images when using `extract_images` or `extract_element_types`.
     """
 
     exactly_one(filename=filename, file=file)
@@ -196,7 +196,7 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         languages=languages,
         metadata_last_modified=metadata_last_modified,
-        extract_images_in_pdf=extract_images_in_pdf,
+        extract_images=extract_images,
         extract_element_types=extract_element_types,
         image_output_dir_path=image_output_dir_path,
         **kwargs,
@@ -247,7 +247,7 @@ def _partition_pdf_or_image_local(
     model_name: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     pdf_text_extractable: bool = False,
-    extract_images_in_pdf: bool = False,
+    extract_images: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     pdf_image_dpi: Optional[int] = None,
@@ -387,9 +387,9 @@ def _partition_pdf_or_image_local(
     )
 
     extract_element_types = check_element_types_to_extract(extract_element_types)
-    #  NOTE(christine): `extract_images_in_pdf` would deprecate
+    #  NOTE(christine): `extract_images` would deprecate
     #  (but continue to support for a while)
-    if extract_images_in_pdf:
+    if extract_images:
         save_elements(
             elements=elements,
             element_category_to_save=ElementType.IMAGE,
@@ -400,7 +400,7 @@ def _partition_pdf_or_image_local(
         )
 
     for el_type in extract_element_types:
-        if extract_images_in_pdf and el_type == ElementType.IMAGE:
+        if extract_images and el_type == ElementType.IMAGE:
             continue
 
         save_elements(
@@ -450,7 +450,7 @@ def partition_pdf_or_image(
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
-    extract_images_in_pdf: bool = False,
+    extract_images: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
     **kwargs,
@@ -495,7 +495,7 @@ def partition_pdf_or_image(
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
-        extract_images_in_pdf=extract_images_in_pdf,
+        extract_images=extract_images,
     )
 
     if strategy == PartitionStrategy.HI_RES:
@@ -511,7 +511,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 pdf_text_extractable=pdf_text_extractable,
-                extract_images_in_pdf=extract_images_in_pdf,
+                extract_images=extract_images,
                 extract_element_types=extract_element_types,
                 image_output_dir_path=image_output_dir_path,
                 **kwargs,

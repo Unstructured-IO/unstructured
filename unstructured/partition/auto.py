@@ -389,7 +389,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
-            extract_images_in_pdf=pdf_extract_images,
+            extract_images=pdf_extract_images,
             image_output_dir_path=pdf_image_output_dir_path,
             **kwargs,
         )
