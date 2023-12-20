@@ -221,7 +221,11 @@ install-ingest-sftp:
 
 .PHONY: install-ingest-pinecone
 install-ingest-pinecone:
-	python3 -m pip install -r requirements/ingest-pinecone.txt
+	python3 -m pip install -r requirements/ingest/pinecone.txt
+
+.PHONY: install-ingest-chroma
+install-ingest-chroma:
+	python3 -m pip install -r requirements/ingest/chroma.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
@@ -351,7 +355,7 @@ check: check-ruff check-black check-flake8 check-version check-flake8-print
 
 .PHONY: check-shfmt
 check-shfmt:
-	shfmt -d .
+	shfmt -i 2 -d .
 
 .PHONY: check-black
 check-black:
@@ -394,7 +398,7 @@ tidy: tidy-python
 
 .PHONY: tidy_shell
 tidy-shell:
-	shfmt -l -w .
+	shfmt -i 2 -l -w .
 
 .PHONY: tidy-python
 tidy-python:

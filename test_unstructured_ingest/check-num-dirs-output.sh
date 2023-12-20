@@ -18,10 +18,10 @@ NUMBER_OF_FOUND_DIRS="$(find "$OUTPUT_DIR" -type d -exec printf '.' \; | wc -c |
 
 # Note: single brackets and "-ne" operator were necessary for evaluation in CI
 if [ "$NUMBER_OF_FOUND_DIRS" -ne "$EXPECTED_NUM_DIRS" ]; then
-	echo
-	echo "$EXPECTED_NUM_DIRS directories were expected to be found."
-	echo "$NUMBER_OF_FOUND_DIRS directories were found instead."
-	echo "Name of the directories found:"
-	find "$OUTPUT_DIR" -type d
-	exit 1
+  echo
+  echo "$EXPECTED_NUM_DIRS directories were expected to be found."
+  echo "$NUMBER_OF_FOUND_DIRS directories were found instead."
+  echo "Name of the directories found:"
+  find "$OUTPUT_DIR" -type d
+  exit 1
 fi
