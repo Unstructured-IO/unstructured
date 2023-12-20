@@ -61,10 +61,16 @@ def measure_text_extraction_accuracy(
         print("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
     if output_type not in ["json", "txt"]:
-        print(f"Specified file type under `output_dir` or `output_list` should be one of 'json' or 'txt'. The given file type is {output_type}, exiting.")
+        print(
+            f"Specified file type under `output_dir` or `output_list` should be one of \
+                'json' or 'txt'. The given file type is {output_type}, exiting."
+        )
         sys.exit(0)
     if not all(_.endswith(output_type) for _ in output_list):
-        print("The directory contains file type inconsistent with the given input. Please note that some files will be skipped.")
+        print(
+            "The directory contains file type inconsistent with the given input. \
+                Please note that some files will be skipped."
+        )
 
     rows = []
 
@@ -83,11 +89,13 @@ def measure_text_extraction_accuracy(
             fn_txt = fn + ".txt"
 
         if fn_txt in source_list:  # type: ignore
-            output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
-            source_cct = _read_text(os.path.join(source_dir, fn_txt))
+            try:
+                output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
+                source_cct = _read_text(os.path.join(source_dir, fn_txt))
+            except Exception:
+                pass
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
-
             rows.append([filename, doctype, connector, accuracy, percent_missing])
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
@@ -171,7 +179,7 @@ def measure_element_type_accuracy(
     _display(agg_df)
 
 
-def _prepare_output_cct(docpath, output_type):
+def _prepare_output_cct(docpath: str, output_type: str):
     if output_type == "json":
         output_cct = elements_to_text(elements_from_json(docpath))
     elif output_type == "txt":
@@ -217,7 +225,9 @@ def _display(df):
         )
 
 
-def _write_to_file(dir: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = False):
+def _write_to_file(
+    dir: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = True
+):
     if mode not in ["w", "a"]:
         raise ValueError("Mode not supported. Mode must be one of [w, a].")
     if dir and not os.path.exists(dir):

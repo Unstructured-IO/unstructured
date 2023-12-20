@@ -74,7 +74,15 @@ def measure_text_extraction_accuracy_command(
     grouping: Optional[str] = None,
 ):
     return measure_text_extraction_accuracy(
-        output_dir, source_dir, output_list, source_list, export_dir, grouping, weights, visualize, output_type
+        output_dir,
+        source_dir,
+        output_list,
+        source_list,
+        export_dir,
+        grouping,
+        weights,
+        visualize,
+        output_type,
     )
 
 
