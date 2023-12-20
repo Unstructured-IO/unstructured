@@ -9,15 +9,21 @@ from typing import List
 import pytest
 
 from unstructured.chunking.base import (
+    BasePreChunker,
     ChunkingOptions,
     PreChunkBuilder,
     PreChunkCombiner,
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
+    is_in_next_section,
+    is_on_next_page,
+    is_title,
 )
 from unstructured.documents.elements import (
+    CheckBox,
     CompositeElement,
+    Element,
     ElementMetadata,
     PageBreak,
     RegexMetadata,
@@ -26,6 +32,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+
+# ================================================================================================
+# CHUNKING OPTIONS
+# ================================================================================================
 
 
 class DescribeChunkingOptions:
@@ -135,12 +145,63 @@ class DescribeChunkingOptions:
 
 
 # ================================================================================================
+# BASE PRE-CHUNKER
+# ================================================================================================
+
+
+class DescribeBasePreChunker:
+    """Unit-test suite for `unstructured.chunking.base.BasePreChunker` objects."""
+
+    def it_gathers_elements_into_pre_chunks_respecting_the_specified_chunk_size(self):
+        elements = [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
+            Text("Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+            Title("Ut Enim"),
+            Text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi."),
+            Text("Ut aliquip ex ea commodo consequat."),
+            CheckBox(),
+        ]
+
+        opts = ChunkingOptions.new(max_characters=150, new_after_n_chars=65)
+
+        pre_chunk_iter = BasePreChunker.iter_pre_chunks(elements, opts=opts)
+
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Text("Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Title("Ut Enim"),
+            Text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi."),
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [Text("Ut aliquip ex ea commodo consequat."), CheckBox()]
+        # --
+        with pytest.raises(StopIteration):
+            next(pre_chunk_iter)
+
+
+# ================================================================================================
 # PRE-CHUNK SUBTYPES
 # ================================================================================================
 
 
 class DescribeTablePreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TablePreChunk objects."""
+    """Unit-test suite for `unstructured.chunking.base.TablePreChunk` objects."""
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
@@ -256,7 +317,7 @@ class DescribeTablePreChunk:
 
 
 class DescribeTextPreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TextPreChunk objects."""
+    """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
 
     def it_can_combine_itself_with_another_TextPreChunk_instance(self):
         """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.
@@ -572,15 +633,15 @@ class DescribePreChunkBuilder:
     def it_is_empty_on_construction(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
 
-        assert builder.text_length == 0
-        assert builder.remaining_space == 50
+        assert builder._text_length == 0
+        assert builder._remaining_space == 50
 
     def it_accumulates_elements_added_to_it(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         builder.add_element(Title("Introduction"))
-        assert builder.text_length == 12
-        assert builder.remaining_space == 136
+        assert builder._text_length == 12
+        assert builder._remaining_space == 136
 
         builder.add_element(
             Text(
@@ -588,8 +649,67 @@ class DescribePreChunkBuilder:
                 "lectus porta volutpat.",
             ),
         )
-        assert builder.text_length == 112
-        assert builder.remaining_space == 36
+        assert builder._text_length == 112
+        assert builder._remaining_space == 36
+
+    @pytest.mark.parametrize("element", [Table("Heading\nCell text"), Text("abcd " * 200)])
+    def it_will_fit_a_Table_or_oversized_element_when_empty(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        assert builder.will_fit(element)
+
+    @pytest.mark.parametrize(
+        ("existing_element", "next_element"),
+        [
+            (Text("abcd"), Table("Fruits\nMango")),
+            (Text("abcd"), Text("abcd " * 200)),
+            (Table("Heading\nCell text"), Table("Fruits\nMango")),
+            (Table("Heading\nCell text"), Text("abcd " * 200)),
+        ],
+    )
+    def but_not_when_it_already_contains_an_element_of_any_kind(
+        self, existing_element: Element, next_element: Element
+    ):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder.add_element(existing_element)
+
+        assert not builder.will_fit(next_element)
+
+    @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
+    def it_will_not_fit_any_element_when_it_already_contains_a_table(self, element: Element):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder.add_element(Table("Heading\nCell text"))
+
+        assert not builder.will_fit(element)
+
+    def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
+        builder = PreChunkBuilder(
+            opts=ChunkingOptions.new(max_characters=100, new_after_n_chars=50)
+        )
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        assert not builder.will_fit(Text("In rhoncus ipsum."))
+
+    def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 44 == 101 --
+        assert not builder.will_fit(
+            Text("In rhoncus ipsum sed lectus portos volutpat.")  # 44-chars
+        )
+
+    def but_it_will_fit_an_element_that_fits(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder.add_element(
+            Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
+        )
+
+        # -- 55 + 2 (separator) + 43 == 100 --
+        assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
 
     def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
@@ -611,8 +731,24 @@ class DescribePreChunkBuilder:
                 "lectus porta volutpat.",
             ),
         ]
-        assert builder.text_length == 0
-        assert builder.remaining_space == 150
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+
+    def but_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
+        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder.add_element(Table("Heading\nCell text"))
+
+        pre_chunk = next(builder.flush())
+
+        # -- pre-chunk builder was reset before the yield, such that the iterator does not need to
+        # -- be exhausted before clearing out the old elements and a new pre-chunk can be
+        # -- accumulated immediately (first `next()` call is required however, to advance to the
+        # -- yield statement).
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
+        # -- pre-chunk is a `TablePreChunk` --
+        assert isinstance(pre_chunk, TablePreChunk)
+        assert pre_chunk._table == Table("Heading\nCell text")
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
@@ -620,21 +756,21 @@ class DescribePreChunkBuilder:
         pre_chunks = list(builder.flush())
 
         assert pre_chunks == []
-        assert builder.text_length == 0
-        assert builder.remaining_space == 150
+        assert builder._text_length == 0
+        assert builder._remaining_space == 150
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
         builder.add_element(Text("abcde"))
         builder.add_element(Text("fghij"))
 
-        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
+        # -- ._text_length includes a separator ("\n\n", len==2) between each text-segment,
         # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
-        assert builder.text_length == 12
-        # -- .remaining_space is reduced by the length (2) of the trailing separator which would go
-        # -- between the current text and that of the next element if one was added.
+        assert builder._text_length == 12
+        # -- ._remaining_space is reduced by the length (2) of the trailing separator which would
+        # -- go between the current text and that of the next element if one was added.
         # -- So 50 - 12 - 2 = 36 here, not 50 - 12 = 38
-        assert builder.remaining_space == 36
+        assert builder._remaining_space == 36
 
 
 class DescribePreChunkCombiner:
@@ -976,3 +1112,137 @@ class DescribeTextPreChunkAccumulator:
         # -- go between the current text and that of the next pre-chunk if one was added.
         # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
         assert accum.remaining_space == 86
+
+
+# ================================================================================================
+# (SEMANTIC) BOUNDARY PREDICATES
+# ================================================================================================
+
+
+class Describe_is_in_next_section:
+    """Unit-test suite for `unstructured.chunking.base.is_in_next_section()` function.
+
+    `is_in_next_section()` is not itself a predicate, rather it returns a predicate on Element
+    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
+    element stream.
+    """
+
+    def it_is_false_for_the_first_element_when_it_has_a_non_None_section(self):
+        """This is an explicit first-section; first-section does not represent a section break."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+
+    def and_it_is_false_for_the_first_element_when_it_has_a_None_section(self):
+        """This is an anonymous first-section; still doesn't represent a section break."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+
+    def it_is_false_for_None_section_elements_that_follow_an_explicit_first_section(self):
+        """A `None` section element is considered to continue the prior section."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def and_it_is_false_for_None_section_elements_that_follow_an_anonymous_first_section(self):
+        """A `None` section element is considered to continue the prior section."""
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def it_is_false_for_matching_section_elements_that_follow_an_explicit_first_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
+
+    def it_is_true_for_an_explicit_section_element_that_follows_an_anonymous_first_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh"))
+        assert pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
+
+    def and_it_is_true_for_a_different_explicit_section_that_follows_an_explicit_section(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
+        assert pred(Text("efgh", metadata=ElementMetadata(section="Summary")))
+
+    def it_is_true_whenever_the_section_explicitly_changes_except_at_the_start(self):
+        pred = is_in_next_section()
+        assert not pred(Text("abcd"))
+        assert pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("ijkl"))
+        assert not pred(Text("mnop", metadata=ElementMetadata(section="Introduction")))
+        assert not pred(Text("qrst"))
+        assert pred(Text("uvwx", metadata=ElementMetadata(section="Summary")))
+        assert not pred(Text("yzab", metadata=ElementMetadata(section="Summary")))
+        assert not pred(Text("cdef"))
+        assert pred(Text("ghij", metadata=ElementMetadata(section="Appendix")))
+
+
+class Describe_is_on_next_page:
+    """Unit-test suite for `unstructured.chunking.base.is_on_next_page()` function.
+
+    `is_on_next_page()` is not itself a predicate, rather it returns a predicate on Element
+    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
+    element stream.
+    """
+
+    @pytest.mark.parametrize(
+        "element", [Text("abcd"), Text("efgh", metadata=ElementMetadata(page_number=4))]
+    )
+    def it_is_unconditionally_false_for_the_first_element(self, element: Element):
+        """The first page never represents a page-break."""
+        pred = is_on_next_page()
+        assert not pred(element)
+
+    def it_is_false_for_an_element_that_has_no_page_number(self):
+        """An element with a `None` page-number is assumed to continue the current page."""
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl"))
+
+    def it_is_false_for_an_element_with_the_current_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("efgh"))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(page_number=1)))
+        assert not pred(Text("mnop"))
+
+    def it_assigns_page_number_1_to_a_first_element_that_has_no_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd"))
+        assert not pred(Text("efgh", metadata=ElementMetadata(page_number=1)))
+
+    def it_is_true_for_an_element_with_an_explicit_different_page_number(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=1)))
+        assert pred(Text("efgh", metadata=ElementMetadata(page_number=2)))
+
+    def and_it_is_true_even_when_that_page_number_is_lower(self):
+        pred = is_on_next_page()
+        assert not pred(Text("abcd", metadata=ElementMetadata(page_number=4)))
+        assert pred(Text("efgh", metadata=ElementMetadata(page_number=2)))
+        assert not pred(Text("ijkl", metadata=ElementMetadata(page_number=2)))
+        assert not pred(Text("mnop"))
+        assert pred(Text("qrst", metadata=ElementMetadata(page_number=3)))
+
+
+class Describe_is_title:
+    """Unit-test suite for `unstructured.chunking.base.is_title()` predicate."""
+
+    def it_is_true_for_a_Title_element(self):
+        assert is_title(Title("abcd"))
+
+    @pytest.mark.parametrize(
+        "element",
+        [
+            PageBreak(""),
+            Table("Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"),
+            Text("abcd"),
+        ],
+    )
+    def and_it_is_false_for_any_other_element_subtype(self, element: Element):
+        assert not is_title(element)

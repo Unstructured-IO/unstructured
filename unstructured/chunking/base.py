@@ -4,7 +4,19 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
+from typing import (
+    Any,
+    Callable,
+    DefaultDict,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    cast,
+)
 
 from typing_extensions import Self, TypeAlias
 
@@ -16,10 +28,20 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Table,
     TableChunk,
+    Title,
 )
 from unstructured.utils import lazyproperty
 
+BoundaryPredicate: TypeAlias = Callable[[Element], bool]
+"""Detects when element represents crossing a semantic boundary like section or page."""
+
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
+"""The kind of object produced by a pre-chunker."""
+
+
+# ================================================================================================
+# CHUNKING OPTIONS
+# ================================================================================================
 
 
 class ChunkingOptions:
@@ -163,6 +185,81 @@ class ChunkingOptions:
         # loop (I think).
         if self._overlap >= max_characters:
             raise ValueError(f"'overlap' must be less than max_characters," f" got {self._overlap}")
+
+
+# ================================================================================================
+# BASE PRE-CHUNKER
+# ================================================================================================
+
+
+class BasePreChunker:
+    """Base-class for per-strategy pre-chunkers.
+
+    The pre-chunker's responsibilities are:
+
+    - **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
+      either side of those boundaries into different sections. In this case, the primary indicator
+      of a semantic boundary is a `Title` element. A page-break (change in page-number) is also a
+      semantic boundary when `multipage_sections` is `False`.
+
+    - **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
+      into sections as big as possible without exceeding the chunk window size.
+
+    - **Minimize chunks that must be split mid-text.** Precompute the text length of each section
+      and only produce a section that exceeds the chunk window size when there is a single element
+      with text longer than that window.
+
+    A Table element is placed into a section by itself. CheckBox elements are dropped.
+
+    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates
+    a new "section", hence the "by-title" designation.
+    """
+
+    def __init__(self, elements: Sequence[Element], opts: ChunkingOptions):
+        self._elements = elements
+        self._opts = opts
+
+    @classmethod
+    def iter_pre_chunks(
+        cls, elements: Sequence[Element], opts: ChunkingOptions
+    ) -> Iterator[PreChunk]:
+        """Generate pre-chunks from the element-stream provided on construction."""
+        return cls(elements, opts)._iter_pre_chunks()
+
+    def _iter_pre_chunks(self) -> Iterator[PreChunk]:
+        """Generate pre-chunks from the element-stream provided on construction.
+
+        A *pre-chunk* is the largest sub-sequence of elements that will both fit within the
+        chunking window and respects the semantic boundary rules of the chunking strategy. When a
+        single element exceeds the chunking window size it is placed in a pre-chunk by itself and
+        is subject to mid-text splitting in the second phase of the chunking process.
+        """
+        pre_chunk_builder = PreChunkBuilder(self._opts)
+
+        for element in self._elements:
+            # -- start new pre-chunk when necessary --
+            if self._is_in_new_semantic_unit(element) or not pre_chunk_builder.will_fit(element):
+                yield from pre_chunk_builder.flush()
+
+            # -- add this element to the work-in-progress (WIP) pre-chunk --
+            pre_chunk_builder.add_element(element)
+
+        # -- flush "tail" pre-chunk, any partially-filled pre-chunk after last element is
+        # -- processed
+        yield from pre_chunk_builder.flush()
+
+    @lazyproperty
+    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks."""
+        return ()
+
+    def _is_in_new_semantic_unit(self, element: Element) -> bool:
+        """True when `element` begins a new semantic unit such as a section or page."""
+        # -- all detectors need to be called to update state and avoid double counting
+        # -- boundaries that happen to coincide, like Table and new section on same element.
+        # -- Using `any()` would short-circuit on first True.
+        semantic_boundaries = [pred(element) for pred in self._boundary_predicates]
+        return any(semantic_boundaries)
 
 
 # ================================================================================================
@@ -396,8 +493,8 @@ class TextPreChunk:
 class PreChunkBuilder:
     """An element accumulator suitable for incrementally forming a pre-chunk.
 
-    Provides monitoring properties like `.remaining_space` and `.text_length` a pre-chunker can use
-    to determine whether it should add the next element in the element stream.
+    Provides the trial method `.will_fit()` a pre-chunker can use to determine whether it should add
+    the next element in the element stream.
 
     `.flush()` is used to build a PreChunk object from the accumulated elements. This method
     returns an iterator that generates zero-or-one `TextPreChunk` or `TablePreChunk` object and is
@@ -426,7 +523,7 @@ class PreChunkBuilder:
             self._text_segments.append(element.text)
             self._text_len += len(element.text)
 
-    def flush(self) -> Iterator[TextPreChunk]:
+    def flush(self) -> Iterator[PreChunk]:
         """Generate zero-or-one `PreChunk` object and clear the accumulator.
 
         Suitable for use to emit a PreChunk when the maximum size has been reached or a semantic
@@ -435,23 +532,62 @@ class PreChunkBuilder:
         """
         if not self._elements:
             return
+
+        pre_chunk = (
+            TablePreChunk(self._elements[0], self._opts)
+            if isinstance(self._elements[0], Table)
+            # -- copy list, don't use original or it may change contents as builder proceeds --
+            else TextPreChunk(list(self._elements), self._opts)
+        )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
-        # -- iterator is exhausted and can add eleemnts for the next pre-chunk immediately.
-        elements = self._elements[:]
-        self._elements.clear()
-        self._text_segments.clear()
-        self._text_len = 0
-        yield TextPreChunk(elements, self._opts)
+        # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
+        self._reset_state()
+        yield pre_chunk
+
+    def will_fit(self, element: Element) -> bool:
+        """True when `element` can be added to this prechunk without violating its limits.
+
+        There are several limits:
+        - A `Table` element will never fit with any other element. It will only fit in an empty
+          pre-chunk.
+        - No element will fit in a pre-chunk that already contains a `Table` element.
+        - A text-element will not fit in a pre-chunk that already exceeds the soft-max
+          (aka. new_after_n_chars).
+        - A text-element will not fit when together with the elements already present it would
+          exceed the hard-max (aka. max_characters).
+        """
+        # -- an empty pre-chunk will accept any element (including an oversized-element) --
+        if len(self._elements) == 0:
+            return True
+        # -- a `Table` will not fit in a non-empty pre-chunk --
+        if isinstance(element, Table):
+            return False
+        # -- no element will fit in a pre-chunk that already contains a `Table` element --
+        if self._elements and isinstance(self._elements[0], Table):
+            return False
+        # -- a pre-chunk that already exceeds the soft-max is considered "full" --
+        if self._text_length > self._opts.soft_max:
+            return False
+        # -- don't add an element if it would increase total size beyond the hard-max --
+        if self._remaining_space < len(element.text):
+            return False
+        return True
 
     @property
-    def remaining_space(self) -> int:
+    def _remaining_space(self) -> int:
         """Maximum text-length of an element that can be added without exceeding maxlen."""
         # -- include length of trailing separator that will go before next element text --
         separators_len = self._separator_len * len(self._text_segments)
         return self._opts.hard_max - self._text_len - separators_len
 
+    def _reset_state(self) -> None:
+        """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._elements.clear()
+        self._text_segments.clear()
+        self._text_len = 0
+
     @property
-    def text_length(self) -> int:
+    def _text_length(self) -> int:
         """Length of the text in this pre-chunk.
 
         This value represents the chunk-size that would result if this pre-chunk was flushed in its
@@ -502,10 +638,16 @@ class PreChunkCombiner:
 
 
 class TextPreChunkAccumulator:
-    """Accumulates, measures, and combines pre-chunk objects.
+    """Accumulates, measures, and combines text pre-chunks.
 
-    Provides monitoring properties `.remaining_space` and `.text_length` suitable for deciding
-    whether to add another pre-chunk.
+    Used for combining pre-chunks for chunking strategies like "by-title" that can potentially
+    produce undersized chunks and offer the `combine_text_under_n_chars` option. Note that only
+    sequential `TextPreChunk` objects can be combined. A `TablePreChunk` is never combined with
+    another pre-chunk.
+
+    Provides `.add_pre_chunk()` allowing a pre-chunk to be added to the chunk and provides
+    monitoring properties `.remaining_space` and `.text_length` suitable for deciding whether to add
+    another pre-chunk.
 
     `.flush()` is used to combine the accumulated pre-chunks into a single `TextPreChunk` object.
     This method returns an interator that generates zero-or-one `TextPreChunk` objects and is used
@@ -564,3 +706,118 @@ class TextPreChunkAccumulator:
         total_text_length = sum(s.text_length for s in self._pre_chunks)
         total_separator_length = len(self._opts.text_separator) * (n - 1)
         return total_text_length + total_separator_length
+
+
+# ================================================================================================
+# CHUNK BOUNDARY PREDICATES
+# ------------------------------------------------------------------------------------------------
+# A *boundary predicate* is a function that takes an element and returns True when the element
+# represents the start of a new semantic boundary (such as section or page) to be respected in
+# chunking.
+#
+# Some of the functions below *are* a boundary predicate and others *construct* a boundary
+# predicate.
+#
+# These can be mixed and matched to produce different chunking behaviors like "by_title" or left
+# out altogether to produce "by_element" behavior.
+#
+# The effective lifetime of the function that produce a predicate (rather than directly being one)
+# is limited to a single element-stream because these retain state (e.g. current page number) to
+# determine when a semantic boundary has been crossed.
+# ================================================================================================
+
+
+def is_in_next_section() -> BoundaryPredicate:
+    """Not a predicate itself, calling this returns a predicate that triggers on each new section.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (current section) that is particular to that element stream.
+
+    A "section" of this type is particular to the EPUB format (so far) and not to be confused with
+    a "section" composed of a section-heading (`Title` element) followed by content elements.
+
+    The returned predicate tracks the current section, starting at `None`. Calling with an element
+    with a different value for `metadata.section` returns True, indicating the element starts a new
+    section boundary, and updates the enclosed section name ready for the next transition.
+    """
+    current_section: Optional[str] = None
+    is_first: bool = True
+
+    def section_changed(element: Element) -> bool:
+        nonlocal current_section, is_first
+
+        section = element.metadata.section
+
+        # -- The first element never reports a section break, it starts the first section of the
+        # -- document. That section could be named (section is non-None) or anonymous (section is
+        # -- None). We don't really have to care.
+        if is_first:
+            current_section = section
+            is_first = False
+            return False
+
+        # -- An element with a `None` section is assumed to continue the current section. It never
+        # -- updates the current-section because once set, the current-section is "sticky" until
+        # -- replaced by another explicit section.
+        if section is None:
+            return False
+
+        # -- another element with the same section continues that section --
+        if section == current_section:
+            return False
+
+        current_section = section
+        return True
+
+    return section_changed
+
+
+def is_on_next_page() -> BoundaryPredicate:
+    """Not a predicate itself, calling this returns a predicate that triggers on each new page.
+
+    The lifetime of the returned callable cannot extend beyond a single element-stream because it
+    stores current state (current page-number) that is particular to that element stream.
+
+    The returned predicate tracks the "current" page-number, starting at 1. An element with a
+    greater page number returns True, indicating the element starts a new page boundary, and
+    updates the enclosed page-number ready for the next transition.
+
+    An element with `page_number == None` or a page-number lower than the stored value is ignored
+    and returns False.
+    """
+    current_page_number: int = 1
+    is_first: bool = True
+
+    def page_number_incremented(element: Element) -> bool:
+        nonlocal current_page_number, is_first
+
+        page_number = element.metadata.page_number
+
+        # -- The first element never reports a page break, it starts the first page of the
+        # -- document. That page could be numbered (page_number is non-None) or not. If it is not
+        # -- numbered we assign it page-number 1.
+        if is_first:
+            current_page_number = page_number or 1
+            is_first = False
+            return False
+
+        # -- An element with a `None` page-number is assumed to continue the current page. It never
+        # -- updates the current-page-number because once set, the current-page-number is "sticky"
+        # -- until replaced by a different explicit page-number.
+        if page_number is None:
+            return False
+
+        if page_number == current_page_number:
+            return False
+
+        # -- it's possible for a page-number to decrease. We don't expect that, but if it happens
+        # -- we consider it a page-break.
+        current_page_number = page_number
+        return True
+
+    return page_number_incremented
+
+
+def is_title(element: Element) -> bool:
+    """True when `element` is a `Title` element, False otherwise."""
+    return isinstance(element, Title)

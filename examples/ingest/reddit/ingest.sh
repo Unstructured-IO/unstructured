@@ -15,16 +15,16 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	reddit \
-	--subreddit-name machinelearning \
-	--client-id "<client id here>" \
-	--client-secret "<client secret here>" \
-	--user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
-	--search-query "Unstructured" \
-	--num-posts 10 \
-	--output-dir reddit-ingest-output \
-	--num-processes 2 \
-	--verbose
+  reddit \
+  --subreddit-name machinelearning \
+  --client-id "<client id here>" \
+  --client-secret "<client secret here>" \
+  --user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
+  --search-query "Unstructured" \
+  --num-posts 10 \
+  --output-dir reddit-ingest-output \
+  --num-processes 2 \
+  --verbose
 
 # Alternatively, you can call it using:
 # unstructured-ingest reddit --subreddit-name ...

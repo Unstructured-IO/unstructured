@@ -2,9 +2,9 @@
 set +u
 
 if [ -z "$1" ]; then
-	echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
-	echo "Ex: ${0} abertl"
-	exit 1
+  echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
+  echo "Ex: ${0} abertl"
+  exit 1
 fi
 
 set -eux
@@ -14,12 +14,12 @@ pac="yum"
 
 # If we're not running as root, we want to prefix certain commands with sudo
 if [[ $(whoami) == 'root' ]]; then
-	$pac update -y
-	$pac install -y sudo
-	sudo=''
+  $pac update -y
+  $pac install -y sudo
+  sudo=''
 else
-	type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
-	sudo='sudo'
+  type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
+  sudo='sudo'
 fi
 
 # Set user account for which we're configuring the tools
