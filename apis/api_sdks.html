@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Accessing Unstructured API" href="usage_methods.html" /><link rel="prev" title="Unstructured API" href="../api.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Python and JavaScript SDK for Unstructured API - Unstructured 0.11.5 documentation</title>
+  <title>Python and JavaScript SDK - Unstructured 0.11.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -322,9 +322,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Python and JavaScript SDK for Unstructured API</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Python and JavaScript SDK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -371,6 +372,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
@@ -470,8 +472,8 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="python-and-javascript-sdk-for-unstructured-api">
-<h1>Python and JavaScript SDK for Unstructured API<a class="headerlink" href="#python-and-javascript-sdk-for-unstructured-api" title="Permalink to this heading"></a></h1>
+          <section id="python-and-javascript-sdk">
+<h1>Python and JavaScript SDK<a class="headerlink" href="#python-and-javascript-sdk" title="Permalink to this heading"></a></h1>
 <p>This documentation covers the usage of the Python and JavaScript SDKs for interacting with the Unstructured API.</p>
 <section id="python-sdk">
 <h2>Python SDK<a class="headerlink" href="#python-sdk" title="Permalink to this heading"></a></h2>
@@ -528,37 +530,37 @@
 <section id="id2">
 <h3>Usage<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
 <p>Below is a basic example of how to use the JavaScript SDK:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>import<span class="w"> </span><span class="o">{</span><span class="w"> </span>UnstructuredClient<span class="w"> </span><span class="o">}</span><span class="w"> </span>from<span class="w"> </span><span class="s2">&quot;unstructured-client&quot;</span><span class="p">;</span>
-import<span class="w"> </span><span class="o">{</span><span class="w"> </span>PartitionResponse<span class="w"> </span><span class="o">}</span><span class="w"> </span>from<span class="w"> </span><span class="s2">&quot;unstructured-client/dist/sdk/models/operations&quot;</span><span class="p">;</span>
-import<span class="w"> </span>*<span class="w"> </span>as<span class="w"> </span>fs<span class="w"> </span>from<span class="w"> </span><span class="s2">&quot;fs&quot;</span><span class="p">;</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">{</span> <span class="n">UnstructuredClient</span> <span class="p">}</span> <span class="kn">from</span> <span class="s2">&quot;unstructured-client&quot;</span><span class="p">;</span>
+<span class="kn">import</span> <span class="p">{</span> <span class="n">PartitionResponse</span> <span class="p">}</span> <span class="kn">from</span> <span class="s2">&quot;unstructured-client/dist/sdk/models/operations&quot;</span><span class="p">;</span>
+<span class="kn">import</span> <span class="o">*</span> <span class="k">as</span> <span class="n">fs</span> <span class="kn">from</span> <span class="s2">&quot;fs&quot;</span><span class="p">;</span>
 
-const<span class="w"> </span><span class="nv">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;YOUR-API-KEY&quot;</span><span class="p">;</span>
+<span class="n">const</span> <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;YOUR-API-KEY&quot;</span><span class="p">;</span>
 
-const<span class="w"> </span><span class="nv">client</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>new<span class="w"> </span>UnstructuredClient<span class="o">({</span>
-<span class="w">    </span>security:<span class="w"> </span><span class="o">{</span>
-<span class="w">        </span>apiKeyAuth:<span class="w"> </span>key,
-<span class="w">    </span><span class="o">}</span>,
-<span class="o">})</span><span class="p">;</span>
+<span class="n">const</span> <span class="n">client</span> <span class="o">=</span> <span class="n">new</span> <span class="n">UnstructuredClient</span><span class="p">({</span>
+    <span class="n">security</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">apiKeyAuth</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">});</span>
 
-const<span class="w"> </span><span class="nv">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sample-docs/layout-parser-paper.pdf&quot;</span><span class="p">;</span>
-const<span class="w"> </span><span class="nv">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>fs.readFileSync<span class="o">(</span>filename<span class="o">)</span><span class="p">;</span>
+<span class="n">const</span> <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;sample-docs/layout-parser-paper.pdf&quot;</span><span class="p">;</span>
+<span class="n">const</span> <span class="n">data</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">readFileSync</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
 
-client.general.partition<span class="o">({</span>
-<span class="w">    </span><span class="c1"># Note that this currently only supports a single file</span>
-<span class="w">    </span>files:<span class="w"> </span><span class="o">{</span>
-<span class="w">        </span>content:<span class="w"> </span>data,
-<span class="w">        </span>files:<span class="w"> </span>filename,
-<span class="w">    </span><span class="o">}</span>,
-<span class="w">    </span><span class="c1"># Other partition params</span>
-<span class="w">    </span>strategy:<span class="w"> </span><span class="s2">&quot;fast&quot;</span>,
-<span class="o">})</span>.then<span class="o">((</span>res:<span class="w"> </span>PartitionResponse<span class="o">)</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="o">{</span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">(</span>res.statusCode<span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">200</span><span class="o">)</span><span class="w"> </span><span class="o">{</span>
-<span class="w">        </span>console.log<span class="o">(</span>res.elements<span class="o">)</span><span class="p">;</span>
-<span class="w">    </span><span class="o">}</span>
-<span class="o">})</span>.catch<span class="o">((</span>e<span class="o">)</span><span class="w"> </span><span class="o">=</span>&gt;<span class="w"> </span><span class="o">{</span>
-<span class="w">    </span>console.log<span class="o">(</span>e.statusCode<span class="o">)</span><span class="p">;</span>
-<span class="w">    </span>console.log<span class="o">(</span>e.body<span class="o">)</span><span class="p">;</span>
-<span class="o">})</span><span class="p">;</span>
+<span class="n">client</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">partition</span><span class="p">({</span>
+    <span class="c1"># Note that this currently only supports a single file</span>
+    <span class="n">files</span><span class="p">:</span> <span class="p">{</span>
+        <span class="n">content</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
+        <span class="n">files</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="c1"># Other partition params</span>
+    <span class="n">strategy</span><span class="p">:</span> <span class="s2">&quot;fast&quot;</span><span class="p">,</span>
+<span class="p">})</span><span class="o">.</span><span class="n">then</span><span class="p">((</span><span class="n">res</span><span class="p">:</span> <span class="n">PartitionResponse</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">statusCode</span> <span class="o">==</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">elements</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">})</span><span class="o">.</span><span class="n">catch</span><span class="p">((</span><span class="n">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">statusCode</span><span class="p">);</span>
+    <span class="n">console</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">body</span><span class="p">);</span>
+<span class="p">});</span>
 </pre></div>
 </div>
 <p>For more information, visit the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-js-client">JavaScript SDK GitHub repository</a>.</p>
@@ -621,7 +623,7 @@ client.general.partition<span class="o">({</span>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Python and JavaScript SDK for Unstructured API</a><ul>
+<li><a class="reference internal" href="#">Python and JavaScript SDK</a><ul>
 <li><a class="reference internal" href="#python-sdk">Python SDK</a><ul>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#usage">Usage</a></li>

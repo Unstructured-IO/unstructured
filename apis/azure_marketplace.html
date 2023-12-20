@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Parameters" href="api_parameters.html" /><link rel="prev" title="Accessing Unstructured API" href="usage_methods.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="AWS Marketplace Deployment Guide" href="aws_marketplace.html" /><link rel="prev" title="Accessing Unstructured API" href="usage_methods.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Azure Marketplace Deployment Guide - Unstructured 0.11.5 documentation</title>
+  <title>Azure Marketplace Deployment Guide - Unstructured 0.11.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -322,9 +322,10 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="api_sdks.html">Python and JavaScript SDK for Unstructured API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_sdks.html">Python and JavaScript SDK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Azure Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -371,6 +372,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
@@ -518,7 +520,7 @@
 <li><p>Provide a name in the <strong>Virtual machine name</strong> field.</p></li>
 <li><p>Select a <strong>Region</strong> from the dropdown menu.</p></li>
 <li><p><strong>Image</strong>: Select <code class="docutils literal notranslate"><span class="pre">Unstructured</span> <span class="pre">Customer</span> <span class="pre">Hosted</span> <span class="pre">API</span> <span class="pre">Hourly</span> <span class="pre">-</span> <span class="pre">x64</span> <span class="pre">Gen2</span></code> (<em>default</em>)</p></li>
-<li><p><strong>Size</strong>: Select VM size from dropdown menu.</p></li>
+<li><p><strong>Size</strong>: Select VM size from dropdown menu. Refer to this page for <a class="reference external" href="https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/">Azure VM comparisons</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -539,13 +541,13 @@
 </section>
 <section id="set-up-load-balancer">
 <h2>5. Set Up Load Balancer<a class="headerlink" href="#set-up-load-balancer" title="Permalink to this heading"></a></h2>
-<p>On the <strong>Create a virtual machine</strong> page, go to <strong>Networking</strong> tab and follow the steps below.</p>
+<p>Before you click <code class="docutils literal notranslate"><span class="pre">Review</span> <span class="pre">+</span> <span class="pre">create</span></code> button, go to <strong>Networking</strong> tab and follow the steps below.</p>
 <ul class="simple">
 <li><dl class="simple">
 <dt>Networking interface (required fields)</dt><dd><ul>
-<li><p><strong>Virtual network</strong>: Select from dropdown menu or create new</p></li>
-<li><p><strong>Subnet</strong>: Select from dropdown menu</p></li>
-<li><p><strong>Configure network security group</strong>: Select from dropdown menu or create new</p></li>
+<li><p><strong>Virtual network</strong>: Click <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">new</span></code> link or select a <code class="docutils literal notranslate"><span class="pre">Virtual</span> <span class="pre">network</span></code> from dropdown menu, if you have created one. Refer to  <a class="reference external" href="https://learn.microsoft.com/en-us/azure/virtual-network/quick-create-portal">Quickstart: Use the Azure portal to create a virtual network</a>.</p></li>
+<li><p><strong>Subnet</strong>: Click <code class="docutils literal notranslate"><span class="pre">Manage</span> <span class="pre">subnet</span> <span class="pre">configuration</span></code> link or select a subnet from dropdown menu, if you have created one. Refer to  <a class="reference external" href="https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-subnet?tabs=azure-portal">Add, change, or delete a virtual network subnet</a></p></li>
+<li><p><strong>Configure network security group</strong>: Click <code class="docutils literal notranslate"><span class="pre">Create</span> <span class="pre">new</span></code> link or select a security group from dropdown menu, if you have created one. Refer to  <a class="reference external" href="https://learn.microsoft.com/en-us/azure/virtual-network/manage-network-security-group?tabs=network-security-group-portal">Create, change, or delete a network security group</a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -554,7 +556,8 @@
 <dt>Load balancing</dt><dd><ul>
 <li><p><strong>Load balancing option</strong>: Select <code class="docutils literal notranslate"><span class="pre">Azure</span> <span class="pre">load</span> <span class="pre">balancer</span></code></p></li>
 <li><dl class="simple">
-<dt><strong>Select a load balance</strong>: Select from dropdown menu or create new</dt><dd><ul>
+<dt><strong>Select a load balancer</strong>: If you have created a load balancer, select from dropdown menu, or click <a href="#id1"><span class="problematic" id="id2">``</span></a>Create a load balancer` and fill out the following fields in the pop-up window.</dt><dd><ul>
+<li><p>Enter <strong>Load balancer name</strong></p></li>
 <li><p><strong>Type</strong>: Select <code class="docutils literal notranslate"><span class="pre">Public</span></code> or <code class="docutils literal notranslate"><span class="pre">Internal</span></code></p></li>
 <li><p><strong>Protococl</strong>: Select <code class="docutils literal notranslate"><span class="pre">TCP</span></code> or <code class="docutils literal notranslate"><span class="pre">UDP</span></code></p></li>
 <li><p><strong>Port</strong> and <strong>Backend Port</strong>: Set to <code class="docutils literal notranslate"><span class="pre">port</span> <span class="pre">80</span></code></p></li>
@@ -593,7 +596,11 @@
 <li><p>Navigate to the public IP with the specified path for documentation and API testing.</p></li>
 <li><p>Perform API testing with <cite>curl</cite> commands.</p></li>
 </ul>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-q<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://&lt;you-IP-address&gt;/general/v0/general<span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;accept: application/json&#39;</span><span class="w"> </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span><span class="w"> </span>-F<span class="w"> </span><span class="nv">files</span><span class="o">=</span>@english-and-korean.png<span class="w"> </span>-o<span class="w"> </span>/tmp/english-and-korean.png.json
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-q<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://&lt;you-IP-address&gt;/general/v0/general
+<span class="w">     </span>-H<span class="w"> </span><span class="s1">&#39;accept: application/json&#39;</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="nv">files</span><span class="o">=</span>@&lt;&lt;FILENAME&gt;&gt;
+<span class="w">     </span>-o<span class="w"> </span><span class="s">&lt;&lt;PATH/OUTP</span>UT&gt;&gt;.json
 </pre></div>
 </div>
 <img alt="testing" class="align-center" src="../_images/Azure_Step8.png" />
@@ -605,12 +612,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="api_parameters.html">
+          <a class="next-page" href="aws_marketplace.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">API Parameters</div>
+              <div class="title">AWS Marketplace Deployment Guide</div>
             </div>
           </a>
           <a class="prev-page" href="usage_methods.html">

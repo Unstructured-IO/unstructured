@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Gitlab" href="gitlab.html" /><link rel="prev" title="Elasticsearch" href="elasticsearch.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Github - Unstructured 0.11.5 documentation</title>
+  <title>Github - Unstructured 0.11.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -323,9 +323,10 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK for Unstructured API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -372,6 +373,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/box.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/gcs.html">Google Cloud Service</a></li>
@@ -484,12 +486,12 @@
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
 
 unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>github<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--url<span class="w"> </span>Unstructured-IO/unstructured<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--git-branch<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--output-dir<span class="w"> </span>github-ingest-output<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--verbose
+<span class="w">  </span>github<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--url<span class="w"> </span>Unstructured-IO/unstructured<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--git-branch<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>github-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.connector.git</span> <span class="kn">import</span> <span class="n">GitAccessConfig</span>
@@ -522,14 +524,14 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-1-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-1-1-0" name="1-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-1-1-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-1-1-1" name="1-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-1-1-0" class="sphinx-tabs-panel" id="panel-1-1-0" name="1-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
 
 unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>github<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--url<span class="w"> </span>Unstructured-IO/unstructured<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--git-branch<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--output-dir<span class="w"> </span>github-ingest-output<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--partition-by-api<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
+<span class="w">  </span>github<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--url<span class="w"> </span>Unstructured-IO/unstructured<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--git-branch<span class="w"> </span>main<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>github-ingest-output<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--partition-by-api<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--api-key<span class="w"> </span><span class="s2">&quot;&lt;UNSTRUCTURED-API-KEY&gt;&quot;</span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-1-1" class="sphinx-tabs-panel" hidden="true" id="panel-1-1-1" name="1-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>

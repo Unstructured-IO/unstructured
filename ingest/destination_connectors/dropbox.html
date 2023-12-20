@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Google Cloud Service" href="gcs.html" /><link rel="prev" title="Delta Table" href="delta_table.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Dropbox - Unstructured 0.11.5 documentation</title>
+  <title>Dropbox - Unstructured 0.11.6 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -323,9 +323,10 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK for Unstructured API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -372,6 +373,7 @@
 <li class="toctree-l3"><a class="reference internal" href="azure.html">Azure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box.html">Box</a></li>
+<li class="toctree-l3"><a class="reference internal" href="chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Dropbox</a></li>
 <li class="toctree-l3"><a class="reference internal" href="gcs.html">Google Cloud Service</a></li>
@@ -488,17 +490,17 @@ upstream local connector.</p>
 <span class="nv">EMBEDDING_PROVIDER</span><span class="o">=</span><span class="si">${</span><span class="nv">EMBEDDING_PROVIDER</span><span class="k">:-</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="si">}</span>
 
 unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--input-path<span class="w"> </span>example-docs/book-war-and-peace-1225p.txt<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--output-dir<span class="w"> </span>local-output-to-dropbox<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--chunk-elements<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--embedding-provider<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$EMBEDDING_PROVIDER</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>dropbox<span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DROPBOX_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">	</span>--remote-url<span class="w"> </span><span class="s2">&quot;&lt;your destination path here, ie &#39;dropbox://unstructured/war-and-peace-output&#39;&gt;&quot;</span>
+<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--input-path<span class="w"> </span>example-docs/book-war-and-peace-1225p.txt<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-dir<span class="w"> </span>local-output-to-dropbox<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--chunk-elements<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-provider<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$EMBEDDING_PROVIDER</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>dropbox<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--token<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$DROPBOX_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--remote-url<span class="w"> </span><span class="s2">&quot;&lt;your destination path here, ie &#39;dropbox://unstructured/war-and-peace-output&#39;&gt;&quot;</span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
