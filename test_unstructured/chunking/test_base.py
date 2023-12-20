@@ -9,6 +9,7 @@ from typing import List
 import pytest
 
 from unstructured.chunking.base import (
+    BasePreChunker,
     ChunkingOptions,
     PreChunkBuilder,
     PreChunkCombiner,
@@ -20,6 +21,7 @@ from unstructured.chunking.base import (
     is_title,
 )
 from unstructured.documents.elements import (
+    CheckBox,
     CompositeElement,
     Element,
     ElementMetadata,
@@ -30,6 +32,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+
+# ================================================================================================
+# CHUNKING OPTIONS
+# ================================================================================================
 
 
 class DescribeChunkingOptions:
@@ -139,12 +145,63 @@ class DescribeChunkingOptions:
 
 
 # ================================================================================================
+# BASE PRE-CHUNKER
+# ================================================================================================
+
+
+class DescribeBasePreChunker:
+    """Unit-test suite for `unstructured.chunking.base.BasePreChunker` objects."""
+
+    def it_gathers_elements_into_pre_chunks_respecting_the_specified_chunk_size(self):
+        elements = [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
+            Text("Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+            Title("Ut Enim"),
+            Text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi."),
+            Text("Ut aliquip ex ea commodo consequat."),
+            CheckBox(),
+        ]
+
+        opts = ChunkingOptions.new(max_characters=150, new_after_n_chars=65)
+
+        pre_chunk_iter = BasePreChunker.iter_pre_chunks(elements, opts=opts)
+
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Title("Lorem Ipsum"),
+            Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Text("Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [
+            Title("Ut Enim"),
+            Text("Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi."),
+        ]
+        # --
+        pre_chunk = next(pre_chunk_iter)
+        assert isinstance(pre_chunk, TextPreChunk)
+        assert pre_chunk._elements == [Text("Ut aliquip ex ea commodo consequat."), CheckBox()]
+        # --
+        with pytest.raises(StopIteration):
+            next(pre_chunk_iter)
+
+
+# ================================================================================================
 # PRE-CHUNK SUBTYPES
 # ================================================================================================
 
 
 class DescribeTablePreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TablePreChunk objects."""
+    """Unit-test suite for `unstructured.chunking.base.TablePreChunk` objects."""
 
     def it_uses_its_table_as_the_sole_chunk_when_it_fits_in_the_window(self):
         html_table = (
@@ -260,7 +317,7 @@ class DescribeTablePreChunk:
 
 
 class DescribeTextPreChunk:
-    """Unit-test suite for `unstructured.chunking.base.TextPreChunk objects."""
+    """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
 
     def it_can_combine_itself_with_another_TextPreChunk_instance(self):
         """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.

@@ -4,7 +4,19 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, Callable, DefaultDict, Dict, Iterable, Iterator, List, Optional, Tuple, cast
+from typing import (
+    Any,
+    Callable,
+    DefaultDict,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    cast,
+)
 
 from typing_extensions import Self, TypeAlias
 
@@ -25,6 +37,11 @@ BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 
 PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
 """The kind of object produced by a pre-chunker."""
+
+
+# ================================================================================================
+# CHUNKING OPTIONS
+# ================================================================================================
 
 
 class ChunkingOptions:
@@ -168,6 +185,81 @@ class ChunkingOptions:
         # loop (I think).
         if self._overlap >= max_characters:
             raise ValueError(f"'overlap' must be less than max_characters," f" got {self._overlap}")
+
+
+# ================================================================================================
+# BASE PRE-CHUNKER
+# ================================================================================================
+
+
+class BasePreChunker:
+    """Base-class for per-strategy pre-chunkers.
+
+    The pre-chunker's responsibilities are:
+
+    - **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
+      either side of those boundaries into different sections. In this case, the primary indicator
+      of a semantic boundary is a `Title` element. A page-break (change in page-number) is also a
+      semantic boundary when `multipage_sections` is `False`.
+
+    - **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
+      into sections as big as possible without exceeding the chunk window size.
+
+    - **Minimize chunks that must be split mid-text.** Precompute the text length of each section
+      and only produce a section that exceeds the chunk window size when there is a single element
+      with text longer than that window.
+
+    A Table element is placed into a section by itself. CheckBox elements are dropped.
+
+    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates
+    a new "section", hence the "by-title" designation.
+    """
+
+    def __init__(self, elements: Sequence[Element], opts: ChunkingOptions):
+        self._elements = elements
+        self._opts = opts
+
+    @classmethod
+    def iter_pre_chunks(
+        cls, elements: Sequence[Element], opts: ChunkingOptions
+    ) -> Iterator[PreChunk]:
+        """Generate pre-chunks from the element-stream provided on construction."""
+        return cls(elements, opts)._iter_pre_chunks()
+
+    def _iter_pre_chunks(self) -> Iterator[PreChunk]:
+        """Generate pre-chunks from the element-stream provided on construction.
+
+        A *pre-chunk* is the largest sub-sequence of elements that will both fit within the
+        chunking window and respects the semantic boundary rules of the chunking strategy. When a
+        single element exceeds the chunking window size it is placed in a pre-chunk by itself and
+        is subject to mid-text splitting in the second phase of the chunking process.
+        """
+        pre_chunk_builder = PreChunkBuilder(self._opts)
+
+        for element in self._elements:
+            # -- start new pre-chunk when necessary --
+            if self._is_in_new_semantic_unit(element) or not pre_chunk_builder.will_fit(element):
+                yield from pre_chunk_builder.flush()
+
+            # -- add this element to the work-in-progress (WIP) pre-chunk --
+            pre_chunk_builder.add_element(element)
+
+        # -- flush "tail" pre-chunk, any partially-filled pre-chunk after last element is
+        # -- processed
+        yield from pre_chunk_builder.flush()
+
+    @lazyproperty
+    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks."""
+        return ()
+
+    def _is_in_new_semantic_unit(self, element: Element) -> bool:
+        """True when `element` begins a new semantic unit such as a section or page."""
+        # -- all detectors need to be called to update state and avoid double counting
+        # -- boundaries that happen to coincide, like Table and new section on same element.
+        # -- Using `any()` would short-circuit on first True.
+        semantic_boundaries = [pred(element) for pred in self._boundary_predicates]
+        return any(semantic_boundaries)
 
 
 # ================================================================================================

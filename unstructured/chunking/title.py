@@ -5,19 +5,19 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, Tuple
 
 from unstructured.chunking.base import (
+    BasePreChunker,
     BoundaryPredicate,
     ChunkingOptions,
-    PreChunk,
-    PreChunkBuilder,
     PreChunkCombiner,
     is_in_next_section,
     is_on_next_page,
     is_title,
 )
 from unstructured.documents.elements import Element
+from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
@@ -63,71 +63,27 @@ def chunk_by_title(
     )
 
     pre_chunks = PreChunkCombiner(
-        _split_elements_by_title_and_table(elements, opts), opts=opts
+        _ByTitlePreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
 
 
-def _split_elements_by_title_and_table(
-    elements: List[Element], opts: ChunkingOptions
-) -> Iterator[PreChunk]:
-    """Implements "pre-chunker" responsibilities.
+class _ByTitlePreChunker(BasePreChunker):
+    """Pre-chunker for the "by_title" chunking strategy.
 
-    A _section_ can be thought of as a "pre-chunk", generally determining the size and contents of a
-    chunk formed by the subsequent "chunker" process. The only exception occurs when a single
-    element is too big to fit in the chunk window and the chunker splits it into two or more chunks
-    divided mid-text. The pre-chunker never divides an element mid-text.
-
-    The pre-chunker's responsibilities are:
-
-        * **Segregate semantic units.** Identify semantic unit boundaries and segregate elements on
-          either side of those boundaries into different pre-chunks. In this case, the primary
-          indicator of a semantic boundary is a `Title` element. A page-break (change in
-          page-number) is also a semantic boundary when `multipage_sections` is `False`.
-
-        * **Minimize chunk count for each semantic unit.** Group the elements within a semantic unit
-          into pre-chunks as big as possible without exceeding the chunk window size.
-
-        * **Minimize chunks that must be split mid-text.** Precompute the text length of each
-          pre-chunk and only produce a pre-chunk that exceeds the chunk window size when there is a
-          single element with text longer than that window.
-
-    A Table or Checkbox element is placed into a pre-chunk by itself.
+    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates a
+    new "section", hence the "by-title" designation.
     """
 
-    # ========================================================================================
+    @lazyproperty
+    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks."""
 
-    def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
-        yield is_title
-        yield is_in_next_section()
-        if not opts.multipage_sections:
-            yield is_on_next_page()
+        def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
+            yield is_title
+            yield is_in_next_section()
+            if not self._opts.multipage_sections:
+                yield is_on_next_page()
 
-    # -- the semantic-boundary detectors to be applied to break pre-chunks --
-    boundary_predicates = tuple(iter_boundary_predicates())
-
-    def is_in_new_semantic_unit(element: Element) -> bool:
-        """True when `element` begins a new semantic unit such as a section or page."""
-        # -- all detectors need to be called to update state and avoid double counting
-        # -- boundaries that happen to coincide, like Table and new section on same element.
-        # -- Using `any()` would short-circuit on first True.
-        semantic_boundaries = [pred(element) for pred in boundary_predicates]
-        return any(semantic_boundaries)
-
-    # ----------------------------------------------------------------------------------------
-    # -- these bits ^^^ will get migrated to `BasePreChunker` helper methods in the next PR --
-    # ========================================================================================
-
-    pre_chunk_builder = PreChunkBuilder(opts)
-
-    for element in elements:
-        # -- start new pre_chunk when necessary --
-        if is_in_new_semantic_unit(element) or not pre_chunk_builder.will_fit(element):
-            yield from pre_chunk_builder.flush()
-
-        # -- add this element to the work-in-progress (WIP) pre-chunk --
-        pre_chunk_builder.add_element(element)
-
-    # -- flush "tail" pre_chunk, any partially-filled pre_chunk after last element is processed --
-    yield from pre_chunk_builder.flush()
+        return tuple(iter_boundary_predicates())
