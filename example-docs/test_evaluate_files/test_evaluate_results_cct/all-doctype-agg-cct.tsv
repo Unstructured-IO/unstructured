@@ -1,5 +1,0 @@
-doctype	cct-accuracy	cct-accuracy	cct-accuracy	cct-%missing	cct-%missing	cct-%missing
-	mean	stdev	count	mean	stdev	count
-csv	0.788		1	0.027		1
-pdf	0.931		1	0.001		1
-pptx	0.827		1	0.092		1
