@@ -4,6 +4,7 @@ import uuid
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -84,6 +85,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
             self._client = self.connector_config.connection()
         return self._client
 
+    @DestinationConnectionError.wrap
     def initialize(self):
         _ = self.client
 
@@ -165,19 +167,28 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         return data
 
-    def _resolve_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
+    def check_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
         schema_exists = schema_helper.check_schema_exists()
-        if (
-            self.write_config.mode == "error" or self.write_config.mode == "ignore"
-        ) and schema_exists:
-            raise ValueError(
-                f"There's already an elements schema ({ELEMENTS_TABLE_NAME}) "
-                f"at {self.connector_config.db_type}"
-            )
-        if self.write_config.mode == "overwrite" and schema_exists:
-            schema_helper.clear_schema()
+        if schema_exists:
+            if self.write_config.mode == "error":
+                raise ValueError(
+                    f"There's already an elements schema ({ELEMENTS_TABLE_NAME}) "
+                    f"at {self.connector_config.db_type}"
+                )
+            elif self.write_config.mode == "ignore":
+                logger.info("Table already exists. Ignoring insert.")
+                return False
+            elif self.write_config.mode == "overwrite":
+                logger.info("Table already exists. Clearing table.")
+                schema_helper.clear_schema()
+                return True
+            elif self.write_config.mode == "append":
+                logger.info("Table already exists. Appending to table.")
+                return True
+        else:
+            return True
 
-    # @DestinationConnectionError.wrap
+    @DestinationConnectionError.wrap
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(json_list)} objects to database {self.connector_config.database} "
@@ -190,18 +201,18 @@ class SqlDestinationConnector(BaseDestinationConnector):
                 db_type=self.connector_config.db_type,
             )
 
-            self._resolve_mode(schema_helper)
-            for e in json_list:
-                elem = self.conform_dict(e)
+            # Prep table and insert elements depending on mode
+            if self.check_mode(schema_helper):
+                for e in json_list:
+                    elem = self.conform_dict(e)
 
-                schema_helper.insert(
-                    ELEMENTS_TABLE_NAME,
-                    elem,
-                )
+                    schema_helper.insert(
+                        ELEMENTS_TABLE_NAME,
+                        elem,
+                    )
 
-            conn.commit()
-            schema_helper.cursor.close()
-        conn.close()
+                conn.commit()
+                schema_helper.cursor.close()
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         json_list: t.List[t.Dict[str, t.Any]] = []
