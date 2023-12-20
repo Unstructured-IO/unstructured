@@ -6,7 +6,7 @@ N_ELEMENTS = 5
 
 
 def create_connection(db_type, database=None, port=None):
-    if db_type == "postgresql" or db_type == "pgvector":
+    if db_type == "pgvector":
         from psycopg2 import connect
 
         return connect(
@@ -40,7 +40,8 @@ if __name__ == "__main__":
     count = cursor.fetchone()[0]
 
     if database_name == "pgvector":
-        # Get embedding from database and then use it to search for the closest vector (which should be itself)
+        """Get embedding from database and then use it to
+        search for the closest vector (which should be itself)"""
         cursor = conn.cursor()
         cursor.execute("SELECT embeddings FROM elements order by text limit 1")
         test_embedding = cursor.fetchone()[0]

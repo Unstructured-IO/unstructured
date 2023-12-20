@@ -1,7 +1,7 @@
 import datetime
 from unittest.mock import Mock, patch
 
-from unstructured.ingest.connector.sql.connector import SqlDestinationConnector
+from unstructured.ingest.connector.sql import SqlDestinationConnector
 
 TEST_DATA_1 = {
     "element_id": "80803034fe04181c163306740700cc54",

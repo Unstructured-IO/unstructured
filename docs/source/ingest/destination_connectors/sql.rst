@@ -30,3 +30,29 @@ upstream local connector.
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> sql --help``.
 
 NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
+
+Sample Index Schema
+-------------------
+
+To make sure the schema of the index matches the data being written to it, a sample schema json can be used.
+
+PostgreSQL:
+
+.. literalinclude:: ./data/postgres-schema.sql
+   :language: sql
+   :linenos:
+   :caption: Object description
+
+PostgreSQL with pgvector:
+
+.. literalinclude:: ./data/pgvector-schema.sql
+   :language: sql
+   :linenos:
+   :caption: Object description
+
+Sqlite:
+
+.. literalinclude:: ./data/sqlite-schema.sql
+   :language: sql
+   :linenos:
+   :caption: Object description

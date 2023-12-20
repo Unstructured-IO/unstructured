@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig
-from unstructured.ingest.connector.sql.connector import SimpleSqlConfig, SqlWriteConfig
+from unstructured.ingest.connector.sql import SimpleSqlConfig, SqlWriteConfig
 
 SQL_DRIVERS = {"postgresql", "sqlite"}
 
