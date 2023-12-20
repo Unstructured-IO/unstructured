@@ -167,7 +167,8 @@ class SqlDestinationConnector(BaseDestinationConnector):
         with self.client as conn:
             cursor = conn.cursor()
 
-            # Inserting each element individually
+            # Since we have no guarantee that each element will have the same keys
+            # we insert each element individually
             for e in json_list:
                 elem = self.conform_dict(e)
 
@@ -180,10 +181,11 @@ class SqlDestinationConnector(BaseDestinationConnector):
                     else:
                         values.append(v)
                 cursor.execute(query, values)
+
             conn.commit()
             cursor.close()
 
-        # leaving contexts doesn't close the connection https://www.psycopg.org/docs/connection.html
+        # leaving contexts doesn't close the connection for either sqlite or postgresql via psycopg2
         conn.close()
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
