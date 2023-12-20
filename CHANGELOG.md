@@ -3,6 +3,8 @@
 ### Enhancements
 
 * **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
+* **AWS Marketplace API documentation**: Added the user guide, including setting up VPC and CloudFormation, to deploy Unstructured API on AWS platform.
+* **Azure Marketplace API documentation**: Improved the user guide to deploy Azure Marketplace API by adding references to Azure documentation.
 
 ### Features
 
