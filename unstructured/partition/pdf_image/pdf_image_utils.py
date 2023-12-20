@@ -1,5 +1,7 @@
+import base64
 import os
 import tempfile
+from io import BytesIO
 from pathlib import PurePath
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
@@ -79,6 +81,7 @@ def save_elements(
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
+    extract_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
     """
@@ -124,9 +127,15 @@ def save_elements(
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
                 cropped_image = image.crop((x1, y1, x2, y2))
-                write_image(cropped_image, output_f_path)
-                # add image path to element metadata
-                el.metadata.image_path = output_f_path
+                if extract_to_payload:
+                    buffered = BytesIO()
+                    cropped_image.save(buffered, format="JPEG")
+                    img_base64 = base64.b64encode(buffered.getvalue())
+                    img_base64_str = img_base64.decode()
+                else:
+                    write_image(cropped_image, output_f_path)
+                    # add image path to element metadata
+                    el.metadata.image_path = output_f_path
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
 
