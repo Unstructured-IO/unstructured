@@ -480,12 +480,7 @@ def identify_overlapping_case(
     type1, type2 = label_pair
     text1, text2 = text_pair
     ix_element1, ix_element2 = ix_pair
-    (
-        overlap_percentage,
-        max_area,
-        min_area,
-        total_area,
-    ) = calculate_overlap_percentage(
+    (overlap_percentage, max_area, min_area, total_area) = calculate_overlap_percentage(
         box1,
         box2,
         intersection_ratio_method="partial",
