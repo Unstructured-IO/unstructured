@@ -49,8 +49,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --verbose \
   --index-name movies \
   --hosts http://localhost:9200 \
-  --username elastic \
-  --password DkIedPPSCb \
+  --username "$ELASTIC_USER" \
+  --password "$ELASTIC_PASSWORD" \
   --fields 'ethnicity,director,plot' \
   --work-dir "$WORK_DIR" \
   --batch-size 2
