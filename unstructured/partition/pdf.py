@@ -180,6 +180,7 @@ def partition_pdf(
     extract_element_types
         Only applicable if `strategy=hi_res`.
         Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
+        E.g. `extract_element_types = ["Image", "Table"]`
     image_output_dir_path
         Only applicable if `strategy=hi_res`.
         The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.

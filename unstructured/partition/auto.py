@@ -137,6 +137,7 @@ def partition(
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     pdf_extract_images: bool = False,
+    pdf_extract_element_types: Optional[List[str]] = None,
     pdf_image_output_dir_path: Optional[str] = None,
     pdf_extract_to_payload: bool = False,
     xml_keep_tags: bool = False,
@@ -192,11 +193,15 @@ def partition(
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
     pdf_extract_images
-        If True and strategy=hi_res, any detected images will be saved in the path specified by
-        pdf_image_output_dir_path.
+        Only applicable if `strategy=hi_res`.
+        If `True`, any detected images will be saved in the path specified by image_output_dir_path.
+    pdf_extract_element_types
+        Only applicable if `strategy=hi_res`.
+        Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
+        E.g. `extract_element_types = ["Image", "Table"]`
     pdf_image_output_dir_path
-        If pdf_extract_images=True and strategy=hi_res, any detected images will be saved in the
-        given path
+        Only applicable if `strategy=hi_res`.
+        The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
     pdf_extract_to_payload
         Only applicable if strategy=hi_res and extract_element_types is set.
         If True, images of the element type(s) defined in the list `extract_element_types` will
@@ -395,8 +400,9 @@ def partition(
             strategy=strategy,
             languages=languages,
             extract_images_in_pdf=pdf_extract_images,
+            extract_element_types=pdf_extract_element_types,
             image_output_dir_path=pdf_image_output_dir_path,
-            pdf_extract_to_payload=pdf_extract_to_payload,
+            extract_to_payload=pdf_extract_to_payload,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
