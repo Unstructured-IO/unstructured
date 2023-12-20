@@ -40,13 +40,16 @@ if __name__ == "__main__":
     count = cursor.fetchone()[0]
 
     if database_name == "pgvector":
-        query = (
-            f"SELECT * FROM elements ORDER BY embeddings <-> '{[0.1 for i in range(384)]}' LIMIT 1;"
-        )
+        # Get embedding from database and then use it to search for the closest vector (which should be itself)
         cursor = conn.cursor()
-        cursor.execute(query)
+        cursor.execute("SELECT embeddings FROM elements order by text limit 1")
+        test_embedding = cursor.fetchone()[0]
+        similarity_query = (
+            f"SELECT text FROM elements ORDER BY embeddings <-> '{test_embedding}' LIMIT 1;"
+        )
+        cursor.execute(similarity_query)
         res = cursor.fetchone()
-        assert res[2] == "Mallori"
+        assert res[0] == "Best Regards,"
         print("Result of vector search against pgvector with embeddings successful")
 
     try:
