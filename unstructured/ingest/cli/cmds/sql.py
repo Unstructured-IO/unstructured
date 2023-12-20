@@ -4,7 +4,8 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig
-from unstructured.ingest.connector.sql import SimpleSqlConfig, SqlWriteConfig
+from unstructured.ingest.connector.sql import SimpleSqlConfig
+from unstructured.ingest.interfaces import WriteConfig
 
 SQL_DRIVERS = {"postgresql", "sqlite"}
 
@@ -54,31 +55,12 @@ class SqlCliConfig(SimpleSqlConfig, CliConfig):
         return options
 
 
-@dataclass
-class SqlCliWriteConfig(SqlWriteConfig, CliConfig):
-    @staticmethod
-    def get_cli_options() -> t.List[click.Option]:
-        options = [
-            click.Option(
-                ["--mode"],
-                default="error",
-                type=click.Choice(["error", "append", "overwrite", "ignore"]),
-                help="How to handle existing data. Default is to error if table already exists. "
-                "If 'append', will add new data. "
-                "If 'overwrite', will replace table with new data. "
-                "If 'ignore', will not write anything if table already exists.",
-            ),
-        ]
-        return options
-
-
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
     cmd_cls = BaseDestCmd(
         cmd_name="sql",
         cli_config=SqlCliConfig,
-        additional_cli_options=[SqlCliWriteConfig],
-        write_config=SqlWriteConfig,
+        write_config=WriteConfig,
     )
     return cmd_cls

@@ -10,7 +10,6 @@ from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDoc,
-    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -66,13 +65,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
 
 @dataclass
-class SqlWriteConfig(WriteConfig):
-    mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
-
-
-@dataclass
 class SqlDestinationConnector(BaseDestinationConnector):
-    write_config: SqlWriteConfig
     connector_config: SimpleSqlConfig
     _client: t.Optional[t.Any] = field(init=False, default=None)
 
@@ -164,28 +157,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
         return data
 
-    # def check_mode(self, schema_helper: DatabaseSchema) -> t.Optional[dict]:
-    #     return True
-    # schema_exists = schema_helper.check_schema_exists()
-    # if schema_exists:
-    #     if self.write_config.mode == "error":
-    #         raise ValueError(
-    #             f"There's already an elements schema ({ELEMENTS_TABLE_NAME}) "
-    #             f"at {self.connector_config.db_type}"
-    #         )
-    #     elif self.write_config.mode == "ignore":
-    #         logger.info("Table already exists. Ignoring insert.")
-    #         return False
-    #     elif self.write_config.mode == "overwrite":
-    #         logger.info("Table already exists. Clearing table.")
-    #         schema_helper.clear_schema()
-    #         return True
-    #     elif self.write_config.mode == "append":
-    #         logger.info("Table already exists. Appending to table.")
-    #         return True
-    # else:
-    #     return True
-
     @DestinationConnectionError.wrap
     def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
@@ -194,17 +165,9 @@ class SqlDestinationConnector(BaseDestinationConnector):
         )
 
         with self.client as conn:
-            # schema_helper = DatabaseSchema(
-            #     conn=conn,
-            #     db_type=self.connector_config.db_type,
-            # )
-            # breakpoint()
             cursor = conn.cursor()
 
-            # Prep table and insert elements depending on mode
-            # if self.check_mode(schema_helper):
-
-            # looks like we are inserting each element individually
+            # Inserting each element individually
             for e in json_list:
                 elem = self.conform_dict(e)
 
@@ -217,12 +180,11 @@ class SqlDestinationConnector(BaseDestinationConnector):
                     else:
                         values.append(v)
                 cursor.execute(query, values)
-                # schema_helper.insert(
-                #     ELEMENTS_TABLE_NAME,
-                #     elem,
-                # )
             conn.commit()
             cursor.close()
+
+        # leaving contexts doesn't close the connection https://www.psycopg.org/docs/connection.html
+        conn.close()
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         json_list: t.List[t.Dict[str, t.Any]] = []
