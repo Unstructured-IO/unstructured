@@ -173,9 +173,11 @@ class ElementMetadata:
     file_directory: Optional[str]
     filename: Optional[str]
     filetype: Optional[str]
+    image_path: Optional[str]
+    image_base64: Optional[str]
+    image_mime_type: Optional[str]
     # -- specific to DOCX which has distinct primary, first-page, and even-page header/footers --
     header_footer_type: Optional[str]
-    image_path: Optional[str]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
     languages: Optional[List[str]]

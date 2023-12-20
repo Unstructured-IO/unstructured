@@ -132,6 +132,8 @@ def save_elements(
                     cropped_image.save(buffered, format="JPEG")
                     img_base64 = base64.b64encode(buffered.getvalue())
                     img_base64_str = img_base64.decode()
+                    el.metadata.image_base64 = img_base64_str
+                    el.metadata.image_mime_type = "image/jpeg"
                 else:
                     write_image(cropped_image, output_f_path)
                     # add image path to element metadata
