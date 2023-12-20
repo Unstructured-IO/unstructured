@@ -61,11 +61,10 @@ def measure_text_extraction_accuracy(
         print("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
     if output_type not in ["json", "txt"]:
-        print(
+        raise ValueError(
             f"Specified file type under `output_dir` or `output_list` should be one of \
                 'json' or 'txt'. The given file type is {output_type}, exiting."
         )
-        sys.exit(0)
     if not all(_.endswith(output_type) for _ in output_list):
         print(
             "The directory contains file type inconsistent with the given input. \

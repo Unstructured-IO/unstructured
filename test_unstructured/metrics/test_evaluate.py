@@ -94,3 +94,14 @@ def test_text_extraction_grouping():
     )
     df = pd.read_csv(os.path.join(export_dir, "all-doctype-agg-cct.tsv"), sep="\t")
     assert len(df) == 4  # metrics row and doctype rows
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_text_extraction_wrong_type():
+    output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
+    source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    with pytest.raises(ValueError):
+        measure_text_extraction_accuracy(
+            output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="wrong"
+        )
