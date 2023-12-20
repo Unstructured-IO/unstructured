@@ -174,11 +174,11 @@ def partition_pdf(
         The last modified date for the document.
     extract_images
         Only applicable if `strategy=hi_res`.
-        If `True`, any detected images will be saved in the path specified by
-        image_output_dir_path.
+        If `True`, any detected images will be saved in the path specified by image_output_dir_path.
     extract_element_types
         Only applicable if `strategy=hi_res`.
         Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
+        E.g. `extract_element_types = ["Image", "Table"]`
     image_output_dir_path
         Only applicable if `strategy=hi_res`.
         The path for saving images when using `extract_images` or `extract_element_types`.
