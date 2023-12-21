@@ -63,27 +63,6 @@
     "type": "Title"
   },
   {
-    "element_id": "abcb617ca920c453f3e353e1e2d6885b",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "WORLD ECONOMIC OUTLOOK UPDATE",
-    "type": "Image"
-  },
-  {
     "element_id": "e7ea93453698b4f8bc32fd7cb860617e",
     "metadata": {
       "data_source": {
@@ -2247,27 +2226,6 @@
     "type": "ListItem"
   },
   {
-    "element_id": "cd9e31727baaddee4567c7ef27c4937a",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 11
-    },
-    "text": "BOX 1. GL AL FINANCIAL STABILITY UPDATE",
-    "type": "Image"
-  },
-  {
     "element_id": "a07efcab5056130c10048443a2bf8a3a",
     "metadata": {
       "data_source": {
@@ -2308,27 +2266,6 @@
     },
     "text": "Figure 1.1. Global Financial Conditions: Selected Regions (Standard deviations from mean)",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "d750b11efc2f858c7deadb09e3929e1c",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 11
-    },
-    "text": "7  6  5  4  United States Euro area China Other AEs Other EMs  October 2022  GFSR  3  2  1  0  –1  –2  –3  2006     08 08  06  10   10    12   12    14      16   14  16    18   18     20     22 22  20 ",
-    "type": "Image"
   },
   {
     "element_id": "3e5456c4e156292c6284a528b3d3fb0c",
@@ -2392,27 +2329,6 @@
     },
     "text": "Figure 1.2. Market-Implied Expectations of Policy Rates (Percent)",
     "type": "Title"
-  },
-  {
-    "element_id": "6215d8f373972db90d05458d63af9efe",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 11
-    },
-    "text": "Latest  October 2022 GFSR  6  1. United States  2. Euro area  5  4  3  2  5  4  3  2  1  1  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26  Oct. 22  Apr. 23  Oct. 23  Dec. 24  Dec. 26 ",
-    "type": "Image"
   },
   {
     "element_id": "da431b9817da923cc48a538c4b3b8ade",

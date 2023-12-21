@@ -429,19 +429,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3fcf35e8b67240541d3f2bf3bc0a39c5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "30  ) g m  (     s s o  l     t h g e W  i  20  10g 8g 6g 4g 2g Control  10  48  96  144  192 ",
-    "type": "Image"
-  },
-  {
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
       "data_source": {},
@@ -479,19 +466,6 @@
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "9fd8126152fe50909dc643c92ff6cd4c",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "2.7  1.8  0.9  10g 8g 6g 4g 2g Control  24  48  72  96  120  144  168  192  Exposure time ",
-    "type": "Image"
   },
   {
     "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
@@ -585,19 +559,6 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c1daf0ef9e2135894ab832147233a7f3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "90  )  %  (     y c n e c i f f  i  E n o i t i b h n I     i  80  70  60  50  40  30  2g 4g 6g 8g 10g  20  10  0  20  40  60  80  100  120  140  160  180 ",
-    "type": "Image"
-  },
-  {
     "element_id": "a955dcf1d740ce40d62415d9f16da436",
     "metadata": {
       "data_source": {},
@@ -676,19 +637,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "aa4f0eca72d0603d384878e68fe5be57",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "5 1 os = — 10; =o ° © —\" 205 i —~é é —ip a5 — Control -2 — & 2.5 T T T 0.0000001 + —-0.00001 0.001 O14 Current Density (A/cm2)",
-    "type": "Image"
-  },
-  {
     "element_id": "a2c77d1d5eec0137df5cf9ad22b05b89",
     "metadata": {
       "data_source": {},
@@ -754,19 +702,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "5d44e8f4eeacb0f7c9b351db3adb88da",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "12  10  8  0 / C  6  4  2  2  4  6  8  10  Concentration (g) ",
-    "type": "Image"
-  },
-  {
     "element_id": "1797d9b8b07f302836186c20a19ebd0b",
     "metadata": {
       "data_source": {},
@@ -819,19 +754,6 @@
     "type": "Header"
   },
   {
-    "element_id": "273fb301b173075f79b2cbdab962e2ff",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "SEM HV: Q0KY WD: 14.89 rmrm ‘9EM MAO: 209 x Det: DOE Pectomsence In nanospact",
-    "type": "Image"
-  },
-  {
     "element_id": "d05dc63af5311bbc038193832984955e",
     "metadata": {
       "data_source": {},
@@ -856,19 +778,6 @@
     },
     "text": "Fig. 7. SEM/EDX image of stainless steel immersed in 0.5 M H2SO4 solution without inhibitor.",
     "type": "FigureCaption"
-  },
-  {
-    "element_id": "520d1da08c86ce165cd2843e2dc27f98",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "SEMHV: 20.0KV WD: 15.54 mm EM ING: ACO x Dei: OSE",
-    "type": "Image"
   },
   {
     "element_id": "be145f71b3a113e82026069ef4c9f433",

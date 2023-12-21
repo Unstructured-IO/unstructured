@@ -11,7 +11,7 @@ ideas-page.html	html	local	0.929	0.033
 UDHR_first_article_all.txt	txt	local-single-file	0.995	0.0
 fake-html-cp1252.html	html	local-single-file-with-encoding	0.659	0.0
 layout-parser-paper-with-table.jpg	jpg	local-single-file-with-pdf-infer-table-structure	0.716	0.032
-layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.949	0.029
-2023-Jan-economic-outlook.pdf	pdf	s3	0.845	0.039
+layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.952	0.041
+2023-Jan-economic-outlook.pdf	pdf	s3	0.852	0.042
 page-with-formula.pdf	pdf	s3	0.971	0.021
-recalibrating-risk-report.pdf	pdf	s3	0.968	0.008
+recalibrating-risk-report.pdf	pdf	s3	0.952	0.023

@@ -600,26 +600,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2326155e29fbcc80862533eba5d9c75c",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "Efficient Data Annotation Model Customization Document Images Community Platform ‘a >) ¥ DIA Model Hub i .) Customized Model Training] == | Layout Detection Models | ——= DIA Pipeline Sharing ~ OCR Module = { Layout Data stuctue ) = (storage Visualization VY",
-    "type": "Image"
-  },
-  {
     "element_id": "5aca548166e8ec0e670e39fbe0520256",
     "metadata": {
       "data_source": {
@@ -939,26 +919,6 @@
     },
     "text": "Z. Shen et al.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "3b30176246b01e00c3051a7e2a11669c",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
-    },
-    "text": "- ° . 3 a a 4 a 3 oo er ‘ 2 § 8 a 8 3 3 ‘ £ 4 A g a 9 ‘ 3 ¥ Coordinate g 4 5 3 + § 3 H Extra Features [O=\") [Bo] eaing i Text | | Type | | ower ° & a ¢ o [ coordinatel textblock1, 3 3 ’ g Q 3 , textblock2 , layoutl ] 4 q ® A list of the layout elements Ff",
-    "type": "Image"
   },
   {
     "element_id": "8625c5524829e0a8a6bc7e96d68b20f2",
@@ -1402,26 +1362,6 @@
     "type": "ListItem"
   },
   {
-    "element_id": "294441b6458d8a005ea7588ecb6efc10",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 9
-    },
-    "text": "x09 Burpunog uayor Aeydsiq 1 vondo 10g Guypunog usyoy apir:z uondo Mode I: Showing Layout on the Original Image Mode Il: Drawing OCR'd Text at the Correspoding Position",
-    "type": "Image"
-  },
-  {
     "element_id": "0770888d2e26bc88f295478d836d13bc",
     "metadata": {
       "data_source": {
@@ -1520,26 +1460,6 @@
     },
     "text": "10 Z. Shen et al.",
     "type": "ListItem"
-  },
-  {
-    "element_id": "6e6e9ba62b25fdfb8734842354a7ce64",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 10
-    },
-    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance",
-    "type": "Image"
   },
   {
     "element_id": "81c96876fd12f0bd68cfe4cebc910036",
@@ -1740,26 +1660,6 @@
     },
     "text": "The digitization of historical documents can unlock valuable data that can shed light on many important social, economic, and historical questions. Yet due to scan noises, page wearing, and the prevalence of complicated layout structures, ob- taining a structured representation of historical document scans is often extremely complicated. In this example, LayoutParser was used to develop a comprehensive pipeline, shown in Figure 5, to gener- ate high-quality structured data from historical Japanese ﬁrm ﬁnancial ta- bles with complicated layouts. The pipeline applies two layout models to identify diﬀerent levels of document structures and two customized OCR engines for optimized character recog- nition accuracy.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "e55a2d8ec9ea5f1d6c11788f33f2b97d",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 11
-    },
-    "text": "(spe peepee, ‘Active Learning Layout Annotate Layout Dataset | + ‘Annotation Toolkit ¥ a Deep Leaming Layout Model Training & Inference, ¥ ; Handy Data Structures & Post-processing El Apis for Layout Det a LAR ror tye eats) 4 Text Recognition | <—— Default ane Customized ¥ ee Layout Structure Visualization & Export | <—— | visualization & Storage The Japanese Document Helpful LayoutParser Digitization Pipeline Modules",
-    "type": "Image"
   },
   {
     "element_id": "7f729881ca5ef5ee556e96246fa78528",
@@ -2000,26 +1900,6 @@
     },
     "text": "LayoutParser: A Uniﬁed Toolkit for DL-Based DIA",
     "type": "ListItem"
-  },
-  {
-    "element_id": "7f494d0f1a8170f2ed0da01c039fcbd2",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/example-docs/layout-parser-paper.pdf"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 13
-    },
-    "text": "(@) Partial table at the bottom (&) Full page table (6) Partial table at the top (d) Mis-detected tet line",
-    "type": "Image"
   },
   {
     "element_id": "fed869ba2e01c3daf0816b48809a9790",

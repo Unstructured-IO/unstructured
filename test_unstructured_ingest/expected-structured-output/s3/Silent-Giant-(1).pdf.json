@@ -441,27 +441,6 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d5e389eb1b6b367ac5cf6e12acccfcbc",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "  Marine  40,000    CSP  35,000    Solar PV    Geothermal  30,000    Wind  25,000    Bioenergy  20,000    Hydro    Nuclear  15,000    Gas  10,000    Oil  5,000    Coal  0 ",
-    "type": "Image"
-  },
-  {
     "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
       "data_source": {
@@ -649,27 +628,6 @@
     },
     "text": "h W G",
     "type": "Title"
-  },
-  {
-    "element_id": "152a83b89c4b24f7f3db154d0c3ddc1b",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "30,000,000    High-carbon    Low-carbon  25,000,000  20,000,000  15,000,000  10,000,000  5,000,000  0 ",
-    "type": "Image"
   },
   {
     "element_id": "a7be8e1fe282a37cd666e0632b17d933",
@@ -1071,27 +1029,6 @@
     "type": "Title"
   },
   {
-    "element_id": "2a5e6485f55769e5d4c820cb79f018d7",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 7
-    },
-    "text": "300  250  200  150  100  50  0  m ercial Photovoltaic  C o m  O nshore Wind  Offshore Wind  N uclear  C C G T  C oal ",
-    "type": "Image"
-  },
-  {
     "element_id": "c23c8bcefbe3c4d1e5b55df29b717fc1",
     "metadata": {
       "data_source": {
@@ -1279,27 +1216,6 @@
     },
     "text": "140",
     "type": "UncategorizedText"
-  },
-  {
-    "element_id": "2d52b4cb071eb1384e8f64581d907335",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8
-    },
-    "text": "120  100  120  99.5  80  60  71.9  40  20  0  C oal  Oil  N atural gas  8.5  1.78  Offshore wind  O nshore wind (G erm any)  (U K)  0.245  S olar P V  <0.01  N uclear* ",
-    "type": "Image"
   },
   {
     "element_id": "e11247712b3df61756970b45f019ad68",
@@ -1533,27 +1449,6 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "67ff7489d537e35454934b9dc3a725f9",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8
-    },
-    "text": "90    Coal    Gas/Oil  80    Biofuels/Waste  70    Wind/Solar  60    Hydro    Nuclear  50  40  30  20  10 ",
-    "type": "Image"
-  },
-  {
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
       "data_source": {
@@ -1659,27 +1554,6 @@
     "type": "FigureCaption"
   },
   {
-    "element_id": "dddeec4eec1ff6db9e832ed00fea1b7e",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 9
-    },
-    "text": "600  500    Non-hydro     ren. & waste  400    Nuclear    Natural gas  300    Hydro  200    Oil    Coal  100  0 ",
-    "type": "Image"
-  },
-  {
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {
@@ -1762,27 +1636,6 @@
     },
     "text": "The incredible energy density of uranium means that just a few kilos is all that is required to provide one person with enough power for a lifetime. Uranium is abundant and can be found in many parts of the world, as well as in seawater. Furthermore, spent nuclear fuel is well managed and can in most cases be recycled to produce even more power. By using nuclear energy, countries are able to take charge of their own destinies by decreasing their reliance on imported energy – enhanced independence and security in uncertain times.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "2f701c7144dd1588cdb70e2a188c1418",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 9
-    },
-    "text": "One fuel pellet contains as much energy as a tonne of coal ",
-    "type": "Image"
   },
   {
     "element_id": "a0fef2750bd4fbae8e9e28211ceea788",
