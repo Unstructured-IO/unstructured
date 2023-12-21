@@ -27,7 +27,7 @@ from unstructured.ingest.connector.notion.connector import (
     NotionPageIngestDoc,
 )
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
-from unstructured.ingest.connector.opensearch import (OpenSearchIngestDoc,OpenSearchIngestDocBatch)
+from unstructured.ingest.connector.opensearch import OpenSearchIngestDoc, OpenSearchIngestDocBatch
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc

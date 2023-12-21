@@ -53,7 +53,7 @@ all_tests=(
   'hubspot.sh'
   'local-embed.sh'
   'sftp.sh'
-	'opensearch.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(

@@ -222,9 +222,7 @@ class OpenSearchIngestDocBatch(BaseIngestDocBatch):
                 read_config=self.read_config,
                 connector_config=self.connector_config,
                 document=doc,
-                document_meta=OpenSearchDocumentMeta(
-                    self.connector_config.index_name, doc["_id"]
-                ),
+                document_meta=OpenSearchDocumentMeta(self.connector_config.index_name, doc["_id"]),
             )
             ingest_doc.update_source_metadata()
             doc_body = doc["_source"]
@@ -258,7 +256,7 @@ class OpenSearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     def check_connection(self):
         try:
-            self.es.perform_request("HEAD", "/", headers={"accept": "application/json"})
+            self.es.ping()
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
@@ -325,9 +323,7 @@ class OpenSearchDestinationConnector(BaseDestinationConnector):
     def generate_client(self) -> "OpenSearch":
         from opensearchpy import OpenSearch
 
-        return OpenSearch(
-            **self.connector_config.access_config.to_dict(apply_name_overload=False)
-        )
+        return OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
 
     @property
     def client(self):

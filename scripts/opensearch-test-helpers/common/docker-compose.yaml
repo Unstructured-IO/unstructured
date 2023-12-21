@@ -9,7 +9,7 @@ services:
       - plugins.security.disabled=true
       - discovery.type=single-node
     healthcheck:
-      test: ["CMD-SHELL", "curl https://localhost:9200/_cluster/health -u 'admin:admin' --silent --fail --insecure || exit 1" ]
+      test: 'curl --fail opensearch:9200/_cat/health >/dev/null || exit 1'
       interval: 10s
       timeout: 30s
       retries: 3

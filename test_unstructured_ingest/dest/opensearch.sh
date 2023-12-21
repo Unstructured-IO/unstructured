@@ -5,7 +5,7 @@ set -e
 DEST_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$DEST_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
-OUTPUT_FOLDER_NAME=elasticsearch-dest
+OUTPUT_FOLDER_NAME=opensearch-dest
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
@@ -15,11 +15,11 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 # shellcheck disable=SC1091
-source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
+# source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 function cleanup {
   # Index cleanup
-  echo "Stopping Elasticsearch Docker container"
-  docker-compose -f scripts/elasticsearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
+  echo "Stopping OpenSearch Docker container"
+  docker-compose -f scripts/opensearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
@@ -29,16 +29,16 @@ function cleanup {
   fi
 }
 
-# trap cleanup EXIT
+trap cleanup EXIT
 
 echo "Creating opensearch instance"
 # shellcheck source=/dev/null
-# scripts/opensearch-test-helpers/destination_connector/create-opensearch-instance.sh
-# wait
+scripts/opensearch-test-helpers/destination_connector/create-opensearch-instance.sh
+wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
-  --num-processes "$max_processes" \
+  --num-processes "1" \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
@@ -57,6 +57,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --username "admin" \
   --password "admin" \
   --batch-size-bytes 15000000 \
-  --num-processes "$max_processes"
+  --num-processes "1"
 
-# scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py
+scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py
