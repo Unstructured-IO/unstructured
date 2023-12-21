@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Sequence
 
 import pytest
 
@@ -16,6 +16,7 @@ from unstructured.chunking.base import (
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
+    _TextSplitter,
     is_in_next_section,
     is_on_next_page,
     is_title,
@@ -39,7 +40,7 @@ from unstructured.documents.elements import (
 
 
 class DescribeChunkingOptions:
-    """Unit-test suite for `unstructured.chunking.base.ChunkingOptions objects."""
+    """Unit-test suite for `unstructured.chunking.base.ChunkingOptions` objects."""
 
     @pytest.mark.parametrize("max_characters", [0, -1, -42])
     def it_rejects_max_characters_not_greater_than_zero(self, max_characters: int):
@@ -142,6 +143,97 @@ class DescribeChunkingOptions:
 
     def it_knows_the_text_separator_string(self):
         assert ChunkingOptions.new().text_separator == "\n\n"
+
+
+class Describe_TextSplitter:
+    """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
+
+    def it_splits_on_a_preferred_separator_when_it_can(self):
+        opts = ChunkingOptions.new(max_characters=50, text_splitting_separators=("\n", " "))
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing.\n"
+            "In rhoncus ipsum sed lectus porta volutpat."
+        )
+
+        s, remainder = split(text)
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        assert remainder == "In rhoncus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "In rhoncus ipsum sed lectus porta volutpat."
+        assert remainder == ""
+
+    def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
+        opts = ChunkingOptions.new(max_characters=40, text_splitting_separators=("\n", " "))
+        split = _TextSplitter(opts)
+        text = (
+            "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
+            " volutpat."
+        )
+
+        s, remainder = split(text)
+        assert s == "Lorem ipsum dolor amet consectetur"
+        assert remainder == "adipiscing. In rhoncus ipsum sed lectus porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "adipiscing. In rhoncus ipsum sed lectus"
+        assert remainder == "porta volutpat."
+        # --
+        s, remainder = split(remainder)
+        assert s == "porta volutpat."
+        assert remainder == ""
+
+    def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
+        opts = ChunkingOptions.new(max_characters=40, text_splitting_separators=("\n", " "))
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+
+        s, remainder = split(text)
+        assert s == "Loremipsumdolorametconsecteturadipiscing"
+        assert remainder == "elit. In rhoncus ipsum sed lectus porta."
+        # --
+        s, remainder = split(remainder)
+        assert s == "elit. In rhoncus ipsum sed lectus porta."
+        assert remainder == ""
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "Lorem ipsum dolor amet consectetur adipiscing.",  # 46-chars
+            "Lorem ipsum dolor.",  # 18-chars
+        ],
+    )
+    def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
+        opts = ChunkingOptions.new(max_characters=46)
+        split = _TextSplitter(opts)
+
+        s, remainder = split(text)
+
+        assert s == text
+        assert remainder == ""
+
+    def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
+        opts = ChunkingOptions.new(max_characters=38)
+        split = _TextSplitter(opts)
+        text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
+
+        s, _ = split(text)
+
+        assert s == "Loremipsumdolorametconsecteturadipisci"
+        assert len(s) == 38
+
+    @pytest.mark.parametrize("separators", [("\n", " "), ()])
+    def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
+        opts = ChunkingOptions.new(max_characters=50, text_splitting_separators=separators)
+        split = _TextSplitter(opts)
+        text = "Lorem ipsum dolor amet consectetur adipiscing.       In rhoncus ipsum sed lectus."
+        #       |------------------------------------------------^  50-chars
+
+        s, remainder = split(text)
+
+        assert s == "Lorem ipsum dolor amet consectetur adipiscing."
+        assert remainder == "In rhoncus ipsum sed lectus."
 
 
 # ================================================================================================
@@ -263,7 +355,7 @@ class DescribeTablePreChunk:
         )
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
-            opts=ChunkingOptions.new(max_characters=100),
+            opts=ChunkingOptions.new(max_characters=100, text_splitting_separators=("\n", " ")),
         )
 
         chunk_iter = pre_chunk.iter_chunks()
@@ -273,8 +365,7 @@ class DescribeTablePreChunk:
         assert chunk.text == (
             "Header Col 1   Header Col 2\n"
             "Lorem ipsum    dolor sit amet\n"
-            "Consectetur    adipiscing elit\n"
-            "Nunc aliqua"
+            "Consectetur    adipiscing elit"
         )
         assert chunk.metadata.text_as_html == (
             "<table>\n"
@@ -287,8 +378,8 @@ class DescribeTablePreChunk:
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
-        assert (
-            chunk.text == "m   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
+        assert chunk.text == (
+            "Nunc aliquam   id enim nec molestie\nVivamus quis   nunc ipsum donec ac fermentum"
         )
         assert chunk.metadata.text_as_html == (
             "rem ipsum    </td><td>A Link example</td></tr>\n"
@@ -399,7 +490,7 @@ class DescribeTextPreChunk:
                     " commodo consequat."
                 ),
             ],
-            opts=ChunkingOptions.new(max_characters=200),
+            opts=ChunkingOptions.new(max_characters=200, text_splitting_separators=("\n", " ")),
         )
 
         chunk_iter = pre_chunk.iter_chunks()
@@ -408,12 +499,12 @@ class DescribeTextPreChunk:
         assert chunk == CompositeElement(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
             " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
-            " veniam, quis nostrud exercitation ullamco laboris nisi ut a"
+            " veniam, quis nostrud exercitation ullamco laboris nisi ut"
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
         # --
         chunk = next(chunk_iter)
-        assert chunk == CompositeElement("liquip ex ea commodo consequat.")
+        assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
         assert chunk.metadata is pre_chunk._consolidated_metadata
         # --
         with pytest.raises(StopIteration):
