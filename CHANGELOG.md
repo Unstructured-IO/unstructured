@@ -1,6 +1,8 @@
-## 0.11.7-dev0
+## 0.11.7-dev1
 
 ### Enhancements
+
+* **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
 
 ### Features
 
