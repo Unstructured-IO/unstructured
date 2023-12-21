@@ -167,20 +167,30 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
+def check_languages(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
     """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
     converting `ocr_languages` if needed"""
-    if languages is None:
-        languages = ["eng"]
-
-    if not isinstance(languages, list):
+    if languages is not None and not isinstance(languages, list):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
+    # handle ocr as list
+    if isinstance(ocr_languages, list):
+        ocr_languages = ocr_languages[0]
+
+    if ocr_languages:
+        # handle ocr with extra quotations
+        ocr_languages = re.sub(r"[\"']", "", ocr_languages)
+        # handle ocr with brackets
+        ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
+
+    if languages is None or not languages[0]:
+        languages = ["eng"]
+
     if ocr_languages is not None:
         if languages != ["eng"]:
-            raise ValueError(
+            logger.warning(
                 "Only one of languages and ocr_languages should be specified. "
                 "languages is preferred. ocr_languages is marked for deprecation.",
             )
