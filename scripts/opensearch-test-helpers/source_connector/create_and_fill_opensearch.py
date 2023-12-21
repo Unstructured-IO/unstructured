@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
+from contextlib import suppress
 
 import pandas as pd
 from opensearchpy import Document, Keyword, OpenSearch, Text
+from opensearchpy.exceptions import NotFoundError
 
 DATA_PATH = "scripts/opensearch-test-helpers/wiki_movie_plots_small.csv"
 CLUSTER_URL = "http://localhost:9200"
@@ -30,14 +32,12 @@ client = OpenSearch(hosts=[{"host": "localhost", "port": 9200}], http_auth=("adm
 print(client.info())
 df = pd.read_csv(DATA_PATH).dropna().reset_index()
 
-try:
-    response = client.indices.delete(index="movies")
-except:
-    pass
+with suppress(NotFoundError):
+    client.indices.delete(index="movies")
 
 print("Creating an OpenSearch index for testing opensearch ingest.")
 response = client.indices.create(index=INDEX_NAME)
-if response.get("acknowledged") != True:
+if not response.get("acknowledged"):
     raise RuntimeError("failed to create index")
 
 for i, row in df.iterrows():
