@@ -4,6 +4,8 @@ NOTE: At the moment, the connector only supports PostgreSQL and SQLite. Vectors 
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those local files to a PostgreSQL or SQLite schema.
 
+Insert query is currently limited to append.
+
 First you'll need to install the sql dependencies as shown here if you are using PostgreSQL.
 
 .. code:: shell
