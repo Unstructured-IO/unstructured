@@ -106,7 +106,6 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     pass
 
-
 # NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
 # the bug: https://github.com/pdfminer/pdfminer.six/pull/885
 psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
@@ -434,11 +433,15 @@ def _partition_pdf_or_image_local(
             continue
 
         if isinstance(el, Image):
-            if ElementType.IMAGE in extract_element_types or extract_images_in_pdf:
-                out_elements.append(cast(Element, el))
-            elif el.text is None or len(el.text) < 24 or el.text.find(" ") == -1:
+            if (
+                not extract_images_in_pdf
+                and ElementType.IMAGE not in extract_element_types
+                and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
+            ):
                 # NOTE(crag): small chunks of text from Image elements tend to be garbage
                 continue
+            else:
+                out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
             el.text = re.sub(
