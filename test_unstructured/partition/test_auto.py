@@ -347,15 +347,17 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
     mock_partition.assert_called_once_with(
         filename=filename,
-        metadata_filename=None,
         file=None,
         url=None,
-        include_page_breaks=False,
-        infer_table_structure=False,
-        extract_images_in_pdf=ANY,
-        image_output_dir_path=ANY,
         strategy=PartitionStrategy.FAST,
         languages=None,
+        metadata_filename=None,
+        include_page_breaks=False,
+        infer_table_structure=False,
+        extract_images_in_pdf=False,
+        extract_element_types=None,
+        image_output_dir_path=None,
+        extract_to_payload=False,
     )
 
 

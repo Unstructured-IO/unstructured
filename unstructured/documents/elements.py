@@ -459,6 +459,8 @@ class ConsolidationStrategy(enum.Enum):
             "filetype": cls.FIRST,
             "header_footer_type": cls.DROP,
             "image_path": cls.DROP,
+            "image_base64": cls.DROP,
+            "image_mime_type": cls.DROP,
             "is_continuation": cls.DROP,  # -- not expected, added by chunking, not before --
             "languages": cls.LIST_UNIQUE,
             "last_modified": cls.FIRST,
