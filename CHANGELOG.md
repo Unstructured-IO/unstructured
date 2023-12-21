@@ -1,3 +1,13 @@
+## 0.11.7-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
+
 ## 0.11.6
 
 ### Enhancements
@@ -14,6 +24,7 @@
 * **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
 
 ### Fixes
+
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
 
 ## 0.11.5
