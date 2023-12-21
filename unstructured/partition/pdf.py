@@ -175,19 +175,25 @@ def partition_pdf(
         The last modified date for the document.
     extract_images_in_pdf
         Only applicable if `strategy=hi_res`.
-        If `True`, any detected images will be saved in the path specified by
-        image_output_dir_path.
+        If True, any detected images will be saved in the path specified by 'image_output_dir_path'
+        or stored as base64 encoded data within metadata fields.
+        Deprecation Note: This parameter is marked for deprecation. Future versions will use
+        'extract_element_types' for broader extraction capabilities.
     extract_element_types
         Only applicable if `strategy=hi_res`.
-        Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
-        E.g. `extract_element_types = ["Image", "Table"]`
-    image_output_dir_path
-        Only applicable if `strategy=hi_res`.
-        The path for saving images when using `extract_images_in_pdf` or `extract_element_types`.
+        Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
+        saved in the path specified by 'image_output_dir_path' or stored as base64 encoded data
+        within metadata fields.
     extract_to_payload
-        Only applicable if `strategy=hi_res` and `extract_element_types` is set.
-        If `True`, images of the element type(s) defined in the list `extract_element_types` will
-        be saved as base64 encoded data by two metadat fields `image_base64` and `image_mime_type`.
+        Only applicable if `strategy=hi_res`.
+        If True, images of the element type(s) defined in 'extract_element_types' will be encoded
+        as base64 data and stored in two metadat fields: 'image_base64' and 'image_mime_type'.
+        This parameter facilitates the inclusion of element data directly within the payload,
+        especially for web-based applications or APIs.
+    image_output_dir_path
+        Only applicable if `strategy=hi_res` and `extract_to_payload=False`.
+        The filesystem path for saving images of the element type(s)
+        specified in 'extract_element_types'.
     """
 
     exactly_one(filename=filename, file=file)
