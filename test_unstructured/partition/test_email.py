@@ -137,6 +137,7 @@ def test_partition_email_from_filename_malformed_encoding():
         ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("fake-email-b64.eml", EXPECTED_OUTPUT),
         ("email-no-utf8-2008-07-16.062410.eml", None),
         ("email-no-utf8-2014-03-17.111517.eml", None),
         ("email-replace-mime-encodings-error-1.eml", None),
@@ -172,6 +173,7 @@ def test_partition_email_from_file():
         ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("fake-email-b64.eml", EXPECTED_OUTPUT),
         ("email-no-utf8-2008-07-16.062410.eml", None),
         ("email-no-utf8-2014-03-17.111517.eml", None),
         ("email-replace-mime-encodings-error-1.eml", None),
@@ -342,6 +344,16 @@ def test_extract_email_text_matches_html():
     for i, element in enumerate(elements_from_text):
         assert element == elements_from_text[i]
         assert element.metadata.filename == "fake-email-attachment.eml"
+
+
+def test_extract_base64_email_text_matches_html():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-b64.eml")
+    elements_from_text = partition_email(filename=filename, content_source="text/plain")
+    elements_from_html = partition_email(filename=filename, content_source="text/html")
+    assert len(elements_from_text) == len(elements_from_html)
+    for i, element in enumerate(elements_from_text):
+        assert element == elements_from_text[i]
+        assert element.metadata.filename == "fake-email-b64.eml"
 
 
 def test_extract_attachment_info():
