@@ -2,17 +2,17 @@
 # shellcheck disable=SC2034
 
 core_tests=(
-	'azure.sh'
-	'gcs.sh'
-	's3.sh'
+  'azure.sh'
+  'gcs.sh'
+  's3.sh'
 )
 tests_to_ignore=(
-	'notion.sh'
-	'dropbox.sh'
-	'sharepoint.sh'
+  'notion.sh'
+  'dropbox.sh'
+  'sharepoint.sh'
 )
 tests_to_omit=(
-	'box.sh'
-	'sharepoint-embed-cog-index.sh'
+  'box.sh'
+  'sharepoint-embed-cog-index.sh'
 )
 all_eval=()
