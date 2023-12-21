@@ -82,6 +82,7 @@ __all__ = [
     "LocalRunner",
     "NotionRunner",
     "OneDriveRunner",
+    "OpenSearchRunner",
     "OutlookRunner",
     "RedditRunner",
     "S3Runner",

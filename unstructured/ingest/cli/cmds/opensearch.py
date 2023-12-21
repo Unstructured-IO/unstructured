@@ -5,7 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.opensearch import SimpleOpenSearchConfig
+from unstructured.ingest.connector.opensearch import (
+    OpenSearchWriteConfig,
+    SimpleOpenSearchConfig,
+)
+
+CMD_NAME = "opensearch"
 
 
 @dataclass
@@ -17,7 +22,7 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 ["--index-name"],
                 required=True,
                 type=str,
-                help="Name for the OpenSearch index to pull data from",
+                help="Name of the OpenSearch index to pull data from, or upload data to.",
             ),
             click.Option(
                 ["--hosts"],
@@ -51,7 +56,7 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 type=str,
                 default=None,
                 help="id associated with api key used for authentication: "
-                "https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html",  # noqa: E501
+                "https://www.elastic.co/guide/en/opensearch/reference/current/security-api-create-api-key.html",  # noqa: E501
             ),
             click.Option(
                 ["--bearer-auth"],
@@ -80,9 +85,49 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
         return options
 
 
+@dataclass
+class OpenSearchCliWriteConfig(OpenSearchWriteConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--batch-size-bytes"],
+                required=True,
+                default=15_000_000,
+                type=int,
+                help="Size limit (in bytes) for each batch of items to be uploaded. Check"
+                " https://www.elastic.co/guide/en/opensearch/guide/current/bulk.html"
+                "#_how_big_is_too_big for more information.",
+            ),
+            click.Option(
+                ["--num-processes"],
+                required=True,
+                default=2,
+                type=int,
+                help="Number of processes to be used while uploading content",
+            ),
+        ]
+        return options
+
+
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="opensearch",
         cli_config=OpenSearchCliConfig,
+    )
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(
+        cmd_name="opensearch",
+        cli_config=OpenSearchCliConfig,
+        additional_cli_options=[OpenSearchCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleOpenSearchConfig,
+            "write_config": OpenSearchCliWriteConfig,
+        },
     )
     return cmd_cls

@@ -321,7 +321,7 @@ class OpenSearchDestinationConnector(BaseDestinationConnector):
     _client: t.Optional["OpenSearch"] = field(init=False, default=None)
 
     @DestinationConnectionError.wrap
-    @requires_dependencies(["opensearch"], extras="opensearch")
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
     def generate_client(self) -> "OpenSearch":
         from opensearchpy import OpenSearch
 
@@ -346,7 +346,7 @@ class OpenSearchDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    @requires_dependencies(["opensearch"], extras="opensearch")
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
             f"writing document batches to destination"
