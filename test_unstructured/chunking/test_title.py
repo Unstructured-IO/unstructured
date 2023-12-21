@@ -35,7 +35,7 @@ def test_it_splits_a_large_element_into_multiple_chunks():
 
     assert chunks == [
         CompositeElement("Introduction"),
-        CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing "),
+        CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing"),
         CompositeElement("elit. In rhoncus ipsum sed lectus porta volutpat."),
     ]
 

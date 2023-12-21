@@ -1100,7 +1100,10 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     assert len(partitioned_table_elements_5_chars) != len(table_elements)
     assert len(partitioned_table_elements_200_chars) != len(table_elements)
 
-    assert len(partitioned_table_elements_5_chars[0].text) == 5
+    # trailing whitespace is stripped from the first chunk, leaving only a checkbox character
+    assert len(partitioned_table_elements_5_chars[0].text) == 1
+    # but the second chunk is the full 5 characters
+    assert len(partitioned_table_elements_5_chars[1].text) == 5
     assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
 
     # the first table element is under 200 chars so doesn't get chunked!
