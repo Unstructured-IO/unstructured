@@ -13,7 +13,7 @@ from unstructured.utils import requires_dependencies
 
 @dataclass
 class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
-    model_name: Optional[str] = ("sentence-transformers/all-MiniLM-L6-v2",)
+    model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2"
     model_kwargs: Optional[dict] = field(default_factory=lambda: {"device": "cpu"})
     encode_kwargs: Optional[dict] = field(default_factory=lambda: {"normalize_embeddings": False})
     cache_folder: Optional[dict] = None
