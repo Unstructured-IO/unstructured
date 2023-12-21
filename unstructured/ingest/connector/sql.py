@@ -185,7 +185,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
             conn.commit()
             cursor.close()
 
-        # leaving contexts doesn't close the connection for either sqlite or postgresql via psycopg2
+        # Leaving contexts doesn't close the connection, so doing it here
         conn.close()
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:

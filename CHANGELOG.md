@@ -1,4 +1,4 @@
-## 0.11.7-dev0
+## 0.11.7-dev1
 
 ### Enhancements
 
@@ -23,7 +23,6 @@
 * **Partition emails with base64-encoded text.** Automatically handles and decodes base64 encoded text in emails with content type `text/plain` and `text/html`.
 * **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
 * **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
-* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
 
 ### Fixes
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
