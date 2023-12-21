@@ -418,6 +418,7 @@ def _partition_pdf_or_image_local(
             filename=filename,
             file=file,
             pdf_image_dpi=pdf_image_dpi,
+            extract_to_payload=extract_to_payload,
             output_dir_path=image_output_dir_path,
         )
 

@@ -1,6 +1,7 @@
 import logging
 import math
 import os
+import tempfile
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -1061,3 +1062,78 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
     caplog.set_level(logging.INFO)
     assert pdf.extractable_elements(filename=example_doc_path(filename))
     assert expected_log in caplog.text
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize(
+    ("extract_element_types", "extract_to_payload"),
+    [
+        (["Image", "Table"], False),
+        (["Table", "Table"], True),
+    ],
+)
+def test_partition_pdf_with_element_extraction(
+    monkeypatch,
+    file_mode,
+    extract_element_types,
+    extract_to_payload,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    monkeypatch.setattr(
+        layout,
+        "process_data_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        layout,
+        "process_file_with_model",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_data_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+    monkeypatch.setattr(
+        ocr,
+        "process_file_with_ocr",
+        lambda *args, **kwargs: MockDocumentLayout(),
+    )
+
+    with mock.patch.object(
+        pdf, "save_elements"
+    ) as mock_save_elements, tempfile.TemporaryDirectory() as tmpdir:
+        partition_pdf_kwargs = {
+            "strategy": "hi_res",
+            "extract_element_types": extract_element_types,
+            "extract_to_payload": extract_to_payload,
+            "image_output_dir_path": tmpdir,
+        }
+
+        if file_mode == "filename":
+            elements = pdf.partition_pdf(filename=filename, **partition_pdf_kwargs)
+            expected_kwargs = {
+                "elements": elements,
+                "filename": filename,
+                "file": None,
+                "pdf_image_dpi": 200,
+                "extract_to_payload": extract_to_payload,
+                "output_dir_path": tmpdir,
+            }
+        else:
+            with open(filename, "rb") as f:
+                elements = pdf.partition_pdf(file=f, **partition_pdf_kwargs)
+                expected_kwargs = {
+                    "elements": elements,
+                    "filename": "",
+                    "file": f,
+                    "pdf_image_dpi": 200,
+                    "extract_to_payload": extract_to_payload,
+                    "output_dir_path": tmpdir,
+                }
+
+        for idx, el_type in enumerate(extract_element_types):
+            expected_call_args = mock.call(element_category_to_save=el_type, **expected_kwargs)
+            actual_call_args = mock_save_elements.call_args_list[idx]
+            assert actual_call_args == expected_call_args
