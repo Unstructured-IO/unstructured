@@ -144,6 +144,8 @@ def partition(
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
     request_timeout: Optional[int] = None,
+    hi_res_model_name: Optional[str] = None,
+    model_name: Optional[str] = None,  # to be deprecated
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -219,6 +221,11 @@ def partition(
     request_timeout
         The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
         requests will block indefinitely.
+    hi_res_model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`.
+    model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`. To be
+        deprecated in favor of `hi_res_model_name`.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -410,6 +417,7 @@ def partition(
             extract_element_types=pdf_extract_element_types,
             image_output_dir_path=pdf_image_output_dir_path,
             extract_to_payload=pdf_extract_to_payload,
+            hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
@@ -421,6 +429,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )
     elif filetype == FileType.TXT:
