@@ -215,6 +215,40 @@ def test_partition_pdf_with_model_name(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+def test_partition_pdf_with_hi_res_model_name(
+    monkeypatch,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf(
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
+        )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
+def test_partition_pdf_or_image_with_hi_res_model_name(
+    monkeypatch,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf_or_image(
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
+        )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
 def test_partition_pdf_with_auto_strategy(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
@@ -798,6 +832,22 @@ def test_partition_pdf_uses_model_name():
         assert mockpartition.call_args.kwargs["model_name"]
 
 
+def test_partition_pdf_uses_hi_res_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        pdf.partition_pdf(
+            example_doc_path("layout-parser-paper-fast.pdf"),
+            hi_res_model_name="test",
+            strategy=PartitionStrategy.HI_RES,
+        )
+
+        mockpartition.assert_called_once()
+        assert "hi_res_model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["hi_res_model_name"]
+
+
 def test_partition_pdf_word_bbox_not_char(
     filename=example_doc_path("interface-config-guide-p93.pdf"),
 ):
@@ -858,6 +908,18 @@ def test_partition_model_name_default_to_None():
             strategy=PartitionStrategy.HI_RES,
             ocr_languages="eng",
             model_name=None,
+        )
+    except AttributeError:
+        pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
+
+
+def test_partition_hi_res_model_name_default_to_None():
+    filename = example_doc_path("DA-1p.pdf")
+    try:
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            hi_res_model_name=None,
         )
     except AttributeError:
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")

@@ -24,6 +24,8 @@
 ### Fixes
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
 
+* **Add hi_res_model_name** Adds kwarg to relevant functions and add comments that model_name is to be deprecated.
+
 ## 0.11.5
 
 ### Enhancements
