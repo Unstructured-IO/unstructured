@@ -1,7 +1,9 @@
+import base64
 import logging
 import math
 import os
 import tempfile
+import unittest
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -19,7 +21,7 @@ from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
     Text,
-    Title,
+    Title, ElementType,
 )
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
@@ -1127,75 +1129,54 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize(
-    ("extract_element_types", "extract_to_payload"),
-    [
-        (["Image", "Table"], False),
-        (["Table", "Table"], True),
-    ],
-)
+@pytest.mark.parametrize("extract_to_payload", [False, True])
 def test_partition_pdf_with_element_extraction(
-    monkeypatch,
     file_mode,
-    extract_element_types,
     extract_to_payload,
-    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+    filename=example_doc_path("embedded-images-tables.pdf"),
 ):
-    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
-    monkeypatch.setattr(
-        layout,
-        "process_data_with_model",
-        lambda *args, **kwargs: MockDocumentLayout(),
-    )
-    monkeypatch.setattr(
-        layout,
-        "process_file_with_model",
-        lambda *args, **kwargs: MockDocumentLayout(),
-    )
-    monkeypatch.setattr(
-        ocr,
-        "process_data_with_ocr",
-        lambda *args, **kwargs: MockDocumentLayout(),
-    )
-    monkeypatch.setattr(
-        ocr,
-        "process_file_with_ocr",
-        lambda *args, **kwargs: MockDocumentLayout(),
-    )
-
-    with mock.patch.object(
-        pdf, "save_elements"
-    ) as mock_save_elements, tempfile.TemporaryDirectory() as tmpdir:
-        partition_pdf_kwargs = {
-            "strategy": "hi_res",
-            "extract_element_types": extract_element_types,
-            "extract_to_payload": extract_to_payload,
-            "image_output_dir_path": tmpdir,
-        }
-
+    with tempfile.TemporaryDirectory() as tmpdir:
+        extract_element_types = ["Image", "Table"]
         if file_mode == "filename":
-            elements = pdf.partition_pdf(filename=filename, **partition_pdf_kwargs)
-            expected_kwargs = {
-                "elements": elements,
-                "filename": filename,
-                "file": None,
-                "pdf_image_dpi": 200,
-                "extract_to_payload": extract_to_payload,
-                "output_dir_path": tmpdir,
-            }
+            elements = pdf.partition_pdf(
+                filename=filename,
+                strategy="hi_res",
+                extract_element_types=extract_element_types,
+                extract_to_payload=extract_to_payload,
+                image_output_dir_path=tmpdir,
+            )
         else:
             with open(filename, "rb") as f:
-                elements = pdf.partition_pdf(file=f, **partition_pdf_kwargs)
-                expected_kwargs = {
-                    "elements": elements,
-                    "filename": "",
-                    "file": f,
-                    "pdf_image_dpi": 200,
-                    "extract_to_payload": extract_to_payload,
-                    "output_dir_path": tmpdir,
-                }
+                elements = pdf.partition_pdf(
+                    file=f,
+                    strategy="hi_res",
+                    extract_element_types=extract_element_types,
+                    extract_to_payload=extract_to_payload,
+                    image_output_dir_path=tmpdir,
+                )
 
-        for idx, el_type in enumerate(extract_element_types):
-            expected_call_args = mock.call(element_category_to_save=el_type, **expected_kwargs)
-            actual_call_args = mock_save_elements.call_args_list[idx]
-            assert actual_call_args == expected_call_args
+        extracted_elements = []
+        for el_type in extract_element_types:
+            extracted_elements_by_type = []
+            for el in elements:
+                if el.category == el_type:
+                    extracted_elements_by_type.append(el)
+            extracted_elements.append(extracted_elements_by_type)
+
+        for extracted_elements_by_type in extracted_elements:
+            for i, el in enumerate(extracted_elements_by_type):
+                if extract_to_payload:
+                    assert el.metadata.image_base64 is not None
+                    assert el.metadata.image_mime_type == "image/jpeg"
+                    image_data = base64.b64decode(el.metadata.image_base64)
+                    assert isinstance(image_data, bytes)
+                    assert el.metadata.image_path is None
+                else:
+                    basename = "table" if el.category == ElementType.TABLE else "figure"
+                    expected_image_path = os.path.join(
+                        str(tmpdir), f"{basename}-{el.metadata.page_number}-{i + 1}.jpg"
+                    )
+                    assert el.metadata.image_path == expected_image_path
+                    assert os.path.isfile(expected_image_path)
+                    assert el.metadata.image_base64 is None
+                    assert el.metadata.image_mime_type is None
