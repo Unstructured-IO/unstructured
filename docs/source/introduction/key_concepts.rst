@@ -69,7 +69,7 @@ A RAG workflow can be broken down into the following steps:
 
 4. **Embedding**: After chunking, you will need to convert the text into a numerical representation (vector embedding) that a LLM can understand. OpenAI, Cohere, and Hugging Face all offer embedding models.
 
-5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (Pinecone, Milvus, ChromaDD, Weaviate and more). 
+5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (ChromaDB, Milvus, Pinecone, Qdrant, Weaviate and more). 
 
 6. **User Prompt**: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.
 
