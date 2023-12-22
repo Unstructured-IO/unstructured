@@ -85,8 +85,12 @@ def save_elements(
     output_dir_path: Optional[str] = None,
 ):
     """
-    Extract and save images from the page. This method iterates through the layout elements
-    of the page, identifies image regions, and extracts and saves them as separate image files.
+    Saves specific elements from a PDF as images either to a directory or embeds them in the
+    element's payload.
+
+    This function processes a list of elements partitioned from a PDF file. For each element of
+    a specified category, it extracts and saves the image. The images can either be saved to
+    a specified directory or embedded into the element's payload as a base64-encoded string.
     """
 
     if not output_dir_path:
