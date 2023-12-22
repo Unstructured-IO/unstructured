@@ -174,19 +174,26 @@ def check_languages(languages: Optional[List[str]] = None, ocr_languages: Option
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
-
     # handle ocr as list
     if isinstance(ocr_languages, list):
         ocr_languages = ocr_languages[0]
 
     if ocr_languages:
-        # handle ocr with extra quotations
+        # remove extra quotations
         ocr_languages = re.sub(r"[\"']", "", ocr_languages)
-        # handle ocr with brackets
+        # remove brackets
         ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
+
+    if ocr_languages == "auto":
+        ocr_languages = None
 
     if languages is None or not languages[0]:
         languages = ["eng"]
+
+    # if "auto" is included in the list of inputs, language detection will be triggered
+    # and the rest of the inputted languages will be ignored
+    if languages and "auto" not in languages:
+        [_convert_to_standard_langcode(lang) for lang in languages]
 
     if ocr_languages is not None:
         if languages != ["eng"]:
