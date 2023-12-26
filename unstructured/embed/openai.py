@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 import numpy as np
@@ -10,10 +11,12 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 
+@dataclass
 class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
-    def __init__(self, api_key: str, model_name: str = "text-embedding-ada-002"):
-        self.api_key = api_key
-        self.model_name = model_name
+    api_key: str
+    model_name: str = "text-embedding-ada-002"
+
+    def __post_init__(self):
         self.initialize()
 
     def initialize(self):

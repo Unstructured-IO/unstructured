@@ -1,3 +1,4 @@
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 import numpy as np
@@ -10,19 +11,14 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 
+@dataclass
 class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
-    def __init__(
-        self,
-        model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2",
-        model_kwargs: Optional[dict] = {"device": "cpu"},
-        encode_kwargs: Optional[dict] = {"normalize_embeddings": False},
-        cache_folder: Optional[dict] = None,
-    ):
-        self.model_name = model_name
-        self.model_kwargs = model_kwargs
-        self.encode_kwargs = encode_kwargs
-        self.cache_folder = cache_folder
+    model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2"
+    model_kwargs: Optional[dict] = field(default_factory=lambda: {"device": "cpu"})
+    encode_kwargs: Optional[dict] = field(default_factory=lambda: {"normalize_embeddings": False})
+    cache_folder: Optional[dict] = None
 
+    def __post_init__(self):
         self.initialize()
 
     def initialize(self):

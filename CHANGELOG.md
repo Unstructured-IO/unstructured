@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
+* **Add intra-chunk overlap capability.** Implement overlap for split-chunks where text-splitting is used to divide an oversized chunk into two or more chunks that fit in the chunking window. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap` kwarg on partition functions.
 
 ### Features
 

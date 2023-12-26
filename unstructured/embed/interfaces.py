@@ -1,10 +1,14 @@
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import List, Tuple
+
+from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import Element
 
 
-class BaseEmbeddingEncoder(ABC):
+@dataclass
+class BaseEmbeddingEncoder(DataClassJsonMixin, ABC):
     @abstractmethod
     def initialize(self):
         """Initializes the embedding encoder class. Should also validate the instance
