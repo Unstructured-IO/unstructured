@@ -81,6 +81,7 @@ def save_elements(
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
+    is_image: bool = False,
     extract_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
@@ -98,14 +99,25 @@ def save_elements(
     os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        _image_paths = convert_pdf_to_image(
-            filename,
-            file,
-            pdf_image_dpi,
-            output_folder=temp_dir,
-            path_only=True,
-        )
-        image_paths = cast(List[str], _image_paths)
+        if is_image:
+            if file is None:
+                image_paths = [filename]
+            else:
+                if hasattr(file, "seek"):
+                    file.seek(0)
+                temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir)
+                temp_file.write(file.read() if hasattr(file, "read") else file)
+                temp_file.flush()
+                image_paths = [temp_file.name]
+        else:
+            _image_paths = convert_pdf_to_image(
+                filename,
+                file,
+                pdf_image_dpi,
+                output_folder=temp_dir,
+                path_only=True,
+            )
+            image_paths = cast(List[str], _image_paths)
 
         figure_number = 0
         for el in elements:
