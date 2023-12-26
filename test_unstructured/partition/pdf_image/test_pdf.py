@@ -3,7 +3,6 @@ import logging
 import math
 import os
 import tempfile
-import unittest
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -18,10 +17,11 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
+    ElementType,
     ListItem,
     NarrativeText,
     Text,
-    Title, ElementType,
+    Title,
 )
 from unstructured.partition import pdf, strategies
 from unstructured.partition.pdf import get_uris_from_annots
@@ -1128,15 +1128,44 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
     assert expected_log in caplog.text
 
 
+def assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir):
+    extracted_elements = []
+    for el_type in extract_element_types:
+        extracted_elements_by_type = []
+        for el in elements:
+            if el.category == el_type:
+                extracted_elements_by_type.append(el)
+        extracted_elements.append(extracted_elements_by_type)
+
+    for extracted_elements_by_type in extracted_elements:
+        for i, el in enumerate(extracted_elements_by_type):
+            if extract_to_payload:
+                assert el.metadata.image_base64 is not None
+                assert el.metadata.image_mime_type == "image/jpeg"
+                image_data = base64.b64decode(el.metadata.image_base64)
+                assert isinstance(image_data, bytes)
+                assert el.metadata.image_path is None
+            else:
+                basename = "table" if el.category == ElementType.TABLE else "figure"
+                expected_image_path = os.path.join(
+                    str(tmpdir), f"{basename}-{el.metadata.page_number}-{i + 1}.jpg"
+                )
+                assert el.metadata.image_path == expected_image_path
+                assert os.path.isfile(expected_image_path)
+                assert el.metadata.image_base64 is None
+                assert el.metadata.image_mime_type is None
+
+
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
 @pytest.mark.parametrize("extract_to_payload", [False, True])
-def test_partition_pdf_with_element_extraction(
+def test_partition_pdf_element_extraction(
     file_mode,
     extract_to_payload,
     filename=example_doc_path("embedded-images-tables.pdf"),
 ):
+    extract_element_types = ["Image", "Table"]
+
     with tempfile.TemporaryDirectory() as tmpdir:
-        extract_element_types = ["Image", "Table"]
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
@@ -1155,28 +1184,4 @@ def test_partition_pdf_with_element_extraction(
                     image_output_dir_path=tmpdir,
                 )
 
-        extracted_elements = []
-        for el_type in extract_element_types:
-            extracted_elements_by_type = []
-            for el in elements:
-                if el.category == el_type:
-                    extracted_elements_by_type.append(el)
-            extracted_elements.append(extracted_elements_by_type)
-
-        for extracted_elements_by_type in extracted_elements:
-            for i, el in enumerate(extracted_elements_by_type):
-                if extract_to_payload:
-                    assert el.metadata.image_base64 is not None
-                    assert el.metadata.image_mime_type == "image/jpeg"
-                    image_data = base64.b64decode(el.metadata.image_base64)
-                    assert isinstance(image_data, bytes)
-                    assert el.metadata.image_path is None
-                else:
-                    basename = "table" if el.category == ElementType.TABLE else "figure"
-                    expected_image_path = os.path.join(
-                        str(tmpdir), f"{basename}-{el.metadata.page_number}-{i + 1}.jpg"
-                    )
-                    assert el.metadata.image_path == expected_image_path
-                    assert os.path.isfile(expected_image_path)
-                    assert el.metadata.image_base64 is None
-                    assert el.metadata.image_mime_type is None
+        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
