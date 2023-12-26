@@ -1,10 +1,10 @@
 Hosted API Deployment Guide
-=========================
+===========================
 
-This is the user guide to sign-up and use the Hosted API on Unstructured platform.
+This documentation serves as a guide for Unstructured Hosted API users to register, configure payment, and start using the Hosted API on the Unstructured platform. It contains all necessary instructions and resources to facilitate a smooth setup and deployment process.
 
-Signing Up
-----------
+New User Sign-up
+----------------
 
 #. Navigate to the "Hosted API Signup" section on our website.
 #. Fill out the registration form with your personal details:
@@ -30,16 +30,21 @@ Signing Up
   :alt: Sign Up Form
 
 
-Payment Process
----------------
+Email Confirmation and Payment Processing
+-----------------------------------------
 
 #. Upon successful sign-up, you will receive an email from Stripe.
-#. Click the link in the email and follow the instructions to enter your payment details securely.
+
+   - There will be an initiation fee that will be collected upfront to all new users. Please refer to the pricing information page on our website.
+#. Click "Pay this invoice" button in the email and follow the instructions to enter your payment details securely on Stripe website.
 #. Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.
 
+   - Note that we don't send out a receipt. If you would like to keep a receipt, click "Download receipt" button after you complete the payment on Stripe.
 
-Receiving API Credentials
--------------------------
+
+Receiving API Key and Hosted API URL
+------------------------------------
+
 #. After your payment is processed, you will receive an email from us containing your unique API credentials.
 #. Check your inbox (and the spam folder, just in case) for an email from our domain.
 #. Save these credentials securely, as you will need them to access our API and integrate it with your applications.
@@ -60,8 +65,9 @@ If you need to update your billing information, fill out the "Update Billing" fo
   :alt: Update Billing
 
 
-Subscribe to Usage and Marketing Emails
----------------------------------------
+Opt-in and Opt-out to Usage and Marketing Emails
+------------------------------------------------
+
 
 
 Cancel Billing
