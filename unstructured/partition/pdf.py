@@ -189,7 +189,7 @@ def partition_pdf(
     extract_to_payload
         Only applicable if `strategy=hi_res`.
         If True, images of the element type(s) defined in 'extract_element_types' will be encoded
-        as base64 data and stored in two metadat fields: 'image_base64' and 'image_mime_type'.
+        as base64 data and stored in two metadata fields: 'image_base64' and 'image_mime_type'.
         This parameter facilitates the inclusion of element data directly within the payload,
         especially for web-based applications or APIs.
     image_output_dir_path
