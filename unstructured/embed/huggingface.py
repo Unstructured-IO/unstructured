@@ -31,7 +31,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
     @property
     def client(self) -> "HuggingFaceEmbeddings":
         if self._client is None:
-            self._client = self.get_huggingface_client()
+            self._client = self.create_client()
         return self._client
 
     @property
@@ -51,10 +51,10 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
         return np.isclose(np.linalg.norm(self.exemplary_embedding), 1.0)
 
     def embed_query(self, query):
-        return self.hf.embed_query(str(query))
+        return self.client.embed_query(str(query))
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
-        embeddings = self.hf.embed_documents([str(e) for e in elements])
+        embeddings = self.client.embed_documents([str(e) for e in elements])
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
         return elements_with_embeddings
 
@@ -72,12 +72,9 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
         ["langchain", "sentence_transformers"],
         extras="embed-huggingface",
     )
-    def get_huggingface_client(self) -> "HuggingFaceEmbeddings":
+    def create_client(self) -> "HuggingFaceEmbeddings":
         """Creates a langchain Huggingface python client to embed elements."""
-        if hasattr(self, "hf_client"):
-            return self.hf_client
-
         from langchain.embeddings import HuggingFaceEmbeddings
 
-        hf_client = HuggingFaceEmbeddings(**self.config.to_dict())
-        return hf_client
+        client = HuggingFaceEmbeddings(**self.config.to_dict())
+        return client

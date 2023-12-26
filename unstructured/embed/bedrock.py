@@ -31,7 +31,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
     @property
     def client(self) -> "BedrockEmbeddings":
         if self._client is None:
-            self._client = self.get_bedrock_client()
+            self._client = self.create_client()
         return self._client
 
     @property
@@ -44,7 +44,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         self.initialize()
 
     def initialize(self):
-        self.bedrock_client = self.get_bedrock_client()
+        self.bedrock_client = self.create_client()
 
     def num_of_dimensions(self):
         return np.shape(self.exemplary_embedding)
@@ -73,10 +73,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         ["boto3", "numpy", "langchain"],
         extras="bedrock",
     )
-    def get_bedrock_client(self):
-        if getattr(self, "bedrock_client", None):
-            return self.bedrock_client
-
+    def create_client(self) -> "BedrockEmbeddings":
         # delay import only when needed
         import boto3
         from langchain.embeddings import BedrockEmbeddings

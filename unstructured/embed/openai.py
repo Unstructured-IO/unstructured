@@ -29,7 +29,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
     @property
     def client(self) -> "OpenAIEmbeddings":
         if self._client is None:
-            self._client = self.get_openai_client()
+            self._client = self.create_client()
         return self._client
 
     @property
@@ -68,7 +68,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         ["langchain", "openai", "tiktoken"],
         extras="openai",
     )
-    def get_openai_client(self):
+    def create_client(self) -> "OpenAIEmbeddings":
         """Creates a langchain OpenAI python client to embed elements."""
         from langchain.embeddings.openai import OpenAIEmbeddings
 
