@@ -1,21 +1,44 @@
 from dataclasses import dataclass
-from typing import List
+from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
 
 from unstructured.documents.elements import (
     Element,
 )
-from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
+
+if TYPE_CHECKING:
+    from langchain.embeddings import BedrockEmbeddings
+
+
+@dataclass
+class BedrockEmbeddingConfig(EmbeddingConfig):
+    aws_access_key_id: str = enhanced_field(sensitive=True)
+    aws_secret_access_key: str = enhanced_field(sensitive=True)
+    region_name: str = "us-west-2"
 
 
 @dataclass
 class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
-    aws_access_key_id: str
-    aws_secret_access_key: str
-    region_name: str = "us-west-2"
+    config: BedrockEmbeddingConfig
+    _client: Optional["BedrockEmbeddings"] = enhanced_field(init=False, default=None)
+    _exemplary_embedding: Optional[List[float]] = enhanced_field(init=False, default=None)
+
+    @property
+    def client(self) -> "BedrockEmbeddings":
+        if self._client is None:
+            self._client = self.get_bedrock_client()
+        return self._client
+
+    @property
+    def exemplary_embedding(self) -> List[float]:
+        if self._exemplary_embedding is None:
+            self._exemplary_embedding = self.client.embed_query("Q")
+        return self._exemplary_embedding
 
     def __post_init__(self):
         self.initialize()
@@ -24,10 +47,10 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         self.bedrock_client = self.get_bedrock_client()
 
     def num_of_dimensions(self):
-        return np.shape(self.examplary_embedding)
+        return np.shape(self.exemplary_embedding)
 
     def is_unit_vector(self):
-        return np.isclose(np.linalg.norm(self.examplary_embedding), 1.0)
+        return np.isclose(np.linalg.norm(self.exemplary_embedding), 1.0)
 
     def embed_query(self, query):
         return np.array(self.bedrock_client.embed_query(query))
@@ -58,13 +81,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
         import boto3
         from langchain.embeddings import BedrockEmbeddings
 
-        bedrock_runtime = boto3.client(
-            service_name="bedrock-runtime",
-            aws_access_key_id=self.aws_access_key_id,
-            aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region_name,
-        )
+        bedrock_runtime = boto3.client(service_name="bedrock-runtime", **self.config.to_dict())
 
         bedrock_client = BedrockEmbeddings(client=bedrock_runtime)
-        self.examplary_embedding = np.array(bedrock_client.embed_query("Q"))
         return bedrock_client

@@ -1,35 +1,54 @@
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
 
 from unstructured.documents.elements import (
     Element,
 )
-from unstructured.embed.interfaces import BaseEmbeddingEncoder
+from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
 from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
+if TYPE_CHECKING:
+    from langchain.embeddings import HuggingFaceEmbeddings
+
 
 @dataclass
-class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
+class HuggingFaceEmbeddingConfig(EmbeddingConfig):
     model_name: Optional[str] = "sentence-transformers/all-MiniLM-L6-v2"
     model_kwargs: Optional[dict] = field(default_factory=lambda: {"device": "cpu"})
     encode_kwargs: Optional[dict] = field(default_factory=lambda: {"normalize_embeddings": False})
     cache_folder: Optional[dict] = None
 
-    def __post_init__(self):
-        self.initialize()
+
+@dataclass
+class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
+    config: HuggingFaceEmbeddingConfig
+    _client: Optional["HuggingFaceEmbeddings"] = field(init=False, default=None)
+    _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
+
+    @property
+    def client(self) -> "HuggingFaceEmbeddings":
+        if self._client is None:
+            self._client = self.get_huggingface_client()
+        return self._client
+
+    @property
+    def exemplary_embedding(self) -> List[float]:
+        if self._exemplary_embedding is None:
+            self._exemplary_embedding = self.client.embed_query("Q")
+        return self._exemplary_embedding
 
     def initialize(self):
         """Creates a langchain HuggingFace object to embed elements."""
-        self.hf = self.get_huggingface_client()
+        _ = self.client
 
     def num_of_dimensions(self):
-        return np.shape(self.examplary_embedding)
+        return np.shape(self.exemplary_embedding)
 
     def is_unit_vector(self):
-        return np.isclose(np.linalg.norm(self.examplary_embedding), 1.0)
+        return np.isclose(np.linalg.norm(self.exemplary_embedding), 1.0)
 
     def embed_query(self, query):
         return self.hf.embed_query(str(query))
@@ -53,18 +72,12 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
         ["langchain", "sentence_transformers"],
         extras="embed-huggingface",
     )
-    def get_huggingface_client(self):
+    def get_huggingface_client(self) -> "HuggingFaceEmbeddings":
         """Creates a langchain Huggingface python client to embed elements."""
         if hasattr(self, "hf_client"):
             return self.hf_client
 
         from langchain.embeddings import HuggingFaceEmbeddings
 
-        hf_client = HuggingFaceEmbeddings(
-            model_name=self.model_name,
-            model_kwargs=self.model_kwargs,
-            encode_kwargs=self.encode_kwargs,
-            cache_folder=self.cache_folder,
-        )
-        self.examplary_embedding = hf_client.embed_query("Q")
+        hf_client = HuggingFaceEmbeddings(**self.config.to_dict())
         return hf_client
