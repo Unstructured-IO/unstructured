@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import List
 
 import numpy as np
@@ -10,16 +11,13 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 
+@dataclass
 class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
-    def __init__(
-        self,
-        aws_access_key_id: str,
-        aws_secret_access_key: str,
-        region_name: str = "us-west-2",
-    ):
-        self.aws_access_key_id = aws_access_key_id
-        self.aws_secret_access_key = aws_secret_access_key
-        self.region_name = region_name
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    region_name: str = "us-west-2"
+
+    def __post_init__(self):
         self.initialize()
 
     def initialize(self):
