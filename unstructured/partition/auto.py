@@ -137,7 +137,9 @@ def partition(
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     pdf_extract_images: bool = False,
+    pdf_extract_element_types: Optional[List[str]] = None,
     pdf_image_output_dir_path: Optional[str] = None,
+    pdf_extract_to_payload: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
@@ -193,11 +195,26 @@ def partition(
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
     pdf_extract_images
-        If True and strategy=hi_res, any detected images will be saved in the path specified by
-        pdf_image_output_dir_path.
+        Only applicable if `strategy=hi_res`.
+        If True, any detected images will be saved in the path specified by 'image_output_dir_path'
+        or stored as base64 encoded data within metadata fields.
+        Deprecation Note: This parameter is marked for deprecation. Future versions will use
+        'extract_element_types' for broader extraction capabilities.
+    pdf_extract_element_types
+        Only applicable if `strategy=hi_res`.
+        Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
+        saved in the path specified by 'image_output_dir_path' or stored as base64 encoded data
+        within metadata fields.
+    pdf_extract_to_payload
+        Only applicable if `strategy=hi_res`.
+        If True, images of the element type(s) defined in 'extract_element_types' will be encoded
+        as base64 data and stored in two metadata fields: 'image_base64' and 'image_mime_type'.
+        This parameter facilitates the inclusion of element data directly within the payload,
+        especially for web-based applications or APIs.
     pdf_image_output_dir_path
-        If pdf_extract_images=True and strategy=hi_res, any detected images will be saved in the
-        given path
+        Only applicable if `strategy=hi_res` and `pdf_extract_to_payload=False`.
+        The filesystem path for saving images of the element type(s)
+        specified in 'extract_element_types'.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
@@ -397,7 +414,9 @@ def partition(
             strategy=strategy,
             languages=languages,
             extract_images_in_pdf=pdf_extract_images,
+            extract_element_types=pdf_extract_element_types,
             image_output_dir_path=pdf_image_output_dir_path,
+            extract_to_payload=pdf_extract_to_payload,
             hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )

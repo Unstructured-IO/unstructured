@@ -1,5 +1,7 @@
+import base64
 import os
 import tempfile
+from io import BytesIO
 from pathlib import PurePath
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
@@ -79,11 +81,17 @@ def save_elements(
     pdf_image_dpi: int,
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
+    is_image: bool = False,
+    extract_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
     """
-    Extract and save images from the page. This method iterates through the layout elements
-    of the page, identifies image regions, and extracts and saves them as separate image files.
+    Saves specific elements from a PDF as images either to a directory or embeds them in the
+    element's payload.
+
+    This function processes a list of elements partitioned from a PDF file. For each element of
+    a specified category, it extracts and saves the image. The images can either be saved to
+    a specified directory or embedded into the element's payload as a base64-encoded string.
     """
 
     if not output_dir_path:
@@ -91,14 +99,25 @@ def save_elements(
     os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        _image_paths = convert_pdf_to_image(
-            filename,
-            file,
-            pdf_image_dpi,
-            output_folder=temp_dir,
-            path_only=True,
-        )
-        image_paths = cast(List[str], _image_paths)
+        if is_image:
+            if file is None:
+                image_paths = [filename]
+            else:
+                if hasattr(file, "seek"):
+                    file.seek(0)
+                temp_file = tempfile.NamedTemporaryFile(delete=False, dir=temp_dir)
+                temp_file.write(file.read() if hasattr(file, "read") else file)
+                temp_file.flush()
+                image_paths = [temp_file.name]
+        else:
+            _image_paths = convert_pdf_to_image(
+                filename,
+                file,
+                pdf_image_dpi,
+                output_folder=temp_dir,
+                path_only=True,
+            )
+            image_paths = cast(List[str], _image_paths)
 
         figure_number = 0
         for el in elements:
@@ -124,9 +143,17 @@ def save_elements(
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
                 cropped_image = image.crop((x1, y1, x2, y2))
-                write_image(cropped_image, output_f_path)
-                # add image path to element metadata
-                el.metadata.image_path = output_f_path
+                if extract_to_payload:
+                    buffered = BytesIO()
+                    cropped_image.save(buffered, format="JPEG")
+                    img_base64 = base64.b64encode(buffered.getvalue())
+                    img_base64_str = img_base64.decode()
+                    el.metadata.image_base64 = img_base64_str
+                    el.metadata.image_mime_type = "image/jpeg"
+                else:
+                    write_image(cropped_image, output_f_path)
+                    # add image path to element metadata
+                    el.metadata.image_path = output_f_path
             except (ValueError, IOError):
                 logger.warning("Image Extraction Error: Skipping the failed image", exc_info=True)
 
