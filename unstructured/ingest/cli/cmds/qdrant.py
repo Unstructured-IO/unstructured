@@ -33,6 +33,7 @@ class QdrantCliConfig(SimpleQdrantConfig, CliConfig):
             click.Option(
                 ["--port"],
                 type=int,
+                default=6333
                 help="Port of the REST API interface. Default: 6333.",
             ),
             click.Option(
@@ -48,6 +49,7 @@ class QdrantCliConfig(SimpleQdrantConfig, CliConfig):
             click.Option(
                 ["--https"],
                 type=bool,
+                is_flag=True
                 help="Whether to use HTTPS(SSL) protocol. Default: False.",
             ),
             click.Option(
