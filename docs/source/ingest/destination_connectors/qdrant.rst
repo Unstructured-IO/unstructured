@@ -9,6 +9,8 @@ First you'll need to install the Qdrant dependencies as shown here.
 
   pip install "unstructured[qdrant]"
 
+Create a Qdrant collection with the appropriate configurations. Find more information in the `Qdrant collections guide <https://qdrant.tech/documentation/concepts/collections/>`_.
+
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
