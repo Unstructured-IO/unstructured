@@ -33,23 +33,25 @@ class QdrantCliConfig(SimpleQdrantConfig, CliConfig):
             click.Option(
                 ["--port"],
                 type=int,
-                default=6333
+                default=6333,
                 help="Port of the REST API interface. Default: 6333.",
             ),
             click.Option(
                 ["--grpc-port"],
                 type=int,
+                default=6334,
                 help="Port of the gRPC interface. Default: 6334.",
             ),
             click.Option(
                 ["--prefer-grpc"],
                 type=bool,
+                is_flag=True,
                 help="Whether to use gPRC interface whenever possible in methods. Default: False.",
             ),
             click.Option(
                 ["--https"],
                 type=bool,
-                is_flag=True
+                is_flag=True,
                 help="Whether to use HTTPS(SSL) protocol. Default: False.",
             ),
             click.Option(
@@ -75,6 +77,7 @@ class QdrantCliConfig(SimpleQdrantConfig, CliConfig):
             click.Option(
                 ["--force-disable-check-same-thread"],
                 type=bool,
+                is_flag=True,
                 help="Whether to force disable check same thread for QdrantLocal.",
             ),
             click.Option(
