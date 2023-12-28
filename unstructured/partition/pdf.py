@@ -519,13 +519,15 @@ def partition_pdf_or_image(
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
-        file=file,
         is_image=is_image,
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
         extract_images_in_pdf=extract_images_in_pdf,
         extract_element_types=extract_element_types,
     )
+
+    if file is not None:
+        file.seek(0)
 
     if strategy == PartitionStrategy.HI_RES:
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called

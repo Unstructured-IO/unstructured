@@ -1,5 +1,4 @@
-from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, List, Optional, Union
+from typing import List, Optional
 
 from unstructured.logger import logger
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -24,7 +23,6 @@ def validate_strategy(strategy: str, is_image: bool = False):
 
 def determine_pdf_or_image_strategy(
     strategy: str,
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
@@ -46,9 +44,6 @@ def determine_pdf_or_image_strategy(
                 infer_table_structure=infer_table_structure,
                 extract_element=extract_element,
             )
-
-    if file is not None:
-        file.seek(0)  # type: ignore
 
     if all(
         [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
