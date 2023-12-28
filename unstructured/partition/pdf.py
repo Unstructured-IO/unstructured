@@ -106,7 +106,6 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     pass
 
-
 # NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
 # the bug: https://github.com/pdfminer/pdfminer.six/pull/885
 psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
@@ -140,9 +139,11 @@ def partition_pdf(
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
-    extract_images: bool = False,
+    hi_res_model_name: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
+    extract_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -172,16 +173,29 @@ def partition_pdf(
         with Tesseract, you'll first need to install the appropriate Tesseract language pack.
     metadata_last_modified
         The last modified date for the document.
-    extract_images
+    hi_res_model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`.
+    extract_images_in_pdf
         Only applicable if `strategy=hi_res`.
-        If `True`, any detected images will be saved in the path specified by image_output_dir_path.
+        If True, any detected images will be saved in the path specified by 'image_output_dir_path'
+        or stored as base64 encoded data within metadata fields.
+        Deprecation Note: This parameter is marked for deprecation. Future versions will use
+        'extract_element_types' for broader extraction capabilities.
     extract_element_types
         Only applicable if `strategy=hi_res`.
-        Images of the element type(s) defined in this list will be saved to `image_output_dir_path`.
-        E.g. `extract_element_types = ["Image", "Table"]`
-    image_output_dir_path
+        Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
+        saved in the path specified by 'image_output_dir_path' or stored as base64 encoded data
+        within metadata fields.
+    extract_to_payload
         Only applicable if `strategy=hi_res`.
-        The path for saving images when using `extract_images` or `extract_element_types`.
+        If True, images of the element type(s) defined in 'extract_element_types' will be encoded
+        as base64 data and stored in two metadata fields: 'image_base64' and 'image_mime_type'.
+        This parameter facilitates the inclusion of element data directly within the payload,
+        especially for web-based applications or APIs.
+    image_output_dir_path
+        Only applicable if `strategy=hi_res` and `extract_to_payload=False`.
+        The filesystem path for saving images of the element type(s)
+        specified in 'extract_element_types'.
     """
 
     exactly_one(filename=filename, file=file)
@@ -196,9 +210,11 @@ def partition_pdf(
         infer_table_structure=infer_table_structure,
         languages=languages,
         metadata_last_modified=metadata_last_modified,
-        extract_images=extract_images,
+        hi_res_model_name=hi_res_model_name,
+        extract_images_in_pdf=extract_images_in_pdf,
         extract_element_types=extract_element_types,
         image_output_dir_path=image_output_dir_path,
+        extract_to_payload=extract_to_payload,
         **kwargs,
     )
 
@@ -244,13 +260,15 @@ def _partition_pdf_or_image_local(
     include_page_breaks: bool = False,
     languages: Optional[List[str]] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
-    model_name: Optional[str] = None,
+    model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
+    hi_res_model_name: Optional[str] = None,
+    pdf_image_dpi: Optional[int] = None,
     metadata_last_modified: Optional[str] = None,
     pdf_text_extractable: bool = False,
-    extract_images: bool = False,
+    extract_images_in_pdf: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
-    pdf_image_dpi: Optional[int] = None,
+    extract_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     **kwargs,
@@ -275,10 +293,12 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    model_name = model_name or default_hi_res_model(infer_table_structure)
+    hi_res_model_name = (
+        hi_res_model_name or model_name or default_hi_res_model(infer_table_structure)
+    )
     if pdf_image_dpi is None:
-        pdf_image_dpi = 300 if model_name == "chipper" else 200
-    if (pdf_image_dpi < 300) and (model_name == "chipper"):
+        pdf_image_dpi = 300 if hi_res_model_name == "chipper" else 200
+    if (pdf_image_dpi < 300) and (hi_res_model_name == "chipper"):
         logger.warning(
             "The Chipper model performs better when images are rendered with DPI >= 300 "
             f"(currently {pdf_image_dpi}).",
@@ -288,7 +308,7 @@ def _partition_pdf_or_image_local(
         inferred_document_layout = process_file_with_model(
             filename,
             is_image=is_image,
-            model_name=model_name,
+            model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
 
@@ -314,7 +334,7 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
         )
 
-        if model_name.startswith("chipper"):
+        if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             final_document_layout = merged_document_layout
         else:
@@ -331,7 +351,7 @@ def _partition_pdf_or_image_local(
         inferred_document_layout = process_data_with_model(
             file,
             is_image=is_image,
-            model_name=model_name,
+            model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
         if hasattr(file, "seek"):
@@ -347,7 +367,7 @@ def _partition_pdf_or_image_local(
             extracted_layout=extracted_layout,
         )
 
-        if model_name.startswith("chipper"):
+        if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             final_document_layout = merged_document_layout
         else:
@@ -364,7 +384,7 @@ def _partition_pdf_or_image_local(
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
-    if model_name == "chipper":
+    if hi_res_model_name == "chipper":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
@@ -387,20 +407,22 @@ def _partition_pdf_or_image_local(
     )
 
     extract_element_types = check_element_types_to_extract(extract_element_types)
-    #  NOTE(christine): `extract_images` would deprecate
+    #  NOTE(christine): `extract_images_in_pdf` would deprecate
     #  (but continue to support for a while)
-    if extract_images:
+    if extract_images_in_pdf:
         save_elements(
             elements=elements,
             element_category_to_save=ElementType.IMAGE,
             filename=filename,
             file=file,
+            is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
+            extract_to_payload=extract_to_payload,
             output_dir_path=image_output_dir_path,
         )
 
     for el_type in extract_element_types:
-        if extract_images and el_type == ElementType.IMAGE:
+        if extract_images_in_pdf and el_type == ElementType.IMAGE:
             continue
 
         save_elements(
@@ -408,7 +430,9 @@ def _partition_pdf_or_image_local(
             element_category_to_save=el_type,
             filename=filename,
             file=file,
+            is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
+            extract_to_payload=extract_to_payload,
             output_dir_path=image_output_dir_path,
         )
 
@@ -418,10 +442,12 @@ def _partition_pdf_or_image_local(
             continue
 
         if isinstance(el, Image):
-            # NOTE(crag): small chunks of text from Image elements tend to be garbage
-            if not el.metadata.image_path and (
-                el.text is None or len(el.text) < 24 or el.text.find(" ") == -1
+            if (
+                not extract_images_in_pdf
+                and ElementType.IMAGE not in extract_element_types
+                and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
             ):
+                # NOTE(crag): small chunks of text from Image elements tend to be garbage
                 continue
             else:
                 out_elements.append(cast(Element, el))
@@ -434,7 +460,7 @@ def _partition_pdf_or_image_local(
             ).strip()
             # NOTE(alan): with chipper there are parent elements with no text we don't want to
             # filter those out and leave the children orphaned.
-            if el.text or isinstance(el, PageBreak) or model_name.startswith("chipper"):
+            if el.text or isinstance(el, PageBreak) or hi_res_model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
     return out_elements
@@ -450,9 +476,11 @@ def partition_pdf_or_image(
     ocr_languages: Optional[str] = None,
     languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
-    extract_images: bool = False,
+    hi_res_model_name: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
     extract_element_types: Optional[List[str]] = None,
     image_output_dir_path: Optional[str] = None,
+    extract_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -495,7 +523,7 @@ def partition_pdf_or_image(
         is_image=is_image,
         infer_table_structure=infer_table_structure,
         pdf_text_extractable=pdf_text_extractable,
-        extract_images=extract_images,
+        extract_images_in_pdf=extract_images_in_pdf,
     )
 
     if strategy == PartitionStrategy.HI_RES:
@@ -510,10 +538,12 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
+                hi_res_model_name=hi_res_model_name,
                 pdf_text_extractable=pdf_text_extractable,
-                extract_images=extract_images,
+                extract_images_in_pdf=extract_images_in_pdf,
                 extract_element_types=extract_element_types,
                 image_output_dir_path=image_output_dir_path,
+                extract_to_payload=extract_to_payload,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
