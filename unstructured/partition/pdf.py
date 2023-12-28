@@ -517,15 +517,14 @@ def partition_pdf_or_image(
             logger.error(e)
             logger.warning("PDF text extraction failed, skip text extraction...")
 
-    extract_element = extract_images_in_pdf or bool(extract_element_types)
-
     strategy = determine_pdf_or_image_strategy(
         strategy,
         file=file,
         is_image=is_image,
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
-        extract_element=extract_element,
+        extract_images_in_pdf=extract_images_in_pdf,
+        extract_element_types=extract_element_types,
     )
 
     if strategy == PartitionStrategy.HI_RES:
