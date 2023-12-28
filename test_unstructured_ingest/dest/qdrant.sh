@@ -15,6 +15,7 @@ QDRANT_PORT=6333
 QDRANT_HOST=localhost:$QDRANT_PORT
 COLLECTION_NAME="qdrant-test-$(date +%s)"
 EXPECTED_POINTS_COUNT=1404
+RETRIES=5
 
 function stop_docker()
 {
@@ -29,6 +30,12 @@ trap stop_docker SIGINT
 trap stop_docker ERR
 
 until curl --output /dev/null --silent --get --fail http://$QDRANT_HOST/collections; do
+  RETRIES=$((RETRIES-1))
+  if [ "$RETRIES" -le 0 ]; then
+    echo "Qdrant server failed to start"
+    stop_docker
+    exit 1
+  fi
   printf 'Waiting for Qdrant server to start...'
   sleep 5
 done
