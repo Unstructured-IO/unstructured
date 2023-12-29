@@ -190,23 +190,26 @@ def _clean_ocr_languages_arg(ocr_languages: Union[list, str]) -> str:
 def check_languages(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
     """Handle users defining both `ocr_languages` and `languages`,
     defaulting `languages` to ['eng'] and converting `ocr_languages` if needed"""
-    ocr_languages = _clean_ocr_languages_arg(ocr_languages)
+    if ocr_languages == "auto":
+        ocr_languages = None
+
+    if ocr_languages:
+        ocr_languages = _clean_ocr_languages_arg(ocr_languages)
 
     if languages is not None and not isinstance(languages, list):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
-    if ocr_languages == "auto":
-        ocr_languages = None
-
     if languages is None or not languages[0]:
         languages = ["eng"]
 
     # if "auto" is included in the list of inputs, language detection will be triggered
     # and the rest of the inputted languages will be ignored
-    if languages and "auto" not in languages:
-        [_convert_to_standard_langcode(lang) for lang in languages]
+    if "auto" not in languages:
+        for lang in languages:
+            lang = _convert_language_to_language_code(lang)
+            lang = _convert_to_standard_langcode(lang)
 
     if ocr_languages is not None:
         if languages != ["eng"]:
@@ -288,12 +291,17 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
     return [langcode for langcode in PYTESSERACT_LANG_CODES if langcode.startswith(prefix)]
 
 
-def _convert_to_standard_langcode(lang: str) -> str:
-    """
-    Convert a single language or language code to the standard internal language code format.
-    """
+def _convert_language_to_language_code(lang: str) -> str:
+    """Convert a recognized spelled-out language to a tesseract language code"""
     if TESSERACT_LANGUAGES_AND_CODES.get(lang.lower()):
         lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower())
+    return lang
+
+
+def _convert_to_standard_langcode(lang: str) -> str:
+    """
+    Convert a language code to the standard internal language code format.
+    """
     # convert to standard ISO 639-3 language code
     lang_iso639 = _get_iso639_language_object(lang[:3])
     if lang_iso639:
@@ -333,8 +341,12 @@ def detect_languages(
     # user inputted languages:
     # if "auto" is included in the list of inputs, language detection will be triggered
     # and the rest of the inputted languages will be ignored
+    doc_languages = []
     if languages and "auto" not in languages:
-        doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
+        for lang in languages:
+            lang = _convert_language_to_language_code(lang)
+            lang = _convert_to_standard_langcode(lang)
+            doc_languages.append(lang)
 
     # language detection:
     else:
@@ -356,12 +368,10 @@ def detect_languages(
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
         # TODO(shreya): decide how to maintain nonstandard chinese script information
-        langdetect_langs = [
-            _convert_to_standard_langcode("zh")
-            if langobj.lang.startswith("zh")
-            else _convert_to_standard_langcode(langobj.lang)
-            for langobj in langdetect_result
-        ]
+        langdetect_langs = []
+        for langobj in langdetect_result:
+            lang_code = "zh" if langobj.lang.startswith("zh") else langobj.lang
+            langdetect_langs.append(_convert_to_standard_langcode(lang_code))
 
         # remove duplicate chinese (if exists) without modifying order
         doc_languages = []
