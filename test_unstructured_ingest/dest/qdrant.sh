@@ -17,20 +17,19 @@ COLLECTION_NAME="qdrant-test-$(date +%s)"
 EXPECTED_POINTS_COUNT=1404
 RETRIES=5
 
-function stop_docker()
-{
+function stop_docker() {
   docker stop $CONTAINTER_NAME
 }
 
 docker run -d --rm \
-           -p 6333:$QDRANT_PORT \
-           --name $CONTAINTER_NAME qdrant/qdrant:latest
+  -p 6333:$QDRANT_PORT \
+  --name $CONTAINTER_NAME qdrant/qdrant:latest
 
 trap stop_docker SIGINT
 trap stop_docker ERR
 
 until curl --output /dev/null --silent --get --fail http://$QDRANT_HOST/collections; do
-  RETRIES=$((RETRIES-1))
+  RETRIES=$((RETRIES - 1))
   if [ "$RETRIES" -le 0 ]; then
     echo "Qdrant server failed to start"
     stop_docker
@@ -41,7 +40,7 @@ until curl --output /dev/null --silent --get --fail http://$QDRANT_HOST/collecti
 done
 
 curl -X PUT \
-  http://$QDRANT_HOST/collections/$COLLECTION_NAME \
+  http://$QDRANT_HOST/collections/"$COLLECTION_NAME" \
   -H 'Content-Type: application/json' \
   -d '{
     "vectors": {
@@ -65,13 +64,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --chunk-combine-text-under-n-chars 200 --chunk-new-after-n-chars 2500 --chunk-max-characters 38000 --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   qdrant \
-  --collection-name $COLLECTION_NAME \
+  --collection-name "$COLLECTION_NAME" \
   --location "http://"$QDRANT_HOST \
   --batch-size 80 \
-  --num-processes "$writer_processes" \
+  --num-processes "$writer_processes"
 
 response=$(curl -s -X POST \
-  $QDRANT_HOST/collections/$COLLECTION_NAME/points/count \
+  $QDRANT_HOST/collections/"$COLLECTION_NAME"/points/count \
   -H 'Content-Type: application/json' \
   -d '{
      "exact": true
