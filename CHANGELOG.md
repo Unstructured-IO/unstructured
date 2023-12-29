@@ -6,8 +6,9 @@
 * **Update encoders to leverage dataclasses** All encoders now follow a class approach which get annotated with the dataclass decorator. Similar to the connectors, it uses a nested dataclass for the configs required to configure a client as well as a field/property approach to cache the client. This makes sure any variable associated with the class exists as a dataclass field.
 
 ### Features
- 
+
 * **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ### Fixes
 
