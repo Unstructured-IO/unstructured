@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Iterator, List, Optional
+from typing import Iterable, Iterator, List, Optional, Union
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
@@ -167,22 +167,35 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_languages(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
-    """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
-    converting `ocr_languages` if needed"""
-    if languages is not None and not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings, ex. ['eng']",
-        )
-    # handle ocr as list
+def _clean_ocr_languages_arg(ocr_languages: Union[list, str]) -> str:
+    """Fix common incorrect definitions for ocr_languages:
+    defining it as a list, adding extra quotation marks, adding brackets.
+    Returns a single string of ocr_languages"""
+    # extract from list
     if isinstance(ocr_languages, list):
-        ocr_languages = ocr_languages[0]
+        if len(ocr_languages) == 1:
+            ocr_languages = ocr_languages[0]
+        elif len(ocr_languages) > 1:
+            ocr_languages = "+".join(ocr_languages)
 
     if ocr_languages:
         # remove extra quotations
         ocr_languages = re.sub(r"[\"']", "", ocr_languages)
         # remove brackets
         ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
+
+    return ocr_languages
+
+
+def check_languages(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
+    """Handle users defining both `ocr_languages` and `languages`,
+    defaulting `languages` to ['eng'] and converting `ocr_languages` if needed"""
+    ocr_languages = _clean_ocr_languages_arg(ocr_languages)
+
+    if languages is not None and not isinstance(languages, list):
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
 
     if ocr_languages == "auto":
         ocr_languages = None
