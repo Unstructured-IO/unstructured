@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# A local connector to process pre-downloaded PDFs under `/download` dir with --fast startegy
+# A local connector to process pre-downloaded PDFs under `/download` dir with --fast strategy
 
 set -e
 
