@@ -5,7 +5,7 @@ from unstructured.documents.elements import (
     PageBreak,
 )
 from unstructured.partition.lang import (
-    _convert_to_standard_langcode,
+    _convert_language_to_language_code,
     apply_lang_metadata,
     detect_languages,
     prepare_languages_for_tesseract,
@@ -115,5 +115,5 @@ def test_apply_lang_metadata_has_no_warning_for_PageBreak(caplog):
     assert "No features in text." not in [rec.message for rec in caplog.records]
 
 
-def test_convert_to_standard_langcode_full_language():
-    assert _convert_to_standard_langcode("Spanish") == "spa"
+def test_convert_language_to_language_code():
+    assert _convert_language_to_language_code("Spanish") == "spa"
