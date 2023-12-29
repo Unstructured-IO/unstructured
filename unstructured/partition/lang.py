@@ -418,14 +418,3 @@ def _clean_ocr_languages_arg(ocr_languages: Union[list, str]) -> str:
         ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
 
     return ocr_languages
-
-
-def _convert_to_standard_langcode(lang: str) -> str:
-    """
-    Convert a language code to the standard internal language code format.
-    """
-    # convert to standard ISO 639-3 language code
-    lang_iso639 = _get_iso639_language_object(lang[:3])
-    if lang_iso639:
-        return lang_iso639.part3
-    return ""
