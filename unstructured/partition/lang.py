@@ -152,7 +152,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     converted_languages = list(
         filter(
             lambda x: x is not None and x != "",
-            [convert_language_to_tesseract(lang) for lang in languages],
+            [convert_language_code_to_tesseract_code(lang) for lang in languages],
         ),
     )
     # Remove duplicates from the list but keep the original order
@@ -220,18 +220,19 @@ def convert_old_ocr_languages_to_languages(ocr_languages: str):
     return ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
 
 
-def convert_language_to_tesseract(lang: str) -> str:
+def convert_language_code_to_tesseract_code(lang: str) -> str:
     """
     Convert a language code to its tesseract formatted and recognized langcode(s), if supported.
     """
     # if language is already tesseract langcode, return it immediately
     # this will catch the tesseract special cases equ and osd
     # NOTE(shreya): this may catch some cases of choosing between tesseract code variants for a lang
-    if lang in PYTESSERACT_LANGS:
+    if lang in PYTESSERACT_LANGS:  # 3-letter lang codes
         return lang
 
     # get iso639 language object
     try:
+        # match other lang codes (ex. 2-letter codes)
         lang_iso639 = iso639.Language.match(lang.lower())
     except iso639.LanguageNotFoundError:
         logger.warning(f"{lang} is not a valid standard language code.")
