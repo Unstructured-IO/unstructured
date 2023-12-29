@@ -21,7 +21,7 @@ if __name__ == "__main__":
                 consumer_key=os.getenv("SALESFORCE_CONSUMER_KEY"),
             ),
             username=os.getenv("SALESFORCE_USERNAME"),
-            private_key_path=os.getenv("SALESFORCE_PRIVATE_KEY_PATH"),
+            private_key=os.getenv("SALESFORCE_PRIVATE_KEY_PATH"),
             categories=["EmailMessage", "Account", "Lead", "Case", "Campaign"],
             recursive=True,
         ),
