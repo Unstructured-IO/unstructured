@@ -209,7 +209,9 @@ def check_languages(languages: Optional[List[str]] = None, ocr_languages: Option
     if "auto" not in languages:
         for lang in languages:
             lang = _convert_language_to_language_code(lang)
-            lang = _convert_to_standard_langcode(lang)
+            lang_iso639 = _get_iso639_language_object(lang[:3])
+            if lang_iso639:
+                lang = lang_iso639.part3
 
     if ocr_languages is not None:
         if languages != ["eng"]:
@@ -345,7 +347,9 @@ def detect_languages(
     if languages and "auto" not in languages:
         for lang in languages:
             lang = _convert_language_to_language_code(lang)
-            lang = _convert_to_standard_langcode(lang)
+            lang_iso639 = _get_iso639_language_object(lang[:3])
+            if lang_iso639:
+                lang = lang_iso639.part3
             doc_languages.append(lang)
 
     # language detection:
@@ -371,7 +375,9 @@ def detect_languages(
         langdetect_langs = []
         for langobj in langdetect_result:
             lang_code = "zh" if langobj.lang.startswith("zh") else langobj.lang
-            langdetect_langs.append(_convert_to_standard_langcode(lang_code))
+            lang_iso639 = _get_iso639_language_object(lang_code[:3])
+            if lang_iso639:
+                langdetect_langs.append(lang_iso639.part3)
 
         # remove duplicate chinese (if exists) without modifying order
         doc_languages = []
