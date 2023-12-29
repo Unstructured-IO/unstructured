@@ -5,11 +5,8 @@ from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
-from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
-)
 from unstructured.partition.pdf import partition_pdf_or_image
-from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.partition.utils.constants import TESSERACT_LANGUAGES_SPLITTER, PartitionStrategy
 
 
 @process_metadata()
@@ -103,7 +100,7 @@ def partition_image(
             )
 
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",

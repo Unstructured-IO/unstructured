@@ -306,16 +306,6 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-# TODO (jennings): get rid of this function and replace with .split()
-def convert_old_ocr_languages_to_languages(ocr_languages: str):
-    """
-    Convert ocr_languages parameter to list of langcode strings.
-    Assumption: ocr_languages is in tesseract plus sign format
-    """
-
-    return ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
-
-
 def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
     """
     Convert a single language code to its tesseract formatted and recognized
@@ -392,7 +382,7 @@ def check_languages(languages: Optional[List[str]] = None, ocr_languages: Option
             )
 
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
+            languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
             logger.warning(
                 "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
                 "Please use languages instead.",
