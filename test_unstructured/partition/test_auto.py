@@ -3,7 +3,7 @@ import os
 import pathlib
 import warnings
 from importlib import import_module
-from unittest.mock import ANY, Mock, patch
+from unittest.mock import Mock, patch
 
 import docx
 import pytest
@@ -347,15 +347,18 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
     mock_partition.assert_called_once_with(
         filename=filename,
-        metadata_filename=None,
         file=None,
         url=None,
-        include_page_breaks=False,
-        infer_table_structure=False,
-        extract_images_in_pdf=ANY,
-        image_output_dir_path=ANY,
         strategy=PartitionStrategy.FAST,
         languages=None,
+        metadata_filename=None,
+        include_page_breaks=False,
+        infer_table_structure=False,
+        extract_images_in_pdf=False,
+        extract_element_types=None,
+        image_output_dir_path=None,
+        extract_to_payload=False,
+        hi_res_model_name=None,
     )
 
 
@@ -692,10 +695,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
         extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
     )
     fun_name = "partition_" + filetype_module
-    if filetype_module in ["pdf", "image"]:
-        module = import_module(f"unstructured.partition.pdf_image.{filetype_module}")  # noqa
-    else:
-        module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
+    module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
@@ -1103,7 +1103,10 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     assert len(partitioned_table_elements_5_chars) != len(table_elements)
     assert len(partitioned_table_elements_200_chars) != len(table_elements)
 
-    assert len(partitioned_table_elements_5_chars[0].text) == 5
+    # trailing whitespace is stripped from the first chunk, leaving only a checkbox character
+    assert len(partitioned_table_elements_5_chars[0].text) == 1
+    # but the second chunk is the full 5 characters
+    assert len(partitioned_table_elements_5_chars[1].text) == 5
     assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
 
     # the first table element is under 200 chars so doesn't get chunked!
