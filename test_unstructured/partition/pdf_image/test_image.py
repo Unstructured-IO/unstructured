@@ -649,7 +649,6 @@ def test_partition_image_element_extraction(
         if file_mode == "filename":
             elements = image.partition_image(
                 filename=filename,
-                strategy="hi_res",
                 extract_element_types=extract_element_types,
                 extract_to_payload=extract_to_payload,
                 image_output_dir_path=tmpdir,
@@ -658,7 +657,6 @@ def test_partition_image_element_extraction(
             with open(filename, "rb") as f:
                 elements = image.partition_image(
                     file=f,
-                    strategy="hi_res",
                     extract_element_types=extract_element_types,
                     extract_to_payload=extract_to_payload,
                     image_output_dir_path=tmpdir,
