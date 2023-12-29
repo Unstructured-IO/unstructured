@@ -17,7 +17,7 @@ from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.lang import (
-    check_languages,
+    check_language_args,
 )
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -244,7 +244,7 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages, ocr_languages)
 
     if url is not None:
         file, filetype = file_and_type_from_url(

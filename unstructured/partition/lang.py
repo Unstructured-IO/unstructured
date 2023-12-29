@@ -351,7 +351,7 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
     return [langcode for langcode in PYTESSERACT_LANG_CODES if langcode.startswith(prefix)]
 
 
-def check_languages(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
+def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
     """Handle users defining both `ocr_languages` and `languages`,
     defaulting `languages` to ['eng'] and converting `ocr_languages` if needed"""
     if ocr_languages == "auto":

@@ -70,7 +70,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    check_languages,
+    check_language_args,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
@@ -201,7 +201,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages, ocr_languages)
 
     return partition_pdf_or_image(
         filename=filename,
@@ -492,7 +492,7 @@ def partition_pdf_or_image(
 
     validate_strategy(strategy, is_image)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
