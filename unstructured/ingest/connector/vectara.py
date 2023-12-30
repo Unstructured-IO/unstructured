@@ -144,16 +144,27 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         docs_list: t.Dict[t.Dict[str, t.Any]] = []
 
         def get_metadata(element) -> t.Dict[str, t.Any]:
-            metadata_keys = ['page_number', 'data_source-url', 'filename', 'filetype', 'lastModified']
+            '''
+            Select which meta-data fields to include and optionaly map them to a new new.
+            remove the "metadata-" prefix from the keys
+            '''
+            metadata_map = {
+                'page_number': 'page_number', 
+                'data_source-url': 'url', 
+                'filename': 'filename', 
+                'filetype': 'filetype', 
+                'last_modified': 'last_modified'
+            }
             md = flatten_dict(element, separator="-",flatten_lists=True)
             md = {k.replace('metadata-', ''): v for k, v in md.items()}
-            md = {k:v for k,v in md.items() if k in metadata_keys}
+            md = {metadata_map[k]:v for k,v in md.items() if k in metadata_map.keys()}
             return md
 
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
+                all_types = [e["type"] for e in dict_content]
                 vdoc = {
                     "documentId": str(uuid.uuid4()),
                     "section": [
