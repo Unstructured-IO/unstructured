@@ -18,5 +18,6 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    destination_connectors/mongodb
    destination_connectors/pinecone
    destination_connectors/s3
+   destination_connectors/vectara
    destination_connectors/weaviate
 

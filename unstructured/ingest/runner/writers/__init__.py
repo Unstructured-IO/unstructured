@@ -12,6 +12,7 @@ from .fsspec.gcs import GcsWriter
 from .fsspec.s3 import S3Writer
 from .mongodb import MongodbWriter
 from .pinecone import PineconeWriter
+from .vectara import VectaraWriter
 from .weaviate import WeaviateWriter
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
@@ -26,6 +27,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "mongodb": MongodbWriter,
     "pinecone": PineconeWriter,
     "s3": S3Writer,
+    "vectara": VectaraWriter,
     "weaviate": WeaviateWriter,
 }
 
