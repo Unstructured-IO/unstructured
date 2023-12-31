@@ -12,13 +12,13 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # however ingesting from any supported source connector is possible.
 # shellcheck disable=2094
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  local \
+  local \p
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir local-to-vectara \
   --strategy fast \
   --num-processes 2 \
   --verbose \
-  --work-dir "<directory for intermediate outputs to be saved>" \ 
+  --work-dir "<directory for intermediate outputs to be saved>" \
   vectara \
   --api-key "<Vectara API Key to write into a Pinecone index>" \
   --customer-id "<Vectara customer id, ie: ingest-test>" \
