@@ -12,7 +12,7 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # however ingesting from any supported source connector is possible.
 # shellcheck disable=2094
 PYTHONPATH=. ./unstructured/ingest/main.py \
-  local \p
+  local \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir local-to-vectara \
   --strategy fast \
