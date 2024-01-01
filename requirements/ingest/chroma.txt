@@ -64,6 +64,8 @@ google-auth==2.25.2
     # via kubernetes
 googleapis-common-protos==1.62.0
     # via opentelemetry-exporter-otlp-proto-grpc
+graphlib-backport==1.0.3
+    # via chromadb
 grpcio==1.60.0
     # via
     #   chromadb
@@ -242,7 +244,9 @@ urllib3==1.26.18
     #   kubernetes
     #   requests
 uvicorn[standard]==0.24.0.post1
-    # via chromadb
+    # via
+    #   chromadb
+    #   uvicorn
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
