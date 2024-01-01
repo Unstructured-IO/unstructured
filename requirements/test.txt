@@ -60,7 +60,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.4
     # via yarl
-mypy==1.7.1
+mypy==1.8.0
     # via -r test.in
 mypy-extensions==1.0.0
     # via
