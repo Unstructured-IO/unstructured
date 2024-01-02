@@ -56,7 +56,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index-name ingest-test-destination \
   --username "admin" \
   --password "admin" \
-  --batch-size-bytes 15000000 \
+  --batch-size-bytes 150 \
   --num-processes "1"
 
 scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py

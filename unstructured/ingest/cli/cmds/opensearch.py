@@ -46,35 +46,56 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 help="password when using basic auth or connecting to a cloud instance",
             ),
             click.Option(
-                ["--cloud-id"], type=str, default=None, help="id used to connect to Elastic Cloud"
+                ["--use-ssl"], type=bool, default=False, 
+                is_flag=True,
+                help="bla bla"
             ),
             click.Option(
-                ["--es-api-key"], type=str, default=None, help="api key used for authentication"
+                ["--verify-certs"], type=bool, default=False, is_flag=True,help="bla bla"
             ),
             click.Option(
-                ["--api-key-id"],
-                type=str,
-                default=None,
-                help="id associated with api key used for authentication: "
-                "https://www.elastic.co/guide/en/opensearch/reference/current/security-api-create-api-key.html",  # noqa: E501
+                ["--ssl-show-warn"], type=bool, default=False, is_flag=True,help="bla bla"
             ),
+            # click.Option(
+            #     ["--cloud-id"], type=str, default=None, help="id used to connect to Elastic Cloud"
+            # ),
+            # click.Option(
+            #     ["--es-api-key"], type=str, default=None, help="api key used for authentication"
+            # ),
+            # click.Option(
+            #     ["--api-key-id"],
+            #     type=str,
+            #     default=None,
+            #     help="id associated with api key used for authentication: "
+            #     "https://www.elastic.co/guide/en/opensearch/reference/current/security-api-create-api-key.html",  # noqa: E501
+            # ),
+            # click.Option(
+            #     ["--bearer-auth"], 
+            #     type=str,
+            #     default=None,
+            #     help="bearer token used for HTTP bearer authentication",
+            # ),
             click.Option(
-                ["--bearer-auth"],
-                type=str,
-                default=None,
-                help="bearer token used for HTTP bearer authentication",
-            ),
-            click.Option(
-                ["--ca-certs"],
+                ["--ca-certs"], ### YES
                 type=click.Path(),
                 default=None,
             ),
             click.Option(
-                ["--ssl-assert-fingerprint"],
-                type=str,
+                ["--client-cert"], ### YES
+                type=click.Path(),
                 default=None,
-                help="SHA256 fingerprint value",
             ),
+            click.Option(
+                ["--client-key"], ### YES
+                type=click.Path(),
+                default=None,
+            ),
+            # click.Option(
+            #     ["--ssl-assert-fingerprint"], ### Yes
+            #     type=str,
+            #     default=None,
+            #     help="SHA256 fingerprint value",
+            # ),
             click.Option(
                 ["--batch-size"],
                 default=100,

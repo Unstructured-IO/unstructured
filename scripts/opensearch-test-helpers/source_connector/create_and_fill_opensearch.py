@@ -28,7 +28,13 @@ class Movie(Document):
 
 
 print("Connecting to the OpenSearch cluster.")
-client = OpenSearch(hosts=[{"host": "localhost", "port": 9200}], http_auth=("admin", "admin"))
+client = OpenSearch(
+    hosts=[{"host": "localhost", "port": 9200}],
+    http_auth=("admin", "admin"),
+    use_ssl=True,
+    verify_certs=False,
+    ssl_show_warn=False,
+)
 print(client.info())
 df = pd.read_csv(DATA_PATH).dropna().reset_index()
 

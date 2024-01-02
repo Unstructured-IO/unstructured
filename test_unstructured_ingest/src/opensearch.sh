@@ -20,7 +20,7 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   # Kill the container so the script can be repeatedly run using the same ports
   echo "Stopping OpenSearch Docker container"
-  docker-compose -f scripts/opensearch-test-helpers/docker-compose.yaml down --remove-orphans -v
+  docker-compose -f scripts/opensearch-test-helpers/common/docker-compose.yaml down --remove-orphans -v
 
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
@@ -49,6 +49,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --hosts http://localhost:9200 \
   --username admin \
   --password admin \
+  --use-ssl \
   --fields 'ethnicity,director,plot' \
   --work-dir "$WORK_DIR" \
   --batch-size 2
