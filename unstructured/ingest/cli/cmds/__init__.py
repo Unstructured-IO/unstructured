@@ -39,6 +39,7 @@ from .notion import get_base_src_cmd as notion_base_src_cmd
 from .onedrive import get_base_src_cmd as onedrive_base_src_cmd
 from .outlook import get_base_src_cmd as outlook_base_src_cmd
 from .pinecone import get_base_dest_cmd as pinecone_base_dest_cmd
+from .qdrant import get_base_dest_cmd as qdrant_base_dest_cmd
 from .reddit import get_base_src_cmd as reddit_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
@@ -103,6 +104,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     weaviate_dest_cmd,
     mongo_base_dest_cmd,
     pinecone_base_dest_cmd,
+    qdrant_base_dest_cmd,
 ]
 
 # Make sure there are not overlapping names

@@ -1,5 +1,6 @@
 import os
 import pathlib
+import tempfile
 from unittest import mock
 
 import pytest
@@ -7,6 +8,7 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
+from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType
@@ -536,6 +538,18 @@ def test_partition_image_uses_model_name():
         assert mockpartition.call_args.kwargs["model_name"]
 
 
+def test_partition_image_uses_hi_res_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        image.partition_image("example-docs/layout-parser-paper-fast.jpg", hi_res_model_name="test")
+        print(mockpartition.call_args)
+        assert "model_name" not in mockpartition.call_args.kwargs
+        assert "hi_res_model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["hi_res_model_name"] == "test"
+
+
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
@@ -620,3 +634,32 @@ def test_partition_image_has_filename(inference_results):
     assert element.metadata.filetype == "JPEG"
     # This should be kept from the filename we originally gave
     assert element.metadata.filename == filename
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize("extract_to_payload", [False, True])
+def test_partition_image_element_extraction(
+    file_mode,
+    extract_to_payload,
+    filename=example_doc_path("embedded-images-tables.jpg"),
+):
+    extract_element_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if file_mode == "filename":
+            elements = image.partition_image(
+                filename=filename,
+                extract_element_types=extract_element_types,
+                extract_to_payload=extract_to_payload,
+                image_output_dir_path=tmpdir,
+            )
+        else:
+            with open(filename, "rb") as f:
+                elements = image.partition_image(
+                    file=f,
+                    extract_element_types=extract_element_types,
+                    extract_to_payload=extract_to_payload,
+                    image_output_dir_path=tmpdir,
+                )
+
+        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
