@@ -1,7 +1,8 @@
-Hosted API Deployment Guide
-===========================
+SaaS API Deployment Guide
+=========================
 
-This documentation serves as a guide for Unstructured Hosted API users to register, configure payment, and start using the Hosted API on the Unstructured platform. It contains all the necessary instructions and resources to facilitate a smooth setup and deployment process.
+This documentation serves as a guide for Unstructured SaaS API users to register and manage API Key, as well as the billing information. It contains all the necessary instructions and resources to facilitate a smooth setup and deployment process of Hosted API on Unstructured infrastructure.
+
 
 New User Sign-up
 ----------------
