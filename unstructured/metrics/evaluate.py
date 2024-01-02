@@ -9,6 +9,9 @@ from typing import List, Optional, Tuple, Union
 import click
 import pandas as pd
 from tqdm import tqdm
+import re
+
+from unstructured.metrics.utils import _read_text_file, _listdir_recursive, _mean, _stdev, _pstdev, _write_to_file, _display, _format_grouping_output, _prepare_output_cct
 
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
@@ -17,14 +20,14 @@ from unstructured.metrics.element_type import (
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.staging.base import elements_from_json, elements_to_text
 
-logger = logging.getLogger("unstructured.ingest")
+logger = logging.getLogger("unstructured.eval")
 handler = logging.StreamHandler()
-handler.name = "ingest_log_handler"
+handler.name = "eval_log_handler"
 formatter = logging.Formatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
 handler.setFormatter(formatter)
 
 # Only want to add the handler once
-if "ingest_log_handler" not in [h.name for h in logger.handlers]:
+if "eval_log_handler" not in [h.name for h in logger.handlers]:
     logger.addHandler(handler)
 
 logger.setLevel(logging.DEBUG)
@@ -63,7 +66,7 @@ def measure_text_extraction_accuracy(
     if output_type not in ["json", "txt"]:
         raise ValueError(
             f"Specified file type under `output_dir` or `output_list` should be one of \
-                'json' or 'txt'. The given file type is {output_type}, exiting."
+                `json` or `txt`. The given file type is {output_type}, exiting."
         )
     if not all(_.endswith(output_type) for _ in output_list):
         logger.warning(
@@ -72,7 +75,7 @@ def measure_text_extraction_accuracy(
         )
 
     rows = []
-    ext_index = -len(output_type)
+    ext_index = -(len(output_type) + 1)
 
     # assumption: output file name convention is name-of-file.doc.json
     # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
@@ -179,124 +182,3 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
     _display(agg_df)
-
-
-def _prepare_output_cct(docpath: str, output_type: str):
-    try:
-        if output_type == "json":
-            output_cct = elements_to_text(elements_from_json(docpath))
-        elif output_type == "txt":
-            output_cct = _read_text_file(docpath)
-        else:
-            raise ValueError(f"File type not supported. Expects one of `json` or `txt`, but received {output_type} instead.")
-    except ValueError as e:
-        logger.error(f"Could not read the file {docpath}")
-        raise e
-    return output_cct
-
-
-def _listdir_recursive(dir: str):
-    listdir = []
-    for dirpath, _, filenames in os.walk(dir):
-        for filename in filenames:
-            # Remove the starting directory from the path to show the relative path
-            relative_path = os.path.relpath(dirpath, dir)
-            if relative_path == ".":
-                listdir.append(filename)
-            else:
-                listdir.append(f"{relative_path}/{filename}")
-    return listdir
-
-
-def _format_grouping_output(*df):
-    return pd.concat(df, axis=1).reset_index()
-
-
-def _display(df):
-    if len(df) == 0:
-        return
-    headers = df.columns.tolist()
-    col_widths = [
-        max(len(header), max(len(str(item)) for item in df[header])) for header in headers
-    ]
-    click.echo(" ".join(header.ljust(col_widths[i]) for i, header in enumerate(headers)))
-    click.echo("-" * sum(col_widths) + "-" * (len(headers) - 1))
-    for _, row in df.iterrows():
-        formatted_row = []
-        for item in row:
-            if isinstance(item, float):
-                formatted_row.append(f"{item:.3f}")
-            else:
-                formatted_row.append(str(item))
-        click.echo(
-            " ".join(formatted_row[i].ljust(col_widths[i]) for i in range(len(formatted_row))),
-        )
-
-
-def _write_to_file(
-    dir: str, filename: str, df: pd.DataFrame, mode: str = "w", overwrite: bool = True
-):
-    if mode not in ["w", "a"]:
-        raise ValueError("Mode not supported. Mode must be one of [w, a].")
-    if dir and not os.path.exists(dir):
-        os.makedirs(dir)
-    if "count" in df.columns:
-        df["count"] = df["count"].astype(int)
-    if "filename" in df.columns and "connector" in df.columns:
-        df.sort_values(by=["connector", "filename"], inplace=True)
-    if not overwrite:
-        filename = _uniquity_file(dir, filename)
-    df.to_csv(os.path.join(dir, filename), sep="\t", mode=mode, index=False, header=(mode == "w"))
-
-
-def _uniquity_file(dir, filename):
-    counter = 1
-    original_filename, extension = filename.rsplit(".", 1)
-    while os.path.exists(os.path.join(dir, filename)):
-        filename = original_filename + " (" + str(counter) + ")." + extension
-        counter += 1
-    return filename
-
-
-def _mean(scores: Union[pd.Series, List[float]], rounding: Optional[int] = 3):
-    if len(scores) == 0:
-        return None
-    mean = statistics.mean(scores)
-    if not rounding:
-        return mean
-    return round(mean, rounding)
-
-
-def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
-    # Filter out None values
-    scores = [score for score in scores if score is not None]
-    # Proceed only if there are more than one value
-    if len(scores) <= 1:
-        return None
-    if not rounding:
-        return statistics.stdev(scores)
-    return round(statistics.stdev(scores), rounding)
-
-
-def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
-    scores = [score for score in scores if score is not None]
-    if len(scores) <= 1:
-        return None
-    if not rounding:
-        return statistics.pstdev(scores)
-    return round(statistics.pstdev(scores), rounding)
-
-
-def _read_text_file(path):
-    # Check if the file exists
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"The file at {path} does not exist.")
-
-    try:
-        with open(path, errors="ignore") as f:
-            text = f.read()
-        return text
-    except OSError as e:
-        # Handle other I/O related errors
-        raise IOError(f"An error occurred when reading the file at {path}: {e}")
-
