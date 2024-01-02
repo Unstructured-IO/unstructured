@@ -6,9 +6,6 @@ import pandas as pd
 import pytest
 
 from unstructured.metrics.evaluate import (
-    _mean,
-    _pstdev,
-    _stdev,
     measure_element_type_accuracy,
     measure_text_extraction_accuracy,
 )
@@ -128,22 +125,3 @@ def test_text_extraction_wrong_type():
         measure_text_extraction_accuracy(
             output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="wrong"
         )
-
-
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.parametrize(
-    ("numbers", "expected_mean", "expected_stdev", "expected_pstdev"),
-    [
-        ([2, 5, 6, 7], 5, 2.16, 1.871),
-        ([1, 100], 50.5, 70.004, 49.5),
-        ([1], 1, None, None),
-        ([], None, None, None),
-    ],
-)
-def test_stats(numbers, expected_mean, expected_stdev, expected_pstdev):
-    mean = _mean(numbers)
-    stdev = _stdev(numbers)
-    pstdev = _pstdev(numbers)
-    assert mean == expected_mean
-    assert stdev == expected_stdev
-    assert pstdev == expected_pstdev

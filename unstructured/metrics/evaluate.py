@@ -2,23 +2,28 @@
 
 import logging
 import os
-import statistics
 import sys
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 
-import click
 import pandas as pd
 from tqdm import tqdm
-import re
-
-from unstructured.metrics.utils import _read_text_file, _listdir_recursive, _mean, _stdev, _pstdev, _write_to_file, _display, _format_grouping_output, _prepare_output_cct
 
 from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
-from unstructured.staging.base import elements_from_json, elements_to_text
+from unstructured.metrics.utils import (
+    _display,
+    _format_grouping_output,
+    _listdir_recursive,
+    _mean,
+    _prepare_output_cct,
+    _pstdev,
+    _read_text_file,
+    _stdev,
+    _write_to_file,
+)
 
 logger = logging.getLogger("unstructured.eval")
 handler = logging.StreamHandler()
@@ -97,7 +102,7 @@ def measure_text_extraction_accuracy(
                 output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
                 source_cct = _read_text_file(os.path.join(source_dir, fn_txt))
             except Exception:
-                # if any of the output/source file is unable to open, skip the loop 
+                # if any of the output/source file is unable to open, skip the loop
                 continue
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
