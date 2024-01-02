@@ -20,7 +20,9 @@ if __name__ == "__main__":
     client = OpenSearch(
         hosts=[{"host": "localhost", "port": 9200}],
         http_auth=("admin", "admin"),
-        use_ssl=False,
+        use_ssl=True,
+        verify_certs=False,
+        ssl_show_warn=False,
     )
     print(client.info())
 

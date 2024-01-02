@@ -56,6 +56,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --index-name ingest-test-destination \
   --username "admin" \
   --password "admin" \
+  --use-ssl \
   --batch-size-bytes 150 \
   --num-processes "1"
 
