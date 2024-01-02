@@ -58,7 +58,7 @@ def measure_text_extraction_accuracy(
         source_list = _listdir_recursive(source_dir)
 
     if not output_list:
-        print("No output files to calculate to edit distances for, exiting")
+        logger.info("No output files to calculate to edit distances for, exiting")
         sys.exit(0)
     if output_type not in ["json", "txt"]:
         raise ValueError(
@@ -66,17 +66,19 @@ def measure_text_extraction_accuracy(
                 'json' or 'txt'. The given file type is {output_type}, exiting."
         )
     if not all(_.endswith(output_type) for _ in output_list):
-        print(
+        logger.warning(
             "The directory contains file type inconsistent with the given input. \
                 Please note that some files will be skipped."
         )
 
     rows = []
+    ext_index = -len(output_type)
 
     # assumption: output file name convention is name-of-file.doc.json
     # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
     for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
-        filename = (doc.split("/")[-1]).split(f".{output_type}")[0]
+        # filename = (doc.split("/")[-1]).split(f".{output_type}")[0]
+        filename = os.path.basename(doc)[:ext_index]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
         connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
@@ -90,9 +92,10 @@ def measure_text_extraction_accuracy(
         if fn_txt in source_list:  # type: ignore
             try:
                 output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
-                source_cct = _read_text(os.path.join(source_dir, fn_txt))
+                source_cct = _read_text_file(os.path.join(source_dir, fn_txt))
             except Exception:
-                pass
+                # if any of the output/source file is unable to open, skip the loop 
+                continue
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
             rows.append([filename, doctype, connector, accuracy, percent_missing])
@@ -159,8 +162,8 @@ def measure_element_type_accuracy(
         connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
 
         if fn_json in source_list:  # type: ignore
-            output = get_element_type_frequency(_read_text(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text(os.path.join(source_dir, fn_json)))
+            output = get_element_type_frequency(_read_text_file(os.path.join(output_dir, doc)))
+            source = get_element_type_frequency(_read_text_file(os.path.join(source_dir, fn_json)))
             accuracy = round(calculate_element_type_percent_match(output, source), 3)
             rows.append([filename, doctype, connector, accuracy])
 
@@ -179,10 +182,16 @@ def measure_element_type_accuracy(
 
 
 def _prepare_output_cct(docpath: str, output_type: str):
-    if output_type == "json":
-        output_cct = elements_to_text(elements_from_json(docpath))
-    elif output_type == "txt":
-        output_cct = _read_text(docpath)
+    try:
+        if output_type == "json":
+            output_cct = elements_to_text(elements_from_json(docpath))
+        elif output_type == "txt":
+            output_cct = _read_text_file(docpath)
+        else:
+            raise ValueError(f"File type not supported. Expects one of `json` or `txt`, but received {output_type} instead.")
+    except ValueError as e:
+        logger.error(f"Could not read the file {docpath}")
+        raise e
     return output_cct
 
 
@@ -278,7 +287,16 @@ def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3):
     return round(statistics.pstdev(scores), rounding)
 
 
-def _read_text(path):
-    with open(path, errors="ignore") as f:
-        text = f.read()
-    return text
+def _read_text_file(path):
+    # Check if the file exists
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"The file at {path} does not exist.")
+
+    try:
+        with open(path, errors="ignore") as f:
+            text = f.read()
+        return text
+    except OSError as e:
+        # Handle other I/O related errors
+        raise IOError(f"An error occurred when reading the file at {path}: {e}")
+
