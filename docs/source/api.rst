@@ -28,5 +28,6 @@ NOTE: Currently, the pipeline is capable of recognizing the file type and choosi
    apis/api_sdks
    apis/usage_methods
    apis/azure_marketplace
+   apis/aws_marketplace
    apis/api_parameters
    apis/validation_errors

@@ -18,6 +18,7 @@ from typing import (
     cast,
 )
 
+import regex
 from typing_extensions import Self, TypeAlias
 
 from unstructured.documents.elements import (
@@ -45,7 +46,46 @@ PreChunk: TypeAlias = "TablePreChunk | TextPreChunk"
 
 
 class ChunkingOptions:
-    """Specifies parameters of optional chunking behaviors."""
+    """Specifies parameters of optional chunking behaviors.
+
+    Parameters
+    ----------
+    max_characters
+        Hard-maximum text-length of chunk. A chunk longer than this will be split mid-text and be
+        emitted as two or more chunks.
+    new_after_n_chars
+        Preferred approximate chunk size. A chunk composed of elements totalling this size or
+        greater is considered "full" and will not be enlarged by adding another element, even if it
+        will fit within the remaining `max_characters` for that chunk. Defaults to `max_characters`
+        when not specified, which effectively disables this behavior. Specifying 0 for this
+        argument causes each element to appear in a chunk by itself (although an element with text
+        longer than `max_characters` will be still be split into two or more chunks).
+    multipage_sections
+        Indicates that page-boundaries should not be respected while chunking, i.e. elements
+        appearing on two different pages can appear in the same chunk.
+    combine_text_under_n_chars
+        Provides a way to "recombine" small chunks formed by breaking on a semantic boundary. Only
+        relevant for a chunking strategy that specifies higher-level semantic boundaries to be
+        respected, like "section" or "page". Recursively combines two adjacent pre-chunks when the
+        first pre-chunk is smaller than this threshold. "Recursively" here means the resulting
+        pre-chunk can be combined with the next pre-chunk if it is still under the length threshold.
+        Defaults to `max_characters` which combines chunks whenever space allows. Specifying 0 for
+        this argument suppresses combining of small chunks. Note this value is "capped" at the
+        `new_after_n_chars` value since a value higher than that would not change this parameter's
+        effect.
+    overlap
+        Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
+        next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
+        where an oversized element is divided into multiple chunks by text-splitting.
+    text_splitting_separators
+        A sequence of strings like `("\n", " ")` to be used as target separators during
+        text-splitting. Text-splitting only applies to splitting an oversized element into two or
+        more chunks. These separators are tried in the specified order until one is found in the
+        string to be split. The default separator is `""` which matches between any two characters.
+        This separator should not be specified in this sequence because it is always the separator
+        of last-resort. Note that because the separator is removed during text-splitting, only
+        whitespace character sequences are suitable.
+    """
 
     def __init__(
         self,
@@ -54,12 +94,14 @@ class ChunkingOptions:
         multipage_sections: bool = True,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
+        text_splitting_separators: Sequence[str] = (),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
         self._max_characters = max_characters
         self._multipage_sections = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
         self._overlap = overlap
+        self._text_splitting_separators = text_splitting_separators
 
     @classmethod
     def new(
@@ -69,6 +111,7 @@ class ChunkingOptions:
         multipage_sections: bool = True,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
+        text_splitting_separators: Sequence[str] = (),
     ) -> Self:
         """Construct validated instance.
 
@@ -80,6 +123,7 @@ class ChunkingOptions:
             multipage_sections,
             new_after_n_chars,
             overlap,
+            text_splitting_separators,
         )
         self._validate()
         return self
@@ -145,6 +189,15 @@ class ChunkingOptions:
         )
 
     @lazyproperty
+    def split(self) -> Callable[[str], Tuple[str, str]]:
+        """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
+
+        The function is pre-configured with the chosen chunking window size and any other applicable
+        options specified by the caller as part of this chunking-options instance.
+        """
+        return _TextSplitter(self)
+
+    @lazyproperty
     def text_separator(self) -> str:
         """The string to insert between elements when concatenating their text for a chunk.
 
@@ -153,6 +206,11 @@ class ChunkingOptions:
         in future if we want to.
         """
         return "\n\n"
+
+    @lazyproperty
+    def text_splitting_separators(self) -> Tuple[str, ...]:
+        """Sequence of text-splitting target strings to be used in order of preference."""
+        return tuple(self._text_splitting_separators)
 
     def _validate(self) -> None:
         """Raise ValueError if requestion option-set is invalid."""
@@ -185,6 +243,122 @@ class ChunkingOptions:
         # loop (I think).
         if self._overlap >= max_characters:
             raise ValueError(f"'overlap' must be less than max_characters," f" got {self._overlap}")
+
+
+class _TextSplitter:
+    """Provides a text-splitting function configured on construction.
+
+    Text is split on the best-available separator, falling-back from the preferred separator
+    through a sequence of alternate separators.
+
+    - The separator is removed by splitting so only whitespace strings are suitable separators.
+    - A "blank-line" ("\n\n") is unlikely to occur in an element as it would have been used as an
+      element boundary during partitioning.
+
+    This is a *callable* object. Constructing it essentially produces a function:
+
+        split = _TextSplitter(opts)
+        fragment, remainder = split(s)
+
+    This allows it to be configured with length-options etc. on construction and used throughout a
+    chunking operation on a given element-stream.
+    """
+
+    def __init__(self, opts: ChunkingOptions):
+        self._opts = opts
+
+    def __call__(self, s: str) -> Tuple[str, str]:
+        """Return pair of strings split from `s` on the best match of configured patterns.
+
+        The first string is the split, the second is the remainder of the string. The split string
+        will never be longer than `maxlen`. The separators are tried in order until a match is
+        found. The last separator is "" which matches between any two characters so there will
+        always be a split.
+
+        The separator is removed and does not appear in the split or remainder.
+
+        An `s` that is already less than the maximum length is returned unchanged with no remainder.
+        This allows this function to be called repeatedly with the remainder until it is consumed
+        and returns a remainder of "".
+        """
+        maxlen = self._opts.hard_max
+
+        if len(s) <= maxlen:
+            return s, ""
+
+        for p, sep_len in self._patterns:
+            # -- length of separator must be added to include that separator when it happens to be
+            # -- located exactly at maxlen. Otherwise the search-from-end regex won't find it.
+            fragment, remainder = self._split_from_maxlen(p, sep_len, s)
+            if (
+                # -- no available split with this separator --
+                not fragment
+                # -- split did not progress, consuming part of the string --
+                or len(remainder) >= len(s)
+            ):
+                continue
+            return fragment.rstrip(), remainder.lstrip()
+
+        # -- the terminal "" pattern is not actually executed via regex since its implementation is
+        # -- trivial and provides a hard back-stop here in this method. No separator is used between
+        # -- tail and remainder on arb-char split.
+        return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
+
+    @lazyproperty
+    def _patterns(self) -> Tuple[Tuple[regex.Pattern[str], int], ...]:
+        """Sequence of (pattern, len) pairs to match against.
+
+        Patterns appear in order of preference, those following are "fall-back" patterns to be used
+        if no match of a prior pattern is found.
+
+        NOTE these regexes search *from the end of the string*, which is what the "(?r)" bit
+        specifies. This is much more efficient than starting at the beginning of the string which
+        could result in hundreds of matches before the desired one.
+        """
+        separators = self._opts.text_splitting_separators
+        return tuple((regex.compile(f"(?r){sep}"), len(sep)) for sep in separators)
+
+    def _split_from_maxlen(
+        self, pattern: regex.Pattern[str], sep_len: int, s: str
+    ) -> Tuple[str, str]:
+        """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
+
+        Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
+        separator produces a split shorter than the required overlap (which would produce an
+        infinite loop).
+
+        `split` will never be longer than `maxlen` and there is no longer split available using
+        `pattern`.
+
+        The separator is removed and does not appear in either the split or remainder.
+        """
+        maxlen, overlap = self._opts.hard_max, self._opts.overlap
+
+        # -- A split not longer than overlap will not progress (infinite loop). On the right side,
+        # -- need to extend search range to include a separator located exactly at maxlen.
+        match = pattern.search(s, pos=overlap + 1, endpos=maxlen + sep_len)
+        if match is None:
+            return "", s
+
+        # -- characterize match location
+        match_start, match_end = match.span()
+        # -- matched separator is replaced by single-space in overlap string --
+        separator = " "
+
+        # -- in multi-space situation, fragment may have trailing whitespace because match is from
+        # -- right to left
+        fragment = s[:match_start].rstrip()
+        # -- remainder can have leading space when match is on "\n" followed by spaces --
+        raw_remainder = s[match_end:].lstrip()
+
+        if overlap <= len(separator):
+            return fragment, raw_remainder
+
+        # -- compute overlap --
+        tail_len = overlap - len(separator)
+        tail = fragment[-tail_len:].lstrip()
+        overlapped_remainder = tail + separator + raw_remainder
+        return fragment, overlapped_remainder
 
 
 # ================================================================================================
@@ -276,27 +450,28 @@ class TablePreChunk:
 
     def iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
-        text = self._table.text
-        html = self._table.metadata.text_as_html or ""
+        split = self._opts.split
+        text_remainder = self._table.text
+        html_remainder = self._table.metadata.text_as_html or ""
         maxlen = self._opts.hard_max
 
         # -- only chunk a table when it's too big to swallow whole --
-        if len(text) <= maxlen and len(html) <= maxlen:
+        if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
             yield self._table
             return
 
         is_continuation = False
 
-        while text or html:
-            # -- split off the next maxchars into the next TableChunk --
-            text_chunk, text = text[:maxlen], text[maxlen:]
-            table_chunk = TableChunk(text=text_chunk, metadata=copy.deepcopy(self._table.metadata))
+        while text_remainder or html_remainder:
+            # -- split off the next chunk-worth of characters into a TableChunk --
+            chunk_text, text_remainder = split(text_remainder)
+            table_chunk = TableChunk(text=chunk_text, metadata=copy.deepcopy(self._table.metadata))
 
             # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
             # -- HTML elements that *correspond* to the TextChunk.text fragment.
-            if html:
-                html_chunk, html = html[:maxlen], html[maxlen:]
-                table_chunk.metadata.text_as_html = html_chunk
+            if html_remainder:
+                chunk_html, html_remainder = html_remainder[:maxlen], html_remainder[maxlen:]
+                table_chunk.metadata.text_as_html = chunk_html
 
             # -- mark second and later chunks as a continuation --
             if is_continuation:
@@ -332,17 +507,14 @@ class TextPreChunk:
 
     def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
-        text = self._text
-        text_len = len(text)
-        maxlen = self._opts.hard_max
-        start = 0
-        remaining = text_len
+        split = self._opts.split
+        metadata = self._consolidated_metadata
 
-        while remaining > 0:
-            end = min(start + maxlen, text_len)
-            yield CompositeElement(text=text[start:end], metadata=self._consolidated_metadata)
-            start = end
-            remaining = text_len - end
+        remainder = self._text
+
+        while remainder:
+            s, remainder = split(remainder)
+            yield CompositeElement(text=s, metadata=metadata)
 
     @lazyproperty
     def text_length(self) -> int:
