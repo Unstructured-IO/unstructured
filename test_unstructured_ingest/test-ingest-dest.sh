@@ -25,6 +25,7 @@ all_tests=(
   'gcs.sh'
   'mongodb.sh'
   'pinecone.sh'
+  'qdrant.sh'
   's3.sh'
   'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
