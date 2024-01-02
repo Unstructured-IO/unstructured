@@ -352,7 +352,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         file=None,
         url=None,
         strategy=PartitionStrategy.FAST,
-        languages=None,
+        languages=["auto"],
         metadata_filename=None,
         include_page_breaks=False,
         infer_table_structure=False,

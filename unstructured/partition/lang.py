@@ -354,43 +354,47 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
 def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
     """Handle users defining both `ocr_languages` and `languages`,
     defaulting `languages` to ['eng'] and converting `ocr_languages` if needed"""
+    # --- Clean and update defaults
     if ocr_languages == "auto":
         ocr_languages = None
 
     if ocr_languages:
         ocr_languages = _clean_ocr_languages_arg(ocr_languages)
-
-    if languages is not None and not isinstance(languages, list):
-        raise TypeError(
-            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        logger.warning(
+            "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+            "Please use languages instead.",
         )
 
     if languages is None or not languages[0]:
         languages = ["eng"]
 
+    if not isinstance(languages, list):
+        raise TypeError(
+            "The language parameter must be a list of language codes as strings, ex. ['eng']",
+        )
+
+    # --- If `ocr_languages` is defined and `languages` is also a default, use `ocr_languages`
+    if ocr_languages and (languages == ["eng"] or languages == ["auto"]):
+        languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        logger.warning(
+            "Only one of languages and ocr_languages should be specified. "
+            "languages is preferred. ocr_languages is marked for deprecation.",
+        )
+
+    # --- Clean `languages`
     # if "auto" is included in the list of inputs, language detection will be triggered
     # and the rest of the inputted languages will be ignored
     if "auto" not in languages:
         for i, lang in enumerate(languages):
             languages[i] = _convert_language_to_language_code(lang)
 
-    if ocr_languages is not None:
-        if languages != ["eng"]:
-            logger.warning(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
+        languages = _clean_ocr_languages_arg(languages)
+        languages = languages.split(TESSERACT_LANGUAGES_SPLITTER)
 
-        else:
-            languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
     return languages
 
 
-def _clean_ocr_languages_arg(ocr_languages: Union[list, str]) -> str:
+def _clean_ocr_languages_arg(ocr_languages: Union[List[str], str]) -> str:
     """Fix common incorrect definitions for ocr_languages:
     defining it as a list, adding extra quotation marks, adding brackets.
     Returns a single string of ocr_languages"""
