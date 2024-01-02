@@ -8,7 +8,7 @@ unstructured-ingest \
   --chunk-elements \
   --num-processes 2 \
   --verbose \
-  pinecone \
+  vectara \
   --api-key "$VECTARA_API_KEY" \
   --customer-id "$VECTARA_CUSTOMER_ID" \
   --corpus-id "$VECTARA_CORPUS_ID" \
