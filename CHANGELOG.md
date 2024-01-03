@@ -1,3 +1,15 @@
+## 0.11.8
+
+### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+
+### Features
+
+
+### Fixes
+
+
 ## 0.11.7
 
 ### Enhancements
