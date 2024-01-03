@@ -1,4 +1,4 @@
-## 0.11.7-dev4
+## 0.11.7-dev5
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 * **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
 
 ### Fixes
+
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper** 
 
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
 
