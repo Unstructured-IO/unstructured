@@ -60,6 +60,7 @@ class BaseDestCmd(BaseCmd):
         ingest_log_streaming_init(logging.DEBUG if verbose else logging.INFO)
         log_options(parent_options, verbose=verbose)
         log_options(options, verbose=verbose)
+
         try:
             self.check_dest_options(options=options)
             runner = self.get_dest_runner(

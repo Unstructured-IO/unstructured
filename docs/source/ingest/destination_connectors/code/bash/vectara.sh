@@ -9,7 +9,7 @@ unstructured-ingest \
   --num-processes 2 \
   --verbose \
   vectara \
-  --api-key "$VECTARA_API_KEY" \
   --customer-id "$VECTARA_CUSTOMER_ID" \
-  --corpus-id "$VECTARA_CORPUS_ID" \
-  --batch-size 10
+  --oauth-client-id "$VECTARA_OAUTH_CLIENT_ID" \
+  --oauth-secret "$VECTARA_OAUTH_SECRET" \
+  --corpus-name "test-corpus-vectara"

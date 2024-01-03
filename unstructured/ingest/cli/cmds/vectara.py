@@ -13,24 +13,35 @@ class VectaraCliWriteConfig(SimpleVectaraConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--api-key"],
-                required=True,
-                type=str,
-                help="API key used for authenticating with Vectara.",
-                envvar="VECTARA_API_KEY",
-                show_envvar=True,
-            ),
-            click.Option(
                 ["--customer-id"],
                 required=True,
                 type=str,
                 help="The Vectara customer-id.",
+                envvar="VECTARA_CUSTOMER_ID",
+                show_envvar=True,
             ),
             click.Option(
-                ["--corpus-id"],
+                ["--oauth-client-id"],
                 required=True,
                 type=str,
-                help="The Vectara corpus-id.",
+                help="Vectara OAuth2 client ID.",
+                envvar="VECTARA_OAUTH_CLIENT_ID",
+                show_envvar=True,
+            ),
+            click.Option(
+                ["--oauth-secret"],
+                required=True,
+                type=str,
+                help="Vectara OAuth2 secret.",
+                envvar="VECTARA_OAUTH_SECRET",
+                show_envvar=True,
+            ),
+            click.Option(
+                ["--corpus-name"],
+                required=False,
+                default="vectara-unstructured",
+                type=str,
+                help="The Vectara corpus-name.",
             ),
         ]
         return options

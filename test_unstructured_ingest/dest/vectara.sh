@@ -8,18 +8,19 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-vectara-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
+
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-if [ -z "$VECTARA_API_KEY" ]; then
-  echo "Skipping VECTARA ingest test because VECTARA_API_KEY env var is not set."
+if [ -z "$VECTARA_OAUTH_CLIENT_ID" ]; then
+  echo "Skipping VECTARA ingest test because ECTARA_OAUTH_CLIENT_ID env var is not set."
+  exit 0
+fi
+if [ -z "$VECTARA_OAUTH_SECRET_ID" ]; then
+  echo "Skipping VECTARA ingest test because ECTARA_OAUTH_SECRET_ID env var is not set."
   exit 0
 fi
 if [ -z "$VECTARA_CUSTOMER_ID" ]; then
   echo "Skipping VECTARA ingest test because VECTARA_CUSTOMER_ID env var is not set."
-  exit 0
-fi
-if [ -z "$VECTARA_CORPUS_ID" ]; then
-  echo "Skipping VECTARA ingest test because VECTARA_CORPUS_ID env var is not set."
   exit 0
 fi
 
@@ -46,7 +47,7 @@ function cleanup {
           \"corpusKey\": [
             {
               \"customerId\": $VECTARA_CUSTOMER_ID,
-              \"corpusId\": $VECTARA_CORPUS_ID
+              \"corpusId\": $VECTARA_CORPUS_NAME
             }
           ]
         }
@@ -76,6 +77,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   vectara \
-  --api-key "$VECTARA_API_KEY" \
-  --corpus-id "$VECTARA_CORPUS_ID" \
   --customer-id "$VECTARA_CUSTOMER_ID" \
+  --oauth-client-id "$VECTARA_OAUTH_CLIENT_ID" \
+  --oauth-secret "$VECTARA_OAUTH_SECRET" \
+  --corpus-name "test-corpus-vectara"
+  

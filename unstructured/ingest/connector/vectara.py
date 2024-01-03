@@ -12,22 +12,23 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.staging.base import flatten_dict
-from unstructured.utils import requires_dependencies
 
 import requests
+import datetime
+import traceback
 
 @dataclass
 class VectaraAccessConfig(AccessConfig):
-    api_key: t.AnyStr = None
+    oauth_client_id: t.AnyStr
+    oauth_secret: t.AnyStr
 
 @dataclass
 class SimpleVectaraConfig(BaseConnectorConfig):
     access_config: VectaraAccessConfig
     customer_id: t.AnyStr = None
+    corpus_name: t.AnyStr = "vectara-unstructured"
     corpus_id: t.AnyStr = None
-    endpoint = "api.vectara.io"
 
 @dataclass
 class VectaraWriteConfig(WriteConfig):
@@ -38,102 +39,145 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     write_config: VectaraWriteConfig
     connector_config: SimpleVectaraConfig
 
+    BASE_URL = "https://api.vectara.io/v1"
+
     def initialize(self):
-        self.session = requests.Session()  # to reuse connections
-        adapter = requests.adapters.HTTPAdapter(max_retries=3)
-        self.session.mount("http://", adapter)
         self.check_connection()
+
+    def _request(self, endpoint: str, http_method: str = "POST", params: t.Mapping[str, t.Any] = None, data: t.Mapping[str, t.Any] = None):
+        url = f"{self.BASE_URL}/{endpoint}"
+
+        current_ts = datetime.datetime.now().timestamp()
+        if self.jwt_token_expires_ts - current_ts <= 60:
+            self._get_jwt_token()
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {self.jwt_token}",
+            "customer-id": self.connector_config.customer_id,
+            "X-source": "unstructured",
+        }
+
+        response = requests.request(method=http_method, url=url, headers=headers, params=params, data=json.dumps(data))
+        response.raise_for_status()
+        return response.json()
+
+    # get OAUth2 JWT token
+    def _get_jwt_token(self):
+        """Connect to the server and get a JWT token."""
+        token_endpoint = f"https://vectara-prod-{self.connector_config.customer_id}.auth.us-west-2.amazoncognito.com/oauth2/token"
+        headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+        }
+        data = {
+            "grant_type": "client_credentials", 
+            "client_id": self.connector_config.access_config.oauth_client_id, 
+            "client_secret": self.connector_config.access_config.oauth_secret
+        }
+
+        request_time = datetime.datetime.now().timestamp()
+        response = requests.request(method="POST", url=token_endpoint, headers=headers, data=data)
+        response_json = response.json()
+
+        self.jwt_token = response_json.get("access_token")
+        self.jwt_token_expires_ts = request_time + response_json.get("expires_in")
+        return self.jwt_token
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        #  write and delete a dummy document
-        dummy_doc = {
-            "documentId": str(uuid.uuid4()),
-            "section": [
-                {
-                    "text": "dummy text for testing unstructured destination connector",
-                    "metadataJson": json.dumps({"dummy": "dummy"})
+        """
+        Check the connection for Vectara and validate corpus exists.
+        - If more than one exists - then return a message
+        - If exactly one exists with this name - use it.
+        - If does not exist - create it.
+        """
+        try:
+            jwt_token = self._get_jwt_token()
+            if not jwt_token:
+                return "Unable to get JWT Token. Confirm your Client ID and Client Secret."
+
+            list_corpora_response = self._request(endpoint="list-corpora", data={"numResults": 100, "filter": self.connector_config.corpus_name})
+
+            possible_corpora_ids_names_map = {
+                corpus.get("id"): corpus.get("name")
+                for corpus in list_corpora_response.get("corpus")
+                if corpus.get("name") == self.connector_config.corpus_name
+            }
+
+            if len(possible_corpora_ids_names_map) > 1:
+                return f"Multiple Corpora exist with name {self.connector_config.corpus_name}"
+            if len(possible_corpora_ids_names_map) == 1:
+                self.connector_config.corpus_id = list(possible_corpora_ids_names_map.keys())[0]
+            else:
+                data = {
+                    "corpus": {
+                        "name": self.connector_config.corpus_name,
+                    }
                 }
-            ]
+
+                create_corpus_response = self._request(endpoint="create-corpus", data=data)
+                self.connector_config.corpus_id = create_corpus_response.get("corpusId")
+
+        except Exception as e:
+            return str(e) + "\n" + "".join(traceback.TracebackException.from_exception(e).format())
+
+    def _get_headers(self) -> t.Dict[str, t.Any]:
+        current_ts = datetime.datetime.now().timestamp()
+        if self.jwt_token_expires_ts - current_ts <= 60:
+            self._get_jwt_token()
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {self.jwt_token}",
+            "customer-id": self.connector_config.customer_id,
+            "X-source": "unstructured",
         }
-        if not self._index_document(dummy_doc) or not self._delete_doc(dummy_doc["documentId"]):
-            logger.error("Connection check failed")
+        return headers
 
 
-        # delete document; returns True if successful, False otherwise
-    def _delete_doc(self, doc_id: str) -> bool:
+    # delete document; returns True if successful, False otherwise
+    def _delete_doc(self, doc_id: str) -> None:
         """
         Delete a document from the Vectara corpus.
 
         Args:
             url (str): URL of the page to delete.
             doc_id (str): ID of the document to delete.
-
-        Returns:
-            bool: True if the delete was successful, False otherwise.
         """
         body = {'customer_id': self.connector_config.customer_id, 'corpus_id': self.connector_config.corpus_id, 
                 'document_id': doc_id}
-        post_headers = { 'x-api-key': self.connector_config.access_config.api_key, 
-                         'customer-id': str(self.connector_config.customer_id) }
-        response = self.session.post(
-            f"https://{self.connector_config.endpoint}/v1/delete-doc", data=json.dumps(body),
-            verify=True, headers=post_headers)
-        
-        if response.status_code != 200:
-            logger.error(f"Delete request failed for doc_id = {doc_id} with status code {response.status_code}, reason {response.reason}, text {response.text}")
-            return False
-        return True
+        self._request(endpoint="delete-doc", data=body)
 
-    def _index_document(self, document: t.Dict[str, t.Any]) -> bool:
+    def _index_document(self, document: t.Dict[str, t.Any]) -> None:
         """
         Index a document (by uploading it to the Vectara corpus) from the document dictionary
         """
-        api_endpoint = f"https://{self.connector_config.endpoint}/v1/index"
-
-        request = {
+        body = {
             'customer_id': self.connector_config.customer_id,
             'corpus_id': self.connector_config.corpus_id,
             'document': document,
         }
 
-        post_headers = { 
-            'x-api-key': self.connector_config.access_config.api_key,
-            'customer-id': str(self.connector_config.customer_id),
-            'X-Source': 'unstructured'
-        }
         try:
-            data = json.dumps(request)
-        except Exception as e:
-            logger.info(f"Can't serialize request {request}, skipping")   
-            return False
-
-        try:
-            response = self.session.post(api_endpoint, data=data, verify=True, headers=post_headers)
+            result = self._request(endpoint="index", data=body, http_method="POST")
         except Exception as e:
             logger.info(f"Exception {e} while indexing document {document['documentId']}")
-            return False
-
-        if response.status_code != 200:
-            logger.error("Document indexing failed with code %d, reason %s, text %s",
-                          response.status_code,
-                          response.reason,
-                          response.text)
-            return False
-
-        result = response.json()
+            return
+        
         if "status" in result and result["status"] and \
            ("ALREADY_EXISTS" in result["status"]["code"] or \
             ("CONFLICT" in result["status"]["code"] and "Indexing doesn't support updating documents" in result["status"]["statusDetail"])):
             logger.info(f"Document {document['documentId']} already exists, re-indexing")
             self._delete_doc(document['documentId'])
-            response = self.session.post(api_endpoint, data=json.dumps(request), verify=True, headers=post_headers)
-            return True
-        if "status" in result and result["status"] and "OK" in result["status"]["code"]:
-            return True
+            result = self._request(endpoint="index", data=body, http_method="POST")
+            return
         
-        logger.info(f"Indexing document {document['documentId']} failed, response = {result}")
-        return False
+        if "status" in result and result["status"] and "OK" in result["status"]["code"]:
+            logger.info(f"Indexing document {document['documentId']} succeeded")
+        else:
+            logger.info(f"Indexing document {document['documentId']} failed, response = {result}")
     
     def write_dict(self, *args, docs_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(f"Inserting / updating {len(docs_list)} documents to Vectara ")
