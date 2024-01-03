@@ -136,7 +136,7 @@ def partition(
     languages: Optional[List[str]] = None,
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
-    pdf_extract_images: bool = False,
+    extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
@@ -194,7 +194,7 @@ def partition(
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
-    pdf_extract_images
+    extract_images_in_pdf
         Only applicable if `strategy=hi_res`.
         If True, any detected images will be saved in the path specified by
         'extract_image_block_output_dir' or stored as base64 encoded data within metadata fields.
@@ -414,11 +414,11 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
-            extract_images_in_pdf=pdf_extract_images,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
             extract_image_block_to_payload=extract_image_block_to_payload,
-            hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )
     elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
@@ -431,6 +431,10 @@ def partition(
             strategy=strategy,
             languages=languages,
             hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             **kwargs,
         )
     elif filetype == FileType.TXT:
