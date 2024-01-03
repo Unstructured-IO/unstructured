@@ -14,8 +14,8 @@ logger = logging.getLogger("unstructured.eval")
 
 def _prepare_output_cct(docpath: str, output_type: str) -> str:
     """
-    Convert given input document (path) into cct-ready. The function only support conversion 
-    from `json` or `txt` file. 
+    Convert given input document (path) into cct-ready. The function only support conversion
+    from `json` or `txt` file.
     """
     try:
         if output_type == "json":
@@ -36,7 +36,7 @@ def _prepare_output_cct(docpath: str, output_type: str) -> str:
 def _listdir_recursive(dir: str) -> List[str]:
     """
     Recursively lists all files in the given directory and its subdirectories.
-    Returns a list of all files found, with each file's path relative to the 
+    Returns a list of all files found, with each file's path relative to the
     initial directory.
     """
     listdir = []
@@ -121,7 +121,7 @@ def _sorting_key(filename):
 
 def _uniquity_file(file_list, target_filename) -> str:
     """
-    Checks the duplicity of the file name from the list and run the numerical check 
+    Checks the duplicity of the file name from the list and run the numerical check
     of the minimum number needed as extension to not overwrite the exising file.
     Returns a string of file name in the format of `filename (<min number>).ext`.
     """
@@ -191,7 +191,7 @@ def _stdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[
 
 def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union[float, None]:
     """
-    Find population standard deviation from the list. 
+    Find population standard deviation from the list.
     Returns None if only 0 or 1 element in the list.
 
     Args:
