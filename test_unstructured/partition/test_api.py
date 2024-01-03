@@ -100,7 +100,6 @@ def test_partition_via_api_custom_url(monkeypatch):
     )
 
 
-
 def test_partition_via_api_from_file(monkeypatch):
     monkeypatch.setattr(
         General,
