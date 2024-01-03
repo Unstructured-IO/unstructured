@@ -286,17 +286,23 @@ class _TextSplitter:
         if len(s) <= maxlen:
             return s, ""
 
-        for p, length in self._patterns:
+        for p, sep_len in self._patterns:
             # -- length of separator must be added to include that separator when it happens to be
             # -- located exactly at maxlen. Otherwise the search-from-end regex won't find it.
-            fragment, remainder = self._split_from_maxlen(p, maxlen + length, s)
-            if not fragment:
+            fragment, remainder = self._split_from_maxlen(p, sep_len, s)
+            if (
+                # -- no available split with this separator --
+                not fragment
+                # -- split did not progress, consuming part of the string --
+                or len(remainder) >= len(s)
+            ):
                 continue
             return fragment.rstrip(), remainder.lstrip()
 
         # -- the terminal "" pattern is not actually executed via regex since its implementation is
-        # -- trivial and provides a hard back-stop here in this method.
-        return s[:maxlen].rstrip(), s[maxlen:].lstrip()
+        # -- trivial and provides a hard back-stop here in this method. No separator is used between
+        # -- tail and remainder on arb-char split.
+        return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
     @lazyproperty
     def _patterns(self) -> Tuple[Tuple[regex.Pattern[str], int], ...]:
@@ -312,21 +318,47 @@ class _TextSplitter:
         separators = self._opts.text_splitting_separators
         return tuple((regex.compile(f"(?r){sep}"), len(sep)) for sep in separators)
 
-    @staticmethod
-    def _split_from_maxlen(pattern: regex.Pattern[str], maxlen: int, s: str) -> Tuple[str, str]:
+    def _split_from_maxlen(
+        self, pattern: regex.Pattern[str], sep_len: int, s: str
+    ) -> Tuple[str, str]:
         """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
 
-        Returns `"", s` if no suitable match was found. The first string in the pair will never be
-        longer than `maxlen` and there is no longer split available using `pattern`.
+        Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
+        separator produces a split shorter than the required overlap (which would produce an
+        infinite loop).
+
+        `split` will never be longer than `maxlen` and there is no longer split available using
+        `pattern`.
 
         The separator is removed and does not appear in either the split or remainder.
         """
-        match = pattern.search(s[:maxlen])
+        maxlen, overlap = self._opts.hard_max, self._opts.overlap
+
+        # -- A split not longer than overlap will not progress (infinite loop). On the right side,
+        # -- need to extend search range to include a separator located exactly at maxlen.
+        match = pattern.search(s, pos=overlap + 1, endpos=maxlen + sep_len)
         if match is None:
             return "", s
-        start: int = match.start()
-        end: int = match.end()
-        return s[:start], s[end:]
+
+        # -- characterize match location
+        match_start, match_end = match.span()
+        # -- matched separator is replaced by single-space in overlap string --
+        separator = " "
+
+        # -- in multi-space situation, fragment may have trailing whitespace because match is from
+        # -- right to left
+        fragment = s[:match_start].rstrip()
+        # -- remainder can have leading space when match is on "\n" followed by spaces --
+        raw_remainder = s[match_end:].lstrip()
+
+        if overlap <= len(separator):
+            return fragment, raw_remainder
+
+        # -- compute overlap --
+        tail_len = overlap - len(separator)
+        tail = fragment[-tail_len:].lstrip()
+        overlapped_remainder = tail + separator + raw_remainder
+        return fragment, overlapped_remainder
 
 
 # ================================================================================================
