@@ -139,7 +139,7 @@ def partition(
     pdf_extract_images: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
-    pdf_extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
@@ -205,7 +205,7 @@ def partition(
         Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
         saved in the path specified by 'extract_image_block_output_dir' or stored as base64
         encoded data within metadata fields.
-    pdf_extract_to_payload
+    extract_image_block_to_payload
         Only applicable if `strategy=hi_res`.
         If True, images of the element type(s) defined in 'extract_image_block_types' will be
         encoded as base64 data and stored in two metadata fields: 'image_base64' and
@@ -213,7 +213,7 @@ def partition(
         This parameter facilitates the inclusion of element data directly within the payload,
         especially for web-based applications or APIs.
     extract_image_block_output_dir
-        Only applicable if `strategy=hi_res` and `pdf_extract_to_payload=False`.
+        Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
     xml_keep_tags
@@ -417,7 +417,7 @@ def partition(
             extract_images_in_pdf=pdf_extract_images,
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
-            extract_to_payload=pdf_extract_to_payload,
+            extract_to_payload=extract_image_block_to_payload,
             hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )
