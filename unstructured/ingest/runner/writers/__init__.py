@@ -13,6 +13,7 @@ from .fsspec.s3 import S3Writer
 from .mongodb import MongodbWriter
 from .opensearch import OpenSearchWriter
 from .pinecone import PineconeWriter
+from .qdrant import QdrantWriter
 from .weaviate import WeaviateWriter
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
@@ -27,6 +28,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "mongodb": MongodbWriter,
     "opensearch": OpenSearchWriter,
     "pinecone": PineconeWriter,
+    "qdrant": QdrantWriter,
     "s3": S3Writer,
     "weaviate": WeaviateWriter,
 }

@@ -26,8 +26,7 @@ if t.TYPE_CHECKING:
     from opensearchpy import OpenSearch
 
 """Since the actual OpenSearch project is a fork of Elasticsearch, we are relying
-heavily on the Elasticsearch connector code, inheriting the functionality as much as possible.
-"""
+heavily on the Elasticsearch connector code, inheriting the functionality as much as possible."""
 
 
 @dataclass
@@ -44,8 +43,6 @@ class OpenSearchAccessConfig(AccessConfig):
 
     def to_dict(self, **kwargs) -> t.Dict[str, Json]:
         d = super().to_dict(**kwargs)
-        d.pop("username", None)
-        d.pop("password", None)
         d["http_auth"] = (self.username, self.password)
         return d
 
@@ -54,7 +51,8 @@ class OpenSearchAccessConfig(AccessConfig):
 class SimpleOpenSearchConfig(SimpleElasticsearchConfig):
     """Connector config where:
     url is the url to access the opensearch server,
-    index_name is the name of the index to reach to,
+    index_name is the name of the index to reach to.
+    Other attributes in SimpleElasticsearchConfig.
     """
 
     access_config: OpenSearchAccessConfig = None
