@@ -14,8 +14,6 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
-# shellcheck disable=SC1091
-# source scripts/elasticsearch-test-helpers/common/es-dest-ingest-test-creds.env
 function cleanup {
   # Index cleanup
   echo "Stopping OpenSearch Docker container"
@@ -38,7 +36,7 @@ wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
-  --num-processes "1" \
+  --num-processes "$max_processes1" \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
@@ -58,6 +56,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --password "admin" \
   --use-ssl \
   --batch-size-bytes 150 \
-  --num-processes "1"
+  --num-processes "$max_processes1"
 
 scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py

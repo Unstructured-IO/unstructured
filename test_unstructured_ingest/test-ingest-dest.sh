@@ -29,6 +29,7 @@ all_tests=(
   's3.sh'
   'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(
