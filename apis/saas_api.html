@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Validation Errors" href="validation_errors.html" /><link rel="prev" title="AWS Marketplace Deployment Guide" href="aws_marketplace.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Python and JavaScript SDK" href="api_sdks.html" /><link rel="prev" title="Unstructured API" href="../api.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>API Parameters - Unstructured 0.11.8 documentation</title>
+  <title>SaaS API Deployment Guide - Unstructured 0.11.8 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -322,12 +322,12 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="saas_api.html">SaaS API Deployment Guide</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">SaaS API Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api_sdks.html">Python and JavaScript SDK</a></li>
 <li class="toctree-l2"><a class="reference internal" href="usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">API Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="validation_errors.html">API Validation Errors</a></li>
 </ul>
 </li>
@@ -474,140 +474,134 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="api-parameters">
-<h1>API Parameters<a class="headerlink" href="#api-parameters" title="Permalink to this heading"></a></h1>
-<p>The endpoint of the API provides several parameters to customize the processing of documents. Below are the details of these parameters:</p>
-<section id="files">
-<h2>files<a class="headerlink" href="#files" title="Permalink to this heading"></a></h2>
+          <section id="saas-api-deployment-guide">
+<h1>SaaS API Deployment Guide<a class="headerlink" href="#saas-api-deployment-guide" title="Permalink to this heading"></a></h1>
+<p>This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information. It contains all the necessary instructions and resources to facilitate a smooth setup and deployment process of Hosted API on Unstructured infrastructure.</p>
+<section id="new-user-sign-up">
+<h2>New User Sign-up<a class="headerlink" href="#new-user-sign-up" title="Permalink to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Navigate to the <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> page on our website.</p></li>
+<li><p>Fill out the registration form with your details:</p>
 <ul class="simple">
-<li><p><strong>Type</strong>: string (binary format)</p></li>
-<li><p><strong>Description</strong>: The file to extract.</p></li>
-<li><p><strong>Required</strong>: true</p></li>
-<li><p><strong>Example</strong>: File to be partitioned. <a class="reference external" href="https://github.com/Unstructured-IO/unstructured/blob/98d3541909f64290b5efb65a226fc3ee8a7cc5ee/example-docs/layout-parser-paper.pdf">Example File</a></p></li>
+<li><p><strong>First Name</strong>: Enter your given name.</p></li>
+<li><p><strong>Last Name</strong>: Enter your family or surname.</p></li>
+<li><p><strong>Email</strong>: Provide a valid email address where we can send you confirmations and communications.</p></li>
+<li><p><strong>Company</strong>: Enter the name of your company or organization.</p></li>
 </ul>
+</li>
+<li><p>Optional Preferences:</p>
+<ul class="simple">
+<li><p>Check the box to sign up for future marketing emails and product updates.</p></li>
+<li><p>Check the box to sign up for weekly usage usage emails.</p></li>
+</ul>
+</li>
+<li><p>Terms and Conditions:</p>
+<ul class="simple">
+<li><p>Read and accept our terms and conditions by checking the appropriate box to proceed.</p></li>
+</ul>
+</li>
+<li><p>Click the “Sign Up” button to create your account.</p></li>
+</ol>
+<img alt="Sign Up Form" class="align-center" src="../_images/api_signup.png" />
+<section id="email-confirmation-and-payment-processing">
+<h3>Email Confirmation and Payment Processing<a class="headerlink" href="#email-confirmation-and-payment-processing" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple" start="6">
+<li><p>Upon successful sign-up, you will receive an email from Stripe.</p>
+<ul class="simple">
+<li><p>There will be a small initiation fee for all new subscriptions. This one-time fee will be charged to your credit card to enable automatic billing.</p></li>
+</ul>
+</li>
+<li><p>Click the “Pay this invoice” button in the email and follow the instructions to enter your payment details securely on Stripe website.</p></li>
+<li><p>Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.</p>
+<ul class="simple">
+<li><p>Note that we don’t send out a receipt. If you want to keep a receipt, click the “Download invoice” button after completing the payment on Stripe.</p></li>
+</ul>
+</li>
+</ol>
+<img alt="Stripe Email" class="align-center" src="../_images/stripe_email.png" />
 </section>
-<section id="strategy">
-<h2>strategy<a class="headerlink" href="#strategy" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: The strategy to use for partitioning PDF/image. Options are fast, hi_res, auto. Default: auto.</p></li>
-<li><p><strong>Example</strong>: hi_res</p></li>
-</ul>
+<section id="using-the-api-key-and-url">
+<h3>Using the API Key and URL<a class="headerlink" href="#using-the-api-key-and-url" title="Permalink to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>After your payment is processed, you will receive an email from <code class="docutils literal notranslate"><span class="pre">Unstructured</span></code> containing your unique <strong>API KEY</strong> and <strong>URL</strong>.</p></li>
+<li><p>Check your inbox (and the spam folder, just in case) for an email from our domain.</p></li>
+<li><p>Save these credentials securely, as you will need them to access and integrate our API with your applications.</p></li>
+</ol>
+<img alt="Welcome Email" class="align-center" src="../_images/welcome_email.png" />
 </section>
-<section id="gz-uncompressed-content-type">
-<h2>gz_uncompressed_content_type<a class="headerlink" href="#gz-uncompressed-content-type" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: If file is gzipped, use this content type after unzipping.</p></li>
-<li><p><strong>Example</strong>: application/pdf</p></li>
-</ul>
+<section id="example-parsing-a-document">
+<h3>Example: Parsing a Document<a class="headerlink" href="#example-parsing-a-document" title="Permalink to this heading"></a></h3>
+<p>Please refer to the sample code and output provided below to begin processing documents with your SaaS API.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span><span class="s1">&#39;POST&#39;</span><span class="w"> </span><span class="s1">&#39;https://&lt;REPLACE WITH THE URL IN THE EMAIL&gt;&#39;</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s1">&#39;accept: application/json&#39;</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s1">&#39;unstructured-api-key: &lt;REPLACE WITH API KEY IN THE EMAIL&gt;&#39;</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="s1">&#39;files=@sample-docs/family-day.eml&#39;</span>
+</pre></div>
+</div>
+<img alt="Sample Output" class="align-center" src="../_images/sample_output.png" />
 </section>
-<section id="output-format">
-<h2>output_format<a class="headerlink" href="#output-format" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: The format of the response. Supported formats are application/json and text/csv. Default: application/json.</p></li>
-<li><p><strong>Example</strong>: application/json</p></li>
-</ul>
 </section>
-<section id="coordinates">
-<h2>coordinates<a class="headerlink" href="#coordinates" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If true, return coordinates for each element. Default: false.</p></li>
-</ul>
+<section id="saas-api-account-maintenance">
+<h2>SaaS API Account Maintenance<a class="headerlink" href="#saas-api-account-maintenance" title="Permalink to this heading"></a></h2>
+<section id="opt-in-to-usage-emails">
+<h3>Opt-in to Usage Emails<a class="headerlink" href="#opt-in-to-usage-emails" title="Permalink to this heading"></a></h3>
+<p>To receive regular updates on usage statistics, please follow these steps:</p>
+<ol class="arabic simple">
+<li><p>From the <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> webpage, navigate to FAQ section and click the “Subscribe to Usage Updates” link.</p></li>
+<li><p>Enter your email address in the provided field.</p></li>
+<li><p>Click the “Submit” button to complete the subscription process.</p></li>
+</ol>
+<p>You will start receiving the weekly usage email after your submit the form. To opt-out from the email subscription, please contact our Support team at <a class="reference external" href="mailto:support&#37;&#52;&#48;unstructured&#46;io">support<span>&#64;</span>unstructured<span>&#46;</span>io</a>.</p>
+<img alt="Opt-in Email" class="align-center" src="apis/imgs/paid_api/opt-in.png" />
 </section>
-<section id="encoding">
-<h2>encoding<a class="headerlink" href="#encoding" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: The encoding method used to decode the text input. Default: utf-8.</p></li>
-<li><p><strong>Example</strong>: utf-8</p></li>
-</ul>
+<section id="update-payment-method">
+<h3>Update Payment Method<a class="headerlink" href="#update-payment-method" title="Permalink to this heading"></a></h3>
+<p>If you need to update your billing information, fill out the “Update Billing” form.</p>
+<ol class="arabic simple">
+<li><p>From the <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> webpage, navigate to FAQ section and click the “Update Payment Method” link.</p></li>
+<li><p>Enter your email address in the provided field.</p></li>
+<li><p>Click the “Submit” button to complete the subscription process.</p></li>
+</ol>
+<p>Upon successful form submission, you will be redirected to the Stripe payment page. Follow the instructions to enter your payment details securely. Confirm the payment to complete this process.</p>
+<p>Please note that there will be a nominal fee charged to your credit card to verify the payment method. Stripe will refund this fee once the new payment method is confirmed. You will receive a confirmation email about the refund. We will use this new payment method for your next invoices.</p>
+<img alt="Update Billing" class="align-center" src="../_images/update_billing.png" />
 </section>
-<section id="hi-res-model-name">
-<h2>hi_res_model_name<a class="headerlink" href="#hi-res-model-name" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: The name of the inference model used when strategy is hi_res.</p></li>
-<li><p><strong>Example</strong>: yolox</p></li>
-</ul>
+<section id="cancel-plan">
+<h3>Cancel Plan<a class="headerlink" href="#cancel-plan" title="Permalink to this heading"></a></h3>
+<p>To cancel your current plan, please complete the following steps:</p>
+<ol class="arabic simple">
+<li><p>From the <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> webpage, navigate to FAQ section and click the “Cancel Plan” link.</p></li>
+<li><p>When the pop-up form appears, provide your registered <strong>Email</strong> in the first field.</p></li>
+<li><p>Enter your <strong>Current API Key</strong> in the following field.</p></li>
+<li><p>Click the <strong>Submit</strong> button to send your cancellation request.</p></li>
+</ol>
+<p>Upon submission, our team will process your request, and you will receive a confirmation email regarding the cancellation of your plan.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please contact our Support team at <a class="reference external" href="mailto:support&#37;&#52;&#48;unstructured&#46;io">support<span>&#64;</span>unstructured<span>&#46;</span>io</a>, if you need to re-register Unstructured SaaS API using the same email address after you cancel your plan.</p>
+</div>
+<img alt="Cancel Plan" class="align-center" src="../_images/cancel_plan.png" />
 </section>
-<section id="include-page-breaks">
-<h2>include_page_breaks<a class="headerlink" href="#include-page-breaks" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If True, the output will include page breaks if the filetype supports it. Default: false.</p></li>
-</ul>
+<section id="rotate-a-new-api-key">
+<h3>Rotate a New API Key<a class="headerlink" href="#rotate-a-new-api-key" title="Permalink to this heading"></a></h3>
+<p>If you need to rotate your API key for security reasons or API key regeneration, follow these steps:</p>
+<ol class="arabic simple">
+<li><p>From the <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> webpage, navigate to FAQ section and click the “Get a new API Key” link.</p></li>
+<li><p>Type your registered <strong>Email</strong> address in the corresponding input field.</p></li>
+<li><p>Provide your <strong>Current API Key</strong> in the specified field.</p></li>
+<li><p>Press the <strong>Submit</strong> button to initiate the API key rotation process.</p></li>
+</ol>
+<p>Once you submit the form, our system automatically generates a new API key and deactivates the old one. You will receive the new API key at your registered email address. Be sure to update your applications with the new API key to maintain access to the API services.</p>
+<img alt="Rotate API Key" class="align-center" src="../_images/rotate_key.png" />
 </section>
-<section id="languages">
-<h2>languages<a class="headerlink" href="#languages" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: array</p></li>
-<li><p><strong>Description</strong>: The languages present in the document, for use in partitioning and/or OCR.</p></li>
-<li><p><strong>Default</strong>: []</p></li>
-<li><p><strong>Example</strong>: [eng]</p></li>
-</ul>
 </section>
-<section id="pdf-infer-table-structure">
-<h2>pdf_infer_table_structure<a class="headerlink" href="#pdf-infer-table-structure" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If True and strategy=hi_res, any Table Elements extracted from a PDF will include an additional metadata field, ‘text_as_html’.</p></li>
-</ul>
-</section>
-<section id="skip-infer-table-types">
-<h2>skip_infer_table_types<a class="headerlink" href="#skip-infer-table-types" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: array</p></li>
-<li><p><strong>Description</strong>: The document types that you want to skip table extraction with. Default: [‘pdf’, ‘jpg’, ‘png’].</p></li>
-</ul>
-</section>
-<section id="xml-keep-tags">
-<h2>xml_keep_tags<a class="headerlink" href="#xml-keep-tags" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If True, will retain the XML tags in the output. Otherwise it will simply extract the text from within the tags. Only applies to partition_xml.</p></li>
-</ul>
-</section>
-<section id="chunking-strategy">
-<h2>chunking_strategy<a class="headerlink" href="#chunking-strategy" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: Use one of the supported strategies to chunk the returned elements. Currently supports: by_title.</p></li>
-<li><p><strong>Example</strong>: by_title</p></li>
-</ul>
-</section>
-<section id="multipage-sections">
-<h2>multipage_sections<a class="headerlink" href="#multipage-sections" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, determines if sections can span multiple sections. Default: true.</p></li>
-</ul>
-</section>
-<section id="combine-under-n-chars">
-<h2>combine_under_n_chars<a class="headerlink" href="#combine-under-n-chars" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, combine elements until a section reaches a length of n chars. Default: 500.</p></li>
-<li><p><strong>Example</strong>: 500</p></li>
-</ul>
-</section>
-<section id="new-after-n-chars">
-<h2>new_after_n_chars<a class="headerlink" href="#new-after-n-chars" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, cut off new sections after reaching a length of n chars (soft max). Default: 1500.</p></li>
-<li><p><strong>Example</strong>: 1500</p></li>
-</ul>
-</section>
-<section id="max-characters">
-<h2>max_characters<a class="headerlink" href="#max-characters" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 1500.</p></li>
-<li><p><strong>Example</strong>: 1500</p></li>
-</ul>
+<section id="get-support">
+<h2>Get Support<a class="headerlink" href="#get-support" title="Permalink to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Navigate to FAQ section on <a class="reference external" href="https://unstructured.io/api-key-hosted">Unstructured SaaS API</a> webpage.</p></li>
+<li><p>For any other assistance or queries, please get in touch with our Support team at <a class="reference external" href="mailto:support&#37;&#52;&#48;unstructured&#46;io">support<span>&#64;</span>unstructured<span>&#46;</span>io</a>.</p></li>
+</ol>
 </section>
 </section>
 
@@ -616,21 +610,21 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="validation_errors.html">
+          <a class="next-page" href="api_sdks.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">API Validation Errors</div>
+              <div class="title">Python and JavaScript SDK</div>
             </div>
           </a>
-          <a class="prev-page" href="aws_marketplace.html">
+          <a class="prev-page" href="../api.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">AWS Marketplace Deployment Guide</div>
+              <div class="title">Unstructured API</div>
               
             </div>
           </a>
@@ -666,24 +660,21 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">API Parameters</a><ul>
-<li><a class="reference internal" href="#files">files</a></li>
-<li><a class="reference internal" href="#strategy">strategy</a></li>
-<li><a class="reference internal" href="#gz-uncompressed-content-type">gz_uncompressed_content_type</a></li>
-<li><a class="reference internal" href="#output-format">output_format</a></li>
-<li><a class="reference internal" href="#coordinates">coordinates</a></li>
-<li><a class="reference internal" href="#encoding">encoding</a></li>
-<li><a class="reference internal" href="#hi-res-model-name">hi_res_model_name</a></li>
-<li><a class="reference internal" href="#include-page-breaks">include_page_breaks</a></li>
-<li><a class="reference internal" href="#languages">languages</a></li>
-<li><a class="reference internal" href="#pdf-infer-table-structure">pdf_infer_table_structure</a></li>
-<li><a class="reference internal" href="#skip-infer-table-types">skip_infer_table_types</a></li>
-<li><a class="reference internal" href="#xml-keep-tags">xml_keep_tags</a></li>
-<li><a class="reference internal" href="#chunking-strategy">chunking_strategy</a></li>
-<li><a class="reference internal" href="#multipage-sections">multipage_sections</a></li>
-<li><a class="reference internal" href="#combine-under-n-chars">combine_under_n_chars</a></li>
-<li><a class="reference internal" href="#new-after-n-chars">new_after_n_chars</a></li>
-<li><a class="reference internal" href="#max-characters">max_characters</a></li>
+<li><a class="reference internal" href="#">SaaS API Deployment Guide</a><ul>
+<li><a class="reference internal" href="#new-user-sign-up">New User Sign-up</a><ul>
+<li><a class="reference internal" href="#email-confirmation-and-payment-processing">Email Confirmation and Payment Processing</a></li>
+<li><a class="reference internal" href="#using-the-api-key-and-url">Using the API Key and URL</a></li>
+<li><a class="reference internal" href="#example-parsing-a-document">Example: Parsing a Document</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#saas-api-account-maintenance">SaaS API Account Maintenance</a><ul>
+<li><a class="reference internal" href="#opt-in-to-usage-emails">Opt-in to Usage Emails</a></li>
+<li><a class="reference internal" href="#update-payment-method">Update Payment Method</a></li>
+<li><a class="reference internal" href="#cancel-plan">Cancel Plan</a></li>
+<li><a class="reference internal" href="#rotate-a-new-api-key">Rotate a New API Key</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#get-support">Get Support</a></li>
 </ul>
 </li>
 </ul>
