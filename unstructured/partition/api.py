@@ -65,9 +65,9 @@ def partition_via_api(
             "Please use metadata_filename instead.",
         )
 
-    # Note(austin) - the sdk adds the path to the given server url
-    # For consistency, accept api_url as a param and just strip it
-    base_url = api_url.strip("/general/v0/general")
+    # Note(austin) - the sdk takes the base url, but we have the full api_url
+    # For consistency, just strip off the path
+    base_url = api_url[:-19]  # Remove /general/v0/general
     s = UnstructuredClient(api_key_auth=api_key, server_url=base_url)
 
     if filename is not None:

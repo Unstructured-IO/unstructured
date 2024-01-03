@@ -80,7 +80,7 @@ def test_partition_via_api_custom_url(monkeypatch):
 
     monkeypatch.setattr(requests.Session, "request", mock_request)
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-    custom_url = "http://localhost:1234/general/v0/general"
+    custom_url = "http://localhost:8000/general/v0/general"
 
     with open(filename, "rb") as f:
         partition_via_api(file=f, api_url=custom_url, metadata_filename=filename)
