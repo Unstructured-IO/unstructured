@@ -13,10 +13,7 @@ from unstructured.ingest.connector.elasticsearch import (
 )
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
-from unstructured.ingest.interfaces import (
-    AccessConfig,
-    BaseSingleIngestDoc,
-)
+from unstructured.ingest.interfaces import AccessConfig, BaseSingleIngestDoc
 from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.staging.base import flatten_dict

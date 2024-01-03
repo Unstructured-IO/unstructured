@@ -6,9 +6,7 @@ import click
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.cmds.elasticsearch import ElasticsearchCliWriteConfig
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.opensearch import (
-    SimpleOpenSearchConfig,
-)
+from unstructured.ingest.connector.opensearch import SimpleOpenSearchConfig
 
 CMD_NAME = "opensearch"
 
