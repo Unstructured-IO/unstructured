@@ -83,7 +83,7 @@ def test_partition_via_api_custom_url(monkeypatch):
     custom_url = "http://localhost:1234/general/v0/general"
 
     with open(filename, "rb") as f:
-        elements = partition_via_api(file=f, api_url=custom_url, metadata_filename=filename)
+        partition_via_api(file=f, api_url=custom_url, metadata_filename=filename)
 
     mock_request.assert_called_with(
         "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
