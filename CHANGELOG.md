@@ -13,7 +13,7 @@
 ### Fixes
 
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
-* **Pins version of unstructured-client** Sets minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
+* **Pins version of unstructured-client** Sets minimum version of `unstructured-client` to avoid raising a `TypeError` when passing `api_key_auth` to `UnstructuredClient`
 
 ## 0.11.6
 
