@@ -36,7 +36,7 @@ wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
-  --num-processes "$max_processes1" \
+  --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
@@ -56,6 +56,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --password "admin" \
   --use-ssl \
   --batch-size-bytes 150 \
-  --num-processes "$max_processes1"
+  --num-processes "$max_processes"
 
 scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py
