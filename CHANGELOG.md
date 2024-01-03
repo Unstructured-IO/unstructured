@@ -12,6 +12,7 @@
 
 ### Fixes
 
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
 
 ## 0.11.6
