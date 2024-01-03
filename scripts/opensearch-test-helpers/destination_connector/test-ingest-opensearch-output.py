@@ -14,8 +14,6 @@ from opensearchpy import OpenSearch
 N_ELEMENTS = 1404
 
 if __name__ == "__main__":
-    # print(f"Checking contents of index" f"{INDEX_NAME} at {CLUSTER_URL}")
-
     print("Connecting to the OpenSearch cluster.")
     client = OpenSearch(
         hosts=[{"host": "localhost", "port": 9200}],

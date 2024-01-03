@@ -4,9 +4,9 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
+from unstructured.ingest.cli.cmds.elasticsearch import ElasticsearchCliWriteConfig
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
 from unstructured.ingest.connector.opensearch import (
-    OpenSearchWriteConfig,
     SimpleOpenSearchConfig,
 )
 
@@ -45,87 +45,33 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 default=None,
                 help="password when using basic auth or connecting to a cloud instance",
             ),
+            click.Option(["--use-ssl"], type=bool, default=False, is_flag=True, help="bla bla"),
             click.Option(
-                ["--use-ssl"], type=bool, default=False, 
-                is_flag=True,
-                help="bla bla"
+                ["--verify-certs"], type=bool, default=False, is_flag=True, help="bla bla"
             ),
             click.Option(
-                ["--verify-certs"], type=bool, default=False, is_flag=True,help="bla bla"
+                ["--ssl-show-warn"], type=bool, default=False, is_flag=True, help="bla bla"
             ),
             click.Option(
-                ["--ssl-show-warn"], type=bool, default=False, is_flag=True,help="bla bla"
-            ),
-            # click.Option(
-            #     ["--cloud-id"], type=str, default=None, help="id used to connect to Elastic Cloud"
-            # ),
-            # click.Option(
-            #     ["--es-api-key"], type=str, default=None, help="api key used for authentication"
-            # ),
-            # click.Option(
-            #     ["--api-key-id"],
-            #     type=str,
-            #     default=None,
-            #     help="id associated with api key used for authentication: "
-            #     "https://www.elastic.co/guide/en/opensearch/reference/current/security-api-create-api-key.html",  # noqa: E501
-            # ),
-            # click.Option(
-            #     ["--bearer-auth"], 
-            #     type=str,
-            #     default=None,
-            #     help="bearer token used for HTTP bearer authentication",
-            # ),
-            click.Option(
-                ["--ca-certs"], ### YES
+                ["--ca-certs"],  ### YES
                 type=click.Path(),
                 default=None,
             ),
             click.Option(
-                ["--client-cert"], ### YES
+                ["--client-cert"],  ### YES
                 type=click.Path(),
                 default=None,
             ),
             click.Option(
-                ["--client-key"], ### YES
+                ["--client-key"],  ### YES
                 type=click.Path(),
                 default=None,
             ),
-            # click.Option(
-            #     ["--ssl-assert-fingerprint"], ### Yes
-            #     type=str,
-            #     default=None,
-            #     help="SHA256 fingerprint value",
-            # ),
             click.Option(
                 ["--batch-size"],
                 default=100,
                 type=click.IntRange(0),
                 help="how many records to read at a time per process",
-            ),
-        ]
-        return options
-
-
-@dataclass
-class OpenSearchCliWriteConfig(OpenSearchWriteConfig, CliConfig):
-    @staticmethod
-    def get_cli_options() -> t.List[click.Option]:
-        options = [
-            click.Option(
-                ["--batch-size-bytes"],
-                required=True,
-                default=15_000_000,
-                type=int,
-                help="Size limit (in bytes) for each batch of items to be uploaded. Check"
-                " https://www.elastic.co/guide/en/opensearch/guide/current/bulk.html"
-                "#_how_big_is_too_big for more information.",
-            ),
-            click.Option(
-                ["--num-processes"],
-                required=True,
-                default=2,
-                type=int,
-                help="Number of processes to be used while uploading content",
             ),
         ]
         return options
@@ -145,10 +91,10 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name="opensearch",
         cli_config=OpenSearchCliConfig,
-        additional_cli_options=[OpenSearchCliWriteConfig],
+        additional_cli_options=[ElasticsearchCliWriteConfig],
         addition_configs={
             "connector_config": SimpleOpenSearchConfig,
-            "write_config": OpenSearchCliWriteConfig,
+            "write_config": ElasticsearchCliWriteConfig,
         },
     )
     return cmd_cls

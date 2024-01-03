@@ -1,27 +1,21 @@
-import json
 import typing as t
-import uuid
 from dataclasses import dataclass, field
-from itertools import chain 
 
 from dataclasses_json.core import Json
 
 from unstructured.ingest.connector.elasticsearch import (
+    ElasticsearchDestinationConnector,
     ElasticsearchDocumentMeta,
     ElasticsearchIngestDoc,
     ElasticsearchIngestDocBatch,
     ElasticsearchSourceConnector,
     SimpleElasticsearchConfig,
-    ElasticsearchAccessConfig,
 )
-
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
-    BaseDestinationConnector,
     BaseSingleIngestDoc,
-    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import generator_batching_wbytes
@@ -31,19 +25,16 @@ from unstructured.utils import requires_dependencies
 if t.TYPE_CHECKING:
     from opensearchpy import OpenSearch
 
+"""Since the actual OpenSearch project is a fork of Elasticsearch, we are relying
+heavily on the Elasticsearch connector code, inheriting the functionality as much as possible.
+"""
+
 
 @dataclass
 class OpenSearchAccessConfig(AccessConfig):
     hosts: t.Optional[t.List[str]] = None
     username: t.Optional[str] = None
     password: t.Optional[str] = enhanced_field(default=None, sensitive=True)
-    # cloud_id: t.Optional[str] = None
-    # api_key: t.Optional[str] = enhanced_field(
-    #     default=None, sensitive=True, overload_name="es_api_key"
-    # )
-    # api_key_id: t.Optional[str] = None
-    # bearer_auth: t.Optional[str] = enhanced_field(default=None, sensitive=True)
-    # ssl_assert_fingerprint: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     use_ssl: bool = False
     verify_certs: bool = False
     ssl_show_warn: bool = False
@@ -52,118 +43,34 @@ class OpenSearchAccessConfig(AccessConfig):
     client_key: t.Optional[str] = None
 
     def to_dict(self, **kwargs) -> t.Dict[str, Json]:
-        dddd = super().to_dict(**kwargs)
-        # Update auth related fields to conform to what the SDK expects based on the
-        # supported methods:
-        # FIX THIS...
-        # https://www.elastic.co/guide/en/opensearch/client/python-api/current/connecting.html
-        # if not self.ca_certs:
-        #     # ES library already sets a default for this, don't want to
-        #     # introduce data by setting it to None
-        #     dddd.pop("ca_certs")
-        # if self.password and (self.cloud_id or self.ca_certs or self.ssl_assert_fingerprint):
-        #     dddd.pop("password")
-        #     dddd["basic_auth"] = ("elastic", self.password)
-        # elif not self.cloud_id and self.username and self.password:
-        #     dddd.pop("username", None)
-        #     dddd.pop("password", None)
-        #     dddd["basic_auth"] = (self.username, self.password)
-        # elif self.api_key and self.api_key_id:
-        #     dddd.pop("api_key_id", None)
-        #     dddd.pop("api_key", None)
-        #     dddd["api_key"] = (self.api_key_id, self.api_key)
-        # # This doesn't exist on the client init, remove:
-        # dddd.pop("api_key_id", None)
-        dddd.pop("username", None)
-        dddd.pop("password", None)
-        dddd["http_auth"] = (self.username, self.password)
-        print(dddd)
-        # breakpoint()
-        return dddd
+        d = super().to_dict(**kwargs)
+        d.pop("username", None)
+        d.pop("password", None)
+        d["http_auth"] = (self.username, self.password)
+        return d
 
 
 @dataclass
 class SimpleOpenSearchConfig(SimpleElasticsearchConfig):
-    # """Connector config where:
-    # url is the url to access the opensearch server,
-    # index_name is the name of the index to reach to,
-    # """
+    """Connector config where:
+    url is the url to access the opensearch server,
+    index_name is the name of the index to reach to,
+    """
 
-    # index_name: str
-    # batch_size: int = 100
-    # fields: t.List[str] = field(default_factory=list)
     access_config: OpenSearchAccessConfig = None
-    print("SimpleOpenSearchConfig")
-    # pass
-
-
-@dataclass
-class OpenSearchDocumentMeta(ElasticsearchDocumentMeta):
-    # """Metadata specifying:
-    # name of the opensearch index that is being reached to,
-    # and the id of document that is being reached to,
-    # """
-
-    # index_name: str
-    # document_id: str
-    print("OpenSearchDocumentMeta")
-    pass
 
 
 @dataclass
 class OpenSearchIngestDoc(ElasticsearchIngestDoc):
-    # """Class encapsulating fetching a doc and writing processed results (but not
-    # doing the processing!).
+    """Class encapsulating fetching a doc and writing processed results (but not
+    doing the processing!).
 
-    # Current implementation creates a python OpenSearch client to fetch each doc,
-    # rather than creating a client for each thread.
-    # """
+    Current implementation creates a python OpenSearch client to fetch each doc,
+    rather than creating a client for each thread.
+    """
 
     connector_config: SimpleOpenSearchConfig
-    document_meta: OpenSearchDocumentMeta
-    # document: dict = field(default_factory=dict)
     registry_name: str = "opensearch"
-    print("OpenSearchIngestDoc")
-
-    # # TODO: remove one of filename or _tmp_download_file, using a wrapper
-    # @property
-    # def filename(self):
-    #     f = self.document_meta.document_id
-    #     if self.connector_config.fields:
-    #         f = "{}-{}".format(
-    #             f,
-    #             hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
-    #         )
-    #     return (
-    #         Path(self.read_config.download_dir) / self.document_meta.index_name / f"{f}.txt"
-    #     ).resolve()
-
-    # @property
-    # def _output_filename(self):
-    #     """Create filename document id combined with a hash of the query to uniquely identify
-    #     the output file."""
-    #     # Generate SHA256 hash and take the first 8 characters
-    #     filename = self.document_meta.document_id
-    #     if self.connector_config.fields:
-    #         filename = "{}-{}".format(
-    #             filename,
-    #             hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
-    #         )
-    #     output_file = f"{filename}.json"
-    #     return (
-    #         Path(self.processor_config.output_dir) / self.connector_config.index_name / output_file
-    #     )
-
-    # def update_source_metadata(self, **kwargs):
-    #     if self.document is None:
-    #         self.source_metadata = SourceMetadata(
-    #             exists=False,
-    #         )
-    #         return
-    #     self.source_metadata = SourceMetadata(
-    #         version=self.document["_version"],
-    #         exists=True,
-    #     )
 
     @SourceConnectionError.wrap
     @requires_dependencies(["opensearchpy"], extras="opensearch")
@@ -171,54 +78,19 @@ class OpenSearchIngestDoc(ElasticsearchIngestDoc):
     def get_file(self):
         pass
 
-    # @property
-    # def date_created(self) -> t.Optional[str]:
-    #     return None
-
-    # @property
-    # def date_modified(self) -> t.Optional[str]:
-    #     return None
-
-    # @property
-    # def source_url(self) -> t.Optional[str]:
-    #     return None
-
-    # @property
-    # def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
-    #     return {
-    #         "hosts": self.connector_config.access_config.hosts,
-    #         "index_name": self.connector_config.index_name,
-    #         "document_id": self.document_meta.document_id,
-    #     }
-
 
 @dataclass
 class OpenSearchIngestDocBatch(ElasticsearchIngestDocBatch):
     connector_config: SimpleOpenSearchConfig
     ingest_docs: t.List[OpenSearchIngestDoc] = field(default_factory=list)
-    # list_of_ids: t.List[str] = field(default_factory=list)
     registry_name: str = "opensearch_batch"
-    print("OpenSearchIngestDocBatch")
-    
-
-    # def __post_init__(self):
-    #     # Until python3.8 is deprecated, this is a limitation of dataclass inheritance
-    #     # to make it a required field
-    #     if len(self.list_of_ids) == 0:
-    #         raise ValueError("list_of_ids is required")
-
-    # @property
-    # def unique_id(self) -> str:
-    #     return ",".join(sorted(self.list_of_ids))
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def _get_docs(self):
         from opensearchpy import OpenSearch
         from opensearchpy.helpers import scan
-        print("OpenSearchIngestDocBatch._get_docs() GET DOCS")
 
-        # breakpoint()
-        es = OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
+        ops = OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
         scan_query = {
             "_source": self.connector_config.fields,
             "version": True,
@@ -226,7 +98,7 @@ class OpenSearchIngestDocBatch(ElasticsearchIngestDocBatch):
         }
 
         result = scan(
-            es,
+            ops,
             query=scan_query,
             scroll="1m",
             index=self.connector_config.index_name,
@@ -236,7 +108,6 @@ class OpenSearchIngestDocBatch(ElasticsearchIngestDocBatch):
     @SourceConnectionError.wrap
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def get_files(self):
-        print("OpenSearchIngestDocBatch.get_files() GET FILES")
         documents = self._get_docs()
         for doc in documents:
             ingest_doc = OpenSearchIngestDoc(
@@ -244,7 +115,9 @@ class OpenSearchIngestDocBatch(ElasticsearchIngestDocBatch):
                 read_config=self.read_config,
                 connector_config=self.connector_config,
                 document=doc,
-                document_meta=OpenSearchDocumentMeta(self.connector_config.index_name, doc["_id"]),
+                document_meta=ElasticsearchDocumentMeta(
+                    self.connector_config.index_name, doc["_id"]
+                ),
             )
             ingest_doc.update_source_metadata()
             doc_body = doc["_source"]
@@ -264,42 +137,32 @@ class OpenSearchSourceConnector(ElasticsearchSourceConnector):
     """Fetches particular fields from all documents in a given opensearch cluster and index"""
 
     connector_config: SimpleOpenSearchConfig
-    _es: t.Optional["OpenSearch"] = field(init=False, default=None)
+    _ops: t.Optional["OpenSearch"] = field(init=False, default=None)
 
     @property
-    def es(self):
-        print("OpenSearchSourceConnector.es CONNECT")
+    def ops(self):
         from opensearchpy import OpenSearch
-        # breakpoint()
 
-        if self._es is None:
-            self._es = OpenSearch(
+        if self._ops is None:
+            self._ops = OpenSearch(
                 **self.connector_config.access_config.to_dict(apply_name_overload=False)
             )
-        return self._es
+        return self._ops
 
     def check_connection(self):
         try:
-            self.es.ping()
+            self.ops.ping()
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
-
-    # def __post_init__(self):
-    #     self.scan_query: dict = {"stored_fields": [], "query": {"match_all": {}}}
-
-    # def initialize(self):
-    #     pass
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def _get_doc_ids(self):
         """Fetches all document ids in an index"""
         from opensearchpy.helpers import scan
-        print("OpenSearchSourceConnector._get_doc_ids() GET DOC IDS")
-
 
         hits = scan(
-            self.es,
+            self.ops,
             query=self.scan_query,
             scroll="1m",
             index=self.connector_config.index_name,
@@ -333,43 +196,16 @@ class OpenSearchSourceConnector(ElasticsearchSourceConnector):
 
 
 @dataclass
-class OpenSearchWriteConfig(WriteConfig):
-    batch_size_bytes: int
-    num_processes: int  
-    print("OpenSearchWriteConfig")
-
-
-@dataclass
-class OpenSearchDestinationConnector(BaseDestinationConnector):
-    write_config: OpenSearchWriteConfig
+class OpenSearchDestinationConnector(ElasticsearchDestinationConnector):
     connector_config: SimpleOpenSearchConfig
     _client: t.Optional["OpenSearch"] = field(init=False, default=None)
-    print("OpenSearchDestinationConnector")
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def generate_client(self) -> "OpenSearch":
         from opensearchpy import OpenSearch
-        print("OpenSearchDestinationConnector.generate_client() GENERATE CLIENT")
 
         return OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
-
-    @property
-    def client(self):
-        if self._client is None:
-            self._client = self.generate_client()
-        return self._client
-
-    def initialize(self):
-        _ = self.client
-
-    @DestinationConnectionError.wrap
-    def check_connection(self):
-        try:
-            assert self.client.ping()
-        except Exception as e:
-            logger.error(f"failed to validate connection: {e}", exc_info=True)
-            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
@@ -381,7 +217,6 @@ class OpenSearchDestinationConnector(BaseDestinationConnector):
             f" with {self.write_config.num_processes} (number of) processes"
         )
         from opensearchpy.helpers import parallel_bulk
-        print("OpenSearchDestinationConnector.write_dict() WRITE DICT")
 
         for batch in generator_batching_wbytes(
             element_dicts, batch_size_limit_bytes=self.write_config.batch_size_bytes
@@ -393,29 +228,3 @@ class OpenSearchDestinationConnector(BaseDestinationConnector):
                     logger.error(
                         "upload failed for a batch in opensearch destination connector:", info
                     )
-
-    def conform_dict(self, element_dict):
-        return {
-            "_index": self.connector_config.index_name,
-            "_id": str(uuid.uuid4()),
-            "_source": {
-                "element_id": element_dict.pop("element_id", None),
-                "embeddings": element_dict.pop("embeddings", None),
-                "text": element_dict.pop("text", None),
-                "metadata": flatten_dict(
-                    element_dict.pop("metadata", None),
-                    separator="-",
-                ),
-            },
-        }
-
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        def generate_element_dicts(doc):
-            with open(doc._output_filename) as json_file:
-                element_dicts_one_doc = (
-                    self.conform_dict(element_dict) for element_dict in json.load(json_file)
-                )
-                yield from element_dicts_one_doc
-
-        # We chain to unite the generators into one generator
-        self.write_dict(chain(*(generate_element_dicts(doc) for doc in docs)))
