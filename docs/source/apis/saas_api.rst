@@ -32,7 +32,7 @@ New User Sign-up
 
 
 Email Confirmation and Payment Processing
------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 6. Upon successful sign-up, you will receive an email from Stripe.
 
@@ -44,15 +44,17 @@ Email Confirmation and Payment Processing
 
 
 Using the API Key and URL
---------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. After your payment is processed, you will receive an email from us containing your unique API credentials.
 2. Check your inbox (and the spam folder, just in case) for an email from our domain.
 3. Save these credentials securely, as you will need them to access and integrate our API with your applications.
 
+SaaS API Account Maintenance
+-----------------------------
 
 Update Billing
---------------
+^^^^^^^^^^^^^^
 
 If you need to update your billing information, fill out the "Update Billing" form.
 
@@ -61,13 +63,15 @@ If you need to update your billing information, fill out the "Update Billing" fo
 3. Follow the instructions to enter your payment details securely.
 4. Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.
 
+You will receive a confirmation email about the new payment method.
+
 .. image:: imgs/paid_api/update_billing.png
   :align: center
   :alt: Update Billing
 
 
-Opt-in to Marketing and Usage Emails
-------------------------------------
+Opt-in to Marketing and API Usage Emails
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To receive regular updates on usage statistics and marketing emails, please follow these steps:
 
@@ -75,7 +79,7 @@ To receive regular updates on usage statistics and marketing emails, please foll
 2. Enter your email address in the provided field.
 3. Click the "Submit" button to complete the subscription process.
 
-You will receive a confirmation email shortly after submitting your information. Please click the confirmation link to complete your opt-in to usage and marketing emails.
+You will receive a confirmation email shortly after submitting your information.
 
 .. image:: imgs/paid_api/opt-in.png
   :align: center
@@ -83,7 +87,7 @@ You will receive a confirmation email shortly after submitting your information.
 
 
 Rotate a New API Key
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 If you need to rotate your API key for security reasons or API key regeneration, follow these steps:
 
@@ -100,7 +104,7 @@ Once you submit the form, our system automatically generates a new API key and d
 
 
 Cancel Plan
------------
+^^^^^^^^^^^
 
 To cancel your current plan, please complete the following steps:
 
@@ -110,6 +114,9 @@ To cancel your current plan, please complete the following steps:
 4. Click the *Submit* button to send your cancellation request.
 
 Upon submission, our team will process your request, and you will receive a confirmation email regarding the cancellation of your plan.
+
+Note: please contact our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_, if you need to re-register Unstructured SaaS API using the same email address after you cancel your plan.
+
 
 .. image:: imgs/paid_api/cancel_plan.png
   :align: center
@@ -148,4 +155,4 @@ Get Support
   :align: center
   :alt: Support Form
 
-For any other assistance or queries, please get in touch with our support team at `support@unstructured.io <mailto:support@unstructured.io>`_.
+For any other assistance or queries, please get in touch with our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_.
