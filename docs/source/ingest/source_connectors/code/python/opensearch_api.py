@@ -1,17 +1,17 @@
 import os
 
-from unstructured.ingest.connector.elasticsearch import (
-    ElasticsearchAccessConfig,
-    SimpleElasticsearchConfig,
+from unstructured.ingest.connector.opensearch import (
+    OpenSearchAccessConfig,
+    SimpleOpenSearchConfig,
 )
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-from unstructured.ingest.runner import ElasticSearchRunner
+from unstructured.ingest.runner import OpenSearchRunner
 
 if __name__ == "__main__":
-    runner = ElasticSearchRunner(
+    runner = OpenSearchRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="elasticsearch-ingest-output",
+            output_dir="opensearch-ingest-output",
             num_processes=2,
         ),
         read_config=ReadConfig(),
@@ -20,8 +20,8 @@ if __name__ == "__main__":
             partition_by_api=True,
             api_key=os.getenv("UNSTRUCTURED_API_KEY"),
         ),
-        connector_config=SimpleElasticsearchConfig(
-            access_config=ElasticsearchAccessConfig(hosts=["http://localhost:9200"]),
+        connector_config=SimpleOpenSearchConfig(
+            access_config=OpenSearchAccessConfig(hosts=["http://localhost:9200"]),
             index_name="movies",
             fields=["ethnicity", "director", "plot"],
         ),

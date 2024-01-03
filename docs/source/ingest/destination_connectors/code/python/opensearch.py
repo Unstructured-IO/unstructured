@@ -1,11 +1,13 @@
 import os
 
 from unstructured.ingest.connector.elasticsearch import (
-    ElasticsearchAccessConfig,
     ElasticsearchWriteConfig,
-    SimpleElasticsearchConfig,
 )
 from unstructured.ingest.connector.local import SimpleLocalConfig
+from unstructured.ingest.connector.opensearch import (
+    OpenSearchAccessConfig,
+    SimpleOpenSearchConfig,
+)
 from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
@@ -15,20 +17,20 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.runner import LocalRunner
 from unstructured.ingest.runner.writers.base_writer import Writer
-from unstructured.ingest.runner.writers.elasticsearch import (
-    ElasticsearchWriter,
+from unstructured.ingest.runner.writers.opensearch import (
+    OpenSearchWriter,
 )
 
 
 def get_writer() -> Writer:
-    return ElasticsearchWriter(
-        connector_config=SimpleElasticsearchConfig(
-            access_config=ElasticsearchAccessConfig(
-                hosts=os.getenv("ELASTICSEARCH_HOSTS"),
-                username=os.getenv("ELASTICSEARCH_USERNAME"),
-                password=os.getenv("ELASTICSEARCH_PASSWORD"),
+    return OpenSearchWriter(
+        connector_config=SimpleOpenSearchConfig(
+            access_config=OpenSearchAccessConfig(
+                hosts=os.getenv("OPENSEARCH_HOSTS"),
+                username=os.getenv("OPENSEARCH_USERNAME"),
+                password=os.getenv("OPENSEARCH_PASSWORD"),
             ),
-            index_name=os.getenv("ELASTICSEARCH_INDEX_NAME"),
+            index_name=os.getenv("OPENSEARCH_INDEX_NAME"),
         ),
         write_config=ElasticsearchWriteConfig(
             batch_size_bytes=15_000_000,
@@ -42,7 +44,7 @@ if __name__ == "__main__":
     runner = LocalRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="local-output-to-elasticsearch",
+            output_dir="local-output-to-opensearch",
             num_processes=2,
         ),
         connector_config=SimpleLocalConfig(

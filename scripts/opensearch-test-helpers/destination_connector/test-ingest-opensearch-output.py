@@ -4,13 +4,6 @@ import sys
 
 from opensearchpy import OpenSearch
 
-# from es_cluster_config import (
-#     CLUSTER_URL,
-#     INDEX_NAME,
-#     PASSWORD,
-#     USER,
-# )
-
 N_ELEMENTS = 1404
 
 if __name__ == "__main__":

@@ -43,29 +43,48 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 ["--password"],
                 type=str,
                 default=None,
-                help="password when using basic auth or connecting to a cloud instance",
-            ),
-            click.Option(["--use-ssl"], type=bool, default=False, is_flag=True, help="bla bla"),
-            click.Option(
-                ["--verify-certs"], type=bool, default=False, is_flag=True, help="bla bla"
+                help="password when using basic auth",
             ),
             click.Option(
-                ["--ssl-show-warn"], type=bool, default=False, is_flag=True, help="bla bla"
+                ["--use-ssl"],
+                type=bool,
+                default=False,
+                is_flag=True,
+                help="use ssl for the connection",
+            ),
+            click.Option(
+                ["--verify-certs"],
+                type=bool,
+                default=False,
+                is_flag=True,
+                help="whether to verify SSL certificates",
+            ),
+            click.Option(
+                ["--ssl-show-warn"],
+                type=bool,
+                default=False,
+                is_flag=True,
+                help="show warning when verify certs is disabled",
             ),
             click.Option(
                 ["--ca-certs"],
                 type=click.Path(),
                 default=None,
+                help="path to CA bundle",
             ),
             click.Option(
                 ["--client-cert"],
                 type=click.Path(),
                 default=None,
+                help="path to the file containing the private key and the certificate,"
+                " or cert only if using client_key",
             ),
             click.Option(
                 ["--client-key"],
                 type=click.Path(),
                 default=None,
+                help="path to the file containing the private key"
+                " if using separate cert and key files",
             ),
             click.Option(
                 ["--batch-size"],
