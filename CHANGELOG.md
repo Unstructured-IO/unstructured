@@ -1,3 +1,13 @@
+## 0.11.8-dev0
+
+### Enhancements
+
+* **Rename kwargs related to extracting image blocks.** Rename the kwargs related to extracting image blocks for consistency and API usage.
+
+### Features
+
+### Fixes
+
 ## 0.11.7
 
 ### Enhancements
