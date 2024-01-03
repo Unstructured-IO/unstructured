@@ -53,17 +53,17 @@ class OpenSearchCliConfig(SimpleOpenSearchConfig, CliConfig):
                 ["--ssl-show-warn"], type=bool, default=False, is_flag=True, help="bla bla"
             ),
             click.Option(
-                ["--ca-certs"],  ### YES
+                ["--ca-certs"],
                 type=click.Path(),
                 default=None,
             ),
             click.Option(
-                ["--client-cert"],  ### YES
+                ["--client-cert"],
                 type=click.Path(),
                 default=None,
             ),
             click.Option(
-                ["--client-key"],  ### YES
+                ["--client-key"],
                 type=click.Path(),
                 default=None,
             ),

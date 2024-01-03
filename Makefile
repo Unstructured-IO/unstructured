@@ -179,6 +179,10 @@ install-ingest-wikipedia:
 install-ingest-elasticsearch:
 	python3 -m pip install -r requirements/ingest/elasticsearch.txt
 
+.PHONY: install-ingest-opensearch
+install-ingest-opensearch:
+	python3 -m pip install -r requirements/ingest/opensearch.txt
+
 .PHONY: install-ingest-confluence
 install-ingest-confluence:
 	python3 -m pip install -r requirements/ingest/confluence.txt
