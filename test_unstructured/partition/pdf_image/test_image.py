@@ -643,13 +643,13 @@ def test_partition_image_element_extraction(
     extract_to_payload,
     filename=example_doc_path("embedded-images-tables.jpg"),
 ):
-    extract_element_types = ["Image", "Table"]
+    extract_image_block_types = ["Image", "Table"]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             elements = image.partition_image(
                 filename=filename,
-                extract_element_types=extract_element_types,
+                extract_image_block_types=extract_image_block_types,
                 extract_to_payload=extract_to_payload,
                 image_output_dir_path=tmpdir,
             )
@@ -657,9 +657,9 @@ def test_partition_image_element_extraction(
             with open(filename, "rb") as f:
                 elements = image.partition_image(
                     file=f,
-                    extract_element_types=extract_element_types,
+                    extract_image_block_types=extract_image_block_types,
                     extract_to_payload=extract_to_payload,
                     image_output_dir_path=tmpdir,
                 )
 
-        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
+        assert_element_extraction(elements, extract_image_block_types, extract_to_payload, tmpdir)

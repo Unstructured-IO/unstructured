@@ -1128,9 +1128,9 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
     assert expected_log in caplog.text
 
 
-def assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir):
+def assert_element_extraction(elements, extract_image_block_types, extract_to_payload, tmpdir):
     extracted_elements = []
-    for el_type in extract_element_types:
+    for el_type in extract_image_block_types:
         extracted_elements_by_type = []
         for el in elements:
             if el.category == el_type:
@@ -1163,13 +1163,13 @@ def test_partition_pdf_element_extraction(
     extract_to_payload,
     filename=example_doc_path("embedded-images-tables.pdf"),
 ):
-    extract_element_types = ["Image", "Table"]
+    extract_image_block_types = ["Image", "Table"]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
-                extract_element_types=extract_element_types,
+                extract_image_block_types=extract_image_block_types,
                 extract_to_payload=extract_to_payload,
                 image_output_dir_path=tmpdir,
             )
@@ -1177,9 +1177,9 @@ def test_partition_pdf_element_extraction(
             with open(filename, "rb") as f:
                 elements = pdf.partition_pdf(
                     file=f,
-                    extract_element_types=extract_element_types,
+                    extract_image_block_types=extract_image_block_types,
                     extract_to_payload=extract_to_payload,
                     image_output_dir_path=tmpdir,
                 )
 
-        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
+        assert_element_extraction(elements, extract_image_block_types, extract_to_payload, tmpdir)
