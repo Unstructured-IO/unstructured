@@ -29,7 +29,7 @@ def partition_image(
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -73,7 +73,7 @@ def partition_image(
         Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
         saved in the path specified by 'extract_image_block_output_dir' or stored as base64 encoded
         data within metadata fields.
-    extract_to_payload
+    extract_image_block_to_payload
         Only applicable if `strategy=hi_res`.
         If True, images of the element type(s) defined in 'extract_image_block_types' will be
         encoded as base64 data and stored in two metadata fields: 'image_base64' and
@@ -81,7 +81,7 @@ def partition_image(
         This parameter facilitates the inclusion of element data directly within the payload,
         especially for web-based applications or APIs.
     extract_image_block_output_dir
-        Only applicable if `strategy=hi_res` and `extract_to_payload=False`.
+        Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
     """
@@ -122,6 +122,6 @@ def partition_image(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
-        extract_to_payload=extract_to_payload,
+        extract_image_block_to_payload=extract_image_block_to_payload,
         **kwargs,
     )

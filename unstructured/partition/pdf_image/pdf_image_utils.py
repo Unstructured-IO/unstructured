@@ -82,7 +82,7 @@ def save_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
     is_image: bool = False,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
     """
@@ -143,7 +143,7 @@ def save_elements(
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
                 cropped_image = image.crop((x1, y1, x2, y2))
-                if extract_to_payload:
+                if extract_image_block_to_payload:
                     buffered = BytesIO()
                     cropped_image.save(buffered, format="JPEG")
                     img_base64 = base64.b64encode(buffered.getvalue())

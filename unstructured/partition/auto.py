@@ -417,7 +417,7 @@ def partition(
             extract_images_in_pdf=pdf_extract_images,
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
-            extract_to_payload=extract_image_block_to_payload,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             hi_res_model_name=hi_res_model_name or model_name,
             **kwargs,
         )

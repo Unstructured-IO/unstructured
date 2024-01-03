@@ -143,7 +143,7 @@ def partition_pdf(
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -186,7 +186,7 @@ def partition_pdf(
         Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
         saved in the path specified by 'extract_image_block_output_dir' or stored as base64
         encoded data within metadata fields.
-    extract_to_payload
+    extract_image_block_to_payload
         Only applicable if `strategy=hi_res`.
         If True, images of the element type(s) defined in 'extract_image_block_types' will be
         encoded as base64 data and stored in two metadata fields: 'image_base64' and
@@ -194,7 +194,7 @@ def partition_pdf(
         This parameter facilitates the inclusion of element data directly within the payload,
         especially for web-based applications or APIs.
     extract_image_block_output_dir
-        Only applicable if `strategy=hi_res` and `extract_to_payload=False`.
+        Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
     """
@@ -215,7 +215,7 @@ def partition_pdf(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
-        extract_to_payload=extract_to_payload,
+        extract_image_block_to_payload=extract_image_block_to_payload,
         **kwargs,
     )
 
@@ -269,7 +269,7 @@ def _partition_pdf_or_image_local(
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     **kwargs,
@@ -418,7 +418,7 @@ def _partition_pdf_or_image_local(
             file=file,
             is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
-            extract_to_payload=extract_to_payload,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             output_dir_path=extract_image_block_output_dir,
         )
 
@@ -433,7 +433,7 @@ def _partition_pdf_or_image_local(
             file=file,
             is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
-            extract_to_payload=extract_to_payload,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             output_dir_path=extract_image_block_output_dir,
         )
 
@@ -481,7 +481,7 @@ def partition_pdf_or_image(
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -547,7 +547,7 @@ def partition_pdf_or_image(
                 extract_images_in_pdf=extract_images_in_pdf,
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_output_dir=extract_image_block_output_dir,
-                extract_to_payload=extract_to_payload,
+                extract_image_block_to_payload=extract_image_block_to_payload,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
