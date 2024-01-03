@@ -1,4 +1,15 @@
-## 0.11.7-dev5
+## 0.11.8-dev0
+
+### Enhancements
+
+
+### Features
+
+* **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
+
+### Fixes
+
+## 0.11.7
 
 ### Enhancements
 
@@ -9,11 +20,12 @@
 
 * **Add Qdrant destination connector.** Adds support for writing documents and embeddings into a Qdrant collection.
 * **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
-* **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
 
 ### Fixes
 
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 
