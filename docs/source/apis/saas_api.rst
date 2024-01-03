@@ -17,8 +17,8 @@ New User Sign-up
 
 3. Optional Preferences:
 
-   - [] Check the box to sign up for weekly usage reports.
-   - [] Check the box to sign up for future marketing emails.
+   - [] Check the box to sign up for future marketing emails and product updates.
+   - [] Check the box to sign up for weekly usage usage emails.
 
 4. Terms and Conditions:
 
@@ -42,13 +42,21 @@ Email Confirmation and Payment Processing
 
    - Note that we don't send out a receipt. If you want to keep a receipt, click the "Download receipt" button after completing the payment on Stripe.
 
+.. image:: imgs/paid_api/stripe_email.png
+  :align: center
+  :alt: Stripe Email
+
 
 Using the API Key and URL
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. After your payment is processed, you will receive an email from us containing your unique API credentials.
+1. After your payment is processed, you will receive an email from ``Unstructured`` containing your unique API credentials and URL.
 2. Check your inbox (and the spam folder, just in case) for an email from our domain.
 3. Save these credentials securely, as you will need them to access and integrate our API with your applications.
+
+.. image:: imgs/paid_api/welcome_email.png
+  :align: center
+  :alt: Welcome Email
 
 
 SaaS API Account Maintenance
