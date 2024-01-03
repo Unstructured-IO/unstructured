@@ -1169,7 +1169,6 @@ def test_partition_pdf_element_extraction(
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
-                strategy="hi_res",
                 extract_element_types=extract_element_types,
                 extract_to_payload=extract_to_payload,
                 image_output_dir_path=tmpdir,
@@ -1178,7 +1177,6 @@ def test_partition_pdf_element_extraction(
             with open(filename, "rb") as f:
                 elements = pdf.partition_pdf(
                     file=f,
-                    strategy="hi_res",
                     extract_element_types=extract_element_types,
                     extract_to_payload=extract_to_payload,
                     image_output_dir_path=tmpdir,
