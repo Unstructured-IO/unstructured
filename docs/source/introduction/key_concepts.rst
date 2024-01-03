@@ -14,7 +14,7 @@ Data Preprocessing
 Before the core analysis, raw data often requires significant preprocessing:
 
 - **Partitioning**: Segregating data into smaller, manageable segments or partitions.
-  
+
 - **Cleaning**: Removing anomalies, filling missing values, and eliminating any irrelevant or erroneous information.
 
 Preprocessing ensures data integrity and can significantly influence the outcomes of subsequent tasks.
@@ -49,14 +49,14 @@ LLMs, like GPT, are trained on vast amounts of data and have the capacity to com
 Retrieval Augmented Generation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Large Language Models (LLMs) like OpenAI's ChatGPT and Anthropic's Claude have revolutionized the AI landscape with their prowess. However, they inherently suffer from significant drawbacks. One major issue is their static nature, which means they're "frozen in time". 
-For instance, ChatGPT's knowledge is limited up to September 2021, leaving it blind to any developments or information post that period. Despite this, LLMs might often respond to newer queries with unwarranted confidence, a phenomenon known as "hallucination". 
+Large Language Models (LLMs) like OpenAI's ChatGPT and Anthropic's Claude have revolutionized the AI landscape with their prowess. However, they inherently suffer from significant drawbacks. One major issue is their static nature, which means they're "frozen in time".
+For instance, ChatGPT's knowledge is limited up to September 2021, leaving it blind to any developments or information post that period. Despite this, LLMs might often respond to newer queries with unwarranted confidence, a phenomenon known as "hallucination".
 Such errors can be highly detrimental, especially when these models serve critical real-world applications.
 
-Retrieval Augmented Generation (RAG) is a groundbreaking technique designed to counteract the limitations of foundational LLMs. By pairing an LLM with a RAG pipeline, we can enable users to access the underlying data sources that the model uses. This transparent approach not 
+Retrieval Augmented Generation (RAG) is a groundbreaking technique designed to counteract the limitations of foundational LLMs. By pairing an LLM with a RAG pipeline, we can enable users to access the underlying data sources that the model uses. This transparent approach not
 only ensures that an LLM's claims can be verified for accuracy but also builds a trust factor among users.
 
-Moreover, RAG offers a cost-effective solution. Instead of bearing the extensive computational and financial burdens of training custom models or finetuning existing ones, RAG can, in many situations, serve as a sufficient alternative. This reduction in resource consumption 
+Moreover, RAG offers a cost-effective solution. Instead of bearing the extensive computational and financial burdens of training custom models or finetuning existing ones, RAG can, in many situations, serve as a sufficient alternative. This reduction in resource consumption
 is particularly beneficial for organizations that lack the means to develop and deploy foundational models from scratch.
 
 A RAG workflow can be broken down into the following steps:
@@ -69,7 +69,7 @@ A RAG workflow can be broken down into the following steps:
 
 4. **Embedding**: After chunking, you will need to convert the text into a numerical representation (vector embedding) that a LLM can understand. OpenAI, Cohere, and Hugging Face all offer embedding models.
 
-5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (Pinecone, Milvus, ChromaDD, Weaviate and more). 
+5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (ChromaDB, Milvus, Pinecone, Qdrant, Weaviate and more).
 
 6. **User Prompt**: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.
 
