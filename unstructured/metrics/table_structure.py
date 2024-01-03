@@ -3,6 +3,7 @@ import pandas as pd
 from PIL import Image
 
 from unstructured.partition.pdf import convert_pdf_to_images
+from unstructured.partition.pdf_image.ocr import get_table_tokens
 from unstructured.utils import requires_dependencies
 
 
@@ -20,7 +21,9 @@ def image_or_pdf_to_dataframe(filename: str) -> pd.DataFrame:
     else:
         image = Image.open(filename).convert("RGB")
 
-    return tables_agent.run_prediction(image, result_format="dataframe")
+    return tables_agent.run_prediction(
+        image, ocr_tokens=get_table_tokens(image), result_format="dataframe"
+    )
 
 
 @requires_dependencies("unstructured_inference")
