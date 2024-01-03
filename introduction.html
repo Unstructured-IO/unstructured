@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Overview" href="introduction/overview.html" /><link rel="prev" title="Unstructured Core Library" href="index.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Introduction - Unstructured 0.11.6 documentation</title>
+  <title>Introduction - Unstructured 0.11.7 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -378,6 +378,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
@@ -565,7 +566,7 @@ is particularly beneficial for organizations that lack the means to develop and 
 <li><p><strong>Data preprocessing and cleaning</strong>: Once you’ve identified and collected your data sources a good practice is to remove any unnecessary artifacts within the dataset. At Unstructured we have a variety of different tools to remove unneccesary elements. Found <a class="reference external" href="https://unstructured-io.github.io/unstructured/functions.html">here</a></p></li>
 <li><p><strong>Chunking</strong>: The next step is to break your text down into digestable pieces for your LLM to be able to consume. LangChain, Llama Index and Haystack offer chunking funcionalities.</p></li>
 <li><p><strong>Embedding</strong>: After chunking, you will need to convert the text into a numerical representation (vector embedding) that a LLM can understand. OpenAI, Cohere, and Hugging Face all offer embedding models.</p></li>
-<li><p><strong>Vector Database</strong>: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (Pinecone, Milvus, ChromaDD, Weaviate and more).</p></li>
+<li><p><strong>Vector Database</strong>: The next step is to choose a location for storing your chunked embeddings. There are lots of options to choose from for your vector database (ChromaDB, Milvus, Pinecone, Qdrant, Weaviate and more).</p></li>
 <li><p><strong>User Prompt</strong>: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.</p></li>
 <li><p><strong>LLM Generation</strong>: Once you’ve retrieved your relevant chunks you pass the prompt + the context to the LLM for the LLM to generate a more accurate response.</p></li>
 </ol>
