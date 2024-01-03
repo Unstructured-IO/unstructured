@@ -1,4 +1,4 @@
-## 0.11.7-dev4
+## 0.11.7
 
 ### Enhancements
 
@@ -14,6 +14,7 @@
 
 * **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 
