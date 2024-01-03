@@ -356,7 +356,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         infer_table_structure=False,
         extract_images_in_pdf=False,
         extract_image_block_types=None,
-        image_output_dir_path=None,
+        extract_image_block_output_dir=None,
         extract_to_payload=False,
         hi_res_model_name=None,
     )

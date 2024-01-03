@@ -651,7 +651,7 @@ def test_partition_image_element_extraction(
                 filename=filename,
                 extract_image_block_types=extract_image_block_types,
                 extract_to_payload=extract_to_payload,
-                image_output_dir_path=tmpdir,
+                extract_image_block_output_dir=tmpdir,
             )
         else:
             with open(filename, "rb") as f:
@@ -659,7 +659,7 @@ def test_partition_image_element_extraction(
                     file=f,
                     extract_image_block_types=extract_image_block_types,
                     extract_to_payload=extract_to_payload,
-                    image_output_dir_path=tmpdir,
+                    extract_image_block_output_dir=tmpdir,
                 )
 
         assert_element_extraction(elements, extract_image_block_types, extract_to_payload, tmpdir)

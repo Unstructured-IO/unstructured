@@ -142,7 +142,7 @@ def partition_pdf(
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
-    image_output_dir_path: Optional[str] = None,
+    extract_image_block_output_dir: Optional[str] = None,
     extract_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -177,22 +177,23 @@ def partition_pdf(
         The layout detection model used when partitioning strategy is set to `hi_res`.
     extract_images_in_pdf
         Only applicable if `strategy=hi_res`.
-        If True, any detected images will be saved in the path specified by 'image_output_dir_path'
-        or stored as base64 encoded data within metadata fields.
+        If True, any detected images will be saved in the path specified by
+        'extract_image_block_output_dir' or stored as base64 encoded data within metadata fields.
         Deprecation Note: This parameter is marked for deprecation. Future versions will use
         'extract_image_block_types' for broader extraction capabilities.
     extract_image_block_types
         Only applicable if `strategy=hi_res`.
         Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
-        saved in the path specified by 'image_output_dir_path' or stored as base64 encoded data
-        within metadata fields.
+        saved in the path specified by 'extract_image_block_output_dir' or stored as base64
+        encoded data within metadata fields.
     extract_to_payload
         Only applicable if `strategy=hi_res`.
-        If True, images of the element type(s) defined in 'extract_image_block_types' will be encoded
-        as base64 data and stored in two metadata fields: 'image_base64' and 'image_mime_type'.
+        If True, images of the element type(s) defined in 'extract_image_block_types' will be
+        encoded as base64 data and stored in two metadata fields: 'image_base64' and
+        'image_mime_type'.
         This parameter facilitates the inclusion of element data directly within the payload,
         especially for web-based applications or APIs.
-    image_output_dir_path
+    extract_image_block_output_dir
         Only applicable if `strategy=hi_res` and `extract_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
@@ -213,7 +214,7 @@ def partition_pdf(
         hi_res_model_name=hi_res_model_name,
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
-        image_output_dir_path=image_output_dir_path,
+        extract_image_block_output_dir=extract_image_block_output_dir,
         extract_to_payload=extract_to_payload,
         **kwargs,
     )
@@ -267,7 +268,7 @@ def _partition_pdf_or_image_local(
     pdf_text_extractable: bool = False,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
-    image_output_dir_path: Optional[str] = None,
+    extract_image_block_output_dir: Optional[str] = None,
     extract_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
@@ -418,7 +419,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
             extract_to_payload=extract_to_payload,
-            output_dir_path=image_output_dir_path,
+            output_dir_path=extract_image_block_output_dir,
         )
 
     for el_type in extract_image_block_types:
@@ -433,7 +434,7 @@ def _partition_pdf_or_image_local(
             is_image=is_image,
             pdf_image_dpi=pdf_image_dpi,
             extract_to_payload=extract_to_payload,
-            output_dir_path=image_output_dir_path,
+            output_dir_path=extract_image_block_output_dir,
         )
 
     out_elements = []
@@ -479,7 +480,7 @@ def partition_pdf_or_image(
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
-    image_output_dir_path: Optional[str] = None,
+    extract_image_block_output_dir: Optional[str] = None,
     extract_to_payload: bool = False,
     **kwargs,
 ) -> List[Element]:
@@ -545,7 +546,7 @@ def partition_pdf_or_image(
                 pdf_text_extractable=pdf_text_extractable,
                 extract_images_in_pdf=extract_images_in_pdf,
                 extract_image_block_types=extract_image_block_types,
-                image_output_dir_path=image_output_dir_path,
+                extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_to_payload=extract_to_payload,
                 **kwargs,
             )
