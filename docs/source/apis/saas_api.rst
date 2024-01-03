@@ -1,7 +1,7 @@
 SaaS API Deployment Guide
 =========================
 
-This documentation serves as a guide for Unstructured SaaS API users to register and manage API Key, as well as the billing information. It contains all the necessary instructions and resources to facilitate a smooth setup and deployment process of Hosted API on Unstructured infrastructure.
+This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information. It contains all the necessary instructions and resources to facilitate a smooth setup and deployment process of Hosted API on Unstructured infrastructure.
 
 
 New User Sign-up
@@ -17,14 +17,14 @@ New User Sign-up
 
 3. Optional Preferences:
 
-   - [] Check the box to sign up for future marketing emails and product updates.
-   - [] Check the box to sign up for weekly usage usage emails.
+   - Check the box to sign up for future marketing emails and product updates.
+   - Check the box to sign up for weekly usage usage emails.
 
 4. Terms and Conditions:
 
-   - [] Read and accept our terms and conditions by checking the appropriate box to proceed.
+   - Read and accept our terms and conditions by checking the appropriate box to proceed.
 
-5. Once all information is entered and preferences and terms are accepted, click the "Sign Up" button to create your account.
+5. Click the "Sign Up" button to create your account.
 
 .. image:: imgs/paid_api/api_signup.png
   :align: center
@@ -50,13 +50,30 @@ Email Confirmation and Payment Processing
 Using the API Key and URL
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1. After your payment is processed, you will receive an email from ``Unstructured`` containing your unique API credentials and URL.
+1. After your payment is processed, you will receive an email from ``Unstructured`` containing your unique **API KEY** and **URL**.
 2. Check your inbox (and the spam folder, just in case) for an email from our domain.
 3. Save these credentials securely, as you will need them to access and integrate our API with your applications.
 
 .. image:: imgs/paid_api/welcome_email.png
   :align: center
   :alt: Welcome Email
+
+Example: Parsing a Document
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Please refer to the sample code and output provided below to begin processing documents with your SaaS API.
+
+.. code-block:: bash
+
+    curl -X 'POST' 'https://<REPLACE WITH THE URL IN THE EMAIL>'
+         -H 'accept: application/json'
+         -H 'Content-Type: multipart/form-data'
+         -H 'unstructured-api-key: <REPLACE WITH API KEY IN THE EMAIL>'
+         -F 'files=@sample-docs/family-day.eml'
+
+.. image:: imgs/paid_api/sample_output.png
+  :align: center
+  :alt: Sample Output
 
 
 SaaS API Account Maintenance
@@ -67,11 +84,11 @@ Opt-in to Usage Emails
 
 To receive regular updates on usage statistics, please follow these steps:
 
-1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Subscribe to Usage Updates" link.
+1. From the `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Subscribe to Usage Updates" link.
 2. Enter your email address in the provided field.
 3. Click the "Submit" button to complete the subscription process.
 
-You will receive a confirmation email shortly after submitting your information.
+You will start receiving the weekly usage email after your submit the form. To opt-out from the email subscription, please contact our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_.
 
 .. image:: imgs/paid_api/opt-in.png
   :align: center
@@ -82,13 +99,13 @@ Update Payment Method
 
 If you need to update your billing information, fill out the "Update Billing" form.
 
-1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Update Payment Method" link.
+1. From the `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Update Payment Method" link.
 2. Enter your email address in the provided field.
 3. Click the "Submit" button to complete the subscription process.
 
-Upon successful form submission, you will be redirected to the Stripe payment page. Follow the instructions to enter your payment details securely. Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.
+Upon successful form submission, you will be redirected to the Stripe payment page. Follow the instructions to enter your payment details securely. Confirm the payment to complete this process.
 
-You will receive a confirmation email about the new payment method.
+Please note that there will be a nominal fee charged to your credit card to verify the payment method. Stripe will refund this fee once the new payment method is confirmed. You will receive a confirmation email about the refund. We will use this new payment method for your next invoices.
 
 .. image:: imgs/paid_api/update_billing.png
   :align: center
@@ -99,14 +116,14 @@ Cancel Plan
 
 To cancel your current plan, please complete the following steps:
 
-1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Cancel Plan" link.
-2. When the pop-up form appears, provide your registered *Email* in the first field.
-3. Enter your *Current API Key* in the following field.
-4. Click the *Submit* button to send your cancellation request.
+1. From the `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Cancel Plan" link.
+2. When the pop-up form appears, provide your registered **Email** in the first field.
+3. Enter your **Current API Key** in the following field.
+4. Click the **Submit** button to send your cancellation request.
 
 Upon submission, our team will process your request, and you will receive a confirmation email regarding the cancellation of your plan.
 
-Note: please contact our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_, if you need to re-register Unstructured SaaS API using the same email address after you cancel your plan.
+.. note:: Please contact our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_, if you need to re-register Unstructured SaaS API using the same email address after you cancel your plan.
 
 
 .. image:: imgs/paid_api/cancel_plan.png
@@ -118,10 +135,10 @@ Rotate a New API Key
 
 If you need to rotate your API key for security reasons or API key regeneration, follow these steps:
 
-1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Get a new API Key" link.
-2. Type your registered *Email* address in the corresponding input field.
-3. Provide your *Current API Key* in the specified field.
-4. Press the *Submit* button to initiate the API key rotation process.
+1. From the `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Get a new API Key" link.
+2. Type your registered **Email** address in the corresponding input field.
+3. Provide your **Current API Key** in the specified field.
+4. Press the **Submit** button to initiate the API key rotation process.
 
 Once you submit the form, our system automatically generates a new API key and deactivates the old one. You will receive the new API key at your registered email address. Be sure to update your applications with the new API key to maintain access to the API services.
 
