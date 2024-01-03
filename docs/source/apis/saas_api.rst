@@ -26,7 +26,7 @@ New User Sign-up
 
 5. Once all information is entered and preferences and terms are accepted, click the "Sign Up" button to create your account.
 
-.. image:: imgs/paid_api/sign_up_placeholder.png
+.. image:: imgs/paid_api/api_signup.png
   :align: center
   :alt: Sign Up Form
 
@@ -50,32 +50,16 @@ Using the API Key and URL
 2. Check your inbox (and the spam folder, just in case) for an email from our domain.
 3. Save these credentials securely, as you will need them to access and integrate our API with your applications.
 
+
 SaaS API Account Maintenance
 -----------------------------
 
-Update Billing
-^^^^^^^^^^^^^^
-
-If you need to update your billing information, fill out the "Update Billing" form.
-
-1. Select "Update Billing" on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage
-2. Upon successful sign-up, you will be redirected to the Stripe payment page.
-3. Follow the instructions to enter your payment details securely.
-4. Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.
-
-You will receive a confirmation email about the new payment method.
-
-.. image:: imgs/paid_api/update_billing.png
-  :align: center
-  :alt: Update Billing
-
-
-Opt-in to Marketing and API Usage Emails
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Opt-in to Usage Emails
+^^^^^^^^^^^^^^^^^^^^^^
 
 To receive regular updates on usage statistics and marketing emails, please follow these steps:
 
-1. Select "Subscribe to Usage Updates" on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage.
+1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Subscribe to Usage Updates" link.
 2. Enter your email address in the provided field.
 3. Click the "Submit" button to complete the subscription process.
 
@@ -85,31 +69,30 @@ You will receive a confirmation email shortly after submitting your information.
   :align: center
   :alt: Opt-in Email
 
+Update Payment Method
+^^^^^^^^^^^^^^^^^^^^^
 
-Rotate a New API Key
-^^^^^^^^^^^^^^^^^^^^
+If you need to update your billing information, fill out the "Update Billing" form.
 
-If you need to rotate your API key for security reasons or API key regeneration, follow these steps:
+1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Update Payment Method" link.
+2. Enter your email address in the provided field.
+3. Click the "Submit" button to complete the subscription process.
 
-1. Select "Get a new API Key" form on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage.
-2. Type your registered *Email* address in the corresponding input field.
-3. Provide your *Current API Key* in the specified field.
-4. Press the *Submit* button to initiate the API key rotation process.
+Upon successful form submission, you will be redirected to the Stripe payment page. Follow the instructions to enter your payment details securely. Confirm the payment to complete this process. Look out for any confirmation prompts or messages that signify a successful transaction.
 
-Once you submit the form, our system automatically generates a new API key and deactivates the old one. You will receive the new API key at your registered email address. Be sure to update your applications with the new API key to maintain access to the API services.
+You will receive a confirmation email about the new payment method.
 
-.. image:: imgs/paid_api/rotate_key.png
+.. image:: imgs/paid_api/update_billing.png
   :align: center
-  :alt: Rotate API Key
-
+  :alt: Update Billing
 
 Cancel Plan
 ^^^^^^^^^^^
 
 To cancel your current plan, please complete the following steps:
 
-1. Select "Cancel Form" form on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage.
-2. Provide your registered *Email* in the first field.
+1. on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Cancel Plan" link.
+2. When the pop-up form appears, provide your registered *Email* in the first field.
 3. Enter your *Current API Key* in the following field.
 4. Click the *Submit* button to send your cancellation request.
 
@@ -122,37 +105,25 @@ Note: please contact our Support team at `support@unstructured.io <mailto:suppor
   :align: center
   :alt: Cancel Plan
 
+Rotate a New API Key
+^^^^^^^^^^^^^^^^^^^^
+
+If you need to rotate your API key for security reasons or API key regeneration, follow these steps:
+
+1. On `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage, navigate to FAQ section and click the "Get a new API Key" link.
+2. Type your registered *Email* address in the corresponding input field.
+3. Provide your *Current API Key* in the specified field.
+4. Press the *Submit* button to initiate the API key rotation process.
+
+Once you submit the form, our system automatically generates a new API key and deactivates the old one. You will receive the new API key at your registered email address. Be sure to update your applications with the new API key to maintain access to the API services.
+
+.. image:: imgs/paid_api/rotate_key.png
+  :align: center
+  :alt: Rotate API Key
+
+
 Get Support
 -----------
 
-#. **Navigate to Support Request Form:**
-
-   - The support page features a dropdown menu titled "What do you need help with?" Select an option that best describes your issue or inquiry, including:
-
-     - Update Billing
-     - Subscribe to weekly usage email
-     - Cancel
-
-#. **Support Form:**
-
-   - To reach out to our support team, fill in the contact form on the support page with the following details:
-
-     - **First Name**: Your given name.
-     - **Last Name**: Your family or surname.
-     - **Email**: Your email address where we can send you a response.
-     - **Company**: If applicable, the name of your company or organization.
-     - **Message**: The details of your support request or any additional information you wish to provide.
-
-   - Below the contact form, you can select additional support options as needed:
-
-     - [] Tick to sign up for weekly usage reports.
-     - [] Tick to sign up for future marketing emails.
-     - [] Tick to acknowledge that you have read and accepted the terms and conditions.
-
-   - After filling out the form and selecting any additional options, click on the "Sign Up" button to submit your support request.
-
-.. image:: imgs/paid_api/support.png
-  :align: center
-  :alt: Support Form
-
-For any other assistance or queries, please get in touch with our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_.
+1. Navigate to FAQ section on `Unstructured SaaS API <https://unstructured.io/api-key-hosted>`_ webpage.
+2. For any other assistance or queries, please get in touch with our Support team at `support@unstructured.io <mailto:support@unstructured.io>`_.
