@@ -1,4 +1,4 @@
-## 0.11.9-dev1
+## 0.11.9-dev2
 
 ### Enhancements
 
@@ -9,6 +9,8 @@
 * **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
 
 ### Fixes
+
+* **Fix unequal row-length in HTMLTable.text_as_html.** Fixes to other aspects of partition_html() in v0.11 allowed unequal cell-counts in table rows. Make the cells in each row correspond 1:1 with cells in the original table row. This fix also removes "noise" cells resulting from HTML-formatting whitespace and eliminates the "column-shifting" of cells that previously resulted from noise-cells.
 
 ## 0.11.8
 
