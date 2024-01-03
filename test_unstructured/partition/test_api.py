@@ -89,6 +89,17 @@ def test_partition_via_api_custom_url(monkeypatch):
         "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
     )
 
+    # The sdk uses the server url, so we should be able to pass that as well
+    base_url = "http://localhost:8000"
+
+    with open(filename, "rb") as f:
+        partition_via_api(file=f, api_url=base_url, metadata_filename=filename)
+
+    mock_request.assert_called_with(
+        "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
+    )
+
+
 
 def test_partition_via_api_from_file(monkeypatch):
     monkeypatch.setattr(
