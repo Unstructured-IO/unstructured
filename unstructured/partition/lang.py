@@ -353,10 +353,19 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str):
 
 def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Optional[str] = None):
     """Handle users defining both `ocr_languages` and `languages`,
-    defaulting `languages` to ['eng'] and converting `ocr_languages` if needed"""
+    defaulting `languages` to ['eng'] and converting `ocr_languages` if needed.
+
+    `ocr_languages` is only a parameter for the `auto.partition`, `_image`, and `_pdf` partitioners.
+    `ocr_languages` should not be defined as 'auto' since 'auto' is intended for language detection,
+    which is not supported by `_pdf` or `_image` partitioning."""
     # --- Clean and update defaults
     if ocr_languages == "auto":
-        ocr_languages = None
+        raise ValueError(
+            "`ocr_languages` is deprecated but was used to extract text from pdfs and images. "
+            "The 'auto' argument is only for language *detection* when it is assigned "
+            "to `languages` and partitioning documents other than pdfs or images. "
+            "Language detection is not currently supported in pdfs or images."
+        )
 
     if ocr_languages:
         ocr_languages = _clean_ocr_languages_arg(ocr_languages)
@@ -365,16 +374,19 @@ def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Op
             "Please use languages instead.",
         )
 
-    if languages is None or not languages[0]:
-        languages = ["eng"]
-
-    if not isinstance(languages, list):
+    if not (isinstance(languages, list) or languages is None):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
-    # --- If `ocr_languages` is defined and `languages` is also a default, use `ocr_languages`
-    if ocr_languages and (languages == ["eng"] or languages == ["auto"]):
+    # --- If `languages` is a default value and `ocr_languages` is defined, use `ocr_languages`
+    if (
+        ocr_languages
+        and languages == ["auto"]
+        or languages == [""]
+        or languages is None
+        or not languages[0]
+    ):
         languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
         logger.warning(
             "Only one of languages and ocr_languages should be specified. "
@@ -384,12 +396,19 @@ def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Op
     # --- Clean `languages`
     # if "auto" is included in the list of inputs, language detection will be triggered
     # and the rest of the inputted languages will be ignored
-    if "auto" not in languages:
-        for i, lang in enumerate(languages):
-            languages[i] = _convert_language_to_language_code(lang)
+    if languages:
+        if "auto" not in languages:
+            for i, lang in enumerate(languages):
+                languages[i] = _convert_language_to_language_code(lang)
 
-        languages = _clean_ocr_languages_arg(languages)
-        languages = languages.split(TESSERACT_LANGUAGES_SPLITTER)
+            languages = _clean_ocr_languages_arg(languages)
+            languages = languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        # else, remove the extraneous languages.
+        # NOTE (jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
+        else:
+            languages = [
+                "auto"
+            ]  # define as 'auto' for language detection when partitioing non-pdfs or -images
 
     return languages
 
