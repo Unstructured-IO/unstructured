@@ -1,10 +1,12 @@
-## 0.11.9-dev0
+## 0.11.9-dev1
 
 ### Enhancements
 
 * **Rename kwargs related to extracting image blocks.** Rename the kwargs related to extracting image blocks for consistency and API usage.
 
 ### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
 
 ### Fixes
 
@@ -16,9 +18,7 @@
 
 ### Features
 
-
 ### Fixes
-
 
 ## 0.11.7
 
