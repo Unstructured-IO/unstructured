@@ -26,6 +26,7 @@ all_tests=(
   'mongodb.sh'
   'pgvector.sh'
   'pinecone.sh'
+  'qdrant.sh'
   's3.sh'
   'sharepoint-embed-cog-index.sh'
   'sqlite.sh'

@@ -1,6 +1,8 @@
-## 0.11.7-dev1
+## 0.11.8-dev0
 
 ### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
 
 
 ### Features
@@ -8,6 +10,25 @@
 * **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
 
 ### Fixes
+
+
+## 0.11.7
+
+### Enhancements
+
+* **Add intra-chunk overlap capability.** Implement overlap for split-chunks where text-splitting is used to divide an oversized chunk into two or more chunks that fit in the chunking window. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap` kwarg on partition functions.
+* **Update encoders to leverage dataclasses** All encoders now follow a class approach which get annotated with the dataclass decorator. Similar to the connectors, it uses a nested dataclass for the configs required to configure a client as well as a field/property approach to cache the client. This makes sure any variable associated with the class exists as a dataclass field.
+
+### Features
+
+* **Add Qdrant destination connector.** Adds support for writing documents and embeddings into a Qdrant collection.
+* **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
+
+### Fixes
+
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
+* **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 
@@ -25,7 +46,9 @@
 * **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
 
 ### Fixes
+
 * **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
+* **Add hi_res_model_name** Adds kwarg to relevant functions and add comments that model_name is to be deprecated.
 
 ## 0.11.5
 
