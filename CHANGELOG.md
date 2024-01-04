@@ -1,4 +1,27 @@
-## 0.11.7-dev4
+## 0.11.9-dev1
+
+### Enhancements
+
+* **Rename kwargs related to extracting image blocks.** Rename the kwargs related to extracting image blocks for consistency and API usage.
+
+### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+
+### Fixes
+* **Pins version of unstructured-client** Sets minimum version of `unstructured-client` to avoid raising a `TypeError` when passing `api_key_auth` to `UnstructuredClient`
+
+## 0.11.8
+
+### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+
+### Features
+
+### Fixes
+
+## 0.11.7
 
 ### Enhancements
 
@@ -12,8 +35,9 @@
 
 ### Fixes
 
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
-* **Pins version of unstructured-client** Sets minimum version of `unstructured-client` to avoid raising a `TypeError` when passing `api_key_auth` to `UnstructuredClient`
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 
