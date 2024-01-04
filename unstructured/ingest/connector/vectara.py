@@ -115,7 +115,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
                         "name": self.connector_config.corpus_name,
                     }
                 }
-
                 create_corpus_response = self._request(endpoint="create-corpus", data=data)
                 self.connector_config.corpus_id = create_corpus_response.get("corpusId")
 
