@@ -10,12 +10,13 @@ OUTPUT_FOLDER_NAME=s3-vectara-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 
-CORPUS_NAME="test-corpus-vectara"
+RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
+CORPUS_NAME="test-corpus-vectara-"$RANDOM_SUFFIX
 
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$VECTARA_OAUTH_CLIENT_ID" ]; then
-  echo "Skipping VECTARA ingest test because ECTARA_OAUTH_CLIENT_ID env var is not set."
+  echo "Skipping VECTARA ingest test because VECTARA_OAUTH_CLIENT_ID env var is not set."
   exit 0
 fi
 if [ -z "$VECTARA_OAUTH_SECRET" ]; then
@@ -52,7 +53,7 @@ function cleanup {
 
   # Reset corpus: erase all content
   echo "Deleting corpus $corpus_id ($CORPUS_NAME)"
-  curl -sS -L -X POST 'https://api.vectara.io/v1/reset-corpus' \
+  curl -sS -L -X POST 'https://api.vectara.io/v1/delete-corpus' \
   -H 'Content-Type: application/json' \
   -H 'Accept: application/json' \
   -H "Authorization: Bearer $access_token" \

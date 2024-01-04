@@ -2,7 +2,7 @@ Vectara
 ===========
 
 Process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those to a Vectara corpus.
-
+If you don't yet have a Vectara account, [sign up](https://vectara.comm/integrations/unstructured/) for your account.
 
 Run Locally
 -----------
