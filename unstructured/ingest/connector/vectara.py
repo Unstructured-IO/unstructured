@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 
 import requests
 import datetime
@@ -20,8 +21,8 @@ import traceback
 
 @dataclass
 class VectaraAccessConfig(AccessConfig):
-    oauth_client_id: t.AnyStr
-    oauth_secret: t.AnyStr
+    oauth_client_id: str = enhanced_field(sensitive=True)
+    oauth_secret: str = enhanced_field(sensitive=True)
 
 @dataclass
 class SimpleVectaraConfig(BaseConnectorConfig):

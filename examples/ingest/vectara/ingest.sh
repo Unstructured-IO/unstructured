@@ -20,6 +20,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --verbose \
   --work-dir "<directory for intermediate outputs to be saved>" \
   vectara \
-  --api-key "<Vectara API Key to write into a Pinecone index>" \
-  --customer-id "<Vectara customer id, ie: ingest-test>" \
-  --corpus-id "<Vectara corpus id, ie: ingest-test>"
+  --oauth-client-id "<Vectara OAUTH2 client ID" \
+  --oauth-secret "<Vectara OAUTH2 Secret" \
+  --customer-id "<Vectara customer id" \
+  --corpus-name "<Vectara corpus name>"

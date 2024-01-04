@@ -3,11 +3,6 @@ Vectara
 
 Process all your records using ``unstructured-ingest`` to store structured outputs locally on your filesystem and upload those to a Vectara corpus.
 
-First you'll need to install the Vectara dependencies as shown here.
-
-.. code:: shell
-
-  pip install "unstructured[vectara]"
 
 Run Locally
 -----------
