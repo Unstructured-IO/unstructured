@@ -122,21 +122,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             return str(e) + "\n" + "".join(traceback.TracebackException.from_exception(e).format())
 
-    def _get_headers(self) -> t.Dict[str, t.Any]:
-        current_ts = datetime.datetime.now().timestamp()
-        if self.jwt_token_expires_ts - current_ts <= 60:
-            self._get_jwt_token()
-
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Authorization": f"Bearer {self.jwt_token}",
-            "customer-id": self.connector_config.customer_id,
-            "X-source": "unstructured",
-        }
-        return headers
-
-
     # delete document; returns True if successful, False otherwise
     def _delete_doc(self, doc_id: str) -> None:
         """
