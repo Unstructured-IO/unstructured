@@ -45,7 +45,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   sql \
-  --db_type "$DATABASE_TYPE" \
+  --db-type "$DATABASE_TYPE" \
   --username unstructured \
   --database "$DB_PATH"
 

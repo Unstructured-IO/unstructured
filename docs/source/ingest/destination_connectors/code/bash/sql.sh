@@ -9,7 +9,7 @@ unstructured-ingest \
   --verbose \
   --strategy fast \
   sql \
-  --db_type postgresql \
+  --db-type postgresql \
   --username postgres \
   --password test \
   --host localhost \

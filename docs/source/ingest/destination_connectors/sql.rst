@@ -38,23 +38,25 @@ Sample Index Schema
 
 To make sure the schema of the index matches the data being written to it, a sample schema json can be used.
 
-PostgreSQL:
+.. tabs::
 
-.. literalinclude:: ./data/postgres-schema.sql
-   :language: sql
-   :linenos:
-   :caption: Object description
+   .. tab:: PostgreSQL
+:
+      .. literalinclude:: ./data/postgres-schema.sql
+         :language: sql
+         :linenos:
+         :caption: Object description
 
-PostgreSQL with pgvector:
+   .. tab:: PostgreSQL with pgvector
 
-.. literalinclude:: ./data/pgvector-schema.sql
-   :language: sql
-   :linenos:
-   :caption: Object description
+      .. literalinclude:: ./data/pgvector-schema.sql
+         :language: sql
+         :linenos:
+         :caption: Object description
 
-Sqlite:
+   .. tab:: Sqlite
 
-.. literalinclude:: ./data/sqlite-schema.sql
-   :language: sql
-   :linenos:
-   :caption: Object description
+      .. literalinclude:: ./data/sqlite-schema.sql
+         :language: sql
+         :linenos:
+         :caption: Object description

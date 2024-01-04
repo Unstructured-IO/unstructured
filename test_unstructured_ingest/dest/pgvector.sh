@@ -44,7 +44,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --embedding-provider "langchain-huggingface" \
   sql \
-  --db_type "postgresql" \
+  --db-type "postgresql" \
   --username unstructured \
   --password test \
   --host localhost \

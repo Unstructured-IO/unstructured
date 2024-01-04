@@ -16,7 +16,7 @@ class SqlCliConfig(SimpleSqlConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--db_type"],
+                ["--db-type"],
                 required=True,
                 type=click.Choice(SQL_DRIVERS),
                 help="Type of the database backend",
