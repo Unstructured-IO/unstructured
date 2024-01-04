@@ -79,8 +79,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     # get OAUth2 JWT token
     def _get_jwt_token(self):
         """Connect to the server and get a JWT token."""
-        token_endpoint = f"https://vectara-prod-{self.connector_config.customer_id}. \
-            auth.us-west-2.amazoncognito.com/oauth2/token"
+        token_endpoint = f"https://vectara-prod-{self.connector_config.customer_id}.auth.us-west-2.amazoncognito.com/oauth2/token"  # noqa: E501
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }
