@@ -352,7 +352,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         file=None,
         url=None,
         strategy=PartitionStrategy.FAST,
-        languages=["auto"],
+        languages=None,
         metadata_filename=None,
         include_page_breaks=False,
         infer_table_structure=False,
@@ -1218,7 +1218,6 @@ def test_partition_respects_detect_language_per_element_arg():
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
-# fail
 # check that the ["eng"] default in `partition` does not overwrite the ["auto"]
 # default in other `partition_` functions.
 def test_partition_default_does_not_overwrite_other_defaults():
