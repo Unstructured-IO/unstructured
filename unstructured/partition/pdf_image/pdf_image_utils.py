@@ -82,7 +82,7 @@ def save_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
     is_image: bool = False,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
     """
@@ -143,7 +143,7 @@ def save_elements(
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
                 cropped_image = image.crop((x1, y1, x2, y2))
-                if extract_to_payload:
+                if extract_image_block_to_payload:
                     buffered = BytesIO()
                     cropped_image.save(buffered, format="JPEG")
                     img_base64 = base64.b64encode(buffered.getvalue())
@@ -159,28 +159,28 @@ def save_elements(
 
 
 def check_element_types_to_extract(
-    extract_element_types: Optional[List[str]],
+    extract_image_block_types: Optional[List[str]],
 ) -> List[str]:
     """Check and normalize the provided list of element types to extract."""
 
-    if extract_element_types is None:
+    if extract_image_block_types is None:
         return []
 
-    if not isinstance(extract_element_types, list):
+    if not isinstance(extract_image_block_types, list):
         raise TypeError(
-            "The extract_element_types parameter must be a list of element types as strings, "
+            "The extract_image_block_types parameter must be a list of element types as strings, "
             "ex. ['Table', 'Image']",
         )
 
     available_element_types = list(ElementType.to_dict().values())
-    normalized_extract_element_types = []
-    for el_type in extract_element_types:
+    normalized_extract_image_block_types = []
+    for el_type in extract_image_block_types:
         normalized_el_type = el_type.lower().capitalize()
         if normalized_el_type not in available_element_types:
             logger.warning(f"The requested type ({el_type}) doesn't match any available type")
-        normalized_extract_element_types.append(normalized_el_type)
+        normalized_extract_image_block_types.append(normalized_el_type)
 
-    return normalized_extract_element_types
+    return normalized_extract_image_block_types
 
 
 def valid_text(text: str) -> bool:

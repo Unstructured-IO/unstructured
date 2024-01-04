@@ -1,6 +1,7 @@
 import json
 import os
 import pathlib
+import tempfile
 import warnings
 from importlib import import_module
 from unittest.mock import Mock, patch
@@ -8,6 +9,7 @@ from unittest.mock import Mock, patch
 import docx
 import pytest
 
+from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_XLSX,
@@ -355,9 +357,9 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
-        extract_element_types=None,
-        image_output_dir_path=None,
-        extract_to_payload=False,
+        extract_image_block_types=None,
+        extract_image_block_output_dir=None,
+        extract_image_block_to_payload=False,
         hi_res_model_name=None,
     )
 
@@ -458,6 +460,26 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
+
+
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_image_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.jpg"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
 
 
 @pytest.mark.parametrize(
@@ -664,6 +686,26 @@ def test_auto_filetype_overrides_file_specific(content_type, expected, monkeypat
         elements = partition("example-docs/layout-parser-paper-fast.pdf", content_type=content_type)
     assert len(elements) == 2
     assert all(el.metadata.filetype == expected for el in elements)
+
+
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_pdf_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.pdf"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
 
 
 supported_filetypes = [
