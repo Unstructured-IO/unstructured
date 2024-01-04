@@ -928,6 +928,7 @@ def test_partition_hi_res_model_name_default_to_None():
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
 
 
+# NOTE (jennings): check that the equivalent for this works for partitioing images
 @pytest.mark.parametrize(
     ("strategy", "ocr_func"),
     [
