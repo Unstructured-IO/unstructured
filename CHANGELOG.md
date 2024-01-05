@@ -1,4 +1,4 @@
-## 0.11.9-dev3
+## 0.11.9-dev4
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
 
