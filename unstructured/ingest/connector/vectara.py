@@ -99,8 +99,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        print("*************************************")
-        print("Checking connection to Vectara")
         """
         Check the connection for Vectara and validate corpus exists.
         - If more than one exists - then return a message
