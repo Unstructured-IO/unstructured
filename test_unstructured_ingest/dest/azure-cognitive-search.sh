@@ -58,8 +58,7 @@ response=$(curl -X PUT -s -w "\n%{http_code}" \
   --header 'content-type: application/json' \
   --data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json")
 response_code=$(echo "$response" | tail -n 1) # get the last line
-content=$(echo "$response" | head -n 1)      # get all but the last line which contains the status code
-
+content=$(echo "$response" | head -n 1)      # get the first line
 if [ "$response_code" -lt 400 ]; then
   echo "Index creation success: $response_code"
 else
