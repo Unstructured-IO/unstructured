@@ -304,7 +304,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) ->
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def _convert_language_code_to_pytesseract_lang_code(lang: str) -> Union[str, None]:
+def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
     """
     Convert a single language code to its tesseract formatted and recognized
     langcode(s), if supported.
@@ -340,6 +340,7 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> Union[str, Non
         else:
             logger.warning(f"{lang} is not a language supported by Tesseract.")
             return ""
+    return ""
 
 
 def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
