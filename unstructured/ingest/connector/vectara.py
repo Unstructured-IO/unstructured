@@ -45,9 +45,49 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleVectaraConfig
 
     BASE_URL = "https://api.vectara.io/v1"
+    
+    @DestinationConnectionError.wrap
+    def vectara(self):
+        """
+        Check the connection for Vectara and validate corpus exists.
+        - If more than one exists - then return a message
+        - If exactly one exists with this name - use it.
+        - If does not exist - create it.
+        """
+        try:
+            jwt_token = self._get_jwt_token()
+            if not jwt_token:
+                return "Unable to get JWT Token. Confirm your Client ID and Client Secret."
+
+            list_corpora_response = self._request(
+                endpoint="list-corpora",
+                data={"numResults": 100, "filter": self.connector_config.corpus_name},
+            )
+
+            possible_corpora_ids_names_map = {
+                corpus.get("id"): corpus.get("name")
+                for corpus in list_corpora_response.get("corpus")
+                if corpus.get("name") == self.connector_config.corpus_name
+            }
+
+            if len(possible_corpora_ids_names_map) > 1:
+                return f"Multiple Corpora exist with name {self.connector_config.corpus_name}"
+            if len(possible_corpora_ids_names_map) == 1:
+                self.connector_config.corpus_id = list(possible_corpora_ids_names_map.keys())[0]
+            else:
+                data = {
+                    "corpus": {
+                        "name": self.connector_config.corpus_name,
+                    }
+                }
+                create_corpus_response = self._request(endpoint="create-corpus", data=data)
+                self.connector_config.corpus_id = create_corpus_response.get("corpusId")
+
+        except Exception as e:
+            return str(e) + "\n" + "".join(traceback.TracebackException.from_exception(e).format())
 
     def initialize(self):
-        self.check_connection()
+        self.vectara()
 
     def _request(
         self,
@@ -99,43 +139,12 @@ class VectaraDestinationConnector(BaseDestinationConnector):
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        """
-        Check the connection for Vectara and validate corpus exists.
-        - If more than one exists - then return a message
-        - If exactly one exists with this name - use it.
-        - If does not exist - create it.
-        """
         try:
-            jwt_token = self._get_jwt_token()
-            if not jwt_token:
-                return "Unable to get JWT Token. Confirm your Client ID and Client Secret."
-
-            list_corpora_response = self._request(
-                endpoint="list-corpora",
-                data={"numResults": 100, "filter": self.connector_config.corpus_name},
-            )
-
-            possible_corpora_ids_names_map = {
-                corpus.get("id"): corpus.get("name")
-                for corpus in list_corpora_response.get("corpus")
-                if corpus.get("name") == self.connector_config.corpus_name
-            }
-
-            if len(possible_corpora_ids_names_map) > 1:
-                return f"Multiple Corpora exist with name {self.connector_config.corpus_name}"
-            if len(possible_corpora_ids_names_map) == 1:
-                self.connector_config.corpus_id = list(possible_corpora_ids_names_map.keys())[0]
-            else:
-                data = {
-                    "corpus": {
-                        "name": self.connector_config.corpus_name,
-                    }
-                }
-                create_corpus_response = self._request(endpoint="create-corpus", data=data)
-                self.connector_config.corpus_id = create_corpus_response.get("corpusId")
-
+            self.vectara()
         except Exception as e:
-            return str(e) + "\n" + "".join(traceback.TracebackException.from_exception(e).format())
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+        pass
 
     # delete document; returns True if successful, False otherwise
     def _delete_doc(self, doc_id: str) -> None:
