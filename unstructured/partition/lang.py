@@ -379,12 +379,8 @@ def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Op
         )
 
     # --- If `languages` is a default value and `ocr_languages` is defined, use `ocr_languages`
-    if (
-        ocr_languages
-        and languages == ["auto"]
-        or languages == [""]
-        or languages is None
-        or not languages[0]
+    if ocr_languages and (
+        languages == ["auto"] or languages == [""] or languages is None or not languages[0]
     ):
         languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
         logger.warning(
@@ -400,14 +396,13 @@ def check_language_args(languages: Optional[List[str]] = None, ocr_languages: Op
             for i, lang in enumerate(languages):
                 languages[i] = _convert_language_to_language_code(lang)
 
-            languages = _clean_ocr_languages_arg(languages)
-            languages = languages.split(TESSERACT_LANGUAGES_SPLITTER)
+            str_languages = _clean_ocr_languages_arg(languages)
+            languages = str_languages.split(TESSERACT_LANGUAGES_SPLITTER)
         # else, remove the extraneous languages.
         # NOTE (jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
         else:
-            languages = [
-                "auto"
-            ]  # define as 'auto' for language detection when partitioing non-pdfs or -images
+            # define as 'auto' for language detection when partitioing non-pdfs or -images
+            languages = ["auto"]
 
     return languages
 
@@ -418,10 +413,7 @@ def _clean_ocr_languages_arg(ocr_languages: Union[List[str], str]) -> str:
     Returns a single string of ocr_languages"""
     # extract from list
     if isinstance(ocr_languages, list):
-        if len(ocr_languages) == 1:
-            ocr_languages = ocr_languages[0]
-        elif len(ocr_languages) > 1:
-            ocr_languages = "+".join(ocr_languages)
+        ocr_languages = "+".join(ocr_languages)
 
     if ocr_languages:
         # remove extra quotations
