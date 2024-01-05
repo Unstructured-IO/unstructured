@@ -272,7 +272,7 @@ def _convert_language_to_language_code(lang: str) -> str:
     return lang
 
 
-def _get_iso639_language_object(lang: str) -> Union[iso639.Language, str]:
+def _get_iso639_language_object(lang: str) -> Union[iso639.Language, None]:
     try:
         # match other lang codes (ex. 2-letter codes)
         lang_iso639 = iso639.Language.match(lang.lower())
@@ -282,7 +282,7 @@ def _get_iso639_language_object(lang: str) -> Union[iso639.Language, str]:
     return lang_iso639
 
 
-def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
+def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) -> str:
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
@@ -302,11 +302,10 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
             f"languages: {languages}, proceed with `eng` instead.",
         )
         return "eng"
-
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
+def _convert_language_code_to_pytesseract_lang_code(lang: str) -> Union[str, None]:
     """
     Convert a single language code to its tesseract formatted and recognized
     langcode(s), if supported.
@@ -344,7 +343,7 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
             return ""
 
 
-def _get_all_tesseract_langcodes_with_prefix(prefix: str):
+def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
     """
     Get all matching tesseract langcodes with this prefix (may be one or multiple variants).
     """
