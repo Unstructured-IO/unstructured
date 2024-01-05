@@ -267,9 +267,8 @@ def detect_languages(
 
 def _convert_language_to_language_code(lang: str) -> str:
     """Convert a recognized spelled-out language to a tesseract language code"""
-    if TESSERACT_LANGUAGES_AND_CODES.get(lang.lower()):
-        lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower())
-    return lang
+    tesseract_lang_code = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower())
+    return tesseract_lang_code or ""
 
 
 def _get_iso639_language_object(lang: str) -> Union[iso639.Language, None]:
