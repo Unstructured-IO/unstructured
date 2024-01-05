@@ -14,6 +14,7 @@ from .mongodb import MongodbWriter
 from .opensearch import OpenSearchWriter
 from .pinecone import PineconeWriter
 from .qdrant import QdrantWriter
+from .sql import SqlWriter
 from .weaviate import WeaviateWriter
 
 writer_map: t.Dict[str, t.Type[Writer]] = {
@@ -30,6 +31,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "pinecone": PineconeWriter,
     "qdrant": QdrantWriter,
     "s3": S3Writer,
+    "sql": SqlWriter,
     "weaviate": WeaviateWriter,
 }
 

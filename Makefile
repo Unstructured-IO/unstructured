@@ -235,6 +235,10 @@ install-ingest-qdrant:
 install-ingest-chroma:
 	python3 -m pip install -r requirements/ingest/chroma.txt
 
+.PHONY: install-ingest-postgres
+install-ingest-postgres:
+	python3 -m pip install -r requirements/ingest-postgres.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
