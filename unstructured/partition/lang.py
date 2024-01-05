@@ -289,7 +289,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) ->
         raise ValueError("`languages` can not be `None`")
     converted_languages = list(
         filter(
-            lambda x: x is not None and x != "",
+            lambda x: x != "",
             [_convert_language_code_to_pytesseract_lang_code(lang) for lang in languages],
         ),
     )
