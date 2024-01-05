@@ -45,7 +45,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleVectaraConfig
 
     BASE_URL = "https://api.vectara.io/v1"
-    
+
     @DestinationConnectionError.wrap
     def vectara(self):
         """
@@ -144,7 +144,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
-        pass
 
     # delete document; returns True if successful, False otherwise
     def _delete_doc(self, doc_id: str) -> None:
