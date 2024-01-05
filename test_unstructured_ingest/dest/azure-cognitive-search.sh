@@ -28,13 +28,13 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
-    "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+    "https://ingest-test-azure-cognitive-search.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
     --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json')
   if [ "$response_code" == "200" ]; then
     echo "deleting index $DESTINATION_INDEX"
     curl -X DELETE \
-      "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+      "https://ingest-test-azure-cognitive-search.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
       --header "api-key: $AZURE_SEARCH_API_KEY" \
       --header 'content-type: application/json'
   else
@@ -51,12 +51,13 @@ trap cleanup EXIT
 # Create index
 echo "Creating index $DESTINATION_INDEX"
 response=$(curl -X PUT -s -w "\n%{http_code}" \
-  "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+  "https://ingest-test-azure-cognitive-search.search.windows.net/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
   --header "api-key: $AZURE_SEARCH_API_KEY" \
   --header 'content-type: application/json' \
   --data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json")
 response_code=$(tail -n1 <<<"$response") # get the last line
 content=$(sed '$ d' <<<"$response")      # get all but the last line which contains the status code
+response_code="${response_code//[$'\t\r\n ']}" # remove all whitespace to allow integer comparison
 
 if [ "$response_code" -lt 400 ]; then
   echo "Index creation success: $response_code"
@@ -89,7 +90,7 @@ while [ "$docs_count_remote" -eq 0 ] && [ "$attempt" -lt 6 ]; do
   sleep 10
 
   # Check the contents of the index
-  docs_count_remote=$(curl "https://utic-test-ingest-fixtures.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
+  docs_count_remote=$(curl "https://ingest-test-azure-cognitive-search.search.windows.net/indexes/$DESTINATION_INDEX/docs/\$count?api-version=$API_VERSION" \
     --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json' | jq)
 
