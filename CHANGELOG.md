@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Rename kwargs related to extracting image blocks.** Rename the kwargs related to extracting image blocks for consistency and API usage.
+* **Rename kwargs related to extracting image blocks** Rename the kwargs related to extracting image blocks for consistency and API usage.
 
 ### Features
 
