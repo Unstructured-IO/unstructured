@@ -1,4 +1,4 @@
-## 0.11.9-dev2
+## 0.11.9-dev3
 
 ### Enhancements
 
@@ -17,6 +17,7 @@
 ### Enhancements
 
 * **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+* **Add inter-chunk overlap capability.** Implement overlap between chunks. This applies to all chunks prior to any text-splitting of oversized chunks so is a distinct behavior; overlap at text-splits of oversized chunks is independent of inter-chunk overlap (distinct chunk boundaries) and can be requested separately. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap_all` kwarg on partition functions.
 
 ### Features
 
