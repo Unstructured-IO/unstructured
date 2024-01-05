@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "10b5ef18a3c7fb1d7436b2e1b256e5b9",
+    "element_id": "597883fce258148ee227842378ce55c3",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -17,9 +17,9 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><tr><td>Driver</td></tr><tr><td>Approver</td></tr><tr><td>Contributors</td></tr><tr><td>Informed</td></tr><tr><td>Objective</td></tr><tr><td>Due date</td></tr><tr><td>Key outcomes</td></tr><tr><td>Status</td><td>NOT STARTED</td><td>/</td><td>IN PROGRESS</td><td>/</td><td>COMPLETE</td></tr></table>"
+      "text_as_html": "<table><tr><td>Driver</td><td></td></tr><tr><td>Approver</td><td></td></tr><tr><td>Contributors</td><td></td></tr><tr><td>Informed</td><td></td></tr><tr><td>Objective</td><td></td></tr><tr><td>Due date</td><td></td></tr><tr><td>Key outcomes</td><td></td></tr><tr><td>Status</td><td>NOT STARTED / IN PROGRESS / COMPLETE</td></tr></table>"
     },
-    "text": "Driver Approver Contributors Informed Objective Due date Key outcomes Status NOT STARTED  /  IN PROGRESS  /  COMPLETE",
+    "text": "Driver Approver Contributors Informed Objective Due date Key outcomes Status NOT STARTED / IN PROGRESS / COMPLETE",
     "type": "Table"
   },
   {
@@ -84,7 +84,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><tr><td>Must have:</td></tr><tr><td>Nice to have:</td></tr><tr><td>Not in scope:</td></tr></table>"
+      "text_as_html": "<table><tr><td>Must have:</td><td></td></tr><tr><td>Nice to have:</td><td></td></tr><tr><td>Not in scope:</td><td></td></tr></table>"
     },
     "text": "Must have: Nice to have: Not in scope:",
     "type": "Table"
@@ -327,7 +327,7 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr></table>"
+      "text_as_html": "<table><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr></table>"
     },
     "text": "Milestone Owner Deadline Status",
     "type": "Table"

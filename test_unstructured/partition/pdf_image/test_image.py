@@ -637,29 +637,31 @@ def test_partition_image_has_filename(inference_results):
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize("extract_to_payload", [False, True])
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_partition_image_element_extraction(
     file_mode,
-    extract_to_payload,
+    extract_image_block_to_payload,
     filename=example_doc_path("embedded-images-tables.jpg"),
 ):
-    extract_element_types = ["Image", "Table"]
+    extract_image_block_types = ["Image", "Table"]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             elements = image.partition_image(
                 filename=filename,
-                extract_element_types=extract_element_types,
-                extract_to_payload=extract_to_payload,
-                image_output_dir_path=tmpdir,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                extract_image_block_output_dir=tmpdir,
             )
         else:
             with open(filename, "rb") as f:
                 elements = image.partition_image(
                     file=f,
-                    extract_element_types=extract_element_types,
-                    extract_to_payload=extract_to_payload,
-                    image_output_dir_path=tmpdir,
+                    extract_image_block_types=extract_image_block_types,
+                    extract_image_block_to_payload=extract_image_block_to_payload,
+                    extract_image_block_output_dir=tmpdir,
                 )
 
-        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
