@@ -60,7 +60,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 jwt_token_resp=$(curl -sS -XPOST -H "Content-type: application/x-www-form-urlencoded" -d \
   "grant_type=client_credentials&client_id=$VECTARA_OAUTH_CLIENT_ID&client_secret=$VECTARA_OAUTH_SECRET" \
   "https://vectara-prod-$VECTARA_CUSTOMER_ID.auth.us-west-2.amazoncognito.com/oauth2/token")
-access_token="$(echo $jwt_token_resp | jq -r '.access_token')"
+access_token=$(echo "$jwt_token_resp" | jq -r '.access_token')
 
 # Get corpus ID from name
 corpora_resp=$(curl -sS -L -X POST 'https://api.vectara.io/v1/list-corpora' \
@@ -72,7 +72,7 @@ corpora_resp=$(curl -sS -L -X POST 'https://api.vectara.io/v1/list-corpora' \
                     \"numResults\": 100,
                     \"filter\": \"$CORPUS_NAME\"
                     }")
-corpus_id="$(echo $corpora_resp | jq -r '.corpus[0].id')"
+corpus_id=$(echo "$corpora_resp" | jq -r '.corpus[0].id')
 
 # Check that the size of the corpus is as expected
 get_corpus_size=$(curl -L -X POST 'https://api.vectara.io/v1/compute-corpus-size' \
@@ -83,7 +83,7 @@ get_corpus_size=$(curl -L -X POST 'https://api.vectara.io/v1/compute-corpus-size
   --data-raw "{
   \"corpusId\": $corpus_id
 }")
-corpus_size="$(echo $get_corpus_size | jq -r '.size.size')"
+corpus_size=$(echo "$get_corpus_size" | jq -r '.size.size')
 
 if [ "$corpus_size" == "$EXPECTED_CORPUS_SIZE" ]; then
   echo "Corpus size is as expected: $corpus_size"
