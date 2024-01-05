@@ -213,7 +213,7 @@ class WriteNode(PipelineNode):
     def initialize(self):
         logger.info(
             f"Running write node to upload content. "
-            f"Destination connector: {self.dest_doc_connector.to_json()}]",
+            f"Destination connector: {self.dest_doc_connector.to_json(redact_sensitive=True)}]",
         )
         super().initialize()
         self.dest_doc_connector.initialize()
