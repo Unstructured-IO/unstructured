@@ -145,7 +145,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    # delete document; returns True if successful, False otherwise
+    # delete document; returns True if successful, False otherwisee
     def _delete_doc(self, doc_id: str) -> None:
         """
         Delete a document from the Vectara corpus.
