@@ -46,12 +46,6 @@ class OpenSearchAccessConfig(AccessConfig):
 
 @dataclass
 class SimpleOpenSearchConfig(SimpleElasticsearchConfig):
-    """Connector config where:
-    url is the url to access the opensearch server,
-    index_name is the name of the index to reach to.
-    Other attributes in SimpleElasticsearchConfig.
-    """
-
     access_config: OpenSearchAccessConfig = None
 
 
