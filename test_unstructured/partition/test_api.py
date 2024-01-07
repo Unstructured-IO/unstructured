@@ -2,11 +2,11 @@ import contextlib
 import json
 import os
 import pathlib
+from unittest.mock import ANY, Mock
 
 import pytest
 import requests
 from unstructured_client.general import General
-from unstructured_client.models.errors.sdkerror import SDKError
 
 from unstructured.documents.elements import NarrativeText
 from unstructured.partition.api import partition_multiple_via_api, partition_via_api
@@ -45,6 +45,7 @@ class MockResponse:
         # layer in the new unstructured-client:
         #     `elements_from_json(text=response.raw_response.text)`
         self.raw_response = MockRawResponse()
+        self.headers = {"Content-Type": "application/json"}
 
     def json(self):
         return json.loads(self.text)
@@ -69,6 +70,34 @@ def test_partition_via_api_from_filename(monkeypatch):
     elements = partition_via_api(filename=filename)
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_via_api_custom_url(monkeypatch):
+    """
+    Assert that we can specify api_url and requests are sent to the right place
+    """
+    mock_request = Mock(return_value=MockResponse(status_code=200))
+
+    monkeypatch.setattr(requests.Session, "request", mock_request)
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
+    custom_url = "http://localhost:8000/general/v0/general"
+
+    with open(filename, "rb") as f:
+        partition_via_api(file=f, api_url=custom_url, metadata_filename=filename)
+
+    mock_request.assert_called_with(
+        "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
+    )
+
+    # The sdk uses the server url, so we should be able to pass that as well
+    base_url = "http://localhost:8000"
+
+    with open(filename, "rb") as f:
+        partition_via_api(file=f, api_url=base_url, metadata_filename=filename)
+
+    mock_request.assert_called_with(
+        "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
+    )
 
 
 def test_partition_via_api_from_file(monkeypatch):
@@ -181,10 +210,11 @@ def test_partition_via_api_valid_request_data_kwargs():
     assert isinstance(elements, list)
 
 
-def test_partition_via_api_invalid_request_data_kwargs():
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
-    with pytest.raises(SDKError):
-        partition_via_api(filename=filename, strategy="not_a_strategy")
+# Note(austin) - This test is way too noisy against the hosted api
+# def test_partition_via_api_invalid_request_data_kwargs():
+#     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
+#     with pytest.raises(SDKError):
+#         partition_via_api(filename=filename, strategy="not_a_strategy")
 
 
 class MockMultipleResponse:
