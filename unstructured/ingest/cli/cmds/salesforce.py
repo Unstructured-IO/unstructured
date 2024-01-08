@@ -8,7 +8,6 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     CliRecursiveConfig,
     DelimitedString,
-    FileOrJson,
 )
 from unstructured.ingest.connector.salesforce import SimpleSalesforceConfig
 
@@ -34,7 +33,7 @@ class SalesforceCliConfig(SimpleSalesforceConfig, CliConfig):
             click.Option(
                 ["--private-key"],
                 required=True,
-                type=FileOrJson(allow_raw_str=True),
+                type=str,
                 help="Path to the private key or its contents for the Salesforce JWT auth. "
                 "Key file is usually named server.key.",
             ),
