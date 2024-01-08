@@ -1,13 +1,15 @@
 import json
 import os
 import pathlib
+import tempfile
 import warnings
 from importlib import import_module
-from unittest.mock import ANY, Mock, patch
+from unittest.mock import Mock, patch
 
 import docx
 import pytest
 
+from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_XLSX,
@@ -347,15 +349,18 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
 
     mock_partition.assert_called_once_with(
         filename=filename,
-        metadata_filename=None,
         file=None,
         url=None,
-        include_page_breaks=False,
-        infer_table_structure=False,
-        extract_images_in_pdf=ANY,
-        image_output_dir_path=ANY,
         strategy=PartitionStrategy.FAST,
         languages=None,
+        metadata_filename=None,
+        include_page_breaks=False,
+        infer_table_structure=False,
+        extract_images_in_pdf=False,
+        extract_image_block_types=None,
+        extract_image_block_output_dir=None,
+        extract_image_block_to_payload=False,
+        hi_res_model_name=None,
     )
 
 
@@ -455,6 +460,26 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
+
+
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_image_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.jpg"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
 
 
 @pytest.mark.parametrize(
@@ -663,6 +688,26 @@ def test_auto_filetype_overrides_file_specific(content_type, expected, monkeypat
     assert all(el.metadata.filetype == expected for el in elements)
 
 
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_pdf_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.pdf"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
+
+
 supported_filetypes = [
     _
     for _ in FileType
@@ -692,10 +737,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
         extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
     )
     fun_name = "partition_" + filetype_module
-    if filetype_module in ["pdf", "image"]:
-        module = import_module(f"unstructured.partition.pdf_image.{filetype_module}")  # noqa
-    else:
-        module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
+    module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
     for file in pathlib.Path("example-docs").iterdir():
         if file.is_file() and file.suffix == f".{extension}":
@@ -1104,6 +1146,7 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     assert len(partitioned_table_elements_200_chars) != len(table_elements)
 
     assert len(partitioned_table_elements_5_chars[0].text) == 5
+    assert len(partitioned_table_elements_5_chars[1].text) == 5
     assert len(partitioned_table_elements_5_chars[0].metadata.text_as_html) == 5
 
     # the first table element is under 200 chars so doesn't get chunked!

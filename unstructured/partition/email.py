@@ -27,7 +27,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
@@ -353,7 +353,19 @@ def partition_email(
         if content_type.endswith("encrypted"):
             is_encrypted = True
 
-        content_map[content_type] = part.get_payload()
+        # NOTE(andymli) - we can determine if text is base64 encoded via the
+        # content-transfer-encoding property of a part
+        # https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html
+        if (
+            part.get_content_maintype() == "text"
+            and part.get("content-transfer-encoding", None) == "base64"
+        ):
+            try:
+                content_map[content_type] = part.get_payload(decode=True).decode(encoding)
+            except (UnicodeDecodeError, UnicodeError):
+                content_map[content_type] = part.get_payload()
+        else:
+            content_map[content_type] = part.get_payload()
 
     content = content_map.get(content_source, "")
 

@@ -2,8 +2,7 @@ import os
 
 import pytest
 
-from unstructured.partition import strategies
-from unstructured.partition.pdf_image import pdf
+from unstructured.partition import pdf, strategies
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
@@ -54,28 +53,6 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
     assert bool(extractable) is expected
 
 
-def test_determine_image_auto_strategy():
-    strategy = strategies._determine_image_auto_strategy()
-    assert strategy == PartitionStrategy.HI_RES
-
-
-@pytest.mark.parametrize(
-    ("pdf_text_extractable", "infer_table_structure", "expected"),
-    [
-        (True, True, PartitionStrategy.HI_RES),
-        (False, True, PartitionStrategy.HI_RES),
-        (True, False, PartitionStrategy.FAST),
-        (False, False, PartitionStrategy.OCR_ONLY),
-    ],
-)
-def test_determine_pdf_auto_strategy(pdf_text_extractable, infer_table_structure, expected):
-    strategy = strategies._determine_pdf_auto_strategy(
-        pdf_text_extractable=pdf_text_extractable,
-        infer_table_structure=infer_table_structure,
-    )
-    assert strategy is expected
-
-
 @pytest.mark.parametrize(
     ("pdf_text_extractable", "infer_table_structure"),
     [
@@ -92,3 +69,56 @@ def test_determine_pdf_or_image_fast_strategy(pdf_text_extractable, infer_table_
         infer_table_structure=infer_table_structure,
     )
     assert strategy == PartitionStrategy.FAST
+
+
+@pytest.mark.parametrize(
+    (
+        "pdf_text_extractable",
+        "infer_table_structure",
+        "extract_images_in_pdf",
+        "extract_image_block_types",
+        "expected",
+    ),
+    [
+        (True, True, True, ["Image"], PartitionStrategy.HI_RES),
+        (True, True, True, [], PartitionStrategy.HI_RES),
+        (True, True, False, ["Image"], PartitionStrategy.HI_RES),
+        (True, True, False, [], PartitionStrategy.HI_RES),
+        (True, False, True, ["Image"], PartitionStrategy.HI_RES),
+        (True, False, True, [], PartitionStrategy.HI_RES),
+        (True, False, False, ["Image"], PartitionStrategy.HI_RES),
+        (True, False, False, [], PartitionStrategy.FAST),
+        (False, True, True, ["Image"], PartitionStrategy.HI_RES),
+        (False, True, True, [], PartitionStrategy.HI_RES),
+        (False, True, False, ["Image"], PartitionStrategy.HI_RES),
+        (False, True, False, [], PartitionStrategy.HI_RES),
+        (False, False, True, ["Image"], PartitionStrategy.HI_RES),
+        (False, False, True, [], PartitionStrategy.HI_RES),
+        (False, False, False, ["Image"], PartitionStrategy.HI_RES),
+        (False, False, False, [], PartitionStrategy.OCR_ONLY),
+    ],
+)
+def test_determine_pdf_auto_strategy(
+    pdf_text_extractable,
+    infer_table_structure,
+    extract_images_in_pdf,
+    extract_image_block_types,
+    expected,
+):
+    strategy = strategies.determine_pdf_or_image_strategy(
+        strategy=PartitionStrategy.AUTO,
+        is_image=False,
+        pdf_text_extractable=pdf_text_extractable,
+        infer_table_structure=infer_table_structure,
+        extract_images_in_pdf=extract_images_in_pdf,
+        extract_image_block_types=extract_image_block_types,
+    )
+    assert strategy == expected
+
+
+def test_determine_image_auto_strategy():
+    strategy = strategies.determine_pdf_or_image_strategy(
+        strategy=PartitionStrategy.AUTO,
+        is_image=True,
+    )
+    assert strategy == PartitionStrategy.HI_RES

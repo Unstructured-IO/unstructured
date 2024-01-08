@@ -2,10 +2,11 @@
 
 import os
 import pathlib
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import pytest
 from lxml import etree
+from lxml import html as lxml_html
 
 from unstructured.documents import html
 from unstructured.documents.base import Page
@@ -28,6 +29,7 @@ from unstructured.documents.html import (
     HTMLTable,
     HTMLTitle,
     TagsMixin,
+    _parse_HTMLTable_from_table_elem,
 )
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -218,7 +220,7 @@ def test_it_provides_parseable_HTML_in_text_as_html():
 def test_it_does_not_extract_text_in_script_tags():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "example-with-scripts.html")
     doc = HTMLDocument.from_file(filename=filename)
-    assert all("function (" not in element.text for element in cast(List[Text], doc.elements))
+    assert all("function (" not in element.text for element in doc.elements)
 
 
 def test_it_does_not_extract_text_in_style_tags():
@@ -881,6 +883,108 @@ def test_line_break_in_text_tag(tag):
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
     assert doc.elements[1].text == "World"
+
+
+# -- unit-level tests ----------------------------------------------------------------------------
+
+
+class Describe_parse_HTMLTable_from_table_elem:
+    """Unit-test suite for `unstructured.documents.html._parse_HTMLTable_from_table_elem`."""
+
+    def it_produces_one_cell_for_each_original_table_cell(self):
+        table_html = (
+            # -- include formatting whitespace to make sure it is removed --
+            "<table>\n"
+            "  <tr>\n"
+            "    <td>foo</td>\n"
+            "    <td>bar</td>\n"
+            "  </tr>\n"
+            "</table>"
+        )
+        table_elem = lxml_html.fromstring(table_html)  # pyright: ignore[reportUnknownMemberType]
+
+        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+
+        assert isinstance(html_table, HTMLTable)
+        assert html_table.text == "foo bar"
+        assert html_table.text_as_html == "<table><tr><td>foo</td><td>bar</td></tr></table>"
+
+    def it_accommodates_tds_with_child_elements(self):
+        """Like this example from an SEC 10k filing."""
+        table_html = (
+            "<table>\n"
+            " <tr>\n"
+            "  <td></td>\n"
+            "  <td></td>\n"
+            " </tr>\n"
+            " <tr>\n"
+            "  <td>\n"
+            "   <p>\n"
+            "    <span>\n"
+            '     <ix:nonNumeric id="F_be4cc145-372a-4689-be60-d8a70b0c8b9a"'
+            ' contextRef="C_1de69f73-df01-4830-8af0-0f11b469bc4a" name="dei:DocumentAnnualReport"'
+            ' format="ixt-sec:boolballotbox">\n'
+            "     <span>&#9746;</span>\n"
+            "     </ix:nonNumeric>\n"
+            "    </span>\n"
+            "   </p>\n"
+            "  </td>\n"
+            "  <td>\n"
+            "   <p>\n"
+            "    <span>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE"
+            " ACT OF 1934</span>\n"
+            "   </p>\n"
+            "  </td>\n"
+            " </tr>\n"
+            "</table>\n"
+        )
+        table_elem = lxml_html.fromstring(table_html)  # pyright: ignore[reportUnknownMemberType]
+
+        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+
+        assert isinstance(html_table, HTMLTable)
+        assert html_table.text == (
+            "☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934"
+        )
+        print(f"{html_table.text_as_html=}")
+        assert html_table.text_as_html == (
+            "<table>"
+            "<tr><td></td><td></td></tr>"
+            "<tr><td>☒</td><td>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES"
+            " EXCHANGE ACT OF 1934</td></tr>"
+            "</table>"
+        )
+
+    def it_reduces_a_nested_table_to_its_text_placed_in_the_cell_containing_the_nested_table(self):
+        """Recursively ..."""
+        nested_table_html = (
+            "<table>\n"
+            " <tr>\n"
+            "  <td>\n"
+            "   <table>\n"
+            "     <tr><td>foo</td><td>bar</td></tr>\n"
+            "     <tr><td>baz</td><td>bng</td></tr>\n"
+            "   </table>\n"
+            "  </td>\n"
+            "  <td>\n"
+            "   <table>\n"
+            "     <tr><td>fizz</td><td>bang</td></tr>\n"
+            "   </table>\n"
+            "  </td>\n"
+            " </tr>\n"
+            "</table>"
+        )
+        table_elem = lxml_html.fromstring(  # pyright: ignore[reportUnknownMemberType]
+            nested_table_html
+        )
+
+        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+
+        assert isinstance(html_table, HTMLTable)
+        assert html_table.text == "foo bar baz bng fizz bang"
+        assert html_table.text_as_html == (
+            "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"
+        )
 
 
 # -- module-level fixtures -----------------------------------------------------------------------

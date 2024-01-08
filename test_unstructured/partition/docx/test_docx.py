@@ -3,7 +3,7 @@
 import pathlib
 import re
 from tempfile import SpooledTemporaryFile
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import docx
 import pytest
@@ -293,7 +293,7 @@ def test_partition_docx_raises_with_neither():
 
 def test_parition_docx_from_team_chat():
     """Docx with no sections partitions recognizing both paragraphs and tables."""
-    elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
+    elements = partition_docx(example_doc_path("teams_chat.docx"))
     assert [e.text for e in elements] == [
         "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
@@ -681,7 +681,7 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
 
 
 def test_partition_docx_includes_hyperlink_metadata():
-    elements = cast(List[Text], partition_docx(example_doc_path("hlink-meta.docx")))
+    elements = partition_docx(example_doc_path("hlink-meta.docx"))
 
     # -- regular paragraph, no hyperlinks --
     element = elements[0]

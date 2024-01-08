@@ -15,7 +15,6 @@ from dataclasses_json.core import Json, _decode_dataclass
 
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
@@ -53,8 +52,8 @@ class BaseConfig(EnhancedDataClassJsonMixin, ABC):
 
 @dataclass
 class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
+    """Meant to designate holding any sensitive information associated with other configs
+    and also for access specific configs."""
 
 
 @dataclass
@@ -194,9 +193,20 @@ class EmbeddingConfig(BaseConfig):
             kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
+        # TODO make this more dynamic to map to encoder configs
+        if self.provider == "langchain-openai":
+            from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
 
-        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
-        return cls(**kwargs)
+            return OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-huggingface":
+            from unstructured.embed.huggingface import (
+                HuggingFaceEmbeddingConfig,
+                HuggingFaceEmbeddingEncoder,
+            )
+
+            return HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig(**kwargs))
+        else:
+            raise ValueError(f"{self.provider} not a recognized encoder")
 
 
 @dataclass

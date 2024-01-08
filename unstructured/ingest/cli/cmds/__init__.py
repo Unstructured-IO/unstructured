@@ -9,10 +9,12 @@ from unstructured.ingest.cli.cmds.fsspec.sftp import get_base_src_cmd as sftp_ba
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
+from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
+from .elasticsearch import get_base_dest_cmd as elasticsearch_base_dest_cmd
 from .elasticsearch import get_base_src_cmd as elasticsearch_base_src_cmd
 from .fsspec.azure import get_base_dest_cmd as azure_base_dest_cmd
 from .fsspec.azure import get_base_src_cmd as azure_base_src_cmd
@@ -37,10 +39,12 @@ from .notion import get_base_src_cmd as notion_base_src_cmd
 from .onedrive import get_base_src_cmd as onedrive_base_src_cmd
 from .outlook import get_base_src_cmd as outlook_base_src_cmd
 from .pinecone import get_base_dest_cmd as pinecone_base_dest_cmd
+from .qdrant import get_base_dest_cmd as qdrant_base_dest_cmd
 from .reddit import get_base_src_cmd as reddit_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
+from .sql import get_base_dest_cmd as sql_base_dest_cmd
 from .weaviate import get_base_dest_cmd as weaviate_dest_cmd
 from .wikipedia import get_base_src_cmd as wikipedia_base_src_cmd
 
@@ -90,15 +94,19 @@ if src_duplicates:
 base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
     box_base_dest_cmd,
+    chroma_base_dest_cmd,
     dropbox_base_dest_cmd,
+    elasticsearch_base_dest_cmd,
     fsspec_base_dest_cmd,
     gcs_base_dest_cmd,
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
+    sql_base_dest_cmd,
     weaviate_dest_cmd,
     mongo_base_dest_cmd,
     pinecone_base_dest_cmd,
+    qdrant_base_dest_cmd,
 ]
 
 # Make sure there are not overlapping names
