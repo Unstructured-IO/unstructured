@@ -37,14 +37,14 @@ filelock==3.13.1
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.46.0
+fonttools==4.47.0
     # via matplotlib
 fsspec==2023.9.1
     # via
     #   -c constraints.in
     #   huggingface-hub
     #   torch
-huggingface-hub==0.19.4
+huggingface-hub==0.20.2
     # via
     #   timm
     #   tokenizers
@@ -66,7 +66,7 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-lxml==4.9.3
+lxml==5.1.0
     # via
     #   -c base.txt
     #   pikepdf
@@ -124,7 +124,7 @@ pandas==2.0.3
     # via
     #   -c constraints.in
     #   layoutparser
-pdf2image==1.16.3
+pdf2image==1.17.0
     # via
     #   -r extra-pdf-image.in
     #   layoutparser
@@ -134,7 +134,7 @@ pdfminer-six==20221105
     #   pdfplumber
 pdfplumber==0.10.3
     # via layoutparser
-pikepdf==8.8.0
+pikepdf==8.11.0
     # via -r extra-pdf-image.in
 pillow==10.0.1
     # via
@@ -164,9 +164,9 @@ pyparsing==3.0.9
     # via
     #   -c constraints.in
     #   matplotlib
-pypdf==3.17.1
+pypdf==3.17.4
     # via -r extra-pdf-image.in
-pypdfium2==4.24.0
+pypdfium2==4.25.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -186,11 +186,11 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.5.2
+rapidfuzz==3.6.1
     # via
     #   -c base.txt
     #   unstructured-inference
-regex==2023.10.3
+regex==2023.12.25
     # via
     #   -c base.txt
     #   transformers
@@ -221,14 +221,14 @@ timm==0.9.12
     # via effdet
 tokenizers==0.15.0
     # via transformers
-torch==2.1.1
+torch==2.1.2
     # via
     #   -c constraints.in
     #   effdet
     #   layoutparser
     #   timm
     #   torchvision
-torchvision==0.16.1
+torchvision==0.16.2
     # via
     #   effdet
     #   layoutparser
@@ -239,16 +239,16 @@ tqdm==4.66.1
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.35.2
+transformers==4.36.2
     # via unstructured-inference
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   -c base.txt
     #   huggingface-hub
     #   iopath
     #   pypdf
     #   torch
-tzdata==2023.3
+tzdata==2023.4
     # via pandas
 unstructured-inference==0.7.18
     # via -r extra-pdf-image.in

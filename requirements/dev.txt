@@ -22,11 +22,11 @@ asttokens==2.4.1
     # via stack-data
 async-lru==2.0.4
     # via jupyterlab
-attrs==23.1.0
+attrs==23.2.0
     # via
     #   jsonschema
     #   referencing
-babel==2.13.1
+babel==2.14.0
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython
@@ -58,7 +58,7 @@ click==8.1.7
     #   -c base.txt
     #   -c test.txt
     #   pip-tools
-comm==0.2.0
+comm==0.2.1
     # via
     #   ipykernel
     #   ipywidgets
@@ -68,7 +68,7 @@ decorator==5.1.1
     # via ipython
 defusedxml==0.7.1
     # via nbconvert
-distlib==0.3.7
+distlib==0.3.8
     # via virtualenv
 exceptiongroup==1.2.0
     # via
@@ -76,13 +76,13 @@ exceptiongroup==1.2.0
     #   anyio
 executing==2.0.1
     # via stack-data
-fastjsonschema==2.19.0
+fastjsonschema==2.19.1
     # via nbformat
 filelock==3.13.1
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
-identify==2.5.32
+identify==2.5.33
     # via pre-commit
 idna==3.6
     # via
@@ -91,7 +91,7 @@ idna==3.6
     #   anyio
     #   jsonschema
     #   requests
-importlib-metadata==7.0.0
+importlib-metadata==7.0.1
     # via
     #   build
     #   jupyter-client
@@ -104,7 +104,7 @@ importlib-resources==6.1.1
     #   jsonschema
     #   jsonschema-specifications
     #   jupyterlab
-ipykernel==6.27.1
+ipykernel==6.28.0
     # via
     #   jupyter
     #   jupyter-console
@@ -138,7 +138,7 @@ jsonschema[format-nongpl]==4.20.0
     #   jupyter-events
     #   jupyterlab-server
     #   nbformat
-jsonschema-specifications==2023.11.2
+jsonschema-specifications==2023.12.1
     # via jsonschema
 jupyter==1.0.0
     # via -r dev.in
@@ -151,7 +151,7 @@ jupyter-client==8.6.0
     #   qtconsole
 jupyter-console==6.6.3
     # via jupyter
-jupyter-core==5.5.0
+jupyter-core==5.7.1
     # via
     #   -c constraints.in
     #   ipykernel
@@ -167,16 +167,16 @@ jupyter-events==0.9.0
     # via jupyter-server
 jupyter-lsp==2.2.1
     # via jupyterlab
-jupyter-server==2.11.2
+jupyter-server==2.12.2
     # via
     #   jupyter-lsp
     #   jupyterlab
     #   jupyterlab-server
     #   notebook
     #   notebook-shim
-jupyter-server-terminals==0.4.4
+jupyter-server-terminals==0.5.1
     # via jupyter-server
-jupyterlab==4.0.9
+jupyterlab==4.0.10
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -198,7 +198,7 @@ mistune==3.0.2
     # via nbconvert
 nbclient==0.9.0
     # via nbconvert
-nbconvert==7.12.0
+nbconvert==7.14.0
     # via
     #   jupyter
     #   jupyter-server
@@ -253,11 +253,11 @@ pre-commit==3.5.0
     # via -r dev.in
 prometheus-client==0.19.0
     # via jupyter-server
-prompt-toolkit==3.0.41
+prompt-toolkit==3.0.43
     # via
     #   ipython
     #   jupyter-console
-psutil==5.9.6
+psutil==5.9.7
     # via ipykernel
 ptyprocess==0.7.0
     # via
@@ -301,7 +301,7 @@ qtconsole==5.5.1
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.31.1
+referencing==0.32.1
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -319,7 +319,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.13.2
+rpds-py==0.16.2
     # via
     #   jsonschema
     #   referencing
@@ -362,7 +362,7 @@ tornado==6.4
     #   jupyterlab
     #   notebook
     #   terminado
-traitlets==5.14.0
+traitlets==5.14.1
     # via
     #   comm
     #   ipykernel
@@ -379,9 +379,9 @@ traitlets==5.14.0
     #   nbconvert
     #   nbformat
     #   qtconsole
-types-python-dateutil==2.8.19.14
+types-python-dateutil==2.8.19.20240106
     # via arrow
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   -c base.txt
     #   -c test.txt
@@ -397,7 +397,7 @@ urllib3==1.26.18
     #   requests
 virtualenv==20.25.0
     # via pre-commit
-wcwidth==0.2.12
+wcwidth==0.2.13
     # via prompt-toolkit
 webcolors==1.13
     # via jsonschema
