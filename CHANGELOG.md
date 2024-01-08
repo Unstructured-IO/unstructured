@@ -1,4 +1,30 @@
-## 0.11.7-dev3
+## 0.11.9-dev3
+
+### Enhancements
+
+* **Rename kwargs related to extracting image blocks** Rename the kwargs related to extracting image blocks for consistency and API usage.
+
+### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
+
+### Fixes
+
+* **Fix unequal row-length in HTMLTable.text_as_html.** Fixes to other aspects of partition_html() in v0.11 allowed unequal cell-counts in table rows. Make the cells in each row correspond 1:1 with cells in the original table row. This fix also removes "noise" cells resulting from HTML-formatting whitespace and eliminates the "column-shifting" of cells that previously resulted from noise-cells.
+
+## 0.11.8
+
+### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+* **Add inter-chunk overlap capability.** Implement overlap between chunks. This applies to all chunks prior to any text-splitting of oversized chunks so is a distinct behavior; overlap at text-splits of oversized chunks is independent of inter-chunk overlap (distinct chunk boundaries) and can be requested separately. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap_all` kwarg on partition functions.
+
+### Features
+
+### Fixes
+
+## 0.11.7
 
 ### Enhancements
 
@@ -7,12 +33,14 @@
 
 ### Features
 
+* **Add Qdrant destination connector.** Adds support for writing documents and embeddings into a Qdrant collection.
 * **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
-* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ### Fixes
 
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 
