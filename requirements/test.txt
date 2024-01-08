@@ -30,7 +30,7 @@ coverage[toml]==7.4.0
     #   pytest-cov
 exceptiongroup==1.2.0
     # via pytest
-flake8==6.1.0
+flake8==7.0.0
     # via
     #   -r test.in
     #   flake8-print
@@ -51,7 +51,7 @@ label-studio-sdk==0.0.32
     # via -r test.in
 label-studio-tools==0.0.3
     # via label-studio-sdk
-lxml==5.0.0
+lxml==5.1.0
     # via
     #   -c base.txt
     #   label-studio-sdk
@@ -89,7 +89,7 @@ pydantic==1.10.13
     #   -c constraints.in
     #   -r test.in
     #   label-studio-sdk
-pyflakes==3.1.0
+pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
@@ -126,11 +126,11 @@ tomli==2.0.1
     #   pytest
 types-click==7.1.8
     # via -r test.in
-types-markdown==3.5.0.3
+types-markdown==3.5.0.20240106
     # via -r test.in
 types-requests==2.31.0.6
     # via -r test.in
-types-tabulate==0.9.0.3
+types-tabulate==0.9.0.20240106
     # via -r test.in
 types-urllib3==1.26.25.14
     # via types-requests

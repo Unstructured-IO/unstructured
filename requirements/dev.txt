@@ -151,7 +151,7 @@ jupyter-client==8.6.0
     #   qtconsole
 jupyter-console==6.6.3
     # via jupyter
-jupyter-core==5.6.1
+jupyter-core==5.7.1
     # via
     #   -c constraints.in
     #   ipykernel
@@ -167,7 +167,7 @@ jupyter-events==0.9.0
     # via jupyter-server
 jupyter-lsp==2.2.1
     # via jupyterlab
-jupyter-server==2.12.1
+jupyter-server==2.12.2
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -301,7 +301,7 @@ qtconsole==5.5.1
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.32.0
+referencing==0.32.1
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -379,7 +379,7 @@ traitlets==5.14.1
     #   nbconvert
     #   nbformat
     #   qtconsole
-types-python-dateutil==2.8.19.14
+types-python-dateutil==2.8.19.20240106
     # via arrow
 typing-extensions==4.9.0
     # via
@@ -397,7 +397,7 @@ urllib3==1.26.18
     #   requests
 virtualenv==20.25.0
     # via pre-commit
-wcwidth==0.2.12
+wcwidth==0.2.13
     # via prompt-toolkit
 webcolors==1.13
     # via jsonschema

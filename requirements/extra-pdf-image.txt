@@ -44,7 +44,7 @@ fsspec==2023.9.1
     #   -c constraints.in
     #   huggingface-hub
     #   torch
-huggingface-hub==0.20.1
+huggingface-hub==0.20.2
     # via
     #   timm
     #   tokenizers
@@ -66,7 +66,7 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-lxml==5.0.0
+lxml==5.1.0
     # via
     #   -c base.txt
     #   pikepdf
@@ -124,7 +124,7 @@ pandas==2.0.3
     # via
     #   -c constraints.in
     #   layoutparser
-pdf2image==1.16.3
+pdf2image==1.17.0
     # via
     #   -r extra-pdf-image.in
     #   layoutparser

@@ -27,7 +27,7 @@ fsspec==2023.9.1
     #   -c constraints.in
     #   huggingface-hub
     #   torch
-huggingface-hub==0.20.1
+huggingface-hub==0.20.2
     # via
     #   tokenizers
     #   transformers

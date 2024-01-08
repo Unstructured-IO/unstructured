@@ -39,7 +39,7 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r base.in
-lxml==5.0.0
+lxml==5.1.0
     # via -r base.in
 marshmallow==3.20.1
     # via

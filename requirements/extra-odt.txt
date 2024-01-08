@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=extra-odt.txt extra-odt.in
 #
-lxml==5.0.0
+lxml==5.1.0
     # via
     #   -c base.txt
     #   python-docx

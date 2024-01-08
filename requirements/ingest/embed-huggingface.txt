@@ -56,7 +56,7 @@ fsspec==2023.9.1
     #   torch
 huggingface==0.0.1
     # via -r ingest/embed-huggingface.in
-huggingface-hub==0.20.1
+huggingface-hub==0.20.2
     # via
     #   sentence-transformers
     #   tokenizers
@@ -80,11 +80,11 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.0.353
+langchain==0.1.0
     # via -r ingest/embed-huggingface.in
-langchain-community==0.0.7
+langchain-community==0.0.10
     # via langchain
-langchain-core==0.1.4
+langchain-core==0.1.8
     # via
     #   langchain
     #   langchain-community

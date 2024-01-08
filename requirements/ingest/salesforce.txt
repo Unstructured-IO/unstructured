@@ -29,11 +29,11 @@ importlib-resources==6.1.1
     # via pendulum
 isodate==0.6.1
     # via zeep
-lxml==5.0.0
+lxml==5.1.0
     # via
     #   -c ingest/../base.txt
     #   zeep
-more-itertools==10.1.0
+more-itertools==10.2.0
     # via simple-salesforce
 pendulum==3.0.0
     # via simple-salesforce
