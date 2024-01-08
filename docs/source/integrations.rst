@@ -93,6 +93,9 @@ the text from each element and their types such as ``NarrativeText`` or ``Title`
 You can format your JSON or CSV outputs for use with `Prodigy <https://prodi.gy/docs/api-loaders>`_ using the `stage_for_prodigy <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-prodigy>`_ and `stage_csv_for_prodigy <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-csv-for-prodigy>`_ staging functions. After running ``stage_for_prodigy`` |
 ``stage_csv_for_prodigy``, you can write the results to a ``.json`` | ``.jsonl`` or a ``.csv`` file that is ready to be used with Prodigy. Follow the links for more details on usage.
 
+``Integration with Qdrant``
+-----------------------------
+Qdrant is a high-performance vector search engine and database. It enables the storage of vector embeddings and arbitrary data, facilitating semantic search with extensive filtering capabilities. You can read more about using Qdrant with Unstructured `here <https://unstructured-io.github.io/unstructured/ingest/destination_connectors/qdrant.html>`__ for ingesting data with chunking and embedding-generation support.
 
 ``Integration with Weaviate``
 -----------------------------
