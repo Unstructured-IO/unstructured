@@ -1,7 +1,6 @@
 import json
 import typing as t
 from dataclasses import dataclass, field
-from urllib.parse import unquote_plus
 
 from dataclasses_json.core import Json
 
@@ -24,7 +23,7 @@ SERVER_API_VERSION = "1"
 
 def parse_userinfo(userinfo: str) -> t.Tuple[str, str]:
     user, _, passwd = userinfo.partition(":")
-    return unquote_plus(user), unquote_plus(passwd)
+    return user, passwd
 
 
 def redact(uri: str, redacted_text="***REDACTED***") -> str:
