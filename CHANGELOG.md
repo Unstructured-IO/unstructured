@@ -2,7 +2,7 @@
 
 ### Enhancements
 
-* **Rename kwargs related to extracting image blocks.** Rename the kwargs related to extracting image blocks for consistency and API usage.
+* **Rename kwargs related to extracting image blocks** Rename the kwargs related to extracting image blocks for consistency and API usage.
 
 ### Features
 
@@ -12,6 +12,7 @@
 * **Pins version of unstructured-client** Sets minimum version of `unstructured-client` to avoid raising a `TypeError` when passing `api_key_auth` to `UnstructuredClient`
 
 * **Fix unequal row-length in HTMLTable.text_as_html.** Fixes to other aspects of partition_html() in v0.11 allowed unequal cell-counts in table rows. Make the cells in each row correspond 1:1 with cells in the original table row. This fix also removes "noise" cells resulting from HTML-formatting whitespace and eliminates the "column-shifting" of cells that previously resulted from noise-cells.
+* **Fix MongoDB connector URI password redaction.** MongoDB documentation states that characters `$ : / ? # [ ] @` must be percent encoded. URIs with password containing such special character were not redacted.
 
 ## 0.11.8
 
