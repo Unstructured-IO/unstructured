@@ -86,7 +86,8 @@ class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def check_connection(self):
         pass
 
-    def is_file_type_supported(self, path: str) -> bool:
+    @staticmethod
+    def is_file_type_supported(path: str) -> bool:
         # Workaround to ensure that auto.partition isn't fed with .yaml, .py, etc. files
         # TODO: What to do with no filenames? e.g. LICENSE, Makefile, etc.
         supported = path.endswith(
