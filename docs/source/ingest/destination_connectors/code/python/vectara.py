@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.connector.vectara import (
     SimpleVectaraConfig,
@@ -20,7 +22,12 @@ from unstructured.ingest.runner.writers.vectara import (
 def get_writer() -> Writer:
     return VectaraWriter(
         connector_config=SimpleVectaraConfig(
-            access_config=VectaraAccessConfig(),
+            access_config=VectaraAccessConfig(
+                oauth_client_id=os.getenv("VECTARA_OAUTH_CLIENT_ID"),
+                oauth_secret=os.getenv("VECTARA_OAUTH_SECRET"),
+            ),
+            customer_id=os.getenv("VECTARA_CUSTOMER_ID"),
+            corpus_name="test-corpus-vectara",
         ),
         write_config=VectaraWriteConfig(),
     )
