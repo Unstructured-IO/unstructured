@@ -236,6 +236,7 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
         else:
             logger.warning(f"{lang} is not a language supported by Tesseract.")
             return ""
+    return ""
 
 
 def _get_iso639_language_object(lang: str) -> Union[iso639.Language, str]:
