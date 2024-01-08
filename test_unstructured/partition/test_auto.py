@@ -1253,6 +1253,39 @@ def test_partition_languages_incorrectly_defaults_to_English(tmpdir):
     assert elements[0].metadata.languages == ["eng"]
 
 
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages", "expected_lang"),
+    [
+        # raise warning and use `ocr_languages` when `languages` is empty or None
+        (None, "deu", ["deu"]),
+        ([""], '"deu"', ["deu"]),
+        ([""], "deu", ["deu"]),
+        ([""], "[deu]", ["deu"]),
+        # raise warning and use `languages` when both are defined
+        (["spa"], "deu", ["spa"]),
+        (["spanish"], "english", ["spa"]),
+        (["spa"], "[deu]", ["spa"]),
+        (["spa"], '"deu"', ["spa"]),
+        (["spa"], ["deu"], ["spa"]),
+        (["spa"], ["[deu]"], ["spa"]),
+        (["spa+deu"], "eng+deu", ["spa", "deu"]),
+    ],
+)
+def test_auto_partition_uses_languages_over_ocr_languages(
+    languages, ocr_languages, expected_lang, caplog
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "DA-1p.pdf")
+    elements = partition(
+        filename=filename,
+        strategy=PartitionStrategy.OCR_ONLY,
+        ocr_languages=ocr_languages,
+        languages=languages,
+    )
+    for lang in elements[0].metadata.languages:
+        assert lang in expected_lang
+    assert "ocr_languages" in caplog.text
+
+
 def test_partition_timeout_gets_routed():
     class CallException(Exception):
         pass
