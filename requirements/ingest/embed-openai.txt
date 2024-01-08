@@ -89,7 +89,7 @@ numpy==1.24.4
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   langchain
-openai==1.3.7
+openai==1.6.1
     # via -r ingest/embed-openai.in
 packaging==23.2
     # via
