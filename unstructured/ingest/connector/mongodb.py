@@ -10,6 +10,9 @@ from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
     BaseSingleIngestDoc,
     WriteConfig,
+    IngestDocCleanupMixin,
+    SourceConnectorCleanupMixin,
+    BaseSourceConnector,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -60,11 +63,14 @@ def redact(uri: str, redacted_text="***REDACTED***") -> str:
         uri = uri.replace(passwd, redacted_text)
     return uri
 
+# MongoDBAccessConfig here
 
 @dataclass
-class SimpleMongoDBStorageConfig(BaseConnectorConfig):
+class SimpleMongoDBConfig(BaseConnectorConfig):
     uri: t.Optional[str] = None
     host: t.Optional[str] = None
+    database: t.Optional[str] = None
+    collection: t.Optional[str] = None
     port: int = 27017
 
     def to_dict(
@@ -80,6 +86,85 @@ class SimpleMongoDBStorageConfig(BaseConnectorConfig):
                 d["uri"] = redact(uri=self.uri, redacted_text=redacted_text)
         return d
 
+@dataclass
+class MongoDBDocumentMeta:
+    collection: str
+    document_id: str
+
+
+
+
+@dataclass
+class MongoDBIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
+    connector_config: SimpleMongoDBConfig
+    document_meta: MongoDBDocumentMeta
+    document: dict = field(default_factory=dict)
+    registry_name: str = "mongodb"
+    
+
+@dataclass
+class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleMongoDBConfig
+    _client: t.Optional["MongoClient"] = field(init=False, default=None)
+
+    @requires_dependencies(["pymongo"], extras="mongodb")
+    def generate_client(self) -> "MongoClient":
+        from pymongo import MongoClient
+        from pymongo.server_api import ServerApi
+
+        if self.connector_config.uri:
+            return MongoClient(
+                self.connector_config.uri, server_api=ServerApi(version=SERVER_API_VERSION)
+            )
+        else:
+            return MongoClient(
+                host=self.connector_config.host,
+                port=self.connector_config.port,
+                server_api=ServerApi(version=SERVER_API_VERSION),
+            )
+
+    @property
+    def client(self) -> "MongoClient":
+        if self._client is None:
+            self._client = self.generate_client()
+        return self._client
+
+
+
+    def check_connection(self):
+        try:
+            self.client.admin.command("ping")
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+    
+    def initialize(self):
+        _ = self.client
+
+    def _get_doc_ids(self):
+        """Fetches all document ids in a collection"""
+        self._client = self.generate_client()
+        db = self._client[self.connector_config.database]
+        collection = db[self.connector_config.collection]
+        return [str(doc["_id"]) for doc in collection.find({}, {"_id": 1})]
+
+    def get_ingest_docs(self) -> t.List[BaseSingleIngestDoc]:
+        ids = self._get_doc_ids()
+        ingest_docs = []
+        for doc_id in ids:
+            document_meta = MongoDBDocumentMeta(collection=self.connector_config.collection, document_id=doc_id)
+            ingest_doc = MongoDBIngestDoc(connector_config=self.connector_config, document_meta=document_meta)
+            ingest_docs.append(ingest_doc)
+        return ingest_docs
+
+    
+# _get_doc_ids
+
+# get_ingest_docs
+# initialize
+# check_connection
+
+##### Write from here on down.
 
 @dataclass
 class MongoDBWriteConfig(WriteConfig):
@@ -90,7 +175,7 @@ class MongoDBWriteConfig(WriteConfig):
 @dataclass
 class MongoDBDestinationConnector(BaseDestinationConnector):
     write_config: MongoDBWriteConfig
-    connector_config: SimpleMongoDBStorageConfig
+    connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
 
     @requires_dependencies(["pymongo"], extras="mongodb")

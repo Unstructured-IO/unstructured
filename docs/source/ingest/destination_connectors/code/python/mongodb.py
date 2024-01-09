@@ -1,7 +1,7 @@
 import os
 
 from unstructured.ingest.connector.local import SimpleLocalConfig
-from unstructured.ingest.connector.mongodb import MongoDBWriteConfig, SimpleMongoDBStorageConfig
+from unstructured.ingest.connector.mongodb import MongoDBWriteConfig, SimpleMongoDBConfig
 from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
@@ -18,7 +18,7 @@ from unstructured.ingest.runner.writers.mongodb import (
 
 def get_writer() -> Writer:
     return MongodbWriter(
-        connector_config=SimpleMongoDBStorageConfig(
+        connector_config=SimpleMongoDBConfig(
             uri=os.getenv("MONGODB_URI"),
         ),
         write_config=MongoDBWriteConfig(
