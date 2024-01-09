@@ -7,11 +7,11 @@
 # Structured outputs are stored in opensearch-ingest-output
 
 # shellcheck source=/dev/null
-sh scripts/opensearch-test-helpers/source_connector/create-fill-and-check-es.sh
+sh scripts/opensearch-test-helpers/source_connector/create-fill-and-check-opensearch.sh
 wait
 
 # Kill the container so the script can be repeatedly run using the same ports
-trap 'echo "Stopping opensearch Docker container"; docker stop es-test' EXIT
+trap 'echo "Stopping opensearch Docker container"; docker stop os-test' EXIT
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   opensearch \
