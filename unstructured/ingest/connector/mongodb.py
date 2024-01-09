@@ -1,10 +1,12 @@
+import hashlib
 import json
 import typing as t
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from dataclasses_json.core import Json
 
-from unstructured.ingest.error import DestinationConnectionError, WriteError
+from unstructured.ingest.error import DestinationConnectionError, WriteError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
@@ -15,6 +17,7 @@ from unstructured.ingest.interfaces import (
     BaseSourceConnector,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -63,9 +66,12 @@ def redact(uri: str, redacted_text="***REDACTED***") -> str:
         uri = uri.replace(passwd, redacted_text)
     return uri
 
+
 # MongoDBAccessConfig here SKIPPING due to uri
 
 # -----------------------------------
+
+#### Think about versioning
 
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
@@ -88,12 +94,11 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
                 d["uri"] = redact(uri=self.uri, redacted_text=redacted_text)
         return d
 
+
 @dataclass
 class MongoDBDocumentMeta:
     collection: str
     document_id: str
-
-
 
 
 @dataclass
@@ -102,7 +107,42 @@ class MongoDBIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     document_meta: MongoDBDocumentMeta
     document: dict = field(default_factory=dict)
     registry_name: str = "mongodb"
-    
+
+    @property
+    def filename(self):
+        f = self.document_meta.document_id
+        # breakpoint()
+        # if self.connector_config.fields:
+        #     f = "{}-{}".format(
+        #         f,
+        #         hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
+        #     )
+        return (
+            Path(self.read_config.download_dir) / self.document_meta.collection / f"{f}.txt"
+        ).resolve()
+
+    @property
+    def _output_filename(self):
+        """Create filename document id combined with a hash of the query to uniquely identify
+        the output file."""
+        # Generate SHA256 hash and take the first 8 characters
+        filename = self.document_meta.document_id
+        # if self.connector_config.fields:
+        #     filename = "{}-{}".format(
+        #         filename,
+        #         hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
+        #     )
+        output_file = f"{filename}.json"
+        return (
+            Path(self.processor_config.output_dir) / self.connector_config.collection / output_file
+        )
+
+    @SourceConnectionError.wrap
+    @requires_dependencies(["pymongo"], extras="mongodb")
+    @BaseSingleIngestDoc.skip_if_file_exists
+    def get_file(self):
+        pass
+
 
 @dataclass
 class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
@@ -131,7 +171,6 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             self._client = self.generate_client()
         return self._client
 
-
     def get_collection(self):
         database = self.client[self.connector_config.database]
         return database.get_collection(name=self.connector_config.collection)
@@ -142,28 +181,47 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
-    
+
     def initialize(self):
         _ = self.client
 
     def _get_doc_ids(self):
         """Fetches all document ids in a collection. actually returns ObjectId"""
         collection = self.get_collection()
-        return collection.distinct('_id')
+        return collection.distinct("_id")
 
     def get_ingest_docs(self) -> t.List[BaseSingleIngestDoc]:
         collection = self.get_collection()
         ids = self._get_doc_ids()
         ingest_docs = []
         for doc_id in ids:
-            breakpoint()
-            document_meta = MongoDBDocumentMeta(collection=self.connector_config.collection, document_id=doc_id)
-            # ingest_doc = MongoDBIngestDoc(connector_config=self.connector_config, document_meta=document_meta)
-            ingest_doc=collection.find_one({'_id':doc_id})
+            # breakpoint()
+            doc = collection.find_one({"_id": doc_id})
+            ingest_doc = MongoDBIngestDoc(
+                processor_config=self.processor_config,
+                read_config=self.read_config,
+                connector_config=self.connector_config,
+                document_meta=MongoDBDocumentMeta(
+                    collection=self.connector_config.collection, document_id=doc_id
+                ),
+                document=doc,
+                # check for read_config, processor_config
+            )
+            # ingest_doc.update_source_metadata()
+            del doc["_id"]
+            filename = ingest_doc.filename
+            flattened_dict = flatten_dict(dictionary=doc)
+            str_values = [str(value) for value in flattened_dict.values()]
+            concatenated_values = "\n".join(str_values)
+
+            filename.parent.mkdir(parents=True, exist_ok=True)
+            with open(filename, "w", encoding="utf8") as f:
+                f.write(concatenated_values)
+
             ingest_docs.append(ingest_doc)
         return ingest_docs
 
-    
+
 # _get_doc_ids
 
 # get_ingest_docs
@@ -171,8 +229,8 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 # check_connection
 
 
-
 ##### Write from here on down.
+
 
 @dataclass
 class MongoDBWriteConfig(WriteConfig):
