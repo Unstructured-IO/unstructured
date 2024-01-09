@@ -28,14 +28,8 @@ class Reader(SourceNode):
             # Still need to fetch metadata if file exists locally
             doc.update_source_metadata()
         else:
-            # TODO: update all to use doc.to_json(redact_sensitive=True) once session handler
-            # can be serialized
-            try:
-                serialized_doc = doc.to_json(redact_sensitive=True)
-                logger.debug(f"Fetching {serialized_doc} - PID: {os.getpid()}")
-            except Exception as e:
-                logger.warning("failed to print full doc: ", e)
-                logger.debug(f"Fetching {doc.__class__.__name__} - PID: {os.getpid()}")
+            serialized_doc = doc.to_json(redact_sensitive=True)
+            logger.debug(f"Fetching {serialized_doc} - PID: {os.getpid()}")
             if self.retry_strategy:
                 self.retry_strategy(doc.get_file)
             else:
