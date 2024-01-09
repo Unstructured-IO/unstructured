@@ -35,11 +35,11 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.9.1
+fsspec==2023.12.2
     # via
     #   -r ingest/gcs.in
     #   gcsfs
-gcsfs==2023.9.1
+gcsfs==2023.12.2.post1
     # via -r ingest/gcs.in
 google-api-core==2.15.0
     # via
