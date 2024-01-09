@@ -15,18 +15,18 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-google-api-core==2.14.0
+google-api-core==2.15.0
     # via google-api-python-client
-google-api-python-client==2.109.0
+google-api-python-client==2.112.0
     # via -r ingest/google-drive.in
-google-auth==2.24.0
+google-auth==2.26.1
     # via
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-google-auth-httplib2==0.1.1
+google-auth-httplib2==0.2.0
     # via google-api-python-client
-googleapis-common-protos==1.61.0
+googleapis-common-protos==1.62.0
     # via google-api-core
 httplib2==0.22.0
     # via

@@ -25,7 +25,7 @@ dataclasses-json==0.6.3
     # via
     #   -r base.in
     #   unstructured-client
-emoji==2.8.0
+emoji==2.9.0
     # via -r base.in
 filetype==1.2.0
     # via -r base.in
@@ -39,7 +39,7 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r base.in
-lxml==4.9.3
+lxml==5.1.0
     # via -r base.in
 marshmallow==3.20.1
     # via
@@ -61,13 +61,13 @@ packaging==23.2
     #   unstructured-client
 python-dateutil==2.8.2
     # via unstructured-client
-python-iso639==2023.6.15
+python-iso639==2024.1.2
     # via -r base.in
 python-magic==0.4.27
     # via -r base.in
-rapidfuzz==3.5.2
+rapidfuzz==3.6.1
     # via -r base.in
-regex==2023.10.3
+regex==2023.12.25
     # via nltk
 requests==2.31.0
     # via
@@ -84,7 +84,7 @@ tabulate==0.9.0
     # via -r base.in
 tqdm==4.66.1
     # via nltk
-typing-extensions==4.8.0
+typing-extensions==4.9.0
     # via
     #   -r base.in
     #   typing-inspect
@@ -93,7 +93,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.14.3
+unstructured-client==0.15.1
     # via -r base.in
 urllib3==1.26.18
     # via

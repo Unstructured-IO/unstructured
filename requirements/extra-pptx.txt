@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=extra-pptx.txt extra-pptx.in
 #
-lxml==4.9.3
+lxml==5.1.0
     # via python-pptx
 pillow==10.0.1
     # via

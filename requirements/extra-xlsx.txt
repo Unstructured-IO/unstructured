@@ -29,7 +29,7 @@ six==1.16.0
     # via
     #   -c base.txt
     #   python-dateutil
-tzdata==2023.3
+tzdata==2023.4
     # via pandas
 xlrd==2.0.1
     # via -r extra-xlsx.in

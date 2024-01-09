@@ -6,7 +6,7 @@
 #
 alabaster==0.7.13
     # via sphinx
-babel==2.13.1
+babel==2.14.0
     # via sphinx
 beautifulsoup4==4.12.2
     # via
@@ -36,7 +36,7 @@ idna==3.6
     #   requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==7.0.0
+importlib-metadata==7.0.1
     # via sphinx
 jinja2==3.1.2
     # via
