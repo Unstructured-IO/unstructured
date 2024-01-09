@@ -63,7 +63,9 @@ def redact(uri: str, redacted_text="***REDACTED***") -> str:
         uri = uri.replace(passwd, redacted_text)
     return uri
 
-# MongoDBAccessConfig here
+# MongoDBAccessConfig here SKIPPING due to uri
+
+# -----------------------------------
 
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
@@ -130,6 +132,9 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return self._client
 
 
+    def get_collection(self):
+        database = self.client[self.connector_config.database]
+        return database.get_collection(name=self.connector_config.collection)
 
     def check_connection(self):
         try:
@@ -142,18 +147,19 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         _ = self.client
 
     def _get_doc_ids(self):
-        """Fetches all document ids in a collection"""
-        self._client = self.generate_client()
-        db = self._client[self.connector_config.database]
-        collection = db[self.connector_config.collection]
-        return [str(doc["_id"]) for doc in collection.find({}, {"_id": 1})]
+        """Fetches all document ids in a collection. actually returns ObjectId"""
+        collection = self.get_collection()
+        return collection.distinct('_id')
 
     def get_ingest_docs(self) -> t.List[BaseSingleIngestDoc]:
+        collection = self.get_collection()
         ids = self._get_doc_ids()
         ingest_docs = []
         for doc_id in ids:
+            breakpoint()
             document_meta = MongoDBDocumentMeta(collection=self.connector_config.collection, document_id=doc_id)
-            ingest_doc = MongoDBIngestDoc(connector_config=self.connector_config, document_meta=document_meta)
+            # ingest_doc = MongoDBIngestDoc(connector_config=self.connector_config, document_meta=document_meta)
+            ingest_doc=collection.find_one({'_id':doc_id})
             ingest_docs.append(ingest_doc)
         return ingest_docs
 
@@ -164,17 +170,20 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 # initialize
 # check_connection
 
+
+
 ##### Write from here on down.
 
 @dataclass
 class MongoDBWriteConfig(WriteConfig):
-    database: str
-    collection: str
+    pass
+    # database: str
+    # collection: str
 
 
 @dataclass
 class MongoDBDestinationConnector(BaseDestinationConnector):
-    write_config: MongoDBWriteConfig
+    # write_config: MongoDBWriteConfig
     connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
 
@@ -215,14 +224,14 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
         pass
 
     def get_collection(self):
-        database = self.client[self.write_config.database]
-        return database.get_collection(name=self.write_config.collection)
+        database = self.client[self.connector_config.database]
+        return database.get_collection(name=self.connector_config.collection)
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(elements_dict)} documents to destination "
-            f"database {self.write_config.database}, at collection {self.write_config.collection}",
+            f"database {self.connector_config.database}, at collection {self.connector_config.collection}",
         )
 
         collection = self.get_collection()
