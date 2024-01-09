@@ -1,3 +1,9 @@
+## 0.12.0
+
+### Enhancements
+
+* **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
+
 ## 0.11.9-dev4
 
 ### Enhancements

@@ -1,5 +1,5 @@
 -c constraints.in
 -c base.txt
 
-python-docx>=1.1.0
+python-docx
 pypandoc
