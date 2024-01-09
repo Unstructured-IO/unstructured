@@ -83,7 +83,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
-    python_requires=">=3.10.0",
+    python_requires=">=3.9.0,<3.12",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
