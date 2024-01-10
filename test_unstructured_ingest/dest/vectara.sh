@@ -85,6 +85,25 @@ get_corpus_size=$(curl -L -X POST 'https://api.vectara.io/v1/compute-corpus-size
 }")
 corpus_size=$(echo "$get_corpus_size" | jq -r '.size.size')
 
+# list documents
+# list_documents=$(curl -L -X POST 'https://api.vectara.io/v1/list-documents' \
+#   -H 'Content-Type: application/json' \
+#   -H 'Accept: application/json' \
+#   -H "customer-id: $VECTARA_CUSTOMER_ID" \
+#   -H "Authorization: Bearer $access_token" \
+#   --data-raw "{
+#   \"corpusId\": $corpus_id,
+#   \"numResults\": 100,
+#   \"pageKey\": \"\",
+#   \"metadataFilter\": \"\"
+# }")
+# echo "***"
+# echo "$access_token"
+# echo "$VECTARA_CUSTOMER_ID"
+# echo "$corpus_id"
+# echo "$list_documents"
+# echo "***"
+
 if [ "$corpus_size" == "$EXPECTED_CORPUS_SIZE" ]; then
   echo "Corpus size is as expected: $corpus_size"
 else

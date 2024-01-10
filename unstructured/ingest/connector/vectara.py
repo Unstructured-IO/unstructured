@@ -29,19 +29,14 @@ class VectaraAccessConfig(AccessConfig):
 @dataclass
 class SimpleVectaraConfig(BaseConnectorConfig):
     access_config: VectaraAccessConfig
-    customer_id: t.AnyStr = None
+    customer_id: str
     corpus_name: t.AnyStr = "vectara-unstructured"
     corpus_id: t.AnyStr = None
 
 
 @dataclass
-class VectaraWriteConfig(WriteConfig):
-    batch_size: int = 100
-
-
-@dataclass
 class VectaraDestinationConnector(BaseDestinationConnector):
-    write_config: VectaraWriteConfig
+    write_config: WriteConfig
     connector_config: SimpleVectaraConfig
 
     BASE_URL = "https://api.vectara.io/v1"
@@ -61,7 +56,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
 
             list_corpora_response = self._request(
                 endpoint="list-corpora",
-                data={"numResults": 100, "filter": self.connector_config.corpus_name},
+                data={"numResults": 1, "filter": self.connector_config.corpus_name},
             )
 
             possible_corpora_ids_names_map = {
@@ -84,7 +79,8 @@ class VectaraDestinationConnector(BaseDestinationConnector):
                 self.connector_config.corpus_id = create_corpus_response.get("corpusId")
 
         except Exception as e:
-            return str(e) + "\n" + "".join(traceback.TracebackException.from_exception(e).format())
+            logger.error(f"failed to create Vectara connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to create Vectara connection: {e}")
 
     def initialize(self):
         self.vectara()

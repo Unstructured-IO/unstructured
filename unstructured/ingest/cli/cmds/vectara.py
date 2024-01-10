@@ -4,8 +4,8 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig
-from unstructured.ingest.connector.vectara import SimpleVectaraConfig, VectaraWriteConfig
-
+from unstructured.ingest.connector.vectara import SimpleVectaraConfig, WriteConfig
+# from unstructured.ingest.interfaces import WriteConfig
 
 @dataclass
 class VectaraCliWriteConfig(SimpleVectaraConfig, CliConfig):
@@ -38,8 +38,7 @@ class VectaraCliWriteConfig(SimpleVectaraConfig, CliConfig):
             ),
             click.Option(
                 ["--corpus-name"],
-                required=False,
-                default="vectara-unstructured",
+                required=True,
                 type=str,
                 help="The Vectara corpus-name.",
             ),
@@ -54,6 +53,6 @@ def get_base_dest_cmd():
         cmd_name="vectara",
         cli_config=VectaraCliWriteConfig,
         additional_cli_options=[],
-        write_config=VectaraWriteConfig,
+        write_config=WriteConfig,
     )
     return cmd_cls
