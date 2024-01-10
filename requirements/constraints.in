@@ -17,8 +17,6 @@ wheel>=0.38.1
 certifi>=2023.7.22
 # From pycocotools in local-inference
 pyparsing<3.1.0
-# NOTE(robinson) - Numpy dropped Python 3.8 support in 1.25.0
-numpy<1.25.0
 scipy<1.11.0
 IPython<8.13
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
@@ -38,9 +36,6 @@ unstructured.pytesseract>=0.3.12
 weaviate-client>3.25.0
 # Note(yuming) - pining to avoid conflict with paddle install
 matplotlib==3.7.2
-# NOTE(crag) - pin to available pandas for python 3.8 (at least in CI)
-fsspec==2023.9.1
-pandas<2.0.4
 # langchain limits anyio to below 4.0
 anyio<4.0
 # NOTE(crag): earlier versions fail in compilation step when pip installing the package

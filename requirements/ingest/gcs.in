@@ -1,5 +1,5 @@
 -c ../constraints.in
 -c ../base.txt
 gcsfs
-fsspec==2023.9.1
+fsspec
 bs4

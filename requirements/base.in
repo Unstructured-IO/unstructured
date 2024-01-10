@@ -1,4 +1,4 @@
--c "constraints.in"
+-c constraints.in
 chardet
 filetype
 python-magic

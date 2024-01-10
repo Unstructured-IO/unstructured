@@ -48,9 +48,7 @@ def _asdict(
         result = []
         overrides = _user_overrides_or_exts(obj)
         for field in fields(obj):
-            if getattr(field, "sensitive", False) and redact_sensitive:
-                value = redacted_text
-            elif overrides[field.name].encoder:
+            if overrides[field.name].encoder:
                 value = getattr(obj, field.name)
             else:
                 value = _asdict(
@@ -59,6 +57,8 @@ def _asdict(
                     redact_sensitive=redact_sensitive,
                     redacted_text=redacted_text,
                 )
+            if getattr(field, "sensitive", False) and redact_sensitive and value:
+                value = redacted_text
             if getattr(field, "overload_name", None) and apply_name_overload:
                 overload_name = getattr(field, "overload_name")
                 result.append((overload_name, value))
