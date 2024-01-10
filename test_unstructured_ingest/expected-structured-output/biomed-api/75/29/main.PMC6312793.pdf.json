@@ -13,6 +13,19 @@
     "type": "Header"
   },
   {
+    "element_id": "73862c31b60251b2f838a92c4265b6d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "ELSEVIER",
+    "type": "Image"
+  },
+  {
     "element_id": "721bbccb8e92736ad5776ad812dc8bca",
     "metadata": {
       "data_source": {},
@@ -52,6 +65,19 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "8bdb2c4b6997a1bbd7b948d7aeb402e2",
     "metadata": {
       "data_source": {},
@@ -78,6 +104,19 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "77b037daa0a8a3f7349bd57dda36499f",
     "metadata": {
       "data_source": {},
@@ -89,6 +128,19 @@
     },
     "text": "(eee",
     "type": "Title"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "9d8efece3117b2eec928f8ee4d4888e4",
