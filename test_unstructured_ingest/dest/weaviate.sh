@@ -45,6 +45,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --embedding-provider "langchain-huggingface" \
   weaviate \
   --host-url http://localhost:8080 \
-  --class-name elements
+  --class-name elements \
+  --anonymous
 
 "$SCRIPT_DIR"/python/test-ingest-weaviate-output.py
