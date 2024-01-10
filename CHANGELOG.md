@@ -1,4 +1,4 @@
-## 0.12.1-dev0
+## 0.12.1-dev1
 
 ### Enhancements
 
@@ -6,7 +6,10 @@
 
 ### Fixes
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 154a77c10 (bump changelog)
 ## 0.12.0
 
 ### Enhancements
