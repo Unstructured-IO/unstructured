@@ -9,7 +9,7 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
 )
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
@@ -184,7 +184,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         # Leaving contexts doesn't close the connection, so doing it here
         conn.close()
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         json_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
@@ -194,4 +194,4 @@ class SqlDestinationConnector(BaseDestinationConnector):
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
                 json_list.extend(json_content)
-        self.write_dict(elements_dict=json_list)
+        return json_list

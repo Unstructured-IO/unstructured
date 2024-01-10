@@ -10,7 +10,7 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     ConfigSessionHandleMixin,
     IngestDocSessionHandleMixin,
     WriteConfig,
@@ -128,7 +128,7 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             ) as pool:
                 pool.map(self.upsert_batch, list(chunk_generator(elements_dict, qdrant_batch_size)))
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         dict_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
@@ -154,4 +154,4 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
                     f"appending {len(dict_content)} json elements from content in {local_path}",
                 )
                 dict_list.extend(dict_content)
-        self.write_dict(elements_dict=dict_list)
+        return dict_list

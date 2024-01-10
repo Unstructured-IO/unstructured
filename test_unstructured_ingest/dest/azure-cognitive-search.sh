@@ -11,8 +11,6 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-AZURE_SEARCH_ENDPOINT="https://ingest-test-azure-cognitive-search.search.windows.net"
-
 random_id=$(uuidgen)
 # index name must be all lowercase
 random_id=$(echo "$random_id" | tr '[:upper:]' '[:lower:]')
@@ -21,8 +19,8 @@ DESTINATION_INDEX="utic-test-ingest-fixtures-output-$random_id"
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
 API_VERSION=2023-07-01-Preview
 
-if [ -z "$AZURE_SEARCH_API_KEY" ]; then
-  echo "Skipping Azure Cognitive Search ingest test because AZURE_SEARCH_API_KEY env var is not set."
+if [ -z "$AZURE_SEARCH_API_KEY" ] || [ -z "$AZURE_SEARCH_ENDPOINT" ]; then
+  echo "Skipping Azure Cognitive Search ingest test because AZURE_SEARCH_API_KEY or AZURE_SEARCH_ENDPOINT env var is not set."
   exit 8
 fi
 # shellcheck disable=SC1091

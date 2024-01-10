@@ -8,7 +8,7 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
+    BaseSingleIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -126,15 +126,15 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         )
         return chroma_dict
 
-    def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        logger.info(f"Inserting / updating {len(dict_list)} documents to destination ")
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
         chroma_batch_size = self.write_config.batch_size
 
-        for chunk in chunk_generator(dict_list, chroma_batch_size):
+        for chunk in chunk_generator(elements_dict, chroma_batch_size):
             self.upsert_batch(self.prepare_chroma_list(chunk))
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         dict_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
@@ -154,4 +154,4 @@ class ChromaDestinationConnector(BaseDestinationConnector):
                     f"Extending {len(dict_content)} json elements from content in {local_path}",
                 )
                 dict_list.extend(dict_content)
-        self.write_dict(dict_list=dict_list)
+        return dict_list

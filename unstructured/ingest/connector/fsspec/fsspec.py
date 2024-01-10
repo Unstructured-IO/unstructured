@@ -339,6 +339,9 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             **write_text_configs,
         )
 
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
+        pass
+
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
             file_path = doc.base_output_filename

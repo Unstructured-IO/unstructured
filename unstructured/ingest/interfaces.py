@@ -662,19 +662,26 @@ class BaseDestinationConnector(BaseConnector, ABC):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
 
-    @abstractmethod
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
+        elements_dict = self.get_elements_dict(docs=docs)
+        self.write_raw_dict(elements_dict=elements_dict)
+
+    @abstractmethod
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         pass
 
     @abstractmethod
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
-    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
-        elements_dict = [e.to_dict() for e in elements]
+    def write_raw_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         for d in elements_dict:
             self.conform_dict(data=d)
-        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
+        return self.write_dict(*args, elements_dict=elements_dict, **kwargs)
+
+    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
+        elements_dict = [e.to_dict() for e in elements]
+        self.write_raw_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:

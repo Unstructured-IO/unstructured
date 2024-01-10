@@ -172,6 +172,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def check_connection(self):
         pass
 
+    @requires_dependencies(["deltalake"], extras="delta-table")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
 
@@ -199,8 +200,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
         writer.start()
         writer.join()
 
-    @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         elements_dict: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
@@ -208,4 +208,4 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
                 element_dict = json.load(json_file)
                 logger.info(f"converting {len(element_dict)} rows from content in {local_path}")
                 elements_dict.extend(element_dict)
-        self.write_dict(elements_dict=elements_dict)
+        return elements_dict

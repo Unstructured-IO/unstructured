@@ -144,7 +144,7 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                 ),
             )
 
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         json_list: t.List[t.Dict[str, t.Any]] = []
         for doc in docs:
             local_path = doc._output_filename
@@ -154,4 +154,4 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
                 json_list.extend(json_content)
-        self.write_dict(elements_dict=json_list)
+        return json_list
