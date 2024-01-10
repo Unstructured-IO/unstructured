@@ -695,6 +695,10 @@ class BaseDestinationConnector(BaseConnector, ABC):
     def modify_and_write_dict(
         self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs
     ) -> None:
+        """
+        Modify in this instance means this method wraps calls to conform_dict() and
+        normalize() before actually processing the content via write_dict()
+        """
         for d in elements_dict:
             self.conform_dict(data=d)
         elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
