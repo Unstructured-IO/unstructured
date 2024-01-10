@@ -236,6 +236,7 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
         else:
             logger.warning(f"{lang} is not a language supported by Tesseract.")
             return ""
+    logger.warning(f"{lang} is not a language supported by Tesseract.")
     return ""
 
 
