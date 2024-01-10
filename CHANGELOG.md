@@ -1,18 +1,15 @@
-## 0.12.1-dev1
+## 0.12.1-dev2
 
 ### Enhancements
 
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
 * **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
+* **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
 
 ### Features
 
 ### Fixes
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 154a77c10 (bump changelog)
 ## 0.12.0
 
 ### Enhancements
