@@ -8,6 +8,8 @@ from __future__ import annotations
 from typing import Iterator, List, Optional, Tuple
 
 from unstructured.chunking.base import (
+    CHUNK_MAX_CHARS_DEFAULT,
+    CHUNK_MULTI_PAGE_DEFAULT,
     BasePreChunker,
     BoundaryPredicate,
     ChunkingOptions,
@@ -22,10 +24,10 @@ from unstructured.utils import lazyproperty
 
 def chunk_by_title(
     elements: List[Element],
-    multipage_sections: bool = True,
+    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
     combine_text_under_n_chars: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
-    max_characters: int = 500,
+    max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
     overlap: int = 0,
     overlap_all: bool = False,
 ) -> List[Element]:
