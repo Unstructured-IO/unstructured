@@ -368,7 +368,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                         "upload failed for a batch in elasticsearch destination connector:", info
                     )
 
-    def conform_dict(self, element_dict):
+    def normalize_dict(self, element_dict: dict) -> dict:
         return {
             "_index": self.connector_config.index_name,
             "_id": str(uuid.uuid4()),
@@ -387,7 +387,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         def generate_element_dicts(doc):
             with open(doc._output_filename) as json_file:
                 element_dicts_one_doc = (
-                    self.conform_dict(element_dict) for element_dict in json.load(json_file)
+                    self.normalize_dict(element_dict) for element_dict in json.load(json_file)
                 )
                 yield from element_dicts_one_doc
 

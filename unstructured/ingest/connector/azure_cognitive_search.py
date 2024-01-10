@@ -117,6 +117,8 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         import azure.core.exceptions
 
+        for d in elements_dict:
+            self.conform_dict(data=d)
         logger.info(
             f"writing {len(elements_dict)} documents to destination "
             f"index at {self.write_config.index}",
@@ -150,8 +152,6 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
                 logger.info(
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )

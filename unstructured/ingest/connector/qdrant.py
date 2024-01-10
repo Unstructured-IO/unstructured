@@ -109,23 +109,24 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             raise WriteError(f"Qdrant error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
-    def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"Upserting {len(dict_list)} elements to " f"{self.connector_config.collection_name}",
+            f"Upserting {len(elements_dict)} elements to "
+            f"{self.connector_config.collection_name}",
         )
 
         qdrant_batch_size = self.write_config.batch_size
 
         logger.info(f"using {self.write_config.num_processes} processes to upload")
         if self.write_config.num_processes == 1:
-            for chunk in chunk_generator(dict_list, qdrant_batch_size):
+            for chunk in chunk_generator(elements_dict, qdrant_batch_size):
                 self.upsert_batch(chunk)
 
         else:
             with mp.Pool(
                 processes=self.write_config.num_processes,
             ) as pool:
-                pool.map(self.upsert_batch, list(chunk_generator(dict_list, qdrant_batch_size)))
+                pool.map(self.upsert_batch, list(chunk_generator(elements_dict, qdrant_batch_size)))
 
     def write(self, docs: t.List[BaseIngestDoc]) -> None:
         dict_list: t.List[t.Dict[str, t.Any]] = []
@@ -153,4 +154,4 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
                     f"appending {len(dict_content)} json elements from content in {local_path}",
                 )
                 dict_list.extend(dict_content)
-        self.write_dict(dict_list=dict_list)
+        self.write_dict(elements_dict=dict_list)

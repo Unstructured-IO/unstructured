@@ -654,6 +654,9 @@ class BaseDestinationConnector(BaseConnector, ABC):
         self.write_config = write_config
         self.connector_config = connector_config
 
+    def conform_dict(self, data: dict) -> None:
+        return
+
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly

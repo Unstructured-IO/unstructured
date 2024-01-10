@@ -84,7 +84,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         cursor.execute("SELECT 1;")
         cursor.close()
 
-    def conform_dict(self, data: dict) -> tuple:
+    def conform_dict(self, data: dict) -> None:
         """
         Updates the element dictionary to conform to the sql schema
         """
@@ -155,23 +155,22 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if data.get("metadata", {}):
             data.update(data.pop("metadata", None))
 
-        return data
-
     @DestinationConnectionError.wrap
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} objects to database {self.connector_config.database} "
+            f"writing {len(elements_dict)} objects to database {self.connector_config.database} "
             f"at {self.connector_config.host}"
         )
+
+        for d in elements_dict:
+            self.conform_dict(data=d)
 
         with self.client as conn:
             cursor = conn.cursor()
 
             # Since we have no guarantee that each element will have the same keys
             # we insert each element individually
-            for e in json_list:
-                elem = self.conform_dict(e)
-
+            for elem in elements_dict:
                 query = f"INSERT INTO {ELEMENTS_TABLE_NAME} ({','.join(elem.keys())}) \
                 VALUES({','.join(['?' if self.connector_config.db_type=='sqlite' else '%s' for x in elem])})"  # noqa E501
                 values = []
@@ -198,4 +197,4 @@ class SqlDestinationConnector(BaseDestinationConnector):
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
                 json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+        self.write_dict(elements_dict=json_list)

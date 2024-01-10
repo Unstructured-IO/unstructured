@@ -173,16 +173,18 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} objects to destination "
+            f"writing {len(elements_dict)} objects to destination "
             f"class {self.connector_config.class_name} "
             f"at {self.connector_config.host_url}",
         )
+        for d in elements_dict:
+            self.conform_dict(data=d)
+
         self.client.batch.configure(batch_size=self.write_config.batch_size)
         with self.client.batch as b:
-            for e in json_list:
-                self.conform_dict(e)
+            for e in elements_dict:
                 vector = e.pop("embeddings", None)
                 b.add_data_object(
                     e,
@@ -201,4 +203,4 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )
                 json_list.extend(json_content)
-        self.write_dict(json_list=json_list)
+        self.write_dict(elements_dict=json_list)
