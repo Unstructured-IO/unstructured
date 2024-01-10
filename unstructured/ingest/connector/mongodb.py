@@ -126,9 +126,6 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         _ = self.client
 
-    def conform_dict(self, data: dict) -> None:
-        pass
-
     def get_collection(self):
         database = self.client[self.write_config.database]
         return database.get_collection(name=self.write_config.collection)
@@ -153,8 +150,6 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
                 logger.info(
                     f"appending {len(json_content)} json elements from content in {local_path}",
                 )

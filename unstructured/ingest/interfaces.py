@@ -672,6 +672,8 @@ class BaseDestinationConnector(BaseConnector, ABC):
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
+        for d in elements_dict:
+            self.conform_dict(data=d)
         self.write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 

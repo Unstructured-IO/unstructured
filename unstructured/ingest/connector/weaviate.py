@@ -179,8 +179,6 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             f"class {self.connector_config.class_name} "
             f"at {self.connector_config.host_url}",
         )
-        for d in elements_dict:
-            self.conform_dict(data=d)
 
         self.client.batch.configure(batch_size=self.write_config.batch_size)
         with self.client.batch as b:

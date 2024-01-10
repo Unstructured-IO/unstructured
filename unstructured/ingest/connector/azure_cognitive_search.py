@@ -117,8 +117,6 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         import azure.core.exceptions
 
-        for d in elements_dict:
-            self.conform_dict(data=d)
         logger.info(
             f"writing {len(elements_dict)} documents to destination "
             f"index at {self.write_config.index}",

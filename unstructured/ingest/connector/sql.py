@@ -162,9 +162,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
             f"at {self.connector_config.host}"
         )
 
-        for d in elements_dict:
-            self.conform_dict(data=d)
-
         with self.client as conn:
             cursor = conn.cursor()
 
