@@ -211,12 +211,10 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             index=self.connector_config.index_name,
         )
         return list(result)
-        ##### This is just a big list of dicts, each dict is a document
 
     @SourceConnectionError.wrap
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def get_files(self):
-        breakpoint()
         documents = self._get_docs()
         for doc in documents:
             ingest_doc = ElasticsearchIngestDoc(
