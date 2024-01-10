@@ -72,7 +72,7 @@ eval "$(pyenv virtualenv-init -)"
 EOT
         # install python
         source "$HOME"/.bashrc
-        pyenv install 3.8.17
+        pyenv install 3.10.4
     fi
 EOF
 
