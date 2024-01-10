@@ -1,12 +1,14 @@
+## 0.12.1-dev0
+
+### Fixes
+
+* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
+
 ## 0.12.0
 
 ### Enhancements
 
 * **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
-
-### Fixes
-
-* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
 
 ## 0.11.9-dev4
 
