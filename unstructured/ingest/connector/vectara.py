@@ -19,6 +19,8 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 
+BASE_URL = "https://api.vectara.io/v1"
+DEFAULT_TOKEN_ENDPOINT="https://vectara-prod-{customer_id}.auth.us-west-2.amazoncognito.com/oauth2/token"  # noqa: E501
 
 @dataclass
 class VectaraAccessConfig(AccessConfig):
@@ -30,16 +32,14 @@ class VectaraAccessConfig(AccessConfig):
 class SimpleVectaraConfig(BaseConnectorConfig):
     access_config: VectaraAccessConfig
     customer_id: str
-    corpus_name: t.AnyStr = "vectara-unstructured"
-    corpus_id: t.AnyStr = None
+    corpus_name: t.Optional[str]
+    corpus_id: t.Optional[str]
 
 
 @dataclass
 class VectaraDestinationConnector(BaseDestinationConnector):
     write_config: WriteConfig
     connector_config: SimpleVectaraConfig
-
-    BASE_URL = "https://api.vectara.io/v1"
 
     @DestinationConnectionError.wrap
     def vectara(self):

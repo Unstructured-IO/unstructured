@@ -42,7 +42,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   elasticsearch \
   --download-dir "$DOWNLOAD_DIR" \
   --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-  --num-processes "$max_processes" \
+  --num-processes "1" \
   --preserve-downloads \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
