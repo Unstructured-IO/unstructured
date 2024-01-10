@@ -14,6 +14,8 @@
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
 
+* **Add a capability to reorient pages.** Now, when using the HI\_RES strategy for PDF partitioning, and when the PDF appears to be a scanned one (single image per page, no native text), the file can have its pages individually reoriented through the setting of reorientation_strategy (currently, =NONE by default).
+
 ### Fixes
 
 * **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.

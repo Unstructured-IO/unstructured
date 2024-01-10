@@ -4,6 +4,7 @@ import contextlib
 import io
 import os
 import re
+import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -25,13 +26,7 @@ import numpy as np
 import pdf2image
 import wrapt
 from pdfminer import psparser
-from pdfminer.layout import (
-    LTChar,
-    LTContainer,
-    LTImage,
-    LTItem,
-    LTTextBox,
-)
+from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -54,10 +49,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -69,10 +61,8 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import (
-    check_languages,
-    prepare_languages_for_tesseract,
-)
+from unstructured.partition.lang import check_languages, prepare_languages_for_tesseract
+from unstructured.partition.pdf_image.orientation_and_rotation import reorient_file_or_data
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -94,12 +84,10 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
+    ReorientationStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
-from unstructured.partition.utils.sorting import (
-    coord_has_valid_points,
-    sort_page_elements,
-)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
@@ -118,7 +106,7 @@ def default_hi_res_model(infer_table_structure: bool) -> str:
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
 
-    # if tabler structure is needed we defaul to use yolox for better table detection
+    # if tabler structure is needed we default to use yolox for better table detection
     default = "yolox" if infer_table_structure else "yolox_quantized"
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", default)
 
@@ -144,6 +132,7 @@ def partition_pdf(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -197,6 +186,11 @@ def partition_pdf(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    hi_res_reorientation_strategy
+        Only applicable if `strategy=hi_res` and the pdf is non-native.
+        Values should correspond to ReorientationStrategy class members.
+        Unless set to "", the algorithm will open and (temporarily) rewrite the pdf
+        after rotating the pages in accordance to the orientations detected.
     """
 
     exactly_one(filename=filename, file=file)
@@ -216,6 +210,7 @@ def partition_pdf(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        hi_res_reorientation_strategy=hi_res_reorientation_strategy,
         **kwargs,
     )
 
@@ -272,6 +267,7 @@ def _partition_pdf_or_image_local(
     extract_image_block_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
+    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -280,10 +276,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.pdf_image.ocr import (
-        process_data_with_ocr,
-        process_file_with_ocr,
-    )
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
@@ -291,6 +284,36 @@ def _partition_pdf_or_image_local(
 
     if languages is None:
         languages = ["eng"]
+
+    if (
+        not pdf_text_extractable
+        and not is_image
+        and hi_res_reorientation_strategy not in [None, False, "", ReorientationStrategy.NONE]
+    ):
+        with tempfile.NamedTemporaryFile(mode="w") as tmpFile:
+            reorient_file_or_data(filename, file, hi_res_reorientation_strategy, tmpFile.name)
+            return _partition_pdf_or_image_local(
+                filename=tmpFile.name,  # the reoriented file
+                file=None,
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                ocr_mode=ocr_mode,
+                model_name=model_name,
+                hi_res_model_name=hi_res_model_name,
+                pdf_image_dpi=pdf_image_dpi,
+                metadata_last_modified=metadata_last_modified,
+                pdf_text_extractable=pdf_text_extractable,
+                extract_images_in_pdf=extract_images_in_pdf,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_output_dir=extract_image_block_output_dir,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                analysis=analysis,
+                analyzed_image_output_dir_path=analyzed_image_output_dir_path,
+                hi_res_reorientation_strategy="",  # already reoriented
+                **kwargs,
+            )
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -474,6 +497,7 @@ def partition_pdf_or_image(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -540,6 +564,7 @@ def partition_pdf_or_image(
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_image_block_to_payload=extract_image_block_to_payload,
+                hi_res_reorientation_strategy=hi_res_reorientation_strategy,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -916,10 +941,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
-    from unstructured.partition.pdf_image.ocr import (
-        get_layout_elements_from_ocr,
-        get_ocr_agent,
-    )
+    from unstructured.partition.pdf_image.ocr import get_layout_elements_from_ocr, get_ocr_agent
 
     ocr_agent = get_ocr_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)
