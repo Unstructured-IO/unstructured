@@ -3,6 +3,7 @@
 ### Enhancements
 
 * **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ## 0.11.9-dev4
 
@@ -13,7 +14,6 @@
 ### Features
 
 * **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
-* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ### Fixes
 
