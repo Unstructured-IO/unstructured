@@ -5,6 +5,7 @@ from unstructured.documents.elements import (
     PageBreak,
 )
 from unstructured.partition.lang import (
+    _convert_language_code_to_pytesseract_lang_code,
     apply_lang_metadata,
     detect_languages,
     prepare_languages_for_tesseract,
@@ -112,3 +113,14 @@ def test_apply_lang_metadata_has_no_warning_for_PageBreak(caplog):
         ),
     )
     assert "No features in text." not in [rec.message for rec in caplog.records]
+
+
+@pytest.mark.parametrize(
+    ("lang_in", "expected_lang"),
+    [
+        ("en", "eng"),
+        ("fr", "fra"),
+    ],
+)
+def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
+    assert expected_lang == _convert_language_code_to_pytesseract_lang_code(lang_in)
