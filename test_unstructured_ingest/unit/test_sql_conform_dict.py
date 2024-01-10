@@ -69,7 +69,8 @@ def test_conform_dict_1():
     # Mock the uuid.uuid4 function to return a fixed value
     with patch("uuid.uuid4", return_value="mocked_uuid"):
         # Call the conform_dict method
-        data_out = connector.conform_dict(TEST_DATA_1)
+        data_out = TEST_DATA_1.copy()
+        connector.conform_dict(data_out)
 
     # Assert that the result matches the expected output
     assert data_out == {
@@ -107,7 +108,8 @@ def test_conform_dict_2():
     # Mock the uuid.uuid4 function to return a fixed value
     with patch("uuid.uuid4", return_value="mocked_uuid"):
         # Call the conform_dict method
-        data_out = connector.conform_dict(TEST_DATA_2)
+        data_out = TEST_DATA_2.copy()
+        connector.conform_dict(data_out)
 
     # Assert that the result matches the expected output
     assert data_out == {
