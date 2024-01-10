@@ -674,7 +674,7 @@ class BaseDestinationConnector(BaseConnector, ABC):
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         elements_dict = self.get_elements_dict(docs=docs)
-        self.write_raw_dict(elements_dict=elements_dict)
+        self.modify_and_write_dict(elements_dict=elements_dict)
 
     def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
         dict_list: t.List[t.Dict[str, t.Any]] = []
@@ -692,7 +692,9 @@ class BaseDestinationConnector(BaseConnector, ABC):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
-    def write_raw_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def modify_and_write_dict(
+        self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs
+    ) -> None:
         for d in elements_dict:
             self.conform_dict(data=d)
         elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
@@ -700,7 +702,7 @@ class BaseDestinationConnector(BaseConnector, ABC):
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
-        self.write_raw_dict(*args, elements_dict=elements_dict, **kwargs)
+        self.modify_and_write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
