@@ -1,9 +1,14 @@
+## 0.12.1-dev0
+
+### Enhancements
+
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
+
 ## 0.12.0
 
 ### Enhancements
 
 * **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
-* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ## 0.11.9-dev4
 
