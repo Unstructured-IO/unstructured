@@ -10,7 +10,6 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseSingleIngestDoc,
     ConfigSessionHandleMixin,
     IngestDocSessionHandleMixin,
     WriteConfig,
@@ -128,30 +127,17 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             ) as pool:
                 pool.map(self.upsert_batch, list(chunk_generator(elements_dict, qdrant_batch_size)))
 
-    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
-        dict_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                dict_content = json.load(json_file)
-                dict_content = [
-                    {
-                        "id": str(uuid.uuid4()),
-                        "vector": element.pop("embeddings", {}),
-                        "payload": {
-                            "text": element.pop("text", None),
-                            "element_serialized": json.dumps(element),
-                            **flatten_dict(
-                                element,
-                                separator="-",
-                                flatten_lists=True,
-                            ),
-                        },
-                    }
-                    for element in dict_content
-                ]
-                logger.info(
-                    f"appending {len(dict_content)} json elements from content in {local_path}",
-                )
-                dict_list.extend(dict_content)
-        return dict_list
+    def normalize_dict(self, element_dict: dict) -> dict:
+        return {
+            "id": str(uuid.uuid4()),
+            "vector": element_dict.pop("embeddings", {}),
+            "payload": {
+                "text": element_dict.pop("text", None),
+                "element_serialized": json.dumps(element_dict),
+                **flatten_dict(
+                    element_dict,
+                    separator="-",
+                    flatten_lists=True,
+                ),
+            },
+        }

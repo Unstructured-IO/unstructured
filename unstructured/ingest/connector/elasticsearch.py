@@ -1,5 +1,4 @@
 import hashlib
-import json
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -381,12 +380,3 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                 ),
             },
         }
-
-    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
-        elements_dict: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                element_dict = json.load(json_file)
-                elements_dict.extend([self.normalize_dict(d) for d in element_dict])
-        return elements_dict

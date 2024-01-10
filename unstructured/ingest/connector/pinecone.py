@@ -10,7 +10,6 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseSingleIngestDoc,
     ConfigSessionHandleMixin,
     IngestDocSessionHandleMixin,
     WriteConfig,
@@ -108,35 +107,20 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
                     self.upsert_batch, list(chunk_generator(elements_dict, pinecone_batch_size))
                 )
 
-    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
-        dict_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                dict_content = json.load(json_file)
-
-                # we assign embeddings to "values", and other fields to "metadata"
-                dict_content = [
-                    # While flatten_dict enables indexing on various fields,
-                    # element_serialized enables easily reloading the element object to memory.
-                    # element_serialized is formed without text/embeddings to avoid data bloating.
-                    {
-                        "id": str(uuid.uuid4()),
-                        "values": element.pop("embeddings", None),
-                        "metadata": {
-                            "text": element.pop("text", None),
-                            "element_serialized": json.dumps(element),
-                            **flatten_dict(
-                                element,
-                                separator="-",
-                                flatten_lists=True,
-                            ),
-                        },
-                    }
-                    for element in dict_content
-                ]
-                logger.info(
-                    f"appending {len(dict_content)} json elements from content in {local_path}",
-                )
-                dict_list.extend(dict_content)
-        return dict_list
+    def normalize_dict(self, element_dict: dict) -> dict:
+        # While flatten_dict enables indexing on various fields,
+        # element_serialized enables easily reloading the element object to memory.
+        # element_serialized is formed without text/embeddings to avoid data bloating.
+        return {
+            "id": str(uuid.uuid4()),
+            "values": element_dict.pop("embeddings", None),
+            "metadata": {
+                "text": element_dict.pop("text", None),
+                "element_serialized": json.dumps(element_dict),
+                **flatten_dict(
+                    element_dict,
+                    separator="-",
+                    flatten_lists=True,
+                ),
+            },
+        }

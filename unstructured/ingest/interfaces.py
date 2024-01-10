@@ -2,6 +2,7 @@
 through Unstructured."""
 
 import functools
+import json
 import os
 import re
 import typing as t
@@ -655,7 +656,16 @@ class BaseDestinationConnector(BaseConnector, ABC):
         self.connector_config = connector_config
 
     def conform_dict(self, data: dict) -> None:
+        """
+        When the original dictionary needs to be modified in place
+        """
         return
+
+    def normalize_dict(self, element_dict: dict) -> dict:
+        """
+        When the original dictionary needs to be mapped to a new one
+        """
+        return element_dict
 
     @abstractmethod
     def initialize(self):
@@ -666,9 +676,17 @@ class BaseDestinationConnector(BaseConnector, ABC):
         elements_dict = self.get_elements_dict(docs=docs)
         self.write_raw_dict(elements_dict=elements_dict)
 
-    @abstractmethod
     def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
-        pass
+        dict_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                dict_content = json.load(json_file)
+                logger.info(
+                    f"Extending {len(dict_content)} json elements from content in {local_path}",
+                )
+                dict_list.extend(dict_content)
+        return dict_list
 
     @abstractmethod
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
@@ -677,7 +695,8 @@ class BaseDestinationConnector(BaseConnector, ABC):
     def write_raw_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         for d in elements_dict:
             self.conform_dict(data=d)
-        return self.write_dict(*args, elements_dict=elements_dict, **kwargs)
+        elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
+        return self.write_dict(*args, elements_dict=elements_dict_normalized, **kwargs)
 
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
