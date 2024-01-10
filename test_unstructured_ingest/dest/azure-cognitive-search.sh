@@ -11,7 +11,7 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-AZURE_SEARCH_ENDPOINT=${AZURE_SEARCH_ENDPOINT:-"https://ingest-test-azure-cognitive-search.search.windows.net"}
+AZURE_SEARCH_ENDPOINT="https://ingest-test-azure-cognitive-search.search.windows.net"
 
 random_id=$(uuidgen)
 # index name must be all lowercase
