@@ -1,5 +1,5 @@
-Databricks Delta Table and Connector
-====================================
+Delta Table Source Connector
+============================
 
 Objectives
 ----------
@@ -101,7 +101,7 @@ Extracting Delta Table Using Unstructured Connector
 
 
 Conclusion
-------------
+----------
 
 This documentation covers the essential steps for converting unstructured PDF data into structured data and storing it in a Databricks Delta Table. It also outlines how to extract this data for further use.
 
