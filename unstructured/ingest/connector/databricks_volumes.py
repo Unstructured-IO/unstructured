@@ -2,7 +2,7 @@ import json
 import os
 import typing as t
 from dataclasses import dataclass, field
-from io import StringIO
+from io import BytesIO
 from pathlib import PurePath
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -50,6 +50,7 @@ class SimpleDatabricksVolumesConfig(BaseConnectorConfig):
 class DatabricksVolumesWriteConfig(WriteConfig):
     path: str
     override: bool = False
+    encoding: str = "utf-8"
 
 
 @dataclass
@@ -94,15 +95,9 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
         logger.debug(f"uploading content to {output_path}")
         self.client.files.upload(
             file_path=output_path,
-            contents=StringIO(json.dumps(elements_dict)),
+            contents=BytesIO(json.dumps(elements_dict).encode(encoding=self.write_config.encoding)),
             overwrite=self.write_config.override,
         )
-        # fs.write_text(
-        #     full_output_path,
-        #     json.dumps(elements_dict, indent=indent),
-        #     encoding=encoding,
-        #     **write_text_configs,
-        # )
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
