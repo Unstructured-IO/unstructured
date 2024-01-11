@@ -4,11 +4,14 @@
 
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
 * **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 
 ### Features
 * **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
+
+* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
 
 ## 0.12.0
 
