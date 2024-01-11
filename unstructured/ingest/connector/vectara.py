@@ -1,6 +1,5 @@
 import datetime
 import json
-import traceback
 import typing as t
 import uuid
 from dataclasses import dataclass
@@ -20,7 +19,7 @@ from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 
 BASE_URL = "https://api.vectara.io/v1"
-DEFAULT_TOKEN_ENDPOINT="https://vectara-prod-{customer_id}.auth.us-west-2.amazoncognito.com/oauth2/token"  # noqa: E501
+
 
 @dataclass
 class VectaraAccessConfig(AccessConfig):
@@ -32,8 +31,9 @@ class VectaraAccessConfig(AccessConfig):
 class SimpleVectaraConfig(BaseConnectorConfig):
     access_config: VectaraAccessConfig
     customer_id: str
-    corpus_name: t.Optional[str]
-    corpus_id: t.Optional[str]
+    corpus_name: t.Optional[str] = None
+    corpus_id: t.Optional[str] = None
+    token_url: str = "https://vectara-prod-{}.auth.us-west-2.amazoncognito.com/oauth2/token"
 
 
 @dataclass
@@ -92,7 +92,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         params: t.Mapping[str, t.Any] = None,
         data: t.Mapping[str, t.Any] = None,
     ):
-        url = f"{self.BASE_URL}/{endpoint}"
+        url = f"{BASE_URL}/{endpoint}"
 
         current_ts = datetime.datetime.now().timestamp()
         if self.jwt_token_expires_ts - current_ts <= 60:
@@ -115,7 +115,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     # get OAUth2 JWT token
     def _get_jwt_token(self):
         """Connect to the server and get a JWT token."""
-        token_endpoint = f"https://vectara-prod-{self.connector_config.customer_id}.auth.us-west-2.amazoncognito.com/oauth2/token"  # noqa: E501
+        token_endpoint = self.connector_config.token_url.format(self.connector_config.customer_id)
         headers = {
             "Content-Type": "application/x-www-form-urlencoded",
         }

@@ -5,7 +5,7 @@ import click
 
 from unstructured.ingest.cli.interfaces import CliConfig
 from unstructured.ingest.connector.vectara import SimpleVectaraConfig, WriteConfig
-# from unstructured.ingest.interfaces import WriteConfig
+
 
 @dataclass
 class VectaraCliWriteConfig(SimpleVectaraConfig, CliConfig):
@@ -38,9 +38,17 @@ class VectaraCliWriteConfig(SimpleVectaraConfig, CliConfig):
             ),
             click.Option(
                 ["--corpus-name"],
-                required=True,
+                required=False,
                 type=str,
+                default=None,
                 help="The Vectara corpus-name.",
+            ),
+            click.Option(
+                ["--token-url"],
+                required=False,
+                default="https://vectara-prod-{}.auth.us-west-2.amazoncognito.com/oauth2/token",
+                type=str,
+                help="The Vectara endpoint for token refresh. Needs curly brackets for customer_id",
             ),
         ]
         return options
