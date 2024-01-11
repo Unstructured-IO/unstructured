@@ -14,7 +14,7 @@ Changes to the Free API Service
 
 Implementation of a 1000-Page Cap
 ---------------------------------
-Starting from January 10th, 2024, our free API service will include a cap of 1000 pages. This limitation is introduced to ensure the sustainability of our free offerings and to enhance service quality.
+Starting from January 10th, 2024, our free API service includes a cap of 1,000 pages. This limitation is introduced to ensure the sustainability of our free offerings and to enhance service quality.
 
 .. warning::
     Documents submitted to the free API may be utilized for our proprietary model training and evaluation purposes. This is part of our continuous effort to improve the API's performance and capabilities.
@@ -45,7 +45,7 @@ Documents.  ``.csv``, ``.doc``, ``.docx``, ``.epub``, ``.odt``, ``.pdf``, ``.ppt
 Get Support
 ***********
 
-Should you require any assistance or have any questions regarding the Unstructure API, please contact our support team at `support@unstructured.io <mailto:support@unstructured.io>`__.
+Should you require any assistance or have any questions regarding the Unstructured API, please contact our support team at `support@unstructured.io <mailto:support@unstructured.io>`__.
 
 Table of Content
 ****************
