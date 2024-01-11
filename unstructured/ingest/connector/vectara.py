@@ -45,9 +45,10 @@ class VectaraDestinationConnector(BaseDestinationConnector):
 
     @property
     def jwt_token(self):
-        if self._jwt_token is None:
-            self._jwt_token = self._get_jwt_token()
-        elif self._jwt_token_expires_ts - datetime.datetime.now().timestamp() <= 60:
+        if (
+            not self._jwt_token
+            or self._jwt_token_expires_ts - datetime.datetime.now().timestamp() <= 60
+        ):
             self._jwt_token = self._get_jwt_token()
         return self._jwt_token
 
@@ -131,7 +132,9 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         }
 
         request_time = datetime.datetime.now().timestamp()
-        response_json = requests.request(method="POST", url=token_endpoint, headers=headers, data=data).json()
+        response_json = requests.request(
+            method="POST", url=token_endpoint, headers=headers, data=data
+        ).json()
 
         self._jwt_token_expires_ts = request_time + response_json.get("expires_in")
         return response_json.get("access_token")
