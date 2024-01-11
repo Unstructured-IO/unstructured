@@ -21,22 +21,25 @@ DESTINATION_INDEX="utic-test-ingest-fixtures-output-$random_id"
 # 2023-07-01-Preview, 2021-04-30-Preview, 2020-06-30-Preview
 API_VERSION=2023-07-01-Preview
 
-if [ -z "$AZURE_SEARCH_API_KEY" ]; then
-  echo "Skipping Azure Cognitive Search ingest test because AZURE_SEARCH_API_KEY env var is not set."
+if [ -z "$AZURE_SEARCH_API_KEY" ] || [ -z "$AZURE_SEARCH_ENDPOINT" ]; then
+  echo "Skipping Azure Cognitive Search ingest test because AZURE_SEARCH_API_KEY or AZURE_SEARCH_ENDPOINT env var is not set."
   exit 8
 fi
+
+endpoint="$AZURE_SEARCH_ENDPOINT/indexes/$DESTINATION_INDEX?api-version=$API_VERSION"
+echo "Connecting to endpoint: $endpoint"
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Index cleanup
   response_code=$(curl -s -o /dev/null -w "%{http_code}" \
-    "$AZURE_SEARCH_ENDPOINT/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+    "$endpoint" \
     --header "api-key: $AZURE_SEARCH_API_KEY" \
     --header 'content-type: application/json')
   if [ "$response_code" == "200" ]; then
     echo "deleting index $DESTINATION_INDEX"
     curl -X DELETE \
-      "$AZURE_SEARCH_ENDPOINT/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+      "$endpoint" \
       --header "api-key: $AZURE_SEARCH_API_KEY" \
       --header 'content-type: application/json'
   else
@@ -53,7 +56,7 @@ trap cleanup EXIT
 # Create index
 echo "Creating index $DESTINATION_INDEX"
 response=$(curl -X PUT -s -w "\n%{http_code}" \
-  "$AZURE_SEARCH_ENDPOINT/indexes/$DESTINATION_INDEX?api-version=$API_VERSION" \
+  "$endpoint" \
   --header "api-key: $AZURE_SEARCH_API_KEY" \
   --header 'content-type: application/json' \
   --data "@$SCRIPT_DIR/files/azure_cognitive_index_schema.json")
