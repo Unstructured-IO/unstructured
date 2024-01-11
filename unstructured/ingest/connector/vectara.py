@@ -2,7 +2,7 @@ import datetime
 import json
 import typing as t
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import requests
 
@@ -40,19 +40,28 @@ class SimpleVectaraConfig(BaseConnectorConfig):
 class VectaraDestinationConnector(BaseDestinationConnector):
     write_config: WriteConfig
     connector_config: SimpleVectaraConfig
+    _jwt_token: t.Optional[str] = field(init=False, default=None)
+    _jwt_token_expires_ts: t.Optional[float] = field(init=False, default=None)
+
+    @property
+    def jwt_token(self):
+        if self._jwt_token is None:
+            self._jwt_token = self._get_jwt_token()
+        elif self._jwt_token_expires_ts - datetime.datetime.now().timestamp() <= 60:
+            self._jwt_token = self._get_jwt_token()
+        return self._jwt_token
 
     @DestinationConnectionError.wrap
     def vectara(self):
         """
         Check the connection for Vectara and validate corpus exists.
-        - If more than one exists - then return a message
-        - If exactly one exists with this name - use it.
+        - If more than one corpus with the same name exists - then return a message
+        - If exactly one corpus exists with this name - use it.
         - If does not exist - create it.
         """
         try:
-            jwt_token = self._get_jwt_token()
-            if not jwt_token:
-                return "Unable to get JWT Token. Confirm your Client ID and Client Secret."
+            # Get token if not already set
+            self.jwt_token
 
             list_corpora_response = self._request(
                 endpoint="list-corpora",
@@ -94,10 +103,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
     ):
         url = f"{BASE_URL}/{endpoint}"
 
-        current_ts = datetime.datetime.now().timestamp()
-        if self.jwt_token_expires_ts - current_ts <= 60:
-            self._get_jwt_token()
-
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -126,12 +131,10 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         }
 
         request_time = datetime.datetime.now().timestamp()
-        response = requests.request(method="POST", url=token_endpoint, headers=headers, data=data)
-        response_json = response.json()
+        response_json = requests.request(method="POST", url=token_endpoint, headers=headers, data=data).json()
 
-        self.jwt_token = response_json.get("access_token")
-        self.jwt_token_expires_ts = request_time + response_json.get("expires_in")
-        return self.jwt_token
+        self._jwt_token_expires_ts = request_time + response_json.get("expires_in")
+        return response_json.get("access_token")
 
     @DestinationConnectionError.wrap
     def check_connection(self):
@@ -141,7 +144,6 @@ class VectaraDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    # delete document; returns True if successful, False otherwisee
     def _delete_doc(self, doc_id: str) -> None:
         """
         Delete a document from the Vectara corpus.

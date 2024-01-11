@@ -10,10 +10,6 @@
 
 ### Fixes
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 154a77c10 (bump changelog)
 ## 0.12.0
 
 ### Enhancements
