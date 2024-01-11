@@ -118,7 +118,7 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         response.raise_for_status()
         return response.json()
 
-    # get OAUth2 JWT token
+    # Get Oauth2 JWT token
     def _get_jwt_token(self):
         """Connect to the server and get a JWT token."""
         token_endpoint = self.connector_config.token_url.format(self.connector_config.customer_id)
@@ -128,15 +128,16 @@ class VectaraDestinationConnector(BaseDestinationConnector):
         data = {
             "grant_type": "client_credentials",
             "client_id": self.connector_config.access_config.oauth_client_id,
-            "client_secret": self.connector_config.access_config.oauth_secret,
+            "client_secret": self.connector_config.access_config.oauth_secret
         }
 
-        request_time = datetime.datetime.now().timestamp()
-        response_json = requests.request(
-            method="POST", url=token_endpoint, headers=headers, data=data
-        ).json()
+        response = requests.request(method="POST", url=token_endpoint, headers=headers, data=data)
+        response.raise_for_status()
+        response_json = response.json()
 
+        request_time = datetime.datetime.now().timestamp()
         self._jwt_token_expires_ts = request_time + response_json.get("expires_in")
+
         return response_json.get("access_token")
 
     @DestinationConnectionError.wrap
