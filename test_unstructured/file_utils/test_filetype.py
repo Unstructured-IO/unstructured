@@ -447,10 +447,10 @@ def test_detect_filetype_from_octet_stream(filename="example-docs/emoji.xlsx"):
         assert _detect_filetype_from_octet_stream(file=f) == FileType.XLSX
 
 
-def test_detect_wav_from_filename(filename="example-docs/ucl_audio.wav"):
+def test_detect_wav_from_filename(filename="example-docs/CantinaBand3.wav"):
     assert detect_filetype(filename=filename) == FileType.WAV
 
 
-def test_detect_wav_from_file(filename="example-docs/ucl_audio.wav"):
+def test_detect_wav_from_file(filename="example-docs/CantinaBand3.wav"):
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.WAV
