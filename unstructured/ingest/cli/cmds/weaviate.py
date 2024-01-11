@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig, Dict
+from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
 from unstructured.ingest.connector.weaviate import SimpleWeaviateConfig, WeaviateWriteConfig
 
 CMD_NAME = "weaviate"
@@ -26,18 +26,46 @@ class WeaviateCliConfig(SimpleWeaviateConfig, CliConfig):
                 help="Name of the class to push the records into, e.g: Pdf-elements",
             ),
             click.Option(
-                ["--auth-keys"],
-                required=False,
-                type=Dict(),
-                help=(
-                    "String representing a JSON-like dict with key,value containing "
-                    "the required parameters to create an authentication object. "
-                    'example: \'{"api_key":"123abc!"}\' '
-                    "The connector resolves the authentication object from the parameters. "
-                    "See https://weaviate.io/developers/weaviate/client-libraries/python_v3"
-                    "#api-key-authentication "
-                    "for more information."
-                ),
+                ["--access-token"], default=None, type=str, help="Used to create the bearer token."
+            ),
+            click.Option(
+                ["--refresh-token"],
+                default=None,
+                type=str,
+                help="Will tie this value to the bearer token. If not provided, "
+                "the authentication will expire once the lifetime of the access token is up.",
+            ),
+            click.Option(
+                ["--api-key"],
+                default=None,
+                type=str,
+            ),
+            click.Option(
+                ["--client-secret"],
+                default=None,
+                type=str,
+            ),
+            click.Option(
+                ["--scope"],
+                default=None,
+                type=DelimitedString(),
+            ),
+            click.Option(
+                ["--username"],
+                default=None,
+                type=str,
+            ),
+            click.Option(
+                ["--password"],
+                default=None,
+                type=str,
+            ),
+            click.Option(
+                ["--anonymous"],
+                is_flag=True,
+                default=False,
+                type=bool,
+                help="if set, all auth values will be ignored",
             ),
         ]
         return options

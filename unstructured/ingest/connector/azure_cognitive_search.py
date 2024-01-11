@@ -9,7 +9,6 @@ from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseSingleIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -143,17 +142,3 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     ],
                 ),
             )
-
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
-        self.write_dict(elements_dict=json_list)
