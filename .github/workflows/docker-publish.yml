@@ -9,7 +9,7 @@ env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
   DOCKER_BUILD_REPOSITORY: quay.io/unstructured-io/build-unstructured
   PIP_VERSION: "23.2.1"
-  PYTHON_VERSION: "3.8"
+  PYTHON_VERSION: "3.10"
 
 jobs:
   set-short-sha:
