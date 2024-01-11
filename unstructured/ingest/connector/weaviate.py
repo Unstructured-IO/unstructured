@@ -1,8 +1,10 @@
+import copy
 import json
 import typing as t
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
@@ -20,7 +22,14 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class WeaviateAccessConfig(AccessConfig):
-    auth_keys: t.Optional[t.Dict[str, str]] = enhanced_field(default=None, sensitive=True)
+    access_token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    refresh_token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    client_secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    scope: t.Optional[t.List[str]] = None
+    username: t.Optional[str] = None
+    password: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    anonymous: bool = False
 
 
 @dataclass
@@ -40,6 +49,18 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     write_config: WeaviateWriteConfig
     connector_config: SimpleWeaviateConfig
     _client: t.Optional["Client"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _client variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     @requires_dependencies(["weaviate"], extras="weaviate")
@@ -65,29 +86,35 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def _resolve_auth_method(self):
-        auth_keys = self.connector_config.access_config.auth_keys
-        if auth_keys is None:
+        access_configs = self.connector_config.access_config
+        if access_configs.anonymous:
             return None
 
-        if access_token := auth_keys.get("access_token"):
+        if access_configs.access_token:
             from weaviate.auth import AuthBearerToken
 
             return AuthBearerToken(
-                access_token=access_token,
-                refresh_token=auth_keys.get("refresh_token"),
+                access_token=access_configs.access_token,
+                refresh_token=access_configs.refresh_token,
             )
-        elif api_key := auth_keys.get("api_key"):
+        elif access_configs.api_key:
             from weaviate.auth import AuthApiKey
 
-            return AuthApiKey(api_key=api_key)
-        elif client_secret := auth_keys.get("client_secret"):
+            return AuthApiKey(api_key=access_configs.api_key)
+        elif access_configs.client_secret:
             from weaviate.auth import AuthClientCredentials
 
-            return AuthClientCredentials(client_secret=client_secret, scope=auth_keys.get("scope"))
-        elif (username := auth_keys.get("username")) and (pwd := auth_keys.get("password")):
+            return AuthClientCredentials(
+                client_secret=access_configs.client_secret, scope=access_configs.scope
+            )
+        elif access_configs.username and access_configs.password:
             from weaviate.auth import AuthClientPassword
 
-            return AuthClientPassword(username=username, password=pwd, scope=auth_keys.get("scope"))
+            return AuthClientPassword(
+                username=access_configs.username,
+                password=access_configs.password,
+                scope=access_configs.scope,
+            )
         return None
 
     def conform_dict(self, data: dict) -> None:

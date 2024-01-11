@@ -1,3 +1,25 @@
+## 0.12.1-dev1
+
+### Enhancements
+
+* **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
+* **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
+
+### Features
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+
+### Fixes
+
+<<<<<<< HEAD
+
+=======
+>>>>>>> 154a77c10 (bump changelog)
+## 0.12.0
+
+### Enhancements
+
+* **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
+
 ## 0.11.9-dev4
 
 ### Enhancements
@@ -7,7 +29,6 @@
 ### Features
 
 * **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
-* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
 
