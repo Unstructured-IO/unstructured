@@ -139,6 +139,7 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    # NOTE(robinson) - https://mimetype.io/audio/wav
     "audio/vnd.wav": FileType.WAV,
     "audio/vnd.wave": FileType.WAV,
     "audio/wave": FileType.WAV,
