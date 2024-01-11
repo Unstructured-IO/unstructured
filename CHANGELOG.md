@@ -1,4 +1,4 @@
-## 0.12.1-dev2
+## 0.12.1-dev3
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
 
 ## 0.12.0
 
