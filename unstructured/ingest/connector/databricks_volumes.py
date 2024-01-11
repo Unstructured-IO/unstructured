@@ -54,7 +54,7 @@ class DatabricksVolumesWriteConfig(WriteConfig):
 
 
 @dataclass
-class MongoDBDestinationConnector(BaseDestinationConnector):
+class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
     write_config: DatabricksVolumesWriteConfig
     connector_config: SimpleDatabricksVolumesConfig
     _client: t.Optional["WorkspaceClient"] = field(init=False, default=None)
@@ -98,6 +98,9 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
             contents=BytesIO(json.dumps(elements_dict).encode(encoding=self.write_config.encoding)),
             overwrite=self.write_config.override,
         )
+
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
+        pass
 
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
         for doc in docs:
