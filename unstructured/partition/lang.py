@@ -6,7 +6,10 @@ from langdetect import DetectorFactory, detect_langs, lang_detect_exception
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
-from unstructured.partition.utils.constants import TESSERACT_LANGUAGES_SPLITTER
+from unstructured.partition.utils.constants import (
+    TESSERACT_LANGUAGES_AND_CODES,
+    TESSERACT_LANGUAGES_SPLITTER,
+)
 
 # pytesseract.get_languages(config="") only shows user installed language packs,
 # so manually include the list of all currently supported Tesseract languages
@@ -252,6 +255,8 @@ def _convert_to_standard_langcode(lang: str) -> str:
     """
     Convert a language code to the standard internal language code format.
     """
+    if TESSERACT_LANGUAGES_AND_CODES.get(lang.lower()):
+        lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower())
     # convert to standard ISO 639-3 language code
     lang_iso639 = iso639.Language.match(lang[:3].lower())
     return lang_iso639.part3
