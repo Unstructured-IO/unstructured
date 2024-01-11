@@ -1,10 +1,6 @@
 Databricks Delta Table and Connector
 ====================================
 
-.. contents::
-   :class: this-will-duplicate-information-and-it-is-still-useful-here
-   :depth: 2
-
 Objectives
 ----------
 

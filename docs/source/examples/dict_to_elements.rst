@@ -1,10 +1,6 @@
 Multi-files API Processing with Unstructured Connector & Context-Aware Chunking
 ===============================================================================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Introduction
 ============
 

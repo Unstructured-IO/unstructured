@@ -1,10 +1,6 @@
 Transforming HTML into Vector Database
 ======================================
 
-.. contents::
-   :local:
-   :depth: 2
-
 Introduction
 ------------
 
