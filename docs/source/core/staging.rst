@@ -3,9 +3,10 @@ Staging
 #######
 
 .. warning::
-    The ``Staging`` brick is being deprecated in favor of the new and more comprehensive ``Destination Connectors``. For the complete list of the Destination Connectors and usage, please refer to `Destination Connectors page <https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html>`__
+    The ``Staging`` brick is being deprecated in favor of the new and more comprehensive ``Destination Connectors``. To explore the complete list and usage, please refer to `Destination Connectors documentation <https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html>`__.
 
-    We continue to adding the destination connectors. If you would like to request a Destination Connector, please create a Feature Request on `Unstructured GitHub repo <https://github.com/Unstructured-IO/unstructured/issues/new/choose>`__.
+    Note: We are constantly expanding our collection of destination connectors. If you wish to request a specific Destination Connector, you're encouraged to submit a Feature Request on the `Unstructured GitHub repository <https://github.com/Unstructured-IO/unstructured/issues/new/choose>`__.
+
 
 Staging functions in the ``unstructured`` package help prepare your data for ingestion into downstream systems.
 A staging function accepts a list of document elements as input and return an appropriately formatted dictionary as output.
