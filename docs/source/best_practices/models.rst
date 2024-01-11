@@ -10,12 +10,13 @@ Depending on your need, ``Unstructured`` provides OCR-based and Transformer-base
 
 .. code:: python
 
-    elements = partition(filename=filename, strategy='hi_res', model_name='chipper')
+    elements = partition(filename=filename,
+                         strategy="hi_res",
+                         hi_res_model_name="yolox")
 
-Notes:
-
-* To use a the detection model, set: ``strategy='hi_res'``.
-* When ``model_name`` is not defined, the inferences will fall back to the default model.
+.. note::
+    * To use any model with the partition, set the ``strategy`` to ``hi_res`` as shown above.
+    * To maintain the consistency between the ``unstructured`` and ``unstructured-api`` libraries, we are deprecating the ``model_name`` parameter. Please use ``hi_res_model_name`` parameter when specifing a model.
 
 :raw-html:`<br />`
 **List of Available Models in the Partitions:**
@@ -41,6 +42,7 @@ There are three ways you can use the non-default model as follows:
     from unstructured.partition.pdf import partition_pdf
 
     os.environ["UNSTRUCTURED_HI_RES_MODEL_NAME"] = "yolox"
+
     out_yolox = partition_pdf("example-docs/layout-parser-paper-fast.pdf", strategy="hi_res")
 
 
@@ -49,7 +51,10 @@ There are three ways you can use the non-default model as follows:
 .. code:: python
 
     filename = "example-docs/layout-parser-paper-fast.pdf"
-    elements = partition(filename=filename, strategy='hi_res', model_name='yolox')
+
+    elements = partition(filename=filename,
+                         strategy="hi_res",
+                         hi_res_model_name="yolox")
 
 3. Use `unstructured-inference <url_>`_ library.
 
@@ -62,7 +67,6 @@ There are three ways you can use the non-default model as follows:
 
     model = get_model("yolox")
     layout = DocumentLayout.from_file("sample-docs/layout-parser-paper.pdf", detection_model=model)
-
 
 
 Bring Your Own Models
