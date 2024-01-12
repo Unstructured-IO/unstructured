@@ -18,16 +18,7 @@
          },
          "embeddings": {
             "type": "knn_vector",
-            "dimension": 384,
-            "method": {
-               "name": "hnsw",
-               "space_type": "l2",
-               "engine": "nmslib",
-               "parameters": {
-                 "ef_construction": 128,
-                 "m": 24
-               }
-             }
+            "dimension": 384
          },
          "metadata": {
             "type": "object",
