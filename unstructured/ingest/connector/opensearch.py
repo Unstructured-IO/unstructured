@@ -197,7 +197,7 @@ class OpenSearchDestinationConnector(ElasticsearchDestinationConnector):
         return OpenSearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
-    def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]]) -> None:
         logger.info(
             f"writing document batches to destination"
             f" index named {self.connector_config.index_name}"
@@ -208,7 +208,7 @@ class OpenSearchDestinationConnector(ElasticsearchDestinationConnector):
         from opensearchpy.helpers import parallel_bulk
 
         for batch in generator_batching_wbytes(
-            element_dicts, batch_size_limit_bytes=self.write_config.batch_size_bytes
+            elements_dict, batch_size_limit_bytes=self.write_config.batch_size_bytes
         ):
             for success, info in parallel_bulk(
                 self.client, batch, thread_count=self.write_config.num_processes
