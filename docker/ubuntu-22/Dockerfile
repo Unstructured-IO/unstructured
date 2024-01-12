@@ -13,7 +13,7 @@ COPY Makefile Makefile
 
 SHELL ["/bin/bash", "-c"]
 
-RUN source ~/.bashrc && pyenv virtualenv 3.8.17 unstructured && \
+RUN source ~/.bashrc && pyenv virtualenv 3.10 unstructured && \
     source ~/.pyenv/versions/unstructured/bin/activate && \
     make install-ci && \
     make install-ingest-s3 && \

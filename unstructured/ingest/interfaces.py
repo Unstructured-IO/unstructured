@@ -2,6 +2,7 @@
 through Unstructured."""
 
 import functools
+import json
 import os
 import re
 import typing as t
@@ -299,6 +300,8 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
 
     def to_dict(self, **kwargs) -> t.Dict[str, Json]:
         as_dict = _asdict(self, **kwargs)
+        if "_session_handle" in as_dict:
+            as_dict.pop("_session_handle", None)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         if getattr(self, "_source_metadata") is not None:
             self.add_props(as_dict=as_dict, props=self.metadata_properties)
@@ -652,22 +655,58 @@ class BaseDestinationConnector(BaseConnector, ABC):
         self.write_config = write_config
         self.connector_config = connector_config
 
+    def conform_dict(self, data: dict) -> None:
+        """
+        When the original dictionary needs to be modified in place
+        """
+        return
+
+    def normalize_dict(self, element_dict: dict) -> dict:
+        """
+        When the original dictionary needs to be mapped to a new one
+        """
+        return element_dict
+
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
 
-    @abstractmethod
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        pass
+        elements_dict = self.get_elements_dict(docs=docs)
+        self.modify_and_write_dict(elements_dict=elements_dict)
+
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
+        dict_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                dict_content = json.load(json_file)
+                logger.info(
+                    f"Extending {len(dict_content)} json elements from content in {local_path}",
+                )
+                dict_list.extend(dict_content)
+        return dict_list
 
     @abstractmethod
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
+    def modify_and_write_dict(
+        self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs
+    ) -> None:
+        """
+        Modify in this instance means this method wraps calls to conform_dict() and
+        normalize() before actually processing the content via write_dict()
+        """
+        for d in elements_dict:
+            self.conform_dict(data=d)
+        elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
+        return self.write_dict(*args, elements_dict=elements_dict_normalized, **kwargs)
+
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
-        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
+        self.modify_and_write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
