@@ -1,4 +1,4 @@
-## 0.12.1-dev3
+## 0.12.1-dev4
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 ### Fixes
 
 * **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
+* **Pin version of unstructured-client** Set minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
 
 ## 0.12.0
 
