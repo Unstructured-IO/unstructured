@@ -40,12 +40,12 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         allow_nan: bool = True,
         indent: t.Optional[t.Union[int, str]] = None,
         separators: t.Optional[t.Tuple[str, str]] = None,
-        default: t.Optional[t.Callable] = None,
+        default: t.Optional[t.Callable[..., t.Any]] = None,
         sort_keys: bool = False,
-        redact_sensitive=False,
-        redacted_text="***REDACTED***",
+        redact_sensitive: bool = False,
+        redacted_text: str = "***REDACTED***",
         apply_name_overload: bool = True,
-        **kw
+        **kw: t.Any,
     ) -> str:
         return json.dumps(
             self.to_dict(
@@ -63,7 +63,7 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
             separators=separators,
             default=default,
             sort_keys=sort_keys,
-            **kw
+            **kw,
         )
 
     @classmethod
@@ -72,15 +72,15 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         kvs: dataclasses_json_core.Json,
         *,
         infer_missing=False,
-        apply_name_overload=False
+        apply_name_overload=False,
     ) -> A:
         return dataclasses_json_core._decode_dataclass(cls, kvs, infer_missing)
 
     def to_dict(
         self,
-        encode_json=False,
-        redact_sensitive=False,
-        redacted_text="***REDACTED***",
+        encode_json: bool = False,
+        redact_sensitive: bool = False,
+        redacted_text: str = "***REDACTED***",
         apply_name_overload: bool = True,
     ) -> t.Dict[str, dataclasses_json_core.Json]:
         return _asdict(
