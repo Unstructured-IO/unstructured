@@ -63,6 +63,23 @@ $htmlbody
 @dataclass
 class SalesforceAccessConfig(AccessConfig):
     consumer_key: str = enhanced_field(sensitive=True)
+    private_key: str = enhanced_field(sensitive=True)
+
+    @requires_dependencies(["cryptography"])
+    def get_private_key_value_and_type(self) -> t.Tuple[str, t.Type]:
+        from cryptography.hazmat.primitives import serialization
+
+        try:
+            serialization.load_pem_private_key(data=self.private_key.encode("utf-8"), password=None)
+        except ValueError:
+            pass
+        else:
+            return self.private_key, str
+
+        if Path(self.private_key).is_file():
+            return self.private_key, Path
+
+        raise ValueError("private_key does not contain PEM private key or path")
 
 
 @dataclass
@@ -72,17 +89,19 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
     access_config: SalesforceAccessConfig
     categories: t.List[str]
     username: str
-    private_key_path: str
     recursive: bool = False
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_client(self):
         from simple_salesforce import Salesforce
 
+        pkey_value, pkey_type = self.access_config.get_private_key_value_and_type()
+
         return Salesforce(
             username=self.username,
             consumer_key=self.access_config.consumer_key,
-            privatekey_file=self.private_key_path,
+            privatekey_file=pkey_value if pkey_type is Path else None,
+            privatekey=pkey_value if pkey_type is str else None,
             version=SALESFORCE_API_VERSION,
         )
 

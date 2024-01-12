@@ -124,3 +124,7 @@ def test_apply_lang_metadata_has_no_warning_for_PageBreak(caplog):
 )
 def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
     assert expected_lang == _convert_language_code_to_pytesseract_lang_code(lang_in)
+
+    
+def test_convert_to_standard_langcode_full_language():
+    assert _convert_to_standard_langcode("Spanish") == "spa"
