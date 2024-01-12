@@ -1,9 +1,7 @@
 import hashlib
-import json
 import typing as t
 import uuid
 from dataclasses import dataclass, field
-from itertools import chain
 from pathlib import Path
 
 from dataclasses_json.core import Json
@@ -347,7 +345,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    def write_dict(self, element_dicts: t.List[t.Dict[str, t.Any]]) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing document batches to destination"
             f" index named {self.connector_config.index_name}"
@@ -358,7 +356,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
         from elasticsearch.helpers import parallel_bulk
 
         for batch in generator_batching_wbytes(
-            element_dicts, batch_size_limit_bytes=self.write_config.batch_size_bytes
+            elements_dict, batch_size_limit_bytes=self.write_config.batch_size_bytes
         ):
             for success, info in parallel_bulk(
                 self.client, batch, thread_count=self.write_config.num_processes
@@ -368,7 +366,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                         "upload failed for a batch in elasticsearch destination connector:", info
                     )
 
-    def conform_dict(self, element_dict):
+    def normalize_dict(self, element_dict: dict) -> dict:
         return {
             "_index": self.connector_config.index_name,
             "_id": str(uuid.uuid4()),
@@ -382,14 +380,3 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                 ),
             },
         }
-
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        def generate_element_dicts(doc):
-            with open(doc._output_filename) as json_file:
-                element_dicts_one_doc = (
-                    self.conform_dict(element_dict) for element_dict in json.load(json_file)
-                )
-                yield from element_dicts_one_doc
-
-        # We chain to unite the generators into one generator
-        self.write_dict(chain(*(generate_element_dicts(doc) for doc in docs)))

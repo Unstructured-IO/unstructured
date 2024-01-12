@@ -77,6 +77,10 @@ class ChunkingOptions:
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
         where an oversized element is divided into multiple chunks by text-splitting.
+    overlap_all
+        Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
+        elements and not subject to text-splitting. Use this with caution as it entails a certain
+        level of "pollution" of otherwise clean semantic chunk boundaries.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -95,7 +99,7 @@ class ChunkingOptions:
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
         overlap_all: bool = False,
-        text_splitting_separators: Sequence[str] = (),
+        text_splitting_separators: Sequence[str] = ("\n", " "),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
         self._max_characters = max_characters
@@ -114,7 +118,7 @@ class ChunkingOptions:
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
         overlap_all: bool = False,
-        text_splitting_separators: Sequence[str] = (),
+        text_splitting_separators: Sequence[str] = ("\n", " "),
     ) -> Self:
         """Construct validated instance.
 

@@ -41,7 +41,6 @@ To make sure the schema of the index matches the data being written to it, a sam
 .. tabs::
 
    .. tab:: PostgreSQL
-:
       .. literalinclude:: ./data/postgres-schema.sql
          :language: sql
          :linenos:
