@@ -1,5 +1,5 @@
-Understanding Elements
-======================
+Document Elements
+=================
 
 Introduction
 ************
