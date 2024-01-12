@@ -51,7 +51,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
 
     def to_dict(self, **kwargs):
         """
-        The _client variable in this dataclass breaks deepcopy due to:
+        The _index variable in this dataclass breaks deepcopy due to:
         TypeError: cannot pickle '_thread.lock' object
         When serializing, remove it, meaning client data will need to be reinitialized
         when deserialized
