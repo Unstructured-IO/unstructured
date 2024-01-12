@@ -1,4 +1,4 @@
-## 0.12.1-dev4
+## 0.12.1-dev5
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 * **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
 
 ### Features
+* **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
 
 ### Fixes
 
