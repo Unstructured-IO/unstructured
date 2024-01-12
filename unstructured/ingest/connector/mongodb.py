@@ -265,7 +265,8 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
             f"writing {len(elements_dict)} documents to destination "
-            f"database {self.connector_config.database}, at collection {self.connector_config.collection}",
+            f"database {self.connector_config.database}, "
+            f"at collection {self.connector_config.collection}",
         )
 
         collection = self.get_collection()
