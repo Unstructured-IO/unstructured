@@ -12,6 +12,7 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    destination_connectors/azure_cognitive_search
    destination_connectors/box
    destination_connectors/chroma
+   destination_connectors/databricks_volumes
    destination_connectors/delta_table
    destination_connectors/dropbox
    destination_connectors/elasticsearch

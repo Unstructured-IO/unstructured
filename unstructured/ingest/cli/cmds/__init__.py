@@ -11,6 +11,7 @@ from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
+from .databricks_volumes import get_base_dest_cmd as databricks_volumes_dest_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
@@ -100,6 +101,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
     box_base_dest_cmd,
     chroma_base_dest_cmd,
+    databricks_volumes_dest_cmd,
     dropbox_base_dest_cmd,
     elasticsearch_base_dest_cmd,
     fsspec_base_dest_cmd,

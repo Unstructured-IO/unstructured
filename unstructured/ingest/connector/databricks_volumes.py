@@ -48,9 +48,19 @@ class SimpleDatabricksVolumesConfig(BaseConnectorConfig):
 
 @dataclass
 class DatabricksVolumesWriteConfig(WriteConfig):
-    path: str
+    volume: str
+    catalog: str
+    volume_path: t.Optional[str] = None
     override: bool = False
     encoding: str = "utf-8"
+    schema: str = "default"
+
+    @property
+    def path(self) -> str:
+        path = f"/Volumes/{self.catalog}/{self.schema}/{self.volume}"
+        if self.volume_path:
+            path = f"{path}/{self.volume_path}"
+        return path
 
 
 @dataclass
@@ -61,6 +71,8 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
 
     @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
     def generate_client(self) -> "WorkspaceClient":
+        from databricks.sdk import WorkspaceClient
+
         return WorkspaceClient(
             host=self.connector_config.host, **self.connector_config.access_config.to_dict()
         )
