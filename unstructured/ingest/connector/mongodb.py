@@ -1,4 +1,3 @@
-import hashlib
 import json
 import typing as t
 from dataclasses import dataclass, field
@@ -6,15 +5,15 @@ from pathlib import Path
 
 from dataclasses_json.core import Json
 
-from unstructured.ingest.error import DestinationConnectionError, WriteError, SourceConnectionError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseSingleIngestDoc,
-    WriteConfig,
+    BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
-    BaseSourceConnector,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
@@ -72,6 +71,7 @@ def redact(uri: str, redacted_text="***REDACTED***") -> str:
 # -----------------------------------
 
 #### Think about versioning
+
 
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
