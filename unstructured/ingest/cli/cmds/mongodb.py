@@ -5,7 +5,8 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.mongodb import MongoDBWriteConfig, SimpleMongoDBConfig
+from unstructured.ingest.connector.mongodb import SimpleMongoDBConfig
+from unstructured.ingest.interfaces import WriteConfig
 
 CMD_NAME = "mongodb"
 
@@ -36,21 +37,6 @@ class MongoDBCliConfig(SimpleMongoDBConfig, CliConfig):
         return options
 
 
-# @dataclass
-# class MongoDBCliWriteConfig(MongoDBWriteConfig, CliConfig):
-#     @staticmethod
-#     def get_cli_options() -> t.List[click.Option]:
-#         options = [
-#             click.Option(
-#                 ["--database"], type=str, required=True, help="database name to connect to"
-#             ),
-#             click.Option(
-#                 ["--collection"], required=True, type=str, help="collection name to connect to"
-#             ),
-#         ]
-#         return options
-
-
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
@@ -65,7 +51,6 @@ def get_base_dest_cmd():
     cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=MongoDBCliConfig,
-        # additional_cli_options=[MongoDBCliWriteConfig],
-        write_config=MongoDBWriteConfig,
+        write_config=WriteConfig,
     )
     return cmd_cls

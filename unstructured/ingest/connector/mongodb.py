@@ -8,16 +8,18 @@ from unstructured.ingest.error import DestinationConnectionError, SourceConnecti
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
+    BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
-    WriteConfig,
+    SourceMetadata,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
+    from bson.objectid import ObjectId
     from pymongo import MongoClient
 
 
@@ -92,11 +94,26 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
                 d["uri"] = redact(uri=self.uri, redacted_text=redacted_text)
         return d
 
+    @requires_dependencies(["pymongo"], extras="mongodb")
+    def generate_client(self) -> "MongoClient":
+        from pymongo import MongoClient
+        from pymongo.server_api import ServerApi
+
+        if self.uri:
+            return MongoClient(self.uri, server_api=ServerApi(version=SERVER_API_VERSION))
+        else:
+            return MongoClient(
+                host=self.host,
+                port=self.port,
+                server_api=ServerApi(version=SERVER_API_VERSION),
+            )
+
 
 @dataclass
 class MongoDBDocumentMeta:
     collection: str
     document_id: str
+    date_created: str
 
 
 @dataclass
@@ -108,31 +125,29 @@ class MongoDBIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def filename(self):
-        f = self.document_meta.document_id
-        # breakpoint()
-        # if self.connector_config.fields:
-        #     f = "{}-{}".format(
-        #         f,
-        #         hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
-        #     )
         return (
-            Path(self.read_config.download_dir) / self.document_meta.collection / f"{f}.txt"
+            Path(self.read_config.download_dir)
+            / self.document_meta.collection
+            / f"{self.document_meta.document_id}.txt"
         ).resolve()
 
     @property
     def _output_filename(self):
-        """Create filename document id combined with a hash of the query to uniquely identify
-        the output file."""
-        # Generate SHA256 hash and take the first 8 characters
-        filename = self.document_meta.document_id
-        # if self.connector_config.fields:
-        #     filename = "{}-{}".format(
-        #         filename,
-        #         hashlib.sha256(",".join(self.connector_config.fields).encode()).hexdigest()[:8],
-        #     )
-        output_file = f"{filename}.json"
         return (
-            Path(self.processor_config.output_dir) / self.connector_config.collection / output_file
+            Path(self.processor_config.output_dir)
+            / self.connector_config.collection
+            / f"{self.document_meta.document_id}.json"
+        )
+
+    def update_source_metadata(self, **kwargs):
+        if self.document is None:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            date_created=self.document_meta.date_created,
+            exists=True,
         )
 
     @SourceConnectionError.wrap
@@ -141,32 +156,25 @@ class MongoDBIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_file(self):
         pass
 
+    @property
+    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:
+        # breakpoint()
+        return {
+            "host": self.connector_config.host,
+            "collection": self.connector_config.collection,
+            "document_id": self.document_meta.document_id,
+        }
+
 
 @dataclass
 class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
 
-    @requires_dependencies(["pymongo"], extras="mongodb")
-    def generate_client(self) -> "MongoClient":
-        from pymongo import MongoClient
-        from pymongo.server_api import ServerApi
-
-        if self.connector_config.uri:
-            return MongoClient(
-                self.connector_config.uri, server_api=ServerApi(version=SERVER_API_VERSION)
-            )
-        else:
-            return MongoClient(
-                host=self.connector_config.host,
-                port=self.connector_config.port,
-                server_api=ServerApi(version=SERVER_API_VERSION),
-            )
-
     @property
     def client(self) -> "MongoClient":
         if self._client is None:
-            self._client = self.generate_client()
+            self._client = self.connector_config.generate_client()
         return self._client
 
     def get_collection(self):
@@ -183,8 +191,9 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def initialize(self):
         _ = self.client
 
-    def _get_doc_ids(self):
-        """Fetches all document ids in a collection. actually returns ObjectId"""
+    def _get_doc_ids(self) -> "ObjectId":
+        """Fetches all document ids in a collection.
+        Actually returns ObjectId which contains generation_time"""
         collection = self.get_collection()
         return collection.distinct("_id")
 
@@ -200,12 +209,14 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 read_config=self.read_config,
                 connector_config=self.connector_config,
                 document_meta=MongoDBDocumentMeta(
-                    collection=self.connector_config.collection, document_id=doc_id
+                    collection=self.connector_config.collection,
+                    document_id=str(doc_id),
+                    date_created=doc_id.generation_time.isoformat(),
                 ),
                 document=doc,
                 # check for read_config, processor_config
             )
-            # ingest_doc.update_source_metadata()
+            ingest_doc.update_source_metadata()
             del doc["_id"]
             filename = ingest_doc.filename
             flattened_dict = flatten_dict(dictionary=doc)
@@ -220,21 +231,7 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return ingest_docs
 
 
-# _get_doc_ids
-
-# get_ingest_docs
-# initialize
-# check_connection
-
-
 ##### Write from here on down.
-
-
-@dataclass
-class MongoDBWriteConfig(WriteConfig):
-    pass
-    # database: str
-    # collection: str
 
 
 @dataclass
@@ -243,26 +240,10 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
 
-    @requires_dependencies(["pymongo"], extras="mongodb")
-    def generate_client(self) -> "MongoClient":
-        from pymongo import MongoClient
-        from pymongo.server_api import ServerApi
-
-        if self.connector_config.uri:
-            return MongoClient(
-                self.connector_config.uri, server_api=ServerApi(version=SERVER_API_VERSION)
-            )
-        else:
-            return MongoClient(
-                host=self.connector_config.host,
-                port=self.connector_config.port,
-                server_api=ServerApi(version=SERVER_API_VERSION),
-            )
-
     @property
     def client(self) -> "MongoClient":
         if self._client is None:
-            self._client = self.generate_client()
+            self._client = self.connector_config.generate_client()
         return self._client
 
     @requires_dependencies(["pymongo"], extras="mongodb")
