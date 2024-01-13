@@ -14,3 +14,4 @@ High-level overview of available strategies and models in ``Unstructured`` libra
 
    best_practices/strategies
    best_practices/models
+   best_practices/table_extraction_pdf
