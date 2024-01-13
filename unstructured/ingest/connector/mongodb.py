@@ -101,6 +101,12 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
                 server_api=ServerApi(version=SERVER_API_VERSION),
             )
 
+    def get_collection(self, client):
+        database = client[self.database]
+        return database.get_collection(name=self.collection)
+
+
+
 
 @dataclass
 class MongoDBDocumentMeta:
@@ -170,9 +176,9 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             self._client = self.connector_config.generate_client()
         return self._client
 
-    def get_collection(self):
-        database = self.client[self.connector_config.database]
-        return database.get_collection(name=self.connector_config.collection)
+    # def get_collection(self):
+    #     database = self.client[self.connector_config.database]
+    #     return database.get_collection(name=self.connector_config.collection)
 
     def check_connection(self):
         try:
@@ -187,15 +193,14 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def _get_doc_ids(self) -> "ObjectId":
         """Fetches all document ids in a collection.
         Actually returns ObjectId which contains generation_time"""
-        collection = self.get_collection()
+        collection = self.connector_config.get_collection(self.client)
         return collection.distinct("_id")
 
     def get_ingest_docs(self) -> t.List[BaseSingleIngestDoc]:
-        collection = self.get_collection()
+        collection = self.connector_config.get_collection(self.client)
         ids = self._get_doc_ids()
         ingest_docs = []
         for doc_id in ids:
-            # breakpoint()
             doc = collection.find_one({"_id": doc_id})
             ingest_doc = MongoDBIngestDoc(
                 processor_config=self.processor_config,
@@ -207,7 +212,6 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                     date_created=doc_id.generation_time.isoformat(),
                 ),
                 document=doc,
-                # check for read_config, processor_config
             )
             ingest_doc.update_source_metadata()
             del doc["_id"]
@@ -217,6 +221,7 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             concatenated_values = "\n".join(str_values)
 
             filename.parent.mkdir(parents=True, exist_ok=True)
+            print("******************* writing doc")
             with open(filename, "w", encoding="utf8") as f:
                 f.write(concatenated_values)
 
@@ -226,7 +231,6 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
 @dataclass
 class MongoDBDestinationConnector(BaseDestinationConnector):
-    # write_config: MongoDBWriteConfig
     connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
 
@@ -247,9 +251,9 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         _ = self.client
 
-    def get_collection(self):
-        database = self.client[self.connector_config.database]
-        return database.get_collection(name=self.connector_config.collection)
+    # def get_collection(self):
+    #     database = self.client[self.connector_config.database]
+    #     return database.get_collection(name=self.connector_config.collection)
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
@@ -259,7 +263,7 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
             f"at collection {self.connector_config.collection}",
         )
 
-        collection = self.get_collection()
+        collection = self.connector_config.get_collection(self.client)
         try:
             collection.insert_many(elements_dict)
         except Exception as e:
