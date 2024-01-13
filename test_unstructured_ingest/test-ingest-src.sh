@@ -54,6 +54,7 @@ all_tests=(
   'hubspot.sh'
   'local-embed.sh'
   'sftp.sh'
+  'mongodb.sh'
 )
 
 full_python_matrix_tests=(

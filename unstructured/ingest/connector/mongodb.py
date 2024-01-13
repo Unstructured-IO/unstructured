@@ -66,13 +66,6 @@ def redact(uri: str, redacted_text="***REDACTED***") -> str:
     return uri
 
 
-# MongoDBAccessConfig here SKIPPING due to uri
-
-# -----------------------------------
-
-#### Think about versioning
-
-
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
     uri: t.Optional[str] = None
@@ -229,9 +222,6 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
             ingest_docs.append(ingest_doc)
         return ingest_docs
-
-
-##### Write from here on down.
 
 
 @dataclass
