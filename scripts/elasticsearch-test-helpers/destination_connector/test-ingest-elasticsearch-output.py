@@ -10,6 +10,7 @@ from es_cluster_config import (
     PASSWORD,
     USER,
 )
+
 from unstructured.embed.huggingface import HuggingFaceEmbeddingConfig, HuggingFaceEmbeddingEncoder
 
 N_ELEMENTS = 1404
@@ -31,8 +32,8 @@ def query(client: Elasticsearch, search_text: str):
                 "query": {"match_all": {}},
                 "script": {
                     "source": "cosineSimilarity(params.query_vector, 'embeddings') + 1.0",
-                    "params": {"query_vector": search_vector}
-                }
+                    "params": {"query_vector": search_vector},
+                },
             }
         }
     }
@@ -59,6 +60,9 @@ if __name__ == "__main__":
     # Query the index using the appropriate embedding vector for given query text
     # Verify that the top 1 result matches the expected chunk by checking the start text
     print("Testing query to the embedded index.")
-    query_response = query(client, "A gathering of Russian nobility and merchants in historic uniforms, discussing the Emperor's manifesto with a mix of solemn anticipation and everyday concerns, while Pierre, dressed in a tight nobleman's uniform, ponders the French Revolution and social contracts amidst the crowd.")
-    assert query_response['hits']['hits'][0]['_source']['text'].startswith("CHAPTER XXII")
+    query_response = query(
+        client,
+        "A gathering of Russian nobility and merchants in historic uniforms, discussing the Emperor's manifesto with a mix of solemn anticipation and everyday concerns, while Pierre, dressed in a tight nobleman's uniform, ponders the French Revolution and social contracts amidst the crowd.",
+    )
+    assert query_response["hits"]["hits"][0]["_source"]["text"].startswith("CHAPTER XXII")
     print("Query to the embedded index was successful and returned the expected result.")
