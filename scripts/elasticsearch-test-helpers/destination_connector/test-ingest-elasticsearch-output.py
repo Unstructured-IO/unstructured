@@ -24,7 +24,6 @@ def embeddings_for_text(text: str) -> List[float]:
 def query(client: Elasticsearch, search_text: str):
     # Query the index using the appropriate embedding vector for given query text
     search_vector = embeddings_for_text(search_text)
-    print(search_vector)
     # Constructing the search query
     query = {
         "query": {
