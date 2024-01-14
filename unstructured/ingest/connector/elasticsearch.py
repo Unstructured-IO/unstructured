@@ -308,8 +308,8 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
 
 @dataclass
 class ElasticsearchWriteConfig(WriteConfig):
-    batch_size_bytes: int
-    num_processes: int
+    batch_size_bytes: int = 15_000_000
+    num_processes: int = 1
 
 
 @dataclass
