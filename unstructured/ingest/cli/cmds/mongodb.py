@@ -33,6 +33,12 @@ class MongoDBCliConfig(SimpleMongoDBConfig, CliConfig):
             click.Option(
                 ["--collection"], required=True, type=str, help="collection name to connect to"
             ),
+            click.Option(
+                ["--batch-size"],
+                default=100,
+                type=click.IntRange(0),
+                help="how many records to read at a time per process",
+            ),
         ]
         return options
 

@@ -13,6 +13,7 @@ from unstructured.ingest.interfaces import (
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    BaseIngestDocBatch,
 )
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
@@ -73,6 +74,7 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
     database: t.Optional[str] = None
     collection: t.Optional[str] = None
     port: int = 27017
+    batch_size: int = 100
 
     def to_dict(
         self, redact_sensitive=False, redacted_text="***REDACTED***", **kwargs
@@ -164,52 +166,104 @@ class MongoDBIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             "document_id": self.document_meta.document_id,
         }
 
-
 @dataclass
-class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+class MongoDBIngestDocBatch(BaseIngestDocBatch):
     connector_config: SimpleMongoDBConfig
-    _client: t.Optional["MongoClient"] = field(init=False, default=None)
+    ingest_docs: t.List[MongoDBIngestDoc] = field(default_factory=list)
+    list_of_ids: t.List[str] = field(default_factory=list)
+    registry_name: str = "mongodb_batch"
+
+    def __post_init__(self):
+        # Until python3.8 is deprecated, this is a limitation of dataclass inheritance
+        # to make it a required field
+        if len(self.list_of_ids) == 0:
+            raise ValueError("list_of_ids is required")
 
     @property
-    def client(self) -> "MongoClient":
-        if self._client is None:
-            self._client = self.connector_config.generate_client()
-        return self._client
+    def unique_id(self) -> str:
+        return ",".join(sorted(self.list_of_ids))
 
-    # def get_collection(self):
-    #     database = self.client[self.connector_config.database]
-    #     return database.get_collection(name=self.connector_config.collection)
+    @requires_dependencies(["pymongo"], extras="mongodb")
+    def _get_docs(self):
+        """Fetches all documents in a collection."""
+        print("******************* _get_docs")
+        # doc = collection.find_one({"_id": doc_id})
+        # breakpoint()
+        from bson import ObjectId
+        client=self.connector_config.generate_client()
+        collection = self.connector_config.get_collection(client)
+        # breakpoint()
+        list_of_object_ids = []    
+        for x in self.list_of_ids:
+            list_of_object_ids.append(ObjectId(x))
+        return [x for x in collection.find({'_id':{'$in':list_of_object_ids}})]
+        # Actually returns ObjectId which contains generation_time"""
+        # collection = self.connector_config.get_collection(self.client)
+        # return collection.distinct("_id")
+    # @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    # def _get_docs(self):
+    #     from elasticsearch import Elasticsearch
+    #     from elasticsearch.helpers import scan
 
-    def check_connection(self):
-        try:
-            self.client.admin.command("ping")
-        except Exception as e:
-            logger.error(f"failed to validate connection: {e}", exc_info=True)
-            raise DestinationConnectionError(f"failed to validate connection: {e}")
+    #     es = Elasticsearch(**self.connector_config.access_config.to_dict(apply_name_overload=False))
+    #     scan_query = {
+    #         "_source": self.connector_config.fields,
+    #         "version": True,
+    #         "query": {"ids": {"values": self.list_of_ids}},
+    #     }
 
-    def initialize(self):
-        _ = self.client
+    #     result = scan(
+    #         es,
+    #         query=scan_query,
+    #         scroll="1m",
+    #         index=self.connector_config.index_name,
+    #     )
+    #     return list(result)
 
-    def _get_doc_ids(self) -> "ObjectId":
-        """Fetches all document ids in a collection.
-        Actually returns ObjectId which contains generation_time"""
-        collection = self.connector_config.get_collection(self.client)
-        return collection.distinct("_id")
+    # @SourceConnectionError.wrap
+    # @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    # def get_files(self):
+    #     documents = self._get_docs()
+    #     for doc in documents:
+    #         ingest_doc = ElasticsearchIngestDoc(
+    #             processor_config=self.processor_config,
+    #             read_config=self.read_config,
+    #             connector_config=self.connector_config,
+    #             document=doc,
+    #             document_meta=ElasticsearchDocumentMeta(
+    #                 self.connector_config.index_name, doc["_id"]
+    #             ),
+    #         )
+    #         ingest_doc.update_source_metadata()
+    #         doc_body = doc["_source"]
+    #         filename = ingest_doc.filename
+    #         flattened_dict = flatten_dict(dictionary=doc_body)
+    #         str_values = [str(value) for value in flattened_dict.values()]
+    #         concatenated_values = "\n".join(str_values)
 
-    def get_ingest_docs(self) -> t.List[BaseSingleIngestDoc]:
-        collection = self.connector_config.get_collection(self.client)
-        ids = self._get_doc_ids()
-        ingest_docs = []
-        for doc_id in ids:
-            doc = collection.find_one({"_id": doc_id})
+    #         filename.parent.mkdir(parents=True, exist_ok=True)
+    #         print("******************* writing doc")
+    #         with open(filename, "w", encoding="utf8") as f:
+    #             f.write(concatenated_values)
+    #         self.ingest_docs.append(ingest_doc)
+
+    def get_files(self):
+        print("get_files")
+        # breakpoint()
+        # collection = self.connector_config.get_collection(self.client)
+        documents = self._get_docs()
+        # ingest_docs = []
+        for doc in documents:
+            # breakpoint()
+            
             ingest_doc = MongoDBIngestDoc(
                 processor_config=self.processor_config,
                 read_config=self.read_config,
                 connector_config=self.connector_config,
                 document_meta=MongoDBDocumentMeta(
                     collection=self.connector_config.collection,
-                    document_id=str(doc_id),
-                    date_created=doc_id.generation_time.isoformat(),
+                    document_id=str(doc.get("_id")),
+                    date_created=doc.get("_id").generation_time.isoformat(),
                 ),
                 document=doc,
             )
@@ -225,8 +279,97 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             with open(filename, "w", encoding="utf8") as f:
                 f.write(concatenated_values)
 
-            ingest_docs.append(ingest_doc)
-        return ingest_docs
+            self.ingest_docs.append(ingest_doc)
+        # return ingest_docs
+
+
+@dataclass
+class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    connector_config: SimpleMongoDBConfig
+    _client: t.Optional["MongoClient"] = field(init=False, default=None)
+
+    @property
+    def client(self) -> "MongoClient":
+        if self._client is None:
+            self._client = self.connector_config.generate_client()
+        return self._client
+
+    def get_collection(self):
+        database = self.client[self.connector_config.database]
+        return database.get_collection(name=self.connector_config.collection)
+
+    def check_connection(self):
+        try:
+            self.client.admin.command("ping")
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
+    def initialize(self):
+        _ = self.client
+
+    @requires_dependencies(["pymongo"], extras="mongodb")
+    def _get_doc_ids(self):
+        """Fetches all document ids in a collection.
+        Actually returns ObjectIds which contains generation_time"""
+        collection = self.get_collection()
+        return [str(x) for x in collection.distinct("_id")]
+
+    def get_ingest_docs(self):
+        """Fetches all documents in an index, using ids that are fetched with _get_doc_ids"""
+        ids = self._get_doc_ids()
+        id_batches = [
+            ids[
+                i
+                * self.connector_config.batch_size : (i + 1)  # noqa
+                * self.connector_config.batch_size
+            ]
+            for i in range(
+                (len(ids) + self.connector_config.batch_size - 1)
+                // self.connector_config.batch_size
+            )
+        ]
+        # breakpoint()
+        return [
+            MongoDBIngestDocBatch(
+                connector_config=self.connector_config,
+                processor_config=self.processor_config,
+                read_config=self.read_config,
+                list_of_ids=batched_ids,
+            )
+            for batched_ids in id_batches
+        ]
+    # def get_files(self):
+    #     collection = self.connector_config.get_collection(self.client)
+    #     ids = self._get_docs()
+    #     ingest_docs = []
+    #     for doc_id in ids:
+    #         doc = collection.find_one({"_id": doc_id})
+    #         ingest_doc = MongoDBIngestDoc(
+    #             processor_config=self.processor_config,
+    #             read_config=self.read_config,
+    #             connector_config=self.connector_config,
+    #             document_meta=MongoDBDocumentMeta(
+    #                 collection=self.connector_config.collection,
+    #                 document_id=str(doc_id),
+    #                 date_created=doc_id.generation_time.isoformat(),
+    #             ),
+    #             document=doc,
+    #         )
+    #         ingest_doc.update_source_metadata()
+    #         del doc["_id"]
+    #         filename = ingest_doc.filename
+    #         flattened_dict = flatten_dict(dictionary=doc)
+    #         str_values = [str(value) for value in flattened_dict.values()]
+    #         concatenated_values = "\n".join(str_values)
+
+    #         filename.parent.mkdir(parents=True, exist_ok=True)
+    #         print("******************* writing doc")
+    #         with open(filename, "w", encoding="utf8") as f:
+    #             f.write(concatenated_values)
+
+    #         ingest_docs.append(ingest_doc)
+        # return ingest_docs
 
 
 @dataclass
@@ -251,9 +394,9 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         _ = self.client
 
-    # def get_collection(self):
-    #     database = self.client[self.connector_config.database]
-    #     return database.get_collection(name=self.connector_config.collection)
+    def get_collection(self):
+        database = self.client[self.connector_config.database]
+        return database.get_collection(name=self.connector_config.collection)
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
@@ -263,7 +406,7 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
             f"at collection {self.connector_config.collection}",
         )
 
-        collection = self.connector_config.get_collection(self.client)
+        collection = self.get_collection()
         try:
             collection.insert_many(elements_dict)
         except Exception as e:
