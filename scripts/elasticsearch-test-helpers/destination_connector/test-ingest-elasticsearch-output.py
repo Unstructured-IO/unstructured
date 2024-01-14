@@ -60,9 +60,12 @@ if __name__ == "__main__":
     # Query the index using the appropriate embedding vector for given query text
     # Verify that the top 1 result matches the expected chunk by checking the start text
     print("Testing query to the embedded index.")
-    query_response = query(
-        client,
-        "A gathering of Russian nobility and merchants in historic uniforms, discussing the Emperor's manifesto with a mix of solemn anticipation and everyday concerns, while Pierre, dressed in a tight nobleman's uniform, ponders the French Revolution and social contracts amidst the crowd.",
+    query_text = (
+        "A gathering of Russian nobility and merchants in historic uniforms, "
+        "discussing the Emperor's manifesto with a mix of solemn anticipation "
+        "and everyday concerns, while Pierre, dressed in a tight nobleman's uniform, "
+        "ponders the French Revolution and social contracts amidst the crowd."
     )
+    query_response = query(client, query_text)
     assert query_response["hits"]["hits"][0]["_source"]["text"].startswith("CHAPTER XXII")
     print("Query to the embedded index was successful and returned the expected result.")
