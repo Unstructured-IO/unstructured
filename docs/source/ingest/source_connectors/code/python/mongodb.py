@@ -1,25 +1,26 @@
-from unstructured.ingest.connector.elasticsearch import (
-    ElasticsearchAccessConfig,
-    SimpleElasticsearchConfig,
+import os
+
+from unstructured.ingest.connector.mongodb import (
+    SimpleMongoDBConfig,
 )
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-from unstructured.ingest.runner import ElasticSearchRunner
+from unstructured.ingest.runner import MongoDBRunner
 
 if __name__ == "__main__":
-    runner = ElasticSearchRunner(
+    runner = MongoDBRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="elasticsearch-ingest-output",
+            output_dir="mongodb-ingest-output",
             num_processes=2,
         ),
         read_config=ReadConfig(),
         partition_config=PartitionConfig(
             metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
         ),
-        connector_config=SimpleElasticsearchConfig(
-            access_config=ElasticsearchAccessConfig(hosts=["http://localhost:9200"]),
-            index_name="movies",
-            fields=["ethnicity", "director", "plot"],
+        connector_config=SimpleMongoDBConfig(
+            uri=os.getenv("MONGODB_URI"),
+            database=os.getenv("MONGODB_DATABASE_NAME"),
+            collection=os.getenv("DESTINATION_MONGO_COLLECTION"),
         ),
     )
     runner.run()

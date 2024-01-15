@@ -185,7 +185,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_record(self) -> OrderedDict:
         # Get record from Salesforce based on id
         response = self._get_response()
-        logger.debug(f"response from salesforce record request: {json.dumps(response)}")
+        logger.debug(f"response from salesforce record request: {json.dumps(self.record_id)}")
         records = response["records"]
         if not records:
             raise ValueError(
