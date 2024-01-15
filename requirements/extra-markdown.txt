@@ -6,7 +6,7 @@
 #
 importlib-metadata==7.0.1
     # via markdown
-markdown==3.5.1
+markdown==3.5.2
     # via -r extra-markdown.in
 zipp==3.17.0
     # via importlib-metadata
