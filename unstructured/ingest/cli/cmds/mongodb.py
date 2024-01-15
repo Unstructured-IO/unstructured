@@ -35,6 +35,8 @@ class MongoDBCliConfig(SimpleMongoDBConfig, CliConfig):
             ),
         ]
         return options
+
+
 @dataclass
 class MongoDBReadConfig(SimpleMongoDBConfig, CliConfig):
     @staticmethod

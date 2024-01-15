@@ -1,9 +1,11 @@
+import copy
 import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from dataclasses_json.core import Json
 
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -274,6 +276,18 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 class MongoDBDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleMongoDBConfig
     _client: t.Optional["MongoClient"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _client variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     def client(self) -> "MongoClient":
