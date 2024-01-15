@@ -33,6 +33,13 @@ class MongoDBCliConfig(SimpleMongoDBConfig, CliConfig):
             click.Option(
                 ["--collection"], required=True, type=str, help="collection name to connect to"
             ),
+        ]
+        return options
+@dataclass
+class MongoDBReadConfig(SimpleMongoDBConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
             click.Option(
                 ["--batch-size"],
                 default=100,
@@ -47,6 +54,7 @@ def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name=CMD_NAME,
         cli_config=MongoDBCliConfig,
+        additional_cli_options=[MongoDBReadConfig],
     )
     return cmd_cls
 
