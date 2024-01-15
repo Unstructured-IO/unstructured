@@ -188,7 +188,9 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         logger.debug(f"response from salesforce record request: {json.dumps(response)}")
         records = response["records"]
         if not records:
-            raise ValueError(f"No record found with record id {self.record_id}: {json.dumps(response)}")
+            raise ValueError(
+                f"No record found with record id {self.record_id}: {json.dumps(response)}"
+            )
         record_json = records[0]
         return record_json
 
