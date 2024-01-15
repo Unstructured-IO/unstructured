@@ -170,12 +170,6 @@ class MongoDBIngestDocBatch(BaseIngestDocBatch):
     list_of_ids: t.List[str] = field(default_factory=list)
     registry_name: str = "mongodb_batch"
 
-    def __post_init__(self):
-        # Until python3.8 is deprecated, this is a limitation of dataclass inheritance
-        # to make it a required field
-        if len(self.list_of_ids) == 0:
-            raise ValueError("list_of_ids is required")
-
     @property
     def unique_id(self) -> str:
         return ",".join(sorted(self.list_of_ids))

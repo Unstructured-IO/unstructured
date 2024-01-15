@@ -13,14 +13,14 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
   --input-path example-docs/book-war-and-peace-1225p.txt \
-  --output-dir local-to-elasticsearch \
+  --output-dir local-to-mongodb \
   --strategy fast \
   --chunk-elements \
   --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
   --num-processes 2 \
   --verbose \
   --work-dir "<directory for intermediate outputs to be saved>" \
-  elasticsearch \
+  mongodb \
   --uri "<MongoDB hosted uri" \
   --database "<MongoDB database>" \
   --collection "<MongoDB collection>" \
