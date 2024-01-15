@@ -1,4 +1,3 @@
-import json
 import typing as t
 from dataclasses import dataclass, field
 
@@ -8,7 +7,6 @@ from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseSingleIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -126,9 +124,6 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
     def initialize(self):
         _ = self.client
 
-    def conform_dict(self, data: dict) -> None:
-        pass
-
     def get_collection(self):
         database = self.client[self.write_config.database]
         return database.get_collection(name=self.write_config.collection)
@@ -146,17 +141,3 @@ class MongoDBDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             logger.error(f"failed to write records: {e}", exc_info=True)
             raise WriteError(f"failed to write records: {e}")
-
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
-        self.write_dict(elements_dict=json_list)

@@ -11,7 +11,8 @@
          "type": "keyword"
       },
       "embeddings": {
-         "type": "float"
+         "type": "dense_vector",
+         "dims": 384
       },
       "metadata": {
          "type": "object",

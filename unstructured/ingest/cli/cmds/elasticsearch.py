@@ -92,7 +92,7 @@ class ElasticsearchCliWriteConfig(ElasticsearchWriteConfig, CliConfig):
         options = [
             click.Option(
                 ["--batch-size-bytes"],
-                required=True,
+                required=False,
                 default=15_000_000,
                 type=int,
                 help="Size limit (in bytes) for each batch of items to be uploaded. Check"
@@ -101,8 +101,8 @@ class ElasticsearchCliWriteConfig(ElasticsearchWriteConfig, CliConfig):
             ),
             click.Option(
                 ["--num-processes"],
-                required=True,
-                default=2,
+                required=False,
+                default=1,
                 type=int,
                 help="Number of processes to be used while uploading content",
             ),
