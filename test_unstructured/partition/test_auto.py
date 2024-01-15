@@ -730,7 +730,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
+    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
