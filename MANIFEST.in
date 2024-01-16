@@ -19,3 +19,4 @@ include requirements/ingest-outlook.in
 include requirements/ingest-confluence.in
 include requirements/ingest-airtable.in
 include requirements/ingest-sharepoint.in
+include requirements/ingest-mongodb.in
