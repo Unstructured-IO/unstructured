@@ -1,9 +1,9 @@
-from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.connector.chroma import (
-    SimpleChromaConfig,
     ChromaAccessConfig,
     ChromaWriteConfig,
+    SimpleChromaConfig,
 )
+from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
