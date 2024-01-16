@@ -177,7 +177,7 @@ class MongoDBIngestDocBatch(BaseIngestDocBatch):
         return ",".join(sorted(self.list_of_ids))
 
     @requires_dependencies(["pymongo"], extras="mongodb")
-    def _get_docs(self):
+    def _get_docs(self) -> t.List[dict]:
         """Fetches all documents in a collection."""
         from bson.objectid import ObjectId
 
@@ -241,7 +241,7 @@ class MongoDBSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         _ = self.client
 
     @requires_dependencies(["pymongo"], extras="mongodb")
-    def _get_doc_ids(self):
+    def _get_doc_ids(self) -> t.List[str]:
         """Fetches all document ids in a collection."""
         collection = self.connector_config.get_collection(self.client)
         return [str(x) for x in collection.distinct("_id")]
