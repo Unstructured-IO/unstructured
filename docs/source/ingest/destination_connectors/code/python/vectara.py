@@ -4,10 +4,9 @@ from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.connector.vectara import (
     SimpleVectaraConfig,
     VectaraAccessConfig,
-    VectaraWriteConfig,
+    WriteConfig,
 )
 from unstructured.ingest.interfaces import (
-    ChunkingConfig,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
@@ -29,7 +28,7 @@ def get_writer() -> Writer:
             customer_id=os.getenv("VECTARA_CUSTOMER_ID"),
             corpus_name="test-corpus-vectara",
         ),
-        write_config=VectaraWriteConfig(),
+        write_config=WriteConfig(),
     )
 
 
@@ -46,7 +45,7 @@ if __name__ == "__main__":
         ),
         read_config=ReadConfig(),
         partition_config=PartitionConfig(),
-        chunking_config=ChunkingConfig(chunk_elements=True),
+        # chunking_config=ChunkingConfig(chunk_elements=True),
         writer=writer,
         writer_kwargs={},
     )
