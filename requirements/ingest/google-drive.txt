@@ -19,7 +19,7 @@ google-api-core==2.15.0
     # via google-api-python-client
 google-api-python-client==2.113.0
     # via -r ingest/google-drive.in
-google-auth==2.26.1
+google-auth==2.26.2
     # via
     #   google-api-core
     #   google-api-python-client

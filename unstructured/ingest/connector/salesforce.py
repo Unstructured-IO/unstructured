@@ -120,20 +120,24 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             self._record = self.get_record()
         return self._record
 
-    def _tmp_download_file(self) -> Path:
+    def get_file_extension(self) -> str:
         if self.record_type == "EmailMessage":
-            record_file = self.record_id + ".eml"
+            extension = ".eml"
         elif self.record_type in ["Account", "Lead", "Case", "Campaign"]:
-            record_file = self.record_id + ".xml"
+            extension = ".xml"
         else:
             raise MissingCategoryError(
                 f"There are no categories with the name: {self.record_type}",
             )
+        return extension
+
+    def _tmp_download_file(self) -> Path:
+        record_file = self.record_id + self.get_file_extension()
         return Path(self.read_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self) -> Path:
-        record_file = self.record_id + ".json"
+        record_file = self.record_id + self.get_file_extension() + ".json"
         return Path(self.processor_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
