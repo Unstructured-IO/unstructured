@@ -63,8 +63,7 @@ def reorient_file_or_data(
     filename: str,
     file: Optional[Union[bytes, BinaryIO]],
     reorientation_strategy: str,
-    target: str,
-) -> None:
+) -> io.BytesIO:
     """Opens the PDF, determines the orientation of individual pages,
        rotates as needed and writes the result to target.
     Parameters
@@ -82,9 +81,12 @@ def reorient_file_or_data(
 
     """
     reader = pypdf.PdfReader(file if file is not None else filename)
-    with pypdf.PdfWriter() as writer:
-        for page in reader.pages:
-            orientation = _find_orientation(page, reorientation_strategy=reorientation_strategy)
-            page = page.rotate(-orientation)
-            writer.add_page(page)
-        writer.write(target)
+    writer = pypdf.PdfWriter()
+    for page in reader.pages:
+        orientation = _find_orientation(page, reorientation_strategy=reorientation_strategy)
+        page = page.rotate(-orientation)
+        writer.add_page(page)
+    target = io.BytesIO()
+    writer.write(target)
+    target.seek(0)
+    return target

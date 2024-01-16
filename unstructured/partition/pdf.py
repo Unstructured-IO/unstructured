@@ -4,7 +4,6 @@ import contextlib
 import io
 import os
 import re
-import tempfile
 import warnings
 from tempfile import SpooledTemporaryFile
 from typing import (
@@ -267,7 +266,6 @@ def _partition_pdf_or_image_local(
     extract_image_block_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
-    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -284,36 +282,6 @@ def _partition_pdf_or_image_local(
 
     if languages is None:
         languages = ["eng"]
-
-    if (
-        not pdf_text_extractable
-        and not is_image
-        and hi_res_reorientation_strategy not in [None, False, "", ReorientationStrategy.NONE]
-    ):
-        with tempfile.NamedTemporaryFile(mode="w") as tmpFile:
-            reorient_file_or_data(filename, file, hi_res_reorientation_strategy, tmpFile.name)
-            return _partition_pdf_or_image_local(
-                filename=tmpFile.name,  # the reoriented file
-                file=None,
-                is_image=is_image,
-                infer_table_structure=infer_table_structure,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                ocr_mode=ocr_mode,
-                model_name=model_name,
-                hi_res_model_name=hi_res_model_name,
-                pdf_image_dpi=pdf_image_dpi,
-                metadata_last_modified=metadata_last_modified,
-                pdf_text_extractable=pdf_text_extractable,
-                extract_images_in_pdf=extract_images_in_pdf,
-                extract_image_block_types=extract_image_block_types,
-                extract_image_block_output_dir=extract_image_block_output_dir,
-                extract_image_block_to_payload=extract_image_block_to_payload,
-                analysis=analysis,
-                analyzed_image_output_dir_path=analyzed_image_output_dir_path,
-                hi_res_reorientation_strategy="",  # already reoriented
-                **kwargs,
-            )
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
@@ -550,9 +518,25 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
+
+            filename_partition_local = filename
+            file_partition_local = spooled_to_bytes_io_if_needed(file)
+
+            if (
+                not pdf_text_extractable
+                and not is_image
+                and hi_res_reorientation_strategy
+                not in [None, False, "", ReorientationStrategy.NONE]
+            ):
+                reoriented_pdf = reorient_file_or_data(
+                    filename, file, hi_res_reorientation_strategy
+                )
+                filename_partition_local = ""
+                file_partition_local = reoriented_pdf
+
             elements = _partition_pdf_or_image_local(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
+                filename=filename_partition_local,
+                file=file_partition_local,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,
@@ -564,7 +548,6 @@ def partition_pdf_or_image(
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_image_block_to_payload=extract_image_block_to_payload,
-                hi_res_reorientation_strategy=hi_res_reorientation_strategy,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
