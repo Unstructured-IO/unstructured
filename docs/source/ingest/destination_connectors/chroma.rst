@@ -18,12 +18,12 @@ upstream local connector.
 
    .. tab:: Shell
 
-      .. literalinclude:: ./code/bash/pinecone.sh
+      .. literalinclude:: ./code/bash/chroma.sh
          :language: bash
 
    .. tab:: Python
 
-      .. literalinclude:: ./code/python/pinecone.py
+      .. literalinclude:: ./code/python/chroma.py
          :language: python
 
 
