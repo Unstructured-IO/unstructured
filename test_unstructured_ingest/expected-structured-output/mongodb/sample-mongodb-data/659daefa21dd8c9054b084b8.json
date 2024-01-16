@@ -1,0 +1,162 @@
+[
+  {
+    "element_id": "00f6112fe58387958ef80793a3474642",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "1908",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "e0533ffb556f333840f06d3634c97c90",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "A Christmas Carol",
+    "type": "Title"
+  },
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "b764cdc0eab7137467211272fa539f12",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Unknown",
+    "type": "Title"
+  },
+  {
+    "element_id": "9686b627c59ef51b243df49bf7c76fdd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Tom Ricketts",
+    "type": "Title"
+  },
+  {
+    "element_id": "87da8bbbea6db324c6f7da5ab1312dbd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "drama",
+    "type": "Title"
+  },
+  {
+    "element_id": "b07e1884d6acecd42436d8fceb4ec1b4",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "https://en.wikipedia.org/wiki/A_Christmas_Carol_(1908_film)",
+    "type": "Title"
+  },
+  {
+    "element_id": "7ddfc82896f749f2c5b5c5baac5a93bf",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b8",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b8.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "No prints of the first American film adaptation of A Christmas Carol are known to exist,[1] but The Moving Picture World magazine provided a scene-by-scene description before the film's release. [2] Scrooge goes into his office and begins working. His nephew, along with three women who wish for Scrooge to donate enter. However, Scrooge dismisses them. On the night of Christmas Eve, his long-dead partner Jacob Marley comes as a ghost, warning him of a horrible fate if he does not change his ways. Scrooge meets three spirits that show Scrooge the real meaning of Christmas, along with his grave, the result of his parsimonious ways. The next morning, he wakes and realizes the error of his ways. Scrooge was then euphoric and generous for the rest of his life.",
+    "type": "NarrativeText"
+  }
+]
