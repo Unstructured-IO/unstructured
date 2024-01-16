@@ -31,10 +31,10 @@ class SimpleSftpConfig(SimpleFsspecConfig):
     def __post_init__(self):
         super().__post_init__()
 
-        logger.Info(f'[Ingest SFTP][Access config IN]{self.access_config}')
+        logger.info(f'[Ingest SFTP][Access config IN]{self.access_config}')
         _, ext = os.path.splitext(self.remote_url)
         parsed_url = urlparse(self.remote_url)
-        logger.Info(f'[Ingest SFTP][URL]{parsed_url}')
+        logger.info(f'[Ingest SFTP][URL]{parsed_url}')
         if ext:
             # We only want the file_path if it has an extension
             self.file_path = Path(self.remote_url).name
@@ -46,7 +46,7 @@ class SimpleSftpConfig(SimpleFsspecConfig):
             self.path_without_protocol = self.dir_path
         self.access_config.host = parsed_url.hostname or self.access_config.host
         self.access_config.port = parsed_url.port or self.access_config.port
-        logger.Info(f'[Ingest SFTP][Access config OUT]{self.access_config}')
+        logger.info(f'[Ingest SFTP][Access config OUT]{self.access_config}')
 
 
 @dataclass
@@ -66,7 +66,7 @@ class SftpSourceConnector(FsspecSourceConnector):
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def initialize(self):
-        logger.Info(f'[Ingest SFTP][connect_config source]{self.connector_config}')
+        logger.info(f'[Ingest SFTP][connect_config source]{self.connector_config}')
         super().initialize()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
