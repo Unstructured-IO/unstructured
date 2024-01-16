@@ -27,17 +27,15 @@ class ChromaCliConfig(SimpleChromaConfig, CliConfig):
             ),
             click.Option(
                 ["--tenant"],
-                required=False,
-                default="default_tenant",
+                required=True,
                 type=str,
-                help="The tenant to use for this client.",
+                help="The tenant to use for this client." "Chroma default is 'default_tenant'.",
             ),
             click.Option(
                 ["--database"],
-                required=False,
-                default="default_database",
+                required=True,
                 type=str,
-                help="The database to use for this client.",
+                help="The database to use for this client." "Chroma default is 'default_database'.",
             ),
             click.Option(
                 ["--host"],

@@ -25,6 +25,8 @@ def get_writer() -> Writer:
             host="localhost",
             port=8000,
             collection_name="elements",
+            tenant="default_tenant",
+            database="default_database",
         ),
         write_config=ChromaWriteConfig(),
     )
