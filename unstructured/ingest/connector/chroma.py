@@ -73,7 +73,6 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             )
 
         elif self.connector_config.host and self.connector_config.port:
-            breakpoint()
             chroma_client = chromadb.HttpClient(
                 host=self.connector_config.host,
                 port=self.connector_config.port,
