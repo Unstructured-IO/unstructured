@@ -443,15 +443,7 @@ def _partition_pdf_or_image_local(
             continue
 
         if isinstance(el, Image):
-            if (
-                not extract_images_in_pdf
-                and ElementType.IMAGE not in extract_image_block_types
-                and (el.text is None or len(el.text) < 24 or el.text.find(" ") == -1)
-            ):
-                # NOTE(crag): small chunks of text from Image elements tend to be garbage
-                continue
-            else:
-                out_elements.append(cast(Element, el))
+            out_elements.append(cast(Element, el))
         # NOTE(crag): this is probably always a Text object, but check for the sake of typing
         elif isinstance(el, Text):
             el.text = re.sub(

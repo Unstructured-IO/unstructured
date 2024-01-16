@@ -111,7 +111,7 @@ requests==2.31.0
     # via
     #   -c base.txt
     #   label-studio-sdk
-ruff==0.1.11
+ruff==0.1.13
     # via -r test.in
 six==1.16.0
     # via

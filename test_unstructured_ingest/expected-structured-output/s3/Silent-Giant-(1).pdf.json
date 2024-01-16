@@ -21,6 +21,27 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "b0f30096c91b740f061fd09cc6b86f2b",
     "metadata": {
       "data_source": {
@@ -313,6 +334,27 @@
     },
     "text": "The need for a holistic safety paradigm for the whole electricity system.",
     "type": "ListItem"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "0fc5165686190ca845407c03ad4572e8",
@@ -861,6 +903,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "e81223a218fb419ef983253212ce7e22",
     "metadata": {
       "data_source": {
@@ -880,6 +943,69 @@
     },
     "text": "Modern society is dependent on the steady supply of electricity, every day of the year – regardless of weather, season or time of day – and nuclear energy is particularly well-suited to providing this service. Given that the majority of baseload supply is fossil-based, an increase in the use of nuclear energy would result in a rapid decarbonization of the electricity system. The International Energy Agency’s (IEA) recent report III on nuclear energy highlighted the importance of dependable baseload electricity generators and the need to properly value and compensate them for the electricity security and reliability services they provide.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "70d25f2c1428def16804c3b346ee8d13",
@@ -1050,6 +1176,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 6
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "e8dbac2cdc67e714e99baa9c0f6a54b9",
     "metadata": {
       "data_source": {
@@ -1195,6 +1342,27 @@
     },
     "text": "The International Atomic Energy Agency (IAEA) has highlighted the importance of addressing this issue, concluding that the lack of regulatory harmony ‘…causes many drawbacks for the entire nuclear industry, including developers, vendors, operators and even regulators themselves…This results in increased costs and reduced predictability in project execution’. vii It is therefore crucial that we harmonize the regulatory process to address these weaknesses, and avoid unnecessary duplication and inconsistencies.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "aec400e3e65dc09b31513694bc9893b9",
@@ -1932,6 +2100,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 10
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {
@@ -2329,6 +2518,27 @@
     },
     "text": "World Nuclear Association is the international organization that represents the global nuclear industry. Its mission is to promote a wider understanding of nuclear energy among key international influencers by producing authoritative information, developing common industry positions, and contributing to the energy debate.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 12
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "3df4f87a759f8e1a2e3ab0a186ac16ef",
