@@ -11,7 +11,7 @@ if __name__ == "__main__":
     runner = LocalRunner(
         processor_config=ProcessorConfig(
             verbose=True,
-            output_dir="local-output-to-pinecone",
+            output_dir="local-output-to-chroma",
             num_processes=2,
         ),
         read_config=ReadConfig(),
