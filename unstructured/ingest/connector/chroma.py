@@ -29,8 +29,8 @@ class SimpleChromaConfig(BaseConnectorConfig):
     access_config: ChromaAccessConfig
     collection_name: str
     path: t.Optional[str] = None
-    tenant: t.Optional[str] = None
-    database: t.Optional[str] = None
+    tenant: t.Optional[str] = "default_tenant"
+    database: t.Optional[str] = "default_database"
     host: t.Optional[str] = None
     port: t.Optional[int] = None
     ssl: bool = False
@@ -73,6 +73,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             )
 
         elif self.connector_config.host and self.connector_config.port:
+            breakpoint()
             chroma_client = chromadb.HttpClient(
                 host=self.connector_config.host,
                 port=self.connector_config.port,
