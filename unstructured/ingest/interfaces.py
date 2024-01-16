@@ -14,6 +14,7 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
+from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
@@ -215,9 +216,9 @@ class EmbeddingConfig(BaseConfig):
 class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
     chunking_strategy: t.Optional[str] = None
-    multipage_sections: bool = True
-    combine_text_under_n_chars: int = 500
-    max_characters: int = 1500
+    combine_text_under_n_chars: t.Optional[int] = None
+    max_characters: int = CHUNK_MAX_CHARS_DEFAULT
+    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT
     new_after_n_chars: t.Optional[int] = None
     overlap: int = 0
     overlap_all: bool = False
