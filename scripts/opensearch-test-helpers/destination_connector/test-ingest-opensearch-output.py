@@ -28,6 +28,7 @@ if __name__ == "__main__":
 
     try:
         assert vector_search["hits"]["hits"][0]["_source"]["text"] == EXPECTED_TEXT
+        print("OpenSearch vector search test was successful.")
     except AssertionError:
         sys.exit(
             "OpenSearch dest check failed:" f"Did not find {EXPECTED_TEXT} in via vector search."
