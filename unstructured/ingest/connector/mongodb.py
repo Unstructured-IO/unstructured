@@ -181,11 +181,10 @@ class MongoDBIngestDocBatch(BaseIngestDocBatch):
         """Fetches all documents in a collection."""
         from bson.objectid import ObjectId
 
-        # I don't like this here. Would prefer to get client
-        # from MongoDBSourceConnector or SimpleMongoDBConfig
+        # Note for future. Maybe this could use other client
         client = self.connector_config.generate_client()
         collection = self.connector_config.get_collection(client)
-        # MondoDB expects a list of ObjectIds (yet won't take a list comprehension for some reason
+        # MondoDB expects a list of ObjectIds
         list_of_object_ids = []
         for x in self.list_of_ids:
             list_of_object_ids.append(ObjectId(x))
