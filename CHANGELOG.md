@@ -2,12 +2,14 @@
 
 ### Enhancements
 
+* **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
 * **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
 * **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
 * **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
 * **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
-* **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified. 
+* **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
+* **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
 
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
