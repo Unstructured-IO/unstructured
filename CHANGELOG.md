@@ -790,6 +790,7 @@ allowing the document to be loaded. Fix: Change parent class for Formula to Text
 * make notion module discoverable
 * fix emails with `Content-Distribution: inline` and `Content-Distribution: attachment` with no filename
 * Fix email attachment filenames which had `=` in the filename itself
+* Fix documentation and sample code for Chroma
 
 ## 0.9.2
 
