@@ -388,6 +388,7 @@ class ElasticsearchDestinationConnector(BaseDestinationConnector):
                 "element_id": element_dict.pop("element_id", None),
                 "embeddings": element_dict.pop("embeddings", None),
                 "text": element_dict.pop("text", None),
+                "type": element_dict.pop("type", None),
                 "metadata": flatten_dict(
                     element_dict.pop("metadata", None),
                     separator="-",

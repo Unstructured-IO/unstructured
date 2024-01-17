@@ -24,6 +24,7 @@ from .local import LocalRunner
 from .mongodb import MongoDBRunner
 from .notion import NotionRunner
 from .onedrive import OneDriveRunner
+from .opensearch import OpenSearchRunner
 from .outlook import OutlookRunner
 from .reddit import RedditRunner
 from .salesforce import SalesforceRunner
@@ -53,6 +54,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "mongodb": MongoDBRunner,
     "notion": NotionRunner,
     "onedrive": OneDriveRunner,
+    "opensearch": OpenSearchRunner,
     "outlook": OutlookRunner,
     "reddit": RedditRunner,
     "s3": S3Runner,
@@ -83,6 +85,7 @@ __all__ = [
     "MongoDBRunner",
     "NotionRunner",
     "OneDriveRunner",
+    "OpenSearchRunner",
     "OutlookRunner",
     "RedditRunner",
     "S3Runner",

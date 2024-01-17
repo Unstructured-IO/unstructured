@@ -55,6 +55,7 @@ all_tests=(
   'local-embed.sh'
   'sftp.sh'
   'mongodb.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(

@@ -28,6 +28,7 @@ from unstructured.ingest.connector.notion.connector import (
     NotionPageIngestDoc,
 )
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
+from unstructured.ingest.connector.opensearch import OpenSearchIngestDoc, OpenSearchIngestDocBatch
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
@@ -64,6 +65,8 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "notion_database": NotionDatabaseIngestDoc,
     "notion_page": NotionPageIngestDoc,
     "onedrive": OneDriveIngestDoc,
+    "opensearch": OpenSearchIngestDoc,
+    "opensearch_batch": OpenSearchIngestDocBatch,
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,
