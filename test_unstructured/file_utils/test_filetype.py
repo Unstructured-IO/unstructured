@@ -4,6 +4,7 @@ import zipfile
 
 import magic
 import pytest
+from PIL import Image
 
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
@@ -360,6 +361,29 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch, tmpdir):
         f.write("here is a fake file!")
 
     assert detect_filetype(filename=filename) == FileType.TXT
+
+
+def test_detect_filetype_detects_bmp_from_filename(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    filetype = detect_filetype(filename=bmp_filename) == FileType.BMP
+
+
+def test_detect_filetype_detects_bmp_from_file(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    with open(bmp_filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.BMP
 
 
 def test_detect_filetype_raises_with_both_specified():
