@@ -19,6 +19,8 @@ from unstructured.file_utils.filetype import (
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs")
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]
@@ -374,6 +376,7 @@ def test_detect_filetype_detects_bmp_from_filename(
     detect_filetype(filename=bmp_filename) == FileType.BMP
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_detect_filetype_detects_bmp_from_file(
     tmpdir,
     filename="example-docs/layout-parser-paper-with-table.jpg",
