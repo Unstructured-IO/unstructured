@@ -29,8 +29,8 @@ class SimpleChromaConfig(BaseConnectorConfig):
     access_config: ChromaAccessConfig
     collection_name: str
     path: t.Optional[str] = None
-    tenant: t.Optional[str] = None
-    database: t.Optional[str] = None
+    tenant: t.Optional[str] = "default_tenant"
+    database: t.Optional[str] = "default_database"
     host: t.Optional[str] = None
     port: t.Optional[int] = None
     ssl: bool = False
