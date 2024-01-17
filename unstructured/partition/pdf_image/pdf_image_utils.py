@@ -4,7 +4,7 @@ import tempfile
 from copy import deepcopy
 from io import BytesIO
 from pathlib import PurePath
-from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast, Tuple
+from typing import TYPE_CHECKING, BinaryIO, List, Optional, Tuple, Union, cast
 
 import cv2
 import numpy as np
@@ -169,8 +169,7 @@ def save_elements(
             h_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD
             v_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD
             padded_bbox = cast(
-                Tuple[int, int, int, int],
-                pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
+                Tuple[int, int, int, int], pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
             )
             page_number = el.metadata.page_number
 
