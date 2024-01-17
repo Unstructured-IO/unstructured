@@ -22,11 +22,13 @@ from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
 from unstructured.ingest.connector.hubspot import HubSpotIngestDoc
 from unstructured.ingest.connector.jira import JiraIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
+from unstructured.ingest.connector.mongodb import MongoDBIngestDoc, MongoDBIngestDocBatch
 from unstructured.ingest.connector.notion.connector import (
     NotionDatabaseIngestDoc,
     NotionPageIngestDoc,
 )
 from unstructured.ingest.connector.onedrive import OneDriveIngestDoc
+from unstructured.ingest.connector.opensearch import OpenSearchIngestDoc, OpenSearchIngestDocBatch
 from unstructured.ingest.connector.outlook import OutlookIngestDoc
 from unstructured.ingest.connector.reddit import RedditIngestDoc
 from unstructured.ingest.connector.salesforce import SalesforceIngestDoc
@@ -58,9 +60,13 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "hubspot": HubSpotIngestDoc,
     "jira": JiraIngestDoc,
     "local": LocalIngestDoc,
+    "mongodb": MongoDBIngestDoc,
+    "mongodb_batch": MongoDBIngestDocBatch,
     "notion_database": NotionDatabaseIngestDoc,
     "notion_page": NotionPageIngestDoc,
     "onedrive": OneDriveIngestDoc,
+    "opensearch": OpenSearchIngestDoc,
+    "opensearch_batch": OpenSearchIngestDocBatch,
     "outlook": OutlookIngestDoc,
     "reddit": RedditIngestDoc,
     "s3": S3IngestDoc,

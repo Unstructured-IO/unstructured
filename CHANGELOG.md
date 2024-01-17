@@ -1,4 +1,4 @@
-## 0.12.1-dev8
+## 0.12.1-dev10
 
 ### Enhancements
 
@@ -12,6 +12,8 @@
 * **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
 
 ### Features
+* **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
+* **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
 * **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
@@ -20,6 +22,7 @@
 * **Pin version of unstructured-client** Set minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
 * **Fix the serialization of the Pinecone destination connector.** Presence of the PineconeIndex object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
 
 ## 0.12.0
 

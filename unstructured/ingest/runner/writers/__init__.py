@@ -11,6 +11,7 @@ from .fsspec.dropbox import DropboxWriter
 from .fsspec.gcs import GcsWriter
 from .fsspec.s3 import S3Writer
 from .mongodb import MongodbWriter
+from .opensearch import OpenSearchWriter
 from .pinecone import PineconeWriter
 from .qdrant import QdrantWriter
 from .sql import SqlWriter
@@ -27,6 +28,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "elasticsearch": ElasticsearchWriter,
     "gcs": GcsWriter,
     "mongodb": MongodbWriter,
+    "opensearch": OpenSearchWriter,
     "pinecone": PineconeWriter,
     "qdrant": QdrantWriter,
     "s3": S3Writer,

@@ -7,6 +7,7 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
+import json
 import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -188,10 +189,12 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_record(self) -> OrderedDict:
         # Get record from Salesforce based on id
         response = self._get_response()
-        logger.debug(f"response from salesforce record request: {response}")
+        logger.debug(f"response was returned for salesforce record id: {self.record_id}")
         records = response["records"]
         if not records:
-            raise ValueError(f"No record found with record id {self.record_id}: {response}")
+            raise ValueError(
+                f"No record found with record id {self.record_id}: {json.dumps(response)}"
+            )
         record_json = records[0]
         return record_json
 
