@@ -1,6 +1,7 @@
 import base64
 import os
 import tempfile
+from copy import deepcopy
 from io import BytesIO
 from pathlib import PurePath
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
@@ -16,6 +17,7 @@ from unstructured.partition.common import convert_to_bytes
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
 
@@ -73,6 +75,22 @@ def convert_pdf_to_image(
         )
 
     return images
+
+
+def pad_element_bboxes(
+    element: "LayoutElement",
+    padding: Union[int, float],
+) -> "LayoutElement":
+    """Increases (or decreases, if padding is negative) the size of the bounding
+    boxes of the element by extending the boundary outward (resp. inward)"""
+
+    out_element = deepcopy(element)
+    out_element.bbox.x1 -= padding
+    out_element.bbox.x2 += padding
+    out_element.bbox.y1 -= padding
+    out_element.bbox.y2 += padding
+
+    return out_element
 
 
 def save_elements(
