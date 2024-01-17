@@ -136,7 +136,7 @@ def test_valid_text(text, outcome):
 
 def test_pad_bbox():
     bbox = (100, 100, 200, 200)
-    padding = (10, 20)           # Horizontal padding 10, Vertical padding 20
+    padding = (10, 20)  # Horizontal padding 10, Vertical padding 20
     expected = (90, 80, 210, 220)
 
     result = pdf_image_utils.pad_bbox(bbox, padding)
