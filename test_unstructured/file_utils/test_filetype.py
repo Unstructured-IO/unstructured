@@ -371,7 +371,7 @@ def test_detect_filetype_detects_bmp_from_filename(
     img = Image.open(filename)
     img.save(bmp_filename)
 
-    filetype = detect_filetype(filename=bmp_filename) == FileType.BMP
+    detect_filetype(filename=bmp_filename) == FileType.BMP
 
 
 def test_detect_filetype_detects_bmp_from_file(
