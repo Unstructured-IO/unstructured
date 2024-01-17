@@ -1,3 +1,4 @@
+import copy
 import json
 import os
 import typing as t
@@ -6,6 +7,7 @@ from io import BytesIO
 from pathlib import PurePath
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -68,6 +70,12 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
     write_config: DatabricksVolumesWriteConfig
     connector_config: SimpleDatabricksVolumesConfig
     _client: t.Optional["WorkspaceClient"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
 
     @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
     def generate_client(self) -> "WorkspaceClient":
