@@ -342,7 +342,9 @@ def apply_lang_metadata(
     languages: Optional[List[str]],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
-    """Detect and apply metadata.languages to each element in `elements`."""
+    """Detect language and apply it to metadata.languages for each element in `elements`.
+    If languages is None, default to auto detection.
+    If languages is and empty string, skip."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
 
@@ -359,6 +361,7 @@ def apply_lang_metadata(
         yield from elements
         return
 
+    # Convert elements to a list to get the text, detect the language, and add it to the elements
     if not isinstance(elements, List):
         elements = list(elements)
 
@@ -369,7 +372,7 @@ def apply_lang_metadata(
         and len(languages) == 1
         and detect_language_per_element is False
     ):
-        # -- apply detected language to each metadata --
+        # -- apply detected language to each element's metadata --
         for e in elements:
             e.metadata.languages = detected_languages
             yield e
