@@ -5,6 +5,7 @@ from unstructured.documents.elements import (
     PageBreak,
 )
 from unstructured.partition.lang import (
+    _clean_ocr_languages_arg,
     _convert_language_code_to_pytesseract_lang_code,
     _convert_to_standard_langcode,
     apply_lang_metadata,
@@ -129,3 +130,19 @@ def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
 
 def test_convert_to_standard_langcode_full_language():
     assert _convert_to_standard_langcode("Spanish") == "spa"
+
+
+@pytest.mark.parametrize(
+    ("input_ocr_langs", "expected"),
+    [
+        (["eng"], "eng"),  # list
+        ('"deu"', "deu"),  # extra quotation marks
+        ("[deu]", "deu"),  # brackets
+        ("['deu']", "deu"),  # brackets and quotation marks
+        (["[deu]"], "deu"),  # list, brackets and quotation marks
+        (['"deu"'], "deu"),  # list and quotation marks
+        ("deu+spa", "deu+spa"),  # correct input
+    ],
+)
+def test_clean_ocr_languages_arg(input_ocr_langs, expected):
+    assert _clean_ocr_languages_arg(input_ocr_langs) == expected
