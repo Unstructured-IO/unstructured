@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:experimental
-FROM quay.io/unstructured-io/base-images:rocky9.2-8@sha256:68b11677eab35ea702cfa682202ddae33f2053ea16c14c951120781a2dcac1b2 as base
+FROM quay.io/unstructured-io/base-images:rocky9.2-9@sha256:6c838b65b7e4b3b9a94d56ab92ba5d801f5a530709ffb2ef63ece267955d3140 as base
 
 # NOTE(crag): NB_USER ARG for mybinder.org compat:
 #             https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html
