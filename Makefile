@@ -239,6 +239,10 @@ install-ingest-chroma:
 install-ingest-postgres:
 	python3 -m pip install -r requirements/ingest-postgres.txt
 
+.PHONY: install-ingest-mongodb
+install-ingest-mongodb:
+	python3 -m pip install -r requirements/ingest-mongodb.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt

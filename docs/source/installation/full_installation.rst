@@ -39,7 +39,7 @@ To use any of the data connectors, you must install the specific dependency:
 
    .. code-block:: bash
 
-        "airtable", "azure", "azure-cognitive-search", "biomed", "box", "confluence", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "jira", "notion", "opensearch", "onedrive", "outlook", "reddit", "s3", "sharepoint", "salesforce", "slack", "wikipedia"
+        "airtable", "azure", "azure-cognitive-search", "biomed", "box", "confluence", "delta-table", "discord", "dropbox", "elasticsearch", "gcs", "github", "gitlab", "google-drive", "jira", "mongodb", "notion", "opensearch", "onedrive", "outlook", "reddit", "s3", "sharepoint", "salesforce", "slack", "wikipedia"
 
 Installation with ``conda`` on Windows
 --------------------------------------

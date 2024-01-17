@@ -35,6 +35,7 @@ from .hubspot import get_base_src_cmd as hubspot_base_src_cmd
 from .jira import get_base_src_cmd as jira_base_src_cmd
 from .local import get_base_src_cmd as local_base_src_cmd
 from .mongodb import get_base_dest_cmd as mongo_base_dest_cmd
+from .mongodb import get_base_src_cmd as mongodb_base_src_cmd
 from .notion import get_base_src_cmd as notion_base_src_cmd
 from .onedrive import get_base_src_cmd as onedrive_base_src_cmd
 from .opensearch import get_base_dest_cmd as opensearch_base_dest_cmd
@@ -71,6 +72,7 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     hubspot_base_src_cmd,
     jira_base_src_cmd,
     local_base_src_cmd,
+    mongodb_base_src_cmd,
     notion_base_src_cmd,
     onedrive_base_src_cmd,
     opensearch_base_src_cmd,

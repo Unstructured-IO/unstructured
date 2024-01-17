@@ -22,6 +22,7 @@ from unstructured.ingest.connector.google_drive import GoogleDriveIngestDoc
 from unstructured.ingest.connector.hubspot import HubSpotIngestDoc
 from unstructured.ingest.connector.jira import JiraIngestDoc
 from unstructured.ingest.connector.local import LocalIngestDoc
+from unstructured.ingest.connector.mongodb import MongoDBIngestDoc, MongoDBIngestDocBatch
 from unstructured.ingest.connector.notion.connector import (
     NotionDatabaseIngestDoc,
     NotionPageIngestDoc,
@@ -59,6 +60,8 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "hubspot": HubSpotIngestDoc,
     "jira": JiraIngestDoc,
     "local": LocalIngestDoc,
+    "mongodb": MongoDBIngestDoc,
+    "mongodb_batch": MongoDBIngestDocBatch,
     "notion_database": NotionDatabaseIngestDoc,
     "notion_page": NotionPageIngestDoc,
     "onedrive": OneDriveIngestDoc,

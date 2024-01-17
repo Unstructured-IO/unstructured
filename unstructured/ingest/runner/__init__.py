@@ -21,6 +21,7 @@ from .google_drive import GoogleDriveRunner
 from .hubspot import HubSpotRunner
 from .jira import JiraRunner
 from .local import LocalRunner
+from .mongodb import MongoDBRunner
 from .notion import NotionRunner
 from .onedrive import OneDriveRunner
 from .opensearch import OpenSearchRunner
@@ -50,6 +51,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "hubspot": HubSpotRunner,
     "jira": JiraRunner,
     "local": LocalRunner,
+    "mongodb": MongoDBRunner,
     "notion": NotionRunner,
     "onedrive": OneDriveRunner,
     "opensearch": OpenSearchRunner,
@@ -80,6 +82,7 @@ __all__ = [
     "GitlabRunner",
     "JiraRunner",
     "LocalRunner",
+    "MongoDBRunner",
     "NotionRunner",
     "OneDriveRunner",
     "OpenSearchRunner",
