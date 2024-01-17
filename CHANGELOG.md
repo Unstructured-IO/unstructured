@@ -1,7 +1,8 @@
-## 0.12.1-dev11
+## 0.12.1-dev12
 
 ### Enhancements
 
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
 * **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
