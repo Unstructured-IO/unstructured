@@ -4,6 +4,7 @@ import zipfile
 
 import magic
 import pytest
+from PIL import Image
 
 from unstructured.file_utils import filetype
 from unstructured.file_utils.filetype import (
@@ -17,6 +18,8 @@ from unstructured.file_utils.filetype import (
 
 FILE_DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(FILE_DIRECTORY, "..", "..", "example-docs")
+
+is_in_docker = os.path.exists("/.dockerenv")
 
 DOCX_MIME_TYPES = [
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -360,6 +363,30 @@ def test_detect_filetype_detects_unknown_text_types_as_txt(monkeypatch, tmpdir):
         f.write("here is a fake file!")
 
     assert detect_filetype(filename=filename) == FileType.TXT
+
+
+def test_detect_filetype_detects_bmp_from_filename(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    detect_filetype(filename=bmp_filename) == FileType.BMP
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_detect_filetype_detects_bmp_from_file(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    with open(bmp_filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.BMP
 
 
 def test_detect_filetype_raises_with_both_specified():
