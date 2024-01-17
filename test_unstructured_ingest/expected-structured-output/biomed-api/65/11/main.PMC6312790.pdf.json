@@ -13,6 +13,19 @@
     "type": "Header"
   },
   {
+    "element_id": "73862c31b60251b2f838a92c4265b6d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "ELSEVIER",
+    "type": "Image"
+  },
+  {
     "element_id": "721bbccb8e92736ad5776ad812dc8bca",
     "metadata": {
       "data_source": {},
@@ -52,6 +65,19 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "8bdb2c4b6997a1bbd7b948d7aeb402e2",
     "metadata": {
       "data_source": {},
@@ -78,6 +104,19 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "c21a7f75a507e8d1d940e30b66575616",
     "metadata": {
       "data_source": {},
@@ -89,6 +128,19 @@
     },
     "text": "(Jee",
     "type": "Title"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "6d1999c49562bd7c2b15a41327b8fc36",
@@ -845,6 +897,19 @@
     "type": "FigureCaption"
   },
   {
+    "element_id": "d04d110c16a4ebc184fa130f09b8d423",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "Sem ny. 200 Rv",
+    "type": "Image"
+  },
+  {
     "element_id": "0dcaad338c239bbf75e7c2a59a932d7d",
     "metadata": {
       "data_source": {},
@@ -960,6 +1025,19 @@
     },
     "text": "Austenitic stainless steel Type 316 was used in this study with chemical composition reported in [1,2]. The chemicals used were of annular grade. The inhibitor concentrations are in the range of 2, 4, 6, 8 and 10 g [3–5]. The structural formula of egg shell powder is shown in Fig. 9.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "6217bccead857caaba41da19ca470e7b",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 6
+    },
+    "text": "ou H,;COCHNY OH",
+    "type": "Image"
   },
   {
     "element_id": "389bd6e22f3ac105897fa0a75807197d",

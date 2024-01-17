@@ -14,6 +14,8 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
+from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
+from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
@@ -175,7 +177,7 @@ class FsspecConfig(FileStorageConfig):
 @dataclass
 class ReadConfig(BaseConfig):
     # where raw documents are stored for processing, and then removed if not preserve_downloads
-    download_dir: str = ""
+    download_dir: t.Optional[str] = ""
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
@@ -213,22 +215,43 @@ class EmbeddingConfig(BaseConfig):
 @dataclass
 class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
-    multipage_sections: bool = True
-    combine_text_under_n_chars: int = 500
-    max_characters: int = 1500
+    chunking_strategy: t.Optional[str] = None
+    combine_text_under_n_chars: t.Optional[int] = None
+    max_characters: int = CHUNK_MAX_CHARS_DEFAULT
+    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT
     new_after_n_chars: t.Optional[int] = None
+    overlap: int = 0
+    overlap_all: bool = False
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        if self.chunk_elements:
-            return chunk_by_title(
+        chunking_strategy = (
+            self.chunking_strategy
+            if self.chunking_strategy in ("basic", "by_title")
+            else "by_title"
+            if self.chunk_elements is True
+            else None
+        )
+        return (
+            chunk_by_title(
                 elements=elements,
-                multipage_sections=self.multipage_sections,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 max_characters=self.max_characters,
+                multipage_sections=self.multipage_sections,
                 new_after_n_chars=self.new_after_n_chars,
+                overlap=self.overlap,
+                overlap_all=self.overlap_all,
             )
-        else:
-            return elements
+            if chunking_strategy == "by_title"
+            else chunk_elements(
+                elements=elements,
+                max_characters=self.max_characters,
+                new_after_n_chars=self.new_after_n_chars,
+                overlap=self.overlap,
+                overlap_all=self.overlap_all,
+            )
+            if chunking_strategy == "basic"
+            else elements
+        )
 
 
 @dataclass

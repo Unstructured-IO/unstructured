@@ -41,7 +41,7 @@ langdetect==1.0.9
     # via -r base.in
 lxml==5.1.0
     # via -r base.in
-marshmallow==3.20.1
+marshmallow==3.20.2
     # via
     #   dataclasses-json
     #   unstructured-client

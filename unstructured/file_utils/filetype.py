@@ -97,6 +97,9 @@ class FileType(enum.Enum):
     # Open Office Types
     ODT = 70
 
+    # Audio Files
+    WAV = 80
+
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
@@ -136,6 +139,12 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    # NOTE(robinson) - https://mimetype.io/audio/wav
+    "audio/vnd.wav": FileType.WAV,
+    "audio/vnd.wave": FileType.WAV,
+    "audio/wave": FileType.WAV,
+    "audio/x-pn-wav": FileType.WAV,
+    "audio/x-wav": FileType.WAV,
     "inode/x-empty": FileType.EMPTY,
 }
 
@@ -182,6 +191,7 @@ EXT_TO_FILETYPE = {
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
     ".tiff": FileType.TIFF,
+    ".wav": FileType.WAV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,

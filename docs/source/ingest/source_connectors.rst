@@ -23,6 +23,7 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    source_connectors/google_drive
    source_connectors/jira
    source_connectors/local_connector
+   source_connectors/mongodb
    source_connectors/notion
    source_connectors/onedrive
    source_connectors/outlook

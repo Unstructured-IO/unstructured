@@ -45,7 +45,7 @@ google-api-core==2.15.0
     # via
     #   google-cloud-core
     #   google-cloud-storage
-google-auth==2.26.1
+google-auth==2.26.2
     # via
     #   gcsfs
     #   google-api-core

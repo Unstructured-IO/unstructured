@@ -1187,3 +1187,14 @@ def test_partition_pdf_element_extraction(
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
+
+
+def test_partition_pdf_always_keep_all_image_elements(
+    filename=example_doc_path("embedded-images.pdf"),
+):
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy="hi_res",
+    )
+    image_elements = [el for el in elements if el.category == ElementType.IMAGE]
+    assert len(image_elements) == 3
