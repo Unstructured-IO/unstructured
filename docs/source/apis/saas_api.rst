@@ -64,7 +64,7 @@ Example: Parsing a Document via SaaS API
 Please refer to the sample code and output provided below to begin processing documents with your SaaS API.
 
 .. warning::
-    When using the Command Line Interface (CLI), ensure that you copy the complete SaaS API URL provided in your email. This URL should **do include** the specific path ``/general/v0/general``.
+    When using the Command Line Interface (CLI), ensure that you copy the complete SaaS API URL provided in your email. This URL should include the specific path ``/general/v0/general``.
 
 .. code-block:: bash
 
