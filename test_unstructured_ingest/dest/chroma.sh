@@ -53,6 +53,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --host "localhost" \
   --port 8000 \
   --collection-name "$COLLECTION_NAME" \
+  --tenant "default_tenant" \
+  --database "default_database" \
   --batch-size 80
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --collection-name "$COLLECTION_NAME"
