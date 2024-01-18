@@ -100,6 +100,19 @@ class FileType(enum.Enum):
     # Audio Files
     WAV = 80
 
+    # Code files
+    PY = 101
+    JS = 102
+    TS = 103
+    C = 104
+    CPP = 105
+    JAVA = 106
+    CSHARP = 107
+    PHP = 108
+    RB = 109
+    SWIFT = 110
+    GO = 111
+
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
@@ -146,6 +159,12 @@ STR_TO_FILETYPE = {
     "audio/x-pn-wav": FileType.WAV,
     "audio/x-wav": FileType.WAV,
     "inode/x-empty": FileType.EMPTY,
+    # NOTE(Pierre) - Need to check the mimetypes detected by Libmagic
+    "text/javascript": FileType.JS,
+    "text/x-python": FileType.PY,
+    "text/x-script.python": FileType.PY,
+    "text/x-c": FileType.C,
+    "text/x-c++": FileType.CPP,
 }
 
 MIMETYPES_TO_EXCLUDE = [
@@ -192,20 +211,22 @@ EXT_TO_FILETYPE = {
     ".tab": FileType.TSV,
     ".tiff": FileType.TIFF,
     ".wav": FileType.WAV,
-    # NOTE(robinson) - for now we are treating code files as plain text
-    ".js": FileType.TXT,
-    ".py": FileType.TXT,
-    ".java": FileType.TXT,
-    ".cpp": FileType.TXT,
-    ".cc": FileType.TXT,
-    ".cxx": FileType.TXT,
-    ".c": FileType.TXT,
-    ".cs": FileType.TXT,
-    ".php": FileType.TXT,
-    ".rb": FileType.TXT,
-    ".swift": FileType.TXT,
-    ".ts": FileType.TXT,
-    ".go": FileType.TXT,
+    ".js": FileType.JS,
+    ".py": FileType.PY,
+    ".java": FileType.JAVA,
+    ".hpp": FileType.CPP,
+    ".cpp": FileType.CPP,
+    ".cc": FileType.C,
+    ".cxx": FileType.CPP,
+    ".h": FileType.C,
+    ".c": FileType.C,
+    ".cu": FileType.C,
+    ".cs": FileType.CSHARP,
+    ".php": FileType.PHP,
+    ".rb": FileType.RB,
+    ".swift": FileType.SWIFT,
+    ".ts": FileType.TS,
+    ".go": FileType.GO,
     None: FileType.UNK,
 }
 
@@ -380,7 +401,7 @@ def detect_filetype(
         # NOTE(robinson) - we'll treat all code files as plain text for now.
         # we can update this logic and add filetypes for specific languages
         # later if needed.
-        return FileType.TXT
+        return STR_TO_FILETYPE.get(mime_type, FileType.TXT)
 
     elif mime_type.endswith("empty"):
         return FileType.EMPTY
