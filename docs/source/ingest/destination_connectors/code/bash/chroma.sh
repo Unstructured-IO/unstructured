@@ -14,4 +14,6 @@ unstructured-ingest \
   --host "localhost" \
   --port 8000 \
   --collection-name "collection name" \
+  --tenant "default_tenant" \
+  --database "default_database" \
   --batch-size 80

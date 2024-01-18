@@ -71,7 +71,6 @@ response_code=$(curl \
   "dimension": 384,
   "metric": "cosine",
   "pods": 1,
-  "replicas": 1,
   "pod_type": "p1.x1"
 }
 ')

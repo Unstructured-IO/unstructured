@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os.path
 import typing as t
@@ -8,7 +10,9 @@ from pathlib import Path
 
 import click
 from dataclasses_json.core import Json
+from typing_extensions import Self
 
+from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,
@@ -462,59 +466,108 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 ["--chunk-elements"],
                 is_flag=True,
                 default=False,
+                help="Deprecated, use --chunking-strategy instead.",
+            ),
+            click.Option(
+                ["--chunking-strategy"],
+                type=click.Choice(["basic", "by_title"]),
+                help="The rule-set to use to form chunks. Omit to disable chunking.",
             ),
             click.Option(
                 ["--chunk-multipage-sections"],
                 is_flag=True,
-                default=False,
+                default=CHUNK_MULTI_PAGE_DEFAULT,
+                help=(
+                    "Ignore page boundaries when chunking such that elements from two different"
+                    " pages can appear in the same chunk. Only operative for 'by_title'"
+                    " chunking-strategy."
+                ),
             ),
             click.Option(
                 ["--chunk-combine-text-under-n-chars"],
                 type=int,
-                default=500,
-                show_default=True,
+                help=(
+                    "Combine consecutive chunks when the first does not exceed this length and"
+                    " the second will fit without exceeding the hard-maximum length. Only"
+                    " operative for 'by_title' chunking-strategy."
+                ),
             ),
             click.Option(
                 ["--chunk-new-after-n-chars"],
                 type=int,
-                default=1500,
-                show_default=True,
+                help=(
+                    "Soft-maximum chunk length. Another element will not be added to a chunk of"
+                    " this length even when it would fit without exceeding the hard-maximum"
+                    " length."
+                ),
             ),
             click.Option(
                 ["--chunk-max-characters"],
                 type=int,
-                default=1500,
+                default=CHUNK_MAX_CHARS_DEFAULT,
                 show_default=True,
+                help=(
+                    "Hard maximum chunk length. No chunk will exceed this length. An oversized"
+                    " element will be divided by text-splitting to fit this window."
+                ),
+            ),
+            click.Option(
+                ["--chunk-overlap"],
+                type=int,
+                default=0,
+                show_default=True,
+                help=(
+                    "Prefix chunk text with last overlap=N characters of prior chunk. Only"
+                    " applies to oversized chunks divided by text-splitting. To apply overlap to"
+                    " non-oversized chunks use the --overlap-all option."
+                ),
+            ),
+            click.Option(
+                ["--chunk-overlap-all"],
+                is_flag=True,
+                default=False,
+                help=(
+                    "Apply overlap to chunks formed from whole elements as well as those formed"
+                    " by text-splitting oversized elements. Overlap length is take from --overlap"
+                    " option value."
+                ),
             ),
         ]
         return options
 
     @classmethod
-    def from_dict(cls, kvs: Json, **kwargs):
+    def from_dict(cls, kvs: Json, **kwargs: t.Any) -> t.Optional[Self]:
+        """Extension of dataclass from_dict() to avoid a naming conflict with other CLI params.
+
+        This allows CLI arguments to be prefixed with "chunking_" during CLI invocation but doesn't
+        require that as part of the field names in this class
         """
-        Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
-        This allows CLI arguments to be prepended with chunking_ during CLI invocation but
-        doesn't require that as part of the field names in this class
-        """
-        if isinstance(kvs, dict):
-            kvs = kvs.copy()
-            new_kvs = {}
-            if "chunk_elements" in kvs:
-                chunk_elements = kvs.pop("chunk_elements")
-                if not chunk_elements:
-                    return None
-                new_kvs["chunk_elements"] = chunk_elements
-            new_kvs.update(
-                {
-                    k[len("chunk_") :]: v  # noqa: E203
-                    for k, v in kvs.items()
-                    if k.startswith("chunk_")
-                },
+        if not isinstance(kvs, dict):
+            return super().from_dict(kvs=kvs, **kwargs)
+
+        options: t.Dict[str, t.Any] = kvs.copy()
+        chunk_elements = options.pop("chunk_elements", None)
+        chunking_strategy = options.pop("chunking_strategy", None)
+        # -- when neither are specified, chunking is not requested --
+        if not chunk_elements and not chunking_strategy:
+            return None
+
+        def iter_kv_pairs() -> t.Iterator[t.Tuple[str, t.Any]]:
+            # -- newer `chunking_strategy` option takes precedence over legacy `chunk_elements` --
+            if chunking_strategy:
+                yield "chunking_strategy", chunking_strategy
+            # -- but legacy case is still supported, equivalent to `chunking_strategy="by_title" --
+            elif chunk_elements:
+                yield "chunking_strategy", "by_title"
+
+            yield from (
+                (key[len("chunk_") :], value)
+                for key, value in options.items()
+                if key.startswith("chunk_")
             )
-            if len(new_kvs.keys()) == 0:
-                return None
-            return super().from_dict(kvs=new_kvs, **kwargs)
-        return super().from_dict(kvs=kvs, **kwargs)
+
+        new_kvs = dict(iter_kv_pairs())
+        return None if len(new_kvs) == 0 else super().from_dict(kvs=new_kvs, **kwargs)
 
 
 class CliPermissionsConfig(PermissionsConfig, CliMixin):

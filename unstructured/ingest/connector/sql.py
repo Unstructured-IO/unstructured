@@ -1,9 +1,11 @@
+import copy
 import json
 import typing as t
 import uuid
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
@@ -67,6 +69,18 @@ class SimpleSqlConfig(BaseConnectorConfig):
 class SqlDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleSqlConfig
     _client: t.Optional[t.Any] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _client variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     def client(self):

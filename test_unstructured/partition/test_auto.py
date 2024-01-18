@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 import docx
 import pytest
+from PIL import Image
 
 from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.partition.test_constants import (
@@ -730,7 +731,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
+    if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -1265,3 +1266,20 @@ def test_partition_timeout_gets_routed():
     kwargs = mock_ocr_func.call_args.kwargs
     assert "request_timeout" in kwargs
     assert kwargs["request_timeout"] == 326
+
+
+def test_partition_image_with_bmp_with_auto(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = partition(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]

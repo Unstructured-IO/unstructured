@@ -118,7 +118,7 @@ isoduration==20.11.0
     # via jsonschema
 jedi==0.19.1
     # via ipython
-jinja2==3.1.2
+jinja2==3.1.3
     # via
     #   jupyter-server
     #   jupyterlab
@@ -162,7 +162,7 @@ jupyter-events==0.9.0
     # via jupyter-server
 jupyter-lsp==2.2.1
     # via jupyterlab
-jupyter-server==2.12.2
+jupyter-server==2.12.4
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -193,7 +193,7 @@ mistune==3.0.2
     # via nbconvert
 nbclient==0.9.0
     # via nbconvert
-nbconvert==7.14.0
+nbconvert==7.14.1
     # via
     #   jupyter
     #   jupyter-server

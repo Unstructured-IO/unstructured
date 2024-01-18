@@ -24,8 +24,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   chroma \
   --path "<Location where Chroma is persisted, if not connecting via http>" \
   --settings "<Dictionary of settings to communicate with the chroma server>" \
-  --tenant "<Tenant to use for this client>" \
-  --database "<Database to use for this client>" \
+  --tenant "<Tenant to use for this client. Chroma defaults to 'default_tenant'>" \
+  --database "<Database to use for this client. Chroma defaults to 'default_database'>" \
   --host "<Hostname of the Chroma server>" \
   --port "<Port of the Chroma server>" \
   --ssl "<Whether to use SSL to connect to the Chroma server>" \

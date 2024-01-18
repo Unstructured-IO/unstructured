@@ -1,3 +1,4 @@
+import copy
 import json
 import multiprocessing as mp
 import typing as t
@@ -5,6 +6,7 @@ import uuid
 from dataclasses import dataclass
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     AccessConfig,
@@ -46,6 +48,18 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
     write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
     _index: t.Optional["PineconeIndex"] = None
+
+    def to_dict(self, **kwargs):
+        """
+        The _index variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_index"):
+            setattr(self_cp, "_index", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     def pinecone_index(self):

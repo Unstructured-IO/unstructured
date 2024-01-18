@@ -1,0 +1,649 @@
+[
+  {
+    "type": "CompositeElement",
+    "element_id": "141239c4dab75a61a9d513fc033b2c33",
+    "text": "US Trustee Handbook\n\nCHAPTER 1\n\nINTRODUCTION\n\nCHAPTER 1 – INTRODUCTION\n\nA.\tPURPOSE",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "emphasized_text_contents": [
+        "CHAPTER 1",
+        "INTRODUCTION"
+      ],
+      "emphasized_text_tags": [
+        "b",
+        "b"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "bbab04cdd1540f50e5bfecfbd381df2d",
+    "text": "The United States Trustee appoints and supervises standing trustees and monitors and supervises cases under chapter 13 of title 11 of the United",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2118e8faa751f3dd7865ec383e72a8bb",
+    "text": "le 11 of the United States Code.  28 U.S.C. § 586(b).  The Handbook, issued as part of our duties under 28 U.S.C. § 586, establishes or clarifies the",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3bbcf0b1c0d7fefcd5d876d2e7490d65",
+    "text": "es or clarifies the position of the United States Trustee Program (Program) on the duties owed by a standing trustee to the debtors, creditors, other",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "81667567d298d7ff9097eaad2ddeb30c",
+    "text": "s, creditors, other parties in interest, and the United States Trustee.  The Handbook does not present a full and complete statement of the law; it",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9bbadecc7ed6546e05d84fb592a52e1a",
+    "text": "ment of the law; it should not be used as a substitute for legal research and analysis.  The standing trustee must be familiar with relevant",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "23e818f12923bb5292381a53c7132474",
+    "text": "iliar with relevant provisions of the Bankruptcy Code, Federal Rules of Bankruptcy Procedure (Rules), any local bankruptcy rules, and case law.  11",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5deeec95f6e04d6b6f19dd27a239b8e2",
+    "text": ", and case law.  11 U.S.C. § 321, 28 U.S.C. § 586, 28 C.F.R. § 58.6(a)(3).  Standing trustees are encouraged to follow Practice Tips identified in",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "20bad03b8ea3a8edbe80e814d98f631a",
+    "text": "Tips identified in this Handbook but these are not considered mandatory.",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b27631eca540a6a1b2029f3565b4706c",
+    "text": "Nothing in this Handbook should be construed to excuse the standing trustee from complying with all duties imposed by the Bankruptcy Code and Rules,",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ff776964ebb49b8f1c79c2a2ed00e353",
+    "text": "tcy Code and Rules, local rules, and orders of the court.  The standing trustee should notify the United States Trustee whenever the provision of the",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "74e50cee04371ad9ab9023de3e70e94a",
+    "text": "he provision of the Handbook conflicts with the local rules or orders of the court.  The standing trustee is accountable for all duties set forth in",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5d4e824c934173203e79473aed8c0880",
+    "text": "duties set forth in this Handbook, but need not personally perform any duty unless otherwise indicated.  All statutory references in this Handbook",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "22b6ecadef903f8a7ad089e8972fa083",
+    "text": "es in this Handbook refer to the Bankruptcy Code, 11 U.S.C. § 101 et seq., unless otherwise indicated.",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "67483276a5011df9e435b054ad7fde6e",
+    "text": "This Handbook does not create additional rights against the standing trustee or United States Trustee in favor of other parties.",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4966c7804baab3f751348b349370ec3a",
+    "text": "B.\tROLE OF THE UNITED STATES TRUSTEE",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "dddbded7d110a391543cad01b6692090",
+    "text": "The Bankruptcy Reform Act of 1978 removed the bankruptcy judge from the responsibilities for daytoday administration of cases.  Debtors, creditors,",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9f60b8193e3cfe4e59375b238fd40a9f",
+    "text": "Debtors, creditors, and third parties with adverse interests to the trustee were concerned that the court, which previously appointed and supervised",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4df88af9f7e8675f393e9836e1152959",
+    "text": "nted and supervised the trustee, would not impartially adjudicate their rights as adversaries of that trustee. To address these concerns, judicial and",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "1b863cb4fb3ec2686cbbd4f68111c1cd",
+    "text": "cerns, judicial and administrative functions within the bankruptcy system were bifurcated.",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "336455884cd8fb1f3d12d3202bbf7ddb",
+    "text": "Many administrative functions formerly performed by the court were placed within the Department of Justice through the creation of the Program.  Among",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4060f1c8720ff306864ea03276260465",
+    "text": "the Program.  Among the administrative functions assigned to the United States Trustee were the appointment and supervision of chapter 13 trustees./",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "102a88bc6dbcbef2f2768d34d078aaaa",
+    "text": "apter 13 trustees./ This Handbook is issued under the authority of the Program’s enabling statutes. ",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ba76416d7694fefb8e1c7e3d30aa93e1",
+    "text": "C.\tSTATUTORY DUTIES OF A STANDING TRUSTEE\t",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6a4103a612f3c02822142ed9f264ba55",
+    "text": "The standing trustee has a fiduciary responsibility to the bankruptcy estate.  The standing trustee is more than a mere disbursing agent.  The",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2d185b07953a24e5c39b6764e4e888f1",
+    "text": "bursing agent.  The standing trustee must be personally involved in the trustee operation.  If the standing trustee is or becomes unable to perform",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "b2446a962f13a1ddc963d33d59cbb955",
+    "text": "s unable to perform the duties and responsibilities of a standing trustee, the standing trustee must immediately advise the United States Trustee.  28",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "76c356cc9d5f81ae378d264f7cd0bdfe",
+    "text": "States Trustee.  28 U.S.C. § 586(b), 28 C.F.R. § 58.4(b) referencing 28 C.F.R. § 58.3(b).",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "1bf977cfa6a572f2f4be43b4bc0e7799",
+    "text": "Although this Handbook is not intended to be a complete statutory reference, the standing trustee’s primary statutory duties are set forth in 11",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "7dff671218580aaa5d24fbc571ba002b",
+    "text": "are set forth in 11 U.S.C. § 1302, which incorporates by reference some of the duties of chapter 7 trustees found in 11 U.S.C. § 704.  These duties",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "97bee5732e2b1b11659e9cdc431a2c15",
+    "text": "704.  These duties include, but are not limited to, the following:",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "8dfc77ab4089e09d4397e12306086c19",
+    "text": "Copyright",
+    "metadata": {
+      "data_source": {
+        "url": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/../example-docs/handbook-1p.docx",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ]
+    }
+  }
+]

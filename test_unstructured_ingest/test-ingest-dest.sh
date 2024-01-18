@@ -31,6 +31,7 @@ all_tests=(
   'sharepoint-embed-cog-index.sh'
   'sqlite.sh'
   'weaviate.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(
