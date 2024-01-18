@@ -166,6 +166,7 @@ setup(
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
         "mongodb": load_requirements("requirements/ingest/mongodb.in"),
+        "opensearch": load_requirements("requirements/ingest/opensearch.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
