@@ -1,15 +1,19 @@
-## 0.12.1-dev10
+## 0.12.1-dev15
 
 ### Enhancements
 
+* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+  `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
 * **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
 * **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
 * **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
+* **Update documentation**: (i) added verbiage about the free API cap limit, (ii) added deprecation warning on ``Staging`` bricks in favor of ``Destination Connectors``, (iii) added warning and code examples to use the SaaS API Endpoints using CLI-vs-SDKs, (iv) fixed example pages formatting, (v) added deprecation on ``model_name`` in favor of ``hi_res_model_name``, (vi) added ``extract_images_in_pdf`` usage in ``partition_pdf`` section, (vii) reorganize and improve the documentation introduction section, and (viii) added PDF table extraction best practices.
 * **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
 * **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
 * **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
+* **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
 
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
@@ -22,6 +26,7 @@
 * **Pin version of unstructured-client** Set minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
 * **Fix the serialization of the Pinecone destination connector.** Presence of the PineconeIndex object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
 
 ## 0.12.0
