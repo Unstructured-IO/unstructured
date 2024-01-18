@@ -65,8 +65,8 @@ class ChromaDestinationConnector(BaseDestinationConnector):
     def to_dict(self, **kwargs):
         """
         The _collection variable in this dataclass breaks deepcopy due to:
-        TypeError: cannot pickle '_thread.lock' object
-        When serializing, remove it, meaning client data will need to be reinitialized
+        TypeError: cannot pickle 'module' object
+        When serializing, remove it, meaning collection data will need to be reinitialized
         when deserialized
         """
         self_cp = copy.copy(self)
