@@ -74,6 +74,7 @@ class FileType(enum.Enum):
     JPG = 30
     PNG = 31
     TIFF = 32
+    BMP = 33
 
     # Plain Text Types
     EML = 40
@@ -125,6 +126,7 @@ STR_TO_FILETYPE = {
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
     "image/tiff": FileType.TIFF,
+    "image/bmp": FileType.BMP,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -210,6 +212,7 @@ EXT_TO_FILETYPE = {
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
     ".tiff": FileType.TIFF,
+    ".bmp": FileType.BMP,
     ".wav": FileType.WAV,
     ".js": FileType.JS,
     ".py": FileType.PY,

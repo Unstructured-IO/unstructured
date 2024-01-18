@@ -8,7 +8,7 @@
          "analyzer": "english"
       },
       "type": {
-         "type": "keyword"
+         "type": "text"
       },
       "embeddings": {
          "type": "dense_vector",

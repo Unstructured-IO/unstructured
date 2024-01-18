@@ -46,12 +46,15 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
+  --chunk-max-characters 1500 \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   chroma \
   --host "localhost" \
   --port 8000 \
   --collection-name "$COLLECTION_NAME" \
+  --tenant "default_tenant" \
+  --database "default_database" \
   --batch-size 80
 
 python "$SCRIPT_DIR"/python/test-ingest-chroma-output.py --collection-name "$COLLECTION_NAME"

@@ -58,12 +58,18 @@ Using the API Key and URL
   :align: center
   :alt: Welcome Email
 
-Example: Parsing a Document
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Example: Parsing a Document via SaaS API
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Please refer to the sample code and output provided below to begin processing documents with your SaaS API.
 
+.. warning::
+    When using the Command Line Interface (CLI), ensure that you copy the complete SaaS API URL provided in your email. This URL should include the specific path ``/general/v0/general``.
+
 .. code-block:: bash
+
+    # Make sure to replace the placeholders with the actual URL and API key from your email
+    # Include the path `/general/v0/general` in the URL.
 
     curl -X 'POST' 'https://<REPLACE WITH THE URL IN THE EMAIL>'
          -H 'accept: application/json'
@@ -74,6 +80,18 @@ Please refer to the sample code and output provided below to begin processing do
 .. image:: imgs/paid_api/sample_output.png
   :align: center
   :alt: Sample Output
+
+.. warning::
+    When using the Unstructured `Python SDK <https://github.com/Unstructured-IO/unstructured-python-client>`__ or `JavaScript SDK <https://github.com/Unstructured-IO/unstructured-js-client>`__, it is important to **omit** the path ``/general/v0/general`` from the ``server_url`` parameter. Additionally, ensure you use ``https`` in the URL to prevent potential errors.
+
+.. code-block:: python
+
+    from unstructured_client import UnstructuredClient
+
+    # Remember NOT to include `/general/v0/general` in the `server_url`
+    s = UnstructuredClient(api_key_auth="<YOUR_API_KEY>",  # Replace <YOUR_API_KEY> with the API key provided in the email
+                           server_url="<YOUR_SERVER_URL>") # Replace <YOUR_SERVER_URL> with the server URL provided in the email
+
 
 
 SaaS API Account Maintenance
