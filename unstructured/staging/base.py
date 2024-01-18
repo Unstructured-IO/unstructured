@@ -181,7 +181,7 @@ def flatten_dict(
 ):
     """Flattens a nested dictionary into a single level dictionary. keys_to_omit is a list of keys
     that don't get flattened. If omitting a nested key, format as {parent_key}{separator}{key}.
-    If flatten_lists is True, then lists are flattened as well."""
+    If flatten_lists is True, then lists and tuples are flattened as well."""
     keys_to_omit = keys_to_omit if keys_to_omit else []
     flattened_dict = {}
     for key, value in dictionary.items():

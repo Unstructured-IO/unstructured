@@ -1,4 +1,4 @@
-## 0.12.1-dev3
+## 0.12.1-dev4
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 ### Fixes
 
 * **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
+* **Fix flatten_dict to be able to flatten tuples inside dicts** Update flatten_dict function to support flattening tuples inside dicts. This is necessary for objects like Coordinates, when the object is not written to the disk, therefore not being converted to a list before getting flattened (still being a tuple).
 
 ## 0.12.0
 
