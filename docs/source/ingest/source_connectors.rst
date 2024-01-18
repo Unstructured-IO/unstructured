@@ -26,6 +26,7 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    source_connectors/mongodb
    source_connectors/notion
    source_connectors/onedrive
+   source_connectors/opensearch
    source_connectors/outlook
    source_connectors/reddit
    source_connectors/s3

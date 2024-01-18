@@ -135,3 +135,8 @@ html_theme_options = {
         "sidebar-caption-space-above": "0",
     },
 }
+
+# kapa.ai integration
+html_static_path = ["_static"]
+html_js_files = ["custom.js"]
+html_css_files = ["custom.css"]

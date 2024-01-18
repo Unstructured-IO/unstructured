@@ -103,6 +103,14 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
     PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
 
 
+IMAGE_FILETYPES = [
+    FileType.PNG,
+    FileType.JPG,
+    FileType.TIFF,
+    FileType.BMP,
+]
+
+
 def _get_partition_with_extras(
     doc_type: str,
     partition_with_extras_map: Optional[Dict[str, Callable]] = None,
@@ -421,7 +429,7 @@ def partition(
             extract_image_block_to_payload=extract_image_block_to_payload,
             **kwargs,
         )
-    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
+    elif filetype in IMAGE_FILETYPES:
         elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore

@@ -1,8 +1,10 @@
-## 0.12.1-dev12
+## 0.12.1-dev16
 
 ### Enhancements
 
 * **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
+* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+  `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
 * **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
@@ -12,6 +14,7 @@
 * **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
 * **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
 * **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
+* **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
 
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
