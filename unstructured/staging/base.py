@@ -192,7 +192,7 @@ def flatten_dict(
             flattened_dict.update(
                 flatten_dict(value, new_key, separator, flatten_lists, keys_to_omit=keys_to_omit),
             )
-        elif isinstance(value, list) and flatten_lists:
+        elif isinstance(value, (list, tuple)) and flatten_lists:
             for index, item in enumerate(value):
                 flattened_dict.update(
                     flatten_dict(
