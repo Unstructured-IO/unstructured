@@ -1,22 +1,21 @@
-Multi-files API Processing with Unstructured Connector & Context-Aware Chunking
-===============================================================================
-
-.. contents::
-   :local:
-   :depth: 2
+Multi-files API Processing
+==========================
 
 Introduction
-============
+************
 
 This guide demonstrates how to process multiple files using the Unstructured API and S3 Connector and implement context-aware chunking. The process involves installing dependencies, configuring settings, and utilizing Python scripts to manage and chunk data effectively.
 
 Prerequisites
-=============
+*************
 
 Ensure you have Unstructured API key and access to an S3 bucket containing the target files.
 
+Step-by-Step Process
+********************
+
 Step 1: Install Unstructured and S3 Dependency
-==============================================
+----------------------------------------------
 
 Install the `unstructured` package with S3 support.
 
@@ -26,7 +25,7 @@ Install the `unstructured` package with S3 support.
 
 
 Step 2: Import Libraries
-========================
+------------------------
 
 Import necessary libraries from the `unstructured` package for chunking and S3 processing.
 
@@ -43,8 +42,9 @@ Import necessary libraries from the `unstructured` package for chunking and S3 p
    from unstructured.chunking.title import chunk_by_title
    from unstructured.staging.base import dict_to_elements
 
+
 Step 3: Configuration
-=====================
+---------------------
 
 Set up the API key and S3 URL for accessing the data.
 
@@ -53,14 +53,13 @@ Set up the API key and S3 URL for accessing the data.
    UNSTRUCTURED_API_KEY = os.getenv('UNSTRUCTURED_API_KEY')
    S3_URL = "s3://rh-financial-reports/world-development-bank-2023/"
 
+
 Step 4: Python Runner
-=====================
+---------------------
 
 Configure and run the S3Runner for processing the data.
 
 .. code-block:: python
-
-
 
    runner = S3Runner(
         processor_config=ProcessorConfig(
@@ -84,8 +83,9 @@ Configure and run the S3Runner for processing the data.
 
    runner.run(anonymous=True)
 
+
 Step 5: Combine JSON Files from Multi-files Ingestion
-=====================================================
+-----------------------------------------------------
 
 Combine JSON files into a single dataset for further processing.
 
@@ -93,8 +93,9 @@ Combine JSON files into a single dataset for further processing.
 
    combined_json_data = read_and_combine_json("Connector-Output/world-development-bank-2023")
 
+
 Step 6: Convert into Unstructured Elements for Chunking
-=======================================================
+-------------------------------------------------------
 
 Convert the combined JSON data into Unstructured Elements and apply chunking by title.
 
@@ -103,8 +104,9 @@ Convert the combined JSON data into Unstructured Elements and apply chunking by 
    elements = dict_to_elements(combined_json_data)
    chunks = chunk_by_title(elements)
 
+
 Conclusion
-==========
+**********
 
 Following these steps allows for efficient processing of multiple files using the Unstructured S3 Connector. The context-aware chunking helps in organizing and analyzing the data effectively.
 

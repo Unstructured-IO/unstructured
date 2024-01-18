@@ -163,6 +163,24 @@ def test_partition_image_with_multipage_tiff(
     assert elements[-1].metadata.page_number == 2
 
 
+def test_partition_image_with_bmp(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = image.partition_image(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
         ocr,
