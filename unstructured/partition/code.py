@@ -167,19 +167,20 @@ def _partition_by_node(
     current_chunk: str = "",
     min_chars: int = 200,
     max_chars: int = 2000,
-    level: int = 0,
 ) -> list[str]:
     new_chunks = []
     for child in node.children:
         if child.end_byte - child.start_byte > max_chars:
-            # Child is too big, recursively chunk the child
+            # Child is too big, recursively chunk the child, keep memory
             if len(current_chunk) > min_chars:
                 new_chunks.append(current_chunk)
                 current_chunk = ""
             new_chunks.extend(
-                _partition_by_node(child, text, last_end, current_chunk, level=level + 1)
+                _partition_by_node(child, text, last_end, current_chunk)
             )
-            current_chunk = ""
+            # We might have information for the last recursive elements
+            current_chunk = new_chunks[-1]
+            new_chunks = new_chunks[:-1]
         elif len(current_chunk) + child.end_byte - child.start_byte > max_chars:
             # Child would make the current chunk too big, so start a new chunk
             new_chunks.append(current_chunk)
