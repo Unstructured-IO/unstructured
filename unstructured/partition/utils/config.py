@@ -84,14 +84,14 @@ class ENVConfig:
         """extra image block content to add around an identified element(`Image`, `Table`) region
         horizontally; measured in pixels
         """
-        return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_PAD", 0)
+        return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD", 0)
 
     @property
     def EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD(self) -> int:
         """extra image block content to add around an identified element(`Image`, `Table`) region
         vertically; measured in pixels
         """
-        return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_PAD", 0)
+        return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", 0)
 
 
 env_config = ENVConfig()
