@@ -1,4 +1,4 @@
-## 0.12.1-dev15
+## 0.12.1-dev16
 
 ### Enhancements
 
@@ -27,6 +27,7 @@
 * **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
+* **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
 
 ## 0.12.0
 
