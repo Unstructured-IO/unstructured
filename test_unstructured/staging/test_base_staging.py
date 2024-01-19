@@ -463,6 +463,33 @@ def test_flatten_dict_flatten_list_omit_keys():
         == expected_result
     )
 
+def test_flatten_dict_flatten_list_omit_keys_remove_none():
+    """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
+    dictionary = {"a": None, "b": [2, 3, 4], "c": {"d": None, "e": [6, 7]}}
+    keys_to_omit = ["c"]
+    expected_result = {"b_0": 2, "b_1": 3, "b_2": 4, "c": {"d": None, "e": [6, 7]}}
+    assert (
+        base.flatten_dict(dictionary, keys_to_omit=keys_to_omit, flatten_lists=True, remove_none=True)
+        == expected_result
+    )
+
+def test_flatten_dict_flatten_list_remove_none():
+    """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
+    dictionary = {"a": None, "b": [2, 3, 4], "c": {"d": None, "e": [6, 7]}}
+    expected_result = {"b_0": 2, "b_1": 3, "b_2": 4, "c_e_0": 6, "c_e_1": 7}
+    assert (
+        base.flatten_dict(dictionary, flatten_lists=True, remove_none=True)
+        == expected_result
+    )
+
+def test_flatten_dict_flatten_list_none_in_list_remove_none():
+    """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
+    dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": None, "e": [6, None]}}
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c_e_0": 6}
+    assert (
+        base.flatten_dict(dictionary, flatten_lists=True, remove_none=True)
+        == expected_result
+    )
 
 def test_flatten_dict_flatten_list_omit_keys2():
     """Flattening a dictionary with flatten_lists set to True and also omitting keys"""
