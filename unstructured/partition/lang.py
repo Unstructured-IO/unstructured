@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Iterator, List, Optional
+from typing import Iterable, Iterator, List, Optional, Union
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception

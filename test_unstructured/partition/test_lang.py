@@ -142,7 +142,7 @@ def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
 def test_clean_ocr_languages_arg(input_ocr_langs, expected):
     assert _clean_ocr_languages_arg(input_ocr_langs) == expected
 
-    
+
 def test_detect_languages_handles_spelled_out_languages():
     languages = detect_languages(text="Sample text longer than 5 words.", languages=["Spanish"])
     assert languages == ["spa"]
