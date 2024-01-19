@@ -143,7 +143,7 @@ PYTESSERACT_LANG_CODES = [
 ]
 
 
-def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
+def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) -> str:
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
@@ -167,7 +167,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
+def check_language_args(languages: Optional[List[str]], ocr_languages: Optional[str]) -> list[str]:
     """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
     converting `ocr_languages` if needed"""
     if languages is None:
@@ -194,7 +194,7 @@ def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]
     return languages
 
 
-def convert_old_ocr_languages_to_languages(ocr_languages: str):
+def convert_old_ocr_languages_to_languages(ocr_languages: str) -> list[str]:
     """
     Convert ocr_languages parameter to list of langcode strings.
     Assumption: ocr_languages is in tesseract plus sign format
@@ -251,7 +251,7 @@ def _get_iso639_language_object(lang: str) -> Optional[iso639.Language]:
         return None
 
 
-def _get_all_tesseract_langcodes_with_prefix(prefix: str):
+def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
     """
     Get all matching tesseract langcodes with this prefix (may be one or multiple variants).
     """
