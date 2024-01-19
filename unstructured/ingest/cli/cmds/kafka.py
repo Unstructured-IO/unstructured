@@ -34,13 +34,13 @@ class KafkaCliConfig(SimpleKafkaConfig, CliConfig):
             ),
             click.Option(
                 ["--kafka-api-key"],
-                required=True,
+                required=False,
                 type=str,
                 help="The API KEY",
             ),
             click.Option(
                 ["--secret"],
-                required=True,
+                required=False,
                 type=str,
                 help="The secret",
             ),
@@ -49,6 +49,13 @@ class KafkaCliConfig(SimpleKafkaConfig, CliConfig):
                 required=False,
                 type=int,
                 help="The number of messages to consume before unblocking the consumer",
+            ),
+            click.Option(
+                ["--confluent"],
+                required=False,
+                type=bool,
+                default=True,
+                help="Whether this Kafka instance is from Confluent",
             ),
         ]
         return options
