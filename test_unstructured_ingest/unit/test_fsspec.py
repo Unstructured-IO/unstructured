@@ -9,7 +9,6 @@ def test_version_is_string(mock_get_filesystem_class):
     """
     Test that the version is a string even when the filesystem checksum is an integer.
     """
-    # Setup
     mock_fs = MagicMock(spec=AbstractFileSystem)
     mock_fs.checksum.return_value = 1234567890
     mock_fs.info.return_value = {"etag": ""}
@@ -21,6 +20,4 @@ def test_version_is_string(mock_get_filesystem_class):
         connector_config=config,
         remote_file_path="test.txt",
     )
-
-    # Check the version is a string
     assert isinstance(doc.source_metadata.version, str)
