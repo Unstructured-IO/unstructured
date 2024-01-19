@@ -1,8 +1,10 @@
-import pytest
 from unittest.mock import MagicMock, patch
+
 from fsspec import AbstractFileSystem
+
 from unstructured.ingest.connector.fsspec.fsspec import FsspecIngestDoc, SimpleFsspecConfig
 from unstructured.ingest.interfaces import ProcessorConfig, ReadConfig
+
 
 @patch("fsspec.get_filesystem_class")
 def test_version_is_string(mock_get_filesystem_class):
