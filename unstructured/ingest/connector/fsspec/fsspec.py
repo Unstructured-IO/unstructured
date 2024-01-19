@@ -303,7 +303,10 @@ class FsspecDestinationConnector(BaseDestinationConnector):
                 **self.connector_config.get_access_config(),
             )
 
-            bucket_name = self.connector_config.dir_path.split("/")[0]
+            # e.g. Dropbox path starts with /
+            bucket_name = "/" if self.connector_config.path_without_protocol.startswith("/") else ""
+            bucket_name += self.connector_config.dir_path.split("/")[0]
+
             logger.info(f"checking connection for destination {bucket_name}")
             fs.ls(path=bucket_name)
         except Exception as e:
