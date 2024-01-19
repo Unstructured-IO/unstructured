@@ -167,31 +167,65 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) ->
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_language_args(languages: Optional[List[str]], ocr_languages: Optional[str]) -> list[str]:
-    """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
-    converting `ocr_languages` if needed"""
-    if languages is None:
-        languages = ["eng"]
+def check_language_args(
+    languages: Optional[List[str]], ocr_languages: Optional[str]
+) -> Union[list[str], None]:
+    """Handle users defining both `ocr_languages` and `languages`, giving preference to `languages`
+    and converting `ocr_languages` if needed, but defaulting to `None.
 
-    if not isinstance(languages, list):
+    `ocr_languages` is only a parameter for `auto.partition`, `partition_image`, & `partition_pdf`.
+    `ocr_languages` should not be defined as 'auto' since 'auto' is intended for language detection
+    which is not supported by `partition_image` or `partition_pdf`."""
+    # --- Clean and update defaults
+    if ocr_languages == "auto":
+        raise ValueError(
+            "`ocr_languages` is deprecated but was used to extract text from pdfs and images. "
+            "The 'auto' argument is only for language *detection* when it is assigned "
+            "to `languages` and partitioning documents other than pdfs or images. "
+            "Language detection is not currently supported in pdfs or images."
+        )
+
+    if ocr_languages:
+        ocr_languages = _clean_ocr_languages_arg(ocr_languages)
+        logger.warning(
+            "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+            "Please use languages instead.",
+        )
+
+    # raise error if languages is not None of a list
+    if not (isinstance(languages, list) or languages is None):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
-    if ocr_languages is not None:
-        if languages != ["eng"]:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
+    # --- If `languages` is a null/default value and `ocr_languages` is defined, use `ocr_languages`
+    if ocr_languages and (
+        languages == ["auto"] or languages == [""] or languages is None or not languages[0]
+    ):
+        languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        logger.warning(
+            "Only one of languages and ocr_languages should be specified. "
+            "languages is preferred. ocr_languages is marked for deprecation.",
+        )
 
+    # --- Clean `languages`
+    # If "auto" is included in the list of inputs, language detection will be triggered downstream.
+    # The rest of the inputted languages are ignored.
+    if languages:
+        if "auto" not in languages:
+            for i, lang in enumerate(languages):
+                languages[i] = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower(), lang)
+
+            str_languages = _clean_ocr_languages_arg(languages)
+            languages = str_languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        # else, remove the extraneous languages.
+        # NOTE (jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
-    return languages
+            # define as 'auto' for language detection when partitioning non-pdfs or -images
+            languages = ["auto"]
+        return languages
+
+    return None
 
 
 def convert_old_ocr_languages_to_languages(ocr_languages: str) -> list[str]:

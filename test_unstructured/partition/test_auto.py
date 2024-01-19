@@ -4,6 +4,7 @@ import pathlib
 import tempfile
 import warnings
 from importlib import import_module
+from typing import List, Union
 from unittest.mock import Mock, patch
 
 import docx
@@ -22,6 +23,7 @@ from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
+    Element,
     ElementMetadata,
     ListItem,
     NarrativeText,
@@ -1283,3 +1285,39 @@ def test_partition_image_with_bmp_with_auto(
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
     assert "<table><thead><th>" in table[0]
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages", "expected_lang"),
+    [
+        # raise warning and use `ocr_languages` when `languages` is empty or None
+        (None, "deu", ["deu"]),
+        ([""], '"deu"', ["deu"]),
+        ([""], "deu", ["deu"]),
+        ([""], "[deu]", ["deu"]),
+        # raise warning and use `languages` when both are defined
+        (["spa"], "deu", ["spa"]),
+        (["spanish"], "english", ["spa"]),
+        (["spa"], "[deu]", ["spa"]),
+        (["spa"], '"deu"', ["spa"]),
+        (["spa"], ["deu"], ["spa"]),
+        (["spa"], ["[deu]"], ["spa"]),
+        (["spa+deu"], "eng+deu", ["spa", "deu"]),
+    ],
+)
+def test_auto_partition_uses_languages_over_ocr_languages(
+    languages: Union[list[str], str, None],
+    ocr_languages: Union[list[str], str, None],
+    expected_lang: list[str],
+    caplog,
+):
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "DA-1p.pdf")
+    elements: List[Element] = partition(  # type: ignore
+        filename=filename,
+        strategy=PartitionStrategy.OCR_ONLY,
+        ocr_languages=ocr_languages,  # type: ignore
+        languages=languages,  # type: ignore
+    )
+    for lang in elements[0].metadata.languages:  # type: ignore
+        assert lang in expected_lang
+    assert "ocr_languages" in caplog.text

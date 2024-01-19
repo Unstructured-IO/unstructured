@@ -3,10 +3,9 @@ from typing import List, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata
-from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
 from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
+    check_language_args,
 )
 from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -87,27 +86,7 @@ def partition_image(
     """
     exactly_one(filename=filename, file=file)
 
-    if languages is None:
-        languages = ["eng"]
-
-    if not isinstance(languages, list):
-        raise TypeError(
-            'The language parameter must be a list of language codes as strings, ex. ["eng"]',
-        )
-
-    if ocr_languages is not None:
-        if languages != ["eng"]:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
-
-        else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
+    languages = check_language_args(languages, ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,

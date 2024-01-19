@@ -201,7 +201,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_language_args(languages, ocr_languages)
+    languages = check_language_args(languages, ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,
@@ -483,8 +483,6 @@ def partition_pdf_or_image(
     # function.
 
     validate_strategy(strategy, is_image)
-
-    languages = check_language_args(languages, ocr_languages)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
