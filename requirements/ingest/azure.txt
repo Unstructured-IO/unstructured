@@ -10,15 +10,11 @@ aiohttp==3.9.1
     # via adlfs
 aiosignal==1.3.1
     # via aiohttp
-anyio==3.7.1
-    # via
-    #   -c ingest/../constraints.in
-    #   azure-core
 async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-azure-core==1.29.6
+azure-core==1.29.7
     # via
     #   adlfs
     #   azure-identity
@@ -48,8 +44,6 @@ cryptography==41.0.7
     #   azure-storage-blob
     #   msal
     #   pyjwt
-exceptiongroup==1.2.0
-    # via anyio
 frozenlist==1.4.1
     # via
     #   aiohttp
@@ -61,7 +55,6 @@ fsspec==2023.12.2
 idna==3.6
     # via
     #   -c ingest/../base.txt
-    #   anyio
     #   requests
     #   yarl
 isodate==0.6.1
@@ -86,7 +79,9 @@ portalocker==2.8.2
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.31.0
     # via
     #   -c ingest/../base.txt
@@ -98,8 +93,6 @@ six==1.16.0
     #   -c ingest/../base.txt
     #   azure-core
     #   isodate
-sniffio==1.3.0
-    # via anyio
 typing-extensions==4.9.0
     # via
     #   -c ingest/../base.txt

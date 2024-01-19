@@ -17,7 +17,7 @@ idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
-python-gitlab==4.3.0
+python-gitlab==4.4.0
     # via -r ingest/gitlab.in
 requests==2.31.0
     # via

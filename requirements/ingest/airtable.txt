@@ -21,7 +21,7 @@ inflection==0.5.1
     # via pyairtable
 pyairtable==2.2.1
     # via -r ingest/airtable.in
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   pyairtable

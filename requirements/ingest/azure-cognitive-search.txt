@@ -4,13 +4,9 @@
 #
 #    pip-compile --output-file=ingest/azure-cognitive-search.txt ingest/azure-cognitive-search.in
 #
-anyio==3.7.1
-    # via
-    #   -c ingest/../constraints.in
-    #   azure-core
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.29.6
+azure-core==1.29.7
     # via azure-search-documents
 azure-search-documents==11.4.0
     # via -r ingest/azure-cognitive-search.in
@@ -23,12 +19,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-exceptiongroup==1.2.0
-    # via anyio
 idna==3.6
     # via
     #   -c ingest/../base.txt
-    #   anyio
     #   requests
 isodate==0.6.1
     # via azure-search-documents
@@ -41,8 +34,6 @@ six==1.16.0
     #   -c ingest/../base.txt
     #   azure-core
     #   isodate
-sniffio==1.3.0
-    # via anyio
 typing-extensions==4.9.0
     # via
     #   -c ingest/../base.txt

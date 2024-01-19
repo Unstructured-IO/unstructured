@@ -39,7 +39,7 @@ cython==3.0.8
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==3.0.0
+flask==3.0.1
     # via
     #   flask-babel
     #   visualdl
