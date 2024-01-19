@@ -409,6 +409,13 @@ def test_flatten_nested_dict():
     assert base.flatten_dict(dictionary) == expected_result
 
 
+def test_flatten_dict_with_tuples():
+    """Flattening a dictionary with tuples"""
+    dictionary = {"a": 1, "b": (2, 3, 4), "c": {"d": 5, "e": (6, 7)}}
+    expected_result = {"a": 1, "b": (2, 3, 4), "c_d": 5, "c_e": (6, 7)}
+    assert base.flatten_dict(dictionary) == expected_result
+
+
 def test_flatten_dict_with_lists():
     """Flattening a dictionary with lists"""
     dictionary = {"a": 1, "b": [2, 3, 4], "c": {"d": 5, "e": [6, 7]}}
@@ -430,6 +437,13 @@ def test_flatten_dict_alt_separator():
     separator = "-"
     expected_result = {"a": 1, "b-c": 2, "b-d": 3, "e": 4}
     assert base.flatten_dict(dictionary, separator=separator) == expected_result
+
+
+def test_flatten_dict_flatten_tuple():
+    """Flattening a dictionary with flatten_lists set to True, to flatten tuples"""
+    dictionary = {"a": 1, "b": (2, 3, 4), "c": {"d": 5, "e": (6, 7)}}
+    expected_result = {"a": 1, "b_0": 2, "b_1": 3, "b_2": 4, "c_d": 5, "c_e_0": 6, "c_e_1": 7}
+    assert base.flatten_dict(dictionary, flatten_lists=True) == expected_result
 
 
 def test_flatten_dict_flatten_list():
