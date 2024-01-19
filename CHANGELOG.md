@@ -1,7 +1,9 @@
-## 0.12.1-dev16
+## 0.12.1-dev19
+
 
 ### Enhancements
 
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
 * **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
   `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
@@ -28,6 +30,8 @@
 * **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
 * **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
+* **Fix flatten_dict to be able to flatten tuples inside dicts** Update flatten_dict function to support flattening tuples inside dicts. This is necessary for objects like Coordinates, when the object is not written to the disk, therefore not being converted to a list before getting flattened (still being a tuple).
+* **Fix the serialization of the Chroma destination connector.** Presence of the ChromaCollection object breaks serialization due to TypeError: cannot pickle 'module' object. This removes that object before serialization.
 
 ## 0.12.0
 
