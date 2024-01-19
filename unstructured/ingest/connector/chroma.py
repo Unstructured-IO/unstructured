@@ -1,7 +1,9 @@
+import copy
 import typing as t
 import uuid
 from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
@@ -59,6 +61,18 @@ class ChromaDestinationConnector(BaseDestinationConnector):
     @DestinationConnectionError.wrap
     def check_connection(self):
         _ = self.chroma_collection
+
+    def to_dict(self, **kwargs):
+        """
+        The _collection variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle 'module' object
+        When serializing, remove it, meaning collection data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_collection"):
+            setattr(self_cp, "_collection", None)
+        return _asdict(self_cp, **kwargs)
 
     @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self) -> "ChromaCollection":
