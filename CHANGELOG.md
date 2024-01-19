@@ -1,8 +1,9 @@
-## 0.12.1-dev17
+## 0.12.1-dev18
 
 
 ### Enhancements
 
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
 * **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
   `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
