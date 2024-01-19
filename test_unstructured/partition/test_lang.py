@@ -7,7 +7,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.lang import (
     _clean_ocr_languages_arg,
     _convert_language_code_to_pytesseract_lang_code,
-    _convert_to_standard_langcode,
     apply_lang_metadata,
     detect_languages,
     prepare_languages_for_tesseract,
@@ -128,10 +127,6 @@ def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
     assert expected_lang == _convert_language_code_to_pytesseract_lang_code(lang_in)
 
 
-def test_convert_to_standard_langcode_full_language():
-    assert _convert_to_standard_langcode("Spanish") == "spa"
-
-
 @pytest.mark.parametrize(
     ("input_ocr_langs", "expected"),
     [
@@ -146,3 +141,8 @@ def test_convert_to_standard_langcode_full_language():
 )
 def test_clean_ocr_languages_arg(input_ocr_langs, expected):
     assert _clean_ocr_languages_arg(input_ocr_langs) == expected
+
+    
+def test_detect_languages_handles_spelled_out_languages():
+    languages = detect_languages(text="Sample text longer than 5 words.", languages=["Spanish"])
+    assert languages == ["spa"]
