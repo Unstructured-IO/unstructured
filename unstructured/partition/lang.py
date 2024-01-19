@@ -1,5 +1,5 @@
 import re
-from typing import Iterable, Iterator, List, Optional
+from typing import Iterable, Iterator, List, Optional, Union
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
@@ -380,3 +380,19 @@ def apply_lang_metadata(
                 yield e
             else:
                 yield e
+
+
+def _clean_ocr_languages_arg(ocr_languages: Union[List[str], str]) -> str:
+    """Fix common incorrect definitions for ocr_languages:
+    defining it as a list, adding extra quotation marks, adding brackets.
+    Returns a single string of ocr_languages"""
+    # extract from list
+    if isinstance(ocr_languages, list):
+        ocr_languages = "+".join(ocr_languages)
+
+    # remove extra quotations
+    ocr_languages = re.sub(r"[\"']", "", ocr_languages)
+    # remove brackets
+    ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
+
+    return ocr_languages
