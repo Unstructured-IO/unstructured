@@ -160,7 +160,7 @@ pyparsing==3.0.9
     # via
     #   -c constraints.in
     #   matplotlib
-pypdf==3.17.4
+pypdf==4.0.0
     # via -r extra-pdf-image.in
 pypdfium2==4.26.0
     # via pdfplumber
@@ -246,7 +246,7 @@ typing-extensions==4.9.0
     #   torch
 tzdata==2023.4
     # via pandas
-unstructured-inference==0.7.21
+unstructured-inference==0.7.23
     # via -r extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

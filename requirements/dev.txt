@@ -30,7 +30,7 @@ babel==2.14.0
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via
     #   -c base.txt
     #   nbconvert
@@ -99,7 +99,7 @@ importlib-metadata==7.0.1
     #   jupyterlab
     #   jupyterlab-server
     #   nbconvert
-ipykernel==6.28.0
+ipykernel==6.29.0
     # via
     #   jupyter
     #   jupyter-console
@@ -128,7 +128,7 @@ json5==0.9.14
     # via jupyterlab-server
 jsonpointer==2.4
     # via jsonschema
-jsonschema[format-nongpl]==4.20.0
+jsonschema[format-nongpl]==4.21.0
     # via
     #   jupyter-events
     #   jupyterlab-server
@@ -160,9 +160,9 @@ jupyter-core==5.7.1
     #   qtconsole
 jupyter-events==0.9.0
     # via jupyter-server
-jupyter-lsp==2.2.1
+jupyter-lsp==2.2.2
     # via jupyterlab
-jupyter-server==2.12.4
+jupyter-server==2.12.5
     # via
     #   jupyter-lsp
     #   jupyterlab
@@ -171,7 +171,7 @@ jupyter-server==2.12.4
     #   notebook-shim
 jupyter-server-terminals==0.5.1
     # via jupyter-server
-jupyterlab==4.0.10
+jupyterlab==4.0.11
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -193,7 +193,7 @@ mistune==3.0.2
     # via nbconvert
 nbclient==0.9.0
     # via nbconvert
-nbconvert==7.14.1
+nbconvert==7.14.2
     # via
     #   jupyter
     #   jupyter-server
@@ -202,11 +202,11 @@ nbformat==5.9.2
     #   jupyter-server
     #   nbclient
     #   nbconvert
-nest-asyncio==1.5.8
+nest-asyncio==1.5.9
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.0.6
+notebook==7.0.7
     # via jupyter
 notebook-shim==0.2.3
     # via
@@ -226,7 +226,7 @@ packaging==23.2
     #   nbconvert
     #   qtconsole
     #   qtpy
-pandocfilters==1.5.0
+pandocfilters==1.5.1
     # via nbconvert
 parso==0.8.3
     # via jedi
@@ -310,7 +310,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.16.2
+rpds-py==0.17.1
     # via
     #   jsonschema
     #   referencing

@@ -6,6 +6,9 @@
 
 ### Fixes
 
+* **Fix index error in table processing.** Bumps the `unstructured-inference` version to address and
+  index error that occurs on some tables in the table transformer object.
+
 ## 0.12.1
 
 ### Enhancements
