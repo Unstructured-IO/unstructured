@@ -891,6 +891,11 @@ class Footer(Text):
     category = "Footer"
 
 
+class Code(Text):
+    """An element for capturing code snippets."""
+
+    category = "Code"
+
 TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,

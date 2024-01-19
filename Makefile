@@ -62,6 +62,12 @@ install-dev:
 install-build:
 	python3 -m pip install -r requirements/build.txt
 
+.PHONY: install-code
+install-code:
+	python3 -m pip install -r requirements/extra-code.txt
+	scripts/install_treesitter.sh
+	
+
 .PHONY: install-csv
 install-csv:
 	python3 -m pip install -r requirements/extra-csv.txt

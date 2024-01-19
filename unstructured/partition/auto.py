@@ -102,6 +102,23 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
     PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
 
+if dependency_exists("tree_sitter"):
+    from unstructured.partition.code import partition_code
+
+
+CODE_FILETYPES = [
+    FileType.JS,
+    FileType.PY,
+    FileType.JAVA,
+    FileType.CPP,
+    FileType.C,
+    FileType.CSHARP,
+    FileType.PHP,
+    FileType.RB,
+    FileType.SWIFT,
+    FileType.TS,
+    FileType.GO,
+]
 
 IMAGE_FILETYPES = [
     FileType.PNG,
@@ -522,6 +539,13 @@ def partition(
             file=file,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype in CODE_FILETYPES:
+        elements = partition_code(
+            filename=filename,
+            file=file,
+            languages=languages,
             **kwargs,
         )
     elif filetype == FileType.EMPTY:

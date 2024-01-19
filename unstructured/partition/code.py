@@ -1,23 +1,22 @@
 import copy
-import textwrap
 import os
 import io
 from typing import IO, Any, List, Optional
 
 import tree_sitter
 
-from unstructured.documents.elements import Element
+from unstructured.documents.elements import Code, Element, ElementMetadata, process_metadata
 
 from unstructured.file_utils.filetype import FileType, EXT_TO_FILETYPE, detect_filetype
-from unstructured.nlp.tokenize import sent_tokenize
 from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.partition.lang import apply_lang_metadata
 
-TREE_SITTER_BUILD_PATH = "build/my-languages.so"
+from unstructured import __path__ as package_path
+
+TREE_SITTER_BUILD_PATH = package_path[0] + '/treesitter_build/languages.so'
 # TODO(Pierre) Add the other languages
 FILETYPE_TO_LANG = {
     FileType.C: "c",
@@ -27,7 +26,6 @@ FILETYPE_TO_LANG = {
     FileType.JS: "javascript",
     FileType.TS: "typescript",
 }
-
 
 def partition_code(
     filename: Optional[str] = None,
@@ -78,6 +76,7 @@ def partition_code(
     )
 
 
+@process_metadata()
 def _partition_code(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -89,9 +88,9 @@ def _partition_code(
     min_partition: Optional[int] = 50,
     metadata_last_modified: Optional[str] = None,
     detect_language_per_element: bool = False,
-    detection_origin: Optional[str] = "text",
+    detection_origin: Optional[str] = "codefile",
     **kwargs: Any,
-) -> List[str]:
+) -> List[Element]:
     """internal API for `partition_code`"""
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -122,8 +121,10 @@ def _partition_code(
             raise FileNotFoundError("Provided filename is not correct")
     elif text is not None:
         file = io.BytesIO(bytes(text, "utf-8"))
-    elif file is not None:
+
+    if file is not None:
         filetype = detect_filetype(file=file)
+        file.seek(0)
         file_text = file.read()
         last_modification_date = get_last_modified_date_from_file(file)
         if filetype:
@@ -132,7 +133,8 @@ def _partition_code(
             raise RuntimeError("Unable to detect code file type")
 
     if min_partition is not None and len(file_text) < min_partition:
-        raise ValueError("`min_partition` cannot be larger than the length of file contents.")
+        min_partition = len(file_text)
+        #raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
     if language is None:
         raise ValueError("No programming language provided/detected")
@@ -145,7 +147,6 @@ def _partition_code(
     parser = tree_sitter.Parser()
     parser.set_language(LANG)
     tree = parser.parse(file_text)
-    cursor = tree.walk()
     if not tree.root_node.children or tree.root_node.children[0].type == "ERROR":
         raise ValueError(f"File is not written in {language}")
 
@@ -156,17 +157,40 @@ def _partition_code(
         max_chars=max_partition,
     )
 
-    elements = file_content
+    elements: List[Element] = []
+    
+    if include_metadata:
+        metadata = ElementMetadata(
+            filename=metadata_filename or filename,
+            last_modified=metadata_last_modified or last_modification_date,
+            languages = [language],
+        )
+        metadata.detection_origin = detection_origin
+    else:
+        metadata = ElementMetadata()
+
+    #Note (Pierre) Some languages (i.e Python) use blank space and tabs for semantic
+    #Maybe removing the spaces is not a good idea
+    for ctext in file_content:
+        # Don't think it makes sens to use a coordinate system in code, TBD
+        element = Code(
+            text=ctext,
+            coordinates=None,
+            coordinate_system=None
+        )
+        element.metadata = copy.deepcopy(metadata)
+        elements.append(element)
+
     return elements
 
 
 def _partition_by_node(
     node: tree_sitter.Node,
     text: str,
-    last_end: int = 0,
-    current_chunk: str = "",
-    min_chars: int = 200,
-    max_chars: int = 2000,
+    last_end: Optional[int] = 0,
+    current_chunk: Optional[str] = "",
+    min_chars: Optional[int] = 200,
+    max_chars: Optional[int] = 2000,
 ) -> list[str]:
     new_chunks = []
     for child in node.children:
