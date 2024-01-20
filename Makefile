@@ -65,8 +65,6 @@ install-build:
 .PHONY: install-code
 install-code:
 	python3 -m pip install -r requirements/extra-code.txt
-	scripts/install_treesitter.sh
-	
 
 .PHONY: install-csv
 install-csv:
@@ -109,7 +107,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
+install-all-docs: install-base install-code install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-all-ingest
 install-all-ingest:
