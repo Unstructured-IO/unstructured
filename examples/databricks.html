@@ -4,15 +4,15 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking" href="dict_to_elements.html" /><link rel="prev" title="Transforming HTML into Vector Database" href="chroma.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Multi-files API Processing" href="dict_to_elements.html" /><link rel="prev" title="Data Processing into Vector Database" href="chroma.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Databricks Delta Table and Connector - Unstructured 0.11.8 documentation</title>
+  <title>Delta Table Source Connector - Unstructured 0.12.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-  <link rel="stylesheet" type="text/css" href="../_static/unstructured.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   
 
@@ -142,8 +142,7 @@
   <script src="../_static/doctools.js"></script>
   <script src="../_static/sphinx_highlight.js"></script>
   <script src="../_static/scripts/furo.js"></script>
-  <script src="../_static/js/githubStargazers.js"></script>
-  <script src="../_static/js/sidebarScrollPosition.js"></script>
+  <script src="../_static/custom.js"></script>
   </head>
 
 <body>
@@ -308,12 +307,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html#key-concepts">Key Concepts</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Document Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/key_concepts.html">Key Concepts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -321,12 +318,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API Services</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API Services</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -357,8 +354,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/google_drive.html">Google Drive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/jira.html">Jira</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/notion.html">Notion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/outlook.html">Outlook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/s3.html">S3</a></li>
@@ -376,11 +375,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/elasticsearch.html">Elasticsearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
@@ -399,24 +401,16 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="chroma.html">Transforming HTML into Vector Database</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Databricks Delta Table and Connector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html#conclusion">Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chroma.html">Data Processing into Vector Database</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Delta Table Source Connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dict_to_elements.html">Multi-files API Processing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../integrations.html">Integrations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices/table_extraction_pdf.html">Table Extraction from PDF</a></li>
 </ul>
 </li>
 </ul>
@@ -474,25 +468,10 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="databricks-delta-table-and-connector">
-<h1><a class="toc-backref" href="#id1" role="doc-backlink">Databricks Delta Table and Connector</a><a class="headerlink" href="#databricks-delta-table-and-connector" title="Permalink to this heading"></a></h1>
-<nav class="contents this-will-duplicate-information-and-it-is-still-useful-here" id="contents">
-<p class="topic-title">Contents</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#databricks-delta-table-and-connector" id="id1">Databricks Delta Table and Connector</a></p>
-<ul>
-<li><p><a class="reference internal" href="#objectives" id="id2">Objectives</a></p></li>
-<li><p><a class="reference internal" href="#prerequisites" id="id3">Prerequisites</a></p></li>
-<li><p><a class="reference internal" href="#extracting-pdf-using-unstructured-python-sdk" id="id4">Extracting PDF Using Unstructured Python SDK</a></p></li>
-<li><p><a class="reference internal" href="#processing-and-storing-into-databricks-delta-table" id="id5">Processing and Storing into Databricks Delta Table</a></p></li>
-<li><p><a class="reference internal" href="#extracting-delta-table-using-unstructured-connector" id="id6">Extracting Delta Table Using Unstructured Connector</a></p></li>
-<li><p><a class="reference internal" href="#conclusion" id="id7">Conclusion</a></p></li>
-</ul>
-</li>
-</ul>
-</nav>
+          <section id="delta-table-source-connector">
+<h1>Delta Table Source Connector<a class="headerlink" href="#delta-table-source-connector" title="Permalink to this heading"></a></h1>
 <section id="objectives">
-<h2><a class="toc-backref" href="#id2" role="doc-backlink">Objectives</a><a class="headerlink" href="#objectives" title="Permalink to this heading"></a></h2>
+<h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Extract text and metadata from a PDF file using the Unstructured.io Python SDK.</p></li>
 <li><p>Process and store this data in a Databricks Delta Table.</p></li>
@@ -500,7 +479,7 @@
 </ol>
 </section>
 <section id="prerequisites">
-<h2><a class="toc-backref" href="#id3" role="doc-backlink">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p>Unstructured Python SDK</p></li>
 <li><p>Databricks account and workspace</p></li>
@@ -508,7 +487,7 @@
 </ul>
 </section>
 <section id="extracting-pdf-using-unstructured-python-sdk">
-<h2><a class="toc-backref" href="#id4" role="doc-backlink">Extracting PDF Using Unstructured Python SDK</a><a class="headerlink" href="#extracting-pdf-using-unstructured-python-sdk" title="Permalink to this heading"></a></h2>
+<h2>Extracting PDF Using Unstructured Python SDK<a class="headerlink" href="#extracting-pdf-using-unstructured-python-sdk" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple">
 <li><p>Install Unstructured Python SDK</p></li>
 </ol>
@@ -543,7 +522,7 @@
 </div>
 </section>
 <section id="processing-and-storing-into-databricks-delta-table">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Processing and Storing into Databricks Delta Table</a><a class="headerlink" href="#processing-and-storing-into-databricks-delta-table" title="Permalink to this heading"></a></h2>
+<h2>Processing and Storing into Databricks Delta Table<a class="headerlink" href="#processing-and-storing-into-databricks-delta-table" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple" start="3">
 <li><p>Initialize PySpark</p></li>
 </ol>
@@ -568,7 +547,7 @@
 </div>
 </section>
 <section id="extracting-delta-table-using-unstructured-connector">
-<h2><a class="toc-backref" href="#id6" role="doc-backlink">Extracting Delta Table Using Unstructured Connector</a><a class="headerlink" href="#extracting-delta-table-using-unstructured-connector" title="Permalink to this heading"></a></h2>
+<h2>Extracting Delta Table Using Unstructured Connector<a class="headerlink" href="#extracting-delta-table-using-unstructured-connector" title="Permalink to this heading"></a></h2>
 <ol class="arabic simple" start="6">
 <li><p>Install Unstructured Connector Dependency</p></li>
 </ol>
@@ -590,7 +569,7 @@
 </div>
 </section>
 <section id="conclusion">
-<h2><a class="toc-backref" href="#id7" role="doc-backlink">Conclusion</a><a class="headerlink" href="#conclusion" title="Permalink to this heading"></a></h2>
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading"></a></h2>
 <p>This documentation covers the essential steps for converting unstructured PDF data into structured data and storing it in a Databricks Delta Table. It also outlines how to extract this data for further use.</p>
 </section>
 </section>
@@ -605,7 +584,7 @@
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</div>
+              <div class="title">Multi-files API Processing</div>
             </div>
           </a>
           <a class="prev-page" href="chroma.html">
@@ -614,7 +593,7 @@
                 <span>Previous</span>
               </div>
               
-              <div class="title">Transforming HTML into Vector Database</div>
+              <div class="title">Data Processing into Vector Database</div>
               
             </div>
           </a>
@@ -650,7 +629,7 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Databricks Delta Table and Connector</a><ul>
+<li><a class="reference internal" href="#">Delta Table Source Connector</a><ul>
 <li><a class="reference internal" href="#objectives">Objectives</a></li>
 <li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
 <li><a class="reference internal" href="#extracting-pdf-using-unstructured-python-sdk">Extracting PDF Using Unstructured Python SDK</a></li>

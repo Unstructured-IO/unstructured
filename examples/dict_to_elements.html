@@ -4,15 +4,15 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Integrations" href="../integrations.html" /><link rel="prev" title="Databricks Delta Table and Connector" href="databricks.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Integrations" href="../integrations.html" /><link rel="prev" title="Delta Table Source Connector" href="databricks.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking - Unstructured 0.11.8 documentation</title>
+  <title>Multi-files API Processing - Unstructured 0.12.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-  <link rel="stylesheet" type="text/css" href="../_static/unstructured.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   
 
@@ -142,8 +142,7 @@
   <script src="../_static/doctools.js"></script>
   <script src="../_static/sphinx_highlight.js"></script>
   <script src="../_static/scripts/furo.js"></script>
-  <script src="../_static/js/githubStargazers.js"></script>
-  <script src="../_static/js/sidebarScrollPosition.js"></script>
+  <script src="../_static/custom.js"></script>
   </head>
 
 <body>
@@ -252,7 +251,7 @@
       <label class="search-icon" for="__search">
         <div class="visually-hidden">Toggle search</div>
       </label>
-      <!-- <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <!-- <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label> -->
@@ -308,12 +307,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html#key-concepts">Key Concepts</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Document Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/key_concepts.html">Key Concepts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -321,12 +318,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API Services</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API Services</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -357,8 +354,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/google_drive.html">Google Drive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/jira.html">Jira</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/notion.html">Notion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/outlook.html">Outlook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/s3.html">S3</a></li>
@@ -376,11 +375,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/elasticsearch.html">Elasticsearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
@@ -399,24 +401,16 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../examples.html">Examples</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="chroma.html">Transforming HTML into Vector Database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="databricks.html">Databricks Delta Table and Connector</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-2-import-libraries">Step 2: Import Libraries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-3-configuration">Step 3: Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-4-python-runner">Step 4: Python Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#conclusion">Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chroma.html">Data Processing into Vector Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="databricks.html">Delta Table Source Connector</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Multi-files API Processing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../integrations.html">Integrations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices/table_extraction_pdf.html">Table Extraction from PDF</a></li>
 </ul>
 </li>
 </ul>
@@ -429,7 +423,7 @@
     </div>
   </aside>
   <div class="main">
-    <div class="content content--no-toc">
+    <div class="content">
       <div class="article-container">
         <a href="#" class="back-to-top muted-link">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -453,7 +447,7 @@
               </svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg>
                 <use href="#svg-toc"></use>
@@ -474,26 +468,27 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="multi-files-api-processing-with-unstructured-connector-context-aware-chunking">
-<h1>Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking<a class="headerlink" href="#multi-files-api-processing-with-unstructured-connector-context-aware-chunking" title="Permalink to this heading"></a></h1>
-</section>
+          <section id="multi-files-api-processing">
+<h1>Multi-files API Processing<a class="headerlink" href="#multi-files-api-processing" title="Permalink to this heading"></a></h1>
 <section id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h1>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading"></a></h2>
 <p>This guide demonstrates how to process multiple files using the Unstructured API and S3 Connector and implement context-aware chunking. The process involves installing dependencies, configuring settings, and utilizing Python scripts to manage and chunk data effectively.</p>
 </section>
 <section id="prerequisites">
-<h1>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h1>
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this heading"></a></h2>
 <p>Ensure you have Unstructured API key and access to an S3 bucket containing the target files.</p>
 </section>
+<section id="step-by-step-process">
+<h2>Step-by-Step Process<a class="headerlink" href="#step-by-step-process" title="Permalink to this heading"></a></h2>
 <section id="step-1-install-unstructured-and-s3-dependency">
-<h1>Step 1: Install Unstructured and S3 Dependency<a class="headerlink" href="#step-1-install-unstructured-and-s3-dependency" title="Permalink to this heading"></a></h1>
+<h3>Step 1: Install Unstructured and S3 Dependency<a class="headerlink" href="#step-1-install-unstructured-and-s3-dependency" title="Permalink to this heading"></a></h3>
 <p>Install the <cite>unstructured</cite> package with S3 support.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="s2">&quot;unstructured[s3]&quot;</span>
 </pre></div>
 </div>
 </section>
 <section id="step-2-import-libraries">
-<h1>Step 2: Import Libraries<a class="headerlink" href="#step-2-import-libraries" title="Permalink to this heading"></a></h1>
+<h3>Step 2: Import Libraries<a class="headerlink" href="#step-2-import-libraries" title="Permalink to this heading"></a></h3>
 <p>Import necessary libraries from the <cite>unstructured</cite> package for chunking and S3 processing.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">FsspecConfig</span><span class="p">,</span>
@@ -509,7 +504,7 @@
 </div>
 </section>
 <section id="step-3-configuration">
-<h1>Step 3: Configuration<a class="headerlink" href="#step-3-configuration" title="Permalink to this heading"></a></h1>
+<h3>Step 3: Configuration<a class="headerlink" href="#step-3-configuration" title="Permalink to this heading"></a></h3>
 <p>Set up the API key and S3 URL for accessing the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">UNSTRUCTURED_API_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;UNSTRUCTURED_API_KEY&#39;</span><span class="p">)</span>
 <span class="n">S3_URL</span> <span class="o">=</span> <span class="s2">&quot;s3://rh-financial-reports/world-development-bank-2023/&quot;</span>
@@ -517,7 +512,7 @@
 </div>
 </section>
 <section id="step-4-python-runner">
-<h1>Step 4: Python Runner<a class="headerlink" href="#step-4-python-runner" title="Permalink to this heading"></a></h1>
+<h3>Step 4: Python Runner<a class="headerlink" href="#step-4-python-runner" title="Permalink to this heading"></a></h3>
 <p>Configure and run the S3Runner for processing the data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span> <span class="o">=</span> <span class="n">S3Runner</span><span class="p">(</span>
      <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
@@ -544,23 +539,25 @@
 </div>
 </section>
 <section id="step-5-combine-json-files-from-multi-files-ingestion">
-<h1>Step 5: Combine JSON Files from Multi-files Ingestion<a class="headerlink" href="#step-5-combine-json-files-from-multi-files-ingestion" title="Permalink to this heading"></a></h1>
+<h3>Step 5: Combine JSON Files from Multi-files Ingestion<a class="headerlink" href="#step-5-combine-json-files-from-multi-files-ingestion" title="Permalink to this heading"></a></h3>
 <p>Combine JSON files into a single dataset for further processing.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">combined_json_data</span> <span class="o">=</span> <span class="n">read_and_combine_json</span><span class="p">(</span><span class="s2">&quot;Connector-Output/world-development-bank-2023&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="step-6-convert-into-unstructured-elements-for-chunking">
-<h1>Step 6: Convert into Unstructured Elements for Chunking<a class="headerlink" href="#step-6-convert-into-unstructured-elements-for-chunking" title="Permalink to this heading"></a></h1>
+<h3>Step 6: Convert into Unstructured Elements for Chunking<a class="headerlink" href="#step-6-convert-into-unstructured-elements-for-chunking" title="Permalink to this heading"></a></h3>
 <p>Convert the combined JSON data into Unstructured Elements and apply chunking by title.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">elements</span> <span class="o">=</span> <span class="n">dict_to_elements</span><span class="p">(</span><span class="n">combined_json_data</span><span class="p">)</span>
 <span class="n">chunks</span> <span class="o">=</span> <span class="n">chunk_by_title</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
+</section>
 <section id="conclusion">
-<h1>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading"></a></h1>
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this heading"></a></h2>
 <p>Following these steps allows for efficient processing of multiple files using the Unstructured S3 Connector. The context-aware chunking helps in organizing and analyzing the data effectively.</p>
+</section>
 </section>
 
         </article>
@@ -582,7 +579,7 @@
                 <span>Previous</span>
               </div>
               
-              <div class="title">Databricks Delta Table and Connector</div>
+              <div class="title">Delta Table Source Connector</div>
               
             </div>
           </a>
@@ -606,8 +603,38 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Multi-files API Processing</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#step-by-step-process">Step-by-Step Process</a><ul>
+<li><a class="reference internal" href="#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
+<li><a class="reference internal" href="#step-2-import-libraries">Step 2: Import Libraries</a></li>
+<li><a class="reference internal" href="#step-3-configuration">Step 3: Configuration</a></li>
+<li><a class="reference internal" href="#step-4-python-runner">Step 4: Python Runner</a></li>
+<li><a class="reference internal" href="#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
+<li><a class="reference internal" href="#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -7,12 +7,12 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Embedding" href="embedding.html" /><link rel="prev" title="Staging" href="staging.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Chunking - Unstructured 0.11.8 documentation</title>
+  <title>Chunking - Unstructured 0.12.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-  <link rel="stylesheet" type="text/css" href="../_static/unstructured.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   
 
@@ -142,8 +142,7 @@
   <script src="../_static/doctools.js"></script>
   <script src="../_static/sphinx_highlight.js"></script>
   <script src="../_static/scripts/furo.js"></script>
-  <script src="../_static/js/githubStargazers.js"></script>
-  <script src="../_static/js/sidebarScrollPosition.js"></script>
+  <script src="../_static/custom.js"></script>
   </head>
 
 <body>
@@ -308,12 +307,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../introduction.html#key-concepts">Key Concepts</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../introduction/overview.html">Document Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../introduction/key_concepts.html">Key Concepts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../introduction/getting_started.html">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -321,12 +318,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Unstructured API Services</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API Services</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -357,8 +354,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/google_drive.html">Google Drive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/jira.html">Jira</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/notion.html">Notion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/outlook.html">Outlook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/source_connectors/s3.html">S3</a></li>
@@ -376,11 +375,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/elasticsearch.html">Elasticsearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
@@ -399,24 +401,16 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../metadata.html">Metadata</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../examples/chroma.html">Transforming HTML into Vector Database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/databricks.html">Databricks Delta Table and Connector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html#conclusion">Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/chroma.html">Data Processing into Vector Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/databricks.html">Delta Table Source Connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples/dict_to_elements.html">Multi-files API Processing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../integrations.html">Integrations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../best_practices/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../best_practices/table_extraction_pdf.html">Table Extraction from PDF</a></li>
 </ul>
 </li>
 </ul>
@@ -476,36 +470,90 @@
           </div>
           <section id="chunking">
 <h1>Chunking<a class="headerlink" href="#chunking" title="Permalink to this heading"></a></h1>
-<p>Chunking functions in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> use metadata and document elements
-detected with <code class="docutils literal notranslate"><span class="pre">partition</span></code> functions to split a document into subsections
-for uses cases such as Retrieval Augmented Generation (RAG).</p>
-<section id="chunk-by-title">
-<h2><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code><a class="headerlink" href="#chunk-by-title" title="Permalink to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> function combines elements into sections by looking
-for the presence of titles. When a title is detected, a new section is created.
-Tables and non-text elements (such as page breaks or images) are always their
-own section.</p>
-<p>New sections are also created if changes in metadata occure. Examples of when
-this occurs include when the section of the document or the page number changes
-or when an element comes from an attachment instead of from the main document.
-If you set <code class="docutils literal notranslate"><span class="pre">multipage_sections=True</span></code>, <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> will allow for sections
-that span between pages. This kwarg is <code class="docutils literal notranslate"><span class="pre">True</span></code> by default.</p>
-<p><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> will start a new section if the length of a section exceed
-<code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span></code>. The default value is <code class="docutils literal notranslate"><span class="pre">1500</span></code>. <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code> does
-not split elements, it is possible for a section to exceed that lenght, for
-example if a <code class="docutils literal notranslate"><span class="pre">NarrativeText</span></code> elements exceeds <code class="docutils literal notranslate"><span class="pre">1500</span></code> characters on its on.</p>
-<p>Similarly, sections under <code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars</span></code> will be combined if they
-do not exceed the specified threshold, which defaults to <code class="docutils literal notranslate"><span class="pre">500</span></code>. This will combine
-a series of <code class="docutils literal notranslate"><span class="pre">Title</span></code> elements that occur one after another, which sometimes
-happens in lists that are not detected as <code class="docutils literal notranslate"><span class="pre">ListItem</span></code> elements. Set
-<code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars=0</span></code> to turn off this behavior.</p>
-<p>The following shows an example of how to use <code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code>. You will
-see the document chunked into sections instead of elements.</p>
+<p>Chunking functions in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> use metadata and document elements detected with
+<code class="docutils literal notranslate"><span class="pre">partition</span></code> functions to split a document into smaller parts for uses cases such as Retrieval
+Augmented Generation (RAG).</p>
+<section id="chunking-basics">
+<h2>Chunking Basics<a class="headerlink" href="#chunking-basics" title="Permalink to this heading"></a></h2>
+<p>Chunking in <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> differs from other chunking mechanisms you may be familiar with.
+Typical approaches start with the text extracted from the document and form chunks based on
+plain-text features, character sequences like <code class="docutils literal notranslate"><span class="pre">&quot;\n\n&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;\n&quot;</span></code> that might indicate a paragraph
+boundary or list-item boundary.</p>
+<p>Because <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> uses specific knowledge about each document format to partition the
+document into semantic units (document elements), we only need to resort to text-splitting when a
+single element exceeds the desired maximum chunk size. Except in that case, all chunks contain one
+or more whole elements, preserving the coherence of semantic units established during partitioning.</p>
+<p>A few concepts about chunking are worth introducing before discussing the details.</p>
+<ul class="simple">
+<li><p>Chunking is performed on <em>document elements</em>. It is a separate step performed <em>after</em>
+partitioning, on the elements produced by partitioning. (Although it can be combined with
+partitioning in a single step.)</p></li>
+<li><p>In general, chunking <em>combines</em> consecutive elements to form chunks as large as possible without
+exceeding the maximum chunk size.</p></li>
+<li><p>A single element that by itself exceeds the maximum chunk size is divided into two or more chunks
+using text-splitting.</p></li>
+<li><p>Chunking produces a sequence of <code class="docutils literal notranslate"><span class="pre">CompositeElement</span></code>, <code class="docutils literal notranslate"><span class="pre">Table</span></code>, or <code class="docutils literal notranslate"><span class="pre">TableChunk</span></code> elements. Each
+“chunk” is an instance of one of these three types.</p></li>
+</ul>
+</section>
+<section id="chunking-options">
+<h2>Chunking Options<a class="headerlink" href="#chunking-options" title="Permalink to this heading"></a></h2>
+<p>The following options are available to tune chunking behaviors. These are keyword arguments that can
+be used in a partitioning or chunking function call. All these options have defaults and need only
+be specified when a non-default setting is required. Specific chunking strategies (such as
+“by-title”) may have additional options.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">max_characters:</span> <span class="pre">int</span> <span class="pre">(default=500)</span></code> - the hard maximum size for a chunk. No chunk will exceed
+this number of characters. A single element that by itself exceeds this size will be divided into
+two or more chunks using text-splitting.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_after_n_chars:</span> <span class="pre">int</span> <span class="pre">(default=max_characters)</span></code> - the “soft” maximum size for a chunk. A chunk
+that already exceeds this number of characters will not be extended, even if the next element
+would fit without exceeding the specified hard maximum. This can be used in conjunction with
+<code class="docutils literal notranslate"><span class="pre">max_characters</span></code> to set a “preferred” size, like “I prefer chunks of around 1000 characters, but
+I’d rather have a chunk of 1500 (max_characters) than resort to text-splitting”. This would be
+specified with <code class="docutils literal notranslate"><span class="pre">(...,</span> <span class="pre">max_characters=1500,</span> <span class="pre">new_after_n_chars=1000)</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">overlap:</span> <span class="pre">int</span> <span class="pre">(default=0)</span></code> - only when using text-splitting to break up an oversized chunk,
+include this number of characters from the end of the prior chunk as a prefix on the next. This
+can mitigate the effect of splitting the semantic unit represented by the oversized element at an
+arbitrary position based on text length.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">overlap_all:</span> <span class="pre">bool</span> <span class="pre">(default=False)</span></code> - also apply overlap between “normal” chunks, not just when
+text-splitting to break up an oversized element. Because normal chunks are formed from whole
+elements that each have a clean semantic boundary, this option may “pollute” normal chunks. You’ll
+need to decide based on your use-case whether this option is right for you.</p></li>
+</ul>
+</section>
+<section id="chunking-elements">
+<h2>Chunking elements<a class="headerlink" href="#chunking-elements" title="Permalink to this heading"></a></h2>
+<p>Chunking can be performed as part of partitioning or as a separate step after
+partitioning:</p>
+<section id="specifying-a-chunking-strategy-while-partitioning">
+<h3>Specifying a chunking strategy while partitioning<a class="headerlink" href="#specifying-a-chunking-strategy-while-partitioning" title="Permalink to this heading"></a></h3>
+<p>Chunking can be performed as part of partitioning by specifying a value for the
+<code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code> argument. The current options are <code class="docutils literal notranslate"><span class="pre">basic</span></code> and <code class="docutils literal notranslate"><span class="pre">by-title</span></code> (described
+below).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
-<span class="kn">from</span> <span class="nn">unstructured.chunking.title</span> <span class="kn">import</span> <span class="n">chunk_by_title</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">chunking_strategy</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="calling-a-chunking-function">
+<h3>Calling a chunking function<a class="headerlink" href="#calling-a-chunking-function" title="Permalink to this heading"></a></h3>
+<p>Chunking can also be performed separately from partitioning by calling a chunking function directly.
+This may be convenient, for example, when tuning chunking parameters. Chunking is typically faster
+than partitioning, especially when OCR or inference is used, so a faster feedback loop is possible
+by doing these separately:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.chunking.basic</span> <span class="kn">import</span> <span class="n">chunk_elements</span>
+<span class="kn">from</span> <span class="nn">unstructured.partition.html</span> <span class="kn">import</span> <span class="n">partition_html</span>
 
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://understandingwar.org/backgrounder/russian-offensive-campaign-assessment-august-27-2023-0&quot;</span>
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition_html</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">)</span>
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">chunk_elements</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+
+<span class="c1"># -- OR --</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.chunking.title</span> <span class="kn">import</span> <span class="n">chunk_by_title</span>
+
 <span class="n">chunks</span> <span class="o">=</span> <span class="n">chunk_by_title</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunks</span><span class="p">:</span>
@@ -514,6 +562,57 @@ see the document chunked into sections instead of elements.</p>
     <span class="nb">input</span><span class="p">()</span>
 </pre></div>
 </div>
+</section>
+</section>
+<section id="chunking-strategies">
+<h2>Chunking Strategies<a class="headerlink" href="#chunking-strategies" title="Permalink to this heading"></a></h2>
+<p>There are currently two chunking strategies, <em>basic</em> and <em>by_title</em>. The <code class="docutils literal notranslate"><span class="pre">by_title</span></code> strategy
+shares most behaviors with the basic strategy so we’ll describe the baseline strategy first:</p>
+<section id="basic-chunking-strategy">
+<h3>“basic” chunking strategy<a class="headerlink" href="#basic-chunking-strategy" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>The basic strategy combines sequential elements to maximally fill each chunk while respecting both
+the specified <code class="docutils literal notranslate"><span class="pre">max_characters</span></code> (hard-max) and <code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span></code> (soft-max) option values.</p></li>
+<li><p>A single element that by itself exceeds the hard-max is isolated (never combined with another
+element) and then divided into two or more chunks using text-splitting.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">Table</span></code> element is always isolated and never combined with another element. A <code class="docutils literal notranslate"><span class="pre">Table</span></code> can be
+oversized, like any other text element, and in that case is divided into two or more
+<code class="docutils literal notranslate"><span class="pre">TableChunk</span></code> elements using text-splitting.</p></li>
+<li><p>If specified, <code class="docutils literal notranslate"><span class="pre">overlap</span></code> is applied between split-chunks and is also applied between normal
+chunks when <code class="docutils literal notranslate"><span class="pre">overlap_all</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+</ul>
+</section>
+<section id="by-title-chunking-strategy">
+<h3>“by_title” chunking strategy<a class="headerlink" href="#by-title-chunking-strategy" title="Permalink to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">by_title</span></code> chunking strategy preserves section boundaries and optionally page boundaries as
+well. “Preserving” here means that a single chunk will never contain text that occurred in two
+different sections. When a new section starts, the existing chunk is closed and a new one started,
+even if the next element would fit in the prior chunk.</p>
+<p>In addition to the behaviors of the <code class="docutils literal notranslate"><span class="pre">basic</span></code> strategy above, the <code class="docutils literal notranslate"><span class="pre">by_title</span></code> strategy has the
+following behaviors:</p>
+<ul class="simple">
+<li><p><strong>Detect section headings.</strong> A <code class="docutils literal notranslate"><span class="pre">Title</span></code> element is considered to start a new section. When a
+<code class="docutils literal notranslate"><span class="pre">Title</span></code> element is encountered, the prior chunk is closed and a new chunk started, even if the
+<code class="docutils literal notranslate"><span class="pre">Title</span></code> element would fit in the prior chunk. This implements the first aspect of the “preserve
+section boundaries” contract.</p></li>
+<li><p><strong>Detect metadata.section change.</strong> An element with a new value in <code class="docutils literal notranslate"><span class="pre">element.metadata.section</span></code> is
+considered to start a new section. When a change in this value is encountered a new chunk is
+started. This implements the second aspect of preserving section boundaries. This metadata is not
+present in all document formats so is not used alone. An element having <code class="docutils literal notranslate"><span class="pre">None</span></code> for this metadata
+field is considered to be part of the prior section; a section break is only detected on an
+explicit change in value.</p></li>
+<li><p><strong>Respect page boundaries.</strong> Page boundaries can optionally also be respected using the
+<code class="docutils literal notranslate"><span class="pre">multipage_sections</span></code> argument. This defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> meaning that a page break does <em>not</em>
+start a new chunk. Setting this to <code class="docutils literal notranslate"><span class="pre">False</span></code> will separate elements that occur on different pages
+into distinct chunks.</p></li>
+<li><p><strong>Combine small sections.</strong> In certain documents, partitioning may identify a list-item or other
+short paragraph as a <code class="docutils literal notranslate"><span class="pre">Title</span></code> element even though it does not serve as a section heading. This
+can produce chunks substantially smaller than desired. This behavior can be mitigated using the
+<code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars</span></code> argument. This defaults to the same value as <code class="docutils literal notranslate"><span class="pre">max_characters</span></code>
+such that sequential small sections are combined to maximally fill the chunking window. Setting
+this to <code class="docutils literal notranslate"><span class="pre">0</span></code> will disable section combining.</p></li>
+</ul>
+</section>
 </section>
 </section>
 
@@ -573,7 +672,18 @@ see the document chunked into sections instead of elements.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Chunking</a><ul>
-<li><a class="reference internal" href="#chunk-by-title"><code class="docutils literal notranslate"><span class="pre">chunk_by_title</span></code></a></li>
+<li><a class="reference internal" href="#chunking-basics">Chunking Basics</a></li>
+<li><a class="reference internal" href="#chunking-options">Chunking Options</a></li>
+<li><a class="reference internal" href="#chunking-elements">Chunking elements</a><ul>
+<li><a class="reference internal" href="#specifying-a-chunking-strategy-while-partitioning">Specifying a chunking strategy while partitioning</a></li>
+<li><a class="reference internal" href="#calling-a-chunking-function">Calling a chunking function</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#chunking-strategies">Chunking Strategies</a><ul>
+<li><a class="reference internal" href="#basic-chunking-strategy">“basic” chunking strategy</a></li>
+<li><a class="reference internal" href="#by-title-chunking-strategy">“by_title” chunking strategy</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

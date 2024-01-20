@@ -30,3 +30,13 @@ upstream local connector.
 For a full list of the options the CLI accepts check ``unstructured-ingest <upstream connector> elasticsearch --help``.
 
 NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you're running this locally. You can find more information about this in the `installation guide <https://unstructured-io.github.io/unstructured/installing.html>`_.
+
+Vector Search Sample Mapping
+----------------------------
+
+To make sure the schema of the index matches the data being written to it, a sample mapping json can be used.
+
+      .. literalinclude:: ./data/elasticsearch_elements_mappings.json
+         :language: json
+         :linenos:
+         :caption: Object description

@@ -7,12 +7,12 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="SaaS API Deployment Guide" href="apis/saas_api.html" /><link rel="prev" title="Docker Installation" href="installation/docker.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Unstructured API - Unstructured 0.11.8 documentation</title>
+  <title>Unstructured API Services - Unstructured 0.12.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-  <link rel="stylesheet" type="text/css" href="_static/unstructured.css" />
+  <link rel="stylesheet" type="text/css" href="_static/custom.css" />
   
   
 
@@ -142,8 +142,7 @@
   <script src="_static/doctools.js"></script>
   <script src="_static/sphinx_highlight.js"></script>
   <script src="_static/scripts/furo.js"></script>
-  <script src="_static/js/githubStargazers.js"></script>
-  <script src="_static/js/sidebarScrollPosition.js"></script>
+  <script src="_static/custom.js"></script>
   </head>
 
 <body>
@@ -308,12 +307,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html#key-concepts">Key Concepts</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="introduction/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction/getting_started.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction/overview.html">Document Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="introduction/key_concepts.html">Key Concepts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction/getting_started.html">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -321,12 +318,12 @@
 <li class="toctree-l2"><a class="reference internal" href="installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Unstructured API</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Unstructured API Services</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API Services</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -357,8 +354,10 @@
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/google_drive.html">Google Drive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/jira.html">Jira</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/notion.html">Notion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/outlook.html">Outlook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/source_connectors/s3.html">S3</a></li>
@@ -376,11 +375,14 @@
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/elasticsearch.html">Elasticsearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
@@ -399,24 +401,16 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="metadata.html">Metadata</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="examples/chroma.html">Transforming HTML into Vector Database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/databricks.html">Databricks Delta Table and Connector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html#conclusion">Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/chroma.html">Data Processing into Vector Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/databricks.html">Delta Table Source Connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/dict_to_elements.html">Multi-files API Processing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Integrations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="best_practices/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="best_practices/table_extraction_pdf.html">Table Extraction from PDF</a></li>
 </ul>
 </li>
 </ul>
@@ -474,18 +468,38 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="unstructured-api">
-<h1>Unstructured API<a class="headerlink" href="#unstructured-api" title="Permalink to this heading"></a></h1>
-<p>Try our hosted API! You can get your API key <a class="reference external" href="https://unstructured.io/api-key">here</a> now and start using it today.</p>
-<p>You will find a more comprehensive overview of the API capabilities. For detailed information on request and response schemas, refer to the <a class="reference external" href="https://api.unstructured.io/general/docs#/">API documentation</a>.</p>
-<p>NOTE: You can also host the API locally. For more information check the <a class="reference external" href="https://github.com/Unstructured-IO/unstructured-api">Using the API Locally</a> section.</p>
+          <section id="unstructured-api-services">
+<h1>Unstructured API Services<a class="headerlink" href="#unstructured-api-services" title="Permalink to this heading"></a></h1>
+<p>The Unstructured API presents an extensive selection of API services, encompassing free access, Software-as-a-Service (SaaS), and Azure &amp; AWS Marketplace applications. These API services offer a high-quality and scalable solution capable of ingesting and digesting files of various types and sizes.</p>
+<p>Within this documentation, you will find a detailed guide for implementing the Unstructured API across these diverse service options to best meet your operational requirements. It includes details on supported file types, step-by-step guides on using various API services, Python and JavaScript SDKs, and API parameters &amp; common error handling.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Please review this manual carefully, as we’ve introduced significant updates to the API services, including a new usage cap for our free API tier, effective from January 10th, 2024.</p>
+<p>Also, documents submitted to the free API may be utilized for our proprietary model training and evaluation purposes. This is part of our continuous effort to improve the API’s performance and capabilities.</p>
+</div>
+<section id="changes-to-the-free-api-service">
+<h2>Changes to the Free API Service<a class="headerlink" href="#changes-to-the-free-api-service" title="Permalink to this heading"></a></h2>
+<section id="implementation-of-a-1000-page-cap">
+<h3>Implementation of a 1000-Page Cap<a class="headerlink" href="#implementation-of-a-1000-page-cap" title="Permalink to this heading"></a></h3>
+<p>Starting from January 10th, 2024, our free API service includes a cap of 1,000 pages. This limitation is introduced to ensure the sustainability of our free offerings and to enhance service quality.</p>
+</section>
+<section id="premium-api-services">
+<h3>Premium API Services<a class="headerlink" href="#premium-api-services" title="Permalink to this heading"></a></h3>
+<p>For users requiring privacy and scalable API services, we provide several alternatives:</p>
+<ul class="simple">
+<li><p><strong>Commercial SaaS API:</strong> Our premium service available with advanced features and dedicated support. Get your premium SaaS API Key <a class="reference external" href="https://unstructured.io/api-key-hosted">here</a>.</p></li>
+<li><p><strong>AWS and Azure Marketplace APIs:</strong> A selection of specialized APIs available through various marketplaces, including <a class="reference external" href="https://aws.amazon.com/marketplace/pp/prodview-fuvslrofyuato">AWS Marketplace</a> and <a class="reference external" href="https://azuremarketplace.microsoft.com/en-us/marketplace/apps/unstructured1691024866136.customer_api_v1">Azure Marketplace</a>.</p></li>
+<li><p><strong>Open Source Offering:</strong> Access to our open-source tools for self-hosting and customization on <a class="reference external" href="https://github.com/Unstructured-IO/unstructured">Unstructured GitHub repo</a>.</p></li>
+</ul>
+</section>
+</section>
 <section id="supported-file-types">
 <h2>Supported File Types<a class="headerlink" href="#supported-file-types" title="Permalink to this heading"></a></h2>
 <div class="table-wrapper docutils container">
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Category</p></th>
-<th class="head"><p>Output</p></th>
+<th class="head"><p>File Types</p></th>
 </tr>
 </thead>
 <tbody>
@@ -493,7 +507,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">.eml</span></code>, <code class="docutils literal notranslate"><span class="pre">.html</span></code>, <code class="docutils literal notranslate"><span class="pre">.json</span></code>, <code class="docutils literal notranslate"><span class="pre">.md</span></code>, <code class="docutils literal notranslate"><span class="pre">.msg</span></code>, <code class="docutils literal notranslate"><span class="pre">.rst</span></code>, <code class="docutils literal notranslate"><span class="pre">.rtf</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">.xml</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Images</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.jpeg</span></code>, <code class="docutils literal notranslate"><span class="pre">.png</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.png</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpg</span></code>, <code class="docutils literal notranslate"><span class="pre">.jpeg</span></code>, <code class="docutils literal notranslate"><span class="pre">.tiff</span></code>, <code class="docutils literal notranslate"><span class="pre">.bmp</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Documents.</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">.doc</span></code>, <code class="docutils literal notranslate"><span class="pre">.docx</span></code>, <code class="docutils literal notranslate"><span class="pre">.epub</span></code>, <code class="docutils literal notranslate"><span class="pre">.odt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pdf</span></code>, <code class="docutils literal notranslate"><span class="pre">.ppt</span></code>, <code class="docutils literal notranslate"><span class="pre">.pptx</span></code>, <code class="docutils literal notranslate"><span class="pre">.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">.xlsx</span></code></p></td>
@@ -501,14 +515,21 @@
 </tbody>
 </table>
 </div>
-<p>NOTE: Currently, the pipeline is capable of recognizing the file type and choosing the relevant partition function to process the file.</p>
+<p><strong>NOTE</strong>: Currently, the pipeline is capable of recognizing the file type and choosing the relevant partition function to process the file.</p>
+</section>
+<section id="get-support">
+<h2>Get Support<a class="headerlink" href="#get-support" title="Permalink to this heading"></a></h2>
+<p>Should you require any assistance or have any questions regarding the Unstructured API, please contact our support team at <a class="reference external" href="mailto:support&#37;&#52;&#48;unstructured&#46;io">support<span>&#64;</span>unstructured<span>&#46;</span>io</a>.</p>
+</section>
+<section id="table-of-content">
+<h2>Table of Content<a class="headerlink" href="#table-of-content" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -571,8 +592,15 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Unstructured API</a><ul>
+<li><a class="reference internal" href="#">Unstructured API Services</a><ul>
+<li><a class="reference internal" href="#changes-to-the-free-api-service">Changes to the Free API Service</a><ul>
+<li><a class="reference internal" href="#implementation-of-a-1000-page-cap">Implementation of a 1000-Page Cap</a></li>
+<li><a class="reference internal" href="#premium-api-services">Premium API Services</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#supported-file-types">Supported File Types</a></li>
+<li><a class="reference internal" href="#get-support">Get Support</a></li>
+<li><a class="reference internal" href="#table-of-content">Table of Content</a></li>
 </ul>
 </li>
 </ul>

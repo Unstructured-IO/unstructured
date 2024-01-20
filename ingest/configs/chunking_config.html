@@ -7,12 +7,12 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Embedding Configuration" href="embedding_config.html" /><link rel="prev" title="Retry Strategy Configuration" href="retry_strategy_config.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Chunking Configuration - Unstructured 0.11.8 documentation</title>
+  <title>Chunking Configuration - Unstructured 0.12.2 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
-  <link rel="stylesheet" type="text/css" href="../../_static/unstructured.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
   
   
 
@@ -142,8 +142,7 @@
   <script src="../../_static/doctools.js"></script>
   <script src="../../_static/sphinx_highlight.js"></script>
   <script src="../../_static/scripts/furo.js"></script>
-  <script src="../../_static/js/githubStargazers.js"></script>
-  <script src="../../_static/js/sidebarScrollPosition.js"></script>
+  <script src="../../_static/custom.js"></script>
   </head>
 
 <body>
@@ -308,12 +307,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction.html#key-concepts">Key Concepts</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../introduction.html#getting-started">Getting Started</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Getting Started</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../introduction/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../introduction.html">Introduction</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Introduction</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/getting_started.html">Quick Start</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../introduction/overview.html">Document Elements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../introduction/key_concepts.html">Key Concepts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../introduction/getting_started.html">Getting Started</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../installing.html">Installation</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of Installation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -321,12 +318,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../../installation/docker.html">Docker Installation</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Unstructured API</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Unstructured API Services</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Unstructured API Services</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/saas_api.html">SaaS API Deployment Guide</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/azure_marketplace.html">Azure Marketplace Deployment Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/aws_marketplace.html">AWS Marketplace Deployment Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/api_sdks.html">Python and JavaScript SDK</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../apis/usage_methods.html">Accessing Unstructured API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/api_parameters.html">API Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../apis/validation_errors.html">API Validation Errors</a></li>
 </ul>
@@ -357,8 +354,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/google_drive.html">Google Drive</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/jira.html">Jira</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/local_connector.html">Local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/notion.html">Notion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/onedrive.html">One Drive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../source_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/outlook.html">Outlook</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/reddit.html">Reddit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../source_connectors/s3.html">S3</a></li>
@@ -376,11 +375,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/chroma.html">Chroma</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/elasticsearch.html">Elasticsearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/gcs.html">Google Cloud Service</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/pinecone.html">Pinecone</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/opensearch.html">OpenSearch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/s3.html">S3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/weaviate.html">Weaviate</a></li>
 </ul>
 </li>
@@ -399,24 +401,16 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../metadata.html">Metadata</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../examples.html">Examples</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Examples</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/chroma.html">Transforming HTML into Vector Database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/databricks.html">Databricks Delta Table and Connector</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html">Multi-files API Processing with Unstructured Connector &amp; Context-Aware Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-1-install-unstructured-and-s3-dependency">Step 1: Install Unstructured and S3 Dependency</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-2-import-libraries">Step 2: Import Libraries</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-3-configuration">Step 3: Configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-4-python-runner">Step 4: Python Runner</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-5-combine-json-files-from-multi-files-ingestion">Step 5: Combine JSON Files from Multi-files Ingestion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#step-6-convert-into-unstructured-elements-for-chunking">Step 6: Convert into Unstructured Elements for Chunking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html#conclusion">Conclusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/chroma.html">Data Processing into Vector Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/databricks.html">Delta Table Source Connector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../examples/dict_to_elements.html">Multi-files API Processing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../integrations.html">Integrations</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../best_practices.html">Best Practices</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Best Practices</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../best_practices/strategies.html">Strategies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../best_practices/models.html">Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../best_practices/table_extraction_pdf.html">Table Extraction from PDF</a></li>
 </ul>
 </li>
 </ul>
@@ -488,8 +482,19 @@ in vector databases, enhancing the quality and relevance of the results.</p>
 <section id="configs">
 <h2>Configs<a class="headerlink" href="#configs" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">chunk_elements</span> <span class="pre">(default</span> <span class="pre">False)</span></code>: Boolean flag whether to run chunking as part of the ingest process.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">multipage_sections</span> <span class="pre">(default</span> <span class="pre">True)</span></code>: If True, sections can span multiple pages.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_elements</span> <span class="pre">(default</span> <span class="pre">False)</span></code>: (Deprecated) Boolean flag whether to run chunking as part of
+the ingest process. This option is deprecated in favor of the <code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code> option. This
+option being set True has the same effect as <code class="docutils literal notranslate"><span class="pre">chunking_strategy=by_title</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code>: One of “basic” or “by_title”. When omitted, no chunking is performed. The
+“basic” strategy maximally fills each chunk with whole elements, up the specified size limits
+(<code class="docutils literal notranslate"><span class="pre">max_characters</span></code> and <code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span></code> described below). A single element that exceeds this
+length is divided into two or more chunks using text-splitting. A <code class="docutils literal notranslate"><span class="pre">Table</span></code> element is never
+combined with any other element and appears as a chunk of its own or as a sequence of
+<code class="docutils literal notranslate"><span class="pre">TableChunk</span></code> elements splitting is required. The “by_title” behaviors are the same except that
+section and optionally page boundaries are respected such that two consecutive elements from
+different sections appear in separate chunks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multipage_sections</span> <span class="pre">(default</span> <span class="pre">True)</span></code>: When False, in addition to section boundaries, page
+boundaries are also respected. Only operative for the “by_title” strategy.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars</span> <span class="pre">(default</span> <span class="pre">500)</span></code>: Combines elements (for example a series of titles) until a section reaches a length of n characters. Defaults to <cite>max_characters</cite> which combines chunks whenever space allows. Specifying 0 for this argument suppresses combining of small chunks. Note this value is “capped” at the <cite>new_after_n_chars</cite> value since a value higher than that would not change this parameter’s effect.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span> <span class="pre">(default</span> <span class="pre">1500)</span></code>: Cuts off new sections once they reach a length of n characters (soft max). Defaults to <cite>max_characters</cite> when not specified, which effectively disables any soft window. Specifying 0 for this argument causes each element to appear in a chunk by itself (although an element with text longer than <cite>max_characters</cite> will be still be split into two or more chunks).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">max_characters</span> <span class="pre">(default</span> <span class="pre">1500)</span></code>: Chunks elements text and text_as_html (if present) into chunks of length n characters (hard max)</p></li>
