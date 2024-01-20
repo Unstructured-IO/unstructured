@@ -134,7 +134,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         self.source_metadata = SourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
-            version=version,
+            version=str(version),
             source_url=f"{self.connector_config.protocol}://{self.remote_file_path}",
             exists=file_exists,
         )

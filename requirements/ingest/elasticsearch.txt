@@ -9,9 +9,9 @@ certifi==2023.11.17
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   elastic-transport
-elastic-transport==8.11.0
+elastic-transport==8.12.0
     # via elasticsearch
-elasticsearch==8.11.1
+elasticsearch==8.12.0
     # via -r ingest/elasticsearch.in
 urllib3==1.26.18
     # via

@@ -100,3 +100,15 @@ max_characters
 - **Type**: integer
 - **Description**: If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 1500.
 - **Example**: 1500
+
+extract_image_block_types
+-------------------------
+- **Type**: array
+- **Description**: The types of image blocks to extract from the document. Supports various Element types.
+- **Example**: ['Image', 'Table']
+
+extract_image_block_to_payload
+------------------------------
+- **Type**: boolean
+- **Description**: This parameter facilitates the inclusion of element data directly within the payload, especially for web-based applications or APIs.
+- **Example**: true

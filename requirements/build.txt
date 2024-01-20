@@ -8,7 +8,7 @@ alabaster==0.7.16
     # via sphinx
 babel==2.14.0
     # via sphinx
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via
     #   -c base.txt
     #   furo

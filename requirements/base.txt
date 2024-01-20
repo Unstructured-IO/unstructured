@@ -6,7 +6,7 @@
 #
 backoff==2.2.1
     # via -r base.in
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via -r base.in
 certifi==2023.11.17
     # via
@@ -25,7 +25,7 @@ dataclasses-json==0.6.3
     # via
     #   -r base.in
     #   unstructured-client
-emoji==2.9.0
+emoji==2.10.0
     # via -r base.in
 filetype==1.2.0
     # via -r base.in
