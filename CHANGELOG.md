@@ -1,6 +1,8 @@
-## 0.12.2
+## 0.12.2-dev0
 
 ### Enhancements
+
+* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
 
 ### Features
 
