@@ -745,14 +745,6 @@ def test_partition_pdf_warns_with_ocr_languages(caplog):
     assert "ocr_languages" in caplog.text
 
 
-def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
-    filename = example_doc_path("DA-1p.pdf")
-    pdf.partition_pdf_or_image(
-        filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
-    )
-    assert "ocr_languages" in caplog.text
-
-
 def test_partition_categorization_backup():
     text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
