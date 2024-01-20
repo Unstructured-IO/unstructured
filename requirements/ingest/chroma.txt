@@ -153,7 +153,7 @@ packaging==23.2
     #   build
     #   huggingface-hub
     #   onnxruntime
-posthog==3.3.1
+posthog==3.3.2
     # via chromadb
 protobuf==4.23.4
     # via
@@ -169,7 +169,7 @@ pyasn1==0.5.1
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   chromadb
@@ -248,8 +248,10 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   kubernetes
     #   requests
-uvicorn[standard]==0.25.0
-    # via chromadb
+uvicorn[standard]==0.26.0
+    # via
+    #   chromadb
+    #   uvicorn
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
