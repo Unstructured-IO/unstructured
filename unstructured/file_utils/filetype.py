@@ -20,6 +20,7 @@ from unstructured.partition.common import (
     exactly_one,
     set_element_hierarchy,
 )
+from unstructured.utils import dependency_exists
 
 try:
     import magic
@@ -401,10 +402,10 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, filetype)
 
     elif _is_code_mime_type(mime_type):
-        # NOTE(robinson) - we'll treat all code files as plain text for now.
-        # we can update this logic and add filetypes for specific languages
-        # later if needed.
-        return STR_TO_FILETYPE.get(mime_type, FileType.TXT)
+        if dependency_exists("tree_sitter"):
+            return STR_TO_FILETYPE.get(mime_type, FileType.TXT)
+        else:
+            return FileType.TXT
 
     elif mime_type.endswith("empty"):
         return FileType.EMPTY

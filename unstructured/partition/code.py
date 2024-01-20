@@ -14,9 +14,12 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 
-from unstructured import __path__ as package_path
+from unstructured.utils import update_tree_sitter, get_homedir
 
-TREE_SITTER_BUILD_PATH = package_path[0] + '/treesitter_build/languages.so'
+
+TREE_SITTER_BUILD_PATH = os.path.join(get_homedir(),
+                                      '.unstructured_treesitter/treesitter_build/languages.so')
+
 # TODO(Pierre) Add the other languages
 FILETYPE_TO_LANG = {
     FileType.C: "c",
@@ -34,15 +37,14 @@ def partition_code(
     encoding: Optional[str] = None,
     language: Optional[str] = None,
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 0,
+    min_partition: Optional[int] = 200,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     detection_origin: Optional[str] = "text",
     **kwargs: Any,
 ) -> List[Element]:
-    """Partitions an .txt documents into its constituent paragraph elements.
-    If paragraphs are below "min_partition" or above "max_partition" boundaries,
-    they are combined or split.
+    """Partitions a code file into chunks that are greater than min_partition and 
+    smaller than max_partition.
     Parameters
     ----------
     filename
@@ -50,7 +52,7 @@ def partition_code(
     file
         A file-like object using "rb" mode --> open(filename, "rb").
     text
-        The string representation of the .txt document.
+        The string representation of the code file.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
     max_partition
@@ -105,7 +107,7 @@ def _partition_code(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
     file_text = bytes()
-    language = None
+    programming_language = None
     last_modification_date = None
 
     if filename is not None:
@@ -115,7 +117,7 @@ def _partition_code(
             _, extension = os.path.splitext(filename)
             filetype = EXT_TO_FILETYPE.get(extension)
             if filetype:
-                language = FILETYPE_TO_LANG.get(filetype)
+                programming_language = FILETYPE_TO_LANG.get(filetype)
             last_modification_date = get_last_modified_date(filename)
         except FileNotFoundError:
             raise FileNotFoundError("Provided filename is not correct")
@@ -128,7 +130,7 @@ def _partition_code(
         file_text = file.read()
         last_modification_date = get_last_modified_date_from_file(file)
         if filetype:
-            language = FILETYPE_TO_LANG.get(filetype)
+            programming_language = FILETYPE_TO_LANG.get(filetype)
         else:
             raise RuntimeError("Unable to detect code file type")
 
@@ -136,19 +138,20 @@ def _partition_code(
         min_partition = len(file_text)
         #raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
-    if language is None:
+    if programming_language is None:
         raise ValueError("No programming language provided/detected")
 
     try:
-        LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=language)
-    except AttributeError:
-        raise RuntimeError(f"The binary {TREE_SITTER_BUILD_PATH} does not contain {language}")
+        LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=programming_language)
+    except (AttributeError, OSError):
+        update_tree_sitter([programming_language])
+        LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=programming_language)
 
     parser = tree_sitter.Parser()
     parser.set_language(LANG)
     tree = parser.parse(file_text)
     if not tree.root_node.children or tree.root_node.children[0].type == "ERROR":
-        raise ValueError(f"File is not written in {language}")
+        raise ValueError(f"File is not written in {programming_language}")
 
     file_content = _partition_by_node(
         node=tree.root_node,
@@ -163,7 +166,7 @@ def _partition_code(
         metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
-            languages = [language],
+            languages = [programming_language],
         )
         metadata.detection_origin = detection_origin
     else:

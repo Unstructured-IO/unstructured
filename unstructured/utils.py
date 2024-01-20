@@ -5,8 +5,10 @@ import json
 import os
 import platform
 import subprocess
+import sys
 from datetime import datetime
 from functools import wraps
+from glob import glob
 from itertools import combinations
 from typing import (
     TYPE_CHECKING,
@@ -712,3 +714,53 @@ def catch_overlapping_and_nested_bboxes(
                 document_with_overlapping_flag = True
 
     return document_with_overlapping_flag, overlapping_cases
+
+
+def get_homedir() -> str:
+    if sys.platform == "win32" and "APPDATA" in os.environ:
+        homedir = os.environ["APPDATA"]
+    else:
+        homedir = os.path.expanduser("~/")
+        if homedir == "~/":
+            raise ValueError("Could not find a default directory for TreeSitter")
+    return homedir
+
+
+
+def update_tree_sitter(languages: List[str], cache_dir: Optional[str] = None):
+    if dependency_exists("tree_sitter"):
+        from tree_sitter import Language
+    else:
+        raise RuntimeError("Cannot update TreeSitter if not installed")
+
+    available_parsers = []
+    unavailable_parsers = []
+    for language in languages:
+        if requests.get(f"https://github.com/tree-sitter/tree-sitter-{language}").status_code == 200:
+            available_parsers.append(language)
+        else:
+            unavailable_parsers.append(language)
+
+    if len(unavailable_parsers) > 0:
+        raise ValueError(f"Treesitter parsers are unavailable for: {','.join(unavailable_parsers)}")
+
+    if not cache_dir:
+        cache_dir = get_homedir()
+    else:
+        raise NotImplementedError("Custom treesitter cache directory is not available yet")
+    
+    download_dir = os.path.join(cache_dir, ".unstructured_treesitter")
+
+    for language in available_parsers:
+        subprocess.run(
+            f"git clone https://github.com/tree-sitter/tree-sitter-{language} {download_dir}/tree-sitter-{language}",
+            shell=True)
+
+    all_languages = glob(f"{download_dir}/tree-sitter-*")
+
+    # Note(Pierre) Not sure what will happen if we are already parsing
+    # and changing the library at the same time, TODO: Test that
+    Language.build_library(
+        f"{download_dir}/treesitter_build/languages.so",
+        all_languages
+    )
