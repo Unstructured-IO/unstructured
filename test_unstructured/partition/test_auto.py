@@ -1312,7 +1312,7 @@ def test_auto_partition_uses_languages_over_ocr_languages(
     caplog,
 ):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "DA-1p.pdf")
-    elements: List[Element] = partition(  # type: ignore
+    elements: List[Element] = partition(
         filename=filename,
         strategy=PartitionStrategy.OCR_ONLY,
         ocr_languages=ocr_languages,  # type: ignore
@@ -1320,4 +1320,5 @@ def test_auto_partition_uses_languages_over_ocr_languages(
     )
     for lang in elements[0].metadata.languages:  # type: ignore
         assert lang in expected_lang
-    assert "ocr_languages" in caplog.text
+    if languages or ocr_languages:
+        assert "ocr_languages" in caplog.text

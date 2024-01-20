@@ -20,7 +20,7 @@ def partition_image(
     include_page_breaks: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[List[str]] = None,
     strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,

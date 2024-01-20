@@ -1,3 +1,7 @@
+import os
+import pathlib
+from typing import Union
+
 import pytest
 
 from unstructured.documents.elements import (
@@ -8,9 +12,13 @@ from unstructured.partition.lang import (
     _clean_ocr_languages_arg,
     _convert_language_code_to_pytesseract_lang_code,
     apply_lang_metadata,
+    check_language_args,
     detect_languages,
     prepare_languages_for_tesseract,
 )
+
+DIRECTORY = pathlib.Path(__file__).parent.resolve()
+EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "example-docs")
 
 
 def test_prepare_languages_for_tesseract_with_one_language():
@@ -146,3 +154,39 @@ def test_clean_ocr_languages_arg(input_ocr_langs, expected):
 def test_detect_languages_handles_spelled_out_languages():
     languages = detect_languages(text="Sample text longer than 5 words.", languages=["Spanish"])
     assert languages == ["spa"]
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages", "expected_langs"),
+    [
+        # raise warning and use `ocr_languages` when `languages` is empty or None
+        (None, "deu", ["deu"]),
+        ([""], '"deu"', ["deu"]),
+        ([""], "deu", ["deu"]),
+        ([""], "[deu]", ["deu"]),
+        # raise warning and use `languages` when both are defined
+        (["spa"], "deu", ["spa"]),
+        (["spanish"], "english", ["spa"]),
+        (["spa"], "[deu]", ["spa"]),
+        (["spa"], '"deu"', ["spa"]),
+        (["spa"], ["deu"], ["spa"]),
+        (["spa"], ["[deu]"], ["spa"]),
+        (["spa+deu"], "eng+deu", ["spa", "deu"]),
+    ],
+)
+def test_check_language_args(
+    languages: Union[list[str], str, None],
+    ocr_languages: Union[list[str], str, None],
+    expected_langs: list[str],
+    caplog,
+):
+    returned_langs = check_language_args(languages=languages, ocr_languages=ocr_languages)
+    for lang in returned_langs:  # type: ignore
+        assert lang in expected_langs
+    if languages or ocr_languages:
+        assert "ocr_languages" in caplog.text
+
+
+def test_check_language_args_returns_None_with_None_defaults():
+    returned_langs = check_language_args(languages=None, ocr_languages=None)  # type: ignore
+    assert returned_langs is None
