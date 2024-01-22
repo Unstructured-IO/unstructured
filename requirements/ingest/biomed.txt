@@ -4,11 +4,11 @@
 #
 #    pip-compile --output-file=ingest/biomed.txt ingest/biomed.in
 #
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via
     #   -c ingest/../base.txt
     #   bs4
-bs4==0.0.1
+bs4==0.0.2
     # via -r ingest/biomed.in
 soupsieve==2.5
     # via

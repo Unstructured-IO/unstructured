@@ -84,7 +84,7 @@ pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c constraints.in
     #   -r test.in
