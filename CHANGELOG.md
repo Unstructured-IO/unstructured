@@ -1,4 +1,4 @@
-## 0.12.2-dev0
+## 0.12.2-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 * **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
+* **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
 
 ## 0.12.2
 
