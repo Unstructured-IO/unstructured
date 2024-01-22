@@ -23,6 +23,8 @@ all_tests=(
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
+  'kafka.sh'
+  'kafka-local.sh'
   'mongodb.sh'
   'pgvector.sh'
   'pinecone.sh'

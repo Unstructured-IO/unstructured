@@ -29,6 +29,8 @@ all_tests=(
   'github.sh'
   'gitlab.sh'
   'google-drive.sh'
+  'kafka.sh'
+  'kafka-local.sh'
   'wikipedia.sh'
   'local.sh'
   'slack.sh'

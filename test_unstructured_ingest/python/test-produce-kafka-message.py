@@ -16,18 +16,25 @@ def cli():
 @click.option("--input-file", type=str, required=True)
 @click.option("--bootstrap-server", type=str, required=True)
 @click.option("--topic", type=str, required=True)
-@click.option("--api-key", type=str, required=True)
-@click.option("--secret", type=str, required=True)
-def up(input_file: str, bootstrap_server: str, topic: str, api_key: str, secret: str):
+@click.option("--api-key", type=str, required=False)
+@click.option("--secret", type=str, required=False)
+@click.option("--confluent", type=bool, required=False, default=True)
+@click.option("--port", type=int, required=False, default=9092)
+
+def up(input_file: str, bootstrap_server: str, topic: str, api_key: str, secret: str, confluent: bool, port: int):
     conf = {
-        "bootstrap.servers": bootstrap_server,
-        "security.protocol": "SASL_SSL",
-        "sasl.mechanism": "PLAIN",
-        "sasl.username": api_key,
-        "sasl.password": secret,
+        "bootstrap.servers": f'{bootstrap_server}:{port}',
         "client.id": socket.gethostname(),
         "message.max.bytes": 10485760,
     }
+
+    print(f'Confluent setting: {confluent}')
+    if confluent:
+        conf["security.protocol"] = "SASL_SSL"
+        conf["sasl.mechanism"] = "PLAIN"
+        conf["sasl.username"] = api_key
+        conf["sasl.password"] = secret
+
     producer = Producer(conf)
 
     # Read the file in binary mode and encode content in base64

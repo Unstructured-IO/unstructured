@@ -19,7 +19,9 @@ def get_partition_size(consumer: Consumer, topic_name: str, partition_key: int):
 
 
 def get_topic_size(consumer: Consumer, topic_name: str):
+    print(f"Getting the number of messages in the topic {topic_name}")
     topic = consumer.list_topics(topic=topic_name)
+    print(f'topic {topic}')
     partitions = topic.topics[topic_name].partitions
     workers, max_workers = [], len(partitions) or 1
 
@@ -35,21 +37,27 @@ def get_topic_size(consumer: Consumer, topic_name: str):
 @cli.command()
 @click.option("--bootstrap-server", type=str, required=True)
 @click.option("--topic", type=str, required=True)
-@click.option("--api-key", type=str, required=True)
-@click.option("--secret", type=str, required=True)
-def check(bootstrap_server: str, topic: str, api_key: str, secret: str):
+@click.option("--api-key", type=str, required=False)
+@click.option("--secret", type=str, required=False)
+@click.option("--confluent", type=bool, required=True, default=True)
+@click.option("--port", type=int, required=False, default=9092)
+def check(bootstrap_server: str, topic: str, api_key: str, secret: str, confluent:bool, port:int):
     conf = {
-        "bootstrap.servers": bootstrap_server,
-        "security.protocol": "SASL_SSL",
-        "sasl.mechanism": "PLAIN",
-        "sasl.username": api_key,
-        "sasl.password": secret,
+        "bootstrap.servers": f'{bootstrap_server}:{port}',
         "client.id": socket.gethostname(),
         "group.id": "your_group_id",
-        "enable.auto.commit": "false",
+        "enable.auto.commit": "true",
         "auto.offset.reset": "earliest",
     }
+    
+    if confluent:
+        conf["security.protocol"] = "SASL_SSL"
+        conf["sasl.mechanism"] = "PLAIN"
+        conf["sasl.username"] = api_key
+        conf["sasl.password"] = secret
+    
     consumer = Consumer(conf)
+    print("Checking the number of messages in the topic")
     topic_size = get_topic_size(consumer, topic)
     expected = 37
     print(

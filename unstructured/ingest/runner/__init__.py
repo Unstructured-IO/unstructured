@@ -20,6 +20,7 @@ from .gitlab import GitlabRunner
 from .google_drive import GoogleDriveRunner
 from .hubspot import HubSpotRunner
 from .jira import JiraRunner
+from .kafka import KafkaRunner
 from .local import LocalRunner
 from .notion import NotionRunner
 from .onedrive import OneDriveRunner
@@ -48,6 +49,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "google_drive": GoogleDriveRunner,
     "hubspot": HubSpotRunner,
     "jira": JiraRunner,
+    "kafka": KafkaRunner,
     "local": LocalRunner,
     "notion": NotionRunner,
     "onedrive": OneDriveRunner,

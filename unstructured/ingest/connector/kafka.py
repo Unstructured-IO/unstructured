@@ -31,8 +31,8 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class KafkaAccessConfig(AccessConfig):
-    kafka_api_key: str = enhanced_field(sensitive=True)
-    secret: str = enhanced_field(sensitive=True)
+    kafka_api_key: t.Optional[str] = enhanced_field(sensitive=True)
+    secret: t.Optional[str] = enhanced_field(sensitive=True)
 
 
 @dataclass
@@ -41,6 +41,7 @@ class SimpleKafkaConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     port: str
     topic: str
     access_config: KafkaAccessConfig
+    confluent: t.Optional[bool] = True
     num_messages_to_consume: t.Optional[int] = 1
 
 
@@ -82,17 +83,23 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
     def create_producer(self) -> "Producer":
         from confluent_kafka import Producer
 
+        is_confluent = self.connector_config.confluent
         bootstrap = self.connector_config.bootstrap_server
-        api_key = self.connector_config.access_config.kafka_api_key
-        secret = self.connector_config.access_config.secret
+        port = self.connector_config.port
+
         conf = {
-            "bootstrap.servers": bootstrap,
-            "security.protocol": "SASL_SSL",
-            "sasl.mechanism": "PLAIN",
-            "sasl.username": api_key,
-            "sasl.password": secret,
+            "bootstrap.servers": f'{bootstrap}:{port}',
             "client.id": socket.gethostname(),
         }
+
+        if is_confluent:
+            api_key = self.connector_config.access_config.kafka_api_key
+            secret = self.connector_config.access_config.secret
+            conf["sasl.mechanism"] = "PLAIN"
+            conf["security.protocol"] = "SASL_SSL"
+            conf["sasl.username"] = api_key
+            conf["sasl.password"] = secret
+
         producer = Producer(conf)
         logger.debug(f"Connected to bootstrap: {bootstrap}")
         return producer
@@ -151,7 +158,6 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
                 for content in dict_content:
-                    # print(f'CONTENT: {content["type"]} {content["text"]} ')
                     content_list.append(
                         {
                             "type": content["type"],
@@ -241,21 +247,27 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def create_consumer(self) -> "Consumer":
         from confluent_kafka import Consumer
 
+        is_confluent = self.connector_config.confluent
         bootstrap = self.connector_config.bootstrap_server
-        kafka_api_key = self.connector_config.access_config.kafka_api_key
-        secret = self.connector_config.access_config.secret
+        port = self.connector_config.port
+        
         conf = {
-            "bootstrap.servers": bootstrap,
-            "security.protocol": "SASL_SSL",
-            "sasl.mechanism": "PLAIN",
-            "sasl.username": kafka_api_key,
-            "sasl.password": secret,
+            "bootstrap.servers": f'{bootstrap}:{port}',
             "client.id": socket.gethostname(),
             "group.id": "your_group_id",
             "enable.auto.commit": "false",
             "auto.offset.reset": "earliest",
             "message.max.bytes": 10485760,
         }
+
+        if is_confluent:
+            kafka_api_key = self.connector_config.access_config.kafka_api_key
+            secret = self.connector_config.access_config.secret
+            conf["sasl.mechanism"] = "PLAIN"
+            conf["security.protocol"] = "SASL_SSL"
+            conf["sasl.username"] = kafka_api_key
+            conf["sasl.password"] = secret
+
         consumer = Consumer(conf)
         logger.debug(f"Kafka Consumer connected to bootstrap: {bootstrap}")
         return consumer
@@ -286,6 +298,7 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             else:
                 collected.append(json.loads(msg.value().decode("utf8")))
                 if len(collected) >= num_messages_to_consume:
+                    logger.debug(f"Found {len(collected)} messages, stopping")
                     running = False
                     consumer.commit(asynchronous=False)
                     break

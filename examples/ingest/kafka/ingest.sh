@@ -3,7 +3,6 @@
 # Processes the pdf specified in the input path
 # processes the document, and writes to results to a Confluent topic.
 
-# Structured outputs are stored in s3-small-batch-output-to-pinecone/
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
