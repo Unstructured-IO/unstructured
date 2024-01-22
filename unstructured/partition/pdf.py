@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import contextlib
 import io
-import os
 import re
 import warnings
 from tempfile import SpooledTemporaryFile
@@ -111,16 +110,6 @@ if TYPE_CHECKING:
 psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
-
-
-def default_hi_res_model(infer_table_structure: bool) -> str:
-    # a light config for the hi res model; this is not defined as a constant so that no setting of
-    # the default hi res model name is done on importing of this submodule; this allows (if user
-    # prefers) for setting env after importing the sub module and changing the default model name
-
-    # if tabler structure is needed we defaul to use yolox for better table detection
-    default = "yolox" if infer_table_structure else "yolox_quantized"
-    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", default)
 
 
 @process_metadata()
@@ -294,9 +283,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    hi_res_model_name = (
-        hi_res_model_name or model_name or default_hi_res_model(infer_table_structure)
-    )
+    hi_res_model_name = hi_res_model_name or model_name
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if hi_res_model_name == "chipper" else 200
     if (pdf_image_dpi < 300) and (hi_res_model_name == "chipper"):
