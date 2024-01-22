@@ -8,6 +8,7 @@ ARG NB_UID=1000
 ARG PIP_VERSION
 
 # Set up environment
+ENV PADDLE_OCR_VERSION=PP-OCRv4
 ENV HOME /home/${NB_USER}
 ENV PYTHONPATH="${PYTHONPATH}:${HOME}"
 ENV PATH="/home/usr/.local/bin:${PATH}"
