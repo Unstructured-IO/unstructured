@@ -1,3 +1,13 @@
+## 0.12.3-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings; this allows for consistent behavior with `unstructured-inference`
+
 ## 0.12.2
 
 ### Enhancements
