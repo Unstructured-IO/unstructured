@@ -268,6 +268,7 @@ def _partition_pdf_or_image_local(
         process_data_with_model,
         process_file_with_model,
     )
+    from unstructured_inference.models.base import DEFAULT_MODEL
 
     from unstructured.partition.pdf_image.ocr import (
         process_data_with_ocr,
@@ -283,7 +284,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    hi_res_model_name = hi_res_model_name or model_name
+    hi_res_model_name = hi_res_model_name or model_name or DEFAULT_MODEL
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if hi_res_model_name == "chipper" else 200
     if (pdf_image_dpi < 300) and (hi_res_model_name == "chipper"):
