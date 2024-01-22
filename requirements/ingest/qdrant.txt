@@ -31,7 +31,9 @@ hpack==4.0.0
 httpcore==1.0.2
     # via httpx
 httpx[http2]==0.26.0
-    # via qdrant-client
+    # via
+    #   httpx
+    #   qdrant-client
 hyperframe==6.0.1
     # via h2
 idna==3.6
@@ -49,7 +51,7 @@ protobuf==4.23.4
     # via
     #   -c ingest/../constraints.in
     #   grpcio-tools
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   qdrant-client

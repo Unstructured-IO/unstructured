@@ -4,8 +4,12 @@
 #
 #    pip-compile --output-file=ingest/jira.txt ingest/jira.in
 #
-atlassian-python-api==3.41.4
+atlassian-python-api==3.41.8
     # via -r ingest/jira.in
+beautifulsoup4==4.12.3
+    # via
+    #   -c ingest/../base.txt
+    #   atlassian-python-api
 certifi==2023.11.17
     # via
     #   -c ingest/../base.txt
@@ -21,6 +25,8 @@ idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
+jmespath==1.0.1
+    # via atlassian-python-api
 oauthlib==3.2.2
     # via
     #   atlassian-python-api
@@ -36,6 +42,10 @@ six==1.16.0
     # via
     #   -c ingest/../base.txt
     #   atlassian-python-api
+soupsieve==2.5
+    # via
+    #   -c ingest/../base.txt
+    #   beautifulsoup4
 urllib3==1.26.18
     # via
     #   -c ingest/../base.txt

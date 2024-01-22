@@ -79,15 +79,15 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.0
+langchain==0.1.1
     # via -r ingest/embed-huggingface.in
-langchain-community==0.0.11
+langchain-community==0.0.13
     # via langchain
-langchain-core==0.1.10
+langchain-core==0.1.13
     # via
     #   langchain
     #   langchain-community
-langsmith==0.0.80
+langsmith==0.0.83
     # via
     #   langchain
     #   langchain-community
@@ -135,7 +135,7 @@ pillow==10.0.1
     # via
     #   -c ingest/../constraints.in
     #   torchvision
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   langchain
@@ -167,7 +167,7 @@ safetensors==0.3.2
     # via
     #   -c ingest/../constraints.in
     #   transformers
-scikit-learn==1.3.2
+scikit-learn==1.4.0
     # via sentence-transformers
 scipy==1.10.1
     # via

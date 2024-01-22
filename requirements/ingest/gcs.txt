@@ -12,11 +12,11 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via
     #   -c ingest/../base.txt
     #   bs4
-bs4==0.0.1
+bs4==0.0.2
     # via -r ingest/gcs.in
 cachetools==5.3.2
     # via google-auth
