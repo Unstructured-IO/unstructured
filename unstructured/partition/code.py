@@ -17,8 +17,9 @@ from unstructured.partition.common import (
 from unstructured.utils import update_tree_sitter, get_homedir
 
 
-TREE_SITTER_BUILD_PATH = os.path.join(get_homedir(),
-                                      '.unstructured_treesitter/treesitter_build/languages.so')
+TREE_SITTER_BUILD_PATH = os.path.join(
+    get_homedir(), ".unstructured_treesitter/treesitter_build/languages.so"
+)
 
 # TODO(Pierre) Add the other languages
 FILETYPE_TO_LANG = {
@@ -28,7 +29,14 @@ FILETYPE_TO_LANG = {
     FileType.CPP: "cpp",
     FileType.JS: "javascript",
     FileType.TS: "typescript",
+    FileType.CSHARP: "c-sharp",
+    FileType.PHP: "php",
+    FileType.RB: "ruby",
+    FileType.SWIFT: "swift",
 }
+
+# update_tree_sitter(FILETYPE_TO_LANG.values())
+
 
 def partition_code(
     filename: Optional[str] = None,
@@ -43,7 +51,7 @@ def partition_code(
     detection_origin: Optional[str] = "text",
     **kwargs: Any,
 ) -> List[Element]:
-    """Partitions a code file into chunks that are greater than min_partition and 
+    """Partitions a code file into chunks that are greater than min_partition and
     smaller than max_partition.
     Parameters
     ----------
@@ -87,7 +95,7 @@ def _partition_code(
     include_metadata: bool = True,
     languages: Optional[List[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
-    min_partition: Optional[int] = 50,
+    min_partition: Optional[int] = 200,
     metadata_last_modified: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "codefile",
@@ -136,11 +144,12 @@ def _partition_code(
 
     if min_partition is not None and len(file_text) < min_partition:
         min_partition = len(file_text)
-        #raise ValueError("`min_partition` cannot be larger than the length of file contents.")
+        # raise ValueError("`min_partition` cannot be larger than the length of file contents.")
 
     if programming_language is None:
         raise ValueError("No programming language provided/detected")
 
+    global TREE_SITTER_BUILD_PATH
     try:
         LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=programming_language)
     except (AttributeError, OSError):
@@ -153,7 +162,7 @@ def _partition_code(
     if not tree.root_node.children or tree.root_node.children[0].type == "ERROR":
         raise ValueError(f"File is not written in {programming_language}")
 
-    file_content = _partition_by_node(
+    file_content, _ = _partition_by_node(
         node=tree.root_node,
         text=file_text.decode("utf-8"),
         min_chars=min_partition,
@@ -161,26 +170,22 @@ def _partition_code(
     )
 
     elements: List[Element] = []
-    
+
     if include_metadata:
         metadata = ElementMetadata(
             filename=metadata_filename or filename,
             last_modified=metadata_last_modified or last_modification_date,
-            languages = [programming_language],
+            languages=[programming_language],
         )
         metadata.detection_origin = detection_origin
     else:
         metadata = ElementMetadata()
 
-    #Note (Pierre) Some languages (i.e Python) use blank space and tabs for semantic
-    #Maybe removing the spaces is not a good idea
+    # Note (Pierre) Some languages (i.e Python) use blank space and tabs for semantic
+    # Maybe removing the spaces is not a good idea
     for ctext in file_content:
         # Don't think it makes sens to use a coordinate system in code, TBD
-        element = Code(
-            text=ctext,
-            coordinates=None,
-            coordinate_system=None
-        )
+        element = Code(text=ctext, coordinates=None, coordinate_system=None)
         element.metadata = copy.deepcopy(metadata)
         elements.append(element)
 
@@ -193,22 +198,23 @@ def _partition_by_node(
     last_end: Optional[int] = 0,
     current_chunk: Optional[str] = "",
     min_chars: Optional[int] = 200,
-    max_chars: Optional[int] = 2000,
+    max_chars: Optional[int] = 1500,
 ) -> list[str]:
     new_chunks = []
     for child in node.children:
-        if child.end_byte - child.start_byte > max_chars:
+        if (child.end_byte - child.start_byte) > max_chars:
             # Child is too big, recursively chunk the child, keep memory
             if len(current_chunk) > min_chars:
                 new_chunks.append(current_chunk)
                 current_chunk = ""
-            new_chunks.extend(
-                _partition_by_node(child, text, last_end, current_chunk)
+            chunks, last_end = _partition_by_node(
+                child, text, last_end, current_chunk, min_chars, max_chars
             )
-            # We might have information for the last recursive elements
-            current_chunk = new_chunks[-1]
-            new_chunks = new_chunks[:-1]
-        elif len(current_chunk) + child.end_byte - child.start_byte > max_chars:
+            new_chunks.extend(chunks[:-1])
+            current_chunk = chunks[-1]
+        elif (len(current_chunk) + child.end_byte - child.start_byte) > max_chars and len(
+            current_chunk
+        ) > min_chars:
             # Child would make the current chunk too big, so start a new chunk
             new_chunks.append(current_chunk)
             current_chunk = text[last_end : child.end_byte]
@@ -217,4 +223,4 @@ def _partition_by_node(
         last_end = child.end_byte
     if len(current_chunk) > 0:
         new_chunks.append(current_chunk)
-    return new_chunks
+    return new_chunks, last_end

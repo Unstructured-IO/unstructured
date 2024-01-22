@@ -726,17 +726,32 @@ def get_homedir() -> str:
     return homedir
 
 
-
 def update_tree_sitter(languages: List[str], cache_dir: Optional[str] = None):
     if dependency_exists("tree_sitter"):
         from tree_sitter import Language
     else:
         raise RuntimeError("Cannot update TreeSitter if not installed")
 
+    if not cache_dir:
+        cache_dir = get_homedir()
+    else:
+        raise NotImplementedError("Custom treesitter cache directory is not available yet")
+
+    download_dir = os.path.join(cache_dir, ".unstructured_treesitter")
+
+    installed_languages = [
+        l.split("/")[-1].removeprefix("tree-sitter-") for l in glob(f"{download_dir}/tree-sitter-*")
+    ]
+
     available_parsers = []
     unavailable_parsers = []
     for language in languages:
-        if requests.get(f"https://github.com/tree-sitter/tree-sitter-{language}").status_code == 200:
+        if language in installed_languages:
+            continue
+        if (
+            requests.get(f"https://github.com/tree-sitter/tree-sitter-{language}").status_code
+            == 200
+        ):
             available_parsers.append(language)
         else:
             unavailable_parsers.append(language)
@@ -744,23 +759,19 @@ def update_tree_sitter(languages: List[str], cache_dir: Optional[str] = None):
     if len(unavailable_parsers) > 0:
         raise ValueError(f"Treesitter parsers are unavailable for: {','.join(unavailable_parsers)}")
 
-    if not cache_dir:
-        cache_dir = get_homedir()
-    else:
-        raise NotImplementedError("Custom treesitter cache directory is not available yet")
-    
-    download_dir = os.path.join(cache_dir, ".unstructured_treesitter")
-
     for language in available_parsers:
         subprocess.run(
             f"git clone https://github.com/tree-sitter/tree-sitter-{language} {download_dir}/tree-sitter-{language}",
-            shell=True)
+            shell=True,
+        )
 
-    all_languages = glob(f"{download_dir}/tree-sitter-*")
+    all_languages = glob(f"{download_dir}/tree-sitter-*/**/src/parser.c", recursive=True)
+    # Some languages might have different folder structure
+    all_languages = [l.removesuffix("/src/parser.c") for l in all_languages]
 
-    # Note(Pierre) Not sure what will happen if we are already parsing
-    # and changing the library at the same time, TODO: Test that
-    Language.build_library(
-        f"{download_dir}/treesitter_build/languages.so",
-        all_languages
+    # Update main shared library
+    Language.build_library(f"{download_dir}/treesitter_build/languages_tmp.so", all_languages)
+    subprocess.run(
+        f"mv {download_dir}/treesitter_build/languages_tmp.so {download_dir}/treesitter_build/languages.so",
+        shell=True,
     )

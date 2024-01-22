@@ -104,6 +104,8 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
 if dependency_exists("tree_sitter"):
     from unstructured.partition.code import partition_code
+else:
+    partition_code = partition_text
 
 
 CODE_FILETYPES = [

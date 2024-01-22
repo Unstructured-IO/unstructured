@@ -220,7 +220,7 @@ EXT_TO_FILETYPE = {
     ".java": FileType.JAVA,
     ".hpp": FileType.CPP,
     ".cpp": FileType.CPP,
-    ".cc": FileType.C,
+    ".cc": FileType.CPP,
     ".cxx": FileType.CPP,
     ".h": FileType.C,
     ".c": FileType.C,
