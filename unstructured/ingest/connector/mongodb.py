@@ -23,7 +23,7 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
-    from pymongo import DriverInfo, MongoClient
+    from pymongo import MongoClient
 
 
 SERVER_API_VERSION = "1"
@@ -93,7 +93,7 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def generate_client(self) -> "MongoClient":
-        from pymongo import MongoClient
+        from pymongo import DriverInfo, MongoClient
         from pymongo.server_api import ServerApi
 
         if self.uri:
