@@ -683,3 +683,11 @@ def test_partition_image_element_extraction(
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
+
+
+def test_partition_image_works_on_heic_file(
+    filename="example-docs/DA-1p.heic",
+):
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
+    titles = [el.text for el in elements if el.category == ElementType.TITLE]
+    assert "CREATURES" in titles

@@ -5,6 +5,7 @@ onnx
 pdf2image
 pdfminer.six
 pikepdf
+pillow_heif
 pypdf
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.

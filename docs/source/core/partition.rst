@@ -31,7 +31,7 @@ to the appropriate partitioning function. If you already know your document type
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | HTML Pages (`.html`/`.htm`)                                                                         | `partition_html`               | N/A                                    | No             | Encoding; Include Page Breaks                                                                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`/`.bmp`)                                                       | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
+| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`/`.bmp`/`.heic`)                                               | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | Markdown (`.md`)                                                                                    | `partition_md`                 | N/A                                    | Yes            | Include Page Breaks                                                                                              |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
@@ -118,9 +118,9 @@ file type and route it to the appropriate partitioning function. All partitionin
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific functions if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.tsv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
-``.png``, ``.jpg``, and ``.txt`` files.
+``.png``, ``.jpg``, ``.heic``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
-``.png``, and ``.jpg``.
+``.png``, ``.heic``, and ``.jpg``.
 The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
 faster processing and `"hi_res"` for more accurate processing.
 
@@ -402,7 +402,7 @@ For more information about the ``partition_html`` function, you can check the `s
 
 The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
-prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+prior to processing. The ``partition_image`` function supports ``.png``, ``.heic``, and ``.jpg`` files.
 
 You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
 use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the

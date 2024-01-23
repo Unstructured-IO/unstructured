@@ -35,6 +35,7 @@ from pdfminer.layout import (
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from pillow_heif import register_heif_opener
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -880,6 +881,7 @@ def _partition_pdf_or_image_with_ocr(
     elements = []
     if is_image:
         images = []
+        register_heif_opener()
         image = PILImage.open(file) if file is not None else PILImage.open(filename)
         images.append(image)
 
