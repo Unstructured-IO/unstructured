@@ -6,14 +6,24 @@ import requests
 import pytest
 
 from unstructured.partition.code import partition_code
+from unstructured.utils import get_homedir
 
-TEST_FILE_URLS = {
-    "c": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-c/master/examples/malloc.c",
-    "go": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-go/master/examples/proc.go",
-    "python": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-python/master/examples/python2-grammar-crlf.py",
-    "cpp": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-cpp/master/examples/rule.cc",
-    "javascript": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-javascript/master/examples/text-editor-component.js",
-    "typescript": "https://raw.githubusercontent.com/tree-sitter/tree-sitter-typescript/master/examples/parser.ts",
+
+TEST_FILE_PATH = {
+    "c": get_homedir() + ".unstructured_treesitter/tree-sitter-c/examples/malloc.c",
+    "go": get_homedir() + ".unstructured_treesitter/tree-sitter-go/examples/proc.go",
+    "python": (
+        get_homedir()
+        + ".unstructured_treesitter/tree-sitter-python/examples/python2-grammar-crlf.py"
+    ),
+    "cpp": get_homedir() + ".unstructured_treesitter/tree-sitter-cpp/examples/rule.cc",
+    "javascript": (
+        get_homedir()
+        + ".unstructured_treesitter/tree-sitter-javascript/examples/text-editor-component.js"
+    ),
+    "typescript": (
+        get_homedir() + ".unstructured_treesitter/tree-sitter-typescript/examples/parser.ts"
+    ),
     # Need to find some file for testing eventually
     # "c-sharp": ,
     # "php": ,
@@ -22,23 +32,10 @@ TEST_FILE_URLS = {
 }
 
 
-@pytest.fixture(scope="module")
-def test_files(tmp_path_factory):
-    test_files = {}
-    for language, file in TEST_FILE_URLS.items():
-        text = requests.get(file).content.decode("utf-8")
-        filename = file.split("/")[-1]
-        fn = tmp_path_factory.mktemp("data") / filename
-        fn.write_text(text)
-        test_files[language] = fn
-
-    return test_files
-
-
-@pytest.mark.parametrize("language", TEST_FILE_URLS.keys())
+@pytest.mark.parametrize("language", TEST_FILE_PATH.keys())
 @pytest.fixture(scope="function")
-def test_partition_code_from_filename(language: str, test_files, tmp_path_factory):
-    elements = partition_code(filename=test_files[language])
+def test_partition_code_from_filename(language: str, tmp_path_factory):
+    elements = partition_code(filename=TEST_FILE_PATH[language])
     assert len(elements) > 0
     for el in elements:
         assert el.metadata.languages == [language]
@@ -48,12 +45,12 @@ def test_partition_code_from_filename(language: str, test_files, tmp_path_factor
         result.write_text(el.text)
 
     # Sanity check to see if we loose anything during partitioning
-    assert test_files[language].read() == result.read()
+    assert open(TEST_FILE_PATH[language], "r").read() == result.read()
 
 
-@pytest.mark.parametrize("language", TEST_FILE_URLS.keys())
-def test_partition_code_from_file(language: str, test_files):
-    file = io.BytesIO(test_files[language].read_bytes())
+@pytest.mark.parametrize("language", TEST_FILE_PATH.keys())
+def test_partition_code_from_file(language: str):
+    file = io.BytesIO(open(TEST_FILE_PATH[language], "rb").read())
     elements = partition_code(file=file)
     assert len(elements) > 0
     for el in elements:
@@ -62,18 +59,18 @@ def test_partition_code_from_file(language: str, test_files):
 
 
 @pytest.mark.parametrize("max_partition", [500, 1000, 2000])
-@pytest.mark.parametrize("language", TEST_FILE_URLS.keys())
-def test_partition_code_max_partition(max_partition: int, language: str, test_files):
-    elements = partition_code(filename=test_files[language], max_partition=max_partition)
+@pytest.mark.parametrize("language", TEST_FILE_PATH.keys())
+def test_partition_code_max_partition(max_partition: int, language: str):
+    elements = partition_code(filename=TEST_FILE_PATH[language], max_partition=max_partition)
     assert len(elements) > 0
     for el in elements:
         assert len(el.text) <= max_partition + 50
 
 
 @pytest.mark.parametrize("min_partition", [50, 100, 200])
-@pytest.mark.parametrize("language", TEST_FILE_URLS.keys())
-def test_partition_code_min_partition(min_partition: int, language: str, test_files):
-    elements = partition_code(filename=test_files[language], min_partition=min_partition)
+@pytest.mark.parametrize("language", TEST_FILE_PATH.keys())
+def test_partition_code_min_partition(min_partition: int, language: str):
+    elements = partition_code(filename=TEST_FILE_PATH[language], min_partition=min_partition)
     assert len(elements) > 0
 
     # No enforcement is done on the last element
