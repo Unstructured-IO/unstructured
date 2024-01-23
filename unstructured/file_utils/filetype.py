@@ -114,6 +114,13 @@ STR_TO_FILETYPE = {
     "image/png": FileType.PNG,
     "image/tiff": FileType.TIFF,
     "image/bmp": FileType.BMP,
+    # NOTE(robinson) - https://mimetype.io/application/yaml
+    # In the future, we may have special processing for YAML
+    # files instead of treating them as plaintext
+    "application/yaml": FileType.TXT,
+    "application/x-yaml": FileType.TXT,
+    "text/x-yaml": FileType.TXT,
+    "text/yaml": FileType.TXT,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -147,13 +154,6 @@ STR_TO_FILETYPE = {
     "audio/wave": FileType.WAV,
     "audio/x-pn-wav": FileType.WAV,
     "audio/x-wav": FileType.WAV,
-    # NOTE(robinson) - https://mimetype.io/application/yaml
-    # In the future, we may have special processing for YAML
-    # files instead of treating them as plaintext
-    "application/yaml": FileType.TXT,
-    "application/x-yaml": FileType.TXT,
-    "text/x-yaml": FileType.TXT,
-    "text/yaml": FileType.TXT,
     "inode/x-empty": FileType.EMPTY,
 }
 
