@@ -53,7 +53,7 @@ class DatabricksVolumesWriteConfig(WriteConfig):
     volume: str
     catalog: str
     volume_path: t.Optional[str] = None
-    override: bool = False
+    overwrite: bool = False
     encoding: str = "utf-8"
     schema: str = "default"
 
@@ -116,7 +116,7 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
         self.client.files.upload(
             file_path=output_path,
             contents=BytesIO(json.dumps(elements_dict).encode(encoding=self.write_config.encoding)),
-            overwrite=self.write_config.override,
+            overwrite=self.write_config.overwrite,
         )
 
     def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
