@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import io
-import requests
-
 import pytest
 
 from unstructured.partition.code import partition_code
