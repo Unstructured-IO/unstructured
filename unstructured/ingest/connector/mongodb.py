@@ -93,7 +93,8 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def generate_client(self) -> "MongoClient":
-        from pymongo import DriverInfo, MongoClient
+        from pymongo import MongoClient
+        from pymongo.driver_info import DriverInfo
         from pymongo.server_api import ServerApi
 
         if self.uri:
