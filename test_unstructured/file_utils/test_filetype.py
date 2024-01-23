@@ -1,5 +1,6 @@
 import os
 import pathlib
+import yaml
 import zipfile
 
 import magic
@@ -481,3 +482,23 @@ def test_detect_wav_from_filename(filename="example-docs/CantinaBand3.wav"):
 def test_detect_wav_from_file(filename="example-docs/CantinaBand3.wav"):
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.WAV
+
+
+def test_detect_yaml_as_text_from_filename(tmpdir):
+    data = {"hi": "there", "this is": "yaml"}
+    filename = os.path.join(tmpdir.dirname, "test.yaml")
+    with open(filename, "w") as f:
+        yaml.dump(data, f)
+
+    assert detect_filetype(filename=filename) == FileType.TXT
+
+
+def test_detect_yaml_as_text_from_file(tmpdir, monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/yaml")
+    data = {"hi": "there", "this is": "yaml"}
+    filename = os.path.join(tmpdir.dirname, "test.yaml")
+    with open(filename, "w") as f:
+        yaml.dump(data, f)
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.TXT
