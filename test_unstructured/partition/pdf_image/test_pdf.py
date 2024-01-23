@@ -893,7 +893,6 @@ def test_check_annotations_within_element(threshold, expected):
     [
         (None, "yolox"),
         ("test", "test"),
-        ("test", "test"),
     ],
 )
 def test_default_hi_res_model(env, expected, monkeypatch):
