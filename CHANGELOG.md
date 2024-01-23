@@ -1,6 +1,9 @@
-## 0.12.3-dev2
+## 0.12.3-dev3
 
 ### Enhancements
+
+* **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
+  MongoDB connector.
 
 ### Features
 
