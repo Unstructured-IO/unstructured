@@ -1,10 +1,10 @@
 import os
 import pathlib
-import yaml
 import zipfile
 
 import magic
 import pytest
+import yaml
 from PIL import Image
 
 from unstructured.file_utils import filetype
