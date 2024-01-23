@@ -5,6 +5,7 @@ from pathlib import Path
 
 from dataclasses_json.core import Json
 
+from unstructured.__version__ import __version__ as unstructured_version
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, WriteError
 from unstructured.ingest.interfaces import (
@@ -22,7 +23,7 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
-    from pymongo import MongoClient
+    from pymongo import DriverInfo, MongoClient
 
 
 SERVER_API_VERSION = "1"
@@ -96,7 +97,11 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
         from pymongo.server_api import ServerApi
 
         if self.uri:
-            return MongoClient(self.uri, server_api=ServerApi(version=SERVER_API_VERSION))
+            return MongoClient(
+                self.uri,
+                server_api=ServerApi(version=SERVER_API_VERSION),
+                driver=DriverInfo(name="unstructured", version=unstructured_version),
+            )
         else:
             return MongoClient(
                 host=self.host,
