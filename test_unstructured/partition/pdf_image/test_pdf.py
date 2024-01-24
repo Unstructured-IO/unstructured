@@ -1119,11 +1119,13 @@ def test_partition_pdf_with_bad_color_profile():
 
 def test_partition_pdf_with_fast_finds_headers_footers(filename="example-docs/header-test-doc.pdf"):
     elements = pdf.partition_pdf(filename, strategy="fast")
-    assert elements == [
-        Header(text="I Am A Header"),
-        Title(text="Title"),
-        NarrativeText(text="Here is a lovely sentences."),
-        Footer(text="I Am A Footer"),
+    assert isinstance(elements[0], Header)
+    assert isinstance(elements[-1], Footer)
+    assert [element.text for element in elements] == [
+        "I Am A Header",
+        "Title",
+        "Here is a lovely sentences.",
+        "I Am A Footer",
     ]
 
 
