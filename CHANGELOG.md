@@ -3,6 +3,7 @@
 ### Enhancements
 
 ### Features
+* **Code Partition.** Partition code file using TreeSitter instead of text partition for the following languages : Python Javascript Typescript C C++ Go Ruby Swift C# PHP 
 
 ### Fixes
 

@@ -164,10 +164,12 @@ STR_TO_FILETYPE = {
     "inode/x-empty": FileType.EMPTY,
     # NOTE(Pierre) - Need to check the mimetypes detected by Libmagic
     "text/javascript": FileType.JS,
+    "text/x-typescript": FileType.TS,
     "text/x-python": FileType.PY,
     "text/x-script.python": FileType.PY,
     "text/x-c": FileType.C,
     "text/x-c++": FileType.CPP,
+    "text/x-go": FileType.GO,
 }
 
 MIMETYPES_TO_EXCLUDE = [

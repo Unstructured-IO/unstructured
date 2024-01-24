@@ -43,7 +43,8 @@ def partition_code(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
-    language: Optional[str] = None,
+    languages: Optional[List[str]] = None,
+    programming_language: Optional[str] = None,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 200,
     metadata_last_modified: Optional[str] = None,
@@ -76,7 +77,8 @@ def partition_code(
         file=file,
         text=text,
         encoding=encoding,
-        language=language,
+        languages=languages,
+        programming_language=programming_language,
         max_partition=max_partition,
         min_partition=min_partition,
         metadata_last_modified=metadata_last_modified,
@@ -93,7 +95,8 @@ def _partition_code(
     text: Optional[str] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[List[str]] = None,
+    programming_language: Optional[str] = None,
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 200,
     metadata_last_modified: Optional[str] = None,
@@ -115,7 +118,8 @@ def _partition_code(
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text)
     file_text = bytes()
-    programming_language = None
+
+    programming_language = programming_language
     last_modification_date = None
 
     if filename is not None:
@@ -124,7 +128,7 @@ def _partition_code(
                 file_text = f.read()
             _, extension = os.path.splitext(filename)
             filetype = EXT_TO_FILETYPE.get(extension)
-            if filetype:
+            if filetype and programming_language is None:
                 programming_language = FILETYPE_TO_LANG.get(filetype)
             last_modification_date = get_last_modified_date(filename)
         except FileNotFoundError:
@@ -137,10 +141,11 @@ def _partition_code(
         file.seek(0)
         file_text = file.read()
         last_modification_date = get_last_modified_date_from_file(file)
-        if filetype:
-            programming_language = FILETYPE_TO_LANG.get(filetype)
-        else:
-            raise RuntimeError("Unable to detect code file type")
+        if programming_language is None:
+            if filetype:
+                programming_language = FILETYPE_TO_LANG.get(filetype)
+            else:
+                raise RuntimeError("Unable to detect code file type")
 
     if min_partition is not None and len(file_text) < min_partition:
         min_partition = len(file_text)
@@ -211,7 +216,7 @@ def _partition_by_node(
                 child, text, last_end, current_chunk, min_chars, max_chars
             )
             new_chunks.extend(chunks[:-1])
-            current_chunk = chunks[-1]
+            current_chunk = chunks[-1] if len(chunks) > 0 else ""
         elif (len(current_chunk) + child.end_byte - child.start_byte) > max_chars and len(
             current_chunk
         ) > min_chars:

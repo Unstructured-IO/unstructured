@@ -104,8 +104,10 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
 if dependency_exists("tree_sitter"):
     from unstructured.partition.code import partition_code
+
+    PARTITION_CODE_AS_TEXT = False
 else:
-    partition_code = partition_text
+    PARTITION_CODE_AS_TEXT = True
 
 
 CODE_FILETYPES = [
@@ -319,6 +321,9 @@ def partition(
         skip_infer_table_types,
         pdf_infer_table_structure,
     )
+
+    if PARTITION_CODE_AS_TEXT and filetype in CODE_FILETYPES:
+        filetype = FileType.TXT
 
     if filetype == FileType.DOC:
         _partition_doc = _get_partition_with_extras("doc")
