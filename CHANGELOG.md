@@ -1,7 +1,9 @@
-## 0.12.3-dev4
+## 0.12.3-dev5
 
 ### Enhancements
 
+* **Header and footer detection for fast strategy.** `partition_pdf` with `fast` strategy now
+  detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
   MongoDB connector.
 
