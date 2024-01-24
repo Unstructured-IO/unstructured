@@ -8,6 +8,7 @@
 ### Features
 
 * **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
+* **Code Partition.** Partition code file using TreeSitter instead of text partition for the following languages : Python Javascript Typescript C C++ Go Ruby Swift C# PHP 
 
 ### Fixes
 * **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
@@ -21,7 +22,6 @@
 ### Enhancements
 
 ### Features
-* **Code Partition.** Partition code file using TreeSitter instead of text partition for the following languages : Python Javascript Typescript C C++ Go Ruby Swift C# PHP 
 
 ### Fixes
 
