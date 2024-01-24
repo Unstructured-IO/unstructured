@@ -170,6 +170,10 @@ STR_TO_FILETYPE = {
     "text/x-c": FileType.C,
     "text/x-c++": FileType.CPP,
     "text/x-go": FileType.GO,
+    "text/x-csharp": FileType.CSHARP,
+    "text/x-php": FileType.PHP,
+    "text/x-ruby": FileType.RB,
+    "text/x-swift": FileType.SWIFT,
 }
 
 MIMETYPES_TO_EXCLUDE = [
