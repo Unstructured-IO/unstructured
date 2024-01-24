@@ -12,7 +12,7 @@ First you'll need to install the Chroma dependencies as shown here.
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream local connector. 
+upstream local connector.
 
 .. tabs::
 

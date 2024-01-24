@@ -128,6 +128,13 @@ STR_TO_FILETYPE = {
     "image/png": FileType.PNG,
     "image/tiff": FileType.TIFF,
     "image/bmp": FileType.BMP,
+    # NOTE(robinson) - https://mimetype.io/application/yaml
+    # In the future, we may have special processing for YAML
+    # files instead of treating them as plaintext
+    "application/yaml": FileType.TXT,
+    "application/x-yaml": FileType.TXT,
+    "text/x-yaml": FileType.TXT,
+    "text/yaml": FileType.TXT,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -237,6 +244,8 @@ EXT_TO_FILETYPE = {
     ".swift": FileType.SWIFT,
     ".ts": FileType.TS,
     ".go": FileType.GO,
+    ".yaml": FileType.TXT,
+    ".yml": FileType.TXT,
     None: FileType.UNK,
 }
 
@@ -377,7 +386,7 @@ def detect_filetype(
             return FileType.EML
 
         if extension in PLAIN_TEXT_EXTENSIONS:
-            return EXT_TO_FILETYPE.get(extension)
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
