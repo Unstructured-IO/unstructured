@@ -151,5 +151,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             "id": str(uuid.uuid4()),
             "embedding": element_dict.pop("embeddings", None),
             "document": element_dict.pop("text", None),
-            "metadata": flatten_dict(element_dict, separator="-", flatten_lists=True),
+            "metadata": flatten_dict(
+                element_dict, separator="-", flatten_lists=True, remove_none=True
+            ),
         }

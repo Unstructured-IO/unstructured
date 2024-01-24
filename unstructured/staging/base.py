@@ -177,20 +177,30 @@ def elements_from_json(
 
 
 def flatten_dict(
-    dictionary, parent_key="", separator="_", flatten_lists=False, keys_to_omit: List[str] = None
+    dictionary,
+    parent_key="",
+    separator="_",
+    flatten_lists=False,
+    remove_none=False,
+    keys_to_omit: List[str] = None,
 ):
     """Flattens a nested dictionary into a single level dictionary. keys_to_omit is a list of keys
     that don't get flattened. If omitting a nested key, format as {parent_key}{separator}{key}.
-    If flatten_lists is True, then lists and tuples are flattened as well."""
+    If flatten_lists is True, then lists and tuples are flattened as well.
+    If remove_none is True, then None keys/values are removed from the flattened dictionary."""
     keys_to_omit = keys_to_omit if keys_to_omit else []
     flattened_dict = {}
     for key, value in dictionary.items():
         new_key = f"{parent_key}{separator}{key}" if parent_key else key
         if new_key in keys_to_omit:
             flattened_dict[new_key] = value
+        elif value is None and remove_none:
+            continue
         elif isinstance(value, dict):
             flattened_dict.update(
-                flatten_dict(value, new_key, separator, flatten_lists, keys_to_omit=keys_to_omit),
+                flatten_dict(
+                    value, new_key, separator, flatten_lists, remove_none, keys_to_omit=keys_to_omit
+                ),
             )
         elif isinstance(value, (list, tuple)) and flatten_lists:
             for index, item in enumerate(value):
@@ -200,6 +210,7 @@ def flatten_dict(
                         "",
                         separator,
                         flatten_lists,
+                        remove_none,
                         keys_to_omit=keys_to_omit,
                     )
                 )
