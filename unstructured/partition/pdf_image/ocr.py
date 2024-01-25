@@ -253,7 +253,7 @@ def supplement_page_layout_with_ocr(
 
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
-    extracted_regions: List[TextRegion],
+    extracted_regions: List["TextRegion"],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
@@ -277,7 +277,9 @@ def supplement_element_with_table_extraction(
             ),
         )
         table_tokens = get_table_tokens(
-            image=cropped_image,
+            extracted_regions=extracted_regions,
+            table_element=padded_element,
+            table_element_image=cropped_image,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
         )
@@ -286,14 +288,16 @@ def supplement_element_with_table_extraction(
 
 
 def get_table_tokens(
-    image: PILImage,
+    extracted_regions: List["TextRegion"],
+    table_element: "LayoutElement",
+    table_element_image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
 ) -> List[Dict]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
     ocr_layout = get_ocr_layout_from_image(
-        image,
+        image=table_element_image,
         ocr_languages=ocr_languages,
         ocr_agent=ocr_agent,
     )
