@@ -168,7 +168,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) ->
 
 
 def check_language_args(
-    languages: Optional[List[str]], ocr_languages: Optional[str]
+    languages: list[str], ocr_languages: Optional[str]
 ) -> Union[list[str], None]:
     """Handle users defining both `ocr_languages` and `languages`, giving preference to `languages`
     and converting `ocr_languages` if needed, but defaulting to `None.
@@ -179,10 +179,10 @@ def check_language_args(
     # --- Clean and update defaults
     if ocr_languages == "auto":
         raise ValueError(
-            "`ocr_languages` is deprecated but was used to extract text from pdfs and images. "
-            "The 'auto' argument is only for language *detection* when it is assigned "
-            "to `languages` and partitioning documents other than pdfs or images. "
-            "Language detection is not currently supported in pdfs or images."
+            "`ocr_languages` is deprecated but was used to extract text from pdfs and images."
+            " The 'auto' argument is only for language *detection* when it is assigned"
+            " to `languages` and partitioning documents other than pdfs or images."
+            " Language detection is not currently supported in pdfs or images."
         )
 
     if ocr_languages:
@@ -192,16 +192,13 @@ def check_language_args(
             "Please use languages instead.",
         )
 
-    # raise error if languages is not None of a list
-    if not (isinstance(languages, list) or languages is None):
+    if not isinstance(languages, list):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
     # --- If `languages` is a null/default value and `ocr_languages` is defined, use `ocr_languages`
-    if ocr_languages and (
-        languages == ["auto"] or languages == [""] or languages is None or not languages[0]
-    ):
+    if ocr_languages and (languages == ["auto"] or languages == [""] or not languages):
         languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
         logger.warning(
             "Only one of languages and ocr_languages should be specified. "

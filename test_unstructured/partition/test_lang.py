@@ -1,3 +1,9 @@
+# pyright: reportPrivateUsage=false
+
+"""Unit-test suite for the `unstructured.partition.lang` module."""
+
+from __future__ import annotations
+
 import os
 import pathlib
 from typing import Union
@@ -159,12 +165,6 @@ def test_detect_languages_handles_spelled_out_languages():
 @pytest.mark.parametrize(
     ("languages", "ocr_languages", "expected_langs"),
     [
-        # raise warning and use `ocr_languages` when `languages` is empty or None
-        (None, "deu", ["deu"]),
-        ([""], '"deu"', ["deu"]),
-        ([""], "deu", ["deu"]),
-        ([""], "[deu]", ["deu"]),
-        # raise warning and use `languages` when both are defined
         (["spa"], "deu", ["spa"]),
         (["spanish"], "english", ["spa"]),
         (["spa"], "[deu]", ["spa"]),
@@ -174,7 +174,7 @@ def test_detect_languages_handles_spelled_out_languages():
         (["spa+deu"], "eng+deu", ["spa", "deu"]),
     ],
 )
-def test_check_language_args(
+def test_check_language_args_uses_languages_when_ocr_languages_and_languages_are_both_defined(
     languages: Union[list[str], str, None],
     ocr_languages: Union[list[str], str, None],
     expected_langs: list[str],
@@ -183,7 +183,28 @@ def test_check_language_args(
     returned_langs = check_language_args(languages=languages, ocr_languages=ocr_languages)
     for lang in returned_langs:  # type: ignore
         assert lang in expected_langs
-    if languages or ocr_languages:
+        assert "ocr_languages" in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages", "expected_langs"),
+    [
+        # raise warning and use `ocr_languages` when `languages` is empty or None
+        (None, "deu", ["deu"]),
+        ([""], '"deu"', ["deu"]),
+        ([""], "deu", ["deu"]),
+        ([""], "[deu]", ["deu"]),
+    ],
+)
+def test_check_language_args_uses_ocr_languages_when_languages_is_empty_or_None(
+    languages: Union[list[str], str, None],
+    ocr_languages: Union[list[str], str, None],
+    expected_langs: list[str],
+    caplog,
+):
+    returned_langs = check_language_args(languages=languages, ocr_languages=ocr_languages)
+    for lang in returned_langs:  # type: ignore
+        assert lang in expected_langs
         assert "ocr_languages" in caplog.text
 
 

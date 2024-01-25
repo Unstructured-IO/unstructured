@@ -742,7 +742,7 @@ def test_partition_pdf_formats_languages_for_tesseract():
 def test_partition_pdf_warns_with_ocr_languages(caplog):
     filename = example_doc_path("chevron-page.pdf")
     pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng")
-    assert "ocr_languages" in caplog.text
+    assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
 def test_partition_categorization_backup():

@@ -201,7 +201,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_language_args(languages, ocr_languages) or ["eng"]
+    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,

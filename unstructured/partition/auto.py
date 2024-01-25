@@ -252,7 +252,7 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    languages = check_language_args(languages, ocr_languages)
+    languages = check_language_args(languages or [], ocr_languages)
 
     if url is not None:
         file, filetype = file_and_type_from_url(
