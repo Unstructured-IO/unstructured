@@ -55,9 +55,10 @@ html_theme = "furo"
 html_static_path = ["_static"]
 
 # Adding a custom css file in order to add custom css file and can change the necessary elements.
+# custom css and js for kapa.ai integration
 html_favicon = "_static/images/unstructured_small.png"
-html_css_files = ["unstructured.css"]
-html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js"]
+html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js", "custom.js"]
+html_css_files = ["unstructured.css", "custom.css"]
 
 html_theme_options = {
     "sidebar_hide_name": True,
@@ -135,8 +136,3 @@ html_theme_options = {
         "sidebar-caption-space-above": "0",
     },
 }
-
-# kapa.ai integration
-html_static_path = ["_static"]
-html_js_files = ["custom.js"]
-html_css_files = ["custom.css"]
