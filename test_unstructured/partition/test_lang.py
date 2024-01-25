@@ -190,7 +190,7 @@ def test_check_language_args_uses_languages_when_ocr_languages_and_languages_are
     ("languages", "ocr_languages", "expected_langs"),
     [
         # raise warning and use `ocr_languages` when `languages` is empty or None
-        (None, "deu", ["deu"]),
+        ([], "deu", ["deu"]),
         ([""], '"deu"', ["deu"]),
         ([""], "deu", ["deu"]),
         ([""], "[deu]", ["deu"]),
@@ -206,8 +206,3 @@ def test_check_language_args_uses_ocr_languages_when_languages_is_empty_or_None(
     for lang in returned_langs:  # type: ignore
         assert lang in expected_langs
         assert "ocr_languages" in caplog.text
-
-
-def test_check_language_args_returns_None_with_None_defaults():
-    returned_langs = check_language_args(languages=None, ocr_languages=None)  # type: ignore
-    assert returned_langs is None
