@@ -135,6 +135,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
                     element_dict,
                     separator="-",
                     flatten_lists=True,
+                    remove_none=True,
                 ),
             },
         }
