@@ -263,6 +263,7 @@ def supplement_element_with_table_extraction(
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
+
     for element in elements:
         if element.type == ElementType.TABLE:
             padding = env_config.TABLE_IMAGE_CROP_PAD
@@ -276,13 +277,14 @@ def supplement_element_with_table_extraction(
                 ),
             )
             table_tokens = get_table_tokens(
-                image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
+                extracted_regions=extracted_regions, image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent,
             )
             element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
 def get_table_tokens(
+    extracted_regions: List["TextRegion"],
     image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
