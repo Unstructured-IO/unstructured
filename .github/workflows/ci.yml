@@ -322,7 +322,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
-        OCR_AGENT: "tesseract"
+        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
@@ -380,7 +380,7 @@ jobs:
         AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
-        OCR_AGENT: "tesseract"
+        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
