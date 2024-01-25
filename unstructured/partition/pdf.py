@@ -303,8 +303,8 @@ def _partition_pdf_or_image_local(
 
     hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
-        pdf_image_dpi = 300 if hi_res_model_name == "chipper" else 200
-    if (pdf_image_dpi < 300) and (hi_res_model_name == "chipper"):
+        pdf_image_dpi = 300 if hi_res_model_name.startswith("chipper") else 200
+    if (pdf_image_dpi < 300) and (hi_res_model_name.startswith("chipper")):
         logger.warning(
             "The Chipper model performs better when images are rendered with DPI >= 300 "
             f"(currently {pdf_image_dpi}).",
@@ -318,32 +318,33 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        extracted_layout = (
-            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
-            if pdf_text_extractable
-            else []
-        )
-
-        if analysis:
-            annotate_layout_elements(
-                inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
-                filename=filename,
-                output_dir_path=analyzed_image_output_dir_path,
-                pdf_image_dpi=pdf_image_dpi,
-                is_image=is_image,
-            )
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-        )
-
         if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_document_layout = merged_document_layout
+            # NOTE(antonio): We shouldn't do PDFMiner with chipper
+            final_document_layout = inferred_document_layout
         else:
+            extracted_layout = (
+                process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
+                if pdf_text_extractable
+                else []
+            )
+
+            if analysis:
+                annotate_layout_elements(
+                    inferred_document_layout=inferred_document_layout,
+                    extracted_layout=extracted_layout,
+                    filename=filename,
+                    output_dir_path=analyzed_image_output_dir_path,
+                    pdf_image_dpi=pdf_image_dpi,
+                    is_image=is_image,
+                )
+
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+            )
+
             final_document_layout = process_file_with_ocr(
                 filename,
                 merged_document_layout,
@@ -360,23 +361,27 @@ def _partition_pdf_or_image_local(
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
-        if hasattr(file, "seek"):
-            file.seek(0)
-
-        extracted_layout = (
-            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else []
-        )
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-        )
 
         if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
+            # NOTE(antonio): We shouldn't do PDFMiner with chipper
             final_document_layout = merged_document_layout
         else:
+            if hasattr(file, "seek"):
+                file.seek(0)
+
+            extracted_layout = (
+                process_data_with_pdfminer(file=file, dpi=pdf_image_dpi)
+                if pdf_text_extractable
+                else []
+            )
+
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+            )
+
             if hasattr(file, "seek"):
                 file.seek(0)
             final_document_layout = process_data_with_ocr(
@@ -390,7 +395,7 @@ def _partition_pdf_or_image_local(
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
-    if hi_res_model_name == "chipper":
+    if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
