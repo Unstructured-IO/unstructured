@@ -137,15 +137,20 @@ def _partition_code(
         file = io.BytesIO(bytes(text, "utf-8"))
 
     if file is not None:
-        filetype = detect_filetype(file=file)
+        filetype = FileType.UNK
+        if programming_language is None:
+            try:
+                filetype = detect_filetype(file=file, file_filename=metadata_filename)
+            except AttributeError:
+                raise RuntimeError("Unable to detect code file type")
+            finally:
+                if filetype not in FILETYPE_TO_LANG.keys():
+                    raise RuntimeError("Unable to detect code file type")
+                else:
+                    programming_language = FILETYPE_TO_LANG.get(filetype)
         file.seek(0)
         file_text = file.read()
         last_modification_date = get_last_modified_date_from_file(file)
-        if programming_language is None:
-            if filetype:
-                programming_language = FILETYPE_TO_LANG.get(filetype)
-            else:
-                raise RuntimeError("Unable to detect code file type")
 
     if min_partition is not None and len(file_text) < min_partition:
         min_partition = len(file_text)
