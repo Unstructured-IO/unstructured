@@ -264,27 +264,28 @@ def supplement_element_with_table_extraction(
     the table's text content is rendered into an html string.
     """
 
-    for element in elements:
-        if element.type == ElementType.TABLE:
-            padding = env_config.TABLE_IMAGE_CROP_PAD
-            padded_element = pad_element_bboxes(element, padding=padding)
-            cropped_image = image.crop(
-                (
-                    padded_element.bbox.x1,
-                    padded_element.bbox.y1,
-                    padded_element.bbox.x2,
-                    padded_element.bbox.y2,
-                ),
-            )
-            table_tokens = get_table_tokens(
-                extracted_regions=extracted_regions, image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent,
-            )
-            element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+    table_elements = [el for el in elements if el.type == ElementType.TABLE]
+    for element in table_elements:
+        padding = env_config.TABLE_IMAGE_CROP_PAD
+        padded_element = pad_element_bboxes(element, padding=padding)
+        cropped_image = image.crop(
+            (
+                padded_element.bbox.x1,
+                padded_element.bbox.y1,
+                padded_element.bbox.x2,
+                padded_element.bbox.y2,
+            ),
+        )
+        table_tokens = get_table_tokens(
+            image=cropped_image,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
+        )
+        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
 def get_table_tokens(
-    extracted_regions: List["TextRegion"],
     image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
