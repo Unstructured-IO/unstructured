@@ -43,6 +43,7 @@ all_tests=(
   # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
   # 'airtable-large.sh'
   'local-single-file.sh'
+  'local-single-file-basic-chunking.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
   'notion.sh'
@@ -53,6 +54,8 @@ all_tests=(
   'hubspot.sh'
   'local-embed.sh'
   'sftp.sh'
+  'mongodb.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(

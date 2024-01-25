@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, cast
+from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Tuple, cast
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final
@@ -343,9 +343,20 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     if not trs:
         return None
 
-    table_data = [[str(text) for text in tr.itertext()] for tr in trs]
+    def iter_cell_texts(tr: etree._Element) -> Iterator[str]:
+        """Generate the text of each cell in `tr`."""
+        # -- a cell can be either a "data" cell (td) or a "heading" cell (th) --
+        tds = cast(List[etree._Element], tr.xpath("./td | ./th"))
+        for td in tds:
+            # -- a cell can contain other elements like spans etc. so we can't count on the text
+            # -- being directly below the `<td>` element. `.itertext()` gets all of it recursively.
+            # -- Filter out whitespace text nodes that result from HTML formatting.
+            stripped_text_nodes = (t.strip() for t in cast(Iterator[str], td.itertext()))
+            yield " ".join(t for t in stripped_text_nodes if t)
+
+    table_data = [list(iter_cell_texts(tr)) for tr in trs]
     html_table = htmlify_matrix_of_cell_texts(table_data)
-    table_text = " ".join(" ".join(row) for row in table_data).strip()
+    table_text = " ".join(" ".join(t for t in row if t) for row in table_data).strip()
 
     if table_text == "":
         return None

@@ -61,10 +61,10 @@ def test_convert_pdf_to_image(
 
 
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
-@pytest.mark.parametrize("extract_to_payload", [False, True])
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_save_elements(
     element_category_to_save,
-    extract_to_payload,
+    extract_image_block_to_payload,
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -101,7 +101,7 @@ def test_save_elements(
             pdf_image_dpi=200,
             filename=filename,
             output_dir_path=str(tmpdir),
-            extract_to_payload=extract_to_payload,
+            extract_image_block_to_payload=extract_image_block_to_payload,
         )
 
         saved_elements = [el for el in elements if el.category == element_category_to_save]
@@ -110,7 +110,7 @@ def test_save_elements(
             expected_image_path = os.path.join(
                 str(tmpdir), f"{basename}-{el.metadata.page_number}-{i + 1}.jpg"
             )
-            if extract_to_payload:
+            if extract_image_block_to_payload:
                 assert isinstance(el.metadata.image_base64, str)
                 assert isinstance(el.metadata.image_mime_type, str)
                 assert not el.metadata.image_path
@@ -132,3 +132,12 @@ def test_write_image_raises_error():
 )
 def test_valid_text(text, outcome):
     assert pdf_image_utils.valid_text(text) == outcome
+
+
+def test_pad_bbox():
+    bbox = (100, 100, 200, 200)
+    padding = (10, 20)  # Horizontal padding 10, Vertical padding 20
+    expected = (90, 80, 210, 220)
+
+    result = pdf_image_utils.pad_bbox(bbox, padding)
+    assert result == expected

@@ -1128,9 +1128,11 @@ def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_lo
     assert expected_log in caplog.text
 
 
-def assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir):
+def assert_element_extraction(
+    elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+):
     extracted_elements = []
-    for el_type in extract_element_types:
+    for el_type in extract_image_block_types:
         extracted_elements_by_type = []
         for el in elements:
             if el.category == el_type:
@@ -1139,7 +1141,7 @@ def assert_element_extraction(elements, extract_element_types, extract_to_payloa
 
     for extracted_elements_by_type in extracted_elements:
         for i, el in enumerate(extracted_elements_by_type):
-            if extract_to_payload:
+            if extract_image_block_to_payload:
                 assert el.metadata.image_base64 is not None
                 assert el.metadata.image_mime_type == "image/jpeg"
                 image_data = base64.b64decode(el.metadata.image_base64)
@@ -1157,29 +1159,42 @@ def assert_element_extraction(elements, extract_element_types, extract_to_payloa
 
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb"])
-@pytest.mark.parametrize("extract_to_payload", [False, True])
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_partition_pdf_element_extraction(
     file_mode,
-    extract_to_payload,
+    extract_image_block_to_payload,
     filename=example_doc_path("embedded-images-tables.pdf"),
 ):
-    extract_element_types = ["Image", "Table"]
+    extract_image_block_types = ["Image", "Table"]
 
     with tempfile.TemporaryDirectory() as tmpdir:
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
-                extract_element_types=extract_element_types,
-                extract_to_payload=extract_to_payload,
-                image_output_dir_path=tmpdir,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                extract_image_block_output_dir=tmpdir,
             )
         else:
             with open(filename, "rb") as f:
                 elements = pdf.partition_pdf(
                     file=f,
-                    extract_element_types=extract_element_types,
-                    extract_to_payload=extract_to_payload,
-                    image_output_dir_path=tmpdir,
+                    extract_image_block_types=extract_image_block_types,
+                    extract_image_block_to_payload=extract_image_block_to_payload,
+                    extract_image_block_output_dir=tmpdir,
                 )
 
-        assert_element_extraction(elements, extract_element_types, extract_to_payload, tmpdir)
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
+
+
+def test_partition_pdf_always_keep_all_image_elements(
+    filename=example_doc_path("embedded-images.pdf"),
+):
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy="hi_res",
+    )
+    image_elements = [el for el in elements if el.category == ElementType.IMAGE]
+    assert len(image_elements) == 3

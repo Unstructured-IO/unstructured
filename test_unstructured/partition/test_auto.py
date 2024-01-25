@@ -1,13 +1,16 @@
 import json
 import os
 import pathlib
+import tempfile
 import warnings
 from importlib import import_module
 from unittest.mock import Mock, patch
 
 import docx
 import pytest
+from PIL import Image
 
+from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.partition.test_constants import (
     EXPECTED_TABLE,
     EXPECTED_TABLE_XLSX,
@@ -355,9 +358,9 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         include_page_breaks=False,
         infer_table_structure=False,
         extract_images_in_pdf=False,
-        extract_element_types=None,
-        image_output_dir_path=None,
-        extract_to_payload=False,
+        extract_image_block_types=None,
+        extract_image_block_output_dir=None,
+        extract_image_block_to_payload=False,
         hi_res_model_name=None,
     )
 
@@ -458,6 +461,26 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
     idx = 3
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
+
+
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_image_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.jpg"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
 
 
 @pytest.mark.parametrize(
@@ -666,6 +689,26 @@ def test_auto_filetype_overrides_file_specific(content_type, expected, monkeypat
     assert all(el.metadata.filetype == expected for el in elements)
 
 
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_auto_partition_pdf_element_extraction(
+    extract_image_block_to_payload,
+    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "embedded-images-tables.pdf"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        elements = partition(
+            filename=filename,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_to_payload=extract_image_block_to_payload,
+            extract_image_block_output_dir=tmpdir,
+        )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
+
+
 supported_filetypes = [
     _
     for _ in FileType
@@ -688,7 +731,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.EMPTY):
+    if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -1112,7 +1155,7 @@ def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     # the first table element is under 200 chars so doesn't get chunked!
     assert table_elements[0] == partitioned_table_elements_200_chars[0]
     assert len(partitioned_table_elements_200_chars[0].text) < 200
-    assert len(partitioned_table_elements_200_chars[1].text) == 200
+    assert len(partitioned_table_elements_200_chars[1].text) == 198
     assert len(partitioned_table_elements_200_chars[1].metadata.text_as_html) == 200
 
 
@@ -1223,3 +1266,20 @@ def test_partition_timeout_gets_routed():
     kwargs = mock_ocr_func.call_args.kwargs
     assert "request_timeout" in kwargs
     assert kwargs["request_timeout"] == 326
+
+
+def test_partition_image_with_bmp_with_auto(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = partition(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]

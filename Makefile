@@ -179,6 +179,10 @@ install-ingest-wikipedia:
 install-ingest-elasticsearch:
 	python3 -m pip install -r requirements/ingest/elasticsearch.txt
 
+.PHONY: install-ingest-opensearch
+install-ingest-opensearch:
+	python3 -m pip install -r requirements/ingest/opensearch.txt
+
 .PHONY: install-ingest-confluence
 install-ingest-confluence:
 	python3 -m pip install -r requirements/ingest/confluence.txt
@@ -230,6 +234,18 @@ install-ingest-qdrant:
 .PHONY: install-ingest-chroma
 install-ingest-chroma:
 	python3 -m pip install -r requirements/ingest/chroma.txt
+
+.PHONY: install-ingest-postgres
+install-ingest-postgres:
+	python3 -m pip install -r requirements/ingest/postgres.txt
+
+.PHONY: install-ingest-mongodb
+install-ingest-mongodb:
+	python3 -m pip install -r requirements/ingest/mongodb.txt
+
+.PHONY: install-ingest-databricks-volumes
+install-ingest-databricks-volumes:
+	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:

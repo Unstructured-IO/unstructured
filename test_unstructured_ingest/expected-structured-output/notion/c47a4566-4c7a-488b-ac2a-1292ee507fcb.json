@@ -114,7 +114,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "8298c3f1d0016deb9cbf44832c33480c",
+    "element_id": "2209179731e74e3b2e89ecdf777cae7c",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-04T18:31:00.000Z",
@@ -125,9 +125,9 @@
         "eng"
       ],
       "page_number": 1,
-      "text_as_html": "<table><tr><td><br/></td><td><br/>          column 1<br/></td><td><br/></td><td><br/>          column 2<br/></td><td><br/></td><td><br/>          pages<br/></td><td><br/></td></tr><tr><td><br/></td><td><br/>          c1r1 <br/></td><td><br/>            content <br/></td><td><br/></td><td><br/></td><td><br/>          c2r1 table <br/>          2023-08-08T09:00:00.000-04:00<br/>            cell<br/></td><td><br/></td><td><br/></td><td><br/>            Page with every block <br/></td><td><br/>           <br/></td><td><br/></td></tr><tr><td><br/></td><td><br/>          c1r2 more <br/></td><td><br/>            content<br/></td><td><br/></td><td><br/></td><td><br/>          c2r2 table <br/></td><td><br/>            cell<br/></td><td><br/></td><td><br/></td><td><br/></td><td><br/>            Untitled<br/></td><td><br/>           <br/></td><td><br/></td></tr><tr><td><br/></td><td><br/>          this is some green text<br/></td><td><br/></td><td><br/>          this is <br/></td><td><br/>            an <br/></td><td><br/></td><td><br/>            equation<br/></td><td><br/></td><td><br/></td><td><br/></td><td><br/>            Untitled<br/></td><td><br/>           <br/></td><td><br/></td></tr><tr><td><br/></td><td><br/>          text1<br/><br/><br/></td><td><br/>            text2<br/></td><td><br/>          <br/><br/>Multiline cell<br/></td><td><br/></td><td><br/>          Another cell  <br/></td><td><br/></td><td><br/></td><td><br/>            Untitled<br/></td><td><br/>           <br/></td><td><br/></td></tr></table>"
+      "text_as_html": "<table><tr><td>column 1</td><td>column 2</td><td>pages</td></tr><tr><td>c1r1 content</td><td>c2r1 table <br/>          2023-08-08T09:00:00.000-04:00<br/>            cell</td><td>Page with every block</td></tr><tr><td>c1r2 more content</td><td>c2r2 table cell</td><td>Untitled</td></tr><tr><td>this is some green text</td><td>this is an equation</td><td>Untitled</td></tr><tr><td>text1 text2 Multiline cell</td><td>Another cell</td><td>Untitled</td></tr></table>"
     },
-    "text": "column 1\n         \n         \n          column 2\n         \n         \n          pages\n         \n       \n         \n          c1r1 \n           \n            content \n           \n         \n         \n          c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell\n         \n         \n           \n            Page with every block \n           \n           \n         \n       \n         \n          c1r2 more \n           \n            content\n           \n         \n         \n          c2r2 table \n           \n            cell\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          this is some green text\n         \n         \n          this is \n           \n            an \n           \n           \n            equation\n           \n         \n         \n           \n            Untitled\n           \n           \n         \n       \n         \n          text1\n\n\n           \n            text2\n           \n          \n\nMultiline cell\n         \n         \n          Another cell  \n         \n         \n           \n            Untitled",
+    "text": "column 1 column 2 pages c1r1 content c2r1 table \n          2023-08-08T09:00:00.000-04:00\n            cell Page with every block c1r2 more content c2r2 table cell Untitled this is some green text this is an equation Untitled text1 text2 Multiline cell Another cell Untitled",
     "type": "Table"
   },
   {

@@ -1,0 +1,823 @@
+
+
+
+Code
+Symbol
+Name
+
+
+AED
+د.إ
+United Arab Emirates d
+
+
+AFN
+؋
+Afghan afghani
+
+
+ALL
+L
+Albanian lek
+
+
+AMD
+AMD
+Armenian dram
+
+
+ANG
+ƒ
+Netherlands Antillean gu
+
+
+AOA
+Kz
+Angolan kwanza
+
+
+ARS
+$
+Argentine peso
+
+
+AUD
+$
+Australian dollar
+
+
+AWG
+Afl.
+Aruban florin
+
+
+AZN
+AZN
+Azerbaijani manat
+
+
+BAM
+KM
+Bosnia and Herzegovina
+
+
+BBD
+$
+Barbadian dollar
+
+
+BDT
+৳
+Bangladeshi taka
+
+
+BGN
+лв.
+Bulgarian lev
+
+
+BHD
+.د.ب
+Bahraini dinar
+
+
+BIF
+Fr
+Burundian franc
+
+
+BMD
+$
+Bermudian dollar
+
+
+BND
+$
+Brunei dollar
+
+
+BOB
+Bs.
+Bolivian boliviano
+
+
+BRL
+R$
+Brazilian real
+
+
+BSD
+$
+Bahamian dollar
+
+
+BTC
+฿
+Bitcoin
+
+
+BTN
+Nu.
+Bhutanese ngultrum
+
+
+BWP
+P
+Botswana pula
+
+
+BYR
+Br
+Belarusian ruble (old)'
+
+
+BYN
+Br
+Belarusian ruble
+
+
+BZD
+$
+Belize dollar
+
+
+CAD
+$
+Canadian dollar
+
+
+CDF
+Fr
+Congolese franc
+
+
+CHF
+CHF
+Swiss franc
+
+
+CLP
+$
+Chilean peso
+
+
+CNY
+¥
+Chinese yuan
+
+
+COP
+$
+Colombian peso
+
+
+CRC
+₡
+Costa Rican colón
+
+
+CUC
+$
+Cuban convertible peso')
+
+
+CUP
+$
+Cuban peso
+
+
+CVE
+$
+Cape Verdean escudo
+
+
+CZK
+Kč
+Czech koruna
+
+
+DJF
+Fr
+Djiboutian franc
+
+
+DKK
+DKK
+Danish krone
+
+
+DOP
+RD$
+Dominican peso
+
+
+DZD
+د.ج
+Algerian dinar
+
+
+EGP
+EGP
+Egyptian pound
+
+
+ERN
+Nfk
+Eritrean nakfa
+
+
+ETB
+Br
+Ethiopian birr
+
+
+EUR
+€
+Euro
+
+
+FJD
+$
+Fijian dollar
+
+
+FKP
+£
+Falkland Islands pound')
+
+
+GBP
+£
+Pound sterling
+
+
+GEL
+₾
+Georgian lari
+
+
+GGP
+£
+Guernsey pound
+
+
+GHS
+₵
+Ghana cedi
+
+
+GIP
+£
+Gibraltar pound
+
+
+GMD
+D
+Gambian dalasi
+
+
+GNF
+Fr
+Guinean franc
+
+
+GTQ
+Q
+Guatemalan quetzal
+
+
+GYD
+$
+Guyanese dollar
+
+
+HKD
+$
+Hong Kong dollar
+
+
+HNL
+L
+Honduran lempira
+
+
+HRK
+kn
+Croatian kuna
+
+
+HTG
+G
+Haitian gourde
+
+
+HUF
+Ft
+Hungarian forint
+
+
+IDR
+Rp
+Indonesian rupiah
+
+
+ILS
+₪
+Israeli new shekel
+
+
+IMP
+£
+Manx pound
+
+
+INR
+₹
+Indian rupee
+
+
+IQD
+ع.د
+Iraqi dinar
+
+
+IRR
+﷼
+Iranian rial
+
+
+IRT
+تومان
+Iranian toman
+
+
+ISK
+kr.
+Icelandic króna
+
+
+JEP
+£
+Jersey pound
+
+
+JMD
+$
+Jamaican dollar
+
+
+JOD
+د.ا
+Jordanian dinar
+
+
+JPY
+¥
+Japanese yen
+
+
+KES
+KSh
+Kenyan shilling
+
+
+KGS
+сом
+Kyrgyzstani som
+
+
+KHR
+៛
+Cambodian riel
+
+
+KMF
+Fr
+Comorian franc
+
+
+KPW
+₩
+North Korean won
+
+
+KRW
+₩
+South Korean won
+
+
+KWD
+د.ك
+Kuwaiti dinar
+
+
+KYD
+$
+Cayman Islands dollar
+
+
+KZT
+₸
+Kazakhstani tenge
+
+
+LAK
+₭
+Lao kip
+
+
+LBP
+ل.ل
+Lebanese pound
+
+
+LKR
+රු
+Sri Lankan rupee
+
+
+LRD
+$
+Liberian dollar
+
+
+LSL
+L
+Lesotho loti
+
+
+LYD
+ل.د
+Libyan dinar
+
+
+MAD
+د.م.
+Moroccan dirham
+
+
+MDL
+MDL
+Moldovan leu
+
+
+MGA
+Ar
+Malagasy ariary
+
+
+MKD
+ден
+Macedonian denar
+
+
+MMK
+Ks
+Burmese kyat
+
+
+MNT
+₮
+Mongolian tögrög
+
+
+MOP
+P
+Macanese pataca
+
+
+MRU
+UM
+Mauritanian ouguiya
+
+
+MUR
+₨
+Mauritian rupee
+
+
+MVR
+.ރ
+Maldivian rufiyaa
+
+
+MWK
+MK
+Malawian kwacha
+
+
+MXN
+$
+Mexican peso
+
+
+MYR
+RM
+Malaysian ringgit
+
+
+MZN
+MT
+Mozambican metical
+
+
+NAD
+N$
+Namibian dollar
+
+
+NGN
+₦
+Nigerian naira
+
+
+NIO
+C$
+Nicaraguan córdoba
+
+
+NOK
+kr
+Norwegian krone
+
+
+NPR
+₨
+Nepalese rupee
+
+
+NZD
+$
+New Zealand dollar
+
+
+OMR
+ر.ع.
+Omani rial
+
+
+PAB
+B/.
+Panamanian balboa
+
+
+PEN
+S/
+Sol
+
+
+PGK
+K
+Papua New Guinean kina')
+
+
+PHP
+₱
+Philippine peso
+
+
+PKR
+₨
+Pakistani rupee
+
+
+PLN
+zł
+Polish złoty
+
+
+PRB
+р.
+Transnistrian ruble
+
+
+PYG
+₲
+Paraguayan guaraní
+
+
+QAR
+ر.ق
+Qatari riyal
+
+
+RON
+lei
+Romanian leu
+
+
+RSD
+рсд
+Serbian dinar
+
+
+RUB
+₽
+Russian ruble
+
+
+RWF
+Fr
+Rwandan franc
+
+
+SAR
+ر.س
+Saudi riyal
+
+
+SBD
+$
+Solomon Islands dollar')
+
+
+SCR
+₨
+Seychellois rupee
+
+
+SDG
+ج.س.
+Sudanese pound
+
+
+SEK
+kr
+Swedish krona
+
+
+SGD
+$
+Singapore dollar
+
+
+SHP
+£
+Saint Helena pound
+
+
+SLL
+Le
+Sierra Leonean leone
+
+
+SOS
+Sh
+Somali shilling
+
+
+SRD
+$
+Surinamese dollar
+
+
+SSP
+£
+South Sudanese pound
+
+
+STN
+Db
+São Tomé and Príncipe d
+
+
+SYP
+ل.س
+Syrian pound
+
+
+SZL
+L
+Swazi lilangeni
+
+
+THB
+฿
+Thai baht
+
+
+TJS
+ЅМ
+Tajikistani somoni
+
+
+TMT
+m
+Turkmenistan manat
+
+
+TND
+د.ت
+Tunisian dinar
+
+
+TOP
+T$
+Tongan paʻanga
+
+
+TRY
+₺
+Turkish lira
+
+
+TTD
+$
+Trinidad and Tobago doll
+
+
+TWD
+NT$
+New Taiwan dollar
+
+
+TZS
+Sh
+Tanzanian shilling
+
+
+UAH
+₴
+Ukrainian hryvnia
+
+
+UGX
+UGX
+Ugandan shilling
+
+
+USD
+$
+United States (US) dolla
+
+
+UYU
+$
+Uruguayan peso
+
+
+UZS
+UZS
+Uzbekistani som
+
+
+VEF
+Bs F
+Venezuelan bolívar
+
+
+VES
+Bs.S
+Bolívar soberano
+
+
+VND
+₫
+Vietnamese đồng
+
+
+VUV
+Vt
+Vanuatu vatu
+
+
+WST
+T
+Samoan tālā
+
+
+XAF
+CFA
+Central African CFA fr
+
+
+XCD
+$
+East Caribbean dollar
+
+
+XOF
+CFA
+West African CFA franc
+
+
+XPF
+Fr
+CFP franc
+
+
+YER
+﷼
+Yemeni rial
+
+
+ZAR
+R
+South African rand
+
+
+ZMW
+ZK
+Zambian kwacha
+
+

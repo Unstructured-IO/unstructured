@@ -5,6 +5,8 @@ from unstructured.documents.elements import (
     PageBreak,
 )
 from unstructured.partition.lang import (
+    _clean_ocr_languages_arg,
+    _convert_language_code_to_pytesseract_lang_code,
     apply_lang_metadata,
     detect_languages,
     prepare_languages_for_tesseract,
@@ -112,3 +114,35 @@ def test_apply_lang_metadata_has_no_warning_for_PageBreak(caplog):
         ),
     )
     assert "No features in text." not in [rec.message for rec in caplog.records]
+
+
+@pytest.mark.parametrize(
+    ("lang_in", "expected_lang"),
+    [
+        ("en", "eng"),
+        ("fr", "fra"),
+    ],
+)
+def test_convert_language_code_to_pytesseract_lang_code(lang_in, expected_lang):
+    assert expected_lang == _convert_language_code_to_pytesseract_lang_code(lang_in)
+
+
+@pytest.mark.parametrize(
+    ("input_ocr_langs", "expected"),
+    [
+        (["eng"], "eng"),  # list
+        ('"deu"', "deu"),  # extra quotation marks
+        ("[deu]", "deu"),  # brackets
+        ("['deu']", "deu"),  # brackets and quotation marks
+        (["[deu]"], "deu"),  # list, brackets and quotation marks
+        (['"deu"'], "deu"),  # list and quotation marks
+        ("deu+spa", "deu+spa"),  # correct input
+    ],
+)
+def test_clean_ocr_languages_arg(input_ocr_langs, expected):
+    assert _clean_ocr_languages_arg(input_ocr_langs) == expected
+
+
+def test_detect_languages_handles_spelled_out_languages():
+    languages = detect_languages(text="Sample text longer than 5 words.", languages=["Spanish"])
+    assert languages == ["spa"]

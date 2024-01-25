@@ -1,14 +1,14 @@
-import json
+import copy
 import typing as t
 import uuid
 from dataclasses import dataclass
 
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -31,8 +31,8 @@ class SimpleChromaConfig(BaseConnectorConfig):
     access_config: ChromaAccessConfig
     collection_name: str
     path: t.Optional[str] = None
-    tenant: t.Optional[str] = None
-    database: t.Optional[str] = None
+    tenant: t.Optional[str] = "default_tenant"
+    database: t.Optional[str] = "default_database"
     host: t.Optional[str] = None
     port: t.Optional[int] = None
     ssl: bool = False
@@ -61,6 +61,18 @@ class ChromaDestinationConnector(BaseDestinationConnector):
     @DestinationConnectionError.wrap
     def check_connection(self):
         _ = self.chroma_collection
+
+    def to_dict(self, **kwargs):
+        """
+        The _collection variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle 'module' object
+        When serializing, remove it, meaning collection data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_collection"):
+            setattr(self_cp, "_collection", None)
+        return _asdict(self_cp, **kwargs)
 
     @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self) -> "ChromaCollection":
@@ -126,32 +138,20 @@ class ChromaDestinationConnector(BaseDestinationConnector):
         )
         return chroma_dict
 
-    def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        logger.info(f"Inserting / updating {len(dict_list)} documents to destination ")
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
         chroma_batch_size = self.write_config.batch_size
 
-        for chunk in chunk_generator(dict_list, chroma_batch_size):
+        for chunk in chunk_generator(elements_dict, chroma_batch_size):
             self.upsert_batch(self.prepare_chroma_list(chunk))
 
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        dict_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                dict_content = json.load(json_file)
-
-                dict_content = [
-                    {
-                        "id": str(uuid.uuid4()),
-                        "embedding": element.pop("embeddings", None),
-                        "document": element.pop("text", None),
-                        "metadata": flatten_dict(element, separator="-", flatten_lists=True),
-                    }
-                    for element in dict_content
-                ]
-                logger.info(
-                    f"Extending {len(dict_content)} json elements from content in {local_path}",
-                )
-                dict_list.extend(dict_content)
-        self.write_dict(dict_list=dict_list)
+    def normalize_dict(self, element_dict: dict) -> dict:
+        return {
+            "id": str(uuid.uuid4()),
+            "embedding": element_dict.pop("embeddings", None),
+            "document": element_dict.pop("text", None),
+            "metadata": flatten_dict(
+                element_dict, separator="-", flatten_lists=True, remove_none=True
+            ),
+        }

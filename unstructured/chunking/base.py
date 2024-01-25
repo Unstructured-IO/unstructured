@@ -33,6 +33,20 @@ from unstructured.documents.elements import (
 )
 from unstructured.utils import lazyproperty
 
+# -- CONSTANTS -----------------------------------
+
+CHUNK_MAX_CHARS_DEFAULT: int = 500
+"""Hard-max chunk-length when no explicit value specified in `max_characters` argument."""
+
+CHUNK_MULTI_PAGE_DEFAULT: bool = True
+"""When False, respect page-boundaries (no two elements from different page in same chunk).
+
+Only operative for "by_title" chunking strategy.
+w"""
+
+
+# -- TYPES ---------------------------------------
+
 BoundaryPredicate: TypeAlias = Callable[[Element], bool]
 """Detects when element represents crossing a semantic boundary like section or page."""
 
@@ -77,6 +91,10 @@ class ChunkingOptions:
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
         where an oversized element is divided into multiple chunks by text-splitting.
+    overlap_all
+        Default: `False`. When `True`, apply overlap between "normal" chunks formed from whole
+        elements and not subject to text-splitting. Use this with caution as it entails a certain
+        level of "pollution" of otherwise clean semantic chunk boundaries.
     text_splitting_separators
         A sequence of strings like `("\n", " ")` to be used as target separators during
         text-splitting. Text-splitting only applies to splitting an oversized element into two or
@@ -90,28 +108,31 @@ class ChunkingOptions:
     def __init__(
         self,
         combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = 500,
-        multipage_sections: bool = True,
+        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
+        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
-        text_splitting_separators: Sequence[str] = (),
+        overlap_all: bool = False,
+        text_splitting_separators: Sequence[str] = ("\n", " "),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
         self._max_characters = max_characters
         self._multipage_sections = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
         self._overlap = overlap
+        self._overlap_all = overlap_all
         self._text_splitting_separators = text_splitting_separators
 
     @classmethod
     def new(
         cls,
         combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = 500,
-        multipage_sections: bool = True,
+        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
+        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
         new_after_n_chars: Optional[int] = None,
         overlap: int = 0,
-        text_splitting_separators: Sequence[str] = (),
+        overlap_all: bool = False,
+        text_splitting_separators: Sequence[str] = ("\n", " "),
     ) -> Self:
         """Construct validated instance.
 
@@ -123,6 +144,7 @@ class ChunkingOptions:
             multipage_sections,
             new_after_n_chars,
             overlap,
+            overlap_all,
             text_splitting_separators,
         )
         self._validate()
@@ -158,6 +180,15 @@ class ChunkingOptions:
         process.
         """
         return self._max_characters
+
+    @lazyproperty
+    def inter_chunk_overlap(self) -> int:
+        """Characters of overlap to add between chunks.
+
+        This applies only to boundaries between chunks formed from whole elements and not to
+        text-splitting boundaries that arise from splitting an oversized element.
+        """
+        return self.overlap if self._overlap_all else 0
 
     @lazyproperty
     def multipage_sections(self) -> bool:
@@ -444,22 +475,24 @@ class BasePreChunker:
 class TablePreChunk:
     """A pre-chunk composed of a single Table element."""
 
-    def __init__(self, table: Table, opts: ChunkingOptions) -> None:
+    def __init__(self, table: Table, overlap_prefix: str, opts: ChunkingOptions) -> None:
         self._table = table
+        self._overlap_prefix = overlap_prefix
         self._opts = opts
 
     def iter_chunks(self) -> Iterator[Table | TableChunk]:
         """Split this pre-chunk into `Table` or `TableChunk` objects maxlen or smaller."""
-        split = self._opts.split
-        text_remainder = self._table.text
-        html_remainder = self._table.metadata.text_as_html or ""
         maxlen = self._opts.hard_max
+        text_remainder = self._text
+        html_remainder = self._table.metadata.text_as_html or ""
 
         # -- only chunk a table when it's too big to swallow whole --
         if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
-            yield self._table
+            # -- but the overlap-prefix must be added to its text --
+            yield Table(text=text_remainder, metadata=copy.deepcopy(self._table.metadata))
             return
 
+        split = self._opts.split
         is_continuation = False
 
         while text_remainder or html_remainder:
@@ -481,6 +514,25 @@ class TablePreChunk:
 
             is_continuation = True
 
+    @lazyproperty
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text[-overlap:].strip() if overlap else ""
+
+    @lazyproperty
+    def _text(self) -> str:
+        """The text for this chunk, including the overlap-prefix when present."""
+        overlap_prefix = self._overlap_prefix
+        table_text = self._table.text
+        # -- use row-separator between overlap and table-text --
+        return overlap_prefix + "\n" + table_text if overlap_prefix else table_text
+
 
 class TextPreChunk:
     """A sequence of elements that belong to the same semantic unit within a document.
@@ -492,18 +544,39 @@ class TextPreChunk:
     This object is purposely immutable.
     """
 
-    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions) -> None:
+    def __init__(
+        self, elements: Iterable[Element], overlap_prefix: str, opts: ChunkingOptions
+    ) -> None:
         self._elements = list(elements)
+        self._overlap_prefix = overlap_prefix
         self._opts = opts
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, TextPreChunk):
             return False
-        return self._elements == other._elements
+        return self._overlap_prefix == other._overlap_prefix and self._elements == other._elements
+
+    def can_combine(self, pre_chunk: TextPreChunk) -> bool:
+        """True when `pre_chunk` can be combined with this one without exceeding size limits."""
+        if len(self._text) >= self._opts.combine_text_under_n_chars:
+            return False
+        # -- avoid duplicating length computations by doing a trial-combine which is just as
+        # -- efficient and definitely more robust than hoping two different computations of combined
+        # -- length continue to get the same answer as the code evolves. Only possible because
+        # -- `.combine()` is non-mutating.
+        combined_len = len(self.combine(pre_chunk)._text)
+
+        return combined_len <= self._opts.hard_max
 
     def combine(self, other_pre_chunk: TextPreChunk) -> TextPreChunk:
         """Return new `TextPreChunk` that combines this and `other_pre_chunk`."""
-        return TextPreChunk(self._elements + other_pre_chunk._elements, opts=self._opts)
+        # -- combined pre-chunk gets the overlap-prefix of the first pre-chunk. The second overlap
+        # -- is automatically incorporated at the end of the first chunk, where it originated.
+        return TextPreChunk(
+            self._elements + other_pre_chunk._elements,
+            overlap_prefix=self._overlap_prefix,
+            opts=self._opts,
+        )
 
     def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
@@ -517,10 +590,15 @@ class TextPreChunk:
             yield CompositeElement(text=s, metadata=metadata)
 
     @lazyproperty
-    def text_length(self) -> int:
-        """Length of concatenated text of this pre-chunk, including separators."""
-        # -- used by pre-chunk-combiner to identify combination candidates --
-        return len(self._text)
+    def overlap_tail(self) -> str:
+        """The portion of this chunk's text to be repeated as a prefix in the next chunk.
+
+        This value is the empty-string ("") when either the `.overlap` length option is `0` or
+        `.overlap_all` is `False`. When there is a text value, it is stripped of both leading and
+        trailing whitespace.
+        """
+        overlap = self._opts.inter_chunk_overlap
+        return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
     def _all_metadata_values(self) -> Dict[str, List[Any]]:
@@ -579,15 +657,15 @@ class TextPreChunk:
         """
         chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
         separator_len = len(self._opts.text_separator)
-        running_text_len = 0
-        start_offset = 0
+        running_text_len = len(self._overlap_prefix) if self._overlap_prefix else 0
+        start_offset = running_text_len
 
         for element in self._elements:
             text_len = len(element.text)
             # -- skip empty elements like `PageBreak("")` --
             if not text_len:
                 continue
-            # -- account for blank line between "squashed" elements, but not before first element --
+            # -- account for blank line between "squashed" elements, but not at start of text --
             running_text_len += separator_len if running_text_len else 0
             start_offset = running_text_len
             running_text_len += text_len
@@ -606,6 +684,18 @@ class TextPreChunk:
                 chunk_regex_metadata[regex_name] = chunk_matches
 
         return chunk_regex_metadata
+
+    def _iter_text_segments(self) -> Iterator[str]:
+        """Generate overlap text and each element text segment in order.
+
+        Empty text segments are not included.
+        """
+        if self._overlap_prefix:
+            yield self._overlap_prefix
+        for e in self._elements:
+            if not e.text:
+                continue
+            yield e.text
 
     @lazyproperty
     def _meta_kwargs(self) -> Dict[str, Any]:
@@ -651,7 +741,7 @@ class TextPreChunk:
         Each element-text is separated from the next by a blank line ("\n\n").
         """
         text_separator = self._opts.text_separator
-        return text_separator.join(e.text for e in self._elements if e.text)
+        return text_separator.join(self._iter_text_segments())
 
 
 # ================================================================================================
@@ -683,6 +773,8 @@ class PreChunkBuilder:
         self._separator_len = len(opts.text_separator)
         self._elements: List[Element] = []
 
+        # -- overlap is only between pre-chunks so starts empty --
+        self._overlap_prefix: str = ""
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
         self._text_segments: List[str] = []
         # -- combined length of text-segments, not including separators --
@@ -706,14 +798,14 @@ class PreChunkBuilder:
             return
 
         pre_chunk = (
-            TablePreChunk(self._elements[0], self._opts)
+            TablePreChunk(self._elements[0], self._overlap_prefix, self._opts)
             if isinstance(self._elements[0], Table)
             # -- copy list, don't use original or it may change contents as builder proceeds --
-            else TextPreChunk(list(self._elements), self._opts)
+            else TextPreChunk(list(self._elements), self._overlap_prefix, self._opts)
         )
         # -- clear builder before yield so we're not sensitive to the timing of how/when this
         # -- iterator is exhausted and can add elements for the next pre-chunk immediately.
-        self._reset_state()
+        self._reset_state(pre_chunk.overlap_tail)
         yield pre_chunk
 
     def will_fit(self, element: Element) -> bool:
@@ -735,7 +827,7 @@ class PreChunkBuilder:
         if isinstance(element, Table):
             return False
         # -- no element will fit in a pre-chunk that already contains a `Table` element --
-        if self._elements and isinstance(self._elements[0], Table):
+        if isinstance(self._elements[0], Table):
             return False
         # -- a pre-chunk that already exceeds the soft-max is considered "full" --
         if self._text_length > self._opts.soft_max:
@@ -752,11 +844,12 @@ class PreChunkBuilder:
         separators_len = self._separator_len * len(self._text_segments)
         return self._opts.hard_max - self._text_len - separators_len
 
-    def _reset_state(self) -> None:
+    def _reset_state(self, overlap_prefix: str) -> None:
         """Set working-state values back to "empty", ready to accumulate next pre-chunk."""
+        self._overlap_prefix = overlap_prefix
         self._elements.clear()
-        self._text_segments.clear()
-        self._text_len = 0
+        self._text_segments = [overlap_prefix] if overlap_prefix else []
+        self._text_len = len(overlap_prefix)
 
     @property
     def _text_length(self) -> int:
@@ -786,25 +879,19 @@ class PreChunkCombiner:
     def iter_combined_pre_chunks(self) -> Iterator[PreChunk]:
         """Generate pre-chunk objects, combining TextPreChunk objects when they'll fit in window."""
         accum = TextPreChunkAccumulator(self._opts)
-        combine_text_under_n_chars = self._opts.combine_text_under_n_chars
 
         for pre_chunk in self._pre_chunks:
-            # -- start new pre-chunk under these conditions --
-            if (
-                # -- a table pre-chunk is never combined --
-                isinstance(pre_chunk, TablePreChunk)
-                # -- don't add another pre-chunk once length has reached combination soft-max --
-                or accum.text_length >= combine_text_under_n_chars
-                # -- combining would exceed hard-max --
-                or accum.remaining_space < pre_chunk.text_length
-            ):
+            # -- a table pre-chunk is never combined --
+            if isinstance(pre_chunk, TablePreChunk):
+                yield from accum.flush()
+                yield pre_chunk
+                continue
+
+            # -- finish accumulating pre-chunk when it's full --
+            if not accum.will_fit(pre_chunk):
                 yield from accum.flush()
 
-            # -- a table pre-chunk is never combined so don't accumulate --
-            if isinstance(pre_chunk, TablePreChunk):
-                yield pre_chunk
-            else:
-                accum.add_pre_chunk(pre_chunk)
+            accum.add_pre_chunk(pre_chunk)
 
         yield from accum.flush()
 
@@ -833,51 +920,39 @@ class TextPreChunkAccumulator:
 
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
-        self._pre_chunks: List[TextPreChunk] = []
+        self._pre_chunk: Optional[TextPreChunk] = None
 
     def add_pre_chunk(self, pre_chunk: TextPreChunk) -> None:
         """Add a pre-chunk to the accumulator for possible combination with next pre-chunk."""
-        self._pre_chunks.append(pre_chunk)
-
-    def flush(self) -> Iterator[TextPreChunk]:
-        """Generate all accumulated pre-chunks as a single combined pre-chunk."""
-        pre_chunks = self._pre_chunks
-
-        # -- nothing to do if no pre-chunks have been accumulated --
-        if not pre_chunks:
-            return
-
-        # -- otherwise combine all accumulated pre-chunk into one --
-        pre_chunk = pre_chunks[0]
-        for other_pre_chunk in pre_chunks[1:]:
-            pre_chunk = pre_chunk.combine(other_pre_chunk)
-        yield pre_chunk
-
-        # -- and reset the accumulator (to empty) --
-        pre_chunks.clear()
-
-    @property
-    def remaining_space(self) -> int:
-        """Maximum size of pre-chunk that can be added without exceeding maxlen."""
-        maxlen = self._opts.hard_max
-        return (
-            maxlen
-            if not self._pre_chunks
-            # -- an additional pre-chunk will also incur an additional separator --
-            else maxlen - self.text_length - len(self._opts.text_separator)
+        self._pre_chunk = (
+            pre_chunk if self._pre_chunk is None else self._pre_chunk.combine(pre_chunk)
         )
 
-    @property
-    def text_length(self) -> int:
-        """Size of concatenated text in all pre-chunks in accumulator."""
-        n = len(self._pre_chunks)
+    def flush(self) -> Iterator[TextPreChunk]:
+        """Generate accumulated pre-chunk as a single combined pre-chunk.
 
-        if n == 0:
-            return 0
+        Does not generate a pre-chunk when none has been accumulated.
+        """
+        # -- nothing to do if no pre-chunk has been accumulated --
+        if not self._pre_chunk:
+            return
+        # -- otherwise generate the combined pre-chunk --
+        yield self._pre_chunk
+        # -- and reset the accumulator (to empty) --
+        self._pre_chunk = None
 
-        total_text_length = sum(s.text_length for s in self._pre_chunks)
-        total_separator_length = len(self._opts.text_separator) * (n - 1)
-        return total_text_length + total_separator_length
+    def will_fit(self, pre_chunk: TextPreChunk) -> bool:
+        """True when there is room for `pre_chunk` in accumulator.
+
+        An empty accumulator always has room. Otherwise there is only room when `pre_chunk` can be
+        combined with any other pre-chunks in the accumulator without exceeding the combination
+        limits specified for the chunking run.
+        """
+        # -- an empty accumulator always has room --
+        if self._pre_chunk is None:
+            return True
+
+        return self._pre_chunk.can_combine(pre_chunk)
 
 
 # ================================================================================================

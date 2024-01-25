@@ -1,4 +1,101 @@
-## 0.11.7-dev5
+## 0.12.3-dev5
+
+### Enhancements
+
+* **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
+  MongoDB connector.
+
+### Features
+
+* **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
+
+### Fixes
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper** 
+* **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
+  files as text.
+* **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
+* **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
+* **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
+
+## 0.12.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix index error in table processing.** Bumps the `unstructured-inference` version to address and
+  index error that occurs on some tables in the table transformer object.
+
+## 0.12.1
+
+### Enhancements
+
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
+* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+  `partition`, `partition_image`, and `detect_filetype`.
+* **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
+* **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
+* **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
+* **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
+* **Update documentation**: (i) added verbiage about the free API cap limit, (ii) added deprecation warning on ``Staging`` bricks in favor of ``Destination Connectors``, (iii) added warning and code examples to use the SaaS API Endpoints using CLI-vs-SDKs, (iv) fixed example pages formatting, (v) added deprecation on ``model_name`` in favor of ``hi_res_model_name``, (vi) added ``extract_images_in_pdf`` usage in ``partition_pdf`` section, (vii) reorganize and improve the documentation introduction section, and (viii) added PDF table extraction best practices.
+* **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
+* **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
+* **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
+* **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
+
+### Features
+* **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
+* **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
+
+### Fixes
+
+* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
+* **Pin version of unstructured-client** Set minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
+* **Fix the serialization of the Pinecone destination connector.** Presence of the PineconeIndex object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
+* **Fix flatten_dict to be able to flatten tuples inside dicts** Update flatten_dict function to support flattening tuples inside dicts. This is necessary for objects like Coordinates, when the object is not written to the disk, therefore not being converted to a list before getting flattened (still being a tuple).
+* **Fix the serialization of the Chroma destination connector.** Presence of the ChromaCollection object breaks serialization due to TypeError: cannot pickle 'module' object. This removes that object before serialization.
+* **Fix fsspec connectors returning version as integer.** Connector data source versions should always be string values, however we were using the integer checksum value for the version for fsspec connectors. This casts that value to a string.
+
+## 0.12.0
+
+### Enhancements
+
+* **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
+
+## 0.11.9
+
+### Enhancements
+
+* **Rename kwargs related to extracting image blocks** Rename the kwargs related to extracting image blocks for consistency and API usage.
+
+### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+
+### Fixes
+
+* **Handle users providing fully spelled out languages** Occasionally some users are defining the `languages` param as a fully spelled out language instead of a language code. This adds a dictionary for common languages so those small mistakes are caught and silently fixed.
+* **Fix unequal row-length in HTMLTable.text_as_html.** Fixes to other aspects of partition_html() in v0.11 allowed unequal cell-counts in table rows. Make the cells in each row correspond 1:1 with cells in the original table row. This fix also removes "noise" cells resulting from HTML-formatting whitespace and eliminates the "column-shifting" of cells that previously resulted from noise-cells.
+* **Fix MongoDB connector URI password redaction.** MongoDB documentation states that characters `$ : / ? # [ ] @` must be percent encoded. URIs with password containing such special character were not redacted.
+
+## 0.11.8
+
+### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+* **Add inter-chunk overlap capability.** Implement overlap between chunks. This applies to all chunks prior to any text-splitting of oversized chunks so is a distinct behavior; overlap at text-splits of oversized chunks is independent of inter-chunk overlap (distinct chunk boundaries) and can be requested separately. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap_all` kwarg on partition functions.
+
+### Features
+
+### Fixes
+
+## 0.11.7
 
 ### Enhancements
 
@@ -12,9 +109,9 @@
 
 ### Fixes
 
-* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper** 
-
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
 * **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
 
 ## 0.11.6
 

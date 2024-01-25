@@ -141,6 +141,15 @@ class DescribeChunkingOptions:
 
         assert opts.soft_max == 444
 
+    def it_knows_how_much_overlap_to_apply_to_split_chunks(self):
+        assert ChunkingOptions.new(overlap=10).overlap == 10
+
+    def and_it_uses_the_same_value_for_inter_chunk_overlap_when_asked_to_overlap_all_chunks(self):
+        assert ChunkingOptions.new(overlap=10, overlap_all=True).inter_chunk_overlap == 10
+
+    def but_it_does_not_overlap_pre_chunks_by_default(self):
+        assert ChunkingOptions.new(overlap=10).inter_chunk_overlap == 0
+
     def it_knows_the_text_separator_string(self):
         assert ChunkingOptions.new().text_separator == "\n\n"
 
@@ -327,6 +336,7 @@ class DescribeTablePreChunk:
         text_table = "Header Col 1  Header Col 2\n" "Lorem ipsum   adipiscing"
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="ctus porta volutpat.",
             opts=ChunkingOptions.new(max_characters=175),
         )
 
@@ -334,7 +344,9 @@ class DescribeTablePreChunk:
 
         chunk = next(chunk_iter)
         assert isinstance(chunk, Table)
-        assert chunk.text == "Header Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        assert chunk.text == (
+            "ctus porta volutpat.\nHeader Col 1  Header Col 2\nLorem ipsum   adipiscing"
+        )
         assert chunk.metadata.text_as_html == (
             "<table>\n"
             "<thead>\n"
@@ -373,6 +385,7 @@ class DescribeTablePreChunk:
         )
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
+            overlap_prefix="",
             opts=ChunkingOptions.new(max_characters=100, text_splitting_separators=("\n", " ")),
         )
 
@@ -424,9 +437,85 @@ class DescribeTablePreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
+    @pytest.mark.parametrize(
+        ("text", "expected_value"),
+        [
+            # -- normally it splits exactly on overlap size  |------- 20 -------|
+            ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
+            # -- but it strips leading and trailing whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus   porta volutpat.  ", "porta volutpat."),
+        ],
+    )
+    def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
+        self, text: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix="", opts=ChunkingOptions.new(overlap=20, overlap_all=True)
+        )
+        assert pre_chunk.overlap_tail == expected_value
+
+    @pytest.mark.parametrize(
+        ("text", "overlap_prefix", "expected_value"),
+        [
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "",
+                "In rhoncus ipsum sed lectus porta volutpat.",
+            ),
+            (
+                "In rhoncus ipsum sed lectus porta volutpat.",
+                "ctus porta volutpat.",
+                "ctus porta volutpat.\nIn rhoncus ipsum sed lectus porta volutpat.",
+            ),
+        ],
+    )
+    def it_includes_its_overlap_prefix_in_its_text_when_present(
+        self, text: str, overlap_prefix: str, expected_value: str
+    ):
+        pre_chunk = TablePreChunk(
+            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions.new()
+        )
+        assert pre_chunk._text == expected_value
+
 
 class DescribeTextPreChunk:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
+
+    @pytest.mark.parametrize(
+        ("max_characters", "combine_text_under_n_chars", "expected_value"),
+        [
+            # Will exactly fit:
+            # - Prefix + separator + text = 20 + 2 + 50 = 72 < combine_text_under_n_chars
+            # - pre_chunk + separator + next_pre_chunk_text = 72 + 2 + 26 = 100 <= max_characters
+            (100, 73, True),
+            # -- already exceeds combine_text_under_n_chars threshold --
+            (100, 72, False),
+            # -- would exceeds hard-max chunking-window threshold --
+            (99, 73, False),
+        ],
+    )
+    def it_knows_when_it_can_combine_itself_with_another_TextPreChunk_instance(
+        self, max_characters: int, combine_text_under_n_chars: int, expected_value: bool
+    ):
+        """This allows `PreChunkCombiner` to operate without knowing `TextPreChunk` internals."""
+        opts = ChunkingOptions.new(
+            max_characters=max_characters,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            overlap=20,
+            overlap_all=True,
+        )
+        pre_chunk = TextPreChunk(
+            [Text("Lorem ipsum dolor sit amet consectetur adipiscing.")],  # len == 50
+            overlap_prefix="e feugiat efficitur.",  # len == 20
+            opts=opts,
+        )
+        next_pre_chunk = TextPreChunk(
+            [Text("In rhoncus sum sed lectus.")],  # len == 26
+            overlap_prefix="sectetur adipiscing.",  # len == 20 but shouldn't come into computation
+            opts=opts,
+        )
+
+        assert pre_chunk.can_combine(next_pre_chunk) is expected_value
 
     def it_can_combine_itself_with_another_TextPreChunk_instance(self):
         """.combine() produces a new pre-chunk by appending the elements of `other_pre-chunk`.
@@ -439,6 +528,7 @@ class DescribeTextPreChunk:
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
             ],
+            overlap_prefix="feugiat efficitur.",
             opts=opts,
         )
         other_pre_chunk = TextPreChunk(
@@ -446,11 +536,16 @@ class DescribeTextPreChunk:
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
             ],
+            overlap_prefix="porta volupat.",
             opts=opts,
         )
 
         new_pre_chunk = pre_chunk.combine(other_pre_chunk)
 
+        # -- Combined pre-chunk contains all elements from both, in order. It gets the
+        # -- overlap-prefix from the existing pre-chunk and the other overlap-prefix is discarded
+        # -- (although it's still in there at the end of the first pre-chunk since that's where it
+        # -- came from originally).
         assert new_pre_chunk == TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -458,13 +553,17 @@ class DescribeTextPreChunk:
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
             ],
+            overlap_prefix="feugiat efficitur.",
             opts=opts,
         )
+        # -- Neither pre-chunk used for combining is mutated, so we don't have to worry about who
+        # -- else may have been given a reference to them.
         assert pre_chunk == TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 Text("In rhoncus ipsum sed lectus porta volutpat."),
             ],
+            overlap_prefix="feugiat efficitur.",
             opts=opts,
         )
         assert other_pre_chunk == TextPreChunk(
@@ -472,6 +571,7 @@ class DescribeTextPreChunk:
                 Text("Donec semper facilisis metus finibus malesuada."),
                 Text("Vivamus magna nibh, blandit eu dui congue, feugiat efficitur velit."),
             ],
+            overlap_prefix="porta volupat.",
             opts=opts,
         )
 
@@ -481,9 +581,10 @@ class DescribeTextPreChunk:
                 Title("Introduction"),
                 Text(
                     "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                    "lectus porta volutpat.",
+                    " lectus porta volutpat.",
                 ),
             ],
+            overlap_prefix="e feugiat efficitur.",
             opts=ChunkingOptions.new(max_characters=200),
         )
 
@@ -491,8 +592,8 @@ class DescribeTextPreChunk:
 
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
-            "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
-            " In rhoncus ipsum sedlectus porta volutpat.",
+            "e feugiat efficitur.\n\nIntroduction\n\nLorem ipsum dolor sit amet consectetur"
+            " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
 
@@ -508,6 +609,7 @@ class DescribeTextPreChunk:
                     " commodo consequat."
                 ),
             ],
+            overlap_prefix="",
             opts=ChunkingOptions.new(max_characters=200, text_splitting_separators=("\n", " ")),
         )
 
@@ -528,12 +630,22 @@ class DescribeTextPreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
-    def it_knows_the_length_of_the_combined_text_of_its_elements_which_is_the_chunk_size(self):
-        """.text_length is the size of chunk this pre-chunk will produce (before any splitting)."""
+    @pytest.mark.parametrize(
+        ("text", "expected_value"),
+        [
+            # -- normally it splits exactly on overlap size  |------- 20 -------|
+            ("In rhoncus ipsum sed lectus porta volutpat.", "ctus porta volutpat."),
+            # -- but it strips leading and trailing whitespace when the tail includes it --
+            ("In rhoncus ipsum sed lectus   porta volutpat.  ", "porta volutpat."),
+        ],
+    )
+    def it_computes_its_overlap_tail_for_use_in_inter_pre_chunk_overlap(
+        self, text: str, expected_value: str
+    ):
         pre_chunk = TextPreChunk(
-            [PageBreak(""), Text("foo"), Text("bar")], opts=ChunkingOptions.new()
+            [Text(text)], overlap_prefix="", opts=ChunkingOptions.new(overlap=20, overlap_all=True)
         )
-        assert pre_chunk.text_length == 8
+        assert pre_chunk.overlap_tail == expected_value
 
     def it_extracts_all_populated_metadata_values_from_the_elements_to_help(self):
         pre_chunk = TextPreChunk(
@@ -557,6 +669,7 @@ class DescribeTextPreChunk:
                     ),
                 ),
             ],
+            overlap_prefix="",
             opts=ChunkingOptions.new(),
         )
 
@@ -594,6 +707,7 @@ class DescribeTextPreChunk:
                 Title("Lorem Ipsum", metadata=metadata),
                 Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
             ],
+            overlap_prefix="",
             opts=ChunkingOptions.new(),
         )
 
@@ -636,17 +750,18 @@ class DescribeTextPreChunk:
                     ),
                 ),
             ],
+            overlap_prefix="ficitur.",  # len == 8
             opts=ChunkingOptions.new(),
         )
 
         regex_metadata = pre_chunk._consolidated_regex_meta
 
         assert regex_metadata == {
-            "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
+            "dolor": [RegexMetadata(text="dolor", start=35, end=40)],
             "ipsum": [
-                RegexMetadata(text="Ipsum", start=6, end=11),
-                RegexMetadata(text="ipsum", start=19, end=24),
-                RegexMetadata(text="ipsum", start=81, end=86),
+                RegexMetadata(text="Ipsum", start=16, end=21),
+                RegexMetadata(text="ipsum", start=29, end=34),
+                RegexMetadata(text="ipsum", start=91, end=96),
             ],
         }
 
@@ -691,6 +806,7 @@ class DescribeTextPreChunk:
                     ),
                 ),
             ],
+            overlap_prefix="",
             opts=ChunkingOptions.new(),
         )
 
@@ -711,23 +827,25 @@ class DescribeTextPreChunk:
         }
 
     @pytest.mark.parametrize(
-        ("elements", "expected_value"),
+        ("elements", "overlap_prefix", "expected_value"),
         [
-            ([Text("foo"), Text("bar")], "foo\n\nbar"),
-            ([Text("foo"), PageBreak(""), Text("bar")], "foo\n\nbar"),
-            ([PageBreak(""), Text("foo"), Text("bar")], "foo\n\nbar"),
-            ([Text("foo"), Text("bar"), PageBreak("")], "foo\n\nbar"),
+            ([Text("foo"), Text("bar")], "bah da bing.", "bah da bing.\n\nfoo\n\nbar"),
+            ([Text("foo"), PageBreak(""), Text("bar")], "da bang.", "da bang.\n\nfoo\n\nbar"),
+            ([PageBreak(""), Text("foo")], "bah da boom.", "bah da boom.\n\nfoo"),
+            ([Text("foo"), Text("bar"), PageBreak("")], "", "foo\n\nbar"),
         ],
     )
-    def it_knows_the_concatenated_text_of_the_pre_chunk(
-        self, elements: List[Text], expected_value: str
+    def it_knows_the_concatenated_text_of_the_pre_chunk_to_help(
+        self, elements: List[Text], overlap_prefix: str, expected_value: str
     ):
         """._text is the "joined" text of the pre-chunk elements.
 
         The text-segment contributed by each element is separated from the next by a blank line
         ("\n\n"). An element that contributes no text does not give rise to a separator.
         """
-        pre_chunk = TextPreChunk(elements, opts=ChunkingOptions.new())
+        pre_chunk = TextPreChunk(
+            elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions.new()
+        )
         assert pre_chunk._text == expected_value
 
 
@@ -843,7 +961,7 @@ class DescribePreChunkBuilder:
         assert builder._text_length == 0
         assert builder._remaining_space == 150
 
-    def but_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
+    def and_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
         builder.add_element(Table("Heading\nCell text"))
 
@@ -859,7 +977,7 @@ class DescribePreChunkBuilder:
         assert isinstance(pre_chunk, TablePreChunk)
         assert pre_chunk._table == Table("Heading\nCell text")
 
-    def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
+    def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
 
         pre_chunks = list(builder.flush())
@@ -867,6 +985,25 @@ class DescribePreChunkBuilder:
         assert pre_chunks == []
         assert builder._text_length == 0
         assert builder._remaining_space == 150
+
+    def it_computes_overlap_from_each_pre_chunk_and_applies_it_to_the_next(self):
+        opts = ChunkingOptions.new(overlap=15, overlap_all=True)
+        builder = PreChunkBuilder(opts=opts)
+
+        builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "Lorem ipsum dolor sit amet consectetur adipiscing elit."
+
+        builder.add_element(Table("In rhoncus ipsum sed lectus porta volutpat."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "dipiscing elit.\nIn rhoncus ipsum sed lectus porta volutpat."
+
+        builder.add_element(Text("Donec semper facilisis metus finibus."))
+        pre_chunk = list(builder.flush())[0]
+
+        assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
         builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
@@ -893,6 +1030,7 @@ class DescribePreChunkCombiner:
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             TextPreChunk(
@@ -900,6 +1038,7 @@ class DescribePreChunkCombiner:
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             TextPreChunk(
@@ -907,6 +1046,7 @@ class DescribePreChunkCombiner:
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
         ]
@@ -934,14 +1074,16 @@ class DescribePreChunkCombiner:
                     Title("Lorem Ipsum"),
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
-            TablePreChunk(Table("Heading\nCell text"), opts=opts),
+            TablePreChunk(Table("Heading\nCell text"), overlap_prefix="", opts=opts),
             TextPreChunk(
                 [
                     Title("Mauris Nec"),
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
         ]
@@ -979,6 +1121,7 @@ class DescribePreChunkCombiner:
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             TextPreChunk(  # 71
@@ -986,6 +1129,7 @@ class DescribePreChunkCombiner:
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             # -- len == 139
@@ -994,6 +1138,7 @@ class DescribePreChunkCombiner:
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
         ]
@@ -1027,6 +1172,7 @@ class DescribePreChunkCombiner:
                     Title("Lorem Ipsum"),  # 11
                     Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),  # 55
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             TextPreChunk(  # 71
@@ -1034,6 +1180,7 @@ class DescribePreChunkCombiner:
                     Title("Mauris Nec"),  # 10
                     Text("Mauris nec urna non augue vulputate consequat eget et nisi."),  # 59
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             # -- len == 139
@@ -1042,6 +1189,7 @@ class DescribePreChunkCombiner:
                     Title("Sed Orci"),  # 8
                     Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies."),  # 63
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
             # -- len == 214
@@ -1072,7 +1220,7 @@ class DescribePreChunkCombiner:
         """Such as occurs when a single element exceeds the window size."""
         opts = ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
         pre_chunks = [
-            TextPreChunk([Title("Lorem Ipsum")], opts=opts),
+            TextPreChunk([Title("Lorem Ipsum")], overlap_prefix="", opts=opts),
             TextPreChunk(  # 179
                 [
                     Text(
@@ -1081,9 +1229,10 @@ class DescribePreChunkCombiner:
                         " Sed orci quam, eleifend sit amet vehicula, elementum ultricies."  # 64
                     )
                 ],
+                overlap_prefix="",
                 opts=opts,
             ),
-            TextPreChunk([Title("Vulputate Consequat")], opts=opts),
+            TextPreChunk([Title("Vulputate Consequat")], overlap_prefix="", opts=opts),
         ]
 
         pre_chunk_iter = PreChunkCombiner(
@@ -1115,70 +1264,42 @@ class DescribePreChunkCombiner:
 class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
 
-    def it_is_empty_on_construction(self):
-        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=100))
-
-        assert accum.text_length == 0
-        assert accum.remaining_space == 100
-
-    def it_accumulates_pre_chunks_added_to_it(self):
-        opts = ChunkingOptions.new(max_characters=500)
+    def it_generates_a_combined_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
+        opts = ChunkingOptions.new()
         accum = TextPreChunkAccumulator(opts=opts)
 
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Lorem Ipsum"),
-                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ],
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Lorem Ipsum"),
+                Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
+            ],
+            overlap_prefix="elementum.",
+            opts=opts,
         )
-        assert accum.text_length == 68
-        assert accum.remaining_space == 430
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Mauris Nec"),
-                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ],
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Mauris Nec"),
+                Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
+            ],
+            overlap_prefix="sit amet.",
+            opts=opts,
         )
-        assert accum.text_length == 141
-        assert accum.remaining_space == 357
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
-    def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        opts = ChunkingOptions.new(max_characters=150)
-        accum = TextPreChunkAccumulator(opts=opts)
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Lorem Ipsum"),
-                    Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
-                ],
-                opts=opts,
-            )
+        pre_chunk = TextPreChunk(
+            [
+                Title("Sed Orci"),
+                Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
+            ],
+            overlap_prefix="consequat.",
+            opts=opts,
         )
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Mauris Nec"),
-                    Text("Mauris nec urna non augue vulputate consequat eget et nisi."),
-                ],
-                opts=opts,
-            )
-        )
-        accum.add_pre_chunk(
-            TextPreChunk(
-                [
-                    Title("Sed Orci"),
-                    Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
-                ],
-                opts=opts,
-            )
-        )
+        assert accum.will_fit(pre_chunk)
+        accum.add_pre_chunk(pre_chunk)
 
         pre_chunk_iter = accum.flush()
 
@@ -1196,31 +1317,15 @@ class DescribeTextPreChunkAccumulator:
             Title("Sed Orci"),
             Text("Sed orci quam, eleifend sit amet vehicula, elementum ultricies quam."),
         ]
-        assert accum.text_length == 0
-        assert accum.remaining_space == 150
+        # -- but only the first overlap-prefix --
+        assert pre_chunk._overlap_prefix == "elementum."
+        # -- and the prior flush emptied the accumulator --
+        with pytest.raises(StopIteration):
+            next(accum.flush())
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
         accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=150))
-
-        pre_chunks = list(accum.flush())
-
-        assert pre_chunks == []
-        assert accum.text_length == 0
-        assert accum.remaining_space == 150
-
-    def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        opts = ChunkingOptions.new(max_characters=100)
-        accum = TextPreChunkAccumulator(opts=opts)
-        accum.add_pre_chunk(TextPreChunk([Text("abcde")], opts=opts))
-        accum.add_pre_chunk(TextPreChunk([Text("fghij")], opts=opts))
-
-        # -- .text_length includes a separator ("\n\n", len==2) between each text-segment,
-        # -- so 5 + 2 + 5 = 12 here, not 5 + 5 = 10
-        assert accum.text_length == 12
-        # -- .remaining_space is reduced by the length (2) of the trailing separator which would
-        # -- go between the current text and that of the next pre-chunk if one was added.
-        # -- So 100 - 12 - 2 = 86 here, not 100 - 12 = 88
-        assert accum.remaining_space == 86
+        assert list(accum.flush()) == []
 
 
 # ================================================================================================

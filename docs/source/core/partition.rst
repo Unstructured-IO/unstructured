@@ -31,7 +31,7 @@ to the appropriate partitioning function. If you already know your document type
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | HTML Pages (`.html`/`.htm`)                                                                         | `partition_html`               | N/A                                    | No             | Encoding; Include Page Breaks                                                                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`)                                                              | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
+| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`/`.bmp`)                                                       | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | Markdown (`.md`)                                                                                    | `partition_md`                 | N/A                                    | Yes            | Include Page Breaks                                                                                              |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
@@ -595,7 +595,7 @@ For more information about the ``partition_org`` function, you can check the `so
 
 
 ``partition_pdf``
----------------------
+-----------------
 
 The ``partition_pdf`` function segments a PDF document by using a document image analysis model.
 If you set ``url=None``, the document image analysis model will execute locally. You need to install ``unstructured[local-inference]``
@@ -626,24 +626,31 @@ Examples:
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
 The available strategies for PDFs are ``"auto"``, ``"hi_res"``, ``"ocr_only"``, and ``"fast"``.
 
-The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
-If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that
-currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``"fast"`` if the PDF text is extractable and
-``"ocr_only"`` otherwise. ``"auto"`` is the default strategy.
+* The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs. If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``"fast"`` if the PDF text is extractable and ``"ocr_only"`` otherwise. ``"auto"`` is the default strategy.
 
-The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that
-it uses the document layout to gain additional information about document elements. We recommend using this strategy
-if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available,
-the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
+* The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that it uses the document layout to gain additional information about document elements. We recommend using this strategy if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available, the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
 
-The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``.
-Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with
-multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls
-back to ``"fast"`` if Tesseract is not available and the document has extractable text.
+* The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``. Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls back to ``"fast"`` if Tesseract is not available and the document has extractable text.
 
-The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``.
-If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the
-``"fast"`` strategy in most cases where the PDF has extractable text.
+* The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``. If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the ``"fast"`` strategy in most cases where the PDF has extractable text.
+
+To extract images and elements as image blocks from a PDF, it is mandatory to set ``strategy="hi_res"`` when setting ``extract_images_in_pdf=True``. With this configuration, detected images are saved in a specified directory or encoded within the file. However, keep in mind that ``extract_images_in_pdf`` is being phased out in favor of ``extract_image_block_types``. This option allows you to specify types of images or elements, like "Image" or "Table". If some extracted images have content clipped, you can adjust the padding by specifying two environment variables "EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD" and "EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD" (for example, EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD = 20, EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD = 10). For integrating these images directly into web applications or APIs, ``extract_image_block_to_payload`` can be used to convert them into ``base64`` format, including details about the image type. Lastly, the ``extract_image_block_output_dir`` can be used to specify the filesystem path for saving the extracted images when not embedding them in payloads.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+
+  partition_pdf(
+      filename="path/to/your/pdf_file.pdf",                  # mandatory
+      strategy="hi_res",                                     # mandatory to use ``hi_res`` strategy
+      extract_images_in_pdf=True,                            # mandatory to set as ``True``
+      extract_image_block_types=["Image", "Table"],          # optional
+      extract_image_block_to_payload=False,                  # optional
+      extract_image_block_output_dir="path/to/save/images",  # optional - only works when ``extract_image_block_to_payload=False``
+      )
+
 
 If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which
 will treat it like an image), but cannot process the document with the ``"fast"`` strategy.

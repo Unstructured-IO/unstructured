@@ -12,18 +12,18 @@ First you'll need to install the Chroma dependencies as shown here.
 Run Locally
 -----------
 The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream local connector. 
+upstream local connector.
 
 .. tabs::
 
    .. tab:: Shell
 
-      .. literalinclude:: ./code/bash/pinecone.sh
+      .. literalinclude:: ./code/bash/chroma.sh
          :language: bash
 
    .. tab:: Python
 
-      .. literalinclude:: ./code/python/pinecone.py
+      .. literalinclude:: ./code/python/chroma.py
          :language: python
 
 

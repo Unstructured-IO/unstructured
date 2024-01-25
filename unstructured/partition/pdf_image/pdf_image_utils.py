@@ -1,9 +1,10 @@
 import base64
 import os
 import tempfile
+from copy import deepcopy
 from io import BytesIO
 from pathlib import PurePath
-from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
+from typing import TYPE_CHECKING, BinaryIO, List, Optional, Tuple, Union, cast
 
 import cv2
 import numpy as np
@@ -13,9 +14,11 @@ from PIL import Image
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
 from unstructured.partition.common import convert_to_bytes
+from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout, TextRegion
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
     from unstructured.documents.elements import Element
 
@@ -75,6 +78,38 @@ def convert_pdf_to_image(
     return images
 
 
+def pad_element_bboxes(
+    element: "LayoutElement",
+    padding: Union[int, float],
+) -> "LayoutElement":
+    """Increases (or decreases, if padding is negative) the size of the bounding
+    boxes of the element by extending the boundary outward (resp. inward)"""
+
+    out_element = deepcopy(element)
+    out_element.bbox.x1 -= padding
+    out_element.bbox.x2 += padding
+    out_element.bbox.y1 -= padding
+    out_element.bbox.y2 += padding
+
+    return out_element
+
+
+def pad_bbox(
+    bbox: Tuple[float, float, float, float],
+    padding: Tuple[Union[int, float], Union[int, float]],
+) -> Tuple[float, float, float, float]:
+    """Pads a bounding box (bbox) by a specified horizontal and vertical padding."""
+
+    x1, y1, x2, y2 = bbox
+    h_padding, v_padding = padding
+    x1 -= h_padding
+    x2 += h_padding
+    y1 -= v_padding
+    y2 += v_padding
+
+    return x1, y1, x2, y2
+
+
 def save_elements(
     elements: List["Element"],
     element_category_to_save: str,
@@ -82,7 +117,7 @@ def save_elements(
     filename: str = "",
     file: Optional[Union[bytes, BinaryIO]] = None,
     is_image: bool = False,
-    extract_to_payload: bool = False,
+    extract_image_block_to_payload: bool = False,
     output_dir_path: Optional[str] = None,
 ):
     """
@@ -131,6 +166,11 @@ def save_elements(
             points = coordinates.points
             x1, y1 = points[0]
             x2, y2 = points[2]
+            h_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD
+            v_padding = env_config.EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD
+            padded_bbox = cast(
+                Tuple[int, int, int, int], pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
+            )
             page_number = el.metadata.page_number
 
             figure_number += 1
@@ -142,8 +182,8 @@ def save_elements(
                 )
                 image_path = image_paths[page_number - 1]
                 image = Image.open(image_path)
-                cropped_image = image.crop((x1, y1, x2, y2))
-                if extract_to_payload:
+                cropped_image = image.crop(padded_bbox)
+                if extract_image_block_to_payload:
                     buffered = BytesIO()
                     cropped_image.save(buffered, format="JPEG")
                     img_base64 = base64.b64encode(buffered.getvalue())
@@ -159,28 +199,28 @@ def save_elements(
 
 
 def check_element_types_to_extract(
-    extract_element_types: Optional[List[str]],
+    extract_image_block_types: Optional[List[str]],
 ) -> List[str]:
     """Check and normalize the provided list of element types to extract."""
 
-    if extract_element_types is None:
+    if extract_image_block_types is None:
         return []
 
-    if not isinstance(extract_element_types, list):
+    if not isinstance(extract_image_block_types, list):
         raise TypeError(
-            "The extract_element_types parameter must be a list of element types as strings, "
+            "The extract_image_block_types parameter must be a list of element types as strings, "
             "ex. ['Table', 'Image']",
         )
 
     available_element_types = list(ElementType.to_dict().values())
-    normalized_extract_element_types = []
-    for el_type in extract_element_types:
+    normalized_extract_image_block_types = []
+    for el_type in extract_image_block_types:
         normalized_el_type = el_type.lower().capitalize()
         if normalized_el_type not in available_element_types:
             logger.warning(f"The requested type ({el_type}) doesn't match any available type")
-        normalized_extract_element_types.append(normalized_el_type)
+        normalized_extract_image_block_types.append(normalized_el_type)
 
-    return normalized_extract_element_types
+    return normalized_extract_image_block_types
 
 
 def valid_text(text: str) -> bool:

@@ -24,11 +24,14 @@ all_tests=(
   'elasticsearch.sh'
   'gcs.sh'
   'mongodb.sh'
+  'pgvector.sh'
   'pinecone.sh'
   'qdrant.sh'
   's3.sh'
-  'weaviate.sh'
   'sharepoint-embed-cog-index.sh'
+  'sqlite.sh'
+  'weaviate.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(

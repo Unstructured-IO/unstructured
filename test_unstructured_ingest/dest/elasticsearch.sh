@@ -59,4 +59,4 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --batch-size-bytes 15000000 \
   --num-processes "$max_processes"
 
-scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py
+PYTHONPATH=. scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py

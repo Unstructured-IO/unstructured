@@ -3,7 +3,7 @@
     "element_id": "3288e0ea130894600aa48a45aaf12121",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -21,10 +21,31 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "61a1e4ec9d7a8140a78bbb7450ec65ca",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -45,7 +66,7 @@
     "element_id": "ad3db440731a2892ac234c2ee7bb5b04",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -66,7 +87,7 @@
     "element_id": "f36c8656d6b853a5728f6f17c29706f3",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -87,7 +108,7 @@
     "element_id": "a23e0b3be89e2c3a3088fdbddfa3bcb1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -108,7 +129,7 @@
     "element_id": "d4d5f1410356bb0053eeff6a9d2e84ae",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -129,7 +150,7 @@
     "element_id": "19d767c50c1203bd1d3882353b464e73",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -150,7 +171,7 @@
     "element_id": "ffcf7b0ae159cc2a1bc0a07e3618454a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -171,7 +192,7 @@
     "element_id": "c25840980b1b27ba0706d4319d6e3aa8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -192,7 +213,7 @@
     "element_id": "0048cc9470dc1736e2fc654d7236a3ee",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -213,7 +234,7 @@
     "element_id": "676bbd12ba352a9d057d15cb8c925e36",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -231,10 +252,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "0fc5165686190ca845407c03ad4572e8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -255,7 +297,7 @@
     "element_id": "5749fdd6b67e4204b3047ba33540bc87",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -276,7 +318,7 @@
     "element_id": "a6c3efab675abc38935ff01d2d8b8386",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -297,7 +339,7 @@
     "element_id": "dbe6820b5750298e87712c37dfe97b7d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -318,7 +360,7 @@
     "element_id": "45e9c81bf6ccdc498a6ac5640d786736",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -339,7 +381,7 @@
     "element_id": "92a15f52537ead259f4d9c2da1b22454",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -360,7 +402,7 @@
     "element_id": "8c4b7bab8fb561388b19a37576e4665f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -381,7 +423,7 @@
     "element_id": "cd51de1780ee75925a66b066fb7e4e01",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -402,7 +444,7 @@
     "element_id": "80b622f9209254c3963bf7431da6a13a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -423,7 +465,7 @@
     "element_id": "ae4cbd98081526c1b5f7fbd30f47c869",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -444,7 +486,7 @@
     "element_id": "d6c864820d8af0aed00d45c41ca0691e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -465,7 +507,7 @@
     "element_id": "829f6e4c5ed9b4e900ab4a696e46687b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -486,7 +528,7 @@
     "element_id": "062875b861d4d40027ab674686333587",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -507,7 +549,7 @@
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -528,7 +570,7 @@
     "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -549,7 +591,7 @@
     "element_id": "f83714d89302473e0e4f5399bd50e7a9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -570,7 +612,7 @@
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -591,7 +633,7 @@
     "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -612,7 +654,7 @@
     "element_id": "6a3adc54db5128f797d4a12855193373",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -633,7 +675,7 @@
     "element_id": "44f0d817d4311d9da996b2cb20dc80c8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -654,7 +696,7 @@
     "element_id": "2c07d964a50db8baf3ed9db257827518",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -675,7 +717,7 @@
     "element_id": "47ad83d77e60857060e4435724be6db6",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -696,7 +738,7 @@
     "element_id": "e450813fe6430d87c4caa64e4792bc74",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -717,7 +759,7 @@
     "element_id": "30844d5faa0b85b758a56d22dd4c5048",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -738,7 +780,7 @@
     "element_id": "70d25f2c1428def16804c3b346ee8d13",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -759,7 +801,7 @@
     "element_id": "0b0bd7ca2acebad288fe09c9d9595f1f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -780,7 +822,7 @@
     "element_id": "b3dc46f381163a6ba4304765c36bc32e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -801,7 +843,7 @@
     "element_id": "8678fa69494c8706052cd795f4f104b2",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -822,7 +864,7 @@
     "element_id": "69172a66b601bc530a3d701869fe70ff",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -843,7 +885,7 @@
     "element_id": "38bd099c0174246d8ac9b5316877b4cb",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -864,7 +906,7 @@
     "element_id": "006f701bd8073d16266a7877cc66ca8e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -882,10 +924,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 6
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "14652e5114533ec4e41bae34a9ae8508",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -906,7 +969,7 @@
     "element_id": "de64c96ca0e7c0888fe7ca31fae679bb",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -927,7 +990,7 @@
     "element_id": "f20b489f0bdd9d6e52a9260366e15809",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -948,7 +1011,7 @@
     "element_id": "cac91db6239b98e81af3b7d4657aba8e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -969,7 +1032,7 @@
     "element_id": "9480b681b55abea19f25da2d11c5a05f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -990,7 +1053,7 @@
     "element_id": "79de44b69099529ba9f79b31427cad59",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1011,7 +1074,7 @@
     "element_id": "e36be3332e741c097797f63a8fd3707d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1032,7 +1095,7 @@
     "element_id": "af07e68b26fd9db43d499e55ca9e018f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1053,7 +1116,7 @@
     "element_id": "256d31a451bb2c5a0d86a9e80a3ecacd",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1074,7 +1137,7 @@
     "element_id": "aec400e3e65dc09b31513694bc9893b9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1095,7 +1158,7 @@
     "element_id": "29399af043bbf069ecfd1abdcaee4b15",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1116,7 +1179,7 @@
     "element_id": "091660349a1a512762bb9380e9d14cf5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1137,7 +1200,7 @@
     "element_id": "b864ba4245ef997f44c68d9d57c1fe29",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1158,7 +1221,7 @@
     "element_id": "f18dedc70c4506433490779a01898ae0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1176,10 +1239,73 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "49cf9714f5fae5188caca69778912b35",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1197,10 +1323,31 @@
     "type": "FigureCaption"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 9
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "6e611a47ebc4cf4fafb25fa9fd407396",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1221,7 +1368,7 @@
     "element_id": "5b6b71051007872635d4f529e167f04e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1242,7 +1389,7 @@
     "element_id": "676bbd12ba352a9d057d15cb8c925e36",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1260,10 +1407,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 9
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "c69b33366ea0bcfb6c30799a4100c6a0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1284,7 +1452,7 @@
     "element_id": "671a02117af87c2371462f800d856f15",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1305,7 +1473,7 @@
     "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1326,7 +1494,7 @@
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1347,7 +1515,7 @@
     "element_id": "5389164ad375b2831f97d751f5bdb4e6",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1368,7 +1536,7 @@
     "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1389,7 +1557,7 @@
     "element_id": "f60b349ce3d55412b0f4e4a6b658c5ca",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1410,7 +1578,7 @@
     "element_id": "c5abfd8856e08e4a6d884b3e2bf860f7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1431,7 +1599,7 @@
     "element_id": "72e939a5bd164f925c3d0aeb3d9a6af8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1452,7 +1620,7 @@
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1473,7 +1641,7 @@
     "element_id": "add0a2858326fca8ba9f6f4e6bbbdb28",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1494,7 +1662,7 @@
     "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1515,7 +1683,7 @@
     "element_id": "3750db60e990408fd944ea48886461b2",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1536,7 +1704,7 @@
     "element_id": "933612b1c8ac73db347d57c4c1006b30",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1557,7 +1725,7 @@
     "element_id": "a0acb863356551c514d2a230c16499bc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1578,7 +1746,7 @@
     "element_id": "bbea23b1fb74c1188b13acbf2b55c077",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1599,7 +1767,7 @@
     "element_id": "c0ff9c6926628d5d8e0318ebdf439444",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1620,7 +1788,7 @@
     "element_id": "4fd3863356260022a18a3c6932cbf1bf",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1641,7 +1809,7 @@
     "element_id": "1646468e15668c053f076342c361e1a9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1662,7 +1830,7 @@
     "element_id": "d36f85976820f1619b8be0e2e65d011d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1683,7 +1851,7 @@
     "element_id": "06d4880e4a23a9520618a50bfbbdf940",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1704,7 +1872,7 @@
     "element_id": "8ff63a0f4af4de37eff90952d575f76d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1725,7 +1893,7 @@
     "element_id": "4ac69378210b56e0c98be2d41e374769",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
@@ -1743,10 +1911,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 12
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "e0366cbb8cc558e39e0ef80e08f603c1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:09:32",
+        "date_modified": "2023-02-12T10:09:32+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"

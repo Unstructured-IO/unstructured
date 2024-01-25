@@ -1,2 +1,4 @@
+-c ../constraints.in
+-c ../base.txt
 hubspot-api-client
-urllib3>=1.26.17
+urllib3

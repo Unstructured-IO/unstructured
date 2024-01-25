@@ -11,6 +11,7 @@ from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
 from .confluence import get_base_src_cmd as confluence_base_src_cmd
+from .databricks_volumes import get_base_dest_cmd as databricks_volumes_dest_cmd
 from .delta_table import get_base_dest_cmd as delta_table_dest_cmd
 from .delta_table import get_base_src_cmd as delta_table_base_src_cmd
 from .discord import get_base_src_cmd as discord_base_src_cmd
@@ -35,8 +36,11 @@ from .hubspot import get_base_src_cmd as hubspot_base_src_cmd
 from .jira import get_base_src_cmd as jira_base_src_cmd
 from .local import get_base_src_cmd as local_base_src_cmd
 from .mongodb import get_base_dest_cmd as mongo_base_dest_cmd
+from .mongodb import get_base_src_cmd as mongodb_base_src_cmd
 from .notion import get_base_src_cmd as notion_base_src_cmd
 from .onedrive import get_base_src_cmd as onedrive_base_src_cmd
+from .opensearch import get_base_dest_cmd as opensearch_base_dest_cmd
+from .opensearch import get_base_src_cmd as opensearch_base_src_cmd
 from .outlook import get_base_src_cmd as outlook_base_src_cmd
 from .pinecone import get_base_dest_cmd as pinecone_base_dest_cmd
 from .qdrant import get_base_dest_cmd as qdrant_base_dest_cmd
@@ -44,6 +48,7 @@ from .reddit import get_base_src_cmd as reddit_base_src_cmd
 from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
+from .sql import get_base_dest_cmd as sql_base_dest_cmd
 from .weaviate import get_base_dest_cmd as weaviate_dest_cmd
 from .wikipedia import get_base_src_cmd as wikipedia_base_src_cmd
 
@@ -68,8 +73,10 @@ base_src_cmd_fns: t.List[t.Callable[[], BaseSrcCmd]] = [
     hubspot_base_src_cmd,
     jira_base_src_cmd,
     local_base_src_cmd,
+    mongodb_base_src_cmd,
     notion_base_src_cmd,
     onedrive_base_src_cmd,
+    opensearch_base_src_cmd,
     outlook_base_src_cmd,
     reddit_base_src_cmd,
     salesforce_base_src_cmd,
@@ -94,6 +101,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     azure_base_dest_cmd,
     box_base_dest_cmd,
     chroma_base_dest_cmd,
+    databricks_volumes_dest_cmd,
     dropbox_base_dest_cmd,
     elasticsearch_base_dest_cmd,
     fsspec_base_dest_cmd,
@@ -101,10 +109,12 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     s3_base_dest_cmd,
     azure_cognitive_search_base_dest_cmd,
     delta_table_dest_cmd,
+    sql_base_dest_cmd,
     weaviate_dest_cmd,
     mongo_base_dest_cmd,
     pinecone_base_dest_cmd,
     qdrant_base_dest_cmd,
+    opensearch_base_dest_cmd,
 ]
 
 # Make sure there are not overlapping names

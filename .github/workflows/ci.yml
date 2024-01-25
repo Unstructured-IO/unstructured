@@ -16,7 +16,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -30,7 +30,7 @@ jobs:
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -150,7 +150,7 @@ jobs:
   test_unit_no_extras:
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -176,7 +176,7 @@ jobs:
     # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.10"]
         extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
     runs-on: ubuntu-latest
     env:
@@ -218,7 +218,7 @@ jobs:
   setup_ingest:
     strategy:
       matrix:
-        python-version: [ "3.8","3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10","3.11" ]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -232,7 +232,7 @@ jobs:
   test_ingest_unit:
     strategy:
       matrix:
-        python-version: [ "3.8","3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10","3.11" ]
     runs-on: ubuntu-latest
     needs: [ setup_ingest, lint ]
     steps:
@@ -258,7 +258,7 @@ jobs:
   test_ingest_src:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -296,6 +296,8 @@ jobs:
         HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
         JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
         JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
         MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
@@ -338,7 +340,7 @@ jobs:
     environment: ci
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -394,8 +396,8 @@ jobs:
   test_unstructured_api_unit:
     strategy:
       matrix:
-        # NOTE(yuming): Unstructured API only use Python 3.8
-        python-version: ["3.8"]
+        # NOTE(yuming): Unstructured API only use Python 3.10
+        python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data

@@ -8,10 +8,11 @@
          "analyzer": "english"
       },
       "type": {
-         "type": "keyword"
+         "type": "text"
       },
       "embeddings": {
-         "type": "float"
+         "type": "dense_vector",
+         "dims": 384
       },
       "metadata": {
          "type": "object",

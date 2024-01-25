@@ -1,3 +1,4 @@
+import copy
 import json
 import multiprocessing as mp
 import typing as t
@@ -5,12 +6,12 @@ import uuid
 from dataclasses import dataclass
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
     ConfigSessionHandleMixin,
     IngestDocSessionHandleMixin,
     WriteConfig,
@@ -47,6 +48,18 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
     write_config: PineconeWriteConfig
     connector_config: SimplePineconeConfig
     _index: t.Optional["PineconeIndex"] = None
+
+    def to_dict(self, **kwargs):
+        """
+        The _index variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_index"):
+            setattr(self_cp, "_index", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     def pinecone_index(self):
@@ -87,9 +100,9 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
-    def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"Upserting {len(dict_list)} elements to destination "
+            f"Upserting {len(elements_dict)} elements to destination "
             f"index at {self.connector_config.index_name}",
         )
 
@@ -97,44 +110,32 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
 
         logger.info(f"using {self.write_config.num_processes} processes to upload")
         if self.write_config.num_processes == 1:
-            for chunk in chunk_generator(dict_list, pinecone_batch_size):
+            for chunk in chunk_generator(elements_dict, pinecone_batch_size):
                 self.upsert_batch(chunk)  # noqa: E203
 
         else:
             with mp.Pool(
                 processes=self.write_config.num_processes,
             ) as pool:
-                pool.map(self.upsert_batch, list(chunk_generator(dict_list, pinecone_batch_size)))
-
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        dict_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                dict_content = json.load(json_file)
-
-                # we assign embeddings to "values", and other fields to "metadata"
-                dict_content = [
-                    # While flatten_dict enables indexing on various fields,
-                    # element_serialized enables easily reloading the element object to memory.
-                    # element_serialized is formed without text/embeddings to avoid data bloating.
-                    {
-                        "id": str(uuid.uuid4()),
-                        "values": element.pop("embeddings", None),
-                        "metadata": {
-                            "text": element.pop("text", None),
-                            "element_serialized": json.dumps(element),
-                            **flatten_dict(
-                                element,
-                                separator="-",
-                                flatten_lists=True,
-                            ),
-                        },
-                    }
-                    for element in dict_content
-                ]
-                logger.info(
-                    f"appending {len(dict_content)} json elements from content in {local_path}",
+                pool.map(
+                    self.upsert_batch, list(chunk_generator(elements_dict, pinecone_batch_size))
                 )
-                dict_list.extend(dict_content)
-        self.write_dict(dict_list=dict_list)
+
+    def normalize_dict(self, element_dict: dict) -> dict:
+        # While flatten_dict enables indexing on various fields,
+        # element_serialized enables easily reloading the element object to memory.
+        # element_serialized is formed without text/embeddings to avoid data bloating.
+        return {
+            "id": str(uuid.uuid4()),
+            "values": element_dict.pop("embeddings", None),
+            "metadata": {
+                "text": element_dict.pop("text", None),
+                "element_serialized": json.dumps(element_dict),
+                **flatten_dict(
+                    element_dict,
+                    separator="-",
+                    flatten_lists=True,
+                    remove_none=True,
+                ),
+            },
+        }

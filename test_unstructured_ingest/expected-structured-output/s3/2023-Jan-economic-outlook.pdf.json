@@ -3,7 +3,7 @@
     "element_id": "0a5f21a42e259b1ae44adc8758f2db19",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -24,7 +24,7 @@
     "element_id": "c2218d09ef001e697de0e0676777a643",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -45,7 +45,7 @@
     "element_id": "1cea24ad0aab30d447fc2b47dcd4f259",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -63,10 +63,31 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-14T07:31:28+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "265756457651539296174748931590365722430"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "abcb617ca920c453f3e353e1e2d6885b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -87,7 +108,7 @@
     "element_id": "e7ea93453698b4f8bc32fd7cb860617e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -108,7 +129,7 @@
     "element_id": "dd494a076f4a875e3ff8591dd84e3bcb",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -129,7 +150,7 @@
     "element_id": "69c0abb4a05d8b3650ac06c6c07c3b88",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -150,7 +171,7 @@
     "element_id": "40f2b406a410dadedbf14e1310e6fd94",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -171,7 +192,7 @@
     "element_id": "0953470500eb215048fd49263b8829a4",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -192,7 +213,7 @@
     "element_id": "fa4f01ba2113b0b7859f01f31ef6c5b1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -213,7 +234,7 @@
     "element_id": "895af44c7b71b95db8e28f86ef2224c8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -234,7 +255,7 @@
     "element_id": "a4bc8a1fe50aa3ff61ba53d96830f9c1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -255,7 +276,7 @@
     "element_id": "c99869e52743869e29fd645e9e0df6fb",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -276,7 +297,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -297,7 +318,7 @@
     "element_id": "78f4f092ce77888950ef2172b8d2a92a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -318,7 +339,7 @@
     "element_id": "c140ad5c30b6075c1a553eddacd8eca5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -339,7 +360,7 @@
     "element_id": "323d79e74460eda1fb0f8d55a2e0ff42",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -360,7 +381,7 @@
     "element_id": "49dca65f362fee401292ed7ada96f962",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -381,7 +402,7 @@
     "element_id": "007b2203e9e86a49c3108e9ffd16fbbc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -402,7 +423,7 @@
     "element_id": "808caaef5b114d874a25b7fec21b5516",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -423,7 +444,7 @@
     "element_id": "c2c7be4534a60790d1d18451c91dc138",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -444,7 +465,7 @@
     "element_id": "28a5aa3897d66de6c31caba99a4c337e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -465,7 +486,7 @@
     "element_id": "2c469f8fa0f3c1c771330dde1be1b28c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -486,7 +507,7 @@
     "element_id": "3a162049bc9ee88b56d4d4bf5897368f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -507,7 +528,7 @@
     "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -528,7 +549,7 @@
     "element_id": "cc874418b59b7ecb37a2c938783fb5ce",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -549,7 +570,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -570,7 +591,7 @@
     "element_id": "c146a58289e616dfc7ba0154e66a262b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -591,7 +612,7 @@
     "element_id": "26a20452d058d66ad402559f659cec7c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -612,7 +633,7 @@
     "element_id": "5779b9b7d25794d3b4ed1fe4e61f6617",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -633,7 +654,7 @@
     "element_id": "e2faa573314abd00886d18714776ff1e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -654,7 +675,7 @@
     "element_id": "7cd3302c25869c2f5421bee2f41417be",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -675,7 +696,7 @@
     "element_id": "3416e531cf0cb72208991b73db6ae3ef",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -696,7 +717,7 @@
     "element_id": "ce9fc96e38d94a623bb7ffee822ac214",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -717,7 +738,7 @@
     "element_id": "78f4bc5a836981f7b1ccfd9ad718cc72",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -738,7 +759,7 @@
     "element_id": "ab9d11a9dd37cfd5e1876f40777a4480",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -759,7 +780,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -780,7 +801,7 @@
     "element_id": "8ab8fca37bfc3201f31244df6b7c4d82",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -801,7 +822,7 @@
     "element_id": "2b03eaeb94d29bd57f35cc895c8e50c8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -822,7 +843,7 @@
     "element_id": "8674194ed5ca8d731d521f16b602a7ff",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -843,7 +864,7 @@
     "element_id": "e56ea100a4185b69f955d45ff914ef57",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -864,7 +885,7 @@
     "element_id": "d2020af82c98a5ae355bf22ab3261e6b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -885,7 +906,7 @@
     "element_id": "94385c9d723aa1c5f156fc9fad3ccc88",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -906,7 +927,7 @@
     "element_id": "afde979c99a73646915fe253c85c5a9c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -927,7 +948,7 @@
     "element_id": "25072141a0ed1c9474256def9a721513",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -948,7 +969,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -969,7 +990,7 @@
     "element_id": "ae86527b9b053129da62dcb5ed3c8aec",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -990,7 +1011,7 @@
     "element_id": "25e2f1dc031b5421b8a234945098e58b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1011,7 +1032,7 @@
     "element_id": "3dfc45d3333ae253d78008c8cde2d752",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1032,7 +1053,7 @@
     "element_id": "4e5a8cc0fcd53f25fe8e41091f016f50",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1053,7 +1074,7 @@
     "element_id": "d93c27500d6e6fc5e73a1e35fe0a36ff",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1074,7 +1095,7 @@
     "element_id": "11ebd9f4c9a7cdbac41f8f7399d3950e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1095,7 +1116,7 @@
     "element_id": "ed6efde0729a7a59cfd24802fa6edb51",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1116,7 +1137,7 @@
     "element_id": "30c61ae1849c6b38dd09c21d3d4f5951",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1137,7 +1158,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1158,7 +1179,7 @@
     "element_id": "4547a3f05b931a26f1cfa16dba70e121",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1179,7 +1200,7 @@
     "element_id": "d11a1c04bd3a9891350b4bd94104df58",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1200,7 +1221,7 @@
     "element_id": "8174b87b76dfe8e8ddb31ab83abc6c33",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1221,7 +1242,7 @@
     "element_id": "fcadc00fe663ee0e7818b0ffc5c46948",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1242,7 +1263,7 @@
     "element_id": "0c76bc4e35219e2a31b09428cd47d009",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1263,7 +1284,7 @@
     "element_id": "3c0578f4d944258ffa4ffac7615f1ff9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1284,7 +1305,7 @@
     "element_id": "6bb1e757e09d7fa3aba323a375abd047",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1305,7 +1326,7 @@
     "element_id": "9db439c530ed3425c0a68724de199942",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1326,7 +1347,7 @@
     "element_id": "b7948d6976e997e76e343161b4b5d864",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1347,7 +1368,7 @@
     "element_id": "e7ac421147471fe341ae242e7544a44c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1368,7 +1389,7 @@
     "element_id": "4b48b0469ba9682a3e385ee7fbb6bbed",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1389,7 +1410,7 @@
     "element_id": "5277334fd8abe869f6a8de2e43942c9d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1410,7 +1431,7 @@
     "element_id": "44f0ab7953bb0b3696b9fa3cf0682f35",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1431,7 +1452,7 @@
     "element_id": "08e781dd2b6499b1ac8105a47f3520cc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1452,7 +1473,7 @@
     "element_id": "e586cf66e92b356a4611ee2ffdf85a16",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1473,7 +1494,7 @@
     "element_id": "46c8e0c55b163d73d3d2766be8d1bf8d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1494,7 +1515,7 @@
     "element_id": "373341046b8ef33d588d6038817b98a0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1515,7 +1536,7 @@
     "element_id": "eff8c9923ee635be60ad8c6d7e891f42",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1536,7 +1557,7 @@
     "element_id": "f7d988c7d799cc7eec1527f363785a8c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1557,7 +1578,7 @@
     "element_id": "41d85a7cc007a9c34136a786d6e61c15",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1578,7 +1599,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1599,7 +1620,7 @@
     "element_id": "75f95ac86db86ab3315a272430deda68",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1620,7 +1641,7 @@
     "element_id": "2bbe57e6c291db638d3fcddca9e0199a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1641,7 +1662,7 @@
     "element_id": "a5ef6992dc2c2b5b122b764e5f23d66a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1662,7 +1683,7 @@
     "element_id": "ddf9839e0b050a2c7b2e3a502e0be91c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1683,7 +1704,7 @@
     "element_id": "925934587d21dc69b7040e5299c3957e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1704,7 +1725,7 @@
     "element_id": "396c7bd25bf4d65da962d23adbb8cbe2",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1725,7 +1746,7 @@
     "element_id": "2d14934d52ff357c52e9ae1c38f7390e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1746,7 +1767,7 @@
     "element_id": "bc6284f4d0f59f3cdadf10b2efc77c18",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1767,7 +1788,7 @@
     "element_id": "d4f397f8b162452852c0a8fb898c5e8a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1788,7 +1809,7 @@
     "element_id": "828061b3c51e703fa7f8a7d5fc8271b1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1809,7 +1830,7 @@
     "element_id": "7250b07d7951c2b7b39c79195f4e69e7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1830,7 +1851,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1851,7 +1872,7 @@
     "element_id": "fa5b96150a767439834d76af71b6f7a8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1872,7 +1893,7 @@
     "element_id": "a81cc4e3ca23fd16254e2b858cdcb00a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1893,7 +1914,7 @@
     "element_id": "91c5d881804324614a0f24e7d96ad42a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1914,7 +1935,7 @@
     "element_id": "55fff1c4b3f7a8ff06a6c46d21d66cd1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1935,7 +1956,7 @@
     "element_id": "4e5bd723dd23dd1d479acbfcf2e5a9d5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1956,7 +1977,7 @@
     "element_id": "a4b8951a10e5e3d05b83227fcc4d02d8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1977,7 +1998,7 @@
     "element_id": "6a18bf042a98d772d5995a6140cc1a9c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -1998,7 +2019,7 @@
     "element_id": "64e79c327a2e74933f25bd3e9caf09f5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2019,7 +2040,7 @@
     "element_id": "a9811a5a7bebc1f7a97bf6ca7ca5c890",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2040,7 +2061,7 @@
     "element_id": "95af4f3feb2d03b2310ce31abc0c435d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2061,7 +2082,7 @@
     "element_id": "907d316caf83dc6066a2a29e7a671f7d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2082,7 +2103,7 @@
     "element_id": "17e2197f8b893177f51752cab299e36f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2103,7 +2124,7 @@
     "element_id": "bc6f2a8f19639ee36e3298fa992b76e6",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2124,7 +2145,7 @@
     "element_id": "b411a2a97519dabf36abc764adda53dc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2145,7 +2166,7 @@
     "element_id": "5dff888d3e9f315d88116aa3660686f9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2166,7 +2187,7 @@
     "element_id": "3d668f85b6a6bd19156d78c62f740006",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2187,7 +2208,7 @@
     "element_id": "950260886a2d8eb808263bc73ec898f1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2208,7 +2229,7 @@
     "element_id": "556c04bb61f902927d202956f7d2d6fd",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2229,7 +2250,7 @@
     "element_id": "cbb9553ae9412cc864f9f254b47c3efc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2250,7 +2271,7 @@
     "element_id": "cd9e31727baaddee4567c7ef27c4937a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2271,7 +2292,7 @@
     "element_id": "a07efcab5056130c10048443a2bf8a3a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2292,7 +2313,7 @@
     "element_id": "9875c08b39a4905c52bef432c042c0bb",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2313,7 +2334,7 @@
     "element_id": "d750b11efc2f858c7deadb09e3929e1c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2334,7 +2355,7 @@
     "element_id": "3e5456c4e156292c6284a528b3d3fb0c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2355,7 +2376,7 @@
     "element_id": "e118be83abfed92b8969eca98bb4d53b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2376,7 +2397,7 @@
     "element_id": "6ef230728534d871e5126e2a55e12b26",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2397,7 +2418,7 @@
     "element_id": "6215d8f373972db90d05458d63af9efe",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2418,7 +2439,7 @@
     "element_id": "da431b9817da923cc48a538c4b3b8ade",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2439,7 +2460,7 @@
     "element_id": "d073e054fbe8931eb0e200b268710187",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2460,7 +2481,7 @@
     "element_id": "9aa84a204c906f24862e2e3326cac381",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2481,7 +2502,7 @@
     "element_id": "bab943d841e99d44807adb96ef9ef925",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
@@ -2502,7 +2523,7 @@
     "element_id": "0e1a77d4edd2f7419db77d9cdff99551",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-14T07:31:28",
+        "date_modified": "2023-02-14T07:31:28+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"

@@ -76,7 +76,7 @@ def test_determine_pdf_or_image_fast_strategy(pdf_text_extractable, infer_table_
         "pdf_text_extractable",
         "infer_table_structure",
         "extract_images_in_pdf",
-        "extract_element_types",
+        "extract_image_block_types",
         "expected",
     ),
     [
@@ -102,7 +102,7 @@ def test_determine_pdf_auto_strategy(
     pdf_text_extractable,
     infer_table_structure,
     extract_images_in_pdf,
-    extract_element_types,
+    extract_image_block_types,
     expected,
 ):
     strategy = strategies.determine_pdf_or_image_strategy(
@@ -111,7 +111,7 @@ def test_determine_pdf_auto_strategy(
         pdf_text_extractable=pdf_text_extractable,
         infer_table_structure=infer_table_structure,
         extract_images_in_pdf=extract_images_in_pdf,
-        extract_element_types=extract_element_types,
+        extract_image_block_types=extract_image_block_types,
     )
     assert strategy == expected
 

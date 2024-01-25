@@ -31,11 +31,11 @@ class SalesforceCliConfig(SimpleSalesforceConfig, CliConfig):
                 help="For the Salesforce JWT auth. Found in Consumer Details.",
             ),
             click.Option(
-                ["--private-key-path"],
+                ["--private-key"],
                 required=True,
-                type=click.Path(file_okay=True, exists=True, dir_okay=False),
-                help="Path to the private key for the Salesforce JWT auth. "
-                "Usually named server.key.",
+                type=str,
+                help="Path to the private key or its contents for the Salesforce JWT auth. "
+                "Key file is usually named server.key.",
             ),
             click.Option(
                 ["--categories"],

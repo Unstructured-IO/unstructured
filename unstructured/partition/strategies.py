@@ -27,7 +27,7 @@ def determine_pdf_or_image_strategy(
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
-    extract_element_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[List[str]] = None,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
@@ -35,7 +35,7 @@ def determine_pdf_or_image_strategy(
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if strategy == PartitionStrategy.AUTO:
-        extract_element = extract_images_in_pdf or bool(extract_element_types)
+        extract_element = extract_images_in_pdf or bool(extract_image_block_types)
         if is_image:
             strategy = _determine_image_auto_strategy()
         else:

@@ -1,5 +1,7 @@
+import json
 import typing as t
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Type
 
 from unstructured.ingest.connector.fsspec.fsspec import (
@@ -20,6 +22,30 @@ class GcsAccessConfig(AccessConfig):
     token: t.Optional[str] = enhanced_field(
         default=None, sensitive=True, overload_name="service_account_key"
     )
+
+    def __post_init__(self):
+        ALLOWED_AUTH_VALUES = "google_default", "cache", "anon", "browser", "cloud"
+        # Case: null value
+        if not self.token:
+            return
+        # Case: one of auth constants
+        if self.token in ALLOWED_AUTH_VALUES:
+            return
+        # Case: token as json
+        try:
+            str_token = self.token.replace("'", '"')
+            str_token = json.loads(str_token)
+        except json.JSONDecodeError:
+            # Not neccessary an error if it is a path
+            pass
+        else:
+            self.token = str_token
+            return
+        # Case: path to token
+        if Path(self.token).is_file():
+            return
+
+        raise ValueError("Invalid auth token value")
 
 
 @dataclass

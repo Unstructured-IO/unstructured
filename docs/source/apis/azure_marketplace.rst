@@ -75,7 +75,7 @@ Before you click ``Review + create`` button, go to **Networking** tab and follow
 
 - Load balancing
     - **Load balancing option**: Select ``Azure load balancer``
-    - **Select a load balancer**: If you have created a load balancer, select from dropdown menu, or click ``Create a load balancer` and fill out the following fields in the pop-up window.
+    - **Select a load balancer**: If you have created a load balancer, select from dropdown menu, or click ``Create a load balancer`` and fill out the following fields in the pop-up window.
         - Enter **Load balancer name**
         - **Type**: Select ``Public`` or ``Internal``
         - **Protococl**: Select ``TCP`` or ``UDP``

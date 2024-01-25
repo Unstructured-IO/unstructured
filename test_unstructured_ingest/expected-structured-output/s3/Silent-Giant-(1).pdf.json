@@ -3,7 +3,7 @@
     "element_id": "80f1cd7f1c8e281093a32842b1e5bbce",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -21,10 +21,31 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "b0f30096c91b740f061fd09cc6b86f2b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -45,7 +66,7 @@
     "element_id": "c56cacd540b7d88bfe08d824c0ced992",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -66,7 +87,7 @@
     "element_id": "14547603bad3329c14c74b8c4e2ff8d9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -87,7 +108,7 @@
     "element_id": "d4d5f1410356bb0053eeff6a9d2e84ae",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -108,7 +129,7 @@
     "element_id": "968d079b21338bb15f266e70ed001fed",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -129,7 +150,7 @@
     "element_id": "b454d477ce7af47a3cce791045b27fb7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -150,7 +171,7 @@
     "element_id": "b00c97f0af489349e26f90166924530c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -171,7 +192,7 @@
     "element_id": "8ab9e34861e39e7de50648b982afd89e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -192,7 +213,7 @@
     "element_id": "2ee5188001ff61cf0d0e40659ce7bc49",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -213,7 +234,7 @@
     "element_id": "1d53fd350bd8dd3a38db6787b7ef77cf",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -234,7 +255,7 @@
     "element_id": "01b622a95350cc48bafc9165732d661a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -255,7 +276,7 @@
     "element_id": "494d55b19020277b68f13daf5464a252",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -276,7 +297,7 @@
     "element_id": "d2bff80ca96af626923ef67c2a927f2f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -297,7 +318,7 @@
     "element_id": "93e7dedc9d334470067ad2de1f9ee788",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -315,10 +336,31 @@
     "type": "ListItem"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "0fc5165686190ca845407c03ad4572e8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -339,7 +381,7 @@
     "element_id": "5749fdd6b67e4204b3047ba33540bc87",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -360,7 +402,7 @@
     "element_id": "3b5a5220792fcbec0b59d2088bc4c9ab",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -381,7 +423,7 @@
     "element_id": "542bf86ba9bab1357e3aaa0b4ae0ff70",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -402,7 +444,7 @@
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -423,7 +465,7 @@
     "element_id": "b4af08fb653ae7dea99f3a48c2ff7f5d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -444,7 +486,7 @@
     "element_id": "d5e389eb1b6b367ac5cf6e12acccfcbc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -465,7 +507,7 @@
     "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -486,7 +528,7 @@
     "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -507,7 +549,7 @@
     "element_id": "73a2af8864fc500fa49048bf3003776c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -528,7 +570,7 @@
     "element_id": "8e1f192fe25ad49be764c3f55c68beb3",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -549,7 +591,7 @@
     "element_id": "df34d853f2f2f1f14b92359f695426dc",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -570,7 +612,7 @@
     "element_id": "befa378e171bb64fdf68091abf3501bd",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -591,7 +633,7 @@
     "element_id": "2ab7465d2e5fa24b6724907f968cd4aa",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -612,7 +654,7 @@
     "element_id": "76b7731e68f6ef2b8958ea4f1ec351af",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -633,7 +675,7 @@
     "element_id": "a5d60fc4dbbd484074d8389c35703cf7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -654,7 +696,7 @@
     "element_id": "152a83b89c4b24f7f3db154d0c3ddc1b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -675,7 +717,7 @@
     "element_id": "a7be8e1fe282a37cd666e0632b17d933",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -696,7 +738,7 @@
     "element_id": "e78f27ab3ef177a9926e6b90e572b985",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -717,7 +759,7 @@
     "element_id": "81a83544cf93c245178cbc1620030f11",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -738,7 +780,7 @@
     "element_id": "a20a2b7bb0842d5cf8a0c06c626421fd",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -759,7 +801,7 @@
     "element_id": "7d12ba56e9f8b3dc64f77c87318c4f37",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -780,7 +822,7 @@
     "element_id": "a85e9db4851f7cd3efb8db7bf69a07cf",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -801,7 +843,7 @@
     "element_id": "e8facf920827e7bb6c64b065223f7c1e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -822,7 +864,7 @@
     "element_id": "5f0bfed5240c4c0d50a2b4d2b56d8e6f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -843,7 +885,7 @@
     "element_id": "a58efe5247845dc40b0a648f1761ad5c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -861,10 +903,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "e81223a218fb419ef983253212ce7e22",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -882,10 +945,73 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "70d25f2c1428def16804c3b346ee8d13",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -906,7 +1032,7 @@
     "element_id": "0b0bd7ca2acebad288fe09c9d9595f1f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -927,7 +1053,7 @@
     "element_id": "6db8df46f6adb58be10bf8d88e53d42e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -948,7 +1074,7 @@
     "element_id": "d2b22b470eb3ab5829c6e3efb55e49a4",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -969,7 +1095,7 @@
     "element_id": "fde5c605b758e800b43c8e5844d0eb39",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -990,7 +1116,7 @@
     "element_id": "c262b08f408059316ea2bfe106d4996b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1011,7 +1137,7 @@
     "element_id": "45a4d31b0300260dec8f3f86ec2ba0ad",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1032,7 +1158,7 @@
     "element_id": "c550d4a50eaa40717f1d857bce491a81",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1050,10 +1176,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 6
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "e8dbac2cdc67e714e99baa9c0f6a54b9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1074,7 +1221,7 @@
     "element_id": "2a5e6485f55769e5d4c820cb79f018d7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1095,7 +1242,7 @@
     "element_id": "c23c8bcefbe3c4d1e5b55df29b717fc1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1116,7 +1263,7 @@
     "element_id": "2e16c4200e350d951a1911e164cc7a7d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1137,7 +1284,7 @@
     "element_id": "5b702c79a0deb88609b6a9b76a8ff4b1",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1158,7 +1305,7 @@
     "element_id": "34e41476b3562e66cc04edd8a2ba4eb7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1179,7 +1326,7 @@
     "element_id": "5e1e7b461ccf41232b3daf5b54d59399",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1197,10 +1344,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 7
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "aec400e3e65dc09b31513694bc9893b9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1221,7 +1389,7 @@
     "element_id": "29399af043bbf069ecfd1abdcaee4b15",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1242,7 +1410,7 @@
     "element_id": "2fb9de7ce072904e3da50fc724ce8b12",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1263,7 +1431,7 @@
     "element_id": "dbae772db29058a88f9bd830e957c695",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1284,7 +1452,7 @@
     "element_id": "2d52b4cb071eb1384e8f64581d907335",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1305,7 +1473,7 @@
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1326,7 +1494,7 @@
     "element_id": "3f79bb7b435b05321651daefd374cdc6",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1347,7 +1515,7 @@
     "element_id": "f83714d89302473e0e4f5399bd50e7a9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1368,7 +1536,7 @@
     "element_id": "380918b946a526640a40df5dced65167",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1389,7 +1557,7 @@
     "element_id": "f9bb49945b60897227abdd75b5f8d39b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1410,7 +1578,7 @@
     "element_id": "1fb2ec4fc8fc547c0de86ba79ba651e5",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1431,7 +1599,7 @@
     "element_id": "c12be3875fcb0e34681e80c68ced624f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1452,7 +1620,7 @@
     "element_id": "3472694e01617965f38369c536bdc070",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1473,7 +1641,7 @@
     "element_id": "49b5bd9868a164cf35b10cbb343ddba0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1494,7 +1662,7 @@
     "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1515,7 +1683,7 @@
     "element_id": "ad57366865126e55649ecb23ae1d4888",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1536,7 +1704,7 @@
     "element_id": "67ff7489d537e35454934b9dc3a725f9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1557,7 +1725,7 @@
     "element_id": "5feceb66ffc86f38d952786c6d696c79",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1578,7 +1746,7 @@
     "element_id": "7a1ca4ef7515f7276bae7230545829c2",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1599,7 +1767,7 @@
     "element_id": "e720e656050a5b95706b7ffefb3ff505",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1620,7 +1788,7 @@
     "element_id": "0b7637d5dd3c0e09980fb400ebbdcf72",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1641,7 +1809,7 @@
     "element_id": "f18421197d4b12d362e1ededa3f3145f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1662,7 +1830,7 @@
     "element_id": "dddeec4eec1ff6db9e832ed00fea1b7e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1683,7 +1851,7 @@
     "element_id": "563a2980d46c81119e1d7d952b375a41",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1704,7 +1872,7 @@
     "element_id": "3d193aba53b016527c3f658cdd6d99e2",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1725,7 +1893,7 @@
     "element_id": "13d3d626e6be5671aed83c1270851087",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1746,7 +1914,7 @@
     "element_id": "c671a138a73229210d751a2857ff503d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1767,7 +1935,7 @@
     "element_id": "2f701c7144dd1588cdb70e2a188c1418",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1788,7 +1956,7 @@
     "element_id": "a0fef2750bd4fbae8e9e28211ceea788",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1809,7 +1977,7 @@
     "element_id": "37eafc6215975a858fa506f14ea98982",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1830,7 +1998,7 @@
     "element_id": "c69b33366ea0bcfb6c30799a4100c6a0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1851,7 +2019,7 @@
     "element_id": "671a02117af87c2371462f800d856f15",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1872,7 +2040,7 @@
     "element_id": "c948e12a05e40ac00f3e5321f6ae7742",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1893,7 +2061,7 @@
     "element_id": "0748d61bf0b14f9f30e6cfbfb57034d4",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1914,7 +2082,7 @@
     "element_id": "395face9e1f924d1f2a0d746f317c5b9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1932,10 +2100,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 10
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "a0d7deccf89e42d02a9d66b0c1889689",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1956,7 +2145,7 @@
     "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1977,7 +2166,7 @@
     "element_id": "5d7f49449ab22deac22d767b89549c55",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -1998,7 +2187,7 @@
     "element_id": "f5557d4fcf727a981a3c315aca733eef",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2019,7 +2208,7 @@
     "element_id": "0ab306823035661bb8dba21cc2535231",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2040,7 +2229,7 @@
     "element_id": "d3fc2842ddfad4c8d3859f84d4439bfd",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2061,7 +2250,7 @@
     "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2082,7 +2271,7 @@
     "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2103,7 +2292,7 @@
     "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2124,7 +2313,7 @@
     "element_id": "c1d2906220d1eef1b17422b7132872a8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2145,7 +2334,7 @@
     "element_id": "de72de35f0092bdd3107011f3be18dc0",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2166,7 +2355,7 @@
     "element_id": "dcf0fcce0dd00a5335e8e42658aacc75",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2187,7 +2376,7 @@
     "element_id": "5897aff759a5cc8d94710101c73af296",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2208,7 +2397,7 @@
     "element_id": "ed171375d0bf81eaa5512140c3a29b8f",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2229,7 +2418,7 @@
     "element_id": "0b9ea5c0804f5a369317ffcf363badf3",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2250,7 +2439,7 @@
     "element_id": "c2fb0a6722612bb6055e56fea799a81b",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2271,7 +2460,7 @@
     "element_id": "06d4880e4a23a9520618a50bfbbdf940",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2292,7 +2481,7 @@
     "element_id": "8ff63a0f4af4de37eff90952d575f76d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2313,7 +2502,7 @@
     "element_id": "4ac69378210b56e0c98be2d41e374769",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
@@ -2331,10 +2520,31 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 12
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "3df4f87a759f8e1a2e3ab0a186ac16ef",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-02-12T10:10:36",
+        "date_modified": "2023-02-12T10:10:36+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
