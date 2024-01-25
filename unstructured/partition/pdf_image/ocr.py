@@ -141,11 +141,11 @@ def process_file_with_ocr(
                     image.format = image_format
                     merged_page_layout = supplement_page_layout_with_ocr(
                         page_layout=out_layout.pages[i],
-                        extracted_regions=extracted_layout[i],
                         image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
+                        extracted_regions=extracted_layout[i],
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -162,11 +162,11 @@ def process_file_with_ocr(
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
                             page_layout=out_layout.pages[i],
-                            extracted_regions=extracted_layout[i],
                             image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
+                            extracted_regions=extracted_layout[i],
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -179,11 +179,11 @@ def process_file_with_ocr(
 
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
-    extracted_regions: List["TextRegion"],
     image: PILImage,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -241,11 +241,11 @@ def supplement_page_layout_with_ocr(
 
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List[LayoutElement], page_layout.elements),
-            extracted_regions=extracted_regions,
             image=image,
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
         )
 
     return page_layout
@@ -253,11 +253,11 @@ def supplement_page_layout_with_ocr(
 
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
-    extracted_regions: List["TextRegion"],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -277,22 +277,22 @@ def supplement_element_with_table_extraction(
             ),
         )
         table_tokens = get_table_tokens(
-            extracted_regions=extracted_regions,
-            table_element=padded_element,
             table_element_image=cropped_image,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_element=padded_element,
         )
         element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
 def get_table_tokens(
-    extracted_regions: List["TextRegion"],
-    table_element: "LayoutElement",
     table_element_image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: str = OCR_AGENT_TESSERACT,
+    extracted_regions: Optional[List["TextRegion"]] = None,
+    table_element: Optional["LayoutElement"] = None,
 ) -> List[Dict]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
