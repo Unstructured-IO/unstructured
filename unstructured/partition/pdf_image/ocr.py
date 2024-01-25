@@ -45,6 +45,7 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -84,6 +85,7 @@ def process_data_with_ocr(
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
             out_layout=out_layout,
+            extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
@@ -96,6 +98,7 @@ def process_data_with_ocr(
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -137,8 +140,9 @@ def process_file_with_ocr(
                     image = image.convert("RGB")
                     image.format = image_format
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        out_layout.pages[i],
-                        image,
+                        page_layout=out_layout.pages[i],
+                        extracted_regions=extracted_layout[i],
+                        image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
@@ -157,8 +161,9 @@ def process_file_with_ocr(
                 for i, image_path in enumerate(image_paths):
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            out_layout.pages[i],
-                            image,
+                            page_layout=out_layout.pages[i],
+                            extracted_regions=extracted_layout[i],
+                            image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
@@ -174,6 +179,7 @@ def process_file_with_ocr(
 
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
+    extracted_regions: List["TextRegion"],
     image: PILImage,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -235,6 +241,7 @@ def supplement_page_layout_with_ocr(
 
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List[LayoutElement], page_layout.elements),
+            extracted_regions=extracted_regions,
             image=image,
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
@@ -246,6 +253,7 @@ def supplement_page_layout_with_ocr(
 
 def supplement_element_with_table_extraction(
     elements: List[LayoutElement],
+    extracted_regions: List[TextRegion],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",

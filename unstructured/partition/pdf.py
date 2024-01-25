@@ -343,6 +343,7 @@ def _partition_pdf_or_image_local(
             final_document_layout = process_file_with_ocr(
                 filename,
                 merged_document_layout,
+                extracted_layout=extracted_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
@@ -382,6 +383,7 @@ def _partition_pdf_or_image_local(
             final_document_layout = process_data_with_ocr(
                 file,
                 merged_document_layout,
+                extracted_layout=extracted_layout,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
