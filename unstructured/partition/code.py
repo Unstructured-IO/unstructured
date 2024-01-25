@@ -158,8 +158,7 @@ def _partition_code(
     try:
         LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=programming_language)
     except (AttributeError, OSError):
-        update_tree_sitter([programming_language])
-        LANG = tree_sitter.Language(TREE_SITTER_BUILD_PATH, name=programming_language)
+        raise ValueError(f"{programming_language} is not supported yet")
 
     parser = tree_sitter.Parser()
     parser.set_language(LANG)
