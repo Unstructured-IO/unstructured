@@ -119,6 +119,7 @@ class SqlDestinationConnector(BaseDestinationConnector):
         if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
             data["metadata"]["coordinates"]["points"] = str(json.dumps(points))
 
+        # should this be link_urls?
         if links := data.get("metadata", {}).get("links", {}):
             data["metadata"]["links"] = str(json.dumps(links))
 
@@ -127,8 +128,8 @@ class SqlDestinationConnector(BaseDestinationConnector):
         ):
             data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
 
-        if link_texts := data.get("metadata", {}).get("link_texts", {}):
-            data["metadata"]["link_texts"] = str(json.dumps(link_texts))
+        # if link_texts := data.get("metadata", {}).get("link_texts", {}):
+        #     data["metadata"]["link_texts"] = str(json.dumps(link_texts))
 
         if sent_from := data.get("metadata", {}).get("sent_from", {}):
             data["metadata"]["sent_from"] = str(json.dumps(sent_from))
