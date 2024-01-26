@@ -411,7 +411,7 @@ def supplement_layout_with_ocr_elements(
 
 def get_ocr_agent() -> str:
     ocr_agent_module = env_config.OCR_AGENT
-    # deal with compatibiltiy with origin way to set OCR
+    # deal with compatibility with origin way to set OCR
     if ocr_agent_module.lower() == OCR_AGENT_TESSERACT_OLD:
         ocr_agent_module = OCR_AGENT_TESSERACT
     elif ocr_agent_module.lower() == OCR_AGENT_PADDLE_OLD:

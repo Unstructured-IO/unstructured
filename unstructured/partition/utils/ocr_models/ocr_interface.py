@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import functools
 import importlib
 from typing import Any, List, Optional, cast
@@ -12,24 +13,29 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured.documents.elements import ElementType
 
 
-class OCRAgent:
+class OCRAgentr(ABC):
     def __init__(self):
         self.agent = self.load_agent()
 
+    @abstractmethod
     def load_agent(self, language: str) -> Any:
         pass
 
+    @abstractmethod
     def is_text_sorted(self) -> bool:
         pass
 
+    @abstractmethod
     def get_text_from_image(self, image: PILImage, ocr_languages: str = "eng") -> str:
         pass
 
+    @abstractmethod
     def get_layout_from_image(
         self, image: PILImage, ocr_languages: str = "eng"
     ) -> List[TextRegion]:
         pass
 
+    @abstractmethod
     def get_layout_elements_from_image(
         self, image: PILImage, ocr_languages: str = "eng"
     ) -> List[LayoutElement]:
