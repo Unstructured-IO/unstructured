@@ -290,6 +290,9 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
+    # init ability to process .heic files
+    register_heif_opener()
+
     if languages is None:
         languages = ["eng"]
 
@@ -881,7 +884,6 @@ def _partition_pdf_or_image_with_ocr(
     elements = []
     if is_image:
         images = []
-        register_heif_opener()
         image = PILImage.open(file) if file is not None else PILImage.open(filename)
         images.append(image)
 
