@@ -66,7 +66,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5d18f0234e23bc96198c9fb19601056a",
+    "element_id": "828767cbc922e731b59894afba55fe10",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -84,51 +84,7 @@
       ],
       "page_number": 1
     },
-    "text": "We ask for this information to carry out the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "1dc07a295891aaf9dfd2559efee66ab2",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to this information.",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "84ab8a2c9ef5f989df144a0ca4576c45",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "give us",
+    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to give us this information.",
     "type": "NarrativeText"
   },
   {
@@ -198,7 +154,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "cf9c7aa24a26aac4f0ec4b6395cbfdcc",
+    "element_id": "40f5ea916f51f85ab53afbceaadeb84f",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -216,55 +172,11 @@
       ],
       "page_number": 1
     },
-    "text": "When",
-    "type": "Title"
-  },
-  {
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Form 3115,",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "d3c76e8e037d3aec863db1d768b81f6d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115).",
+    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115).",
     "type": "NarrativeText"
   },
   {
-    "element_id": "4e7936ce3e93c2ae3ca21444e573c208",
+    "element_id": "463c7a60fb455863074b2919009e36f1",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -282,11 +194,11 @@
       ],
       "page_number": 1
     },
-    "text": "Long-term contracts. —If you are required to",
+    "text": "Long-term contracts. —If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "dbf06d87f9be9871dfd64bd0a7bba567",
+    "element_id": "5a48c177469d6ea3a46a208d5ba41774",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -304,52 +216,8 @@
       ],
       "page_number": 1
     },
-    "text": "change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes 1n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "c259777a4c46933ffda4f8b06922fcfd",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes 1n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the inclusion of income attributable to the sale or furnishing of utility services no later than the year in which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "d3eda7d7ed44b4b43fcbfa6f83f6fad3",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "changes.",
-    "type": "Title"
   },
   {
     "element_id": "790998c70f51276d6fae7db8df6e8351",
@@ -572,7 +440,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c56ebb2883fe0c95b8564fa3969f7010",
+    "element_id": "0ec978b05caa71414e2f4429b1d18f09",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -590,30 +458,8 @@
       ],
       "page_number": 1
     },
-    "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application.",
+    "text": "See section 5.03 of Rev. Proc. 84-74 for filing an early application.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "an",
-    "type": "Title"
   },
   {
     "element_id": "12f877f0bd47f9b761ed7e74be1afacd",
@@ -726,7 +572,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "7d82c5876c5c1a3596338ae8cfbd1a50",
+    "element_id": "742730130f9c14403ad272eec208a456",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -744,52 +590,8 @@
       ],
       "page_number": 1
     },
-    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block.",
+    "text": "Others.-—The employer identification number of an applicant other than an individual should be entered in this block.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "an",
-    "type": "Title"
-  },
-  {
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "of",
-    "type": "Title"
   },
   {
     "element_id": "f1a73e2204a114077f988c9da98d7f8b",
@@ -880,7 +682,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ba7f9dc18be2bf9219e020112b426526",
+    "element_id": "df06bd3517f30f1754d6c57666af0c65",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -898,29 +700,7 @@
       ],
       "page_number": 1
     },
-    "text": "Fiduciaries.—The-form should show the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "15388163cb5265b432737b06d98790e5",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title.",
+    "text": "Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title.",
     "type": "NarrativeText"
   },
   {
@@ -946,7 +726,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+    "element_id": "1df7107903f249d938fbf3710f50283a",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:44:55+00:00",
@@ -964,29 +744,7 @@
       ],
       "page_number": 1
     },
-    "text": "a",
-    "type": "Title"
-  },
-  {
-    "element_id": "12a24aabbcef2cabc07babe12d9c82c5",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:44:55+00:00",
-        "date_modified": "2023-03-10T09:44:55+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.png"
-        },
-        "url": "abfs://container1/IRS-form-1987.png",
-        "version": "328871203465633719836776597535876541325"
-      },
-      "filetype": "image/png",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
+    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
     "type": "NarrativeText"
   },
   {
