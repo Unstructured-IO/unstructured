@@ -13,7 +13,7 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured.documents.elements import ElementType
 
 
-class OCRAgentr(ABC):
+class OCRAgent(ABC):
     def __init__(self):
         self.agent = self.load_agent()
 
