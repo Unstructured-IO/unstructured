@@ -290,9 +290,6 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
-    # init ability to process .heic files
-    register_heif_opener()
-
     if languages is None:
         languages = ["eng"]
 
@@ -490,6 +487,9 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    # init ability to process .heic files
+    register_heif_opener()
 
     validate_strategy(strategy, is_image)
 
