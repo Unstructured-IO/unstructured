@@ -175,7 +175,7 @@ def test_detect_languages_handles_spelled_out_languages():
     ],
 )
 def test_check_language_args_uses_languages_when_ocr_languages_and_languages_are_both_defined(
-    languages: Union[list[str], str, None],
+    languages: Union[list[str], str],
     ocr_languages: Union[list[str], str, None],
     expected_langs: list[str],
     caplog,
@@ -197,7 +197,7 @@ def test_check_language_args_uses_languages_when_ocr_languages_and_languages_are
     ],
 )
 def test_check_language_args_uses_ocr_languages_when_languages_is_empty_or_None(
-    languages: Union[list[str], str, None],
+    languages: Union[list[str], str],
     ocr_languages: Union[list[str], str, None],
     expected_langs: list[str],
     caplog,
@@ -206,3 +206,41 @@ def test_check_language_args_uses_ocr_languages_when_languages_is_empty_or_None(
     for lang in returned_langs:  # type: ignore
         assert lang in expected_langs
         assert "ocr_languages" in caplog.text
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages"),
+    [
+        ([], None),  # how check_language_args is called from auto.partition()
+        ([""], None),
+    ],
+)
+def test_check_language_args_returns_None(
+    languages: Union[list[str], str, None],
+    ocr_languages: Union[list[str], str, None],
+):
+    returned_langs = check_language_args(languages=languages, ocr_languages=ocr_languages)
+    assert returned_langs is None
+
+
+def test_check_language_args_returns_auto(
+    languages=["eng", "spa", "auto"],
+    ocr_languages=None,
+):
+    returned_langs = check_language_args(languages=languages, ocr_languages=ocr_languages)
+    assert returned_langs == ["auto"]
+
+
+@pytest.mark.parametrize(
+    ("languages", "ocr_languages"),
+    [
+        ([], ["auto"]),
+        ([""], "eng+auto"),
+    ],
+)
+def test_check_language_args_raises_error_when_ocr_languages_contains_auto(
+    languages: Union[list[str], str, None],
+    ocr_languages: Union[list[str], str, None],
+):
+    with pytest.raises(ValueError):
+        check_language_args(languages=languages, ocr_languages=ocr_languages)
