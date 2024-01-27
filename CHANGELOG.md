@@ -1,4 +1,4 @@
-## 0.12.3-dev6
+## 0.12.3-dev7
 
 ### Enhancements
 
@@ -17,6 +17,7 @@
 * **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
 * **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
 * **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
+* **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
 
 
 ## 0.12.2
