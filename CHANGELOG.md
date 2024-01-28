@@ -4,13 +4,14 @@
 
 * **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
   MongoDB connector.
+* **refactor OCR agent** more to come
 
 ### Features
 
 * **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
 
 ### Fixes
-* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper** 
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
 * **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
   files as text.
 * **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
