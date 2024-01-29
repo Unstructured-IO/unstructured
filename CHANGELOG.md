@@ -1,3 +1,13 @@
+## 0.12.4-dev0
+
+### Enhancements
+
+### Features
+
+* **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+
+### Fixes
+
 ## 0.12.3
 
 ### Enhancements
@@ -8,7 +18,6 @@
 ### Features
 
 * **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
-* **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
 
 ### Fixes
 * **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
