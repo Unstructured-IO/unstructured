@@ -516,7 +516,7 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
     assert elements[idx].metadata.detection_class_prob is not None
@@ -889,18 +889,16 @@ def test_check_annotations_within_element(threshold, expected):
 
 
 @pytest.mark.parametrize(
-    ("infer_table_structure", "env", "expected"),
+    ("env", "expected"),
     [
-        (False, None, "yolox_quantized"),
-        (True, None, "yolox"),
-        (False, "test", "test"),
-        (True, "test", "test"),
+        (None, "yolox"),
+        ("test", "test"),
     ],
 )
-def test_default_hi_res_model(infer_table_structure, env, expected, monkeypatch):
+def test_default_hi_res_model(env, expected, monkeypatch):
     if env is not None:
         monkeypatch.setenv("UNSTRUCTURED_HI_RES_MODEL_NAME", env)
-    assert pdf.default_hi_res_model(infer_table_structure) == expected
+    assert pdf.default_hi_res_model() == expected
 
 
 def test_partition_model_name_default_to_None():

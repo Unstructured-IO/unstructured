@@ -446,7 +446,7 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, content_type):
+def test_auto_partition_image(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
@@ -458,7 +458,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 

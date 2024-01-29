@@ -8,6 +8,8 @@
 
 ### Fixes
 
+* **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
+
 ## 0.12.3
 
 ### Enhancements
@@ -20,6 +22,7 @@
 * **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
 
 ### Fixes
+
 * **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
 * **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
   files as text.
@@ -28,7 +31,6 @@
 * **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
 * **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
 * **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
-
 
 ## 0.12.2
 

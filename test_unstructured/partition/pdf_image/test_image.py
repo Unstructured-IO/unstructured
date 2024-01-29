@@ -305,7 +305,7 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
     assert elements[idx].metadata.detection_class_prob is not None
@@ -571,7 +571,7 @@ def test_partition_image_uses_hi_res_model_name():
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 3),
+        ("entire_page", 2),
         ("individual_blocks", 1),
     ],
 )
