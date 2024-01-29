@@ -127,9 +127,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
         ):
             data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
 
-        if link_texts := data.get("metadata", {}).get("link_texts", {}):
-            data["metadata"]["link_texts"] = str(json.dumps(link_texts))
-
         if sent_from := data.get("metadata", {}).get("sent_from", {}):
             data["metadata"]["sent_from"] = str(json.dumps(sent_from))
 

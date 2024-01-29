@@ -60,6 +60,23 @@ TEST_DATA_2 = {
     "embeddings": [0.1, 0.2, 0.3],
 }
 
+TEST_DATA_3 = {
+    "metadata": {
+        "coordinates": {"points": [1, 2, 3]},
+        "data_source": {
+            "date_created": "2021-01-01T00:00:00",
+            "date_modified": "2021-01-02T00:00:00",
+            "date_processed": "2022-12-13T15:44:08",
+            "version": 1.1,
+        },
+        "last_modified": "2021-01-03T00:00:00",
+        "page_number": 10,
+        "link_texts": ["Skip to main content"],
+        "link_urls": ["#main-content"],
+    },
+    "embeddings": [0.1, 0.2, 0.3],
+}
+
 
 def test_conform_dict_1():
     """Validate that the conform_dict method returns the expected output for a real example"""
@@ -119,6 +136,33 @@ def test_conform_dict_2():
         "last_modified": datetime.datetime(2021, 1, 3, 0, 0),
         "page_number": "10",
         "regex_metadata": '{"pattern": "abc"}',
+        "date_created": datetime.datetime(2021, 1, 1, 0, 0),
+        "date_modified": datetime.datetime(2021, 1, 2, 0, 0),
+        "date_processed": datetime.datetime(2022, 12, 13, 15, 44, 8),
+        "version": "1.1",
+        "points": "[1, 2, 3]",
+    }
+
+
+def test_conform_dict_link_texts():
+    """Validate that the conform_dict method returns the expected output link_texts"""
+    # Create a mock instance of the connector class
+    connector = SqlDestinationConnector(write_config=Mock(), connector_config=Mock())
+
+    # Mock the uuid.uuid4 function to return a fixed value
+    with patch("uuid.uuid4", return_value="mocked_uuid"):
+        # Call the conform_dict method
+        data_out = TEST_DATA_3.copy()
+        connector.conform_dict(data_out)
+
+    # Assert that the result matches the expected output
+    assert data_out == {
+        "embeddings": "[0.1, 0.2, 0.3]",
+        "id": "mocked_uuid",
+        "last_modified": datetime.datetime(2021, 1, 3, 0, 0),
+        "link_texts": ["Skip to main content"],
+        "link_urls": ["#main-content"],
+        "page_number": "10",
         "date_created": datetime.datetime(2021, 1, 1, 0, 0),
         "date_modified": datetime.datetime(2021, 1, 2, 0, 0),
         "date_processed": datetime.datetime(2022, 12, 13, 15, 44, 8),
