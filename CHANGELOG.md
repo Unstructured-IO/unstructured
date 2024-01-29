@@ -4,6 +4,7 @@
 
 * **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
   MongoDB connector.
+* **Add the ability to specify an alternate OCR** implementation
 
 ### Features
 
