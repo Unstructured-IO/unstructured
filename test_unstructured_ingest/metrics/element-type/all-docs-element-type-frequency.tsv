@@ -1,4 +1,4 @@
 filename	doctype	connector	element-type-accuracy
-IRS-form-1987.pdf	pdf	azure	0.89
+IRS-form-1987.pdf	pdf	azure	0.841
 handbook-1p.docx	docx	local-single-file-basic-chunking	0.0
 page-with-formula.pdf	pdf	s3	0.737
