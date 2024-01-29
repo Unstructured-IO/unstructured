@@ -82,7 +82,7 @@ lxml==5.1.0
     #   -c base.txt
     #   premailer
     #   unstructured-paddleocr
-markupsafe==2.1.3
+markupsafe==2.1.4
     # via
     #   jinja2
     #   werkzeug
@@ -126,13 +126,12 @@ packaging==23.2
     #   matplotlib
     #   scikit-image
     #   visualdl
-pandas==2.1.4
+pandas==2.2.0
     # via visualdl
 pdf2image==1.17.0
     # via unstructured-paddleocr
-pillow==10.0.1
+pillow==10.2.0
     # via
-    #   -c constraints.in
     #   imageio
     #   imgaug
     #   matplotlib
@@ -147,7 +146,7 @@ protobuf==4.23.4
     # via
     #   -c constraints.in
     #   visualdl
-psutil==5.9.7
+psutil==5.9.8
     # via visualdl
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
@@ -162,7 +161,7 @@ python-dateutil==2.8.2
     #   -c base.txt
     #   matplotlib
     #   pandas
-pytz==2023.3.post1
+pytz==2023.4
     # via
     #   flask-babel
     #   pandas
@@ -198,7 +197,7 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2023.12.9
+tifffile==2024.1.30
     # via scikit-image
 tqdm==4.66.1
     # via
