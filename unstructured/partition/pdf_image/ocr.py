@@ -16,6 +16,7 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 from unstructured.documents.elements import ElementType
+from unstructured.logger import logger
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -411,12 +412,24 @@ def supplement_layout_with_ocr_elements(
 
 def get_ocr_agent() -> str:
     ocr_agent_module = env_config.OCR_AGENT
+    message = (
+        "OCR agent name %s is outdated and will be deprecated in a future release; please use %s "
+        "instead"
+    )
     # deal with compatibility with origin way to set OCR
     if ocr_agent_module.lower() == OCR_AGENT_TESSERACT_OLD:
-        logger.warning("OCR agent name %s is outdated and will be deprecated in a future release; please use %s instead", ocr_agent_module, OCR_AGENT_TESSERACT)
+        logger.warning(
+            message,
+            ocr_agent_module,
+            OCR_AGENT_TESSERACT,
+        )
         ocr_agent_module = OCR_AGENT_TESSERACT
     elif ocr_agent_module.lower() == OCR_AGENT_PADDLE_OLD:
-        logger.warning("OCR agent name %s is outdated and will be deprecated in a future release; please use %s instead", ocr_agent_module, OCR_AGENT_PADDLE)
+        logger.warning(
+            message,
+            ocr_agent_module,
+            OCR_AGENT_PADDLE,
+        )
         ocr_agent_module = OCR_AGENT_PADDLE
     try:
         ocr_agent = OCRAgent.get_instance(ocr_agent_module)
