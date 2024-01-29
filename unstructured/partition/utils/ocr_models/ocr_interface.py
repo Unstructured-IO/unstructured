@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
 import functools
 import importlib
+from abc import ABC, abstractmethod
 from typing import Any, List, Optional, cast
 
 from PIL import Image as PILImage
@@ -11,6 +11,7 @@ from unstructured_inference.inference.layoutelement import (
 )
 
 from unstructured.documents.elements import ElementType
+from unstructured.partition.utils.constants import OCR_AGENT_MODULES_WHITELIST
 
 
 class OCRAgent(ABC):
@@ -45,9 +46,15 @@ class OCRAgent(ABC):
     @functools.lru_cache(maxsize=None)
     def get_instance(ocr_agent_module: str) -> "OCRAgent":
         module_name, class_name = ocr_agent_module.rsplit(".", 1)
-        module = importlib.import_module(module_name)
-        loaded_class = getattr(module, class_name)
-        return loaded_class()
+        if module_name in OCR_AGENT_MODULES_WHITELIST:
+            module = importlib.import_module(module_name)
+            loaded_class = getattr(module, class_name)
+            return loaded_class()
+        else:
+            raise ValueError(
+                f"Environment variable OCR_AGENT module name {module_name}",
+                f" must be set to a whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
+            )
 
 
 def get_elements_from_ocr_regions(

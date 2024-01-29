@@ -1,10 +1,19 @@
-## 0.12.3-dev7
+## 0.12.4-dev0
+
+### Enhancements
+
+* **Add the ability to specify an alternate OCR** implementation
+
+### Features
+
+### Fixes
+
+## 0.12.3
 
 ### Enhancements
 
 * **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
   MongoDB connector.
-* **refactor OCR agent** more to come
 
 ### Features
 
