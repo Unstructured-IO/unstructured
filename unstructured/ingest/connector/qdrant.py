@@ -63,8 +63,7 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             self._client = self.create_client()
         return self._client
 
-    def initialize(self):
-        ...
+    def initialize(self): ...
 
     @requires_dependencies(["qdrant_client"], extras="qdrant")
     def create_client(self) -> "QdrantClient":
@@ -77,9 +76,11 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             grpc_port=self.connector_config.grpc_port,
             prefer_grpc=self.connector_config.prefer_grpc,
             https=self.connector_config.https,
-            api_key=self.connector_config.access_config.api_key
-            if self.connector_config.access_config
-            else None,
+            api_key=(
+                self.connector_config.access_config.api_key
+                if self.connector_config.access_config
+                else None
+            ),
             prefix=self.connector_config.prefix,
             timeout=self.connector_config.timeout,
             host=self.connector_config.host,
