@@ -167,9 +167,7 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) ->
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_language_args(
-    languages: list[str], ocr_languages: Optional[str]
-) -> Union[list[str], None]:
+def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> Optional[list[str]]:
     """Handle users defining both `ocr_languages` and `languages`, giving preference to `languages`
     and converting `ocr_languages` if needed, but defaulting to `None.
 
