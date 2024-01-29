@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.2.1
     # via -r test.in
-black==23.12.1
+black==24.1.1
     # via -r test.in
 certifi==2023.11.17
     # via
