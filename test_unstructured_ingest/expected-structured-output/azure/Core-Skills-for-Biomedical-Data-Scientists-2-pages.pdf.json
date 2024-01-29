@@ -44,7 +44,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "a6f2309aca564ada03b7ef16e5d0e9ab",
+    "element_id": "2c17d82bf28bdc48e5177d82f0b17d2f",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:32:44+00:00",
@@ -63,7 +63,7 @@
       "page_number": 1
     },
     "text": "Lisa Federer, MLIS, Data Science Training Coordinator",
-    "type": "Title"
+    "type": "NarrativeText"
   },
   {
     "element_id": "0480125483856ec593d0dc47efed26a7",
@@ -526,27 +526,5 @@
     },
     "text": "2",
     "type": "UncategorizedText"
-  },
-  {
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:32:44+00:00",
-        "date_modified": "2023-03-10T09:32:44+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
-        },
-        "url": "abfs://container1/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf",
-        "version": "167189396509615428390709838081557906335"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "2",
-    "type": "Footer"
   }
 ]
