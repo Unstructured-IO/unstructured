@@ -39,7 +39,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "01a8470646d06d1c29b9f43915ac04e0",
+    "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -130,19 +130,6 @@
     "type": "Title"
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "",
-    "type": "Image"
-  },
-  {
     "element_id": "6d1999c49562bd7c2b15a41327b8fc36",
     "metadata": {
       "data_source": {},
@@ -180,19 +167,6 @@
     },
     "text": "a r t i c l e i n f o",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "3d71760ba4f1cc95873ee36178f97d82",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "ARTICLE INFO",
-    "type": "Title"
   },
   {
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
@@ -286,7 +260,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c965cb5900649ea7abbf36e0d6a13547",
+    "element_id": "8c625bd30cfb1b77c8ba8d4e863d0bb3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -312,7 +286,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "e4359c72057b318ddf5a64f9b97539c4",
+    "element_id": "ef9cdfbc7eb888a2943d3a46c21e0db2",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -321,20 +295,7 @@
       ],
       "page_number": 1
     },
-    "text": "n Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za",
-    "type": "Title"
-  },
-  {
-    "element_id": "1c2879aacaaeedb75720c6e9f57edf67",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "E-mail address: tayo.sanni@yahoo.com (O. Sanni).",
+    "text": "n Corresponding author. tayo.sanni@yahoo.com; SanniO@tut.ac.za E-mail address: tayo.sanni@yahoo.com (O. Sanni).",
     "type": "ListItem"
   },
   {
@@ -351,7 +312,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "722bbe57a365b0aec3839d5228ca8c62",
+    "element_id": "47126e31d0d3d3ae925dac7786be781b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -360,21 +321,8 @@
       ],
       "page_number": 2
     },
-    "text": "452",
-    "type": "Header"
-  },
-  {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "text": "452 O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
+    "type": "ListItem"
   },
   {
     "element_id": "63ffdff8ce24056d9d776dda2adcc934",
@@ -481,7 +429,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "3fcf35e8b67240541d3f2bf3bc0a39c5",
+    "element_id": "41e73dfabedc433f7630b3a1b11a8086",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -490,21 +438,8 @@
       ],
       "page_number": 2
     },
-    "text": "30  ) g m  (     s s o  l     t h g e W  i  20  10g 8g 6g 4g 2g Control  10  48  96  144  192 ",
+    "text": "30  ) g m  (     s s o  l     t h g e W  i  20  10g 8g 6g 4g 2g Control  10  48  96  144  192  Exposure Time (Hours) ",
     "type": "Image"
-  },
-  {
-    "element_id": "a955dcf1d740ce40d62415d9f16da436",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "Exposure Time (Hours)",
-    "type": "Title"
   },
   {
     "element_id": "7e776fc583357f98358877d4c0b48b7f",
@@ -533,7 +468,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "9fd8126152fe50909dc643c92ff6cd4c",
+    "element_id": "efd8d6368b24036491770a67e9d6396e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -542,60 +477,8 @@
       ],
       "page_number": 3
     },
-    "text": "2.7  1.8  0.9  10g 8g 6g 4g 2g Control  24  48  72  96  120  144  168  192  Exposure time ",
+    "text": "2.7  ) r a e y / m m  ( e t a r n o s o r r o C        i  1.8  0.9  10g 8g 6g 4g 2g Control  24  48  72  96  120  144  168  192  Exposure time ",
     "type": "Image"
-  },
-  {
-    "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": ") r a e y / m m",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "49e7364ce1027887460959b2a757b184",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "( e t a r n o s o r r o C",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "i",
-    "type": "Title"
-  },
-  {
-    "element_id": "239bb77f5ec344ce5e614979b8c49742",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Exposure time",
-    "type": "Title"
   },
   {
     "element_id": "7ecc0fe6294fecb9c560f3731532f042",
@@ -611,7 +494,7 @@
     "type": "FigureCaption"
   },
   {
-    "element_id": "57e2eb94df928d0cf17b2c0d41ae042e",
+    "element_id": "4113214f765c6412b9bedf028635c563",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -620,47 +503,8 @@
       ],
       "page_number": 3
     },
-    "text": "100 4",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "100",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "c1daf0ef9e2135894ab832147233a7f3",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "90  )  %  (     y c n e c i f f  i  E n o i t i b h n I     i  80  70  60  50  40  30  2g 4g 6g 8g 10g  20  10  0  20  40  60  80  100  120  140  160  180 ",
+    "text": "100  90  )  %  (     y c n e c i f f  i  E n o i t i b h n I     i  80  70  60  50  40  30  2g 4g 6g 8g 10g  20  10  0  20  40  60  80  100  120  140  160  180  Exposure Time (Hours) ",
     "type": "Image"
-  },
-  {
-    "element_id": "a955dcf1d740ce40d62415d9f16da436",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "Exposure Time (Hours)",
-    "type": "Title"
   },
   {
     "element_id": "5b441ff866b6efc9e9a1d97675f16d57",
@@ -829,19 +673,6 @@
       "page_number": 4
     },
     "text": "C/0",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "e2b6d7e2ab125149fa820500cedfffbb",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "—=—Cc/0",
     "type": "UncategorizedText"
   },
   {
@@ -1105,7 +936,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "05b80da015b27ce53274cccfa0a1ffbf",
+    "element_id": "cc3e3b960765b5c20d535b2f34731260",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1114,21 +945,8 @@
       ],
       "page_number": 6
     },
-    "text": "Corrosion rate CRð",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
-    },
-    "text": ")",
-    "type": "UncategorizedText"
+    "text": "Corrosion rate CRð ð1Þ",
+    "type": "Formula"
   },
   {
     "element_id": "4fec98f0ec22ea41717dc57408c6f864",
@@ -1209,19 +1027,6 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "53b531237b040202ad24f2c6e37aa792",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 6
-    },
-    "text": "ð1Þ",
-    "type": "Title"
-  },
-  {
     "element_id": "41ceb2965d928f62e5bf4f63da952b22",
     "metadata": {
       "data_source": {},
@@ -1248,7 +1053,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "f19a9b9a2dd2d7ebaa58eb2c98ecf702",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1258,7 +1063,7 @@
       "page_number": 7
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "a6063e674a5fcdc03098bf03adb450f0",

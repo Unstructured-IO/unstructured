@@ -169,7 +169,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "8179530b70cc86671c5774ff7989d216",
+    "element_id": "3aa954bd1e29835edef83b7cd04e9769",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -179,6 +179,6 @@
       "page_number": 1
     },
     "text": "AQ3",
-    "type": "NarrativeText"
+    "type": "Title"
   }
 ]

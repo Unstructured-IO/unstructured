@@ -98,6 +98,7 @@ class GitSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 ".doc",
                 ".docx",
                 ".eml",
+                ".heic",
                 ".html",
                 ".png",
                 ".jpg",

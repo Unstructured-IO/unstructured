@@ -35,6 +35,7 @@ from pdfminer.layout import (
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from pillow_heif import register_heif_opener
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -70,7 +71,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    check_languages,
+    check_language_args,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
@@ -112,14 +113,21 @@ psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
-def default_hi_res_model(infer_table_structure: bool) -> str:
+@requires_dependencies("unstructured_inference")
+def default_hi_res_model() -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
 
     # if tabler structure is needed we defaul to use yolox for better table detection
-    default = "yolox" if infer_table_structure else "yolox_quantized"
-    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", default)
+    logger.warning(
+        "This function will be deprecated in a future release and `unstructured` will simply "
+        "use the DEFAULT_MODEL from `unstructured_inference.model.base` to set default model "
+        "name"
+    )
+    from unstructured_inference.models.base import DEFAULT_MODEL
+
+    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
 @process_metadata()
@@ -200,7 +208,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,
@@ -293,9 +301,7 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    hi_res_model_name = (
-        hi_res_model_name or model_name or default_hi_res_model(infer_table_structure)
-    )
+    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
         pdf_image_dpi = 300 if hi_res_model_name.startswith("chipper") else 200
     if (pdf_image_dpi < 300) and (hi_res_model_name.startswith("chipper")):
@@ -486,9 +492,10 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    validate_strategy(strategy, is_image)
+    # init ability to process .heic files
+    register_heif_opener()
 
-    languages = check_languages(languages, ocr_languages)
+    validate_strategy(strategy, is_image)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,

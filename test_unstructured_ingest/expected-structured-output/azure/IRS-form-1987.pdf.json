@@ -66,7 +66,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5d18f0234e23bc96198c9fb19601056a",
+    "element_id": "828767cbc922e731b59894afba55fe10",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -84,51 +84,7 @@
       ],
       "page_number": 1
     },
-    "text": "We ask for this information to carry out the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "b00492d57199616b7b5459cdf57a58d2",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to us this information.",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "0895a532e404a5c9ea96eac7982d268f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "give",
+    "text": "We ask for this information to carry out the Internal Revenue laws of the United States. We need it to ensure that taxpayers are complying with these laws and to allow us to figure and collect the right amount of tax. You are required to give us this information.",
     "type": "NarrativeText"
   },
   {
@@ -198,7 +154,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2127f2ab4fc4feb4d32460c8317bf02f",
+    "element_id": "45f1ee6a617b92c165698c4456a870fb",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -216,55 +172,11 @@
       ],
       "page_number": 1
     },
-    "text": "Form 3115,",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "cf9c7aa24a26aac4f0ec4b6395cbfdcc",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "When",
-    "type": "Title"
-  },
-  {
-    "element_id": "7e3ae97a65f12ef0bb8b4d6b5f721f54",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "filing taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),",
+    "text": "When filing Form 3115, taxpayers are reminded to determine if IRS has published a ruling or procedure dealing with the specific type of change since November 1987 (the current revision date of Form 3115),",
     "type": "NarrativeText"
   },
   {
-    "element_id": "093856d810a56c1557ce2b24c65abf3d",
+    "element_id": "463c7a60fb455863074b2919009e36f1",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -282,33 +194,11 @@
       ],
       "page_number": 1
     },
-    "text": "Long-term contracts. —If",
-    "type": "Title"
-  },
-  {
-    "element_id": "4a1ba7ce20dde03bf464633002f14b10",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "are required to",
+    "text": "Long-term contracts. —If you are required to change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "c7c37f80c11190ab9416495a0d9b7c6e",
+    "element_id": "d30c76a61eda53cddda756c6d370d0e9",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -326,11 +216,11 @@
       ],
       "page_number": 1
     },
-    "text": "you change your method of accounting for long-term contracts under section 460, see Notice 87-61 (9/21/87), 1987-38 IRB 40, for the notification procedures that must be followed.",
+    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these changes.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "6272a6df76820c927d081a1041e3c079",
+    "element_id": "84e7e32f584e2ee9f47ba593bf86c559",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -348,74 +238,8 @@
       ],
       "page_number": 1
     },
-    "text": "Other methods.—Unless the Service has published a regulation or procedure to the contrary, all other changes !n accounting methods required by the Act are automatically considered to be approved by the Commissioner. Examples of method changes automatically approved by the Commissioner are those changes required to effect: (1) the repeal of the reserve method for bad debts of taxpayers other than financial institutions (Act section 805); (2) the repeal of the installment method for sales under a revolving credit plan (Act section 812); (3) the Inclusion of income attributable to the sale or furnishing of utility services no later than the year In which the services were provided to customers (Act section 821); and (4) the repeal of the deduction for qualified discount coupons (Act section 823). Do not file Form 3115 for these",
+    "text": "Generally, applicants must complete Section A. In addition, complete the appropriate sections (B-1 through H) for which a change Is desired.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "d3eda7d7ed44b4b43fcbfa6f83f6fad3",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "changes.",
-    "type": "Title"
-  },
-  {
-    "element_id": "faf2673a7d6b6f7c5bf7cae6770a4130",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "Generally, applicants must complete Section In addition, complete the appropriate sections (B-1 through H) for which a change Is desired.",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "e53657178cb6855ac4b2029197a64b0c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "A.",
-    "type": "UncategorizedText"
   },
   {
     "element_id": "bf2a070cb9d03d056e70b26bebf1ef79",
@@ -440,7 +264,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "10626f80b0f7b25e661f8f82f5d7c454",
+    "element_id": "505160cf4f5ef1cf128734840a8c98d1",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -458,30 +282,8 @@
       ],
       "page_number": 1
     },
-    "text": "State whether you desire a conference in National Office if the Service proposes to disapprove your application.",
+    "text": "State whether you desire a conference in the National Office if the Service proposes to disapprove your application.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "the",
-    "type": "Title"
   },
   {
     "element_id": "242a9dba10a04654d4adef9c58ff96f6",
@@ -638,7 +440,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c56ebb2883fe0c95b8564fa3969f7010",
+    "element_id": "0ec978b05caa71414e2f4429b1d18f09",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -656,30 +458,8 @@
       ],
       "page_number": 1
     },
-    "text": "See section 5.03 of Rev. Proc. 84-74 for filing early application.",
+    "text": "See section 5.03 of Rev. Proc. 84-74 for filing an early application.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "an",
-    "type": "Title"
   },
   {
     "element_id": "12f877f0bd47f9b761ed7e74be1afacd",
@@ -792,7 +572,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "7d82c5876c5c1a3596338ae8cfbd1a50",
+    "element_id": "742730130f9c14403ad272eec208a456",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -810,52 +590,8 @@
       ],
       "page_number": 1
     },
-    "text": "Others.-—The employer identification number applicant other than an individual should be entered in this block.",
+    "text": "Others.-—The employer identification number of an applicant other than an individual should be entered in this block.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "ea325d761f98c6b73320e442b67f2a35",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "an",
-    "type": "Title"
-  },
-  {
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "of",
-    "type": "Title"
   },
   {
     "element_id": "f1a73e2204a114077f988c9da98d7f8b",
@@ -946,7 +682,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f5ea55c27511707a88f8efadcdf50b55",
+    "element_id": "df06bd3517f30f1754d6c57666af0c65",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -964,29 +700,7 @@
       ],
       "page_number": 1
     },
-    "text": "Fiduciaries.—The-form",
-    "type": "Title"
-  },
-  {
-    "element_id": "ca02af326f3caed052e30728481fc4fe",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title.",
+    "text": "Fiduciaries.—The-form should show the name of the estate or trust and be signed by the fiduciary, personal representative, executor, executrix, administrator, administratrix, etc., having legal authority to sign, and his or her title.",
     "type": "NarrativeText"
   },
   {
@@ -1012,7 +726,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ca978112ca1bbdcafac231b39a23dc4d",
+    "element_id": "1df7107903f249d938fbf3710f50283a",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1030,29 +744,7 @@
       ],
       "page_number": 1
     },
-    "text": "a",
-    "type": "Title"
-  },
-  {
-    "element_id": "12a24aabbcef2cabc07babe12d9c82c5",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
+    "text": "If the individual or firm is also authorized to represent the applicant before the IRS, receive a copy of the requested ruling, or perform any other act(s), the power of attorney must reflect such authorization(s).",
     "type": "NarrativeText"
   },
   {
@@ -1254,7 +946,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "81f087b1fcf4c9870324336c6bc0de78",
+    "element_id": "1bbe995811e9fd4c3ce1b218cb641f4e",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1272,11 +964,11 @@
       ],
       "page_number": 2
     },
-    "text": "(1) Gives your best estimate of the percentage the section 481(a) adjustment that would have been required if the requested change had been made for each of the 3 preceding years; and",
+    "text": "(1) Gives your best estimate of the percentage of the section 481(a) adjustment that would have been required if the requested change had been made for each of the 3 preceding years; and",
     "type": "NarrativeText"
   },
   {
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
+    "element_id": "f7872ac379aa024934461d08fa31ebd9",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1294,33 +986,11 @@
       ],
       "page_number": 2
     },
-    "text": "of",
-    "type": "Title"
-  },
-  {
-    "element_id": "cde0777402fde810d0fb24b15df92b2b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "(2) Explains in detail why you cannot provide requested information.",
+    "text": "(2) Explains in detail why you cannot provide the requested information.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
+    "element_id": "2de8f0b5003bcb8c12a4dc59c8e1f740",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1338,33 +1008,11 @@
       ],
       "page_number": 2
     },
-    "text": "the",
-    "type": "Title"
-  },
-  {
-    "element_id": "c855d896f610600602f04d9e31253c91",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "See section 5.06(2) of Rev. Proc. 84-74 for required perjury statement that must be attached.",
+    "text": "See section 5.06(2) of Rev. Proc. 84-74 for the required perjury statement that must be attached.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "1734a701c8a3139ddcb5b857f697318f",
+    "element_id": "678ecc0340dc8848f891bf12a555a3fd",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1382,30 +1030,8 @@
       ],
       "page_number": 2
     },
-    "text": "If IRS later examines your return for the year change or for later years, it has the right to verify your statement at that time.",
+    "text": "If IRS later examines your return for the year of the change or for later years, it has the right to verify your statement at that time.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "the",
-    "type": "Title"
   },
   {
     "element_id": "751abc8c6a0fa412c3e8c18345f57f95",
@@ -1606,50 +1232,6 @@
     "type": "Title"
   },
   {
-    "element_id": "b9776d7ddf459c9ad5b0e1d6ac61e27b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "the",
-    "type": "Title"
-  },
-  {
-    "element_id": "28391d3bc64ec15cbb090426b04aa6b7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "of",
-    "type": "Title"
-  },
-  {
     "element_id": "44902073e7cc4fa753f25d40e009dcef",
     "metadata": {
       "data_source": {
@@ -1782,7 +1364,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "bbd0f86d34b7622cfff546da0c15584d",
+    "element_id": "357d52f500b965abc29ea60039de4fd8",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1800,30 +1382,8 @@
       ],
       "page_number": 2
     },
-    "text": "LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:",
+    "text": "LIFO inventory changes.—Attach a schedule with all the required computations when changing the method of figuring LIFO inventories. If you are changing from LIFO to a non-LIFO method, attach a schedule with the following additional information:",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "1e3abf61a37e3cad36b11b459b1cc39e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "If",
-    "type": "Title"
   },
   {
     "element_id": "347f638641329c72c971a522ec07f6b1",
@@ -1848,7 +1408,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "e850deb3f1e65c13e7cd728279a472bf",
+    "element_id": "ea8e44805e010fa33ed03e9a8f22ddb2",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1866,55 +1426,11 @@
       ],
       "page_number": 2
     },
-    "text": "State whether the",
-    "type": "Title"
-  },
-  {
-    "element_id": "fd3dfa76050e048e229d35a01da6974a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "identification",
-    "type": "Title"
-  },
-  {
-    "element_id": "aca21cfeadca7d527dd36f01005ff44a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "(2) proposed and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726.",
+    "text": "(2) State whether the proposed identification and valuation methods conform to the inventory method currently used with respect to non-LIFO Inventories, if any, or how such method is otherwise consistent with Regulations section 1.4726.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "4a9430201a20b0868ab81c8c9e71b881",
+    "element_id": "6028c579dc843bb5aa2c704f46085914",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1932,30 +1448,8 @@
       ],
       "page_number": 2
     },
-    "text": "(3) The termination event statement required section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event.",
+    "text": "(3) The termination event statement required by section 5.10 of Rev. Proc. 84-74 and an explanation if there has been a termination event.",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "a7e2d26e8d15814dd9c6a1bdc90585c8",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "by",
-    "type": "Title"
   },
   {
     "element_id": "92e21a61e1d872dbbe3e3221a920b409",
@@ -1980,7 +1474,7 @@
     "type": "Title"
   },
   {
-    "element_id": "663ea1bfffe5038f3f0cf667f14c4257",
+    "element_id": "a8e72799229bc2d754f44ea167a6e7d6",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -1998,55 +1492,11 @@
       ],
       "page_number": 2
     },
-    "text": "to",
-    "type": "Title"
-  },
-  {
-    "element_id": "7574058dd32c12eb33bc649b5e36bdcb",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "their method of",
-    "type": "Title"
-  },
-  {
-    "element_id": "3167823c1d2039b4c48efe2f6c89b5c2",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "Applicants requesting change valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods.",
+    "text": "Applicants requesting to change their method of valuing property produced, property acquired for resale, or long-term contracts under section 263A or 460 MUST complete section D showing the treatment under both the present and proposed methods.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "element_id": "b6b99aba936d71652bca9a28d2a68eb8",
     "metadata": {
       "data_source": {
         "date_created": "2023-03-10T09:36:30+00:00",
@@ -2064,29 +1514,7 @@
       ],
       "page_number": 2
     },
-    "text": "%",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "4bde94dc330268d2f63a09423409c6d4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:36:30+00:00",
-        "date_modified": "2023-03-10T09:36:30+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/IRS-form-1987.pdf"
-        },
-        "url": "abfs://container1/IRS-form-1987.pdf",
-        "version": "307846589923949318200712033143133817358"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "U.S. Government Printing Office: 1987—201-993/60166",
+    "text": "% U.S. Government Printing Office: 1987—201-993/60166",
     "type": "NarrativeText"
   },
   {
