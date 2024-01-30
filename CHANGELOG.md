@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
+
 ### Features
 
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
