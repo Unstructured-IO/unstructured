@@ -36,7 +36,7 @@ install-huggingface:
 	python3 -m pip install pip==${PIP_VERSION}
 	python3 -m pip install -r requirements/huggingface.txt
 
-.PHONE: install-nltk-models
+.PHONY: install-nltk-models
 install-nltk-models:
 	python -c "import nltk; nltk.download('punkt')"
 	python -c "import nltk; nltk.download('averaged_perceptron_tagger')"
