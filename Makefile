@@ -457,8 +457,6 @@ docker-start-bash:
 docker-start-dev:
 	docker run --rm \
 	-v ${CURRENT_DIR}:/mnt/local_unstructued \
-	-v ${CURRENT_DIR}/test_unstructured:/home/notebook-user/test_unstructured \
-	-v ${CURRENT_DIR}/examples:/home/notebook-user/examples \
 	-ti ${DOCKER_IMAGE}
 
 .PHONY: docker-test
