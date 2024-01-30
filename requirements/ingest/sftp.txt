@@ -10,7 +10,7 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-cryptography==41.0.7
+cryptography==42.0.1
     # via paramiko
 fsspec==2023.12.2
     # via -r ingest/sftp.in

@@ -65,11 +65,11 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.1
+langchain==0.1.3
     # via -r ingest/embed-openai.in
-langchain-community==0.0.13
+langchain-community==0.0.15
     # via langchain
-langchain-core==0.1.13
+langchain-core==0.1.15
     # via
     #   langchain
     #   langchain-community
@@ -95,7 +95,7 @@ numpy==1.26.3
     #   -c ingest/../base.txt
     #   langchain
     #   langchain-community
-openai==1.8.0
+openai==1.9.0
     # via -r ingest/embed-openai.in
 packaging==23.2
     # via

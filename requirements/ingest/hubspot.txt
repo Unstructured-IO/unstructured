@@ -9,7 +9,7 @@ certifi==2023.11.17
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   hubspot-api-client
-hubspot-api-client==8.2.0
+hubspot-api-client==8.2.1
     # via -r ingest/hubspot.in
 python-dateutil==2.8.2
     # via
