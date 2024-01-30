@@ -63,7 +63,8 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
             self._client = self.create_client()
         return self._client
 
-    def initialize(self): ...
+    def initialize(self):
+        ...  # fmt: skip
 
     @requires_dependencies(["qdrant_client"], extras="qdrant")
     def create_client(self) -> "QdrantClient":

@@ -1,1 +1,2 @@
-class Subshape: ...
+class Subshape:
+    ...  # fmt: skip
