@@ -12,7 +12,7 @@ numpy==1.26.3
     # via
     #   -c ingest/../base.txt
     #   pyarrow
-pyarrow==14.0.2
+pyarrow==15.0.0
     # via deltalake
 pyarrow-hotfix==0.6
     # via deltalake
