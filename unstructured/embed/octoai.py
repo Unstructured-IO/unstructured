@@ -69,7 +69,7 @@ class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
         ["openai", "tiktoken"],
     )
     def create_client(self) -> "OpenAI":
-        """Creates a langchain OpenAI python client to embed elements."""
+        """Creates an OpenAI python client to embed elements."""
         from openai import OpenAI
 
         return OpenAI(api_key=self.config.api_key, base_url="https://text.octoai.run/v1")
