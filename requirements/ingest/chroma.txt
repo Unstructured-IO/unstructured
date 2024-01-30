@@ -145,7 +145,7 @@ opentelemetry-util-http==0.43b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-overrides==7.6.0
+overrides==7.7.0
     # via chromadb
 packaging==23.2
     # via
@@ -153,7 +153,7 @@ packaging==23.2
     #   build
     #   huggingface-hub
     #   onnxruntime
-posthog==3.3.2
+posthog==3.3.3
     # via chromadb
 protobuf==4.23.4
     # via
@@ -248,7 +248,7 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   kubernetes
     #   requests
-uvicorn[standard]==0.27.0
+uvicorn[standard]==0.27.0.post1
     # via chromadb
 uvloop==0.19.0
     # via uvicorn
