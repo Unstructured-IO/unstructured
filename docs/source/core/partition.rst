@@ -404,8 +404,8 @@ The ``partition_image`` function has the same API as ``partition_pdf``, which is
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
 prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
 
-You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
-use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+You can also specify what languages to use for OCR with the ``languages`` kwarg. For example,
+use ``languages=["eng", "deu"]`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
 install instructions.
 
@@ -420,7 +420,7 @@ Examples:
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
 
   # Applies the English and Swedish language pack for ocr
-  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", languages=["eng", "swe"])
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
@@ -449,7 +449,7 @@ have the Korean language pack for Tesseract installed on your system.
   from unstructured.partition.image import partition_image
 
   filename = "example-docs/english-and-korean.png"
-  elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
+  elements = partition_image(filename=filename, languages=["eng", "kor"], strategy="ocr_only")
 
 For more information about the ``partition_image`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py>`__.
 
@@ -604,8 +604,8 @@ If you set the URL, ``partition_pdf`` will make a call to a remote inference ser
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
 
-You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
-use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+You can also specify what languages to use for OCR with the ``languages`` kwarg. For example,
+use ``languages=["eng", "deu"]`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
 install instructions. OCR is only applied if the text is not already available in the PDF document.
 
@@ -620,7 +620,7 @@ Examples:
 
   # Applies the English and Swedish language pack for ocr. OCR is only applied
   # if the text is not available in the PDF.
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", languages=["eng", "swe"])
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
@@ -859,7 +859,7 @@ type for the file. If you do not explicitly pass it, the MIME type will be infer
     elements = partition_via_api(file=f, metadata_filename=filename, api_key="MY_API_KEY")
 
 
-You can pass additional settings such as ``strategy``, ``ocr_languages`` and ``encoding`` to the
+You can pass additional settings such as ``strategy``, ``languages`` and ``encoding`` to the
 API through optional kwargs. These options get added to the request body when the
 API is called.
 See `the API documentation <https://api.unstructured.io/general/docs>`_ for a full list of
