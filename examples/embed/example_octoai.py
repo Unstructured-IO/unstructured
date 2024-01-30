@@ -6,9 +6,9 @@ from unstructured.embed.octoai import OctoAIEmbeddingEncoder, OctoAiEmbeddingCon
 embedding_encoder = OctoAIEmbeddingEncoder(
     config=OctoAiEmbeddingConfig(api_key=os.environ["OCTOAI_TOKEN"])
 )
-# elements = embedding_encoder.embed_documents(
-#     elements=[Text("This is sentence 1"), Text("This is sentence 2")],
-# )
+elements = embedding_encoder.embed_documents(
+    elements=[Text("This is sentence 1"), Text("This is sentence 2")],
+)
 
 query = "This is the query"
 query_embedding = embedding_encoder.embed_query(query=query)
