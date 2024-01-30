@@ -65,7 +65,7 @@ pdf_infer_table_structure
 skip_infer_table_types
 ----------------------
 - **Type**: array
-- **Description**: The document types that you want to skip table extraction with. Default: ['pdf', 'jpg', 'png'].
+- **Description**: The document types that you want to skip table extraction with. Default: ['pdf', 'jpg', 'png', 'heic'].
 
 xml_keep_tags
 -------------

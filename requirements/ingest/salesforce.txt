@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==41.0.7
+cryptography==42.0.1
     # via simple-salesforce
 idna==3.6
     # via
