@@ -35,6 +35,7 @@ from pdfminer.layout import (
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from pillow_heif import register_heif_opener
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -491,6 +492,9 @@ def partition_pdf_or_image(
     # route. Decoding the routing should probably be handled by a single function designed for
     # that task so as routing design changes, those changes are implemented in a single
     # function.
+
+    # init ability to process .heic files
+    register_heif_opener()
 
     validate_strategy(strategy, is_image)
 

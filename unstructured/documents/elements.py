@@ -117,15 +117,19 @@ class CoordinatesMetadata:
         system = (
             None
             if system_name is None
-            else RelativeCoordinateSystem()
-            if system_name == "RelativeCoordinateSystem"
-            else TYPE_TO_COORDINATE_SYSTEM_MAP[system_name](width, height)
-            if (
-                width is not None
-                and height is not None
-                and system_name in TYPE_TO_COORDINATE_SYSTEM_MAP
+            else (
+                RelativeCoordinateSystem()
+                if system_name == "RelativeCoordinateSystem"
+                else (
+                    TYPE_TO_COORDINATE_SYSTEM_MAP[system_name](width, height)
+                    if (
+                        width is not None
+                        and height is not None
+                        and system_name in TYPE_TO_COORDINATE_SYSTEM_MAP
+                    )
+                    else None
+                )
             )
-            else None
         )
 
         return cls(points=points, system=system)

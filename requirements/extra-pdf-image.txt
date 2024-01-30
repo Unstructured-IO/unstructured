@@ -139,9 +139,12 @@ pillow==10.2.0
     #   pdf2image
     #   pdfplumber
     #   pikepdf
+    #   pillow-heif
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
+pillow-heif==0.14.0
+    # via -r extra-pdf-image.in
 portalocker==2.8.2
     # via iopath
 protobuf==4.23.4

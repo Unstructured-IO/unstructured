@@ -724,6 +724,7 @@ supported_filetypes = [
 FILETYPE_TO_MODULE = {
     FileType.JPG: "image",
     FileType.PNG: "image",
+    FileType.HEIC: "image",
     FileType.TXT: "text",
     FileType.EML: "email",
 }

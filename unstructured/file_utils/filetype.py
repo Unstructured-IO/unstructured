@@ -75,6 +75,7 @@ class FileType(enum.Enum):
     PNG = 31
     TIFF = 32
     BMP = 33
+    HEIC = 34
 
     # Plain Text Types
     EML = 40
@@ -112,6 +113,7 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "image/heic": FileType.HEIC,
     "image/tiff": FileType.TIFF,
     "image/bmp": FileType.BMP,
     # NOTE(robinson) - https://mimetype.io/application/yaml
@@ -179,6 +181,7 @@ EXT_TO_FILETYPE = {
     ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
+    ".heic": FileType.HEIC,
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,

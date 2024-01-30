@@ -5,6 +5,7 @@ this module. Constants are values that are usually names for common options (e.g
 settings that should not be altered without making a code change (e.g., definition of 1Gb of memory
 in bytes). Constants should go into `./constants.py`
 """
+
 import os
 from dataclasses import dataclass
 
