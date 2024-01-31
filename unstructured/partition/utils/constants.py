@@ -24,8 +24,17 @@ SORT_MODE_XY_CUT = "xy-cut"
 SORT_MODE_BASIC = "basic"
 SORT_MODE_DONT = "dont"
 
-OCR_AGENT_TESSERACT = "tesseract"
-OCR_AGENT_PADDLE = "paddle"
+OCR_AGENT_TESSERACT_OLD = "tesseract"
+OCR_AGENT_PADDLE_OLD = "paddle"
+
+OCR_AGENT_TESSERACT = "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
+OCR_AGENT_PADDLE = "unstructured.partition.utils.ocr_models.paddle_ocr.OCRAgentPaddle"
+
+OCR_AGENT_MODULES_WHITELIST = os.getenv(
+    "OCR_AGENT_MODULES_WHITELIST",
+    "unstructured.partition.utils.ocr_models.tesseract_ocr,"
+    "unstructured.partition.utils.ocr_models.paddle_ocr",
+).split(",")
 
 SUBREGION_THRESHOLD_FOR_OCR = 0.5
 UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
