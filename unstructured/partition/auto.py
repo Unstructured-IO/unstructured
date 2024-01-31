@@ -17,7 +17,7 @@ from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
+    check_language_args,
 )
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -104,6 +104,7 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
 
 IMAGE_FILETYPES = [
+    FileType.HEIC,
     FileType.PNG,
     FileType.JPG,
     FileType.TIFF,
@@ -138,7 +139,7 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
-    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
+    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
@@ -252,23 +253,7 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    if ocr_languages == "":
-        ocr_languages = None
-
-    if ocr_languages is not None:
-        # check if languages was set to anything not the default value
-        # languages and ocr_languages were therefore both provided - raise error
-        if languages is not None:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
-        else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
+    languages = check_language_args(languages or [], ocr_languages)
 
     if url is not None:
         file, filetype = file_and_type_from_url(

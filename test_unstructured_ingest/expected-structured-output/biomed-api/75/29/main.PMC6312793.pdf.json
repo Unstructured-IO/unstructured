@@ -39,7 +39,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "01a8470646d06d1c29b9f43915ac04e0",
+    "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -130,19 +130,6 @@
     "type": "Title"
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "",
-    "type": "Image"
-  },
-  {
     "element_id": "9d8efece3117b2eec928f8ee4d4888e4",
     "metadata": {
       "data_source": {},
@@ -153,7 +140,7 @@
       "page_number": 1
     },
     "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b",
-    "type": "Title"
+    "type": "NarrativeText"
   },
   {
     "element_id": "cd24a5d2989d27bd46eede4ea54cb41e",
@@ -180,19 +167,6 @@
     },
     "text": "a r t i c l e i n f o",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "3d71760ba4f1cc95873ee36178f97d82",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "ARTICLE INFO",
-    "type": "Title"
   },
   {
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
@@ -296,7 +270,7 @@
       "page_number": 2
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "83c8f5958f7caaf2d10c1d0692b48beb",
@@ -338,7 +312,7 @@
     "type": "Title"
   },
   {
-    "element_id": "467d93043002622ce81acca3c0cb583c",
+    "element_id": "20f64ced2215ecdb636021e3b4eb0670",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -347,20 +321,7 @@
       ],
       "page_number": 2
     },
-    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "fc52e4abc1c21ce5eefec2a08463bf06",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "performance of the algorithms for the MDVSP.",
+    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP.",
     "type": "ListItem"
   },
   {
@@ -481,6 +442,19 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "427a379ae3e6b749a8893bac35e20ab8",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "and",
+    "type": "NarrativeText"
+  },
+  {
     "element_id": "eb21bd15b23d5be59290e5a063011a28",
     "metadata": {
       "data_source": {},
@@ -520,7 +494,7 @@
     "type": "Header"
   },
   {
-    "element_id": "906c45a5da3d7f5a24920bb99bcadb9c",
+    "element_id": "ff8c0c213a7dad3b06bc15b65e59ad15",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -529,21 +503,8 @@
       ],
       "page_number": 3
     },
-    "text": "486",
-    "type": "Header"
-  },
-  {
-    "element_id": "f64bebb0be23116b44b4ad54968178a0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "Header"
+    "text": "486 S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
+    "type": "NarrativeText"
   },
   {
     "element_id": "a34ec26cfe7e88199e3455fc4297cf2e",

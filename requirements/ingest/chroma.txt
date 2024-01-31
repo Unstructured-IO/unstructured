@@ -59,7 +59,7 @@ flatbuffers==23.5.26
     # via onnxruntime
 fsspec==2023.12.2
     # via huggingface-hub
-google-auth==2.26.2
+google-auth==2.27.0
     # via kubernetes
 googleapis-common-protos==1.62.0
     # via opentelemetry-exporter-otlp-proto-grpc
@@ -71,7 +71,7 @@ h11==0.14.0
     # via uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.20.2
+huggingface-hub==0.20.3
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -145,7 +145,7 @@ opentelemetry-util-http==0.43b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-overrides==7.4.0
+overrides==7.7.0
     # via chromadb
 packaging==23.2
     # via
@@ -153,7 +153,7 @@ packaging==23.2
     #   build
     #   huggingface-hub
     #   onnxruntime
-posthog==3.3.1
+posthog==3.3.3
     # via chromadb
 protobuf==4.23.4
     # via
@@ -169,7 +169,7 @@ pyasn1==0.5.1
     #   rsa
 pyasn1-modules==0.3.0
     # via google-auth
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   chromadb
@@ -183,7 +183,7 @@ python-dateutil==2.8.2
     #   -c ingest/../base.txt
     #   kubernetes
     #   posthog
-python-dotenv==1.0.0
+python-dotenv==1.0.1
     # via uvicorn
 pyyaml==6.0.1
     # via
@@ -217,7 +217,7 @@ sympy==1.12
     # via onnxruntime
 tenacity==8.2.3
     # via chromadb
-tokenizers==0.15.0
+tokenizers==0.15.1
     # via chromadb
 tomli==2.0.1
     # via
@@ -248,7 +248,7 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   kubernetes
     #   requests
-uvicorn[standard]==0.25.0
+uvicorn[standard]==0.27.0.post1
     # via chromadb
 uvloop==0.19.0
     # via uvicorn

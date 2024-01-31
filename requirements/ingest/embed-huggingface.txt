@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-huggingface.txt ingest/embed-huggingface.in
 #
-aiohttp==3.9.1
+aiohttp==3.9.3
     # via
     #   langchain
     #   langchain-community
@@ -55,7 +55,7 @@ fsspec==2023.12.2
     #   torch
 huggingface==0.0.1
     # via -r ingest/embed-huggingface.in
-huggingface-hub==0.20.2
+huggingface-hub==0.20.3
     # via
     #   sentence-transformers
     #   tokenizers
@@ -79,20 +79,20 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.0
+langchain==0.1.4
     # via -r ingest/embed-huggingface.in
-langchain-community==0.0.11
+langchain-community==0.0.16
     # via langchain
-langchain-core==0.1.10
+langchain-core==0.1.17
     # via
     #   langchain
     #   langchain-community
-langsmith==0.0.80
+langsmith==0.0.84
     # via
     #   langchain
     #   langchain-community
     #   langchain-core
-markupsafe==2.1.3
+markupsafe==2.1.4
     # via jinja2
 marshmallow==3.20.2
     # via
@@ -122,7 +122,6 @@ numpy==1.26.3
     #   scikit-learn
     #   scipy
     #   sentence-transformers
-    #   torchvision
     #   transformers
 packaging==23.2
     # via
@@ -131,11 +130,9 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.0.1
-    # via
-    #   -c ingest/../constraints.in
-    #   torchvision
-pydantic==1.10.13
+pillow==10.2.0
+    # via sentence-transformers
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   langchain
@@ -161,20 +158,19 @@ requests==2.31.0
     #   langchain-community
     #   langchain-core
     #   langsmith
-    #   torchvision
     #   transformers
 safetensors==0.3.2
     # via
     #   -c ingest/../constraints.in
     #   transformers
-scikit-learn==1.3.2
+scikit-learn==1.4.0
     # via sentence-transformers
 scipy==1.10.1
     # via
     #   -c ingest/../constraints.in
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==2.2.2
+sentence-transformers==2.3.0
     # via -r ingest/embed-huggingface.in
 sentencepiece==0.1.99
     # via sentence-transformers
@@ -193,15 +189,12 @@ tenacity==8.2.3
     #   langchain-core
 threadpoolctl==3.2.0
     # via scikit-learn
-tokenizers==0.15.0
+tokenizers==0.15.1
     # via transformers
 torch==2.1.2
     # via
     #   -c ingest/../constraints.in
     #   sentence-transformers
-    #   torchvision
-torchvision==0.16.2
-    # via sentence-transformers
 tqdm==4.66.1
     # via
     #   -c ingest/../base.txt
@@ -209,7 +202,7 @@ tqdm==4.66.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.36.2
+transformers==4.37.1
     # via sentence-transformers
 typing-extensions==4.9.0
     # via

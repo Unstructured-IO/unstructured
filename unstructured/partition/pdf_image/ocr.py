@@ -1,6 +1,5 @@
 import os
 import tempfile
-from copy import deepcopy
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
 import cv2
@@ -24,7 +23,7 @@ from unstructured_pytesseract import Output
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.pdf_image_utils import valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -361,21 +360,6 @@ def get_layout_elements_from_ocr(
         )
 
     return layout_elements
-
-
-def pad_element_bboxes(
-    element: "LayoutElement",
-    padding: Union[int, float],
-) -> "LayoutElement":
-    """Increases (or decreases, if padding is negative) the size of the bounding
-    boxes of the element by extending the boundary outward (resp. inward)"""
-
-    out_element = deepcopy(element)
-    out_element.bbox.x1 -= padding
-    out_element.bbox.x2 += padding
-    out_element.bbox.y1 -= padding
-    out_element.bbox.y2 += padding
-    return out_element
 
 
 def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:

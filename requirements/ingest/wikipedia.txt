@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/wikipedia.txt ingest/wikipedia.in
 #
-beautifulsoup4==4.12.2
+beautifulsoup4==4.12.3
     # via
     #   -c ingest/../base.txt
     #   wikipedia

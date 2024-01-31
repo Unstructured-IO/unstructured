@@ -17,6 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from typing import List, Optional, Union
 
 from setuptools import find_packages, setup
@@ -168,6 +169,7 @@ setup(
         "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
+        "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

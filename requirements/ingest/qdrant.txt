@@ -49,11 +49,11 @@ protobuf==4.23.4
     # via
     #   -c ingest/../constraints.in
     #   grpcio-tools
-pydantic==1.10.13
+pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   qdrant-client
-qdrant-client==1.7.0
+qdrant-client==1.7.1
     # via -r ingest/qdrant.in
 sniffio==1.3.0
     # via
