@@ -212,7 +212,7 @@ notebook-shim==0.2.3
     # via
     #   jupyterlab
     #   notebook
-overrides==7.6.0
+overrides==7.7.0
     # via jupyter-server
 packaging==23.2
     # via
@@ -292,7 +292,7 @@ qtconsole==5.5.1
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.32.1
+referencing==0.33.0
     # via
     #   jsonschema
     #   jsonschema-specifications

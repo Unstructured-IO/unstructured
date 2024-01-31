@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/embed-huggingface.txt ingest/embed-huggingface.in
 #
-aiohttp==3.9.1
+aiohttp==3.9.3
     # via
     #   langchain
     #   langchain-community
@@ -79,15 +79,15 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.3
+langchain==0.1.4
     # via -r ingest/embed-huggingface.in
-langchain-community==0.0.15
+langchain-community==0.0.16
     # via langchain
-langchain-core==0.1.15
+langchain-core==0.1.17
     # via
     #   langchain
     #   langchain-community
-langsmith==0.0.83
+langsmith==0.0.84
     # via
     #   langchain
     #   langchain-community
@@ -122,7 +122,6 @@ numpy==1.26.3
     #   scikit-learn
     #   scipy
     #   sentence-transformers
-    #   torchvision
     #   transformers
 packaging==23.2
     # via
@@ -131,10 +130,8 @@ packaging==23.2
     #   langchain-core
     #   marshmallow
     #   transformers
-pillow==10.0.1
-    # via
-    #   -c ingest/../constraints.in
-    #   torchvision
+pillow==10.2.0
+    # via sentence-transformers
 pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
@@ -161,7 +158,6 @@ requests==2.31.0
     #   langchain-community
     #   langchain-core
     #   langsmith
-    #   torchvision
     #   transformers
 safetensors==0.3.2
     # via
@@ -174,7 +170,7 @@ scipy==1.10.1
     #   -c ingest/../constraints.in
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==2.2.2
+sentence-transformers==2.3.0
     # via -r ingest/embed-huggingface.in
 sentencepiece==0.1.99
     # via sentence-transformers
@@ -199,9 +195,6 @@ torch==2.1.2
     # via
     #   -c ingest/../constraints.in
     #   sentence-transformers
-    #   torchvision
-torchvision==0.16.2
-    # via sentence-transformers
 tqdm==4.66.1
     # via
     #   -c ingest/../base.txt

@@ -367,7 +367,7 @@ def _partition_pdf_or_image_local(
         if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
             # NOTE(antonio): We shouldn't do PDFMiner with chipper
-            final_document_layout = merged_document_layout
+            final_document_layout = inferred_document_layout
         else:
             if hasattr(file, "seek"):
                 file.seek(0)
