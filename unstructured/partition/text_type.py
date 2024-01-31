@@ -1,4 +1,5 @@
 """partition.py implements logic for partitioning plain text documents into sections."""
+
 import os
 import re
 import sys

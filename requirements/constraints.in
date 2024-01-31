@@ -47,4 +47,3 @@ opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
 onnxruntime==1.15.1
 platformdirs==3.10.0
-pillow<=10.0.1

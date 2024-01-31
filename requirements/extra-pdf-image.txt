@@ -132,9 +132,8 @@ pdfplumber==0.10.3
     # via layoutparser
 pikepdf==8.11.0
     # via -r extra-pdf-image.in
-pillow==10.0.1
+pillow==10.2.0
     # via
-    #   -c constraints.in
     #   layoutparser
     #   matplotlib
     #   pdf2image
@@ -163,7 +162,7 @@ pyparsing==3.0.9
     # via
     #   -c constraints.in
     #   matplotlib
-pypdf==4.0.0
+pypdf==4.0.1
     # via -r extra-pdf-image.in
 pypdfium2==4.26.0
     # via pdfplumber
@@ -176,7 +175,7 @@ python-dateutil==2.8.2
     #   pandas
 python-multipart==0.0.6
     # via unstructured-inference
-pytz==2023.3.post1
+pytz==2023.4
     # via pandas
 pyyaml==6.0.1
     # via

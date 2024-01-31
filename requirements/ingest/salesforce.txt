@@ -46,7 +46,7 @@ python-dateutil==2.8.2
     #   -c ingest/../base.txt
     #   pendulum
     #   time-machine
-pytz==2023.3.post1
+pytz==2023.4
     # via zeep
 requests==2.31.0
     # via
@@ -55,7 +55,7 @@ requests==2.31.0
     #   requests-toolbelt
     #   simple-salesforce
     #   zeep
-requests-file==1.5.1
+requests-file==2.0.0
     # via zeep
 requests-toolbelt==1.0.0
     # via zeep
@@ -66,7 +66,6 @@ six==1.16.0
     #   -c ingest/../base.txt
     #   isodate
     #   python-dateutil
-    #   requests-file
 time-machine==2.13.0
     # via pendulum
 tzdata==2023.4

@@ -41,7 +41,7 @@ pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-pytz==2023.3.post1
+pytz==2023.4
     # via office365-rest-python-client
 requests==2.31.0
     # via
