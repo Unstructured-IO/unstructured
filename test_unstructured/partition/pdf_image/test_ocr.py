@@ -449,7 +449,7 @@ def mock_ocr_layout():
 
 def test_get_table_tokens(mock_ocr_layout):
     with patch.object(ocr, "get_ocr_layout_from_image", return_value=mock_ocr_layout):
-        table_tokens = ocr.get_table_tokens(image=None)
+        table_tokens = ocr.get_table_tokens(table_element_image=None)
         expected_tokens = [
             {
                 "bbox": [15, 25, 35, 45],
