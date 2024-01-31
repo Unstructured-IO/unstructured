@@ -1,9 +1,10 @@
 Platform Destination Connectors
 ===============================
 
+Destination Connectors in the ``Unstructured Platform`` are designed to specify the endpoint for data processed within the platform. These connectors ensure that the transformed and analyzed data is securely and efficiently transferred to a storage system for future use, often to a vector database for tasks that involve high-speed retrieval and advanced data analytics operations.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    platform_destinations/amazon_s3_destination
    platform_destinations/azure_cognitive_search

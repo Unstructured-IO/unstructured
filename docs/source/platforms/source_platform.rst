@@ -1,9 +1,10 @@
 Platform Source Connectors
 ==========================
 
+Source connectors are essential components in data integration systems that establish a link between your files and the data ingestion process. They facilitate the batch processing of files, allowing for the systematic retrieval and ingestion of data stored in various file formats.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    platform_sources/azure_blob
    platform_sources/amazon_s3_source

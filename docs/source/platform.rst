@@ -12,7 +12,7 @@ Table of Content
 ****************
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    platforms/account
    platforms/workflow
