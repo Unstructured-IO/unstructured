@@ -1,4 +1,4 @@
-## 0.12.4-dev2
+## 0.12.4-dev3
 
 ### Enhancements
 
@@ -6,8 +6,8 @@
 
 ### Features
 
-* **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+* **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
 
 ### Fixes
 
