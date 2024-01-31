@@ -1,3 +1,8 @@
-Platform User Account Management
-================================
+User Account Management
+=======================
 
+Account Registration
+--------------------
+
+Billing Management
+------------------

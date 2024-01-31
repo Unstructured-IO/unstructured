@@ -1,2 +1,3 @@
-Source Connector: SFTP Storage
-==============================
+SFTP Storage
+============
+

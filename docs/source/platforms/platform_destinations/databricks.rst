@@ -1,2 +1,2 @@
-Destination Connector: Databricks
-=================================
+Databricks
+==========

@@ -1,2 +1,2 @@
-Source Connector: One Drive
-===========================
+One Drive
+=========

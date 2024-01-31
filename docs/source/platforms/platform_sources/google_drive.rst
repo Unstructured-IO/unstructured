@@ -1,2 +1,2 @@
-Source Connector: Google Drive
-==============================
+Google Drive
+============

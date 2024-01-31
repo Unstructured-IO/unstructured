@@ -1,2 +1,2 @@
-Source Connector: Azure Blog Storage
-====================================
+Azure Blob Storage
+==================

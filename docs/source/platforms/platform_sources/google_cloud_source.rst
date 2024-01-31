@@ -1,2 +1,2 @@
-Source Connector: Google Cloud Storage
-======================================
+Google Cloud Storage
+====================

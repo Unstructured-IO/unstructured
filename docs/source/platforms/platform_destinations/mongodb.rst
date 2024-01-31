@@ -1,2 +1,2 @@
-Destination Connector: MongoDB
-==============================
+MongoDB
+=======

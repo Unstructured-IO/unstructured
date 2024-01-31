@@ -1,2 +1,2 @@
-Source Connector: Sharepoint
-============================
+Sharepoint
+==========

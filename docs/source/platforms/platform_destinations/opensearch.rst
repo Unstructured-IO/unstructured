@@ -1,2 +1,2 @@
-Destination Connector: AWS OpenSearch
-=====================================
+AWS OpenSearch
+==============

@@ -3,14 +3,14 @@ Platform Source Connectors
 
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   platforms_sources/azure_blob
-   platforms_sources/amazon_s3_source
-   platforms_sources/salesforce
-   platforms_sources/sharepoint
-   platforms_sources/google_cloud_source
-   platforms_sources/google_drive
-   platforms_sources/onedrive
-   platforms_sources/elasticsearch_source
-   platforms_sources/sftp
+   platform_sources/azure_blob
+   platform_sources/amazon_s3_source
+   platform_sources/salesforce
+   platform_sources/sharepoint
+   platform_sources/google_cloud_source
+   platform_sources/google_drive
+   platform_sources/onedrive
+   platform_sources/elasticsearch_source
+   platform_sources/sftp

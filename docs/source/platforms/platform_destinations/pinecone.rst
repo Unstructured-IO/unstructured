@@ -1,2 +1,2 @@
-Destination Connector: Pinecone
-===============================
+Pinecone Vector Database
+========================

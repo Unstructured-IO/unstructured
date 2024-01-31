@@ -1,2 +1,2 @@
-Destination Connector: Azure Cognitive Search
-=============================================
+Azure Cognitive Search
+======================

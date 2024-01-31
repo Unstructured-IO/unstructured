@@ -1,2 +1,2 @@
-Destination Connector: Weaviate
-===============================
+Weaviate Vector Database
+========================

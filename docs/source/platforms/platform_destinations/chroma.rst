@@ -1,2 +1,2 @@
-Destination Connector: Chroma DB
-================================
+Chroma Vector Database
+======================
