@@ -1,4 +1,4 @@
-## 0.12.4-dev2
+## 0.12.4-dev3
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Features
 
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
 
@@ -68,7 +69,6 @@
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
 * **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
-* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
 
