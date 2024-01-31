@@ -35,6 +35,7 @@ from pdfminer.layout import (
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from pillow_heif import register_heif_opener
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -70,7 +71,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    check_languages,
+    check_language_args,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
@@ -207,7 +208,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,
@@ -491,9 +492,10 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    validate_strategy(strategy, is_image)
+    # init ability to process .heic files
+    register_heif_opener()
 
-    languages = check_languages(languages, ocr_languages)
+    validate_strategy(strategy, is_image)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
