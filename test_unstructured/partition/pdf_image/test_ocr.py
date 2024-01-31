@@ -37,16 +37,11 @@ def test_process_data_with_ocr_invalid_file(is_image, expected_error):
             data=invalid_data,
             is_image=is_image,
             out_layout=DocumentLayout(),
+            extracted_layout=[],
         )
 
 
-@pytest.mark.parametrize(
-    ("is_image"),
-    [
-        (True),
-        (False),
-    ],
-)
+@pytest.mark.parametrize("is_image", [True, False])
 def test_process_file_with_ocr_invalid_filename(is_image):
     invalid_filename = "i am not a valid file name"
     with pytest.raises(FileNotFoundError):
@@ -54,6 +49,7 @@ def test_process_file_with_ocr_invalid_filename(is_image):
             filename=invalid_filename,
             is_image=is_image,
             out_layout=DocumentLayout(),
+            extracted_layout=[],
         )
 
 
