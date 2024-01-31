@@ -419,40 +419,44 @@ def convert_to_coco(
         {
             "id": el["element_id"],
             "category_id": [x["id"] for x in categories if x["name"] == el["type"]][0],
-            "bbox": [
-                float(el["metadata"].get("coordinates")["points"][0][0]),
-                float(el["metadata"].get("coordinates")["points"][0][1]),
-                float(
-                    abs(
-                        el["metadata"].get("coordinates")["points"][0][0]
-                        - el["metadata"].get("coordinates")["points"][2][0]
-                    )
-                ),
-                float(
-                    abs(
-                        el["metadata"].get("coordinates")["points"][0][1]
-                        - el["metadata"].get("coordinates")["points"][1][1]
-                    )
-                ),
-            ]
-            if el["metadata"].get("coordinates")
-            else [],
+            "bbox": (
+                [
+                    float(el["metadata"].get("coordinates")["points"][0][0]),
+                    float(el["metadata"].get("coordinates")["points"][0][1]),
+                    float(
+                        abs(
+                            el["metadata"].get("coordinates")["points"][0][0]
+                            - el["metadata"].get("coordinates")["points"][2][0]
+                        )
+                    ),
+                    float(
+                        abs(
+                            el["metadata"].get("coordinates")["points"][0][1]
+                            - el["metadata"].get("coordinates")["points"][1][1]
+                        )
+                    ),
+                ]
+                if el["metadata"].get("coordinates")
+                else []
+            ),
             "area": (
-                float(
-                    abs(
-                        el["metadata"].get("coordinates")["points"][0][0]
-                        - el["metadata"].get("coordinates")["points"][2][0]
+                (
+                    float(
+                        abs(
+                            el["metadata"].get("coordinates")["points"][0][0]
+                            - el["metadata"].get("coordinates")["points"][2][0]
+                        )
+                    )
+                    * float(
+                        abs(
+                            el["metadata"].get("coordinates")["points"][0][1]
+                            - el["metadata"].get("coordinates")["points"][1][1]
+                        )
                     )
                 )
-                * float(
-                    abs(
-                        el["metadata"].get("coordinates")["points"][0][1]
-                        - el["metadata"].get("coordinates")["points"][1][1]
-                    )
-                )
-            )
-            if el["metadata"].get("coordinates")
-            else None,
+                if el["metadata"].get("coordinates")
+                else None
+            ),
         }
         for el in elements_dict
     ]

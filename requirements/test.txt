@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.2.1
     # via -r test.in
-black==23.12.1
+black==24.1.1
     # via -r test.in
 certifi==2023.11.17
     # via
@@ -24,7 +24,7 @@ click==8.1.7
     #   -c base.txt
     #   -r test.in
     #   black
-coverage[toml]==7.4.0
+coverage[toml]==7.4.1
     # via
     #   -r test.in
     #   pytest-cov
@@ -93,7 +93,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==7.4.4
+pytest==8.0.0
     # via
     #   pytest-cov
     #   pytest-mock
@@ -126,7 +126,7 @@ tomli==2.0.1
     #   pytest
 types-click==7.1.8
     # via -r test.in
-types-markdown==3.5.0.20240106
+types-markdown==3.5.0.20240129
     # via -r test.in
 types-requests==2.31.0.6
     # via -r test.in
