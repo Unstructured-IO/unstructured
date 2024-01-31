@@ -216,9 +216,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
-                permissions_data=self.update_permissions_data()
-                if self.connector_config.permissions_config
-                else None,
+                permissions_data=(
+                    self.update_permissions_data()
+                    if self.connector_config.permissions_config
+                    else None
+                ),
             )
             return
 
@@ -237,9 +239,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
-            permissions_data=self.update_permissions_data()
-            if self.connector_config.permissions_config
-            else None,
+            permissions_data=(
+                self.update_permissions_data() if self.connector_config.permissions_config else None
+            ),
         )
 
     def _download_page(self):

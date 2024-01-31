@@ -2,8 +2,8 @@ filename	doctype	connector	cct-accuracy	cct-%missing
 fake-text.txt	txt	Sharepoint	1.0	0.0
 ideas-page.html	html	Sharepoint	0.93	0.033
 stanley-cups.xlsx	xlsx	Sharepoint	0.778	0.0
-Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf	pdf	azure	0.981	0.007
-IRS-form-1987.pdf	pdf	azure	0.783	0.135
+Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf	pdf	azure	0.981	0.005
+IRS-form-1987.pdf	pdf	azure	0.794	0.135
 spring-weather.html	html	azure	0.0	0.018
 example-10k.html	html	local	0.727	0.037
 fake-html-cp1252.html	html	local	0.659	0.0
@@ -13,6 +13,6 @@ handbook-1p.docx	docx	local-single-file-basic-chunking	0.858	0.029
 fake-html-cp1252.html	html	local-single-file-with-encoding	0.659	0.0
 layout-parser-paper-with-table.jpg	jpg	local-single-file-with-pdf-infer-table-structure	0.716	0.032
 layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.949	0.029
-2023-Jan-economic-outlook.pdf	pdf	s3	0.845	0.039
+2023-Jan-economic-outlook.pdf	pdf	s3	0.834	0.054
 page-with-formula.pdf	pdf	s3	0.971	0.021
-recalibrating-risk-report.pdf	pdf	s3	0.968	0.008
+recalibrating-risk-report.pdf	pdf	s3	0.966	0.009

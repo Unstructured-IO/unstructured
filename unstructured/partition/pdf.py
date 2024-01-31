@@ -35,6 +35,7 @@ from pdfminer.layout import (
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
+from pillow_heif import register_heif_opener
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -70,7 +71,7 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import (
-    check_languages,
+    check_language_args,
     prepare_languages_for_tesseract,
 )
 from unstructured.partition.pdf_image.pdf_image_utils import (
@@ -88,7 +89,6 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.constants import (
-    OCR_AGENT_TESSERACT,
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
     SORT_MODE_XY_CUT,
@@ -113,14 +113,21 @@ psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
 
-def default_hi_res_model(infer_table_structure: bool) -> str:
+@requires_dependencies("unstructured_inference")
+def default_hi_res_model() -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
 
     # if tabler structure is needed we defaul to use yolox for better table detection
-    default = "yolox" if infer_table_structure else "yolox_quantized"
-    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", default)
+    logger.warning(
+        "This function will be deprecated in a future release and `unstructured` will simply "
+        "use the DEFAULT_MODEL from `unstructured_inference.model.base` to set default model "
+        "name"
+    )
+    from unstructured_inference.models.base import DEFAULT_MODEL
+
+    return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
 
 
 @process_metadata()
@@ -201,7 +208,7 @@ def partition_pdf(
 
     exactly_one(filename=filename, file=file)
 
-    languages = check_languages(languages, ocr_languages)
+    languages = check_language_args(languages or [], ocr_languages) or ["eng"]
 
     return partition_pdf_or_image(
         filename=filename,
@@ -294,12 +301,10 @@ def _partition_pdf_or_image_local(
 
     ocr_languages = prepare_languages_for_tesseract(languages)
 
-    hi_res_model_name = (
-        hi_res_model_name or model_name or default_hi_res_model(infer_table_structure)
-    )
+    hi_res_model_name = hi_res_model_name or model_name or default_hi_res_model()
     if pdf_image_dpi is None:
-        pdf_image_dpi = 300 if hi_res_model_name == "chipper" else 200
-    if (pdf_image_dpi < 300) and (hi_res_model_name == "chipper"):
+        pdf_image_dpi = 300 if hi_res_model_name.startswith("chipper") else 200
+    if (pdf_image_dpi < 300) and (hi_res_model_name.startswith("chipper")):
         logger.warning(
             "The Chipper model performs better when images are rendered with DPI >= 300 "
             f"(currently {pdf_image_dpi}).",
@@ -313,32 +318,33 @@ def _partition_pdf_or_image_local(
             pdf_image_dpi=pdf_image_dpi,
         )
 
-        extracted_layout = (
-            process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
-            if pdf_text_extractable
-            else []
-        )
-
-        if analysis:
-            annotate_layout_elements(
-                inferred_document_layout=inferred_document_layout,
-                extracted_layout=extracted_layout,
-                filename=filename,
-                output_dir_path=analyzed_image_output_dir_path,
-                pdf_image_dpi=pdf_image_dpi,
-                is_image=is_image,
-            )
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-        )
-
         if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_document_layout = merged_document_layout
+            # NOTE(antonio): We shouldn't do PDFMiner with chipper
+            final_document_layout = inferred_document_layout
         else:
+            extracted_layout = (
+                process_file_with_pdfminer(filename=filename, dpi=pdf_image_dpi)
+                if pdf_text_extractable
+                else []
+            )
+
+            if analysis:
+                annotate_layout_elements(
+                    inferred_document_layout=inferred_document_layout,
+                    extracted_layout=extracted_layout,
+                    filename=filename,
+                    output_dir_path=analyzed_image_output_dir_path,
+                    pdf_image_dpi=pdf_image_dpi,
+                    is_image=is_image,
+                )
+
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+            )
+
             final_document_layout = process_file_with_ocr(
                 filename,
                 merged_document_layout,
@@ -355,23 +361,27 @@ def _partition_pdf_or_image_local(
             model_name=hi_res_model_name,
             pdf_image_dpi=pdf_image_dpi,
         )
-        if hasattr(file, "seek"):
-            file.seek(0)
-
-        extracted_layout = (
-            process_data_with_pdfminer(file=file, dpi=pdf_image_dpi) if pdf_text_extractable else []
-        )
-
-        # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
-        merged_document_layout = merge_inferred_with_extracted_layout(
-            inferred_document_layout=inferred_document_layout,
-            extracted_layout=extracted_layout,
-        )
 
         if hi_res_model_name.startswith("chipper"):
             # NOTE(alan): We shouldn't do OCR with chipper
-            final_document_layout = merged_document_layout
+            # NOTE(antonio): We shouldn't do PDFMiner with chipper
+            final_document_layout = inferred_document_layout
         else:
+            if hasattr(file, "seek"):
+                file.seek(0)
+
+            extracted_layout = (
+                process_data_with_pdfminer(file=file, dpi=pdf_image_dpi)
+                if pdf_text_extractable
+                else []
+            )
+
+            # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
+            merged_document_layout = merge_inferred_with_extracted_layout(
+                inferred_document_layout=inferred_document_layout,
+                extracted_layout=extracted_layout,
+            )
+
             if hasattr(file, "seek"):
                 file.seek(0)
             final_document_layout = process_data_with_ocr(
@@ -385,7 +395,7 @@ def _partition_pdf_or_image_local(
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
-    if hi_res_model_name == "chipper":
+    if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
@@ -482,9 +492,10 @@ def partition_pdf_or_image(
     # that task so as routing design changes, those changes are implemented in a single
     # function.
 
-    validate_strategy(strategy, is_image)
+    # init ability to process .heic files
+    register_heif_opener()
 
-    languages = check_languages(languages, ocr_languages)
+    validate_strategy(strategy, is_image)
 
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
@@ -917,7 +928,6 @@ def _partition_pdf_or_image_with_ocr_from_image(
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
     from unstructured.partition.pdf_image.ocr import (
-        get_layout_elements_from_ocr,
         get_ocr_agent,
     )
 
@@ -925,13 +935,12 @@ def _partition_pdf_or_image_with_ocr_from_image(
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text
-    if ocr_agent == OCR_AGENT_TESSERACT:
+    if ocr_agent.is_text_sorted():
         sort_mode = SORT_MODE_DONT
 
-    ocr_data = get_layout_elements_from_ocr(
+    ocr_data = ocr_agent.get_layout_elements_from_image(
         image=image,
         ocr_languages=ocr_languages,
-        ocr_agent=ocr_agent,
     )
 
     metadata = ElementMetadata(
