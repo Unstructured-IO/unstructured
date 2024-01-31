@@ -202,8 +202,10 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+@pytest.mark.parametrize("model_name", ["checkbox", "yolox", "chipper"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
+    model_name,
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -213,9 +215,24 @@ def test_partition_pdf_with_model_name(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(
-            filename=filename, strategy=PartitionStrategy.HI_RES, model_name="checkbox"
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            model_name=model_name,
         )
-        assert mock_process.call_args[1]["model_name"] == "checkbox"
+        assert mock_process.call_args[1]["model_name"] == model_name
+
+    with mock.patch.object(
+        layout,
+        "process_data_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        with open(filename, "rb") as f:
+            pdf.partition_pdf(
+                file=f,
+                strategy=PartitionStrategy.HI_RES,
+                model_name=model_name,
+            )
+            assert mock_process.call_args[1]["model_name"] == model_name
 
 
 def test_partition_pdf_with_hi_res_model_name(
