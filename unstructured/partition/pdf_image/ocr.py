@@ -41,6 +41,7 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -80,6 +81,7 @@ def process_data_with_ocr(
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
             out_layout=out_layout,
+            extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
@@ -92,6 +94,7 @@ def process_data_with_ocr(
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -132,12 +135,14 @@ def process_file_with_ocr(
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
                     image.format = image_format
+                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        out_layout.pages[i],
-                        image,
+                        page_layout=out_layout.pages[i],
+                        image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
+                        extracted_regions=extracted_regions,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -151,13 +156,15 @@ def process_file_with_ocr(
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
+                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            out_layout.pages[i],
-                            image,
+                            page_layout=out_layout.pages[i],
+                            image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
+                            extracted_regions=extracted_regions,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -174,6 +181,7 @@ def supplement_page_layout_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -233,6 +241,7 @@ def supplement_page_layout_with_ocr(
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
         )
 
     return page_layout
@@ -244,39 +253,47 @@ def supplement_element_with_table_extraction(
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
-    for element in elements:
-        if element.type == ElementType.TABLE:
-            padding = env_config.TABLE_IMAGE_CROP_PAD
-            padded_element = pad_element_bboxes(element, padding=padding)
-            cropped_image = image.crop(
-                (
-                    padded_element.bbox.x1,
-                    padded_element.bbox.y1,
-                    padded_element.bbox.x2,
-                    padded_element.bbox.y2,
-                ),
-            )
-            table_tokens = get_table_tokens(
-                image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
-            )
-            element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+
+    table_elements = [el for el in elements if el.type == ElementType.TABLE]
+    for element in table_elements:
+        padding = env_config.TABLE_IMAGE_CROP_PAD
+        padded_element = pad_element_bboxes(element, padding=padding)
+        cropped_image = image.crop(
+            (
+                padded_element.bbox.x1,
+                padded_element.bbox.y1,
+                padded_element.bbox.x2,
+                padded_element.bbox.y2,
+            ),
+        )
+        table_tokens = get_table_tokens(
+            table_element_image=cropped_image,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_element=padded_element,
+        )
+        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
 def get_table_tokens(
-    image: PILImage,
+    table_element_image: PILImage,
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    extracted_regions: Optional[List["TextRegion"]] = None,
+    table_element: Optional["LayoutElement"] = None,
 ) -> List[Dict]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
     ocr_layout = ocr_agent.get_layout_from_image(
-        image,
+        image=table_element_image,
         ocr_languages=ocr_languages,
     )
     table_tokens = []
