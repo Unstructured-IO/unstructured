@@ -8,6 +8,8 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
+
+from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
@@ -29,7 +31,6 @@ from unstructured.partition.utils.constants import (
 )
 from unstructured.partition.utils.ocr_models.ocr_interface import (
     OCRAgent,
-    get_elements_from_ocr_regions,
 )
 
 # Force tesseract to be single threaded,
@@ -401,7 +402,7 @@ def supplement_layout_with_ocr_elements(
     Note:
     - The function relies on `is_almost_subregion_of()` method to determine if an OCR region
       is a subregion of an existing layout element.
-    - It also relies on `get_elements_from_ocr_regions()` to convert OCR regions to layout elements.
+    - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to layout elements.
     - The `SUBREGION_THRESHOLD_FOR_OCR` constant is used to specify the subregion matching
      threshold.
     """
@@ -419,7 +420,7 @@ def supplement_layout_with_ocr_elements(
 
     ocr_regions_to_add = [region for region in ocr_layout if region not in ocr_regions_to_remove]
     if ocr_regions_to_add:
-        ocr_elements_to_add = get_elements_from_ocr_regions(ocr_regions_to_add)
+        ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
         final_layout = layout + ocr_elements_to_add
     else:
         final_layout = layout
