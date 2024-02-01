@@ -428,7 +428,7 @@ def supplement_layout_with_ocr_elements(
     return final_layout
 
 
-def get_ocr_agent() -> str:
+def get_ocr_agent() -> OCRAgent:
     ocr_agent_module = env_config.OCR_AGENT
     message = (
         "OCR agent name %s is outdated and will be deprecated in a future release; please use %s "
