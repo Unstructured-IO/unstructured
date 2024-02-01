@@ -6,7 +6,7 @@ This page contains the information to ingest your documents from Amazon S3 bucke
 Prerequisites
 --------------
 
-- AWS Account
+- AWS Account and API Key
 - S3 Bucket
 - IAM User with S3 Access
 
@@ -19,11 +19,11 @@ Step-by-Step Guide
 .. image:: imgs/Source-AWS-S3.png
   :alt: Source Connector Amazon S3
 
-- **Access the Create Source Page**. Navigate to the 'Sources' section on the left sidebar and click the 'New Source' button.
+1. **Access the Create Source Page**. Navigate to the "Sources" section on the left sidebar and click the "New Source" button.
 
-- **Select Source Type**. Select **Amazon S3** from the ``Type`` dropdown menu.
+2. **Select Source Type**. Select **Amazon S3** from the ``Type`` dropdown menu.
 
-- **Configure Source Details to connect to the AWS Platform**
+3. **Configure Source Details to connect to the AWS Platform**
 
   - ``Name`` (*required*): Enter a unique name for your source to identify it within the platform.
   - ``Bucket Name`` (*required*): Provide the name of your Amazon S3 bucket.
@@ -32,11 +32,11 @@ Step-by-Step Guide
   - ``Token``: If required, enter the security token for temporary access.
   - ``Endpoint URL``: Specify a custom URL if you connect to a non-AWS S3 bucket.
 
-- **Additional Settings**
+4. **Additional Settings**
 
   - Check ``Anonymous`` if you are connecting to a bucket with public access and don’t want to associate the connection with your account.
   - Check ``Recursive`` if you want the platform to ingest data from sub-folders within the bucket.
 
-- **Submit**. After filling in the necessary information, click 'Submit' to create the Source Connector. The newly completed Amazon S3 source connector will be listed on the “Sources” page.
+5. **Submit**. After filling in the necessary information, click 'Submit' to create the Source Connector. The newly completed connector will be listed on the Sources dashboard.
 
 
