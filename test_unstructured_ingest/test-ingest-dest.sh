@@ -30,6 +30,7 @@ all_tests=(
   's3.sh'
   'sharepoint-embed-cog-index.sh'
   'sqlite.sh'
+  'vectara.sh'
   'weaviate.sh'
   'opensearch.sh'
 )
