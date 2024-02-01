@@ -1,5 +1,5 @@
-User Account Management
-=======================
+Getting Started with Platform
+==============================
 
 Account Registration
 --------------------

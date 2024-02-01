@@ -1,2 +1,2 @@
-AWS OpenSearch
-==============
+OpenSearch
+===========

@@ -1,2 +1,2 @@
-Weaviate Vector Database
-========================
+Weaviate
+=========

@@ -1,2 +1,2 @@
-Pinecone Vector Database
-========================
+Pinecone
+=========

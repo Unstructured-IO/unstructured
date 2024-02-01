@@ -8,12 +8,12 @@ Destination Connectors in the ``Unstructured Platform`` are designed to specify 
 
    platform_destinations/amazon_s3_destination
    platform_destinations/azure_cognitive_search
-   platform_destinations/google_cloud_destination
-   platform_destinations/pinecone
-   platform_destinations/postgresql
-   platform_destinations/elasticsearch_destination
-   platform_destinations/weaviate
-   platform_destinations/mongodb
-   platform_destinations/opensearch
    platform_destinations/chroma
    platform_destinations/databricks
+   platform_destinations/elasticsearch_destination
+   platform_destinations/google_cloud_destination
+   platform_destinations/mongodb
+   platform_destinations/opensearch
+   platform_destinations/pinecone
+   platform_destinations/postgresql
+   platform_destinations/weaviate

@@ -1,2 +1,2 @@
-Chroma Vector Database
-======================
+Chroma
+======
