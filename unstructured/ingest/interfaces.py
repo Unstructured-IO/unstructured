@@ -23,8 +23,6 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, e
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.partition.api import partition_via_api
-from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
@@ -227,7 +225,9 @@ class ChunkingConfig(BaseConfig):
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
+            else "by_title"
+            if self.chunk_elements is True
+            else None
         )
         return (
             chunk_by_title(
@@ -539,6 +539,9 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> t.List[Element]:
+        from unstructured.partition.api import partition_via_api
+        from unstructured.partition.auto import partition
+
         if not partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
