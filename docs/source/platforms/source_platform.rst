@@ -3,6 +3,14 @@ Platform Source Connectors
 
 Source connectors are essential components in data integration systems that establish a link between your files and the data ingestion process. They facilitate the batch processing of files, allowing for the systematic retrieval and ingestion of data stored in various file formats.
 
+.. figure:: imgs/01-Sources-Dashboard.png
+  :alt: sources
+
+  Sources Dashboard
+
+List of Source Connectors
+--------------------------
+
 .. toctree::
    :maxdepth: 1
 

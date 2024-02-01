@@ -3,6 +3,14 @@ Platform Destination Connectors
 
 Destination Connectors in the ``Unstructured Platform`` are designed to specify the endpoint for data processed within the platform. These connectors ensure that the transformed and analyzed data is securely and efficiently transferred to a storage system for future use, often to a vector database for tasks that involve high-speed retrieval and advanced data analytics operations.
 
+.. figure:: imgs/02-Destination-Dashboard.png
+  :alt: destinations
+
+  Destinations Dashboard
+
+List of Destination Connectors
+-------------------------------
+
 .. toctree::
    :maxdepth: 1
 
