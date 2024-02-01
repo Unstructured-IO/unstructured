@@ -1,5 +1,8 @@
+Workflows Automation
+====================
+
 Workflow Dashboard
-==================
+------------------
 
 A Workflow in the Unstructured Platform is a defined sequence of processes that automate the data handling from source to destination. It allows users to configure how and when data should be ingested, processed, and stored.
 
