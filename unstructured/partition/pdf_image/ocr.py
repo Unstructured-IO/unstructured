@@ -8,8 +8,6 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-
-from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
@@ -19,6 +17,7 @@ from unstructured_inference.models.tables import UnstructuredTableTransformerMod
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
+from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (

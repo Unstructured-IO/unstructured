@@ -1,4 +1,4 @@
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 from PIL import Image as PILImage
@@ -89,7 +89,12 @@ class OCRAgentPaddle(OCRAgent):
         # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
         # and merging steps are not necessary.
         return [
-            build_layout_element(bbox=r.bbox, text=r.text, source=r.source, element_type=ElementType.UNCATEGORIZED_TEXT)
+            build_layout_element(
+                bbox=r.bbox,
+                text=r.text,
+                source=r.source,
+                element_type=ElementType.UNCATEGORIZED_TEXT,
+            )
             for r in ocr_regions
         ]
 

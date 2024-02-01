@@ -1,7 +1,7 @@
 import functools
 import importlib
 from abc import ABC, abstractmethod
-from typing import Any, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, List
 
 from unstructured.partition.utils.constants import OCR_AGENT_MODULES_WHITELIST
 

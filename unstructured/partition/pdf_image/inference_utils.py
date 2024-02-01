@@ -1,14 +1,13 @@
-from typing import Any, List, Optional, cast, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, Union, cast
 
-from unstructured.documents.elements import ElementType
 from unstructured_inference.constants import Source
-
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
     partition_groups_from_regions,
 )
 
+from unstructured.documents.elements import ElementType
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import Rectangle
@@ -82,7 +81,9 @@ def build_layout_elements_from_ocr_regions(
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
-        build_layout_element(bbox=r.bbox, text=r.text, source=r.source, element_type=ElementType.UNCATEGORIZED_TEXT)
+        build_layout_element(
+            bbox=r.bbox, text=r.text, source=r.source, element_type=ElementType.UNCATEGORIZED_TEXT
+        )
         for r in merged_regions
     ]
 
@@ -111,4 +112,3 @@ def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
     source = sources[0] if all(s == sources[0] for s in sources) else None
 
     return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
-

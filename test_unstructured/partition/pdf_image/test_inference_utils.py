@@ -1,7 +1,11 @@
-from unstructured.documents.elements import ElementType
-from unstructured.partition.pdf_image.inference_utils import merge_text_regions, build_layout_elements_from_ocr_regions
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layoutelement import LayoutElement
+
+from unstructured.documents.elements import ElementType
+from unstructured.partition.pdf_image.inference_utils import (
+    build_layout_elements_from_ocr_regions,
+    merge_text_regions,
+)
 
 
 def test_merge_text_regions(mock_embedded_text_regions):

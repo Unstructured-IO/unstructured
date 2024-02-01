@@ -1,15 +1,17 @@
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import cv2
 import numpy as np
 import pandas as pd
 import unstructured_pytesseract
 from PIL import Image as PILImage
-
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions, build_text_region_from_coords
+from unstructured.partition.pdf_image.inference_utils import (
+    build_layout_elements_from_ocr_regions,
+    build_text_region_from_coords,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -18,7 +20,6 @@ from unstructured.partition.utils.constants import (
     Source,
 )
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
-
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion

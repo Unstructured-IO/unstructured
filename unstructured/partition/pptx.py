@@ -205,7 +205,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         return (
             self._metadata_filename
             if self._metadata_filename
-            else self._file if isinstance(self._file, str) else None
+            else self._file
+            if isinstance(self._file, str)
+            else None
         )
 
     def _increment_page_number(self) -> Iterator[PageBreak]:

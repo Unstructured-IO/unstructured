@@ -4,8 +4,13 @@ import numpy as np
 import pandas as pd
 import pytest
 import unstructured_pytesseract
-from PIL import Image, UnidentifiedImageError
 from pdf2image.exceptions import PDFPageCountError
+from PIL import Image, UnidentifiedImageError
+from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
+from unstructured_inference.inference.layout import DocumentLayout
+from unstructured_inference.inference.layoutelement import (
+    LayoutElement,
+)
 
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
@@ -17,11 +22,6 @@ from unstructured.partition.utils.ocr_models.paddle_ocr import OCRAgentPaddle
 from unstructured.partition.utils.ocr_models.tesseract_ocr import (
     OCRAgentTesseract,
     zoom_image,
-)
-from unstructured_inference.inference.elements import EmbeddedTextRegion, TextRegion
-from unstructured_inference.inference.layout import DocumentLayout
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
 )
 
 
