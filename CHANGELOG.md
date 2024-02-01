@@ -1,4 +1,4 @@
-## 0.12.4-dev3
+## 0.12.4-dev4
 
 ### Enhancements
 
@@ -8,6 +8,7 @@
 
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
 * **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
 
 ### Fixes
 

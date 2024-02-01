@@ -160,6 +160,7 @@ setup(
         "salesforce": load_requirements("requirements/ingest/salesforce.in"),
         "sftp": load_requirements("requirements/ingest/sftp.in"),
         "slack": load_requirements("requirements/ingest/slack.in"),
+        "vectara": load_requirements("requirements/ingest/vectara.in"),
         "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
         "weaviate": load_requirements("requirements/ingest/weaviate.in"),
         # Legacy extra requirements

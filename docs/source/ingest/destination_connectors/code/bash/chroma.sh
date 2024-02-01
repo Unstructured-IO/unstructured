@@ -3,7 +3,7 @@
 unstructured-ingest \
   local \
   --input-path example-docs/book-war-and-peace-1p.txt \
-  --output-dir local-to-pinecone \
+  --output-dir local-to-chroma \
   --strategy fast \
   --chunk-elements \
   --embedding-provider "<unstructured embedding provider, ie. langchain-huggingface>" \

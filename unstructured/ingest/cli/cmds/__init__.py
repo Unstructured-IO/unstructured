@@ -49,6 +49,7 @@ from .salesforce import get_base_src_cmd as salesforce_base_src_cmd
 from .sharepoint import get_base_src_cmd as sharepoint_base_src_cmd
 from .slack import get_base_src_cmd as slack_base_src_cmd
 from .sql import get_base_dest_cmd as sql_base_dest_cmd
+from .vectara import get_base_dest_cmd as vectara_base_dest_cmd
 from .weaviate import get_base_dest_cmd as weaviate_dest_cmd
 from .wikipedia import get_base_src_cmd as wikipedia_base_src_cmd
 
@@ -115,6 +116,7 @@ base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
     pinecone_base_dest_cmd,
     qdrant_base_dest_cmd,
     opensearch_base_dest_cmd,
+    vectara_base_dest_cmd,
 ]
 
 # Make sure there are not overlapping names
