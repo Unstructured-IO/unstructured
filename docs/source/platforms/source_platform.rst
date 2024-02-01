@@ -8,8 +8,7 @@ Source connectors are essential components in data integration systems that esta
 
   Sources Dashboard
 
-List of Source Connectors
---------------------------
+**List of Source Connectors**
 
 .. toctree::
    :maxdepth: 1

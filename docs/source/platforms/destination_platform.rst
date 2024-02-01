@@ -8,8 +8,7 @@ Destination Connectors in the ``Unstructured Platform`` are designed to specify 
 
   Destinations Dashboard
 
-List of Destination Connectors
--------------------------------
+**List of Destination Connectors**
 
 .. toctree::
    :maxdepth: 1
