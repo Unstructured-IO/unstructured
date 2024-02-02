@@ -143,7 +143,7 @@ IMAGE_URL_PATTERN = (
     r"(?i)https?://"
     r"(?:[a-z0-9$_@.&+!*\\(\\),%-])+"
     r"(?:/[a-z0-9$_@.&+!*\\(\\),%-]*)*"
-    r"\.(?:jpg|jpeg|png|gif|bmp)"
+    r"\.(?:jpg|jpeg|png|gif|bmp|heic)"
 )
 
 # NOTE(klaijan) - only supports one level numbered list for now
