@@ -101,7 +101,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-
     def conform_dict(self, data: dict) -> None:
         """
         Updates the element dictionary to conform to the sql schema
