@@ -90,16 +90,13 @@ class SqlDestinationConnector(BaseDestinationConnector):
 
     @DestinationConnectionError.wrap
     def initialize(self):
-        self.check_connection()
         _ = self.client
 
     def check_connection(self):
         try:
-            breakpoint()
             cursor = self.client.cursor()
             cursor.execute("SELECT 1;")
             cursor.close()
-            print("Connection successful **************")
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
