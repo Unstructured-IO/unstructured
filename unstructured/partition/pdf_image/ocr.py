@@ -401,7 +401,8 @@ def supplement_layout_with_ocr_elements(
     Note:
     - The function relies on `is_almost_subregion_of()` method to determine if an OCR region
       is a subregion of an existing layout element.
-    - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to layout elements.
+    - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to
+     layout elements.
     - The `SUBREGION_THRESHOLD_FOR_OCR` constant is used to specify the subregion matching
      threshold.
     """
