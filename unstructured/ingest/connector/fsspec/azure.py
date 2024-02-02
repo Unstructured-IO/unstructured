@@ -54,6 +54,7 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
     connector_config: SimpleAzureBlobStorageConfig
 
+    # INFO: check_connection worked better in fsspec.py
     # @requires_dependencies(["adlfs"], extras="azure")
     # def check_connection(self):
     #     from adlfs import AzureBlobFileSystem
