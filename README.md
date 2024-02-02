@@ -52,7 +52,7 @@ As the Chipper model is in beta version, we welcome feedback and suggestions. Fo
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:
-* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#using-the-library-in-a-container) or
+* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#run-the-library-in-a-container) or
 * Install the library
     1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
     2. [Install for local development](https://github.com/Unstructured-IO/unstructured#installation-instructions-for-local-development)
