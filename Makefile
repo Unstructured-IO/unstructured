@@ -227,10 +227,6 @@ install-ingest-sftp:
 install-ingest-pinecone:
 	python3 -m pip install -r requirements/ingest/pinecone.txt
 
-.PHONY: install-ingest-vectara
-install-ingest-vectara:
-	python3 -m pip install -r requirements/ingest/vectara.txt
-
 .PHONY: install-ingest-qdrant
 install-ingest-qdrant:
 	python3 -m pip install -r requirements/ingest/qdrant.txt
