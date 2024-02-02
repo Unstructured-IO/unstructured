@@ -5,7 +5,10 @@ from PIL import Image as PILImage
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.inference_utils import build_layout_element
+from unstructured.partition.pdf_image.inference_utils import (
+    build_layout_element,
+    build_text_region_from_coords,
+)
 from unstructured.partition.utils.constants import (
     DEFAULT_PADDLE_LANG,
     Source,
@@ -135,12 +138,12 @@ class OCRAgentPaddle(OCRAgent):
                     continue
                 cleaned_text = text.strip()
                 if cleaned_text:
-                    text_region = TextRegion.from_coords(
+                    text_region = build_text_region_from_coords(
                         x1,
                         y1,
                         x2,
                         y2,
-                        cleaned_text,
+                        text=cleaned_text,
                         source=Source.OCR_PADDLE,
                     )
                     text_regions.append(text_region)
