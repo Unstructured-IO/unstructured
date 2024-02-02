@@ -53,7 +53,7 @@ UNICODE_BULLETS: Final[List[str]] = [
     "\u29BF",
     "\u002D",
     "",
-    "\*",  # noqa: W605 NOTE(robinson) - skipping qa because we need the escape for the regex
+    r"\*",
     "\x95",
     "·",
 ]
@@ -76,7 +76,7 @@ EMAIL_HEAD_RE = re.compile(EMAIL_HEAD_PATTERN)
 
 # Helps split text by paragraphs. There must be one newline, with potential whitespace
 # (incluing \r and \n chars) on either side
-PARAGRAPH_PATTERN = r"\s*\n\s*"  # noqa: W605 NOTE(harrell)
+PARAGRAPH_PATTERN = r"\s*\n\s*"
 
 PARAGRAPH_PATTERN_RE = re.compile(
     f"((?:{BULLETS_PATTERN})|{PARAGRAPH_PATTERN})(?!{BULLETS_PATTERN}|$)",
@@ -94,17 +94,17 @@ ONE_LINE_BREAK_PARAGRAPH_PATTERN_RE = re.compile(ONE_LINE_BREAK_PARAGRAPH_PATTER
 
 # IP Address examples: ba23::58b5:2236:45g2:88h2 or 10.0.2.01
 IP_ADDRESS_PATTERN = (
-    "[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}",  # noqa: W605 NOTE(harrell)
+    r"[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]{1,2}",
     # - skipping qa because we need the escape for the regex
     "[a-z0-9]{4}::[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}:[a-z0-9]{4}%?[0-9]*",
 )
 IP_ADDRESS_PATTERN_RE = re.compile(f"({'|'.join(IP_ADDRESS_PATTERN)})")
 
-IP_ADDRESS_NAME_PATTERN = "[a-zA-Z0-9-]*\.[a-zA-Z]*\.[a-zA-Z]*"  # noqa: W605 NOTE(harrell)
+IP_ADDRESS_NAME_PATTERN = r"[a-zA-Z0-9-]*\.[a-zA-Z]*\.[a-zA-Z]*"
 # - skipping qa because we need the escape for the regex
 
 # Mapi ID example: 32.88.5467.123
-MAPI_ID_PATTERN = "[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*;"  # noqa: W605 NOTE(harrell)
+MAPI_ID_PATTERN = r"[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*;"
 # - skipping qa because we need the escape for the regex
 
 # Date, time, timezone example: Fri, 26 Mar 2021 11:04:09 +1200
@@ -114,7 +114,7 @@ EMAIL_DATETIMETZ_PATTERN = (
 )
 EMAIL_DATETIMETZ_PATTERN_RE = re.compile(EMAIL_DATETIMETZ_PATTERN)
 
-EMAIL_ADDRESS_PATTERN = "[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"  # noqa: W605 NOTE(harrell)
+EMAIL_ADDRESS_PATTERN = r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+"
 # - skipping qa because we need the escape for the regex
 EMAIL_ADDRESS_PATTERN_RE = re.compile(EMAIL_ADDRESS_PATTERN)
 
@@ -143,7 +143,7 @@ IMAGE_URL_PATTERN = (
     r"(?i)https?://"
     r"(?:[a-z0-9$_@.&+!*\\(\\),%-])+"
     r"(?:/[a-z0-9$_@.&+!*\\(\\),%-]*)*"
-    r"\.(?:jpg|jpeg|png|gif|bmp|heic)"
+    r"\.(?:jpg|jpeg|png|gif|bmp)"
 )
 
 # NOTE(klaijan) - only supports one level numbered list for now
