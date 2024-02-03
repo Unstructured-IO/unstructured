@@ -1,10 +1,16 @@
+"""Partitioner for Excel 2007+ (XLSX) spreadsheets."""
+
+from __future__ import annotations
+
+import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, BinaryIO, Dict, List, Optional, Tuple, Union, cast
+from typing import IO, Any, Iterator, Optional, cast
 
 import networkx as nx
 import numpy as np
 import pandas as pd
-from lxml.html.soupparser import fromstring as soupparser_fromstring
+from lxml.html.soupparser import fromstring as soupparser_fromstring  # pyright: ignore
+from typing_extensions import TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
@@ -23,7 +29,6 @@ from unstructured.partition.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
-    spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
@@ -33,6 +38,8 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 
+_CellCoordinate: TypeAlias = "tuple[int, int]"
+
 DETECTION_ORIGIN: str = "xlsx"
 
 
@@ -41,17 +48,17 @@ DETECTION_ORIGIN: str = "xlsx"
 @add_chunking_strategy()
 def partition_xlsx(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
 
     Parameters
@@ -85,26 +92,43 @@ def partition_xlsx(
     last_modification_date = None
     header = 0 if include_header else None
 
+    sheets: dict[str, pd.DataFrame] = {}
     if filename:
-        sheets = pd.read_excel(filename, sheet_name=None, header=header)
+        sheets = pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
+            filename, sheet_name=None, header=header
+        )
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
-        f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file),
+        if isinstance(file, SpooledTemporaryFile):
+            file.seek(0)
+            f = io.BytesIO(file.read())
+        else:
+            f = file
+        sheets = pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
+            f, sheet_name=None, header=header
         )
-        sheets = pd.read_excel(f, sheet_name=None, header=header)
         last_modification_date = get_last_modified_date_from_file(file)
+    else:
+        raise ValueError("Either 'filename' or 'file' argument must be specified.")
 
-    elements: List[Element] = []
+    elements: list[Element] = []
     for page_number, (sheet_name, sheet) in enumerate(sheets.items(), start=1):
         if not find_subtable:
             html_text = (
-                sheet.to_html(index=False, header=include_header, na_rep="")
+                sheet.to_html(  # pyright: ignore[reportUnknownMemberType]
+                    index=False, header=include_header, na_rep=""
+                )
                 if infer_table_structure
                 else None
             )
-            text = soupparser_fromstring(html_text).text_content()
+            # XXX: `html_text` can be `None`. What happens on this call in that case?
+            text = cast(
+                str,
+                soupparser_fromstring(  # pyright: ignore[reportUnknownMemberType]
+                    html_text
+                ).text_content(),
+            )
 
             if include_metadata:
                 metadata = ElementMetadata(
@@ -158,13 +182,22 @@ def partition_xlsx(
                         elements.append(element)
 
                 if subtable is not None and len(subtable) == 1:
-                    element = _check_content_element_type(str(subtable.iloc[0].values[0]))
+                    element = _check_content_element_type(
+                        str(subtable.iloc[0].values[0])  # pyright: ignore[reportUnknownMemberType]
+                    )
                     elements.append(element)
 
                 elif subtable is not None:
                     # parse subtables as html
-                    html_text = subtable.to_html(index=False, header=include_header, na_rep="")
-                    text = soupparser_fromstring(html_text).text_content()
+                    html_text = subtable.to_html(  # pyright: ignore[reportUnknownMemberType]
+                        index=False, header=include_header, na_rep=""
+                    )
+                    text = cast(
+                        str,
+                        soupparser_fromstring(  # pyright: ignore[reportUnknownMemberType]
+                            html_text
+                        ).text_content(),
+                    )
                     subtable = Table(text=text)
                     subtable.metadata = metadata
                     subtable.metadata.text_as_html = html_text if infer_table_structure else None
@@ -189,9 +222,8 @@ def partition_xlsx(
 
 
 def _get_connected_components(
-    sheet: pd.DataFrame,
-    filter: bool = True,
-):
+    sheet: pd.DataFrame, filter: bool = True
+) -> list[tuple[list[tuple[int, int]], tuple[int, int, int, int]]]:
     """
     Identify connected components of non-empty cells in an excel sheet.
 
@@ -211,14 +243,17 @@ def _get_connected_components(
         overlapping components to return distinct components.
     """
     max_row, max_col = sheet.shape
-    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)
+    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
     node_array = np.indices((max_row, max_col)).T
     empty_cells = sheet.isna().T
     nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
-    graph.remove_nodes_from(nodes_to_remove)
-    connected_components_as_nodes = nx.connected_components(graph)
-    connected_components = []
-    for _component in connected_components_as_nodes:
+    graph.remove_nodes_from(nodes_to_remove)  # pyright: ignore
+
+    # -- compute sets of nodes representing each connected-component --
+    connected_node_sets: Iterator[set[_CellCoordinate]]
+    connected_node_sets = nx.connected_components(graph)  # pyright: ignore[reportUnknownMemberType]
+    connected_components: list[dict[str, Any]] = []
+    for _component in connected_node_sets:
         component = list(_component)
         min_x, min_y, max_x, max_y = _find_min_max_coord(component)
         connected_components.append(
@@ -248,13 +283,13 @@ def _get_connected_components(
 
 
 def _filter_overlapping_tables(
-    connected_components: List[Dict[str, Any]],
-) -> List[Dict[str, Any]]:
+    connected_components: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
     """
     Filter out overlapping connected components to return distinct components.
     """
     sorted_components = sorted(connected_components, key=lambda x: x["min_x"])
-    merged_components: List[dict] = []
+    merged_components: list[dict[str, Any]] = []
     current_component = None
     for component in sorted_components:
         if current_component is None:
@@ -279,9 +314,7 @@ def _filter_overlapping_tables(
     return merged_components
 
 
-def _find_min_max_coord(
-    connected_component: List[Dict[Any, Any]],
-) -> Tuple[Union[int, float], Union[int, float], Union[int, float], Union[int, float]]:
+def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int, int, int, int]:
     """
     Find the minimum and maximum coordinates (bounding box) of a connected component.
     """
@@ -295,10 +328,12 @@ def _find_min_max_coord(
             max_x = _x
         if _y > max_y:
             max_y = _y
-    return min_x, min_y, max_x, max_y
+    return int(min_x), int(min_y), int(max_x), int(max_y)
 
 
-def _get_sub_subtable(subtable: pd.DataFrame, first_and_last_row: Tuple[int, int]) -> pd.DataFrame:
+def _get_sub_subtable(
+    subtable: pd.DataFrame, first_and_last_row: tuple[int, int]
+) -> Optional[pd.DataFrame]:
     """
     Extract a sub-subtable from a given subtable based on the first and last row range.
     """
@@ -312,9 +347,8 @@ def _get_sub_subtable(subtable: pd.DataFrame, first_and_last_row: Tuple[int, int
 
 
 def _find_first_and_last_non_consecutive_row(
-    row_indices: List[int],
-    table_shape: Tuple[int, int],
-) -> Tuple[Optional[int], Optional[int]]:
+    row_indices: list[int], table_shape: tuple[int, int]
+) -> tuple[Optional[int], Optional[int]]:
     """
     Find the indices of the first and last non-consecutive rows in a list of row indices.
     """
@@ -336,16 +370,16 @@ def _find_first_and_last_non_consecutive_row(
     return front_non_consecutive, last_non_consecutive
 
 
-def _single_non_empty_rows(subtable) -> Tuple[List[int], List[str]]:
+def _single_non_empty_rows(subtable: pd.DataFrame) -> tuple[list[int], list[str]]:
     """
     Identify single non-empty rows in a subtable and extract their row indices and contents.
     """
-    single_non_empty_rows = []
-    single_non_empty_row_contents = []
-    for index, row in subtable.iterrows():
+    single_non_empty_rows: list[int] = []
+    single_non_empty_row_contents: list[str] = []
+    for index, row in subtable.iterrows():  # pyright: ignore
         if row.count() == 1:
-            single_non_empty_rows.append(index)
-            single_non_empty_row_contents.append(row.dropna().iloc[0])
+            single_non_empty_rows.append(cast(int, index))
+            single_non_empty_row_contents.append(str(row.dropna().iloc[0]))  # pyright: ignore
     return single_non_empty_rows, single_non_empty_row_contents
 
 
@@ -380,7 +414,7 @@ def _get_metadata(
     sheet_name: Optional[str] = None,
     page_number: Optional[int] = -1,
     filename: Optional[str] = None,
-    last_modification_date: Union[str, None] = None,
+    last_modification_date: Optional[str] = None,
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
     if include_metadata:
