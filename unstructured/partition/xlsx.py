@@ -37,6 +37,7 @@ from unstructured.partition.text_type import (
     is_possible_numbered_list,
     is_possible_title,
 )
+from unstructured.utils import lazyproperty
 
 _CellCoordinate: TypeAlias = "tuple[int, int]"
 
@@ -241,6 +242,91 @@ def partition_xlsx(
         ),
     )
     return elements
+
+
+class _SubtableParser:
+    """Distinguishes core-table from leading and trailing title rows in a subtable.
+
+    A *subtable* is a contiguous block of populated cells in the spreadsheet. Leading or trailing
+    rows of that block containing only one populated cell are called "single-cell rows" and are
+    not considered part of the core table. These are each emitted separately as a `Text`-subtype
+    element.
+    """
+
+    def __init__(self, subtable: pd.DataFrame):
+        self._subtable = subtable
+
+    @lazyproperty
+    def core_table(self) -> pd.DataFrame | None:
+        """The part between the leading and trailing single-cell rows, if any."""
+        core_table_start = len(self._leading_single_cell_row_indices)
+
+        # -- if core-table start is the end of table, there is no core-table
+        # -- (all rows are single-cell)
+        if core_table_start == len(self._subtable):
+            return None
+
+        # -- assert: there is at least one core-table row (leading single-cell rows greedily
+        # -- consumes all consecutive single-cell rows.
+
+        core_table_stop = len(self._subtable) - len(self._trailing_single_cell_row_indices)
+
+        # -- core-table is what's left in-between --
+        return self._subtable[core_table_start:core_table_stop]
+
+    def iter_leading_single_cell_rows_texts(self) -> Iterator[str]:
+        """Generate the cell-text for each leading single-cell row."""
+        for row_idx in self._leading_single_cell_row_indices:
+            yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
+
+    def iter_trailing_single_cell_rows_texts(self) -> Iterator[str]:
+        """Generate the cell-text for each trailing single-cell row."""
+        for row_idx in self._trailing_single_cell_row_indices:
+            yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
+
+    @lazyproperty
+    def _leading_single_cell_row_indices(self) -> tuple[int, ...]:
+        """Index of each leading single-cell row in subtable, in top-down order."""
+
+        def iter_leading_single_cell_row_indices() -> Iterator[int]:
+            next_row_idx = 0
+            for idx in self._single_cell_row_indices:
+                if idx != next_row_idx:
+                    return
+                yield next_row_idx
+                next_row_idx += 1
+
+        return tuple(iter_leading_single_cell_row_indices())
+
+    @lazyproperty
+    def _single_cell_row_indices(self) -> tuple[int, ...]:
+        """Index of each single-cell row in subtable, in top-down order."""
+
+        def iter_single_cell_row_idxs() -> Iterator[int]:
+            for idx, (_, row) in enumerate(self._subtable.iterrows()):  # pyright: ignore
+                if row.count() != 1:
+                    continue
+                yield idx
+
+        return tuple(iter_single_cell_row_idxs())
+
+    @lazyproperty
+    def _trailing_single_cell_row_indices(self) -> tuple[int, ...]:
+        """Index of each trailing single-cell row in subtable, in top-down order."""
+        # -- if all subtable rows are single-cell, then by convention they are all leading --
+        if len(self._leading_single_cell_row_indices) == len(self._subtable):
+            return ()
+
+        def iter_trailing_single_cell_row_indices() -> Iterator[int]:
+            """... moving from end upward ..."""
+            next_row_idx = len(self._subtable) - 1
+            for idx in self._single_cell_row_indices[::-1]:
+                if idx != next_row_idx:
+                    return
+                yield next_row_idx
+                next_row_idx -= 1
+
+        return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
 
 
 def _get_connected_components(
