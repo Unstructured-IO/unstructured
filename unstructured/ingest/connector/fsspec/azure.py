@@ -54,19 +54,6 @@ class AzureBlobStorageIngestDoc(FsspecIngestDoc):
 class AzureBlobStorageSourceConnector(FsspecSourceConnector):
     connector_config: SimpleAzureBlobStorageConfig
 
-    # INFO: check_connection worked better in fsspec.py
-    # @requires_dependencies(["adlfs"], extras="azure")
-    # def check_connection(self):
-    #     from adlfs import AzureBlobFileSystem
-
-    #     try:
-    #         breakpoint()
-    #         AzureBlobFileSystem(**self.connector_config.get_access_config())
-    #         print("Connection successful************")
-    #     except ValueError as connection_error:
-    #         logger.error(f"failed to validate connection: {connection_error}", exc_info=True)
-    #         raise SourceConnectionError(f"failed to validate connection: {connection_error}")
-
     def __post_init__(self):
         self.ingest_doc_cls: t.Type[AzureBlobStorageIngestDoc] = AzureBlobStorageIngestDoc
 
