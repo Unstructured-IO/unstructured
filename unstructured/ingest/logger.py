@@ -11,7 +11,7 @@ def default_is_data_sensitive(k: str, v: t.Any) -> bool:
         "account_name",
         "client_id",
     ]
-    sensitive_triggers = ["key", "cred", "token", "password"]
+    sensitive_triggers = ["key", "cred", "token", "password", "oauth", "secret"]
     return (
         v
         and any([s in k.lower() for s in sensitive_triggers])  # noqa: C419

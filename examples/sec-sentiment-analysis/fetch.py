@@ -1,4 +1,5 @@
 """Module for fetching data from the SEC EDGAR Archives"""
+
 import json
 import os
 import re

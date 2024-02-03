@@ -163,6 +163,24 @@ def test_partition_image_with_multipage_tiff(
     assert elements[-1].metadata.page_number == 2
 
 
+def test_partition_image_with_bmp(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = image.partition_image(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
         ocr,
@@ -287,7 +305,7 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
     assert elements[idx].metadata.detection_class_prob is not None
@@ -553,7 +571,7 @@ def test_partition_image_uses_hi_res_model_name():
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 3),
+        ("entire_page", 2),
         ("individual_blocks", 1),
     ],
 )
@@ -665,3 +683,11 @@ def test_partition_image_element_extraction(
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
+
+
+def test_partition_image_works_on_heic_file(
+    filename="example-docs/DA-1p.heic",
+):
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
+    titles = [el.text for el in elements if el.category == ElementType.TITLE]
+    assert "CREATURES" in titles

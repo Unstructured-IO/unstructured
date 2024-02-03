@@ -8,6 +8,7 @@ from unittest.mock import Mock, patch
 
 import docx
 import pytest
+from PIL import Image
 
 from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.partition.test_constants import (
@@ -445,7 +446,7 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, content_type):
+def test_auto_partition_image(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
@@ -457,7 +458,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 
@@ -723,6 +724,7 @@ supported_filetypes = [
 FILETYPE_TO_MODULE = {
     FileType.JPG: "image",
     FileType.PNG: "image",
+    FileType.HEIC: "image",
     FileType.TXT: "text",
     FileType.EML: "email",
 }
@@ -730,7 +732,7 @@ FILETYPE_TO_MODULE = {
 
 @pytest.mark.parametrize("filetype", supported_filetypes)
 def test_file_specific_produces_correct_filetype(filetype: FileType):
-    if filetype in (FileType.JPG, FileType.PNG, FileType.TIFF, FileType.WAV, FileType.EMPTY):
+    if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
     filetype_module = (
@@ -1265,3 +1267,20 @@ def test_partition_timeout_gets_routed():
     kwargs = mock_ocr_func.call_args.kwargs
     assert "request_timeout" in kwargs
     assert kwargs["request_timeout"] == 326
+
+
+def test_partition_image_with_bmp_with_auto(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = partition(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]

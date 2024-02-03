@@ -143,7 +143,7 @@ PYTESSERACT_LANG_CODES = [
 ]
 
 
-def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
+def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) -> str:
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
@@ -167,34 +167,65 @@ def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]):
     return TESSERACT_LANGUAGES_SPLITTER.join(converted_languages)
 
 
-def check_languages(languages: Optional[List[str]], ocr_languages: Optional[str]):
-    """Handle `ocr_languages` and `languages`, defining `languages` to ['eng'] as default and
-    converting `ocr_languages` if needed"""
-    if languages is None:
-        languages = ["eng"]
+def check_language_args(languages: list[str], ocr_languages: Optional[str]) -> Optional[list[str]]:
+    """Handle users defining both `ocr_languages` and `languages`, giving preference to `languages`
+    and converting `ocr_languages` if needed, but defaulting to `None.
+
+    `ocr_languages` is only a parameter for `auto.partition`, `partition_image`, & `partition_pdf`.
+    `ocr_languages` should not be defined as 'auto' since 'auto' is intended for language detection
+    which is not supported by `partition_image` or `partition_pdf`."""
+    # --- Clean and update defaults
+    if ocr_languages:
+        ocr_languages = _clean_ocr_languages_arg(ocr_languages)
+        logger.warning(
+            "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
+            "Please use languages instead.",
+        )
+
+    if ocr_languages and "auto" in ocr_languages:
+        raise ValueError(
+            "`ocr_languages` is deprecated but was used to extract text from pdfs and images."
+            " The 'auto' argument is only for language *detection* when it is assigned"
+            " to `languages` and partitioning documents other than pdfs or images."
+            " Language detection is not currently supported in pdfs or images."
+        )
 
     if not isinstance(languages, list):
         raise TypeError(
             "The language parameter must be a list of language codes as strings, ex. ['eng']",
         )
 
-    if ocr_languages is not None:
-        if languages != ["eng"]:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
+    # --- If `languages` is a null/default value and `ocr_languages` is defined, use `ocr_languages`
+    if ocr_languages and (languages == ["auto"] or languages == [""] or not languages):
+        languages = ocr_languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        logger.warning(
+            "Only one of languages and ocr_languages should be specified. "
+            "languages is preferred. ocr_languages is marked for deprecation.",
+        )
 
+    # --- Clean `languages`
+    # If "auto" is included in the list of inputs, language detection will be triggered downstream.
+    # The rest of the inputted languages are ignored.
+    if languages:
+        if "auto" not in languages:
+            for i, lang in enumerate(languages):
+                languages[i] = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower(), lang)
+
+            str_languages = _clean_ocr_languages_arg(languages)
+            if not str_languages:
+                return None
+            languages = str_languages.split(TESSERACT_LANGUAGES_SPLITTER)
+        # else, remove the extraneous languages.
+        # NOTE (jennings): "auto" should only be used for partitioners OTHER THAN `_pdf` or `_image`
         else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
-    return languages
+            # define as 'auto' for language detection when partitioning non-pdfs or -images
+            languages = ["auto"]
+        return languages
+
+    return None
 
 
-def convert_old_ocr_languages_to_languages(ocr_languages: str):
+def convert_old_ocr_languages_to_languages(ocr_languages: str) -> list[str]:
     """
     Convert ocr_languages parameter to list of langcode strings.
     Assumption: ocr_languages is in tesseract plus sign format
@@ -243,33 +274,19 @@ def _convert_language_code_to_pytesseract_lang_code(lang: str) -> str:
     return ""
 
 
-def _get_iso639_language_object(lang: str) -> Union[iso639.Language, str]:
+def _get_iso639_language_object(lang: str) -> Optional[iso639.Language]:
     try:
-        lang_iso639 = iso639.Language.match(lang.lower())
+        return iso639.Language.match(lang.lower())
     except iso639.LanguageNotFoundError:
         logger.warning(f"{lang} is not a valid standard language code.")
         return None
-    return lang_iso639
 
 
-def _get_all_tesseract_langcodes_with_prefix(prefix: str):
+def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
     """
     Get all matching tesseract langcodes with this prefix (may be one or multiple variants).
     """
     return [langcode for langcode in PYTESSERACT_LANG_CODES if langcode.startswith(prefix)]
-
-
-def _convert_to_standard_langcode(lang: str) -> str:
-    """
-    Convert a single language or language code to the standard internal language code format.
-    """
-    if TESSERACT_LANGUAGES_AND_CODES.get(lang.lower()):
-        lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower())
-    # convert to standard ISO 639-3 language code
-    lang_iso639 = _get_iso639_language_object(lang[:3])
-    if lang_iso639:
-        return lang_iso639.part3
-    return ""
 
 
 def detect_languages(
@@ -301,11 +318,17 @@ def detect_languages(
     # set seed for deterministic langdetect outputs
     DetectorFactory.seed = 0
 
+    doc_languages: list[str] = []
+
     # user inputted languages:
     # if "auto" is included in the list of inputs, language detection will be triggered
     # and the rest of the inputted languages will be ignored
     if languages and "auto" not in languages:
-        doc_languages = [_convert_to_standard_langcode(lang) for lang in languages]
+        for lang in languages:
+            str_lang = TESSERACT_LANGUAGES_AND_CODES.get(lang.lower(), lang)
+            language = _get_iso639_language_object(str_lang[:3])
+            if language:
+                doc_languages.append(language.part3)
 
     # language detection:
     else:
@@ -323,19 +346,21 @@ def detect_languages(
             logger.warning(e)
             return None  # None as default
 
+        langdetect_langs: list[str] = []
+
         # NOTE(robinson) - Chinese gets detected with codes zh-cn, zh-tw, zh-hk for various
         # Chinese variants. We normalizes these because there is a single model for Chinese
         # machine translation
         # TODO(shreya): decide how to maintain nonstandard chinese script information
-        langdetect_langs = [
-            _convert_to_standard_langcode("zh")
-            if langobj.lang.startswith("zh")
-            else _convert_to_standard_langcode(langobj.lang)
-            for langobj in langdetect_result
-        ]
+        for langobj in langdetect_result:
+            if str(langobj.lang).startswith("zh"):
+                langdetect_langs.append("zho")
+            else:
+                language = _get_iso639_language_object(langobj.lang[:3])
+                if language:
+                    langdetect_langs.append(language.part3)
 
         # remove duplicate chinese (if exists) without modifying order
-        doc_languages = []
         for lang in langdetect_langs:
             if lang not in doc_languages:
                 doc_languages.append(lang)
@@ -348,7 +373,9 @@ def apply_lang_metadata(
     languages: Optional[List[str]],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
-    """Detect and apply metadata.languages to each element in `elements`."""
+    """Detect language and apply it to metadata.languages for each element in `elements`.
+    If languages is None, default to auto detection.
+    If languages is and empty string, skip."""
     # -- Note this function has a stream interface, but reads the full `elements` stream into memory
     # -- before emitting the first updated element as output.
 
@@ -365,6 +392,7 @@ def apply_lang_metadata(
         yield from elements
         return
 
+    # Convert elements to a list to get the text, detect the language, and add it to the elements
     if not isinstance(elements, List):
         elements = list(elements)
 
@@ -375,7 +403,7 @@ def apply_lang_metadata(
         and len(languages) == 1
         and detect_language_per_element is False
     ):
-        # -- apply detected language to each metadata --
+        # -- apply detected language to each element's metadata --
         for e in elements:
             e.metadata.languages = detected_languages
             yield e
@@ -386,3 +414,19 @@ def apply_lang_metadata(
                 yield e
             else:
                 yield e
+
+
+def _clean_ocr_languages_arg(ocr_languages: Union[List[str], str]) -> str:
+    """Fix common incorrect definitions for ocr_languages:
+    defining it as a list, adding extra quotation marks, adding brackets.
+    Returns a single string of ocr_languages"""
+    # extract from list
+    if isinstance(ocr_languages, list):
+        ocr_languages = "+".join(ocr_languages)
+
+    # remove extra quotations
+    ocr_languages = re.sub(r"[\"']", "", ocr_languages)
+    # remove brackets
+    ocr_languages = re.sub(r"[\[\]]", "", ocr_languages)
+
+    return ocr_languages

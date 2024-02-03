@@ -408,9 +408,11 @@ def _parse_tag(
         # -- zero index the depth --
         int(tag_elem.tag[1]) - 1
         if tag_elem.tag in HEADING_TAGS
-        else len([el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS])
-        if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS
-        else 0
+        else (
+            len([el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS])
+            if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS
+            else 0
+        )
     )
 
     if tag_elem.tag == "script":

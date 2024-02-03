@@ -1,13 +1,8 @@
 import os
 import tempfile
-from copy import deepcopy
 from typing import BinaryIO, Dict, List, Optional, Union, cast
 
-import cv2
-import numpy as np
-import pandas as pd
 import pdf2image
-import unstructured_pytesseract
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
 # unstructured.documents.elements.Image
@@ -17,24 +12,24 @@ from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import (
     LayoutElement,
-    partition_groups_from_regions,
 )
 from unstructured_inference.models.tables import UnstructuredTableTransformerModel
-from unstructured_pytesseract import Output
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.pdf_image_utils import valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
-    IMAGE_COLOR_DEPTH,
     OCR_AGENT_PADDLE,
+    OCR_AGENT_PADDLE_OLD,
     OCR_AGENT_TESSERACT,
+    OCR_AGENT_TESSERACT_OLD,
     SUBREGION_THRESHOLD_FOR_OCR,
-    TESSERACT_MAX_SIZE,
-    TESSERACT_TEXT_HEIGHT,
     OCRMode,
-    Source,
+)
+from unstructured.partition.utils.ocr_models.ocr_interface import (
+    OCRAgent,
+    get_elements_from_ocr_regions,
 )
 
 # Force tesseract to be single threaded,
@@ -46,6 +41,7 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 def process_data_with_ocr(
     data: Union[bytes, BinaryIO],
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -85,6 +81,7 @@ def process_data_with_ocr(
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
             out_layout=out_layout,
+            extracted_layout=extracted_layout,
             is_image=is_image,
             infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
@@ -97,6 +94,7 @@ def process_data_with_ocr(
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
+    extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
@@ -105,7 +103,7 @@ def process_file_with_ocr(
 ) -> "DocumentLayout":
     """
     Process OCR data from a given file and supplement the output DocumentLayout
-    from unsturcutured-inference with ocr.
+    from unstructured-inference with ocr.
 
     Parameters:
     - filename (str): The path to the input file, which can be an image or a PDF.
@@ -137,12 +135,14 @@ def process_file_with_ocr(
                 for i, image in enumerate(ImageSequence.Iterator(images)):
                     image = image.convert("RGB")
                     image.format = image_format
+                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     merged_page_layout = supplement_page_layout_with_ocr(
-                        out_layout.pages[i],
-                        image,
+                        page_layout=out_layout.pages[i],
+                        image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
+                        extracted_regions=extracted_regions,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -156,13 +156,15 @@ def process_file_with_ocr(
                 )
                 image_paths = cast(List[str], _image_paths)
                 for i, image_path in enumerate(image_paths):
+                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
                     with PILImage.open(image_path) as image:
                         merged_page_layout = supplement_page_layout_with_ocr(
-                            out_layout.pages[i],
-                            image,
+                            page_layout=out_layout.pages[i],
+                            image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
+                            extracted_regions=extracted_regions,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -179,6 +181,7 @@ def supplement_page_layout_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -190,10 +193,9 @@ def supplement_page_layout_with_ocr(
 
     ocr_agent = get_ocr_agent()
     if ocr_mode == OCRMode.FULL_PAGE.value:
-        ocr_layout = get_ocr_layout_from_image(
+        ocr_layout = ocr_agent.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
-            ocr_agent=ocr_agent,
         )
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List[LayoutElement], page_layout.elements),
@@ -214,10 +216,9 @@ def supplement_page_layout_with_ocr(
                 )
                 # Note(yuming): instead of getting OCR layout, we just need
                 # the text extraced from OCR for individual elements
-                text_from_ocr = get_ocr_text_from_image(
+                text_from_ocr = ocr_agent.get_text_from_image(
                     cropped_image,
                     ocr_languages=ocr_languages,
-                    ocr_agent=ocr_agent,
                 )
                 element.text = text_from_ocr
     else:
@@ -240,6 +241,7 @@ def supplement_page_layout_with_ocr(
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
         )
 
     return page_layout
@@ -250,42 +252,49 @@ def supplement_element_with_table_extraction(
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
-    ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List[LayoutElement]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
     """
-    for element in elements:
-        if element.type == ElementType.TABLE:
-            padding = env_config.TABLE_IMAGE_CROP_PAD
-            padded_element = pad_element_bboxes(element, padding=padding)
-            cropped_image = image.crop(
-                (
-                    padded_element.bbox.x1,
-                    padded_element.bbox.y1,
-                    padded_element.bbox.x2,
-                    padded_element.bbox.y2,
-                ),
-            )
-            table_tokens = get_table_tokens(
-                image=cropped_image, ocr_languages=ocr_languages, ocr_agent=ocr_agent
-            )
-            element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+
+    table_elements = [el for el in elements if el.type == ElementType.TABLE]
+    for element in table_elements:
+        padding = env_config.TABLE_IMAGE_CROP_PAD
+        padded_element = pad_element_bboxes(element, padding=padding)
+        cropped_image = image.crop(
+            (
+                padded_element.bbox.x1,
+                padded_element.bbox.y1,
+                padded_element.bbox.x2,
+                padded_element.bbox.y2,
+            ),
+        )
+        table_tokens = get_table_tokens(
+            table_element_image=cropped_image,
+            ocr_languages=ocr_languages,
+            ocr_agent=ocr_agent,
+            extracted_regions=extracted_regions,
+            table_element=padded_element,
+        )
+        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
     return elements
 
 
 def get_table_tokens(
-    image: PILImage,
+    table_element_image: PILImage,
     ocr_languages: str = "eng",
-    ocr_agent: str = OCR_AGENT_TESSERACT,
+    ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
+    extracted_regions: Optional[List["TextRegion"]] = None,
+    table_element: Optional["LayoutElement"] = None,
 ) -> List[Dict]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
-    ocr_layout = get_ocr_layout_from_image(
-        image,
+    ocr_layout = ocr_agent.get_layout_from_image(
+        image=table_element_image,
         ocr_languages=ocr_languages,
-        ocr_agent=ocr_agent,
     )
     table_tokens = []
     for ocr_region in ocr_layout:
@@ -312,296 +321,6 @@ def get_table_tokens(
         if "block_num" not in token:
             token["block_num"] = 0
     return table_tokens
-
-
-def get_layout_elements_from_ocr(
-    image: PILImage,
-    ocr_languages: str = "eng",
-    ocr_agent: str = OCR_AGENT_TESSERACT,
-) -> List[LayoutElement]:
-    """
-    Generate a PageLayout with OCR data from a given image.
-    """
-
-    ocr_regions = get_ocr_layout_from_image(
-        image,
-        ocr_languages=ocr_languages,
-        ocr_agent=ocr_agent,
-    )
-
-    if ocr_agent == OCR_AGENT_PADDLE:
-        # NOTE(christine): For paddle, there is no difference in `ocr_layout` and `ocr_text` in
-        # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
-        # and merging steps are not necessary.
-
-        layout_elements = [
-            LayoutElement(
-                bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT
-            )
-            for r in ocr_regions
-        ]
-    else:
-        # NOTE(christine): For tesseract, the ocr_text returned by
-        # `unstructured_pytesseract.image_to_string()` doesn't contain bounding box data but is
-        # well grouped. Conversely, the ocr_layout returned by parsing
-        # `unstructured_pytesseract.image_to_data()` contains bounding box data but is not well
-        # grouped. Therefore, we need to first group the `ocr_layout` by `ocr_text` and then merge
-        # the text regions in each group to create a list of layout elements.
-
-        ocr_text = get_ocr_text_from_image(
-            image,
-            ocr_languages=ocr_languages,
-            ocr_agent=ocr_agent,
-        )
-
-        layout_elements = get_elements_from_ocr_regions(
-            ocr_regions=ocr_regions,
-            ocr_text=ocr_text,
-            group_by_ocr_text=True,
-        )
-
-    return layout_elements
-
-
-def pad_element_bboxes(
-    element: "LayoutElement",
-    padding: Union[int, float],
-) -> "LayoutElement":
-    """Increases (or decreases, if padding is negative) the size of the bounding
-    boxes of the element by extending the boundary outward (resp. inward)"""
-
-    out_element = deepcopy(element)
-    out_element.bbox.x1 -= padding
-    out_element.bbox.x2 += padding
-    out_element.bbox.y1 -= padding
-    out_element.bbox.y2 += padding
-    return out_element
-
-
-def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:
-    """scale an image based on the zoom factor using cv2; the scaled image is post processed by
-    dilation then erosion to improve edge sharpness for OCR tasks"""
-    if zoom <= 0:
-        # no zoom but still does dilation and erosion
-        zoom = 1
-    new_image = cv2.resize(
-        cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR),
-        None,
-        fx=zoom,
-        fy=zoom,
-        interpolation=cv2.INTER_CUBIC,
-    )
-
-    kernel = np.ones((1, 1), np.uint8)
-    new_image = cv2.dilate(new_image, kernel, iterations=1)
-    new_image = cv2.erode(new_image, kernel, iterations=1)
-
-    return PILImage.fromarray(new_image)
-
-
-def get_ocr_text_from_image(
-    image: PILImage,
-    ocr_languages: str = "eng",
-    ocr_agent: str = "tesseract",
-) -> str:
-    """
-    Get the OCR text from image as a string with paddle or tesseract.
-    """
-    if ocr_agent == OCR_AGENT_PADDLE:
-        ocr_regions = get_ocr_layout_paddle(image)
-        ocr_text = "\n\n".join([r.text for r in ocr_regions])
-    else:
-        ocr_text = unstructured_pytesseract.image_to_string(
-            np.array(image),
-            lang=ocr_languages,
-        )
-    return ocr_text
-
-
-def get_ocr_layout_from_image(
-    image: PILImage,
-    ocr_languages: str = "eng",
-    ocr_agent: str = "tesseract",
-) -> List[TextRegion]:
-    """
-    Get the OCR regions from image as a list of text regions with paddle or tesseract.
-    """
-
-    if ocr_agent == OCR_AGENT_PADDLE:
-        ocr_regions = get_ocr_layout_paddle(image)
-    else:
-        ocr_regions = get_ocr_layout_tesseract(image, ocr_languages)
-
-    return ocr_regions
-
-
-def get_ocr_layout_tesseract(
-    image: PILImage,
-    ocr_languages: str = "eng",
-) -> List[TextRegion]:
-    """Get the OCR regions from image as a list of text regions with tesseract."""
-
-    logger.info("Processing entire page OCR with tesseract...")
-    zoom = 1
-    ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
-        np.array(image),
-        lang=ocr_languages,
-        output_type=Output.DATAFRAME,
-    )
-    ocr_df = ocr_df.dropna()
-
-    # tesseract performance degrades when the text height is out of the preferred zone so we
-    # zoom the image (in or out depending on estimated text height) for optimum OCR results
-    # but this needs to be evaluated based on actual use case as the optimum scaling also
-    # depend on type of characters (font, language, etc); be careful about this
-    # functionality
-    text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
-        env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
-    )
-    if (
-        text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
-        or text_height > env_config.TESSERACT_MAX_TEXT_HEIGHT
-    ):
-        max_zoom = max(
-            0, np.round(np.sqrt(TESSERACT_MAX_SIZE / np.prod(image.size) / IMAGE_COLOR_DEPTH), 1)
-        )
-        # rounding avoids unnecessary precision and potential numerical issues associated
-        # with numbers very close to 1 inside cv2 image processing
-        zoom = min(
-            np.round(env_config.TESSERACT_OPTIMUM_TEXT_HEIGHT / text_height, 1),
-            max_zoom,
-        )
-        ocr_df = unstructured_pytesseract.image_to_data(
-            np.array(zoom_image(image, zoom)),
-            lang=ocr_languages,
-            output_type=Output.DATAFRAME,
-        )
-        ocr_df = ocr_df.dropna()
-
-    ocr_regions = parse_ocr_data_tesseract(ocr_df, zoom=zoom)
-
-    return ocr_regions
-
-
-def get_ocr_layout_paddle(image: PILImage) -> List[TextRegion]:
-    """Get the OCR regions from image as a list of text regions with paddle."""
-
-    logger.info("Processing entire page OCR with paddle...")
-    from unstructured.partition.utils.ocr_models import paddle_ocr
-
-    # TODO(yuming): pass in language parameter once we
-    # have the mapping for paddle lang code
-    # see CORE-2034
-    ocr_data = paddle_ocr.load_agent().ocr(np.array(image), cls=True)
-    ocr_regions = parse_ocr_data_paddle(ocr_data)
-
-    return ocr_regions
-
-
-def parse_ocr_data_tesseract(ocr_data: pd.DataFrame, zoom: float = 1) -> List[TextRegion]:
-    """
-    Parse the OCR result data to extract a list of TextRegion objects from
-    tesseract.
-
-    The function processes the OCR result data frame, looking for bounding
-    box information and associated text to create instances of the TextRegion
-    class, which are then appended to a list.
-
-    Parameters:
-    - ocr_data (pd.DataFrame):
-        A Pandas DataFrame containing the OCR result data.
-        It should have columns like 'text', 'left', 'top', 'width', and 'height'.
-
-    - zoom (float, optional):
-        A zoom factor to scale the coordinates of the bounding boxes from image scaling.
-        Default is 1.
-
-    Returns:
-    - List[TextRegion]:
-        A list of TextRegion objects, each representing a detected text region
-        within the OCR-ed image.
-
-    Note:
-    - An empty string or a None value for the 'text' key in the input
-      data frame will result in its associated bounding box being ignored.
-    """
-
-    if zoom <= 0:
-        zoom = 1
-
-    text_regions = []
-    for idtx in ocr_data.itertuples():
-        text = idtx.text
-        if not text:
-            continue
-
-        cleaned_text = str(text) if not isinstance(text, str) else text.strip()
-
-        if cleaned_text:
-            x1 = idtx.left / zoom
-            y1 = idtx.top / zoom
-            x2 = (idtx.left + idtx.width) / zoom
-            y2 = (idtx.top + idtx.height) / zoom
-            text_region = TextRegion.from_coords(
-                x1,
-                y1,
-                x2,
-                y2,
-                text=cleaned_text,
-                source=Source.OCR_TESSERACT,
-            )
-            text_regions.append(text_region)
-
-    return text_regions
-
-
-def parse_ocr_data_paddle(ocr_data: list) -> List[TextRegion]:
-    """
-    Parse the OCR result data to extract a list of TextRegion objects from
-    paddle.
-
-    The function processes the OCR result dictionary, looking for bounding
-    box information and associated text to create instances of the TextRegion
-    class, which are then appended to a list.
-
-    Parameters:
-    - ocr_data (list): A list containing the OCR result data
-
-    Returns:
-    - List[TextRegion]: A list of TextRegion objects, each representing a
-                        detected text region within the OCR-ed image.
-
-    Note:
-    - An empty string or a None value for the 'text' key in the input
-      dictionary will result in its associated bounding box being ignored.
-    """
-    text_regions = []
-    for idx in range(len(ocr_data)):
-        res = ocr_data[idx]
-        if not res:
-            continue
-
-        for line in res:
-            x1 = min([i[0] for i in line[0]])
-            y1 = min([i[1] for i in line[0]])
-            x2 = max([i[0] for i in line[0]])
-            y2 = max([i[1] for i in line[0]])
-            text = line[1][0]
-            if not text:
-                continue
-            cleaned_text = text.strip()
-            if cleaned_text:
-                text_region = TextRegion.from_coords(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    cleaned_text,
-                    source=Source.OCR_PADDLE,
-                )
-                text_regions.append(text_region)
-
-    return text_regions
 
 
 def merge_out_layout_with_ocr_layout(
@@ -708,81 +427,32 @@ def supplement_layout_with_ocr_elements(
     return final_layout
 
 
-def get_elements_from_ocr_regions(
-    ocr_regions: List[TextRegion],
-    ocr_text: Optional[str] = None,
-    group_by_ocr_text: bool = False,
-) -> List[LayoutElement]:
-    """
-    Get layout elements from OCR regions
-    """
-
-    if group_by_ocr_text:
-        text_sections = ocr_text.split("\n\n")
-        grouped_regions = []
-        for text_section in text_sections:
-            regions = []
-            words = text_section.replace("\n", " ").split()
-            for ocr_region in ocr_regions:
-                if not words:
-                    break
-                if ocr_region.text in words:
-                    regions.append(ocr_region)
-                    words.remove(ocr_region.text)
-
-            if not regions:
-                continue
-
-            for r in regions:
-                ocr_regions.remove(r)
-
-            grouped_regions.append(regions)
-    else:
-        grouped_regions = cast(
-            List[List[TextRegion]],
-            partition_groups_from_regions(ocr_regions),
-        )
-
-    merged_regions = [merge_text_regions(group) for group in grouped_regions]
-    return [
-        LayoutElement(
-            text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox
-        )
-        for r in merged_regions
-    ]
-
-
-def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
-    """
-    Merge a list of TextRegion objects into a single TextRegion.
-
-    Parameters:
-    - group (List[TextRegion]): A list of TextRegion objects to be merged.
-
-    Returns:
-    - TextRegion: A single merged TextRegion object.
-    """
-
-    if not regions:
-        raise ValueError("The text regions to be merged must be provided.")
-
-    min_x1 = min([tr.bbox.x1 for tr in regions])
-    min_y1 = min([tr.bbox.y1 for tr in regions])
-    max_x2 = max([tr.bbox.x2 for tr in regions])
-    max_y2 = max([tr.bbox.y2 for tr in regions])
-
-    merged_text = " ".join([tr.text for tr in regions if tr.text])
-    sources = [tr.source for tr in regions]
-    source = sources[0] if all(s == sources[0] for s in sources) else None
-
-    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
-
-
 def get_ocr_agent() -> str:
-    ocr_agent = env_config.OCR_AGENT.lower()
-    if ocr_agent not in [OCR_AGENT_PADDLE, OCR_AGENT_TESSERACT]:
+    ocr_agent_module = env_config.OCR_AGENT
+    message = (
+        "OCR agent name %s is outdated and will be deprecated in a future release; please use %s "
+        "instead"
+    )
+    # deal with compatibility with origin way to set OCR
+    if ocr_agent_module.lower() == OCR_AGENT_TESSERACT_OLD:
+        logger.warning(
+            message,
+            ocr_agent_module,
+            OCR_AGENT_TESSERACT,
+        )
+        ocr_agent_module = OCR_AGENT_TESSERACT
+    elif ocr_agent_module.lower() == OCR_AGENT_PADDLE_OLD:
+        logger.warning(
+            message,
+            ocr_agent_module,
+            OCR_AGENT_PADDLE,
+        )
+        ocr_agent_module = OCR_AGENT_PADDLE
+    try:
+        ocr_agent = OCRAgent.get_instance(ocr_agent_module)
+    except (ImportError, AttributeError):
         raise ValueError(
             "Environment variable OCR_AGENT",
-            " must be set to 'tesseract' or 'paddle'.",
+            f" must be set to an existing ocr agent module, not {ocr_agent_module}.",
         )
     return ocr_agent

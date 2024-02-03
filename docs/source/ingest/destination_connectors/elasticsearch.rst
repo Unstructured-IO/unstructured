@@ -36,7 +36,7 @@ Vector Search Sample Mapping
 
 To make sure the schema of the index matches the data being written to it, a sample mapping json can be used.
 
-      .. literalinclude:: ./data/elasticsearch_elements_mapping.json
+      .. literalinclude:: ./data/elasticsearch_elements_mappings.json
          :language: json
          :linenos:
          :caption: Object description

@@ -1,7 +1,63 @@
-## 0.12.1-dev12
+## 0.12.4-dev5
 
 ### Enhancements
 
+* **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
+
+### Features
+
+* **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+* **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+
+### Fixes
+
+* **Fix `partition_pdf()` not working when using chipper model with `file`** 
+* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
+* **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies ** 
+
+
+## 0.12.3
+
+### Enhancements
+
+* **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
+  MongoDB connector.
+
+### Features
+
+* **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
+
+### Fixes
+
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
+* **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
+  files as text.
+* **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
+* **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
+* **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
+* **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
+* **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
+
+## 0.12.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix index error in table processing.** Bumps the `unstructured-inference` version to address and
+  index error that occurs on some tables in the table transformer object.
+
+## 0.12.1
+
+### Enhancements
+
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
+* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+  `partition`, `partition_image`, and `detect_filetype`.
 * **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
 * **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
 * **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
@@ -11,6 +67,7 @@
 * **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
 * **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
 * **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
+* **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
 
 ### Features
 * **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
@@ -24,6 +81,9 @@
 * **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
 * **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
+* **Fix flatten_dict to be able to flatten tuples inside dicts** Update flatten_dict function to support flattening tuples inside dicts. This is necessary for objects like Coordinates, when the object is not written to the disk, therefore not being converted to a list before getting flattened (still being a tuple).
+* **Fix the serialization of the Chroma destination connector.** Presence of the ChromaCollection object breaks serialization due to TypeError: cannot pickle 'module' object. This removes that object before serialization.
+* **Fix fsspec connectors returning version as integer.** Connector data source versions should always be string values, however we were using the integer checksum value for the version for fsspec connectors. This casts that value to a string.
 
 ## 0.12.0
 

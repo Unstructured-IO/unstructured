@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==41.0.7
+cryptography==42.0.1
     # via boxsdk
 fsspec==2023.12.2
     # via

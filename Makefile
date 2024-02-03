@@ -36,7 +36,7 @@ install-huggingface:
 	python3 -m pip install pip==${PIP_VERSION}
 	python3 -m pip install -r requirements/huggingface.txt
 
-.PHONE: install-nltk-models
+.PHONY: install-nltk-models
 install-nltk-models:
 	python -c "import nltk; nltk.download('punkt')"
 	python -c "import nltk; nltk.download('averaged_perceptron_tagger')"
@@ -237,11 +237,15 @@ install-ingest-chroma:
 
 .PHONY: install-ingest-postgres
 install-ingest-postgres:
-	python3 -m pip install -r requirements/ingest-postgres.txt
+	python3 -m pip install -r requirements/ingest/postgres.txt
 
 .PHONY: install-ingest-mongodb
 install-ingest-mongodb:
-	python3 -m pip install -r requirements/ingest-mongodb.txt
+	python3 -m pip install -r requirements/ingest/mongodb.txt
+
+.PHONY: install-ingest-databricks-volumes
+install-ingest-databricks-volumes:
+	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:

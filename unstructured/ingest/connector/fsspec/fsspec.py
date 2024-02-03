@@ -134,7 +134,7 @@ class FsspecIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         self.source_metadata = SourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
-            version=version,
+            version=str(version),
             source_url=f"{self.connector_config.protocol}://{self.remote_file_path}",
             exists=file_exists,
         )
@@ -293,15 +293,22 @@ class FsspecDestinationConnector(BaseDestinationConnector):
         self.fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
             **self.connector_config.get_access_config(),
         )
+        self.check_connection()
 
     def check_connection(self):
-        from fsspec import get_filesystem_class
+        from fsspec import AbstractFileSystem, get_filesystem_class
 
         try:
-            fs = get_filesystem_class(self.connector_config.protocol)(
+            fs: AbstractFileSystem = get_filesystem_class(self.connector_config.protocol)(
                 **self.connector_config.get_access_config(),
             )
-            fs.ls(path=self.connector_config.path_without_protocol)
+
+            # e.g. Dropbox path starts with /
+            bucket_name = "/" if self.connector_config.path_without_protocol.startswith("/") else ""
+            bucket_name += self.connector_config.dir_path.split("/")[0]
+
+            logger.info(f"checking connection for destination {bucket_name}")
+            fs.ls(path=bucket_name)
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")

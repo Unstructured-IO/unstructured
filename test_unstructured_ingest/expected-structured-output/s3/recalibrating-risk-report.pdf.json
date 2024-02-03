@@ -42,7 +42,7 @@
     "type": "Image"
   },
   {
-    "element_id": "61a1e4ec9d7a8140a78bbb7450ec65ca",
+    "element_id": "1536456ece03fdb7bdbb6b848116dfde",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -60,7 +60,7 @@
       "page_number": 1
     },
     "text": "Recalibrating risk",
-    "type": "Title"
+    "type": "NarrativeText"
   },
   {
     "element_id": "ad3db440731a2892ac234c2ee7bb5b04",
@@ -312,7 +312,7 @@
       "page_number": 4
     },
     "text": "2",
-    "type": "Footer"
+    "type": "Header"
   },
   {
     "element_id": "a6c3efab675abc38935ff01d2d8b8386",
@@ -546,6 +546,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "68733cc884081d4ba0b0a170406eed33",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 5
+    },
+    "text": "25  24.6  20  18.4  e  15  10  5  4.6  2.8  0  C oal  Oil  Bio m ass  N atural gas  0.07  Wind  0.04  H ydropo w er  0.02  S olar  0.01  N uclear ",
+    "type": "Image"
+  },
+  {
     "element_id": "e11247712b3df61756970b45f019ad68",
     "metadata": {
       "data_source": {
@@ -565,27 +586,6 @@
     },
     "text": "r a e y",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "3f79bb7b435b05321651daefd374cdc6",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "e",
-    "type": "Title"
   },
   {
     "element_id": "f83714d89302473e0e4f5399bd50e7a9",
@@ -651,48 +651,6 @@
     "type": "Title"
   },
   {
-    "element_id": "6a3adc54db5128f797d4a12855193373",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "24.6",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "44f0d817d4311d9da996b2cb20dc80c8",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "25  20  18.4  15  10  5  4.6  2.8  0  C oal  Oil  Bio m ass  N atural gas  0.07  Wind  0.04  H ydropo w er  0.02  S olar  0.01  N uclear ",
-    "type": "Image"
-  },
-  {
     "element_id": "2c07d964a50db8baf3ed9db257827518",
     "metadata": {
       "data_source": {
@@ -735,7 +693,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "e450813fe6430d87c4caa64e4792bc74",
+    "element_id": "a31ee6173fae534ef019d75ca771f426",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -752,28 +710,7 @@
       ],
       "page_number": 5
     },
-    "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid cancer. 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "30844d5faa0b85b758a56d22dd4c5048",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 5
-    },
-    "text": "2012 UNSCEAR report and the 2015 US NRC SOARCA study.",
+    "text": "2 Including 28 firefighters that were exposed to lethal amounts of radiation during the accident night, and 15 fatal cases of thyroid cancer. 3 Sources drawn upon: Markandya, A., & Wilkinson, P. (2007), Sovacool et al. (2016). Data for nuclear accidents modified to reflect the 2012 UNSCEAR report and the 2015 US NRC SOARCA study.",
     "type": "ListItem"
   },
   {
@@ -816,7 +753,7 @@
       "page_number": 6
     },
     "text": "4",
-    "type": "Footer"
+    "type": "Header"
   },
   {
     "element_id": "b3dc46f381163a6ba4304765c36bc32e",
@@ -1491,27 +1428,6 @@
     "type": "Title"
   },
   {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 10
-    },
-    "text": "i",
-    "type": "Title"
-  },
-  {
     "element_id": "5389164ad375b2831f97d751f5bdb4e6",
     "metadata": {
       "data_source": {
@@ -1533,7 +1449,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "5d7f49449ab22deac22d767b89549c55",
+    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -1550,7 +1466,7 @@
       ],
       "page_number": 10
     },
-    "text": "ii",
+    "text": "i",
     "type": "Title"
   },
   {
@@ -1617,27 +1533,6 @@
     "type": "ListItem"
   },
   {
-    "element_id": "4c94485e0c21ae6c41ce1dfe7b6bface",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 10
-    },
-    "text": "v",
-    "type": "Title"
-  },
-  {
     "element_id": "add0a2858326fca8ba9f6f4e6bbbdb28",
     "metadata": {
       "data_source": {
@@ -1657,27 +1552,6 @@
     },
     "text": "International Energy Agency (2020). Global share of total energy supply by source, 2018. Key World Energy Statistics 2020. Available at: https://www.iea.org/data-and-statistics/charts/global-share-of-total-energy-supply-by- source-2018",
     "type": "ListItem"
-  },
-  {
-    "element_id": "c0ff93ea8927a7366db0331e5fd9d19f",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 10
-    },
-    "text": "vi",
-    "type": "Title"
   },
   {
     "element_id": "3750db60e990408fd944ea48886461b2",
@@ -1911,7 +1785,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "element_id": "80d6f46f55525a7d55bd7eafc61a82e1",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -1928,7 +1802,7 @@
       ],
       "page_number": 12
     },
-    "text": "",
+    "text": "contributing to the energy debate.",
     "type": "Image"
   },
   {

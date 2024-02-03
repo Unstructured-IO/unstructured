@@ -74,6 +74,8 @@ class FileType(enum.Enum):
     JPG = 30
     PNG = 31
     TIFF = 32
+    BMP = 33
+    HEIC = 34
 
     # Plain Text Types
     EML = 40
@@ -111,7 +113,16 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "image/heic": FileType.HEIC,
     "image/tiff": FileType.TIFF,
+    "image/bmp": FileType.BMP,
+    # NOTE(robinson) - https://mimetype.io/application/yaml
+    # In the future, we may have special processing for YAML
+    # files instead of treating them as plaintext
+    "application/yaml": FileType.TXT,
+    "application/x-yaml": FileType.TXT,
+    "text/x-yaml": FileType.TXT,
+    "text/yaml": FileType.TXT,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -170,6 +181,7 @@ EXT_TO_FILETYPE = {
     ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
+    ".heic": FileType.HEIC,
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
@@ -191,6 +203,7 @@ EXT_TO_FILETYPE = {
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
     ".tiff": FileType.TIFF,
+    ".bmp": FileType.BMP,
     ".wav": FileType.WAV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
@@ -206,6 +219,8 @@ EXT_TO_FILETYPE = {
     ".swift": FileType.TXT,
     ".ts": FileType.TXT,
     ".go": FileType.TXT,
+    ".yaml": FileType.TXT,
+    ".yml": FileType.TXT,
     None: FileType.UNK,
 }
 
@@ -346,7 +361,7 @@ def detect_filetype(
             return FileType.EML
 
         if extension in PLAIN_TEXT_EXTENSIONS:
-            return EXT_TO_FILETYPE.get(extension)
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:

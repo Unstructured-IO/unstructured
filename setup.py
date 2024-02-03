@@ -17,6 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from typing import List, Optional, Union
 
 from setuptools import find_packages, setup
@@ -145,10 +146,13 @@ setup(
         "google-drive": load_requirements("requirements/ingest/google-drive.in"),
         "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
+        "mongodb": load_requirements("requirements/ingest/mongodb.in"),
         "notion": load_requirements("requirements/ingest/notion.in"),
         "onedrive": load_requirements("requirements/ingest/onedrive.in"),
+        "opensearch": load_requirements("requirements/ingest/opensearch.in"),
         "outlook": load_requirements("requirements/ingest/outlook.in"),
         "pinecone": load_requirements("requirements/ingest/pinecone.in"),
+        "postgres": load_requirements("requirements/ingest/postgres.in"),
         "qdrant": load_requirements("requirements/ingest/qdrant.in"),
         "reddit": load_requirements("requirements/ingest/reddit.in"),
         "s3": load_requirements("requirements/ingest/s3.in"),
@@ -165,7 +169,7 @@ setup(
         "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
-        "mongodb": load_requirements("requirements/ingest/mongodb.in"),
+        "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

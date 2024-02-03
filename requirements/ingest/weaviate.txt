@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==41.0.7
+cryptography==42.0.1
     # via authlib
 idna==3.6
     # via
@@ -36,7 +36,7 @@ urllib3==1.26.18
     #   requests
 validators==0.22.0
     # via weaviate-client
-weaviate-client==3.26.0
+weaviate-client==3.26.2
     # via
     #   -c ingest/../constraints.in
     #   -r ingest/weaviate.in
