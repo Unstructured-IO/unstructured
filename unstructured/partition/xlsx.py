@@ -155,20 +155,7 @@ def partition_xlsx(
                 # -- preserved.
                 subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
 
-                # -- select all single-cell rows in the subtable --
-                single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
-                    subtable,
-                )
-
-                # -- work out which are leading and which are trailing
-                # XXX: badly broken
-                (
-                    front_non_consecutive,
-                    last_non_consecutive,
-                ) = _find_first_and_last_non_consecutive_row(
-                    single_non_empty_rows,
-                    subtable.shape,
-                )
+                subtable_parser = _SubtableParser(subtable)
 
                 metadata = _get_metadata(
                     include_metadata,
@@ -178,38 +165,16 @@ def partition_xlsx(
                     metadata_last_modified or last_modification_date,
                 )
 
-                # -- extract the core-table when there are leading or trailing single-cell rows.
-                # XXX: also badly broken.
-                if front_non_consecutive is not None and last_non_consecutive is not None:
-                    first_row = int(front_non_consecutive - max_x)
-                    last_row = int(max_x - last_non_consecutive)
-                    subtable = _get_sub_subtable(subtable, (first_row, last_row))
-
-                # -- emit each leading single-cell row as its own `Text`-subtype element
-                # XXX: this only works when there is exactly one leading single-cell row.
-                if front_non_consecutive is not None:
-                    for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
-                        element = _check_content_element_type(str(content))
-                        element.metadata = metadata
-                        elements.append(element)
-
-                # -- emit the core-table as a `Text`-subtype element if it only has one row --
-                # XXX: This is a bug. Just because a core-table only has one row doesn't mean it
-                # only has one cell. This drops all but the first cell and emits a `Text`-subtype
-                # element when it should emit a table (with one row).
-                if subtable is not None and len(subtable) == 1:
-                    element = _check_content_element_type(
-                        str(subtable.iloc[0].values[0])  # pyright: ignore[reportUnknownMemberType]
-                    )
+                # -- emit each leading single-cell row as its own `Text`-subtype element --
+                for content in subtable_parser.iter_leading_single_cell_rows_texts():
+                    element = _check_content_element_type(str(content))
+                    element.metadata = metadata
                     elements.append(element)
 
                 # -- emit core-table (if it exists) as a `Table` element --
-                elif subtable is not None:
-                    # XXX: Text parsed from HTML this way is bloated with a lot of extra newlines.
-                    # I think we should strip leading and traling "\n"s and replace all others with
-                    # a single space. Possibly a newline at the end of each row but not sure how we
-                    # would do that exactly.
-                    html_text = subtable.to_html(  # pyright: ignore[reportUnknownMemberType]
+                core_table = subtable_parser.core_table
+                if core_table is not None:
+                    html_text = core_table.to_html(  # pyright: ignore[reportUnknownMemberType]
                         index=False, header=include_header, na_rep=""
                     )
                     text = cast(
@@ -218,21 +183,18 @@ def partition_xlsx(
                             html_text
                         ).text_content(),
                     )
-                    subtable = Table(text=text)
-                    subtable.metadata = metadata
-                    subtable.metadata.text_as_html = html_text if infer_table_structure else None
-                    elements.append(subtable)
+                    element = Table(text=text)
+                    element.metadata = metadata
+                    element.metadata.text_as_html = html_text if infer_table_structure else None
+                    elements.append(element)
 
                 # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
 
-                # -- emit each trailing single-cell row as a `Text`-subtype element --
-                if front_non_consecutive is not None and last_non_consecutive is not None:
-                    for content in single_non_empty_row_contents[
-                        front_non_consecutive + 1 :  # noqa: E203
-                    ]:
-                        element = _check_content_element_type(str(content))
-                        element.metadata = metadata
-                        elements.append(element)
+                # -- emit each trailing single-cell row as its own `Text`-subtype element --
+                for content in subtable_parser.iter_trailing_single_cell_rows_texts():
+                    element = _check_content_element_type(str(content))
+                    element.metadata = metadata
+                    elements.append(element)
 
     elements = list(
         apply_lang_metadata(
@@ -289,12 +251,10 @@ class _SubtableParser:
         """Index of each leading single-cell row in subtable, in top-down order."""
 
         def iter_leading_single_cell_row_indices() -> Iterator[int]:
-            next_row_idx = 0
-            for idx in self._single_cell_row_indices:
+            for next_row_idx, idx in enumerate(self._single_cell_row_indices):
                 if idx != next_row_idx:
                     return
                 yield next_row_idx
-                next_row_idx += 1
 
         return tuple(iter_leading_single_cell_row_indices())
 
@@ -449,68 +409,6 @@ def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int
         if _y > max_y:
             max_y = _y
     return int(min_x), int(min_y), int(max_x), int(max_y)
-
-
-def _get_sub_subtable(
-    subtable: pd.DataFrame, first_and_last_row: tuple[int, int]
-) -> Optional[pd.DataFrame]:
-    """Extract core-table from `subtable` based on the first and last row range.
-
-    A core-table is the rows of a subtable when leading and trailing single-cell rows are removed.
-    """
-    # TODO(klaijan) - to further check for sub subtable, we could check whether
-    # two consecutive rows contains full row of cells.
-    # if yes, it might not be a header. We should check the length.
-    first_row, last_row = first_and_last_row
-    if last_row == first_row:
-        return None
-    return subtable.iloc[first_row : last_row + 1]  # noqa: E203
-
-
-def _find_first_and_last_non_consecutive_row(
-    row_indices: list[int], table_shape: tuple[int, int]
-) -> tuple[Optional[int], Optional[int]]:
-    """Find the first and last non-consecutive row indices in `single_cell_row_indices`.
-
-    This can be used to indicate where a contiguous region of cells is "prefixed" or "suffixed" with
-    one or more single-cell rows, like this example:
-
-        x
-        x
-        x x x
-        x x x
-        x
-
-    We want to identify the start of the core table (the 2 x 3 block of xs) so we can emit it as a
-    `Table` element. The leading and trailing single-cell rows get handled separately.
-    """
-    # If the table is a single column with one or more rows
-    table_rows, table_cols = table_shape
-    if len(row_indices) == 1 or (len(row_indices) == table_rows and table_cols == 1):
-        return row_indices[0], row_indices[0]
-
-    arr = np.array(row_indices)
-    front_non_consecutive = next(
-        (i for i, (x, y) in enumerate(zip(arr, arr[1:])) if x + 1 != y),
-        None,
-    )
-    reversed_arr = arr[::-1]  # Reverse the array
-    last_non_consecutive = next(
-        (i for i, (x, y) in enumerate(zip(reversed_arr, reversed_arr[1:])) if x - 1 != y),
-        None,
-    )
-    return front_non_consecutive, last_non_consecutive
-
-
-def _single_non_empty_rows(subtable: pd.DataFrame) -> tuple[list[int], list[str]]:
-    """Row index and contents of each row in `subtable` containing exactly one cell."""
-    single_non_empty_rows: list[int] = []
-    single_non_empty_row_contents: list[str] = []
-    for index, row in subtable.iterrows():  # pyright: ignore
-        if row.count() == 1:
-            single_non_empty_rows.append(cast(int, index))
-            single_non_empty_row_contents.append(str(row.dropna().iloc[0]))  # pyright: ignore
-    return single_non_empty_rows, single_non_empty_row_contents
 
 
 def _check_content_element_type(text: str) -> Element:
