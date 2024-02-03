@@ -1,5 +1,13 @@
+# pyright: reportPrivateUsage=false
+
+"""Test-suite for the `unstructured.partition.xlsx` module."""
+
+from __future__ import annotations
+
 import sys
 
+import pandas as pd
+import pandas.testing as pdt
 import pytest
 from pytest_mock import MockerFixture
 
@@ -11,7 +19,7 @@ from test_unstructured.partition.test_constants import (
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table, Text, Title
-from unstructured.partition.xlsx import partition_xlsx
+from unstructured.partition.xlsx import _SubtableParser, partition_xlsx
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -255,3 +263,153 @@ def test_partition_xlsx_with_more_than_1k_cells():
         partition_xlsx("example-docs/more-than-1k-cells.xlsx")
     finally:
         sys.setrecursionlimit(old_recursion_limit)
+
+
+# ------------------------------------------------------------------------------------------------
+# UNIT TESTS
+# ------------------------------------------------------------------------------------------------
+# These test components used by `partition_xlsx()` in isolation such that all edge cases can be
+# exercised.
+# ------------------------------------------------------------------------------------------------
+
+
+class Describe_SubtableParser:
+    """Unit-test suite for `unstructured.partition.xlsx._SubtableParser` objects."""
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            # -- 1. no leading or trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 2. one leading single-cell row --
+            (
+                pd.DataFrame([["a"], ["b", "c"], ["d", "e"]], index=[0, 1, 2]),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 3. two leading single-cell rows --
+            (
+                pd.DataFrame(
+                    [[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]], index=[0, 1, 2, 3]
+                ),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 4. one trailing single-cell row --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]], index=[0, 1, 2]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 5. two trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]], index=[0, 1, 2, 3]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 6. one leading, one trailing single-cell rows --
+            (
+                pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]], index=[0, 1, 2, 3]),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 7. two leading, one trailing single-cell rows --
+            (
+                pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]], index=[0, 1, 2, 3, 4]),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 8. one leading, two trailing single-cell rows --
+            (
+                pd.DataFrame(
+                    [[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]],
+                    index=[0, 1, 2, 3, 4],
+                ),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 9. two leading, two trailing single-cell rows --
+            (
+                pd.DataFrame(
+                    [["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]], index=[0, 1, 2, 3, 4, 5]
+                ),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 10. single-row core-table, no leading or trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+            ),
+            # -- 11. single-row core-table, one leading single-cell row --
+            (
+                pd.DataFrame([["a"], ["b", "c", "d"]], index=[0, 1]),
+                pd.DataFrame([["b", "c", "d"]], index=[1]),
+            ),
+            # -- 12. single-row core-table, two trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b", "c"], ["d"], ["e"]], index=[0, 1, 2]),
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+            ),
+        ],
+    )
+    def it_extracts_the_core_table_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        """core-table is correctly distinguished from leading and trailing single-cell rows."""
+        subtable_parser = _SubtableParser(subtable)
+
+        core_table = subtable_parser.core_table
+
+        assert core_table is not None
+        pdt.assert_frame_equal(core_table, expected_value)
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            (pd.DataFrame([["a", "b"], ["c", "d"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"]]), ["a"]),
+            (pd.DataFrame([[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]]), ["a", "b"]),
+            (pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]]), []),
+            (pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]]), ["a"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]]), ["a", "b"]),
+            (pd.DataFrame([[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]]), ["a"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]]), ["a", "b"]),
+            (pd.DataFrame([["a", "b", "c"]]), []),
+            (pd.DataFrame([["a"], ["b", "c", "d"]]), ["a"]),
+            (pd.DataFrame([["a", "b", "c"], ["d"], ["e"]]), []),
+        ],
+    )
+    def it_extracts_the_leading_single_cell_rows_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        subtable_parser = _SubtableParser(subtable)
+        leading_single_cell_row_texts = list(subtable_parser.iter_leading_single_cell_rows_texts())
+        assert leading_single_cell_row_texts == expected_value
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            (pd.DataFrame([["a", "b"], ["c", "d"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"]]), []),
+            (pd.DataFrame([[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]]), []),
+            (pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]]), ["e"]),
+            (pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]]), ["e", "f"]),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]]), ["f"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]]), ["g"]),
+            (
+                pd.DataFrame([[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]]),
+                ["f", "g"],
+            ),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]]), ["g", "h"]),
+            (pd.DataFrame([["a", "b", "c"]]), []),
+            (pd.DataFrame([["a"], ["b", "c", "d"]]), []),
+            (pd.DataFrame([["a", "b", "c"], ["d"], ["e"]]), ["d", "e"]),
+        ],
+    )
+    def it_extracts_the_trailing_single_cell_rows_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        subtable_parser = _SubtableParser(subtable)
+
+        trailing_single_cell_row_texts = list(
+            subtable_parser.iter_trailing_single_cell_rows_texts()
+        )
+
+        assert trailing_single_cell_row_texts == expected_value
