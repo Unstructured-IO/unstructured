@@ -146,13 +146,21 @@ def partition_xlsx(
             elements.append(table)
         else:
             _connected_components = _get_connected_components(sheet)
-            for _connected_component, _min_max_coords in _connected_components:
+            for _, _min_max_coords in _connected_components:
                 min_x, min_y, max_x, max_y = _min_max_coords
 
+                # -- subtable is rectangular region (as DataFrame) of portion of worksheet
+                # -- inside the connected-component bounding-box. Row-index and column label are
+                # -- preserved.
                 subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
+
+                # -- select all single-cell rows in the subtable --
                 single_non_empty_rows, single_non_empty_row_contents = _single_non_empty_rows(
                     subtable,
                 )
+
+                # -- work out which are leading and which are trailing
+                # XXX: badly broken
                 (
                     front_non_consecutive,
                     last_non_consecutive,
@@ -169,26 +177,37 @@ def partition_xlsx(
                     metadata_last_modified or last_modification_date,
                 )
 
-                # NOTE(klaijan) - need to explicitly define the condition to avoid the case of 0
+                # -- extract the core-table when there are leading or trailing single-cell rows.
+                # XXX: also badly broken.
                 if front_non_consecutive is not None and last_non_consecutive is not None:
                     first_row = int(front_non_consecutive - max_x)
                     last_row = int(max_x - last_non_consecutive)
                     subtable = _get_sub_subtable(subtable, (first_row, last_row))
 
+                # -- emit each leading single-cell row as its own `Text`-subtype element
+                # XXX: this only works when there is exactly one leading single-cell row.
                 if front_non_consecutive is not None:
                     for content in single_non_empty_row_contents[: front_non_consecutive + 1]:
                         element = _check_content_element_type(str(content))
                         element.metadata = metadata
                         elements.append(element)
 
+                # -- emit the core-table as a `Text`-subtype element if it only has one row --
+                # XXX: This is a bug. Just because a core-table only has one row doesn't mean it
+                # only has one cell. This drops all but the first cell and emits a `Text`-subtype
+                # element when it should emit a table (with one row).
                 if subtable is not None and len(subtable) == 1:
                     element = _check_content_element_type(
                         str(subtable.iloc[0].values[0])  # pyright: ignore[reportUnknownMemberType]
                     )
                     elements.append(element)
 
+                # -- emit core-table (if it exists) as a `Table` element --
                 elif subtable is not None:
-                    # parse subtables as html
+                    # XXX: Text parsed from HTML this way is bloated with a lot of extra newlines.
+                    # I think we should strip leading and traling "\n"s and replace all others with
+                    # a single space. Possibly a newline at the end of each row but not sure how we
+                    # would do that exactly.
                     html_text = subtable.to_html(  # pyright: ignore[reportUnknownMemberType]
                         index=False, header=include_header, na_rep=""
                     )
@@ -203,6 +222,9 @@ def partition_xlsx(
                     subtable.metadata.text_as_html = html_text if infer_table_structure else None
                     elements.append(subtable)
 
+                # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
+
+                # -- emit each trailing single-cell row as a `Text`-subtype element --
                 if front_non_consecutive is not None and last_non_consecutive is not None:
                     for content in single_non_empty_row_contents[
                         front_non_consecutive + 1 :  # noqa: E203
@@ -224,8 +246,7 @@ def partition_xlsx(
 def _get_connected_components(
     sheet: pd.DataFrame, filter: bool = True
 ) -> list[tuple[list[tuple[int, int]], tuple[int, int, int, int]]]:
-    """
-    Identify connected components of non-empty cells in an excel sheet.
+    """Identify contiguous groups of non-empty cells in an excel sheet.
 
     Args:
         sheet: an excel sheet read in DataFrame.
@@ -242,11 +263,14 @@ def _get_connected_components(
         non-empty cells in the sheet. If 'filter' is set to True, it also filters out
         overlapping components to return distinct components.
     """
+    # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
+    # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
     max_row, max_col = sheet.shape
-    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
     node_array = np.indices((max_row, max_col)).T
     empty_cells = sheet.isna().T
     nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
+
+    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
     graph.remove_nodes_from(nodes_to_remove)  # pyright: ignore
 
     # -- compute sets of nodes representing each connected-component --
@@ -285,17 +309,27 @@ def _get_connected_components(
 def _filter_overlapping_tables(
     connected_components: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
+    """Merge connected-components that overlap row-wise.
+
+    A pair of overlapping components might look like one of these:
+
+        x x x        x x
+            x        x x   x x
+        x   x   OR         x x
+        x
+        x x x
     """
-    Filter out overlapping connected components to return distinct components.
-    """
+    # -- order connected-components by their top row --
     sorted_components = sorted(connected_components, key=lambda x: x["min_x"])
+
     merged_components: list[dict[str, Any]] = []
     current_component = None
     for component in sorted_components:
         if current_component is None:
             current_component = component
         else:
-            # Check if component overlaps with the current_component
+            # -- merge this next component with prior if it overlaps row-wise. Note the merged
+            # -- component becomes the new current-component.
             if component["min_x"] <= current_component["max_x"]:
                 # Merge the components and update min_x, max_x
                 current_component["component"].extend(component["component"])
@@ -303,21 +337,21 @@ def _filter_overlapping_tables(
                 current_component["max_x"] = max(current_component["max_x"], component["max_x"])
                 current_component["min_y"] = min(current_component["min_y"], component["min_y"])
                 current_component["max_y"] = max(current_component["max_y"], component["max_y"])
+
+            # -- otherwise flush and move on --
             else:
-                # No overlap, add the current_component to the merged list
                 merged_components.append(current_component)
-                # Update the current_component
                 current_component = component
+
     # Append the last current_component to the merged list
     if current_component is not None:
         merged_components.append(current_component)
+
     return merged_components
 
 
 def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int, int, int, int]:
-    """
-    Find the minimum and maximum coordinates (bounding box) of a connected component.
-    """
+    """Find the minimum and maximum coordinates (bounding box) of a connected component."""
     min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
     for _x, _y in connected_component:
         if _x < min_x:
@@ -334,8 +368,9 @@ def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int
 def _get_sub_subtable(
     subtable: pd.DataFrame, first_and_last_row: tuple[int, int]
 ) -> Optional[pd.DataFrame]:
-    """
-    Extract a sub-subtable from a given subtable based on the first and last row range.
+    """Extract core-table from `subtable` based on the first and last row range.
+
+    A core-table is the rows of a subtable when leading and trailing single-cell rows are removed.
     """
     # TODO(klaijan) - to further check for sub subtable, we could check whether
     # two consecutive rows contains full row of cells.
@@ -349,8 +384,19 @@ def _get_sub_subtable(
 def _find_first_and_last_non_consecutive_row(
     row_indices: list[int], table_shape: tuple[int, int]
 ) -> tuple[Optional[int], Optional[int]]:
-    """
-    Find the indices of the first and last non-consecutive rows in a list of row indices.
+    """Find the first and last non-consecutive row indices in `single_cell_row_indices`.
+
+    This can be used to indicate where a contiguous region of cells is "prefixed" or "suffixed" with
+    one or more single-cell rows, like this example:
+
+        x
+        x
+        x x x
+        x x x
+        x
+
+    We want to identify the start of the core table (the 2 x 3 block of xs) so we can emit it as a
+    `Table` element. The leading and trailing single-cell rows get handled separately.
     """
     # If the table is a single column with one or more rows
     table_rows, table_cols = table_shape
@@ -371,9 +417,7 @@ def _find_first_and_last_non_consecutive_row(
 
 
 def _single_non_empty_rows(subtable: pd.DataFrame) -> tuple[list[int], list[str]]:
-    """
-    Identify single non-empty rows in a subtable and extract their row indices and contents.
-    """
+    """Row index and contents of each row in `subtable` containing exactly one cell."""
     single_non_empty_rows: list[int] = []
     single_non_empty_row_contents: list[str] = []
     for index, row in subtable.iterrows():  # pyright: ignore
@@ -384,9 +428,7 @@ def _single_non_empty_rows(subtable: pd.DataFrame) -> tuple[list[int], list[str]
 
 
 def _check_content_element_type(text: str) -> Element:
-    """
-    Classify the type of content element based on its text.
-    """
+    """Create `Text`-subtype document element appropriate to `text`."""
     if is_bulleted_text(text):
         return ListItem(
             text=clean_bullets(text),
