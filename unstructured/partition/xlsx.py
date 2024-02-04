@@ -200,6 +200,63 @@ def partition_xlsx(
     return elements
 
 
+class _ConnectedComponent:
+    """A collection of cells that are "2d-connected" in a worksheet.
+
+    2d-connected means there is a path from each cell to every other cell by traversing up, down,
+    left, or right (not diagonally).
+    """
+
+    def __init__(self, worksheet: pd.DataFrame, cell_coordinate_set: set[_CellCoordinate]):
+        self._worksheet = worksheet
+        self._cell_coordinate_set = cell_coordinate_set
+
+    @lazyproperty
+    def max_x(self) -> int:
+        """The right-most column index of the connected component."""
+        return self._extents[2]
+
+    def merge(self, other: _ConnectedComponent) -> _ConnectedComponent:
+        """Produce new instance with union of cells in `self` and `other`.
+
+        Used to combine regions of workshet that are "overlapping" row-wise but not actually
+        2D-connected.
+        """
+        return _ConnectedComponent(
+            self._worksheet, self._cell_coordinate_set.union(other._cell_coordinate_set)
+        )
+
+    @lazyproperty
+    def min_x(self) -> int:
+        """The left-most column index of the connected component."""
+        return self._extents[0]
+
+    @lazyproperty
+    def subtable(self) -> pd.DataFrame:
+        """The connected region of the worksheet as a `DataFrame`.
+
+        The subtable is the rectangular region of the worksheet inside the connected-component
+        bounding-box. Row-indices and column labels are preserved, not restarted at 0.
+        """
+        min_x, min_y, max_x, max_y = self._extents
+        return self._worksheet.iloc[min_x : max_x + 1, min_y : max_y + 1]
+
+    @lazyproperty
+    def _extents(self) -> tuple[int, int, int, int]:
+        """Compute bounding box of this connected component."""
+        min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
+        for x, y in self._cell_coordinate_set:
+            if x < min_x:
+                min_x = x
+            if x > max_x:
+                max_x = x
+            if y < min_y:
+                min_y = y
+            if y > max_y:
+                max_y = y
+        return int(min_x), int(min_y), int(max_x), int(max_y)
+
+
 class _SubtableParser:
     """Distinguishes core-table from leading and trailing title rows in a subtable.
 
