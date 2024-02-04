@@ -140,16 +140,8 @@ def partition_xlsx(
             table = Table(text=text, metadata=metadata)
             elements.append(table)
         else:
-            _connected_components = _get_connected_components(sheet)
-            for _, _min_max_coords in _connected_components:
-                min_x, min_y, max_x, max_y = _min_max_coords
-
-                # -- subtable is rectangular region (as DataFrame) of portion of worksheet
-                # -- inside the connected-component bounding-box. Row-index and column label are
-                # -- preserved.
-                subtable = sheet.iloc[min_x : max_x + 1, min_y : max_y + 1]  # noqa: E203
-
-                subtable_parser = _SubtableParser(subtable)
+            for component in _get_connected_components(sheet):
+                subtable_parser = _SubtableParser(component.subtable)
 
                 metadata = _get_metadata(
                     include_metadata,
@@ -340,9 +332,7 @@ class _SubtableParser:
         return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
 
 
-def _get_connected_components(
-    sheet: pd.DataFrame, filter: bool = True
-) -> list[tuple[list[tuple[int, int]], tuple[int, int, int, int]]]:
+def _get_connected_components(worksheet_df: pd.DataFrame) -> list[_ConnectedComponent]:
     """Identify contiguous groups of non-empty cells in an excel sheet.
 
     Args:
@@ -362,9 +352,9 @@ def _get_connected_components(
     """
     # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
     # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
-    max_row, max_col = sheet.shape
+    max_row, max_col = worksheet_df.shape
     node_array = np.indices((max_row, max_col)).T
-    empty_cells = sheet.isna().T
+    empty_cells = worksheet_df.isna().T
     nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
 
     graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
@@ -373,39 +363,20 @@ def _get_connected_components(
     # -- compute sets of nodes representing each connected-component --
     connected_node_sets: Iterator[set[_CellCoordinate]]
     connected_node_sets = nx.connected_components(graph)  # pyright: ignore[reportUnknownMemberType]
-    connected_components: list[dict[str, Any]] = []
-    for _component in connected_node_sets:
-        component = list(_component)
-        min_x, min_y, max_x, max_y = _find_min_max_coord(component)
-        connected_components.append(
-            {
-                "component": component,
-                "min_x": min_x,
-                "min_y": min_y,
-                "max_x": max_x,
-                "max_y": max_y,
-            },
-        )
 
-    if filter:
-        connected_components = _filter_overlapping_tables(connected_components)
-    return [
-        (
-            connected_component["component"],
-            (
-                connected_component["min_x"],
-                connected_component["min_y"],
-                connected_component["max_x"],
-                connected_component["max_y"],
-            ),
+    return list(
+        _filter_overlapping_tables(
+            [
+                _ConnectedComponent(worksheet_df, component_node_set)
+                for component_node_set in connected_node_sets
+            ]
         )
-        for connected_component in connected_components
-    ]
+    )
 
 
 def _filter_overlapping_tables(
-    connected_components: list[dict[str, Any]],
-) -> list[dict[str, Any]]:
+    connected_components: list[_ConnectedComponent],
+) -> Iterator[_ConnectedComponent]:
     """Merge connected-components that overlap row-wise.
 
     A pair of overlapping components might look like one of these:
@@ -417,49 +388,29 @@ def _filter_overlapping_tables(
         x x x
     """
     # -- order connected-components by their top row --
-    sorted_components = sorted(connected_components, key=lambda x: x["min_x"])
+    sorted_components = sorted(connected_components, key=lambda x: x.min_x)
 
-    merged_components: list[dict[str, Any]] = []
     current_component = None
+
     for component in sorted_components:
+        # -- prime the pump --
         if current_component is None:
             current_component = component
+            continue
+
+        # -- merge this next component with prior if it overlaps row-wise. Note the merged
+        # -- component becomes the new current-component.
+        if component.min_x <= current_component.max_x:
+            current_component = current_component.merge(component)
+
+        # -- otherwise flush and move on --
         else:
-            # -- merge this next component with prior if it overlaps row-wise. Note the merged
-            # -- component becomes the new current-component.
-            if component["min_x"] <= current_component["max_x"]:
-                # Merge the components and update min_x, max_x
-                current_component["component"].extend(component["component"])
-                current_component["min_x"] = min(current_component["min_x"], component["min_x"])
-                current_component["max_x"] = max(current_component["max_x"], component["max_x"])
-                current_component["min_y"] = min(current_component["min_y"], component["min_y"])
-                current_component["max_y"] = max(current_component["max_y"], component["max_y"])
+            yield current_component
+            current_component = component
 
-            # -- otherwise flush and move on --
-            else:
-                merged_components.append(current_component)
-                current_component = component
-
-    # Append the last current_component to the merged list
+    # -- flush last component --
     if current_component is not None:
-        merged_components.append(current_component)
-
-    return merged_components
-
-
-def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int, int, int, int]:
-    """Find the minimum and maximum coordinates (bounding box) of a connected component."""
-    min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
-    for _x, _y in connected_component:
-        if _x < min_x:
-            min_x = _x
-        if _y < min_y:
-            min_y = _y
-        if _x > max_x:
-            max_x = _x
-        if _y > max_y:
-            max_y = _y
-    return int(min_x), int(min_y), int(max_x), int(max_y)
+        yield current_component
 
 
 def _check_content_element_type(text: str) -> Element:
