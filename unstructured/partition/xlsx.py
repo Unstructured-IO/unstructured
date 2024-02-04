@@ -10,7 +10,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring  # pyright: ignore
-from typing_extensions import TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
@@ -140,7 +140,7 @@ def partition_xlsx(
             table = Table(text=text, metadata=metadata)
             elements.append(table)
         else:
-            for component in _get_connected_components(sheet):
+            for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
 
                 metadata = _get_metadata(
@@ -249,6 +249,91 @@ class _ConnectedComponent:
         return int(min_x), int(min_y), int(max_x), int(max_y)
 
 
+class _ConnectedComponents:
+    """The collection of connected-components for a single worksheet.
+
+    "Connected-components" refers to the graph algorithm we use to detect contiguous groups of
+    non-empty cells in an excel sheet.
+    """
+
+    def __init__(self, worksheet_df: pd.DataFrame):
+        self._worksheet_df = worksheet_df
+
+    def __iter__(self) -> Iterator[_ConnectedComponent]:
+        return iter(self._connected_components)
+
+    @classmethod
+    def from_worksheet_df(cls, worksheet_df: pd.DataFrame) -> Self:
+        """Construct from a worksheet dataframe produced by reading Excel with pandas."""
+        return cls(worksheet_df)
+
+    @lazyproperty
+    def _connected_components(self) -> list[_ConnectedComponent]:
+        """The `_ConnectedComponent` objects comprising this collection."""
+        # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
+        # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
+        max_row, max_col = self._worksheet_df.shape
+        node_array = np.indices((max_row, max_col)).T
+        empty_cells = self._worksheet_df.isna().T
+        nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
+
+        graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
+        graph.remove_nodes_from(nodes_to_remove)  # pyright: ignore
+
+        # -- compute sets of nodes representing each connected-component --
+        connected_node_sets: Iterator[set[_CellCoordinate]]
+        connected_node_sets = nx.connected_components(  # pyright: ignore[reportUnknownMemberType]
+            graph
+        )
+
+        return list(
+            self._merge_overlapping_tables(
+                [
+                    _ConnectedComponent(self._worksheet_df, component_node_set)
+                    for component_node_set in connected_node_sets
+                ]
+            )
+        )
+
+    def _merge_overlapping_tables(
+        self, connected_components: list[_ConnectedComponent]
+    ) -> Iterator[_ConnectedComponent]:
+        """Merge connected-components that overlap row-wise.
+
+        A pair of overlapping components might look like one of these:
+
+            x x x        x x
+                x        x x   x x
+            x   x   OR         x x
+            x
+            x x x
+        """
+        # -- order connected-components by their top row --
+        sorted_components = sorted(connected_components, key=lambda x: x.min_x)
+
+        current_component = None
+
+        for component in sorted_components:
+            # -- prime the pump --
+            if current_component is None:
+                current_component = component
+                continue
+
+            # -- merge this next component with prior if it overlaps row-wise. Note the merged
+            # -- component becomes the new current-component.
+            if component.min_x <= current_component.max_x:
+                current_component = current_component.merge(component)
+
+            # -- otherwise flush and move on --
+            else:
+                yield current_component
+                current_component = component
+
+        # -- flush last component --
+        if current_component is not None:
+            yield current_component
+
+
 class _SubtableParser:
     """Distinguishes core-table from leading and trailing title rows in a subtable.
 
@@ -330,87 +415,6 @@ class _SubtableParser:
                 next_row_idx -= 1
 
         return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
-
-
-def _get_connected_components(worksheet_df: pd.DataFrame) -> list[_ConnectedComponent]:
-    """Identify contiguous groups of non-empty cells in an excel sheet.
-
-    Args:
-        sheet: an excel sheet read in DataFrame.
-        filter (bool, optional): If True (default), filters out overlapping components
-        to return distinct components.
-
-    Returns:
-        A list of tuples, each containing:
-            - A list of tuples representing the connected component's cell coordinates.
-            - A tuple with the min and max x and y coordinates bounding the connected component.
-
-    Note:
-        This function performs a depth-first search (DFS) to identify connected components of
-        non-empty cells in the sheet. If 'filter' is set to True, it also filters out
-        overlapping components to return distinct components.
-    """
-    # -- produce a 2D-graph representing the populated cells of the worksheet (or subsheet).
-    # -- A 2D-graph relates each populated cell to the one above, below, left, and right of it.
-    max_row, max_col = worksheet_df.shape
-    node_array = np.indices((max_row, max_col)).T
-    empty_cells = worksheet_df.isna().T
-    nodes_to_remove = [tuple(pair) for pair in node_array[empty_cells]]
-
-    graph: nx.Graph = nx.grid_2d_graph(max_row, max_col)  # pyright: ignore
-    graph.remove_nodes_from(nodes_to_remove)  # pyright: ignore
-
-    # -- compute sets of nodes representing each connected-component --
-    connected_node_sets: Iterator[set[_CellCoordinate]]
-    connected_node_sets = nx.connected_components(graph)  # pyright: ignore[reportUnknownMemberType]
-
-    return list(
-        _filter_overlapping_tables(
-            [
-                _ConnectedComponent(worksheet_df, component_node_set)
-                for component_node_set in connected_node_sets
-            ]
-        )
-    )
-
-
-def _filter_overlapping_tables(
-    connected_components: list[_ConnectedComponent],
-) -> Iterator[_ConnectedComponent]:
-    """Merge connected-components that overlap row-wise.
-
-    A pair of overlapping components might look like one of these:
-
-        x x x        x x
-            x        x x   x x
-        x   x   OR         x x
-        x
-        x x x
-    """
-    # -- order connected-components by their top row --
-    sorted_components = sorted(connected_components, key=lambda x: x.min_x)
-
-    current_component = None
-
-    for component in sorted_components:
-        # -- prime the pump --
-        if current_component is None:
-            current_component = component
-            continue
-
-        # -- merge this next component with prior if it overlaps row-wise. Note the merged
-        # -- component becomes the new current-component.
-        if component.min_x <= current_component.max_x:
-            current_component = current_component.merge(component)
-
-        # -- otherwise flush and move on --
-        else:
-            yield current_component
-            current_component = component
-
-    # -- flush last component --
-    if current_component is not None:
-        yield current_component
 
 
 def _check_content_element_type(text: str) -> Element:
