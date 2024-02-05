@@ -70,7 +70,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
 
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
-        ["boto3", "numpy", "langchain"],
+        ["boto3", "numpy", "langchain_community"],
         extras="bedrock",
     )
     def create_client(self) -> "BedrockEmbeddings":

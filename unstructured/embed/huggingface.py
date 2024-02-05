@@ -69,7 +69,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
 
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
-        ["langchain", "sentence_transformers"],
+        ["langchain_community", "sentence_transformers"],
         extras="embed-huggingface",
     )
     def create_client(self) -> "HuggingFaceEmbeddings":

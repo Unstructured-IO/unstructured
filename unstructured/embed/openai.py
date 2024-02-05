@@ -65,7 +65,7 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
-        ["langchain", "openai", "tiktoken"],
+        ["langchain_community", "openai", "tiktoken"],
         extras="openai",
     )
     def create_client(self) -> "OpenAIEmbeddings":
