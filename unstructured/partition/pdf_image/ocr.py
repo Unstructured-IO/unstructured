@@ -11,7 +11,6 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -383,6 +382,7 @@ def aggregate_ocr_text_by_block(
     return " ".join(extracted_texts) if extracted_texts else ""
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_layout_with_ocr_elements(
     layout: List["LayoutElement"],
     ocr_layout: List["TextRegion"],
@@ -413,6 +413,8 @@ def supplement_layout_with_ocr_elements(
     - The `SUBREGION_THRESHOLD_FOR_OCR` constant is used to specify the subregion matching
      threshold.
     """
+
+    from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
 
     ocr_regions_to_remove = []
     for ocr_region in ocr_layout:
