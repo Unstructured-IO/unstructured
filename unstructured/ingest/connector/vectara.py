@@ -232,7 +232,10 @@ class VectaraDestinationConnector(BaseDestinationConnector):
                 dict_content = json.load(json_file)
                 vdoc = {
                     "documentId": str(uuid.uuid4()),
-                    "title": dict_content[0].get("metadata",{}).get("data_source", {}).get("url", "Untitled"),
+                    "title": dict_content[0]
+                    .get("metadata", {})
+                    .get("data_source", {})
+                    .get("url", "Untitled"),
                     "section": [
                         {
                             "text": element.pop("text", None),
