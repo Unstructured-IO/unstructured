@@ -25,6 +25,7 @@ from unstructured.partition.utils.constants import (
 from unstructured.partition.utils.ocr_models.ocr_interface import (
     OCRAgent,
 )
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -176,6 +177,7 @@ def process_file_with_ocr(
             raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
     image: PILImage,
