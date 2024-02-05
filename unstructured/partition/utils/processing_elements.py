@@ -1,11 +1,14 @@
 from collections import defaultdict
-
-from unstructured_inference.inference.layout import DocumentLayout
+from typing import TYPE_CHECKING
 
 from unstructured.partition.utils.constants import Source
 
 
-def clean_pdfminer_inner_elements(document: DocumentLayout) -> DocumentLayout:
+if TYPE_CHECKING:
+    from unstructured_inference.inference.layout import DocumentLayout
+
+
+def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
     """Clean pdfminer elements from inside tables and stores them in extra_info dictionary
     with the table id as key"""
     defaultdict(list)
