@@ -25,13 +25,7 @@ import numpy as np
 import pdf2image
 import wrapt
 from pdfminer import psparser
-from pdfminer.layout import (
-    LTChar,
-    LTContainer,
-    LTImage,
-    LTItem,
-    LTTextBox,
-)
+from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -55,10 +49,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -70,6 +61,7 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.pdf_image.orientation_and_rotation import reorient_file_or_data
 from unstructured.partition.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
@@ -94,12 +86,10 @@ from unstructured.partition.utils.constants import (
     SORT_MODE_XY_CUT,
     OCRMode,
     PartitionStrategy,
+    ReorientationStrategy,
 )
 from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
-from unstructured.partition.utils.sorting import (
-    coord_has_valid_points,
-    sort_page_elements,
-)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
@@ -117,9 +107,8 @@ RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 def default_hi_res_model() -> str:
     # a light config for the hi res model; this is not defined as a constant so that no setting of
     # the default hi res model name is done on importing of this submodule; this allows (if user
-    # prefers) for setting env after importing the sub module and changing the default model name
-
-    # if tabler structure is needed we defaul to use yolox for better table detection
+    # prefers) for setting env after importing the submodule and changing the default model name
+    # if tabler structure is needed we default to use yolox for better table detection
     logger.warning(
         "This function will be deprecated in a future release and `unstructured` will simply "
         "use the DEFAULT_MODEL from `unstructured_inference.model.base` to set default model "
@@ -151,6 +140,7 @@ def partition_pdf(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -204,6 +194,11 @@ def partition_pdf(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    hi_res_reorientation_strategy
+        Only applicable if `strategy=hi_res` and the pdf is non-native.
+        Values should correspond to ReorientationStrategy class members.
+        Unless set to "", the algorithm will open and (temporarily) rewrite the pdf
+        after rotating the pages in accordance to the orientations detected.
     """
 
     exactly_one(filename=filename, file=file)
@@ -223,6 +218,7 @@ def partition_pdf(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        hi_res_reorientation_strategy=hi_res_reorientation_strategy,
         **kwargs,
     )
 
@@ -287,10 +283,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.pdf_image.ocr import (
-        process_data_with_ocr,
-        process_file_with_ocr,
-    )
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
@@ -486,6 +479,7 @@ def partition_pdf_or_image(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    hi_res_reorientation_strategy: str = "",
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -539,9 +533,25 @@ def partition_pdf_or_image(
         # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
+
+            filename_partition_local = filename
+            file_partition_local = spooled_to_bytes_io_if_needed(file)
+
+            if (
+                not pdf_text_extractable
+                and not is_image
+                and hi_res_reorientation_strategy
+                not in [None, False, "", ReorientationStrategy.NONE]
+            ):
+                reoriented_pdf = reorient_file_or_data(
+                    filename, file, hi_res_reorientation_strategy
+                )
+                filename_partition_local = ""
+                file_partition_local = reoriented_pdf
+
             elements = _partition_pdf_or_image_local(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
+                filename=filename_partition_local,
+                file=file_partition_local,
                 is_image=is_image,
                 infer_table_structure=infer_table_structure,
                 include_page_breaks=include_page_breaks,

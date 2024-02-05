@@ -20,6 +20,13 @@ class PartitionStrategy:
     HI_RES = "hi_res"
 
 
+class ReorientationStrategy:
+    NONE = ""
+    PYTESSERACT = "pytesseract"
+    TESSEROCR = "tesserocr"
+    CNN = "cnn"
+
+
 SORT_MODE_XY_CUT = "xy-cut"
 SORT_MODE_BASIC = "basic"
 SORT_MODE_DONT = "dont"

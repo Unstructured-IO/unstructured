@@ -12,6 +12,7 @@
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
 * **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
 * **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+* **Add a capability to reorient pages.** Now, when using the HI\_RES strategy for PDF partitioning, and when the PDF appears to be a scanned one (single image per page, no native text), the file can have its pages individually reoriented through the setting of reorientation_strategy (currently, =NONE by default).
 
 ### Fixes
 
