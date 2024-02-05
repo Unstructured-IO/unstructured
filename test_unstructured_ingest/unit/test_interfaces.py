@@ -158,7 +158,7 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
     """Validate when metadata_include and metadata_exclude are not set, all fields:
     ("element_id", "text", "type", "metadata") are included"""
     mock_partition = mocker.patch(
-        "unstructured.ingest.interfaces.partition",
+        "unstructured.partition.auto.partition",
         return_value=partition_test_results,
     )
     test_ingest_doc = ExampleIngestDoc(
@@ -191,7 +191,7 @@ def test_process_file_metadata_includes_filename_and_filetype(
     """Validate when metadata_include is set to "filename,filetype",
     only filename is included in metadata"""
     mocker.patch(
-        "unstructured.ingest.interfaces.partition",
+        "unstructured.partition.auto.partition",
         return_value=partition_test_results,
     )
     partition_config = PartitionConfig(
@@ -215,7 +215,7 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
     """Validate when metadata_exclude is set to "filename,page_number",
     neither filename nor page_number are included in metadata"""
     mocker.patch(
-        "unstructured.ingest.interfaces.partition",
+        "unstructured.partition.auto.partition",
         return_value=partition_test_results,
     )
     partition_config = PartitionConfig(
@@ -237,7 +237,7 @@ def test_process_file_metadata_exclude_filename_pagenum(mocker, partition_test_r
 
 def test_process_file_flatten_metadata(mocker, partition_test_results):
     mocker.patch(
-        "unstructured.ingest.interfaces.partition",
+        "unstructured.partition.auto.partition",
         return_value=partition_test_results,
     )
     partition_config = PartitionConfig(
