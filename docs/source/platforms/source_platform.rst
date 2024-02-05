@@ -19,6 +19,7 @@ Source connectors are essential components in data integration systems that esta
    platform_sources/google_cloud_source
    platform_sources/google_drive
    platform_sources/onedrive
+   platform_sources/opensearch
    platform_sources/salesforce
    platform_sources/sftp
    platform_sources/sharepoint

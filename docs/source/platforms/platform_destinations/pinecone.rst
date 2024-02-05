@@ -18,7 +18,7 @@ Step-by-Step Guide
 .. image:: imgs/Destination-Pinecone.png
   :alt: Pinecone Destination Connector
 
-1. **Access the Create Destination Page**. Navigate to the 'Destinations' section within the platform's side navigation menu and click on "New Destination" to initiate the setup of a new destination for your processed data.
+1. **Access the Create Destination Page**. Navigate to the "Destinations" section within the platform's side navigation menu and click on "New Destination" to initiate the setup of a new destination for your processed data.
 
 2. **Select Destination Type**. Select **Pinecone** destination connector from the ``Type`` dropdown menu.
 
