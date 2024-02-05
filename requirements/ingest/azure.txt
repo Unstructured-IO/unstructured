@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/azure.txt ingest/azure.in
 #
-adlfs==2024.1.0
+adlfs==2024.2.0
     # via -r ingest/azure.in
 aiohttp==3.9.3
     # via adlfs
@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-azure-core==1.29.7
+azure-core==1.30.0
     # via
     #   adlfs
     #   azure-identity
@@ -25,7 +25,7 @@ azure-identity==1.15.0
     # via adlfs
 azure-storage-blob==12.19.0
     # via adlfs
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -38,7 +38,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==42.0.1
+cryptography==42.0.2
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -48,7 +48,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via
     #   -r ingest/azure.in
     #   adlfs
@@ -66,7 +66,7 @@ msal==1.26.0
     #   msal-extensions
 msal-extensions==1.1.0
     # via azure-identity
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
@@ -79,7 +79,9 @@ portalocker==2.8.2
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.31.0
     # via
     #   -c ingest/../base.txt
