@@ -88,6 +88,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @SourceConnectionError.wrap
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
+
         fs = self._get_fs_from_uri()
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
@@ -99,7 +100,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         df.to_csv(self.filename)
 
     @SourceConnectionNetworkError.wrap
-    def _get_df(self, filesystem) -> pd.DataFrame:
+    def _get_df(self, filesystem) -> "pd.DataFrame":
         import pyarrow.parquet as pq
 
         return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
