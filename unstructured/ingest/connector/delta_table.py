@@ -20,7 +20,6 @@ from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
-    import pandas as pd
     from deltalake import DeltaTable
 
 
@@ -99,7 +98,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         df.to_csv(self.filename)
 
     @SourceConnectionNetworkError.wrap
-    def _get_df(self, filesystem) -> "pd.DataFrame":
+    def _get_df(self, filesystem):
         import pyarrow.parquet as pq
 
         return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
