@@ -8,10 +8,6 @@ from PIL import Image as PILImage
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.inference_utils import (
-    build_layout_elements_from_ocr_regions,
-    build_text_region_from_coords,
-)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -20,6 +16,7 @@ from unstructured.partition.utils.constants import (
     Source,
 )
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -88,9 +85,14 @@ class OCRAgentTesseract(OCRAgent):
 
         return ocr_regions
 
+    @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(
         self, image: PILImage, ocr_languages: str = "eng"
     ) -> List["LayoutElement"]:
+        from unstructured.partition.pdf_image.inference_utils import (
+            build_layout_elements_from_ocr_regions,
+        )
+
         ocr_regions = self.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
@@ -114,6 +116,7 @@ class OCRAgentTesseract(OCRAgent):
             group_by_ocr_text=True,
         )
 
+    @requires_dependencies("unstructured_inference")
     def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> List["TextRegion"]:
         """
         Parse the OCR result data to extract a list of TextRegion objects from
@@ -141,6 +144,8 @@ class OCRAgentTesseract(OCRAgent):
         - An empty string or a None value for the 'text' key in the input
           data frame will result in its associated bounding box being ignored.
         """
+
+        from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
 
         if zoom <= 0:
             zoom = 1

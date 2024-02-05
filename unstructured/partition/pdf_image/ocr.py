@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, Dict, List, Optional, Union, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, BinaryIO, Dict, List, Optional, Union, cast
 
 import pdf2image
 
@@ -93,6 +93,7 @@ def process_data_with_ocr(
         return merged_layouts
 
 
+@requires_dependencies("unstructured_inference")
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
@@ -129,6 +130,9 @@ def process_file_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
+
+    from unstructured_inference.inference.layout import DocumentLayout
+
     merged_page_layouts = []
     try:
         if is_image:
