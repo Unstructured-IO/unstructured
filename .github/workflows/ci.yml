@@ -379,6 +379,9 @@ jobs:
         MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
+        VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
+        VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
+        VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"

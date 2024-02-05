@@ -43,16 +43,11 @@ def test_process_data_with_ocr_invalid_file(is_image, expected_error):
             data=invalid_data,
             is_image=is_image,
             out_layout=DocumentLayout(),
+            extracted_layout=[],
         )
 
 
-@pytest.mark.parametrize(
-    ("is_image"),
-    [
-        (True),
-        (False),
-    ],
-)
+@pytest.mark.parametrize("is_image", [True, False])
 def test_process_file_with_ocr_invalid_filename(is_image):
     invalid_filename = "i am not a valid file name"
     with pytest.raises(FileNotFoundError):
@@ -60,6 +55,7 @@ def test_process_file_with_ocr_invalid_filename(is_image):
             filename=invalid_filename,
             is_image=is_image,
             out_layout=DocumentLayout(),
+            extracted_layout=[],
         )
 
 
@@ -454,7 +450,7 @@ def mock_ocr_layout():
 
 def test_get_table_tokens(mock_ocr_layout):
     with patch.object(OCRAgentTesseract, "get_layout_from_image", return_value=mock_ocr_layout):
-        table_tokens = ocr.get_table_tokens(image=None)
+        table_tokens = ocr.get_table_tokens(table_element_image=None)
         expected_tokens = [
             {
                 "bbox": [15, 25, 35, 45],
