@@ -902,7 +902,7 @@ def _partition_pdf_or_image_with_ocr(
             )
             elements.extend(page_elements)
     else:
-        for page_number, image in enumerate(convert_pdf_to_images(filename, file)):
+        for page_number, image in enumerate(convert_pdf_to_images(filename, file), start=1):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
