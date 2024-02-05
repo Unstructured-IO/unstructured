@@ -498,14 +498,14 @@ def identify_overlapping_case(
                 f"{type1}(ix={ix_element1})",
                 f"{type2}(ix={ix_element2})",
             ]
-            overlapping_case = f"partial overlap with empty content in {type1}"
+            overlapping_case = f"partial overlap with empty content in {type1}(ix={ix_element1})"
 
         elif not text2:
             overlapping_elements = [
                 f"{type2}(ix={ix_element2})",
                 f"{type1}(ix={ix_element1})",
             ]
-            overlapping_case = f"partial overlap with empty content in {type2}"
+            overlapping_case = f"partial overlap with empty content in {type2}(ix={ix_element2})"
 
         elif text1 in text2 or text2 in text1:
             overlapping_elements = [
@@ -533,7 +533,11 @@ def identify_overlapping_case(
                     f"{type1}(ix={ix_element1})",
                     f"{type2}(ix={ix_element2})",
                 ]
-                ref_type = type1 if len(text1.split()) < len(text2.split()) else type2
+                ref_type = (
+                    f"{type1}(ix={ix_element1})"
+                    if len(text1.split()) < len(text2.split())
+                    else f"{type2}(ix={ix_element2})"
+                )
                 ref_type = "of the text from" + ref_type + f"({largest_n}-gram)"
                 overlapping_case = f"partial overlap sharing {largest_ngram_percentage}% {ref_type}"
     return (
@@ -604,7 +608,7 @@ def identify_overlapping_or_nesting_case(
                 f"{type1}(ix={ix_element1})",
                 f"{type2}(ix={ix_element2})",
             ]
-            overlapping_case = f"nested {type2} in {type1}"
+            overlapping_case = f"nested {type2}(ix={ix_element2}) in {type1}(ix={ix_element1})"
             overlap_percentage = 100
 
         elif is_parent_box(box2_corners, box1_corners, add=nested_error_tolerance_px):
@@ -612,7 +616,7 @@ def identify_overlapping_or_nesting_case(
                 f"{type2}(ix={ix_element2})",
                 f"{type1}(ix={ix_element1})",
             ]
-            overlapping_case = f"nested {type1} in {type2}"
+            overlapping_case = f"nested {type1}(ix={ix_element1}) in {type2}(ix={ix_element2})"
             overlap_percentage = 100
 
         else:
