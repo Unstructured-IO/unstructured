@@ -11,7 +11,7 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from langchain.embeddings import HuggingFaceEmbeddings
+    from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 @dataclass
@@ -74,7 +74,7 @@ class HuggingFaceEmbeddingEncoder(BaseEmbeddingEncoder):
     )
     def create_client(self) -> "HuggingFaceEmbeddings":
         """Creates a langchain Huggingface python client to embed elements."""
-        from langchain.embeddings import HuggingFaceEmbeddings
+        from langchain_community.embeddings import HuggingFaceEmbeddings
 
         client = HuggingFaceEmbeddings(**self.config.to_dict())
         return client

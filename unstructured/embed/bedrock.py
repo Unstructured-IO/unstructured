@@ -12,7 +12,7 @@ from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from langchain.embeddings import BedrockEmbeddings
+    from langchain_community.embeddings import BedrockEmbeddings
 
 
 @dataclass
@@ -76,7 +76,7 @@ class BedrockEmbeddingEncoder(BaseEmbeddingEncoder):
     def create_client(self) -> "BedrockEmbeddings":
         # delay import only when needed
         import boto3
-        from langchain.embeddings import BedrockEmbeddings
+        from langchain_community.embeddings import BedrockEmbeddings
 
         bedrock_runtime = boto3.client(service_name="bedrock-runtime", **self.config.to_dict())
 
