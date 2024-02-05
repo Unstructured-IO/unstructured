@@ -88,7 +88,6 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @SourceConnectionError.wrap
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
-
         fs = self._get_fs_from_uri()
         self.update_source_metadata(fs=fs)
         logger.info(f"using a {fs} filesystem to collect table data")
