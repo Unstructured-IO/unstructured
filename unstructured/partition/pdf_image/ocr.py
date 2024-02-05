@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import BinaryIO, Dict, List, Optional, Union, cast
+from typing import BinaryIO, Dict, List, Optional, Union, cast, TYPE_CHECKING
 
 import pdf2image
 
@@ -8,12 +8,6 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
-)
-from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
@@ -31,6 +25,13 @@ from unstructured.partition.utils.constants import (
 from unstructured.partition.utils.ocr_models.ocr_interface import (
     OCRAgent,
 )
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.models.tables import UnstructuredTableTransformerModel
+
 
 # Force tesseract to be single threaded,
 # otherwise we see major performance problems
@@ -198,7 +199,7 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
         )
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
-            out_layout=cast(List[LayoutElement], page_layout.elements),
+            out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -236,7 +237,7 @@ def supplement_page_layout_with_ocr(
             raise RuntimeError("Unable to load table extraction agent.")
 
         page_layout.elements[:] = supplement_element_with_table_extraction(
-            elements=cast(List[LayoutElement], page_layout.elements),
+            elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
@@ -248,13 +249,13 @@ def supplement_page_layout_with_ocr(
 
 
 def supplement_element_with_table_extraction(
-    elements: List[LayoutElement],
+    elements: List["LayoutElement"],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
     extracted_regions: Optional[List["TextRegion"]] = None,
-) -> List[LayoutElement]:
+) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
     the table's text content is rendered into an html string.
@@ -324,10 +325,10 @@ def get_table_tokens(
 
 
 def merge_out_layout_with_ocr_layout(
-    out_layout: List[LayoutElement],
-    ocr_layout: List[TextRegion],
+    out_layout: List["LayoutElement"],
+    ocr_layout: List["TextRegion"],
     supplement_with_ocr_elements: bool = True,
-) -> List[LayoutElement]:
+) -> List["LayoutElement"]:
     """
     Merge the out layout with the OCR-detected text regions on page level.
 
@@ -356,8 +357,8 @@ def merge_out_layout_with_ocr_layout(
 
 
 def aggregate_ocr_text_by_block(
-    ocr_layout: List[TextRegion],
-    region: TextRegion,
+    ocr_layout: List["TextRegion"],
+    region: "TextRegion",
     subregion_threshold: float,
 ) -> Optional[str]:
     """Extracts the text aggregated from the regions of the ocr layout that lie within the given
@@ -377,9 +378,9 @@ def aggregate_ocr_text_by_block(
 
 
 def supplement_layout_with_ocr_elements(
-    layout: List[LayoutElement],
-    ocr_layout: List[TextRegion],
-) -> List[LayoutElement]:
+    layout: List["LayoutElement"],
+    ocr_layout: List["TextRegion"],
+) -> List["LayoutElement"]:
     """
     Supplement the existing layout with additional OCR-derived elements.
 
