@@ -92,6 +92,7 @@ Or, you can use `partition_via_api <https://unstructured-io.github.io/unstructur
 
   elements = partition_via_api(
     filename=filename,
+    api_key=<<REPLACE WITH YOUR API KEY>>,
     api_url="https://<<REPLACE WITH YOUR SERVER URL>>/general/v0/general"
   )
 
