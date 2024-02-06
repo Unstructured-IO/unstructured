@@ -872,13 +872,14 @@ settings supported by the API.
   filename = "example-docs/DA-1p.pdf"
 
   elements = partition_via_api(
-    filename=filename, api_key=api_key, strategy="auto", pdf_infer_table_structure="true"
+    filename=filename,
+    api_key=api_key,
+    strategy="auto",
+    pdf_infer_table_structure="true"
   )
 
-If you are self-hosting or running the API locally, you can use the ``api_url`` kwarg
-to point the ``partition_via_api`` function at your self-hosted or local API.
-See `here <https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image>`_ for
-documentation on how to run the API as a container locally.
+If you use Unstructured SaaS API or running the API locally, you can use the ``api_url`` kwarg
+to point the ``partition_via_api`` function at `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__ or `self-hosted API <https://github.com/Unstructured-IO/unstructured-api>`__.
 
 
 .. code:: python
@@ -888,7 +889,8 @@ documentation on how to run the API as a container locally.
   filename = "example-docs/eml/fake-email.eml"
 
   elements = partition_via_api(
-    filename=filename, api_url="http://localhost:5000/general/v0/general"
+    filename=filename,
+    api_url="http://<<REPLACE WITH YOUR API KEY>>/general/v0/general"
   )
 
 For more information about the ``partition_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.

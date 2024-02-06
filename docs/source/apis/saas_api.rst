@@ -74,12 +74,26 @@ Please refer to the sample code and output provided below to begin processing do
     curl -X 'POST' 'https://<REPLACE WITH THE URL IN THE EMAIL>'
          -H 'accept: application/json'
          -H 'Content-Type: multipart/form-data'
-         -H 'unstructured-api-key: <REPLACE WITH API KEY IN THE EMAIL>'
+         -H 'unstructured-api-key: <REPLACE WITH API KEY IN THE EMAIL>/general/v0/general'
          -F 'files=@sample-docs/family-day.eml'
 
 .. image:: imgs/paid_api/sample_output.png
   :align: center
   :alt: Sample Output
+
+
+Or, you can use `partition_via_api <https://unstructured-io.github.io/unstructured/core/partition.html#partition-via-api>`__ to access the SaaS API URL.
+
+.. code:: python
+
+  from unstructured.partition.api import partition_via_api
+
+  filename = "example-docs/eml/fake-email.eml"
+
+  elements = partition_via_api(
+    filename=filename,
+    api_url="http://<<REPLACE WITH YOUR API KEY>>/general/v0/general"
+  )
 
 .. warning::
     When using the Unstructured `Python SDK <https://github.com/Unstructured-IO/unstructured-python-client>`__ or `JavaScript SDK <https://github.com/Unstructured-IO/unstructured-js-client>`__, it is important to **omit** the path ``/general/v0/general`` from the ``server_url`` parameter. Additionally, ensure you use ``https`` in the URL to prevent potential errors.
@@ -91,7 +105,6 @@ Please refer to the sample code and output provided below to begin processing do
     # Remember NOT to include `/general/v0/general` in the `server_url`
     s = UnstructuredClient(api_key_auth="<YOUR_API_KEY>",  # Replace <YOUR_API_KEY> with the API key provided in the email
                            server_url="<YOUR_SERVER_URL>") # Replace <YOUR_SERVER_URL> with the server URL provided in the email
-
 
 
 SaaS API Account Maintenance
