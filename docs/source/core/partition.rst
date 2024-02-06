@@ -878,7 +878,7 @@ settings supported by the API.
     pdf_infer_table_structure="true"
   )
 
-If you use Unstructured SaaS API or running the API locally, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at Unstructured SaaS API URL or self-hosted API URL.
+If you are using the Unstructured SaaS API or running the API locally, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at Unstructured SaaS API URL or self-hosted API URL.
 
 
 .. code:: python
