@@ -291,7 +291,6 @@ def _partition_pdf_or_image_local(
         process_data_with_ocr,
         process_file_with_ocr,
     )
-
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
