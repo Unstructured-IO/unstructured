@@ -6,7 +6,7 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c base.txt
     #   -c constraints.in
@@ -22,7 +22,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.2.0
     # via matplotlib
-cryptography==42.0.1
+cryptography==42.0.2
     # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -39,7 +39,7 @@ flatbuffers==23.5.26
     # via onnxruntime
 fonttools==4.47.2
     # via matplotlib
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via
     #   huggingface-hub
     #   torch
@@ -69,7 +69,7 @@ lxml==5.1.0
     # via
     #   -c base.txt
     #   pikepdf
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via jinja2
 matplotlib==3.7.2
     # via
@@ -143,7 +143,7 @@ pillow==10.2.0
     #   pytesseract
     #   torchvision
     #   unstructured-pytesseract
-pillow-heif==0.14.0
+pillow-heif==0.15.0
     # via -r extra-pdf-image.in
 portalocker==2.8.2
     # via iopath
@@ -173,9 +173,9 @@ python-dateutil==2.8.2
     #   -c base.txt
     #   matplotlib
     #   pandas
-python-multipart==0.0.6
+python-multipart==0.0.7
     # via unstructured-inference
-pytz==2023.4
+pytz==2024.1
     # via pandas
 pyyaml==6.0.1
     # via
@@ -219,14 +219,14 @@ timm==0.9.12
     # via effdet
 tokenizers==0.15.1
     # via transformers
-torch==2.1.2
+torch==2.2.0
     # via
     #   -c constraints.in
     #   effdet
     #   layoutparser
     #   timm
     #   torchvision
-torchvision==0.16.2
+torchvision==0.17.0
     # via
     #   effdet
     #   layoutparser

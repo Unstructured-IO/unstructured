@@ -26,7 +26,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via
     #   -r ingest/s3.in
     #   s3fs
@@ -36,7 +36,7 @@ idna==3.6
     #   yarl
 jmespath==1.0.1
     # via botocore
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl
@@ -44,7 +44,7 @@ python-dateutil==2.8.2
     # via
     #   -c ingest/../base.txt
     #   botocore
-s3fs==2023.12.2
+s3fs==2024.2.0
     # via -r ingest/s3.in
 six==1.16.0
     # via
