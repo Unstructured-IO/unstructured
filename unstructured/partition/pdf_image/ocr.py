@@ -414,7 +414,9 @@ def supplement_layout_with_ocr_elements(
      threshold.
     """
 
-    from unstructured.partition.pdf_image.inference_utils import build_layout_elements_from_ocr_regions
+    from unstructured.partition.pdf_image.inference_utils import (
+        build_layout_elements_from_ocr_regions,
+    )
 
     ocr_regions_to_remove = []
     for ocr_region in ocr_layout:

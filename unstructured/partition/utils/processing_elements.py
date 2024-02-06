@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from unstructured.partition.utils.constants import Source
 
-
 if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout
 
