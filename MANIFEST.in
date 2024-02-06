@@ -31,7 +31,6 @@ include requirements/ingest/dropbox.in
 include requirements/ingest/elasticsearch.in
 include requirements/ingest/embed-aws-bedrock.in
 include requirements/ingest/embed-huggingface.in
-include requirements/ingest/embed-huggingface.txt
 include requirements/ingest/embed-openai.in
 include requirements/ingest/gcs.in
 include requirements/ingest/github.in
@@ -45,7 +44,6 @@ include requirements/ingest/onedrive.in
 include requirements/ingest/opensearch.in
 include requirements/ingest/outlook.in
 include requirements/ingest/pinecone.in
-include requirements/ingest/pinecone.txt
 include requirements/ingest/postgres.in
 include requirements/ingest/qdrant.in
 include requirements/ingest/reddit.in
@@ -53,7 +51,6 @@ include requirements/ingest/s3.in
 include requirements/ingest/salesforce.in
 include requirements/ingest/sftp.in
 include requirements/ingest/sharepoint.in
-include requirements/ingest/sharepoint.txt
 include requirements/ingest/slack.in
 include requirements/ingest/weaviate.in
 include requirements/ingest/wikipedia.in
