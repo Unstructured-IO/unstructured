@@ -22,7 +22,7 @@ idna==3.6
     # via
     #   -c ingest/../base.txt
     #   yarl
-multidict==6.0.4
+multidict==6.0.5
     # via
     #   aiohttp
     #   yarl

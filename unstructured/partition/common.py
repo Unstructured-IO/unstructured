@@ -129,7 +129,7 @@ def normalize_layout_element(
     coordinates = layout_dict.get("coordinates")
     element_type = layout_dict.get("type")
     prob = layout_dict.get("prob")
-    aux_origin = layout_dict["source"] if "source" in layout_dict else None
+    aux_origin = layout_dict.get("source", None)
     origin = None
     if aux_origin:
         origin = aux_origin.value
