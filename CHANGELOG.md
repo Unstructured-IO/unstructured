@@ -1,4 +1,4 @@
-## 0.12.4-dev7
+## 0.12.4-dev8
 
 ### Enhancements
 
@@ -18,6 +18,8 @@
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add missing dependency files to package manifest**. Updates the file path for the ingest
   dependencies and adds missing extra dependencies.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies **
+* **Add title to Vectara upload - was not separated out from initial connector **
 
 ## 0.12.3
 
