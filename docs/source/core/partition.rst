@@ -875,7 +875,7 @@ settings supported by the API.
     filename=filename, api_key=api_key, strategy="auto", pdf_infer_table_structure="true"
   )
 
-If you are using the `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at Unstructured SaaS API URL or self-hosted API URL.
+If you are using the `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at your Unstructured SaaS API URL.
 
 .. code:: python
 
