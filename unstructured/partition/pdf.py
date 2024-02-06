@@ -74,11 +74,6 @@ from unstructured.partition.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.pdf_image.ocr import (
-    get_ocr_agent,
-    process_data_with_ocr,
-    process_file_with_ocr,
-)
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -290,6 +285,11 @@ def _partition_pdf_or_image_local(
     from unstructured_inference.inference.layout import (
         process_data_with_model,
         process_file_with_model,
+    )
+
+    from unstructured.partition.pdf_image.ocr import (
+        process_data_with_ocr,
+        process_file_with_ocr,
     )
 
     from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -928,6 +928,10 @@ def _partition_pdf_or_image_with_ocr_from_image(
     **kwargs,
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
+
+    from unstructured.partition.pdf_image.ocr import (
+        get_ocr_agent,
+    )
 
     ocr_agent = get_ocr_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)
