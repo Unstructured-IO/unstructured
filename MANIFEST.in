@@ -1,4 +1,4 @@
-# Base requirements and contstraints
+# Base requirements and constraints
 include requirements/base.in
 include requirements/constraints.in
 
