@@ -86,10 +86,9 @@ def open_pdfminer_pages_generator(
 
     device, interpreter = init_pdfminer()
     try:
-        i = 0
         pages = PDFPage.get_pages(fp)
         # Detect invalid dictionary construct for entire PDF
-        for page in pages:
+        for i, page in enumerate(pages):
             try:
                 # Detect invalid dictionary construct for one page
                 interpreter.process_page(page)
@@ -106,7 +105,6 @@ def open_pdfminer_pages_generator(
                     page = next(PDFPage.get_pages(open(tmp.name, "rb")))  # noqa: SIM115
                     interpreter.process_page(page)
                     page_layout = device.get_result()
-            i += 1
             yield page, page_layout
     except PSSyntaxError:
         logger.info("Detected invalid dictionary construct for PDFminer")

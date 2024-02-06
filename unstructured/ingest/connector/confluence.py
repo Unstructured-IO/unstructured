@@ -66,7 +66,7 @@ def scroll_wrapper(func):
         del kwargs["number_of_items_to_fetch"]
 
         kwargs["limit"] = min(100, number_of_items_to_fetch)
-        kwargs["start"] = 0 if "start" not in kwargs else kwargs["start"]
+        kwargs["start"] = kwargs.get("start", 0)
 
         all_results = []
         num_iterations = math.ceil(number_of_items_to_fetch / kwargs["limit"])

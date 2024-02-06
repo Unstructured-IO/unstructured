@@ -97,9 +97,7 @@ def partition_xlsx(
         last_modification_date = get_last_modified_date_from_file(file)
 
     elements: List[Element] = []
-    page_number = 0
-    for sheet_name, sheet in sheets.items():
-        page_number += 1
+    for page_number, (sheet_name, sheet) in enumerate(sheets.items(), start=1):
         if not find_subtable:
             html_text = (
                 sheet.to_html(index=False, header=include_header, na_rep="")

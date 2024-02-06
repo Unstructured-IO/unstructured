@@ -735,9 +735,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
-    filetype_module = (
-        extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
-    )
+    filetype_module = FILETYPE_TO_MODULE.get(filetype, extension)
     fun_name = "partition_" + filetype_module
     module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
