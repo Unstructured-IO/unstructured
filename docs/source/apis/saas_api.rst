@@ -74,7 +74,7 @@ Please refer to the sample code and output provided below to begin processing do
     curl -X 'POST' 'https://<REPLACE WITH THE URL IN THE EMAIL>'
          -H 'accept: application/json'
          -H 'Content-Type: multipart/form-data'
-         -H 'unstructured-api-key: <REPLACE WITH API KEY IN THE EMAIL>/general/v0/general'
+         -H 'unstructured-api-key: <REPLACE WITH API KEY IN THE EMAIL>'
          -F 'files=@sample-docs/family-day.eml'
 
 .. image:: imgs/paid_api/sample_output.png
