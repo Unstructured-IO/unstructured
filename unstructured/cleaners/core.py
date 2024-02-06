@@ -335,6 +335,15 @@ def clean_dashes(text: str) -> str:
     # NOTE(Yuming): '\u2013' is the unicode string of 'EN DASH', a variation of "-"
     return re.sub(r"[-\u2013]", " ", text).strip()
 
+def clean_newline_words(text: str, pattern: str = r"(\w+)-\s+(\w+)" ) -> str:
+    """Removes the dash and whitespace between two words in a given text.
+
+    Example
+    -------
+    'Learning doc- ument parsing is super cool!' -> 'Learning document parsing is super cool!'
+    """
+    return re.sub(pattern, r'\1\2', text)
+
 
 def clean_trailing_punctuation(text: str) -> str:
     """Clean all trailing punctuation in text
