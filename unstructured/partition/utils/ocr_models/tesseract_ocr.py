@@ -1,18 +1,13 @@
-from typing import List
+from typing import TYPE_CHECKING, List
 
 import cv2
 import numpy as np
 import pandas as pd
 import unstructured_pytesseract
 from PIL import Image as PILImage
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
-)
 from unstructured_pytesseract import Output
 
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.ocr import get_elements_from_ocr_regions
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -21,6 +16,13 @@ from unstructured.partition.utils.constants import (
     Source,
 )
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.utils import requires_dependencies
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layoutelement import (
+        LayoutElement,
+    )
 
 
 class OCRAgentTesseract(OCRAgent):
@@ -38,7 +40,7 @@ class OCRAgentTesseract(OCRAgent):
 
     def get_layout_from_image(
         self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[TextRegion]:
+    ) -> List["TextRegion"]:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
         logger.info("Processing entire page OCR with tesseract...")
@@ -83,9 +85,14 @@ class OCRAgentTesseract(OCRAgent):
 
         return ocr_regions
 
+    @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(
         self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[LayoutElement]:
+    ) -> List["LayoutElement"]:
+        from unstructured.partition.pdf_image.inference_utils import (
+            build_layout_elements_from_ocr_regions,
+        )
+
         ocr_regions = self.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
@@ -103,13 +110,14 @@ class OCRAgentTesseract(OCRAgent):
             ocr_languages=ocr_languages,
         )
 
-        return get_elements_from_ocr_regions(
+        return build_layout_elements_from_ocr_regions(
             ocr_regions=ocr_regions,
             ocr_text=ocr_text,
             group_by_ocr_text=True,
         )
 
-    def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> List[TextRegion]:
+    @requires_dependencies("unstructured_inference")
+    def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> List["TextRegion"]:
         """
         Parse the OCR result data to extract a list of TextRegion objects from
         tesseract.
@@ -137,6 +145,8 @@ class OCRAgentTesseract(OCRAgent):
           data frame will result in its associated bounding box being ignored.
         """
 
+        from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
+
         if zoom <= 0:
             zoom = 1
 
@@ -153,7 +163,7 @@ class OCRAgentTesseract(OCRAgent):
                 y1 = idtx.top / zoom
                 x2 = (idtx.left + idtx.width) / zoom
                 y2 = (idtx.top + idtx.height) / zoom
-                text_region = TextRegion.from_coords(
+                text_region = build_text_region_from_coords(
                     x1,
                     y1,
                     x2,
