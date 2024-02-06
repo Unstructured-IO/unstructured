@@ -18,8 +18,6 @@ from pathlib import Path
 from string import Template
 from textwrap import dedent
 
-from dateutil import parser  # type: ignore
-
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -164,6 +162,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         return xml_string
 
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
+        from dateutil import parser  # type: ignore
+
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),

@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=ingest/delta-table.txt ingest/delta-table.in
 #
-deltalake==0.15.1
+deltalake==0.15.2
     # via -r ingest/delta-table.in
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via -r ingest/delta-table.in
 numpy==1.26.3
     # via

@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/pinecone.txt ingest/pinecone.in
 #
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
