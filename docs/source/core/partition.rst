@@ -890,7 +890,8 @@ to point the ``partition_via_api`` function at `Unstructured SaaS API <https://u
 
   elements = partition_via_api(
     filename=filename,
-    api_url="http://<<REPLACE WITH YOUR API KEY>>/general/v0/general"
+    api_key=<<REPLACE WITH YOUR API KEY>>,
+    api_url="https://<<REPLACE WITH YOUR API KEY>>/general/v0/general"
   )
 
 For more information about the ``partition_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.
