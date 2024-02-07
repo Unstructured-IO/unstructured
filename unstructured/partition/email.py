@@ -385,7 +385,7 @@ def partition_email(
 
     if content_source in content_map:
         content = content_map.get(content_source)
-    # NOTE(robinson) - If a the chosen content source is not available and there is
+    # NOTE(robinson) - If the chosen content source is not available and there is
     # another valid content source, fall back to the other valid source
     else:
         for _content_source in VALID_CONTENT_SOURCES:
