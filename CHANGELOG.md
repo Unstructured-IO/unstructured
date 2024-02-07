@@ -1,9 +1,11 @@
-## 0.12.4-dev8
+## 0.12.4-dev9
 
 ### Enhancements
 
 * **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
 * **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
+* **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for
+  the signed message is extracted and added to metadata.
 
 ### Features
 
