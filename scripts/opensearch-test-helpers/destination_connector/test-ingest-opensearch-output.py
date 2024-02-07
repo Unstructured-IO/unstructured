@@ -20,7 +20,7 @@ if __name__ == "__main__":
 
     time.sleep(10)
 
-    initial_query={"query": {"simple_query_string": {"fields": ["text"], "query": EXPECTED_TEXT}}}
+    initial_query = {"query": {"simple_query_string": {"fields": ["text"], "query": EXPECTED_TEXT}}}
     initial_result = client.search(index="ingest-test-destination", body=initial_query)
     initial_embeddings = initial_result["hits"]["hits"][0]["_source"]["embeddings"]
 
