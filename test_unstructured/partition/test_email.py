@@ -406,10 +406,12 @@ def test_convert_to_iso_8601(time, expected):
     assert iso_time == expected
 
 
-def test_partition_email_still_works_with_no_content():
+def test_partition_email_still_works_with_no_content(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     elements = partition_email(filename=filename)
-    assert elements == []
+    assert len(elements) == 1
+    assert elements[0].text.startswith("Hey there")
+    assert "text/html was not found. Falling back to text/plain" in caplog.text
 
 
 def test_partition_email_from_filename_exclude_metadata():
@@ -631,3 +633,10 @@ def test_partition_eml_respects_detect_language_per_element():
     langs = {element.metadata.languages[0] for element in elements}
     assert "eng" in langs
     assert "spa" in langs
+
+
+def test_partition_eml_add_signature_to_metadata():
+    elements = partition_email(filename="example-docs/eml/signed-doc.p7s")
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"
