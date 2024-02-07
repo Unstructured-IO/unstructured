@@ -380,7 +380,6 @@ def partition_email(
                 )
                 break
 
-
     elements: List[Element] = []
 
     if is_encrypted:
