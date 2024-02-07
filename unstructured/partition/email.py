@@ -112,19 +112,26 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
+def find_signature(msg: Message) -> Optional[str]:
+    """Extracts the signature from an email message, if it's available."""
+    payload = msg.get_payload()
+    if not isinstance(payload, list):
+        return None
+
+    for item in payload:
+        if item.get_content_type().endswith("signature"):
+            return item.get_payload()
+
+    return None
+
+
 def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
-    signature = None
-    payload = msg.get_payload()
-    if isinstance(payload, list):
-        for item in payload:
-            if item.get_content_type().endswith("signature"):
-                signature = item.get_payload()
-                break
+    signature = find_signature(msg)
 
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
