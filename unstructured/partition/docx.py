@@ -333,7 +333,7 @@ class _DocxPartitioner:
         text = "".join(
             e.text
             for e in paragraph._p.xpath(
-                "w:r" "| w:hyperlink" "| w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
+                "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
             )
         )
 
