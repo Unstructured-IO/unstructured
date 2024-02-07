@@ -118,6 +118,14 @@ def build_email_metadata(
     metadata_last_modified: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
+    signature = None
+    payload = msg.get_payload()
+    if isinstance(payload, list):
+        for item in payload:
+            if item.get_content_type().endswith("signature"):
+                signature = item.get_payload()
+                break
+
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
     if email_date is not None:
@@ -135,6 +143,7 @@ def build_email_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
+        signature=signature,
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
