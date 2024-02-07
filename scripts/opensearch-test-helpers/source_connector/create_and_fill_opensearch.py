@@ -6,7 +6,7 @@ from opensearchpy import Document, Keyword, OpenSearch, Text
 from opensearchpy.exceptions import NotFoundError
 
 DATA_PATH = "scripts/opensearch-test-helpers/wiki_movie_plots_small.csv"
-CLUSTER_URL = "http://localhost:9200"
+CLUSTER_URL = "http://localhost:9247"
 INDEX_NAME = "movies"
 
 
@@ -29,7 +29,7 @@ class Movie(Document):
 
 print("Connecting to the OpenSearch cluster.")
 client = OpenSearch(
-    hosts=[{"host": "localhost", "port": 9200}],
+    hosts=[{"host": "localhost", "port": 9247}],
     http_auth=("admin", "admin"),
     use_ssl=True,
     verify_certs=False,
