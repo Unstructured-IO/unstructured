@@ -1284,8 +1284,8 @@ def test_partition_image_with_bmp_with_auto(
     assert "<table><thead><th>" in table[0]
 
 
-def test_auto_partition_eml_add_signature_to_metadata(filename="example-docs/eml/signed-doc.p7s"):
-    elements = partition(filename=filename)
+def test_auto_partition_eml_add_signature_to_metadata():
+    elements = partition(filename="example-docs/eml/signed-doc.p7s")
     assert len(elements) == 1
     assert elements[0].text == "This is a test"
     assert elements[0].metadata.signature == "<SIGNATURE>\n"

@@ -635,8 +635,8 @@ def test_partition_eml_respects_detect_language_per_element():
     assert "spa" in langs
 
 
-def test_partition_eml_add_signature_to_metadata(filename="example-docs/eml/signed-doc.p7s"):
-    elements = partition_email(filename=filename)
+def test_partition_eml_add_signature_to_metadata():
+    elements = partition_email(filename="example-docs/eml/signed-doc.p7s")
     assert len(elements) == 1
     assert elements[0].text == "This is a test"
     assert elements[0].metadata.signature == "<SIGNATURE>\n"
