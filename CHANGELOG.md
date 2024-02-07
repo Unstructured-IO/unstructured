@@ -6,6 +6,9 @@
 * **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
 * **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for
   the signed message is extracted and added to metadata.
+* **Fallback to valid content types for emails** If the user selected content type does not exist on
+  the email message, `partition_email` now falls back to anoter valid content type if it's
+  available.
 
 ### Features
 
