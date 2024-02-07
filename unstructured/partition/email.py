@@ -375,8 +375,11 @@ def partition_email(
         for _content_source in VALID_CONTENT_SOURCES:
             content = content_map.get(_content_source, "")
             if content:
-                logger.warning(f"{content_source} was not found. Falling back to {_content_source}")
+                logger.warning(
+                    f"{content_source} was not found. Falling back to {_content_source}."
+                )
                 break
+
 
     elements: List[Element] = []
 

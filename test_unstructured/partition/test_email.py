@@ -406,10 +406,12 @@ def test_convert_to_iso_8601(time, expected):
     assert iso_time == expected
 
 
-def test_partition_email_still_works_with_no_content():
+def test_partition_email_still_works_with_no_content(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     elements = partition_email(filename=filename)
-    assert elements == []
+    assert len(elements) == 1
+    assert elements[0].text.startswith("Hey there")
+    assert "text/html was not found. Falling back to text/plain" in caplog.text
 
 
 def test_partition_email_from_filename_exclude_metadata():
