@@ -189,6 +189,7 @@ EXT_TO_FILETYPE = {
     ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
+    ".p7s": FileType.EML,
     ".png": FileType.PNG,
     ".doc": FileType.DOC,
     ".zip": FileType.ZIP,
@@ -228,6 +229,7 @@ PLAIN_TEXT_EXTENSIONS = [
     ".txt",
     ".text",
     ".eml",
+    ".p7s",
     ".md",
     ".rtf",
     ".html",
@@ -329,6 +331,7 @@ def detect_filetype(
 
         if extension in [
             ".eml",
+            ".p7s",
             ".md",
             ".rtf",
             ".html",
