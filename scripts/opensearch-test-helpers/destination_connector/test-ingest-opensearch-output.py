@@ -41,12 +41,22 @@ if __name__ == "__main__":
             "OpenSearch dest check failed:" f"Did not find {EXPECTED_TEXT} in via vector search."
         )
 
-    count = int(client.count(index="ingest-test-destination")["count"])
+    for i in range(3):
+        try:
+            count = int(client.count(index="ingest-test-destination")["count"])
+            assert count == N_ELEMENTS
+            break
+        except:  # noqa: E722
+            print("Retrying to get count")
+            time.sleep(3)
+
     try:
+        count = int(client.count(index="ingest-test-destination")["count"])
         assert count == N_ELEMENTS
     except AssertionError:
         sys.exit(
             "OpenSearch dest check failed:"
             f"got {count} items in index, expected {N_ELEMENTS} items in index."
         )
+
     print(f"OpenSearch destination test was successful with {count} items being uploaded.")
