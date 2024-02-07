@@ -1,6 +1,6 @@
 import json
 
-CLUSTER_URL = "http://localhost:9200"
+CLUSTER_URL = "http://localhost:9247"
 INDEX_NAME = "ingest-test-destination"
 USER = "admin"
 PASSWORD = "admin"

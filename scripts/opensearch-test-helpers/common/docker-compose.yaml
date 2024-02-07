@@ -3,7 +3,7 @@ services:
     image: opensearchproject/opensearch:2.11.1
     container_name: opensearch-test
     ports:
-      - 9200:9200
+      - 9247:9200
       - 9600:9600
     environment:
       - discovery.type=single-node
