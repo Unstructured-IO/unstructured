@@ -367,7 +367,16 @@ def partition_email(
         else:
             content_map[content_type] = part.get_payload()
 
-    content = content_map.get(content_source, "")
+    if content_source in content_map:
+        content = content_map.get(content_source)
+    # NOTE(robinson) - If a the chosen content source is not available and there is
+    # another valid content source, fall back to the other valid source
+    else:
+        for _content_source in VALID_CONTENT_SOURCES:
+            content = content_map.get(_content_source, "")
+            if content:
+                logger.warning(f"{content_source} was not found. Falling back to {_content_source}")
+                break
 
     elements: List[Element] = []
 
