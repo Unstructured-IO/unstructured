@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-
 import sys
+import time
 
 from opensearchpy import OpenSearch
 
@@ -34,6 +34,7 @@ if __name__ == "__main__":
     #         "OpenSearch dest check failed:" f"Did not find {EXPECTED_TEXT} in via vector search."
     #     )
 
+    time.sleep(10)
     count = int(client.count(index="ingest-test-destination")["count"])
     try:
         assert count == N_ELEMENTS
