@@ -18,18 +18,16 @@ if __name__ == "__main__":
     )
     print(client.info())
 
+    initial_query = {"query": {"simple_query_string": {"fields": ["text"], "query": EXPECTED_TEXT}}}
+
     for i in range(3):
         try:
-            initial_query = {
-                "query": {"simple_query_string": {"fields": ["text"], "query": EXPECTED_TEXT}}
-            }
             initial_result = client.search(index="ingest-test-destination", body=initial_query)
             initial_embeddings = initial_result["hits"]["hits"][0]["_source"]["embeddings"]
             break
         except:  # noqa: E722
             print("Retrying to get initial embeddings")
             time.sleep(3)
-            continue
 
     query = {"size": 1, "query": {"knn": {"embeddings": {"vector": initial_embeddings, "k": 1}}}}
 
