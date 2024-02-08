@@ -112,12 +112,27 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
+def find_signature(msg: Message) -> Optional[str]:
+    """Extracts the signature from an email message, if it's available."""
+    payload = msg.get_payload()
+    if not isinstance(payload, list):
+        return None
+
+    for item in payload:
+        if item.get_content_type().endswith("signature"):
+            return item.get_payload()
+
+    return None
+
+
 def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
+    signature = find_signature(msg)
+
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
     if email_date is not None:
@@ -135,6 +150,7 @@ def build_email_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
+        signature=signature,
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
@@ -367,7 +383,18 @@ def partition_email(
         else:
             content_map[content_type] = part.get_payload()
 
-    content = content_map.get(content_source, "")
+    if content_source in content_map:
+        content = content_map.get(content_source)
+    # NOTE(robinson) - If the chosen content source is not available and there is
+    # another valid content source, fall back to the other valid source
+    else:
+        for _content_source in VALID_CONTENT_SOURCES:
+            content = content_map.get(_content_source, "")
+            if content:
+                logger.warning(
+                    f"{content_source} was not found. Falling back to {_content_source}."
+                )
+                break
 
     elements: List[Element] = []
 

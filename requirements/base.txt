@@ -8,7 +8,7 @@ backoff==2.2.1
     # via -r base.in
 beautifulsoup4==4.12.3
     # via -r base.in
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c constraints.in
     #   requests
@@ -21,11 +21,11 @@ charset-normalizer==3.3.2
     #   unstructured-client
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.3
-    # via
-    #   -r base.in
-    #   unstructured-client
-emoji==2.10.0
+dataclasses-json==0.6.4
+    # via -r base.in
+dataclasses-json-speakeasy==0.5.11
+    # via unstructured-client
+emoji==2.10.1
     # via -r base.in
 filetype==1.2.0
     # via -r base.in
@@ -44,6 +44,7 @@ lxml==5.1.0
 marshmallow==3.20.2
     # via
     #   dataclasses-json
+    #   dataclasses-json-speakeasy
     #   unstructured-client
 mypy-extensions==1.0.0
     # via
@@ -90,8 +91,9 @@ typing-extensions==4.9.0
 typing-inspect==0.9.0
     # via
     #   dataclasses-json
+    #   dataclasses-json-speakeasy
     #   unstructured-client
-unstructured-client==0.16.0
+unstructured-client==0.17.0
     # via -r base.in
 urllib3==1.26.18
     # via

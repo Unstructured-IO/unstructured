@@ -872,7 +872,6 @@ def convert_pdf_to_images(
             yield image
 
 
-@requires_dependencies("unstructured_pytesseract", "unstructured_inference")
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
@@ -902,9 +901,7 @@ def _partition_pdf_or_image_with_ocr(
             )
             elements.extend(page_elements)
     else:
-        page_number = 0
-        for image in convert_pdf_to_images(filename, file):
-            page_number += 1
+        for page_number, image in enumerate(convert_pdf_to_images(filename, file), start=1):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,
@@ -1070,11 +1067,11 @@ def get_uris_from_annots(
         annotation_dict = try_resolve(annotation)
         if not isinstance(annotation_dict, dict):
             continue
-        subtype = annotation_dict["Subtype"] if "Subtype" in annotation_dict else None
+        subtype = annotation_dict.get("Subtype", None)
         if not subtype or isinstance(subtype, PDFObjRef) or str(subtype) != "/'Link'":
             continue
         # Extract bounding box and update coordinates
-        rect = annotation_dict["Rect"] if "Rect" in annotation_dict else None
+        rect = annotation_dict.get("Rect", None)
         if not rect or isinstance(rect, PDFObjRef) or len(rect) != 4:
             continue
         x1, y1, x2, y2 = rect_to_bbox(rect, height)

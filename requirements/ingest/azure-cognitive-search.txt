@@ -6,11 +6,11 @@
 #
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.29.7
+azure-core==1.30.0
     # via azure-search-documents
 azure-search-documents==11.4.0
     # via -r ingest/azure-cognitive-search.in
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in

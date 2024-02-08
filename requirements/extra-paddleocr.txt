@@ -8,13 +8,13 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.14.0
     # via flask-babel
-bce-python-sdk==0.9.2
+bce-python-sdk==0.9.4
     # via visualdl
 blinker==1.7.0
     # via flask
 cachetools==5.3.2
     # via premailer
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c base.txt
     #   -c constraints.in
@@ -39,7 +39,7 @@ cython==3.0.8
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==3.0.1
+flask==3.0.2
     # via
     #   flask-babel
     #   visualdl
@@ -82,7 +82,7 @@ lxml==5.1.0
     #   -c base.txt
     #   premailer
     #   unstructured-paddleocr
-markupsafe==2.1.4
+markupsafe==2.1.5
     # via
     #   jinja2
     #   werkzeug
@@ -161,7 +161,7 @@ python-dateutil==2.8.2
     #   -c base.txt
     #   matplotlib
     #   pandas
-pytz==2023.4
+pytz==2024.1
     # via
     #   flask-babel
     #   pandas
