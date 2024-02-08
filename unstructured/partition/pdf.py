@@ -83,7 +83,6 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
-    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -594,7 +593,6 @@ def _process_uncategorized_text_elements(elements: List[Element]):
     return out_elements
 
 
-@requires_dependencies("pdfminer", "local-inference")
 def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
@@ -673,6 +671,7 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
     return wrapped(resources)
 
 
+@requires_dependencies("pdfminer")
 def _process_pdfminer_pages(
     fp: BinaryIO,
     filename: str,
@@ -683,6 +682,11 @@ def _process_pdfminer_pages(
     **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
+
+    from unstructured.partition.pdf_image.pdfminer_utils import (
+        open_pdfminer_pages_generator,
+    )
+
     elements: List[Element] = []
 
     for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(fp)):
