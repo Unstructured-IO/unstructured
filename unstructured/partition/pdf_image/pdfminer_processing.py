@@ -1,16 +1,6 @@
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
 from pdfminer.utils import open_filename
-from unstructured_inference.inference.elements import (
-    EmbeddedTextRegion,
-    ImageTextRegion,
-    TextRegion,
-)
-from unstructured_inference.inference.layoutelement import (
-    merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
-)
-from unstructured_inference.inference.ordering import order_layout
-from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
 
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
@@ -19,15 +9,17 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
 )
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.sorting import sort_text_regions
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
+    from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layout import DocumentLayout
 
 
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
-) -> List[List[TextRegion]]:
+) -> List[List["TextRegion"]]:
     with open_filename(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout = process_data_with_pdfminer(
@@ -37,12 +29,19 @@ def process_file_with_pdfminer(
         return extracted_layout
 
 
+@requires_dependencies("unstructured_inference")
 def process_data_with_pdfminer(
     file: Optional[Union[bytes, BinaryIO]] = None,
     dpi: int = 200,
-) -> List[List[TextRegion]]:
+) -> List[List["TextRegion"]]:
     """Loads the image and word objects from a pdf using pdfplumber and the image renderings of the
     pdf pages using pdf2image"""
+
+    from unstructured_inference.inference.elements import (
+        EmbeddedTextRegion,
+        ImageTextRegion,
+    )
+    from unstructured_inference.inference.ordering import order_layout
 
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
@@ -89,10 +88,18 @@ def process_data_with_pdfminer(
     return layouts
 
 
+@requires_dependencies("unstructured_inference")
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
-    extracted_layout: List[List[TextRegion]],
+    extracted_layout: List[List["TextRegion"]],
 ) -> "DocumentLayout":
+    """Merge an inferred layout with an extracted layout"""
+
+    from unstructured_inference.inference.layoutelement import (
+        merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
+    )
+    from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
         zip(inferred_pages, extracted_layout)
