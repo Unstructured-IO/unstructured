@@ -61,11 +61,8 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
+from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.pdf_image.orientation_and_rotation import reorient_file_or_data
-from unstructured.partition.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -936,9 +933,7 @@ def _partition_pdf_or_image_with_ocr_from_image(
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
-    from unstructured.partition.pdf_image.ocr import (
-        get_ocr_agent,
-    )
+    from unstructured.partition.pdf_image.ocr import get_ocr_agent
 
     ocr_agent = get_ocr_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)

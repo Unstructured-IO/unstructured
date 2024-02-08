@@ -10,7 +10,6 @@ from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.elements import Element, Text
 from unstructured.partition import pdf
 from unstructured.partition.pdf_image import orientation_and_rotation
-from unstructured.partition.pdf_image.orientation_and_rotation import Orientation
 from unstructured.partition.utils.constants import PartitionStrategy, ReorientationStrategy
 
 

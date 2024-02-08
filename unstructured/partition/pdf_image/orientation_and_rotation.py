@@ -17,7 +17,7 @@ Orientation = Literal[0, 90, 180, 270]
 
 @requires_dependencies("unstructured_pytesseract")
 def _find_orientation_pytesseract(page: PILImage) -> Orientation:
-    raise NotImplementedError("tesserocr-based page reorientation is not implemented.")
+    raise NotImplementedError("pytesseract-based page reorientation is not implemented.")
 
 
 def _find_orientation_tesserocr(page: PILImage) -> Orientation:
