@@ -99,7 +99,6 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-
     def initialize(self):
         _ = self.client
 
