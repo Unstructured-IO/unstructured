@@ -4,6 +4,13 @@ from typing import IO, Any, BinaryIO, Dict, List, Optional, Tuple, Union, cast
 import networkx as nx
 import numpy as np
 import pandas as pd
+
+from unstructured.partition.xlsx import partition_xlsx
+elements = partition_xlsx("tLists2_sum_adjusted.xlsx")
+for e in elements:
+    print(f"{repr(e)}: text={repr(e.text)}")
+
+    
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
 from unstructured.chunking import add_chunking_strategy
