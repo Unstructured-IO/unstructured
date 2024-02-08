@@ -83,6 +83,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
+    open_pdfminer_pages_generator,
     rect_to_bbox,
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
@@ -682,10 +683,6 @@ def _process_pdfminer_pages(
     **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
-
-    from unstructured.partition.pdf_image.pdfminer_utils import (
-        open_pdfminer_pages_generator,
-    )
 
     elements: List[Element] = []
 
