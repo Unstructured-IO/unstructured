@@ -577,8 +577,6 @@ def _partition_pdf_or_image_local(
     return out_elements
 
 
-
-
 def _process_uncategorized_text_elements(elements: List[Element]):
     """Processes a list of elements, creating a new list where elements with the
     category `UncategorizedText` are replaced with corresponding
