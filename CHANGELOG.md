@@ -1,4 +1,15 @@
-## 0.12.4-dev9
+## 0.12.5-dev0
+
+### Enhancements
+
+### Features
+
+
+### Fixes
+
+* **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
+
+## 0.12.4
 
 ### Enhancements
 
