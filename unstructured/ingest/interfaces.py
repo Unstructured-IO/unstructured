@@ -208,6 +208,13 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig(**kwargs))
+        elif self.provider == "octoai":
+            from unstructured.embed.octoai import (
+                OctoAiEmbeddingConfig,
+                OctoAIEmbeddingEncoder,
+            )
+
+            return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
