@@ -23,7 +23,8 @@
   dependencies and adds missing extra dependencies.
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add title to Vectara upload - was not separated out from initial connector **
-* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test*** **Fix `check_connection` in opensearch, postgres, azure connectors** 
+* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
+* **Fix `check_connection` in opensearch, postgres, azure connectors ** 
 
 ## 0.12.3
 
