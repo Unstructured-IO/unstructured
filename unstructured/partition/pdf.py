@@ -227,6 +227,112 @@ def partition_pdf(
     )
 
 
+def partition_pdf_or_image(
+    filename: str = "",
+    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    is_image: bool = False,
+    include_page_breaks: bool = False,
+    strategy: str = PartitionStrategy.AUTO,
+    infer_table_structure: bool = False,
+    ocr_languages: Optional[str] = None,
+    languages: Optional[List[str]] = None,
+    metadata_last_modified: Optional[str] = None,
+    hi_res_model_name: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_output_dir: Optional[str] = None,
+    extract_image_block_to_payload: bool = False,
+    **kwargs,
+) -> List[Element]:
+    """Parses a pdf or image document into a list of interpreted elements."""
+    # TODO(alan): Extract information about the filetype to be processed from the template
+    # route. Decoding the routing should probably be handled by a single function designed for
+    # that task so as routing design changes, those changes are implemented in a single
+    # function.
+
+    # init ability to process .heic files
+    register_heif_opener()
+
+    validate_strategy(strategy, is_image)
+
+    last_modification_date = get_the_last_modification_date_pdf_or_img(
+        file=file,
+        filename=filename,
+    )
+
+    extracted_elements = []
+    pdf_text_extractable = False
+    if not is_image:
+        try:
+            extracted_elements = extractable_elements(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            pdf_text_extractable = any(
+                isinstance(el, Text) and el.text.strip() for el in extracted_elements
+            )
+        except Exception as e:
+            logger.error(e)
+            logger.warning("PDF text extraction failed, skip text extraction...")
+
+    strategy = determine_pdf_or_image_strategy(
+        strategy,
+        is_image=is_image,
+        pdf_text_extractable=pdf_text_extractable,
+        infer_table_structure=infer_table_structure,
+        extract_images_in_pdf=extract_images_in_pdf,
+        extract_image_block_types=extract_image_block_types,
+    )
+
+    if file is not None:
+        file.seek(0)
+
+    if strategy == PartitionStrategy.HI_RES:
+        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            elements = _partition_pdf_or_image_local(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                is_image=is_image,
+                infer_table_structure=infer_table_structure,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                hi_res_model_name=hi_res_model_name,
+                pdf_text_extractable=pdf_text_extractable,
+                extract_images_in_pdf=extract_images_in_pdf,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_output_dir=extract_image_block_output_dir,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                **kwargs,
+            )
+            out_elements = _process_uncategorized_text_elements(elements)
+
+    elif strategy == PartitionStrategy.FAST:
+        return extracted_elements
+
+    elif strategy == PartitionStrategy.OCR_ONLY:
+        # NOTE(robinson): Catches file conversion warnings when running with PDFs
+        with warnings.catch_warnings():
+            elements = _partition_pdf_or_image_with_ocr(
+                filename=filename,
+                file=file,
+                include_page_breaks=include_page_breaks,
+                languages=languages,
+                is_image=is_image,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                **kwargs,
+            )
+            out_elements = _process_uncategorized_text_elements(elements)
+
+    return out_elements
+
+
 def extractable_elements(
     filename: str = "",
     file: Optional[Union[bytes, IO[bytes]]] = None,
@@ -471,110 +577,6 @@ def _partition_pdf_or_image_local(
     return out_elements
 
 
-def partition_pdf_or_image(
-    filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    is_image: bool = False,
-    include_page_breaks: bool = False,
-    strategy: str = PartitionStrategy.AUTO,
-    infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = None,
-    metadata_last_modified: Optional[str] = None,
-    hi_res_model_name: Optional[str] = None,
-    extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
-    extract_image_block_output_dir: Optional[str] = None,
-    extract_image_block_to_payload: bool = False,
-    **kwargs,
-) -> List[Element]:
-    """Parses a pdf or image document into a list of interpreted elements."""
-    # TODO(alan): Extract information about the filetype to be processed from the template
-    # route. Decoding the routing should probably be handled by a single function designed for
-    # that task so as routing design changes, those changes are implemented in a single
-    # function.
-
-    # init ability to process .heic files
-    register_heif_opener()
-
-    validate_strategy(strategy, is_image)
-
-    last_modification_date = get_the_last_modification_date_pdf_or_img(
-        file=file,
-        filename=filename,
-    )
-
-    extracted_elements = []
-    pdf_text_extractable = False
-    if not is_image:
-        try:
-            extracted_elements = extractable_elements(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                **kwargs,
-            )
-            pdf_text_extractable = any(
-                isinstance(el, Text) and el.text.strip() for el in extracted_elements
-            )
-        except Exception as e:
-            logger.error(e)
-            logger.warning("PDF text extraction failed, skip text extraction...")
-
-    strategy = determine_pdf_or_image_strategy(
-        strategy,
-        is_image=is_image,
-        pdf_text_extractable=pdf_text_extractable,
-        infer_table_structure=infer_table_structure,
-        extract_images_in_pdf=extract_images_in_pdf,
-        extract_image_block_types=extract_image_block_types,
-    )
-
-    if file is not None:
-        file.seek(0)
-
-    if strategy == PartitionStrategy.HI_RES:
-        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            elements = _partition_pdf_or_image_local(
-                filename=filename,
-                file=spooled_to_bytes_io_if_needed(file),
-                is_image=is_image,
-                infer_table_structure=infer_table_structure,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                hi_res_model_name=hi_res_model_name,
-                pdf_text_extractable=pdf_text_extractable,
-                extract_images_in_pdf=extract_images_in_pdf,
-                extract_image_block_types=extract_image_block_types,
-                extract_image_block_output_dir=extract_image_block_output_dir,
-                extract_image_block_to_payload=extract_image_block_to_payload,
-                **kwargs,
-            )
-            out_elements = _process_uncategorized_text_elements(elements)
-
-    elif strategy == PartitionStrategy.FAST:
-        return extracted_elements
-
-    elif strategy == PartitionStrategy.OCR_ONLY:
-        # NOTE(robinson): Catches file conversion warnings when running with PDFs
-        with warnings.catch_warnings():
-            elements = _partition_pdf_or_image_with_ocr(
-                filename=filename,
-                file=file,
-                include_page_breaks=include_page_breaks,
-                languages=languages,
-                is_image=is_image,
-                metadata_last_modified=metadata_last_modified or last_modification_date,
-                **kwargs,
-            )
-            out_elements = _process_uncategorized_text_elements(elements)
-
-    return out_elements
 
 
 def _process_uncategorized_text_elements(elements: List[Element]):
