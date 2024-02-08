@@ -8,6 +8,7 @@ from pathlib import PurePath
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -77,7 +78,7 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
             setattr(self_cp, "_client", None)
         return _asdict(self_cp, **kwargs)
 
-    @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks")
+    @requires_dependencies(dependencies=["databricks.sdk"], extras="databricks-volumes")
     def generate_client(self) -> "WorkspaceClient":
         from databricks.sdk import WorkspaceClient
 
@@ -92,7 +93,12 @@ class DatabricksVolumesDestinationConnector(BaseDestinationConnector):
         return self._client
 
     def check_connection(self):
-        pass
+        try:
+            assert self.client.current_user.me().active
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
 
     def initialize(self):
         _ = self.client
