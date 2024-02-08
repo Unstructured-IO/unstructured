@@ -92,6 +92,7 @@ class FileType(enum.Enum):
     EPUB = 53
     RST = 54
     ORG = 55
+    FB2 = 56
 
     # Compressed Types
     ZIP = 60
@@ -156,6 +157,8 @@ STR_TO_FILETYPE = {
     "audio/wave": FileType.WAV,
     "audio/x-pn-wav": FileType.WAV,
     "audio/x-wav": FileType.WAV,
+    "application/fb2": FileType.FB2,
+    "text/fb2+xml": FileType.FB2,
     "inode/x-empty": FileType.EMPTY,
 }
 
@@ -221,6 +224,7 @@ EXT_TO_FILETYPE = {
     ".go": FileType.TXT,
     ".yaml": FileType.TXT,
     ".yml": FileType.TXT,
+    ".fb2": FileType.FB2,
     None: FileType.UNK,
 }
 

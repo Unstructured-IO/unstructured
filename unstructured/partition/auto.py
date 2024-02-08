@@ -53,6 +53,10 @@ if dependency_exists("pypandoc"):
 
     PARTITION_WITH_EXTRAS_MAP["epub"] = partition_epub
 
+if dependency_exists("pypandoc"):
+    from unstructured.partition.fb2 import partition_fb2
+
+    PARTITION_WITH_EXTRAS_MAP["epub"] = partition_fb2
 
 if dependency_exists("pypandoc"):
     from unstructured.partition.org import partition_org
@@ -356,6 +360,17 @@ def partition(
         )
     elif filetype == FileType.EPUB:
         _partition_epub = _get_partition_with_extras("epub")
+        elements = _partition_epub(
+            filename=filename,
+            file=file,
+            include_page_breaks=include_page_breaks,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype == FileType.EPUB:
+        _partition_epub = _get_partition_with_extras("fb2")
         elements = _partition_epub(
             filename=filename,
             file=file,
