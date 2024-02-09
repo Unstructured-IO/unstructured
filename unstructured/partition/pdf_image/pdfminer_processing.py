@@ -127,7 +127,7 @@ def merge_inferred_with_extracted_layout(
         )
 
         elements = inferred_page.get_elements_from_layout(
-            layout=cast(List[TextRegion], merged_layout),
+            layout=cast(List["TextRegion"], merged_layout),
             pdf_objects=extracted_page_layout,
         )
 
