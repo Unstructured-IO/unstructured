@@ -4,7 +4,7 @@ from unstructured.documents.elements import Text
 from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
 embedding_encoder = OctoAIEmbeddingEncoder(
-    config=OctoAiEmbeddingConfig(api_key=os.environ["OCTOAI_TOKEN"])
+    config=OctoAiEmbeddingConfig(api_key=os.environ["OCTOAI_API_KEY"])
 )
 elements = embedding_encoder.embed_documents(
     elements=[Text("This is sentence 1"), Text("This is sentence 2")],
