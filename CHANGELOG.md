@@ -1,8 +1,10 @@
-## 0.12.5-dev1
+## 0.12.5-dev2
 
 ### Enhancements
 
 ### Features
+
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 
 ### Fixes
 

@@ -6,4 +6,5 @@ EMBEDDING_PROVIDER_TO_CLASS_MAP = {
     "langchain-openai": OpenAIEmbeddingEncoder,
     "langchain-huggingface": HuggingFaceEmbeddingEncoder,
     "langchain-aws-bedrock": BedrockEmbeddingEncoder,
+    "octoai": BedrockEmbeddingEncoder,
 }
