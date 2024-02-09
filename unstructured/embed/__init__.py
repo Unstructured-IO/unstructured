@@ -4,7 +4,7 @@ from unstructured.embed.octoai import OctoAIEmbeddingEncoder
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 
 EMBEDDING_PROVIDER_TO_CLASS_MAP = {
-    "langchain-octoai": OctoAIEmbeddingEncoder,
+    "octoai": OctoAIEmbeddingEncoder,
     "langchain-openai": OpenAIEmbeddingEncoder,
     "langchain-huggingface": HuggingFaceEmbeddingEncoder,
     "langchain-aws-bedrock": BedrockEmbeddingEncoder,
