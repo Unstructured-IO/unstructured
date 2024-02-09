@@ -230,9 +230,9 @@ class VectaraDestinationConnector(BaseDestinationConnector):
             local_path = doc._output_filename
             with open(local_path) as json_file:
                 dict_content = json.load(json_file)
-                [e["type"] for e in dict_content]
                 vdoc = {
                     "documentId": str(uuid.uuid4()),
+                    "title": dict_content[0].get("metadata", {}).get("data_source", {}).get("url"),
                     "section": [
                         {
                             "text": element.pop("text", None),

@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/reddit.txt ingest/reddit.in
 #
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in

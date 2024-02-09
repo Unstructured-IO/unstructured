@@ -6,7 +6,6 @@ from ftplib import FTP, error_perm
 from pathlib import Path
 
 import requests
-from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
@@ -167,6 +166,8 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         return endpoint_url
 
     def _list_objects_api(self) -> t.List[BiomedFileMeta]:
+        from bs4 import BeautifulSoup
+
         def urls_to_metadata(urls):
             files = []
             for url in urls:
