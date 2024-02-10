@@ -25,7 +25,7 @@ class OctoAiEmbeddingConfig(EmbeddingConfig):
 @dataclass
 class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
     config: OctoAiEmbeddingConfig
-    # We are using the OpenAI SDK
+    # Uses the OpenAI SDK
     _client: Optional["OpenAI"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
 
@@ -73,7 +73,7 @@ class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
         extras="embed-openai",
     )
     def create_client(self) -> "OpenAI":
-        """Creates an OpenAI python client to embed elements. We are using the OpenAI SDK."""
+        """Creates an OpenAI python client to embed elements. Uses the OpenAI SDK."""
         from openai import OpenAI
 
         return OpenAI(api_key=self.config.api_key, base_url=OCTOAI_BASE_URL)
