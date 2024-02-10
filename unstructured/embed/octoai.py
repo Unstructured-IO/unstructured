@@ -13,6 +13,8 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from openai import OpenAI
 
+OCTOAI_BASE_URL = "https://text.octoai.run/v1"
+
 
 @dataclass
 class OctoAiEmbeddingConfig(EmbeddingConfig):
@@ -23,6 +25,7 @@ class OctoAiEmbeddingConfig(EmbeddingConfig):
 @dataclass
 class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
     config: OctoAiEmbeddingConfig
+    # We are using the OpenAI SDK
     _client: Optional["OpenAI"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
 
@@ -70,7 +73,7 @@ class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
         extras="embed-openai",
     )
     def create_client(self) -> "OpenAI":
-        """Creates an OpenAI python client to embed elements."""
+        """Creates an OpenAI python client to embed elements. We are using the OpenAI SDK."""
         from openai import OpenAI
 
-        return OpenAI(api_key=self.config.api_key, base_url="https://text.octoai.run/v1")
+        return OpenAI(api_key=self.config.api_key, base_url=OCTOAI_BASE_URL)
