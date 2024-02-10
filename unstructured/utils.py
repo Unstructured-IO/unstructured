@@ -228,8 +228,19 @@ def dependency_exists(dependency: str):
     return True
 
 
-# Copied from unstructured/ingest/connector/biomed.py
-def validate_date_args(date: Optional[str] = None):
+def validate_date_args(date: Optional[str] = None) -> bool:
+    """Validate whether the provided date string satisfies any of the supported date formats.
+    Used by unstructured/ingest/connector/biomed.py
+
+    Returns `True` if the date string satisfies any of the supported formats, otherwise raises
+    `ValueError`.
+
+    Supported Date Formats:
+        - 'YYYY-MM-DD'
+        - 'YYYY-MM-DDTHH:MM:SS'
+        - 'YYYY-MM-DD+HH:MM:SS'
+        - 'YYYY-MM-DDTHH:MM:SS±HHMM'
+    """
     if not date:
         raise ValueError("The argument date is None.")
 
@@ -241,8 +252,8 @@ def validate_date_args(date: Optional[str] = None):
             pass
 
     raise ValueError(
-        f"The argument {date} does not satisfy the format: "
-        "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SStz",
+        f"The argument {date} does not satisfy the format:"
+        " YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SS±HHMM",
     )
 
 
@@ -647,7 +658,7 @@ def catch_overlapping_and_nested_bboxes(
     elements: List["Text"],
     nested_error_tolerance_px: int = 5,
     sm_overlap_threshold: float = 10.0,
-) -> (bool, List[Dict]):
+) -> tuple[bool, List[Dict]]:
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
     num_pages = elements[-1].metadata.page_number
