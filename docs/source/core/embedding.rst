@@ -43,10 +43,10 @@ To obtain an api key, visit: https://platform.openai.com/account/api-keys
     import os
 
     from unstructured.documents.elements import Text
-    from unstructured.embed.openai import OpenAIEmbeddingEncoder
+    from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
 
     # Initialize the encoder with OpenAI credentials
-    embedding_encoder = OpenAIEmbeddingEncoder(api_key=os.environ["OPENAI_API_KEY"])
+    embedding_encoder = OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(api_key=os.environ["OPENAI_API_KEY"]))
 
     # Embed a list of Elements
     elements = embedding_encoder.embed_documents(
@@ -130,3 +130,47 @@ To create an instance of the `BedrockEmbeddingEncoder`, AWS credentials and the 
 
 Dependencies:
 This class relies on several dependencies which include boto3, numpy, and langchain. Ensure these are installed and available in the environment where this class is utilized.
+
+``OctoAIEmbeddingEncoder``
+--------------------------
+
+The ``OctoAIEmbeddingEncoder`` class connects to the OctoAI Text&Embedding API to obtain embeddings for pieces of text.
+
+``embed_documents`` will receive a list of Elements, and return an updated list which
+includes the ``embeddings`` attribute for each Element.
+
+``embed_query`` will receive a query as a string, and return a list of floats which is the
+embedding vector for the given query string.
+
+``num_of_dimensions`` is a metadata property that denotes the number of dimensions in any
+embedding vector obtained via this class.
+
+``is_unit_vector`` is a metadata property that denotes if embedding vectors obtained via
+this class are unit vectors.
+
+The following code block shows an example of how to use ``OctoAIEmbeddingEncoder``. You will
+see the updated elements list (with the ``embeddings`` attribute included for each element),
+the embedding vector for the query string, and some metadata properties about the embedding model.
+You will need to set an environment variable named ``OCTOAI_API_KEY`` to be able to run this example.
+To obtain an api key, visit: https://octo.ai/docs/getting-started/how-to-create-an-octoai-access-token
+
+.. code:: python
+
+    import os
+
+    from unstructured.documents.elements import Text
+    from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
+
+    embedding_encoder = OctoAIEmbeddingEncoder(
+        config=OctoAiEmbeddingConfig(api_key=os.environ["OCTOAI_API_KEY"])
+    )
+    elements = embedding_encoder.embed_documents(
+        elements=[Text("This is sentence 1"), Text("This is sentence 2")],
+    )
+
+    query = "This is the query"
+    query_embedding = embedding_encoder.embed_query(query=query)
+
+    [print(e.embeddings, e) for e in elements]
+    print(query_embedding, query)
+    print(embedding_encoder.is_unit_vector(), embedding_encoder.num_of_dimensions())
