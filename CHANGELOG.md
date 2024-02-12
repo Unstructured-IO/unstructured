@@ -1,13 +1,14 @@
-## 0.12.5-dev0
+## 0.12.5-dev3
 
 ### Enhancements
 
 ### Features
 
-
 ### Fixes
 
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors ** 
 
 ## 0.12.4
 
@@ -34,7 +35,7 @@
   dependencies and adds missing extra dependencies.
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add title to Vectara upload - was not separated out from initial connector **
-* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test**
+* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
 
 ## 0.12.3
 
