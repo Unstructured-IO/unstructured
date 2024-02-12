@@ -140,7 +140,7 @@ class OpenSearchSourceConnector(ElasticsearchSourceConnector):
 
     def check_connection(self):
         try:
-            self.ops.ping()
+            assert self.ops.ping()
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")

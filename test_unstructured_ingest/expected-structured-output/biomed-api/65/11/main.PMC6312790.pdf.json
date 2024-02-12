@@ -611,7 +611,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "3d72d60fd0ff59113ec3093fa0e775b6",
+    "element_id": "bd386031e311cac62f5c6b4bb24b97d9",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -620,7 +620,7 @@
       ],
       "page_number": 4
     },
-    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 0.0003 24.0910 2.8163 2 1.9460 0.0596 0.0002 121.440 1.5054 4 0.0163 0.2369 0.0001 42.121 0.9476 6 0.3233 0.0540 5.39E-05 373.180 0.4318 8 0.1240 0.0556 5.46E-05 305.650 0.3772 10 0.0382 0.0086 1.24E-05 246.080 0.0919",
+    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 —0.9393 0.0003 24.0910 2.8163 2 1.9460 0.0596 —0.8276 0.0002 121.440 1.5054 4 0.0163 0.2369 —0.8825 0.0001 42.121 0.9476 6 0.3233 0.0540 —0.8027 5.39E-05 373.180 0.4318 8 0.1240 0.0556 —0.5896 5.46E-05 305.650 0.3772 10 0.0382 0.0086 —0.5356 1.24E-05 246.080 0.0919",
     "type": "Table"
   },
   {
@@ -728,7 +728,7 @@
     "type": "FigureCaption"
   },
   {
-    "element_id": "d04d110c16a4ebc184fa130f09b8d423",
+    "element_id": "af1d52dd4c315c92d1495f1f13478802",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -737,7 +737,7 @@
       ],
       "page_number": 5
     },
-    "text": "Sem ny. 200 Rv",
+    "text": "Sem ny. 200 Rv roiiist BEMMAG. 1.00 Kx 20 i",
     "type": "Image"
   },
   {
@@ -962,7 +962,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "59664b2fe1b21e796c905c904f07faae",
+    "element_id": "9da61b7e10c0a3a3c9c8fa32aafc7633",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -971,7 +971,7 @@
       ],
       "page_number": 6
     },
-    "text": "~ CRo",
+    "text": "_ CRo—CR O= OR",
     "type": "Formula"
   },
   {
