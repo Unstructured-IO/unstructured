@@ -4,6 +4,8 @@
 
 ### Features
 
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+
 ### Fixes
 
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors ** 
