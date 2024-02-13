@@ -1,4 +1,4 @@
-## 0.12.5-dev2
+## 0.12.5-dev3
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Fixes
 
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors ** 
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
 
 ## 0.12.4
 
