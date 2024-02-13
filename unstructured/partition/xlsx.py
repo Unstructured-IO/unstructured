@@ -25,11 +25,7 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -88,8 +84,6 @@ def partition_xlsx(
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
     """
-    exactly_one(filename=filename, file=file)
-
     last_modification_date = None
     header = 0 if include_header else None
 
@@ -111,7 +105,7 @@ def partition_xlsx(
         )
         last_modification_date = get_last_modified_date_from_file(file)
     else:
-        raise ValueError("Either 'filename' or 'file' argument must be specified.")
+        raise ValueError("Either 'filename' or 'file' argument must be specified")
 
     elements: list[Element] = []
     for page_number, (sheet_name, sheet) in enumerate(sheets.items(), start=1):
@@ -414,25 +408,15 @@ def _find_min_max_coord(connected_component: list[_CellCoordinate]) -> tuple[int
 def _check_content_element_type(text: str) -> Element:
     """Create `Text`-subtype document element appropriate to `text`."""
     if is_bulleted_text(text):
-        return ListItem(
-            text=clean_bullets(text),
-        )
+        return ListItem(text=clean_bullets(text))
     elif is_possible_numbered_list(text):
-        return ListItem(
-            text=text,
-        )
+        return ListItem(text=text)
     elif is_possible_narrative_text(text):
-        return NarrativeText(
-            text=text,
-        )
+        return NarrativeText(text=text)
     elif is_possible_title(text):
-        return Title(
-            text=text,
-        )
+        return Title(text=text)
     else:
-        return Text(
-            text=text,
-        )
+        return Text(text=text)
 
 
 def _get_metadata(

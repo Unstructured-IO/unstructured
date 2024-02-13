@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import sys
+import tempfile
 
 import pandas as pd
 import pandas.testing as pdt
@@ -18,7 +19,7 @@ from test_unstructured.partition.test_constants import (
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Table, Text, Title
+from unstructured.documents.elements import ListItem, Table, Text, Title
 from unstructured.partition.xlsx import _SubtableParser, partition_xlsx
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -49,11 +50,51 @@ def test_partition_xlsx_from_filename():
     assert elements[1].metadata.filename == "stanley-cups.xlsx"
 
 
-def test_partition_xlsx_from_filename_with_emoji():
-    elements = partition_xlsx("example-docs/emoji.xlsx", include_header=False)
+def test_partition_xlsx_from_filename_no_subtables():
+    """Partition to a single `Table` element per worksheet."""
+    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+
+
+def test_partition_xlsx_from_filename_no_subtables_no_metadata():
+    elements = partition_xlsx(
+        "example-docs/stanley-cups.xlsx", find_subtable=False, include_metadata=False
+    )
+
+    assert elements == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+    assert all(e.metadata.text_as_html is None for e in elements)
+
+
+def test_partition_xlsx_from_SpooledTemporaryFile_with_emoji():
+    f = tempfile.SpooledTemporaryFile()
+    with open("example-docs/emoji.xlsx", "rb") as g:
+        f.write(g.read())
+    elements = partition_xlsx(file=f, include_header=False)
     assert sum(isinstance(element, Text) for element in elements) == 1
     assert len(elements) == 1
     assert clean_extra_whitespace(elements[0].text) == "🤠😅"
+
+
+def test_partition_xlsx_raises_on_no_file_or_path_provided():
+    with pytest.raises(ValueError, match="Either 'filename' or 'file' argument must be specif"):
+        partition_xlsx()
 
 
 def test_partition_xlsx_from_filename_with_metadata_filename():
@@ -236,9 +277,42 @@ def test_partition_xlsx_metadata_language_from_filename():
 
 
 def test_partition_xlsx_subtables():
-    elements = partition_xlsx("example-docs/vodafone.xlsx")
-    assert sum(isinstance(element, Table) for element in elements) == 3
-    assert len(elements) == 6
+    assert partition_xlsx("example-docs/xlsx-subtable-cases.xlsx") == [
+        Table("\n\n\na\nb\n\n\n\n\nc\nd\n\ne\n\n\n"),
+        ListItem("f"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        ListItem("2. e"),
+        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        Title("e"),
+        Title("f"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("f"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Title("g"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("f"),
+        Title("g"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Title("g"),
+        Title("h"),
+        Table("\n\n\na\nb\nc\n\n\n"),
+        Title("a"),
+        Table("\n\n\nb\nc\nd\n\n\n"),
+        Table("\n\n\na\nb\nc\n\n\n"),
+        Title("d"),
+        Title("e"),
+    ]
 
 
 def test_partition_xlsx_element_metadata_has_languages():
