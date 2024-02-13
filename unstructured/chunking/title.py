@@ -5,7 +5,7 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
-from typing import Iterator, Optional
+from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
     CHUNK_MAX_CHARS_DEFAULT,
@@ -23,7 +23,7 @@ from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
-    elements: list[Element],
+    elements: Iterable[Element],
     multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
     combine_text_under_n_chars: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,

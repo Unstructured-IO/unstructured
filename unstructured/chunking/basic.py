@@ -15,14 +15,14 @@ started.
 
 from __future__ import annotations
 
-from typing import Optional, Sequence
+from typing import Iterable, Optional
 
 from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, BasePreChunker, ChunkingOptions
 from unstructured.documents.elements import Element
 
 
 def chunk_elements(
-    elements: Sequence[Element],
+    elements: Iterable[Element],
     new_after_n_chars: Optional[int] = None,
     max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
     overlap: int = 0,
