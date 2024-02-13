@@ -28,7 +28,7 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
                 ["--collection-name"],
                 required=True,
                 type=str,
-                help="The name of the Chroma collection to write into.",
+                help="The name of the Astra DB collection to write into.",
             ),
         ]
         return options
