@@ -36,7 +36,7 @@ def run_check(token, api_endpoint, collection_name):
 
     # Check that the assertion is true
     assert number_of_embeddings == expected_embeddings, (
-        f"Number of rows in generated table ({number_of_embeddings}) "
+        f"Number of rows in generated table ({number_of_embeddings})"
         f"doesn't match expected value: {expected_embeddings}"
     )
 
