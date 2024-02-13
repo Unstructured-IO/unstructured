@@ -17,7 +17,8 @@ CI=${CI:-"false"}
 
 if [ "$CI" == "false" ]; then
   # sets the PACKAGE_NAME when on local
-  source $ROOT_DIR/.env
+  # shellcheck disable=SC1091
+  source "$ROOT_DIR/.env"
 fi
 
 PACKAGE_NAME=${PACKAGE_NAME:-"unstructured"}
