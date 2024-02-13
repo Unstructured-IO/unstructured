@@ -5,6 +5,7 @@
 ### Features
 
 * **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+* **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
 
 ### Fixes
 
