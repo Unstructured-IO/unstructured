@@ -21,7 +21,7 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
             click.Option(
                 ["--api-endpoint"],
                 required=True,
-                type=Dict(),
+                type=str,
                 help="The API endpoint for the Astra DB.",
             ),
             click.Option(
