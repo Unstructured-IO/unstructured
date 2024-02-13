@@ -47,7 +47,7 @@ class AstraDBWriteConfig(WriteConfig):
 class AstraDBDestinationConnector(BaseDestinationConnector):
     write_config: AstraDBWriteConfig
     connector_config: SimpleAstraDBConfig
-    _astra_db = t.Optional["AstraDB"] = field(init=False, default=None)
+    _astra_db: t.Optional["AstraDB"] = field(init=False, default=None)
     _astra_db_collection: t.Optional["AstraDBCollection"] = field(init=False, default=None)
 
     def to_dict(self, **kwargs):
