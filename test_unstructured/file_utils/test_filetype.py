@@ -166,6 +166,17 @@ def test_detects_go_mime_type():
     assert _is_code_mime_type("text/x-go") is True
 
 
+def test_detect_xml_application_go(monkeypatch, tmpdir):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-go")
+
+    filename = os.path.join(tmpdir, "fake.go")
+    with open(filename, "w") as f:
+        f.write("")
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(filename=filename) == FileType.TXT
+
+
 def test_detect_xml_application_rtf(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/rtf")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.rtf")
