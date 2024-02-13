@@ -411,6 +411,7 @@ def test_filetype_order():
         (b"d\xe2\x80", False),  # Invalid JSON
         (b'[{"key": "value"}]', True),  # Valid JSON
         (b"", False),  # Empty content
+        (b'"This is not a JSON"', False) # Serializable as JSON, but we want to treat it as txt
     ],
 )
 def test_is_text_file_a_json(content, expected):
