@@ -5,12 +5,22 @@ set -e
 SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
+# ROOT_DIR is the pwd if none is assigned from another script
+ROOT_DIR=${ROOT_DIR:-"$PWD"}
 OUTPUT_FOLDER_NAME=s3
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+CI=${CI:-"false"}
+
+if [ "$CI" == "false" ]; then
+  # sets the PACKAGE_NAME when on local
+  source $ROOT_DIR/.env
+fi
+
+PACKAGE_NAME=${PACKAGE_NAME:-"unstructured"}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -22,6 +32,16 @@ function cleanup() {
 trap cleanup EXIT
 
 "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
+
+echo "package_name: $PACKAGE_NAME"
+
+if [ "$PACKAGE_NAME" = "unstructured" ]; then
+  RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
+elif [ "$PACKAGE_NAME" = "core-product" ]; then
+  cd "$PWD"/.. || exit 1
+  PYTHONPATH=upstream-unstructured:upstream-unstructured-inference:.
+  RUN_SCRIPT=${RUN_SCRIPT:-./test_unstructured_ingest/patched_main.py}
+fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \

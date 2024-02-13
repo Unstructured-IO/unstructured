@@ -385,6 +385,7 @@ jobs:
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
+        RUNNING_ENV: "opensource"
       run: |
         source .venv/bin/activate
         sudo apt-get update

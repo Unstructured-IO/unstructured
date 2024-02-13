@@ -97,6 +97,7 @@ jobs:
           OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
           OVERWRITE_FIXTURES: "true"
           CI: "true"
+          RUNNING_ENV: "opensource"
         run: |
           source .venv/bin/activate
           sudo apt-get update
