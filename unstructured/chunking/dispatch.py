@@ -82,30 +82,16 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
         # -- call the partitioning function to get the elements --
         elements = func(*args, **kwargs)
 
-        # -- look for a chunking-strategy argument and run the indicated chunker when present --
+        # -- look for a chunking-strategy argument --
         call_args = get_call_args_applying_defaults()
+        chunking_strategy = call_args.pop("chunking_strategy", None)
 
-        if call_args.get("chunking_strategy") == "by_title":
-            return chunk_by_title(
-                elements,
-                combine_text_under_n_chars=call_args.get("combine_text_under_n_chars"),
-                max_characters=call_args.get("max_characters"),
-                multipage_sections=call_args.get("multipage_sections"),
-                new_after_n_chars=call_args.get("new_after_n_chars"),
-                overlap=call_args.get("overlap"),
-                overlap_all=call_args.get("overlap_all"),
-            )
+        # -- no chunking-strategy means no chunking --
+        if chunking_strategy is None:
+            return elements
 
-        if call_args.get("chunking_strategy") == "basic":
-            return chunk_elements(
-                elements,
-                max_characters=call_args.get("max_characters"),
-                new_after_n_chars=call_args.get("new_after_n_chars"),
-                overlap=call_args.get("overlap"),
-                overlap_all=call_args.get("overlap_all"),
-            )
-
-        return elements
+        # -- otherwise, chunk away :) --
+        return chunk(elements, chunking_strategy, **call_args)
 
     return wrapper
 
