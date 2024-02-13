@@ -162,7 +162,8 @@ def test_save_elements_with_output_dir_path_none():
 
         # Verify that the images are saved in the expected directory
         expected_output_dir = os.path.join(tmpdir, "figures")
-        assert os.path.exists(expected_output_dir) and os.path.isdir(expected_output_dir)
+        assert os.path.exists(expected_output_dir)
+        assert os.path.isdir(expected_output_dir)
         os.chdir(original_cwd)
 
 
