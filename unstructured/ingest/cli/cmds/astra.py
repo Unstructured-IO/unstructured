@@ -19,7 +19,7 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
                 help="Astra DB Token with access to the database.",
             ),
             click.Option(
-                ["--api_endpoint"],
+                ["--api-endpoint"],
                 required=True,
                 type=Dict(),
                 help="The API endpoint for the Astra DB.",
