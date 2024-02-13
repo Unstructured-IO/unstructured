@@ -16,9 +16,12 @@ max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 
 if [ "$CI" == "false" ]; then
-  # sets the PACKAGE_NAME when on local
-  # shellcheck disable=SC1091
-  source "$ROOT_DIR/.env"
+  if [ -f "$ROOT_DIR/.env" ]; then
+    # shellcheck disable=SC1091
+    source "$ROOT_DIR/.env"
+  else
+    echo ".env file not found, skipping..."
+  fi
 fi
 
 PACKAGE_NAME=${PACKAGE_NAME:-"unstructured"}
@@ -33,8 +36,6 @@ function cleanup() {
 trap cleanup EXIT
 
 "$SCRIPT_DIR"/check-num-files-expected-output.sh 3 $OUTPUT_FOLDER_NAME 20k
-
-echo "package_name: $PACKAGE_NAME"
 
 if [ "$PACKAGE_NAME" = "unstructured" ]; then
   RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
