@@ -46,6 +46,9 @@ def run_check(token, api_endpoint, collection_name):
     # Check that we retrieved the coded cleats copy data
     assert find_result[0]["name"] == "Coded Cleats Copy"
 
+    # Clean up the collection
+    astra_db.delete_collection(collection_name)
+
     print("Table check complete")
 
 
