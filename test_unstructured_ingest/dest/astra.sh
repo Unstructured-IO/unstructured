@@ -11,31 +11,31 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_PATH=$SCRIPT_DIR/astra-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-CI=${CI:-"false"}
+
+if [ -z "$ASTRA_DB_APPLICATION_TOKEN" ]; then
+  echo "Skipping Astra DB ingest test because ASTRA_DB_APPLICATION_TOKEN env var is not set."
+  exit 0
+fi
+
+if [ -z "$ASTRA_DB_API_ENDPOINT" ]; then
+  echo "Skipping Astra DB ingest test because ASTRA_DB_API_ENDPOINT env var is not set."
+  exit 0
+fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
-
 COLLECTION_NAME="astra-test-output-$RANDOM_SUFFIX"
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  # Kill Astra background process
-  pgrep -f astra-dest | xargs kill
   cleanup_dir "$DESTINATION_PATH"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  if [ "$CI" == "true" ]; then
-    cleanup_dir "$DOWNLOAD_DIR"
-  fi
+  cleanup_dir "$DOWNLOAD_DIR"
 }
 
 trap cleanup EXIT
-
-# Run Astra from different script so it can be forced into background
-scripts/astra-test-helpers/create-and-check-astra.sh "$DESTINATION_PATH"
-wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -50,11 +50,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   astra \
-  --host "localhost" \
-  --port 8000 \
-  --collection-name "$COLLECTION_NAME" \
-  --tenant "default_tenant" \
-  --database "default_database" \
-  --batch-size 80
+  --token "$ASTRA_DB_APPLICATION_TOKEN" \
+  --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
+  --collection-name "$COLLECTION_NAME"
 
-python "$SCRIPT_DIR"/python/test-ingest-astra-output.py --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-astra-output.py --token "$ASTRA_DB_APPLICATION_TOKEN" --api-endpoint "$ASTRA_DB_API_ENDPOINT" --collection-name "$COLLECTION_NAME"
