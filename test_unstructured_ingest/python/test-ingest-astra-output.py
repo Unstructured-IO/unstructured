@@ -40,6 +40,12 @@ def run_check(token, api_endpoint, collection_name):
         f"doesn't match expected value: {expected_embeddings}"
     )
 
+    # Perform a similarity search
+    find_result = astra_db_collection.vector_find([0.1, 0.1, 0.2, 0.5, 1], limit=3)
+
+    # Check that we retrieved the coded cleats copy data
+    assert find_result[0]["name"] == "Coded Cleats Copy"
+
     print("Table check complete")
 
 
