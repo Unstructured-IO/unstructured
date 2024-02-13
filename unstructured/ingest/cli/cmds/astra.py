@@ -20,13 +20,13 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
             ),
             click.Option(
                 ["--api_endpoint"],
-                required=False,
+                required=True,
                 type=Dict(),
                 help="The API endpoint for the Astra DB.",
             ),
             click.Option(
                 ["--collection-name"],
-                required=True,
+                required=False,
                 type=str,
                 help="The name of the Astra DB collection to write into.",
             ),

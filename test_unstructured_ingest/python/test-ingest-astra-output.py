@@ -5,14 +5,14 @@ from astrapy.db import AstraDB
 @click.command()
 @click.option("--token", type=str)
 @click.option("--api-endpoint", type=str)
-@click.option("--collection-name", type=str)
+@click.option("--collection-name", type=str, default="collection_test")
 def run_check(token, api_endpoint, collection_name):
     print(f"Checking contents of Astra DB collection: {collection_name}")
 
     # Initialize our vector db
     astra_db = AstraDB(token=token, api_endpoint=api_endpoint)
-    astra_db.delete_collection("collection_test")
-    astra_db_collection = astra_db.create_collection("collection_test", dimension=5)
+    astra_db.delete_collection(collection_name)
+    astra_db_collection = astra_db.create_collection(collection_name, dimension=5)
 
     # Insert a document into the test collection
     astra_db_collection.insert_one(
