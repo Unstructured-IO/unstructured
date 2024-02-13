@@ -68,7 +68,7 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
         if self._astra_db_collection is None:
-            from astra.db import AstraDB
+            from astrapy.db import AstraDB
 
             # Build the Astra DB object
             self._astra_db = AstraDB(
