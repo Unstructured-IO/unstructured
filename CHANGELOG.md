@@ -8,7 +8,8 @@
 
 ### Fixes
 
-* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors ** 
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized a JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
 
 ## 0.12.4
 
