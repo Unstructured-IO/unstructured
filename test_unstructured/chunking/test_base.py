@@ -105,6 +105,13 @@ class DescribeChunkingOptions:
         ):
             ChunkingOptions.new(new_after_n_chars=n_chars)
 
+    def it_rejects_overlap_not_less_than_max_characters(self):
+        with pytest.raises(
+            ValueError,
+            match="'overlap' argument must be less than `max_characters`, got 300 >= 200",
+        ):
+            ChunkingOptions(max_characters=200, overlap=300)._validate()
+
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
         """Caller can specify `new_after_n_chars` arg without specifying any other options.
 
@@ -480,6 +487,37 @@ class DescribeTablePreChunk:
 
 class DescribeTextPreChunk:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
+
+    @pytest.mark.parametrize(
+        ("overlap_pfx", "texts", "other_overlap_pfx", "other_texts", "expected_value"),
+        [
+            # -- same elements, and overlap-prefix --
+            ("foo", ["bar", "baz"], "foo", ["bar", "baz"], True),
+            # -- same elements, no overlap-prefix --
+            ("", ["bar", "baz"], "", ["bar", "baz"], True),
+            # -- same elements, different overlap-prefix --
+            ("foo", ["bar", "baz"], "fob", ["bar", "baz"], False),
+            # -- different elements, same overlap-prefix --
+            ("foo", ["bar", "baz"], "foo", ["bah", "dah"], False),
+            # -- different elements, different overlap-prefix --
+            ("", ["bar", "baz"], "foo", ["bah", "dah"], False),
+        ],
+    )
+    def it_knows_when_it_is_equal_to_another_TextPreChunk_instance(
+        self,
+        overlap_pfx: str,
+        texts: list[str],
+        other_overlap_pfx: str,
+        other_texts: list[str],
+        expected_value: bool,
+    ):
+        opts = ChunkingOptions()
+        pre_chunk = TextPreChunk([Text(t) for t in texts], overlap_prefix=overlap_pfx, opts=opts)
+        other_pre_chunk = TextPreChunk(
+            [Text(t) for t in other_texts], overlap_prefix=other_overlap_pfx, opts=opts
+        )
+
+        assert (pre_chunk == other_pre_chunk) is expected_value
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),

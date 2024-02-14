@@ -279,7 +279,10 @@ class ChunkingOptions:
         # otherwise there could be corner cases leading to an infinite
         # loop (I think).
         if self.overlap >= max_characters:
-            raise ValueError(f"'overlap' must be less than max_characters," f" got {self.overlap}")
+            raise ValueError(
+                f"'overlap' argument must be less than `max_characters`,"
+                f" got {self.overlap} >= {max_characters}"
+            )
 
 
 class _TextSplitter:
@@ -731,7 +734,7 @@ class TextPreChunk:
                     yield field_name, self._consolidated_regex_meta
                 elif strategy is CS.DROP:
                     continue
-                else:
+                else:  # pragma: no cover
                     # -- not likely to hit this since we have a test in `text_elements.py` that
                     # -- ensures every ElementMetadata fields has an assigned strategy.
                     raise NotImplementedError(
