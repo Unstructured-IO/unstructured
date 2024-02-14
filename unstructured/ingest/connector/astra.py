@@ -87,7 +87,7 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["astrapy"], extras="astra")
     @DestinationConnectionError.wrap
     def initialize(self):
-        _ = self._astra_db_collection
+        astra_db_collection = self._astra_db_collection
 
     @requires_dependencies(["astrapy"], extras="astra")
     def check_connection(self):
@@ -108,8 +108,8 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
     def normalize_dict(self, element_dict: dict) -> dict:
         return {
             "id": str(uuid.uuid4()),
-            "vector": element_dict.pop("vector", None),
-            "content": element_dict.pop("content", None),
+            "vector": element_dict.pop("embeddings", None),
+            "content": element_dict.pop("text", None),
             "metadata": flatten_dict(
                 element_dict, separator="-", flatten_lists=True, remove_none=True
             ),

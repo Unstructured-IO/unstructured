@@ -28,7 +28,13 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
                 ["--collection-name"],
                 required=False,
                 type=str,
-                help="The name of the Astra DB collection to write into.",
+                help="The name of the Astra DB collection to write into. Note that the collection name must only include letters, numbers, and underscores.",
+            ),
+            click.Option(
+                ["--embedding-dimension"],
+                default=384,
+                type=int,
+                help="The dimensionality of the embeddings",
             ),
         ]
         return options

@@ -23,7 +23,8 @@ if [ -z "$ASTRA_DB_API_ENDPOINT" ]; then
 fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
-COLLECTION_NAME="astra-test-output-$RANDOM_SUFFIX"
+COLLECTION_NAME="astra_test_output_$RANDOM_SUFFIX"
+EMBEDDING_DIMENSION=384
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -52,6 +53,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   astra \
   --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
-  --collection-name "$COLLECTION_NAME"
+  --collection-name "$COLLECTION_NAME" \
+  --embedding-dimension "$EMBEDDING_DIMENSION"
 
 python "$SCRIPT_DIR"/python/test-ingest-astra-output.py --token "$ASTRA_DB_APPLICATION_TOKEN" --api-endpoint "$ASTRA_DB_API_ENDPOINT" --collection-name "$COLLECTION_NAME"

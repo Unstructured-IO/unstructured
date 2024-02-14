@@ -1,4 +1,5 @@
 import click
+import random
 
 from astrapy.db import AstraDB
 
@@ -6,27 +7,17 @@ from astrapy.db import AstraDB
 @click.option("--token", type=str)
 @click.option("--api-endpoint", type=str)
 @click.option("--collection-name", type=str, default="collection_test")
-def run_check(token, api_endpoint, collection_name):
+@click.option("--embedding-dimension", type=int, default=384)
+def run_check(token, api_endpoint, collection_name, embedding_dimension):
     print(f"Checking contents of Astra DB collection: {collection_name}")
 
     # Initialize our vector db
     astra_db = AstraDB(token=token, api_endpoint=api_endpoint)
-    astra_db.delete_collection(collection_name)
-    astra_db_collection = astra_db.create_collection(collection_name, dimension=5)
-
-    # Insert a document into the test collection
-    astra_db_collection.insert_one(
-        {
-            "_id": "1",
-            "name": "Coded Cleats Copy",
-            "description": "ChatGPT integrated sneakers that talk to you",
-            "$vector": [0.25, 0.25, 0.25, 0.25, 0.25],
-        }
-    )
+    astra_db_collection = astra_db.collection(collection_name)
 
     # Tally up the embeddings
     docs_count = astra_db_collection.count_documents()
-    number_of_embeddings = docs_count["status"]["count"]
+    number_of_embeddings = docs_count["status"]["count"] 
 
     # Print the results
     expected_embeddings = 1
@@ -40,8 +31,11 @@ def run_check(token, api_endpoint, collection_name):
         f"doesn't match expected value: {expected_embeddings}"
     )
 
+    # Generate a random embedding of the appropriate length
+    random_vector = [round(random.uniform(0, 1), 1) for _ in range(embedding_dimension)]
+
     # Perform a similarity search
-    find_result = astra_db_collection.vector_find([0.1, 0.1, 0.2, 0.5, 1], limit=3)
+    find_result = astra_db_collection.vector_find(random_vector)
 
     # Check that we retrieved the coded cleats copy data
     assert find_result[0]["name"] == "Coded Cleats Copy"
