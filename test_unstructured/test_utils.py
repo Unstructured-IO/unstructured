@@ -327,3 +327,13 @@ def test_catch_overlapping_and_nested_bboxes(
     )
     assert overlapping_flag == expectation[0]
     assert overlapping_cases == expectation[1]
+
+
+def test_validate_data_args():
+    assert utils.validate_date_args("2020-10-10") is True
+
+    with pytest.raises(ValueError):
+        utils.validate_date_args("blah")
+
+    with pytest.raises(ValueError):
+        utils.validate_date_args(None)
