@@ -31,7 +31,7 @@
 * **Fix `partition_pdf()` not working when using chipper model with `file`**
 * **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
 * **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
-* **Fix remove Vectara requirements from setup.py - there are no dependencies **
+* **Fix remove Vectara requirements from setup.py - there are no dependencies**
 * **Add missing dependency files to package manifest**. Updates the file path for the ingest
   dependencies and adds missing extra dependencies.
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
