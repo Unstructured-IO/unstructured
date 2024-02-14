@@ -166,6 +166,17 @@ def test_detects_go_mime_type():
     assert _is_code_mime_type("text/x-go") is True
 
 
+def test_detect_xml_application_go(monkeypatch, tmpdir):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-go")
+
+    filename = os.path.join(tmpdir, "fake.go")
+    with open(filename, "w") as f:
+        f.write("")
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(filename=filename) == FileType.TXT
+
+
 def test_detect_xml_application_rtf(monkeypatch):
     monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "application/rtf")
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.rtf")
@@ -411,6 +422,7 @@ def test_filetype_order():
         (b"d\xe2\x80", False),  # Invalid JSON
         (b'[{"key": "value"}]', True),  # Valid JSON
         (b"", False),  # Empty content
+        (b'"This is not a JSON"', False),  # Serializable as JSON, but we want to treat it as txt
     ],
 )
 def test_is_text_file_a_json(content, expected):
