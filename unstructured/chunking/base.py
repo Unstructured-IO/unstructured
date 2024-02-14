@@ -96,19 +96,19 @@ class ChunkingOptions:
     def __init__(
         self,
         combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
+        max_characters: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
-        overlap: int = 0,
-        overlap_all: bool = False,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
         text_splitting_separators: Sequence[str] = ("\n", " "),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
-        self._max_characters = max_characters
-        self._multipage_sections = multipage_sections
+        self._max_characters_arg = max_characters
+        self._multipage_sections_arg = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
-        self._overlap = overlap
-        self._overlap_all = overlap_all
+        self._overlap_arg = overlap
+        self._overlap_all_arg = overlap_all
         self._text_splitting_separators = text_splitting_separators
 
     @classmethod
@@ -148,7 +148,7 @@ class ChunkingOptions:
         - Defaults to `max_characters` when not specified.
         - Is reduced to `new_after_n_chars` when it exceeds that value.
         """
-        max_characters = self._max_characters
+        max_characters = self.hard_max
         soft_max = self.soft_max
         arg = self._combine_text_under_n_chars_arg
 
@@ -167,7 +167,8 @@ class ChunkingOptions:
         exceeds this size. Such a pre-chunk is subject to mid-text splitting later in the chunking
         process.
         """
-        return self._max_characters
+        arg_value = self._max_characters_arg
+        return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
     @lazyproperty
     def inter_chunk_overlap(self) -> int:
@@ -176,12 +177,13 @@ class ChunkingOptions:
         This applies only to boundaries between chunks formed from whole elements and not to
         text-splitting boundaries that arise from splitting an oversized element.
         """
-        return self.overlap if self._overlap_all else 0
+        return self.overlap if self._overlap_all_arg else 0
 
     @lazyproperty
     def multipage_sections(self) -> bool:
         """When False, break pre-chunks on page-boundaries."""
-        return self._multipage_sections
+        arg_value = self._multipage_sections_arg
+        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     @lazyproperty
     def overlap(self) -> int:
@@ -190,22 +192,32 @@ class ChunkingOptions:
         The actual overlap will not exceed this number of characters but may be less as required to
         respect splitting-character boundaries.
         """
-        return self._overlap
+        return self._overlap_arg or 0
 
     @lazyproperty
     def soft_max(self) -> int:
         """A pre-chunk of this size or greater is considered full.
 
-        ??? Is a value of 0 valid? It would produce the behavior: "put each element into its own
-        chunk".
+        Note that while a value of `0` is valid, it essentially disables chunking by putting
+        each element into its own chunk.
         """
-        max_chars = self._max_characters
-        new_after_n_chars = self._new_after_n_chars_arg
-        return (
-            max_chars
-            if (new_after_n_chars is None or new_after_n_chars < 0 or new_after_n_chars > max_chars)
-            else new_after_n_chars
-        )
+        hard_max = self.hard_max
+        new_after_n_chars_arg = self._new_after_n_chars_arg
+
+        # -- default value is == max_characters --
+        if new_after_n_chars_arg is None:
+            return hard_max
+
+        # -- we silently fix an invalid value, maybe we shouldn't --
+        if new_after_n_chars_arg < 0:
+            return hard_max
+
+        # -- new_after_n_chars > max_characters behaves the same as ==max_characters --
+        if new_after_n_chars_arg > hard_max:
+            return hard_max
+
+        # -- otherwise, give them what they asked for --
+        return new_after_n_chars_arg
 
     @lazyproperty
     def split(self) -> Callable[[str], tuple[str, str]]:
@@ -233,7 +245,7 @@ class ChunkingOptions:
 
     def _validate(self) -> None:
         """Raise ValueError if requestion option-set is invalid."""
-        max_characters = self._max_characters
+        max_characters = self.hard_max
         # -- chunking window must have positive length --
         if max_characters <= 0:
             raise ValueError(f"'max_characters' argument must be > 0," f" got {max_characters}")
@@ -260,8 +272,8 @@ class ChunkingOptions:
         # TODO: consider a heuristic like never overlap more than half,
         # otherwise there could be corner cases leading to an infinite
         # loop (I think).
-        if self._overlap >= max_characters:
-            raise ValueError(f"'overlap' must be less than max_characters," f" got {self._overlap}")
+        if self.overlap >= max_characters:
+            raise ValueError(f"'overlap' must be less than max_characters," f" got {self.overlap}")
 
 
 class _TextSplitter:
