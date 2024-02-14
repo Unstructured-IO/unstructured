@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable
 
 from typing_extensions import ParamSpec
 
@@ -19,14 +19,14 @@ from unstructured.documents.elements import Element
 _P = ParamSpec("_P")
 
 
-def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+def add_chunking_strategy() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Decorator for chunking text.
 
     Chunks the element sequence produced by the partitioner it decorates when a `chunking_strategy`
     argument is present in the partitioner call and it names an available chunking strategy.
     """
 
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         # -- Patch the docstring of the decorated function to add chunking strategy and
         # -- chunking-related argument documentation. This only applies when `chunking_strategy`
         # -- is an explicit argument of the decorated function and "chunking_strategy" is not
@@ -53,13 +53,13 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
             )
 
         @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             """The decorated function is replaced with this one."""
 
-            def get_call_args_applying_defaults() -> Dict[str, Any]:
+            def get_call_args_applying_defaults() -> dict[str, Any]:
                 """Map both explicit and default arguments of decorated func call by param name."""
                 sig = inspect.signature(func)
-                call_args: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+                call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
                 for param in sig.parameters.values():
                     if param.name not in call_args and param.default is not param.empty:
                         call_args[param.name] = param.default

@@ -15,7 +15,7 @@ started.
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, BasePreChunker, ChunkingOptions
 from unstructured.documents.elements import Element
@@ -27,7 +27,7 @@ def chunk_elements(
     max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
     overlap: int = 0,
     overlap_all: bool = False,
-) -> List[Element]:
+) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
     Produces a sequence of `CompositeElement`, `Table`, and `TableChunk` elements (chunks).

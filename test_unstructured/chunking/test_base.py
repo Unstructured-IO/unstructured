@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import List, Sequence
+from typing import Sequence
 
 import pytest
 
@@ -836,7 +836,7 @@ class DescribeTextPreChunk:
         ],
     )
     def it_knows_the_concatenated_text_of_the_pre_chunk_to_help(
-        self, elements: List[Text], overlap_prefix: str, expected_value: str
+        self, elements: list[Text], overlap_prefix: str, expected_value: str
     ):
         """._text is the "joined" text of the pre-chunk elements.
 

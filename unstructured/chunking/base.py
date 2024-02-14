@@ -4,19 +4,7 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import (
-    Any,
-    Callable,
-    DefaultDict,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    cast,
-)
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, Sequence, cast
 
 import regex
 from typing_extensions import Self, TypeAlias
@@ -220,7 +208,7 @@ class ChunkingOptions:
         )
 
     @lazyproperty
-    def split(self) -> Callable[[str], Tuple[str, str]]:
+    def split(self) -> Callable[[str], tuple[str, str]]:
         """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
 
         The function is pre-configured with the chosen chunking window size and any other applicable
@@ -239,7 +227,7 @@ class ChunkingOptions:
         return "\n\n"
 
     @lazyproperty
-    def text_splitting_separators(self) -> Tuple[str, ...]:
+    def text_splitting_separators(self) -> tuple[str, ...]:
         """Sequence of text-splitting target strings to be used in order of preference."""
         return tuple(self._text_splitting_separators)
 
@@ -298,7 +286,7 @@ class _TextSplitter:
     def __init__(self, opts: ChunkingOptions):
         self._opts = opts
 
-    def __call__(self, s: str) -> Tuple[str, str]:
+    def __call__(self, s: str) -> tuple[str, str]:
         """Return pair of strings split from `s` on the best match of configured patterns.
 
         The first string is the split, the second is the remainder of the string. The split string
@@ -336,7 +324,7 @@ class _TextSplitter:
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
     @lazyproperty
-    def _patterns(self) -> Tuple[Tuple[regex.Pattern[str], int], ...]:
+    def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
         """Sequence of (pattern, len) pairs to match against.
 
         Patterns appear in order of preference, those following are "fall-back" patterns to be used
@@ -351,7 +339,7 @@ class _TextSplitter:
 
     def _split_from_maxlen(
         self, pattern: regex.Pattern[str], sep_len: int, s: str
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
 
         Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
@@ -420,13 +408,13 @@ class BasePreChunker:
     a new "section", hence the "by-title" designation.
     """
 
-    def __init__(self, elements: Sequence[Element], opts: ChunkingOptions):
+    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions):
         self._elements = elements
         self._opts = opts
 
     @classmethod
     def iter_pre_chunks(
-        cls, elements: Sequence[Element], opts: ChunkingOptions
+        cls, elements: Iterable[Element], opts: ChunkingOptions
     ) -> Iterator[PreChunk]:
         """Generate pre-chunks from the element-stream provided on construction."""
         return cls(elements, opts)._iter_pre_chunks()
@@ -454,7 +442,7 @@ class BasePreChunker:
         yield from pre_chunk_builder.flush()
 
     @lazyproperty
-    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+    def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
         return ()
 
@@ -601,7 +589,7 @@ class TextPreChunk:
         return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
-    def _all_metadata_values(self) -> Dict[str, List[Any]]:
+    def _all_metadata_values(self) -> dict[str, list[Any]]:
         """Collection of all populated metadata values across elements.
 
         The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
@@ -618,7 +606,7 @@ class TextPreChunk:
         resolve the list of values for each field to a single consolidated value.
         """
 
-        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[Tuple[str, Any]]:
+        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[tuple[str, Any]]:
             """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
             return (
                 (field_name, value)
@@ -626,7 +614,7 @@ class TextPreChunk:
                 if value is not None
             )
 
-        field_values: DefaultDict[str, List[Any]] = collections.defaultdict(list)
+        field_values: DefaultDict[str, list[Any]] = collections.defaultdict(list)
 
         # -- collect all non-None field values in a list for each field, in element-order --
         for e in self._elements:
@@ -649,13 +637,13 @@ class TextPreChunk:
         return ElementMetadata(**self._meta_kwargs)
 
     @lazyproperty
-    def _consolidated_regex_meta(self) -> Dict[str, List[RegexMetadata]]:
+    def _consolidated_regex_meta(self) -> dict[str, list[RegexMetadata]]:
         """Consolidate the regex-metadata in `regex_metadata_dicts` into a single dict.
 
         This consolidated value is suitable for use in the chunk metadata. `start` and `end`
         offsets of each regex match are also adjusted for their new positions.
         """
-        chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
+        chunk_regex_metadata: dict[str, list[RegexMetadata]] = {}
         separator_len = len(self._opts.text_separator)
         running_text_len = len(self._overlap_prefix) if self._overlap_prefix else 0
         start_offset = running_text_len
@@ -698,7 +686,7 @@ class TextPreChunk:
             yield e.text
 
     @lazyproperty
-    def _meta_kwargs(self) -> Dict[str, Any]:
+    def _meta_kwargs(self) -> dict[str, Any]:
         """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
 
         This is where consolidation strategies are actually applied. The output is suitable for use
@@ -707,7 +695,7 @@ class TextPreChunk:
         CS = ConsolidationStrategy
         field_consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
 
-        def iter_kwarg_pairs() -> Iterator[Tuple[str, Any]]:
+        def iter_kwarg_pairs() -> Iterator[tuple[str, Any]]:
             """Generate (field-name, value) pairs for each field in consolidated metadata."""
             for field_name, values in self._all_metadata_values.items():
                 strategy = field_consolidation_strategies.get(field_name)
@@ -715,7 +703,7 @@ class TextPreChunk:
                     yield field_name, values[0]
                 # -- concatenate lists from each element that had one, in order --
                 elif strategy is CS.LIST_CONCATENATE:
-                    yield field_name, sum(values, cast(List[Any], []))
+                    yield field_name, sum(values, cast("list[Any]", []))
                 # -- union lists from each element, preserving order of appearance --
                 elif strategy is CS.LIST_UNIQUE:
                     # -- Python 3.7+ maintains dict insertion order --
@@ -771,12 +759,12 @@ class PreChunkBuilder:
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
         self._separator_len = len(opts.text_separator)
-        self._elements: List[Element] = []
+        self._elements: list[Element] = []
 
         # -- overlap is only between pre-chunks so starts empty --
         self._overlap_prefix: str = ""
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
-        self._text_segments: List[str] = []
+        self._text_segments: list[str] = []
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 
