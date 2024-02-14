@@ -31,4 +31,6 @@ Step-by-Step Guide
   - ``Consumer Key`` (*required*): Provide the Consumer Key from the Salesforce connected app.
   - ``Private Key (PEM)`` (*required*): Input the Private Key associated with the Consumer Key for the Salesforce connected app.
 
+    - *Note: PEM begins with ``-----BEGIN RSA PRIVATE KEY-----`` and ends with ``-----END RSA PRIVATE KEY-----``.*
+
 4. **Submit**. After filling in the necessary information, click 'Submit' to create the Source Connector. The newly completed Salesforce connector will be listed on the Sources dashboard.
