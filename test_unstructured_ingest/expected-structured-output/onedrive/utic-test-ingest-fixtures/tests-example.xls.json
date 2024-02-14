@@ -184,27 +184,6 @@
     "type": "Title"
   },
   {
-    "element_id": "4cf4ff5597274d0c1ce8ae5a17ead4df",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
-        "record_locator": {
-          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
-          "user_pname": "devops@unstructuredio.onmicrosoft.com"
-        },
-        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls"
-      },
-      "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls",
-    "type": "Title"
-  },
-  {
     "element_id": "dd167905de0defcaf72de673ee44c074",
     "metadata": {
       "data_source": {
@@ -246,27 +225,6 @@
       ],
       "page_name": "Readme",
       "page_number": 3
-    },
-    "text": "1.0 (January 2012)",
-    "type": "UncategorizedText"
-  },
-  {
-    "element_id": "5f9d7b40d332fef76efdd0a97bcb8617",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
-        "record_locator": {
-          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
-          "user_pname": "devops@unstructuredio.onmicrosoft.com"
-        },
-        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls"
-      },
-      "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel",
-      "languages": [
-        "eng"
-      ]
     },
     "text": "1.0 (January 2012)",
     "type": "UncategorizedText"
@@ -318,27 +276,6 @@
     "type": "Title"
   },
   {
-    "element_id": "53d2273ac70fc31640cc45af840dbd42",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
-        "record_locator": {
-          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
-          "user_pname": "devops@unstructuredio.onmicrosoft.com"
-        },
-        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls"
-      },
-      "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "bb-help@andrew.cmu.edu",
-    "type": "Title"
-  },
-  {
     "element_id": "4efca0d10c5feb8e9b35eb1d994f2905",
     "metadata": {
       "data_source": {
@@ -380,27 +317,6 @@
       ],
       "page_name": "Readme",
       "page_number": 3
-    },
-    "text": "This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "4c9720f1540cc84d33e30e09aca8c077",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
-        "record_locator": {
-          "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
-          "user_pname": "devops@unstructuredio.onmicrosoft.com"
-        },
-        "url": "/drives/b!3vfYDk3GHEaRbo1pkhLPIRXZrzTLHCtCm5WV6KY1m_0-lOjrjQaAS6X30Pv_E4VX/root:/utic-test-ingest-fixtures/tests-example.xls"
-      },
-      "filename": "tests-example.xls",
-      "filetype": "application/vnd.ms-excel",
-      "languages": [
-        "eng"
-      ]
     },
     "text": "This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions",
     "type": "NarrativeText"
