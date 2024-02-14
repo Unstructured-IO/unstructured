@@ -28,6 +28,7 @@
 * **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
 * **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
 * **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+* **Add ability to detect text in .docx inline shapes** extensions of docx partition, extracts text from inline shapes and includes them in paragraph's text
 
 ### Fixes
 
@@ -40,6 +41,7 @@
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add title to Vectara upload - was not separated out from initial connector **
 * **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
+
 
 ## 0.12.3
 
