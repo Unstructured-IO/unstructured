@@ -16,6 +16,8 @@ from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element
 
+__all__ = ["CHUNK_MAX_CHARS_DEFAULT", "CHUNK_MULTI_PAGE_DEFAULT", "add_chunking_strategy"]
+
 _P = ParamSpec("_P")
 
 
@@ -74,23 +76,21 @@ def add_chunking_strategy() -> Callable[[Callable[_P, list[Element]]], Callable[
             if call_args.get("chunking_strategy") == "by_title":
                 return chunk_by_title(
                     elements,
-                    combine_text_under_n_chars=call_args.get("combine_text_under_n_chars", None),
-                    max_characters=call_args.get("max_characters", CHUNK_MAX_CHARS_DEFAULT),
-                    multipage_sections=call_args.get(
-                        "multipage_sections", CHUNK_MULTI_PAGE_DEFAULT
-                    ),
-                    new_after_n_chars=call_args.get("new_after_n_chars", None),
-                    overlap=call_args.get("overlap", 0),
-                    overlap_all=call_args.get("overlap_all", False),
+                    combine_text_under_n_chars=call_args.get("combine_text_under_n_chars"),
+                    max_characters=call_args.get("max_characters"),
+                    multipage_sections=call_args.get("multipage_sections"),
+                    new_after_n_chars=call_args.get("new_after_n_chars"),
+                    overlap=call_args.get("overlap"),
+                    overlap_all=call_args.get("overlap_all"),
                 )
 
             if call_args.get("chunking_strategy") == "basic":
                 return chunk_elements(
                     elements,
-                    max_characters=call_args.get("max_characters", CHUNK_MAX_CHARS_DEFAULT),
-                    new_after_n_chars=call_args.get("new_after_n_chars", None),
-                    overlap=call_args.get("overlap", 0),
-                    overlap_all=call_args.get("overlap_all", False),
+                    max_characters=call_args.get("max_characters"),
+                    new_after_n_chars=call_args.get("new_after_n_chars"),
+                    overlap=call_args.get("overlap"),
+                    overlap_all=call_args.get("overlap_all"),
                 )
 
             return elements

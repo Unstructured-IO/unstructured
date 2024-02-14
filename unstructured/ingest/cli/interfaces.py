@@ -12,7 +12,7 @@ import click
 from dataclasses_json.core import Json
 from typing_extensions import Self
 
-from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
+from unstructured.chunking import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,

@@ -24,13 +24,19 @@ from unstructured.utils import lazyproperty
 # -- CONSTANTS -----------------------------------
 
 CHUNK_MAX_CHARS_DEFAULT: int = 500
-"""Hard-max chunk-length when no explicit value specified in `max_characters` argument."""
+"""Hard-max chunk-length when no explicit value specified in `max_characters` argument.
+
+Provided for reference only, for example so the ingest CLI can advertise the default value in its
+UI. External chunking-related functions (e.g. in ingest or decorators) should use
+`max_characters: Optional[int] = None` and not apply this default themselves. Only
+`ChunkingOptions.max_characters` should apply a default value.
+"""
 
 CHUNK_MULTI_PAGE_DEFAULT: bool = True
 """When False, respect page-boundaries (no two elements from different page in same chunk).
 
 Only operative for "by_title" chunking strategy.
-w"""
+"""
 
 
 # -- TYPES ---------------------------------------
@@ -115,11 +121,11 @@ class ChunkingOptions:
     def new(
         cls,
         combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
+        max_characters: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
-        overlap: int = 0,
-        overlap_all: bool = False,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
         text_splitting_separators: Sequence[str] = ("\n", " "),
     ) -> Self:
         """Construct validated instance.
