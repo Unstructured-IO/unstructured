@@ -20,7 +20,7 @@ def run_check(token, api_endpoint, collection_name, embedding_dimension):
     number_of_embeddings = docs_count["status"]["count"] 
 
     # Print the results
-    expected_embeddings = 1
+    expected_embeddings = 3
     print(
         f"# of embeddings in collection vs expected: {number_of_embeddings}/{expected_embeddings}"
     )

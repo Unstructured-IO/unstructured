@@ -87,12 +87,12 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["astrapy"], extras="astra")
     @DestinationConnectionError.wrap
     def initialize(self):
-        astra_db_collection = self._astra_db_collection
+        _ = self.astra_db_collection
 
     @requires_dependencies(["astrapy"], extras="astra")
     def check_connection(self):
         try:
-            _ = self._astra_db_collection
+            _ = self.astra_db_collection
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise SourceConnectionNetworkError(f"failed to validate connection: {e}")
