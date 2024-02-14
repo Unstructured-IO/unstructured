@@ -330,7 +330,12 @@ class _DocxPartitioner:
         does not contribute to the document-element stream and will not cause an element to be
         emitted.
         """
-        text = paragraph.text
+        text = "".join(
+            e.text
+            for e in paragraph._p.xpath(
+                "w:r | w:hyperlink | w:r/descendant::wp:inline[ancestor::w:drawing][1]//w:r"
+            )
+        )
 
         # NOTE(scanny) - blank paragraphs are commonly used for spacing between paragraphs and
         # do not contribute to the document-element stream.
