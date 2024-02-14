@@ -203,6 +203,7 @@ class ElementMetadata:
     sent_from: Optional[List[str]]
     sent_to: Optional[List[str]]
     subject: Optional[str]
+    signature: Optional[str]
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
@@ -240,6 +241,7 @@ class ElementMetadata:
         section: Optional[str] = None,
         sent_from: Optional[List[str]] = None,
         sent_to: Optional[List[str]] = None,
+        signature: Optional[str] = None,
         subject: Optional[str] = None,
         text_as_html: Optional[str] = None,
         url: Optional[str] = None,
@@ -277,6 +279,7 @@ class ElementMetadata:
         self.section = section
         self.sent_from = sent_from
         self.sent_to = sent_to
+        self.signature = signature
         self.subject = subject
         self.text_as_html = text_as_html
         self.url = url
@@ -479,6 +482,7 @@ class ConsolidationStrategy(enum.Enum):
             "section": cls.FIRST,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
+            "signature": cls.FIRST,
             "subject": cls.FIRST,
             "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
             "url": cls.FIRST,

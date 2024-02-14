@@ -189,6 +189,7 @@ EXT_TO_FILETYPE = {
     ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
+    ".p7s": FileType.EML,
     ".png": FileType.PNG,
     ".doc": FileType.DOC,
     ".zip": FileType.ZIP,
@@ -228,6 +229,7 @@ PLAIN_TEXT_EXTENSIONS = [
     ".txt",
     ".text",
     ".eml",
+    ".p7s",
     ".md",
     ".rtf",
     ".html",
@@ -329,6 +331,7 @@ def detect_filetype(
 
         if extension in [
             ".eml",
+            ".p7s",
             ".md",
             ".rtf",
             ".html",
@@ -474,7 +477,15 @@ def _is_text_file_a_json(
         encoding=encoding,
     )
     try:
-        json.loads(file_text)
+        output = json.loads(file_text)
+        # NOTE(robinson) - Per RFC 4627 which defines the application/json media type,
+        # a string is a valid JSON. For our purposes, however, we want to treat that
+        # as a text file even if it is serializable as json.
+        # References:
+        # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
+        # https://www.ietf.org/rfc/rfc4627.txt
+        if isinstance(output, str):
+            return False
         return True
     except json.JSONDecodeError:
         return False

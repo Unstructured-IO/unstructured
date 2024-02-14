@@ -1,5 +1,6 @@
 import os
 import tempfile
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
@@ -60,46 +61,66 @@ def test_convert_pdf_to_image(
             assert isinstance(images[0], PILImg.Image)
 
 
+def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-images.pdf")):
+    with pytest.raises(ValueError) as exc_info:
+        pdf_image_utils.convert_pdf_to_image(filename=filename, path_only=True, output_folder=None)
+
+    assert str(exc_info.value) == "output_folder must be specified if path_only is true"
+
+
+@pytest.mark.parametrize(
+    ("filename", "is_image"),
+    [
+        (example_doc_path("layout-parser-paper-fast.pdf"), False),
+        (example_doc_path("layout-parser-paper-fast.jpg"), True),
+    ],
+)
 @pytest.mark.parametrize("element_category_to_save", [ElementType.IMAGE, ElementType.TABLE])
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_save_elements(
     element_category_to_save,
     extract_image_block_to_payload,
-    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+    filename,
+    is_image,
 ):
     with tempfile.TemporaryDirectory() as tmpdir:
         elements = [
             Image(
-                text="3",
+                text="Image Text 1",
                 coordinates=((78, 86), (78, 519), (512, 519), (512, 86)),
                 coordinate_system=PixelSpace(width=1575, height=1166),
                 metadata=ElementMetadata(page_number=1),
             ),
             Image(
-                text="4",
+                text="Image Text 2",
                 coordinates=((570, 86), (570, 519), (1003, 519), (1003, 86)),
                 coordinate_system=PixelSpace(width=1575, height=1166),
                 metadata=ElementMetadata(page_number=1),
             ),
             Image(
-                text="5",
+                text="Table 1",
                 coordinates=((1062, 86), (1062, 519), (1496, 519), (1496, 86)),
                 coordinate_system=PixelSpace(width=1575, height=1166),
                 metadata=ElementMetadata(page_number=1),
             ),
-            Table(
-                text="Sample Table",
-                coordinates=((1062, 86), (1062, 519), (1496, 519), (1496, 86)),
-                coordinate_system=PixelSpace(width=1575, height=1166),
-                metadata=ElementMetadata(page_number=2),
-            ),
         ]
+        if not is_image:
+            # add a page 2 element
+            elements.append(
+                Table(
+                    text="Table 2",
+                    coordinates=((1062, 86), (1062, 519), (1496, 519), (1496, 86)),
+                    coordinate_system=PixelSpace(width=1575, height=1166),
+                    metadata=ElementMetadata(page_number=2),
+                ),
+            )
 
         pdf_image_utils.save_elements(
             elements=elements,
             element_category_to_save=element_category_to_save,
             pdf_image_dpi=200,
             filename=filename,
+            is_image=is_image,
             output_dir_path=str(tmpdir),
             extract_image_block_to_payload=extract_image_block_to_payload,
         )
@@ -122,6 +143,30 @@ def test_save_elements(
                 assert not el.metadata.image_mime_type
 
 
+def test_save_elements_with_output_dir_path_none():
+    with (
+        patch("PIL.Image.open"),
+        patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
+        patch("unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image"),
+        tempfile.TemporaryDirectory() as tmpdir,
+    ):
+        original_cwd = os.getcwd()
+        os.chdir(tmpdir)
+        pdf_image_utils.save_elements(
+            elements=[],
+            element_category_to_save="",
+            pdf_image_dpi=200,
+            filename="dummy.pdf",
+            output_dir_path=None,
+        )
+
+        # Verify that the images are saved in the expected directory
+        expected_output_dir = os.path.join(tmpdir, "figures")
+        assert os.path.exists(expected_output_dir)
+        assert os.path.isdir(expected_output_dir)
+        os.chdir(original_cwd)
+
+
 def test_write_image_raises_error():
     with pytest.raises(ValueError):
         pdf_image_utils.write_image("invalid_type", "test_image.jpg")
@@ -141,3 +186,126 @@ def test_pad_bbox():
 
     result = pdf_image_utils.pad_bbox(bbox, padding)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    ("input_types", "expected"),
+    [
+        (None, []),
+        (["table", "image"], ["Table", "Image"]),
+        (["unknown"], ["Unknown"]),
+        (["Table", "image", "UnknOwn"], ["Table", "Image", "Unknown"]),
+    ],
+)
+def test_check_element_types_to_extract(input_types, expected):
+    assert pdf_image_utils.check_element_types_to_extract(input_types) == expected
+
+
+def test_check_element_types_to_extract_raises_error():
+    with pytest.raises(TypeError) as exc_info:
+        pdf_image_utils.check_element_types_to_extract("not a list")
+    assert "must be a list" in str(exc_info.value)
+
+
+class MockPageLayout:
+    def annotate(self, colors):
+        return "mock_image"
+
+
+class MockDocumentLayout:
+    pages = [MockPageLayout(), MockPageLayout]
+
+
+def test_annotate_layout_elements_with_image():
+    inferred_layout = MockPageLayout()
+    extracted_layout = MockPageLayout()
+    output_basename = "test_page"
+    page_number = 1
+
+    # Check if images for both layouts were saved
+    with (
+        tempfile.TemporaryDirectory() as tmpdir,
+        patch("unstructured.partition.pdf_image.pdf_image_utils.write_image") as mock_write_image,
+    ):
+        pdf_image_utils.annotate_layout_elements_with_image(
+            inferred_page_layout=inferred_layout,
+            extracted_page_layout=extracted_layout,
+            output_dir_path=str(tmpdir),
+            output_f_basename=output_basename,
+            page_number=page_number,
+        )
+
+        expected_filenames = [
+            f"{output_basename}_{page_number}_inferred.jpg",
+            f"{output_basename}_{page_number}_extracted.jpg",
+        ]
+        actual_calls = [call.args[1] for call in mock_write_image.call_args_list]
+        for expected_filename in expected_filenames:
+            assert any(expected_filename in actual_call for actual_call in actual_calls)
+
+    # Check if only the inferred layout image was saved if extracted layout is None
+    with (
+        tempfile.TemporaryDirectory() as tmpdir,
+        patch("unstructured.partition.pdf_image.pdf_image_utils.write_image") as mock_write_image,
+    ):
+        pdf_image_utils.annotate_layout_elements_with_image(
+            inferred_page_layout=inferred_layout,
+            extracted_page_layout=None,
+            output_dir_path=str(tmpdir),
+            output_f_basename=output_basename,
+            page_number=page_number,
+        )
+
+        expected_filename = f"{output_basename}_{page_number}_inferred.jpg"
+        actual_calls = [call.args[1] for call in mock_write_image.call_args_list]
+        assert any(expected_filename in actual_call for actual_call in actual_calls)
+        assert len(actual_calls) == 1  # Only one image should be saved
+
+
+@pytest.mark.parametrize(
+    ("filename", "is_image"),
+    [
+        (example_doc_path("layout-parser-paper-fast.pdf"), False),
+        (example_doc_path("layout-parser-paper-fast.jpg"), True),
+    ],
+)
+def test_annotate_layout_elements(filename, is_image):
+    inferred_document_layout = MockDocumentLayout
+    extracted_layout = [MagicMock(), MagicMock()]
+
+    with (
+        patch("PIL.Image.open"),
+        patch(
+            "unstructured.partition.pdf_image.pdf_image_utils.convert_pdf_to_image",
+            return_value=["/path/to/image1.jpg", "/path/to/image2.jpg"],
+        ) as mock_pdf2image,
+        patch(
+            "unstructured.partition.pdf_image.pdf_image_utils.annotate_layout_elements_with_image"
+        ) as mock_annotate_layout_elements_with_image,
+    ):
+        pdf_image_utils.annotate_layout_elements(
+            inferred_document_layout=inferred_document_layout,
+            extracted_layout=extracted_layout,
+            filename=filename,
+            output_dir_path="/output",
+            pdf_image_dpi=200,
+            is_image=is_image,
+        )
+        if is_image:
+            mock_annotate_layout_elements_with_image.assert_called_once()
+        else:
+            assert mock_annotate_layout_elements_with_image.call_count == len(
+                mock_pdf2image.return_value
+            )
+
+
+def test_annotate_layout_elements_file_not_found_error():
+    with pytest.raises(FileNotFoundError):
+        pdf_image_utils.annotate_layout_elements(
+            inferred_document_layout=MagicMock(),
+            extracted_layout=[],
+            filename="nonexistent.jpg",
+            output_dir_path="/output",
+            pdf_image_dpi=200,
+            is_image=True,
+        )

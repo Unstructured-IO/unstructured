@@ -1,9 +1,26 @@
-## 0.12.4-dev8
+## 0.12.5-dev4
+
+### Enhancements
+
+### Features
+
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+
+### Fixes
+
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
+
+## 0.12.4
 
 ### Enhancements
 
 * **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
 * **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
+* **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for the signed message is extracted and added to metadata.
+* **Fallback to valid content types for emails** If the user selected content type does not exist on the email message, `partition_email` now falls back to anoter valid content type if it's available.
 
 ### Features
 
@@ -16,9 +33,12 @@
 * **Fix `partition_pdf()` not working when using chipper model with `file`**
 * **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
 * **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies**
+* **Add missing dependency files to package manifest**. Updates the file path for the ingest
+  dependencies and adds missing extra dependencies.
 * **Fix remove Vectara requirements from setup.py - there are no dependencies **
 * **Add title to Vectara upload - was not separated out from initial connector **
-
+* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
 
 ## 0.12.3
 

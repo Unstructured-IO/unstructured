@@ -45,7 +45,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --embedding-provider "langchain-huggingface" \
   opensearch \
-  --hosts http://localhost:9200 \
+  --hosts http://localhost:9247 \
   --index-name ingest-test-destination \
   --username "admin" \
   --password "admin" \
