@@ -1,4 +1,4 @@
-## 0.12.5-dev2
+## 0.12.5-dev3
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 ### Fixes
 
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors ** 
+* **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
 
 ## 0.12.4
 
