@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Optional, Sequence
 
 import pytest
 
@@ -62,40 +62,21 @@ class DescribeChunkingOptions:
         except ValueError:
             pytest.fail("did not accept `max_characters` as option by itself")
 
-    @pytest.mark.parametrize("n_chars", [-1, -42])
-    def it_rejects_combine_text_under_n_chars_for_n_less_than_zero(self, n_chars: int):
-        with pytest.raises(
-            ValueError,
-            match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
-        ):
-            ChunkingOptions.new(combine_text_under_n_chars=n_chars)
+    @pytest.mark.parametrize(
+        ("combine_text_under_n_chars", "expected_value"), [(None, 0), (42, 42)]
+    )
+    def it_accepts_combine_text_under_n_chars_in_constructor_but_defaults_to_no_combining(
+        self, combine_text_under_n_chars: Optional[int], expected_value: int
+    ):
+        """Subclasses can store `combine_text_under_n_chars` but must validate and enable it.
 
-    def it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining(self):
-        """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
-        opts = ChunkingOptions.new(combine_text_under_n_chars=0)
-        assert opts.combine_text_under_n_chars == 0
-
-    def it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself(self):
-        """Caller can specify `combine_text_under_n_chars` arg without specifying other options."""
-        try:
-            opts = ChunkingOptions.new(combine_text_under_n_chars=50)
-        except ValueError:
-            pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
-
-        assert opts.combine_text_under_n_chars == 50
-
-    def it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars(self):
-        """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-        So rather than raising an exception or warning, we just cap that value at `max_characters`
-        which is the behavioral equivalent.
+        The `combine_text_under_n_chars` option is not used by all chunkers and its behavior can
+        differ between subtypes. It is present in and stored by the contructur but it defaults to
+        `0` (no pre-chunk combining) and must be overridden by subclasses to give it the desired
+        behavior.
         """
-        try:
-            opts = ChunkingOptions.new(max_characters=500, combine_text_under_n_chars=600)
-        except ValueError:
-            pytest.fail("did not accept `combine_text_under_n_chars` greater than `max_characters`")
-
-        assert opts.combine_text_under_n_chars == 500
+        opts = ChunkingOptions(combine_text_under_n_chars=combine_text_under_n_chars)
+        assert opts.combine_text_under_n_chars == expected_value
 
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
@@ -113,19 +94,13 @@ class DescribeChunkingOptions:
             ChunkingOptions(max_characters=200, overlap=300)._validate()
 
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
-        """Caller can specify `new_after_n_chars` arg without specifying any other options.
-
-        In particular, `combine_text_under_n_chars` value is adjusted down to the
-        `new_after_n_chars` value when the default for `combine_text_under_n_chars` exceeds the
-        value of `new_after_n_chars`.
-        """
+        """Caller can specify `new_after_n_chars` arg without specifying any other options."""
         try:
             opts = ChunkingOptions.new(new_after_n_chars=200)
         except ValueError:
             pytest.fail("did not accept `new_after_n_chars` as option by itself")
 
         assert opts.soft_max == 200
-        assert opts.combine_text_under_n_chars == 200
 
     def it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chunk(self):
         """Specifying `new_after_n_chars=0` places each element into its own pre-chunk.
@@ -536,7 +511,7 @@ class DescribeTextPreChunk:
         self, max_characters: int, combine_text_under_n_chars: int, expected_value: bool
     ):
         """This allows `PreChunkCombiner` to operate without knowing `TextPreChunk` internals."""
-        opts = ChunkingOptions.new(
+        opts = ChunkingOptions(
             max_characters=max_characters,
             combine_text_under_n_chars=combine_text_under_n_chars,
             overlap=20,
@@ -1061,7 +1036,7 @@ class DescribePreChunkCombiner:
     """Unit-test suite for `unstructured.chunking.base.PreChunkCombiner`."""
 
     def it_combines_sequential_small_text_pre_chunks(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
@@ -1105,7 +1080,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def but_it_does_not_combine_table_pre_chunks(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
@@ -1127,7 +1102,7 @@ class DescribePreChunkCombiner:
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+            pre_chunks, ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1152,7 +1127,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_specified_combination_threshold(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=80)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=80)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
@@ -1203,7 +1178,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_hard_maximum_window_length(self):
-        opts = ChunkingOptions.new(max_characters=200, combine_text_under_n_chars=200)
+        opts = ChunkingOptions(max_characters=200, combine_text_under_n_chars=200)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
@@ -1256,7 +1231,7 @@ class DescribePreChunkCombiner:
 
     def it_accommodates_and_isolates_an_oversized_pre_chunk(self):
         """Such as occurs when a single element exceeds the window size."""
-        opts = ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+        opts = ChunkingOptions(max_characters=150, combine_text_under_n_chars=150)
         pre_chunks = [
             TextPreChunk([Title("Lorem Ipsum")], overlap_prefix="", opts=opts),
             TextPreChunk(  # 179
@@ -1274,7 +1249,7 @@ class DescribePreChunkCombiner:
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+            pre_chunks, ChunkingOptions(max_characters=150, combine_text_under_n_chars=150)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1303,7 +1278,7 @@ class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
 
     def it_generates_a_combined_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        opts = ChunkingOptions.new()
+        opts = ChunkingOptions(combine_text_under_n_chars=500)
         accum = TextPreChunkAccumulator(opts=opts)
 
         pre_chunk = TextPreChunk(

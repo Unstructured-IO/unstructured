@@ -1,13 +1,15 @@
 # pyright: reportPrivateUsage=false
 
-"""Unit-test suite for the `unstructured.chunking.title` module."""
+"""Test suite for the `unstructured.chunking.title` module."""
 
 from __future__ import annotations
+
+from typing import Optional
 
 import pytest
 
 from unstructured.chunking.base import ChunkingOptions, TablePreChunk, TextPreChunk
-from unstructured.chunking.title import _ByTitlePreChunker, chunk_by_title
+from unstructured.chunking.title import _ByTitleChunkingOptions, _ByTitlePreChunker, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     CheckBox,
@@ -22,6 +24,13 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.html import partition_html
+
+# ================================================================================================
+# INTEGRATION-TESTS
+# ================================================================================================
+# These test `chunk_by_title()` as an integrated whole, calling `chunk_by_title()` and inspecting
+# the outputs.
+# ================================================================================================
 
 
 def test_it_splits_a_large_element_into_multiple_chunks():
@@ -544,3 +553,76 @@ def test_it_considers_separator_length_when_pre_chunking():
         ),
         CompositeElement("Minimize mid-text chunk-splitting"),
     ]
+
+
+# ================================================================================================
+# UNIT-TESTS
+# ================================================================================================
+# These test individual components in isolation so can exercise all edge cases while still
+# performing well.
+# ================================================================================================
+
+
+class Describe_ByTitleChunkingOptions:
+    """Unit-test suite for `unstructured.chunking.title._ByTitleChunkingOptions` objects."""
+
+    @pytest.mark.parametrize("n_chars", [-1, -42])
+    def it_rejects_combine_text_under_n_chars_for_n_less_than_zero(self, n_chars: int):
+        with pytest.raises(
+            ValueError,
+            match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
+        ):
+            _ByTitleChunkingOptions.new(combine_text_under_n_chars=n_chars)
+
+    def it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining(self):
+        """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
+        opts = _ByTitleChunkingOptions(combine_text_under_n_chars=0)
+        assert opts.combine_text_under_n_chars == 0
+
+    def it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself(self):
+        """Caller can specify `combine_text_under_n_chars` arg without specifying other options."""
+        try:
+            opts = _ByTitleChunkingOptions(combine_text_under_n_chars=50)
+        except ValueError:
+            pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
+
+        assert opts.combine_text_under_n_chars == 50
+
+    @pytest.mark.parametrize(
+        ("combine_text_under_n_chars", "max_characters", "expected_hard_max"),
+        [(600, None, 500), (600, 450, 450)],
+    )
+    def it_rejects_combine_text_under_n_chars_greater_than_maxchars(
+        self, combine_text_under_n_chars: int, max_characters: Optional[int], expected_hard_max: int
+    ):
+        """`combine_text_under_n_chars` > `max_characters` can produce behavior confusing to users.
+
+        The behavior is no different from `combine_text_under_n_chars == max_characters`, but if
+        `max_characters` is left to default (500) and `combine_text_under_n_chars` is set to a
+        larger number like 1500 then it can look like chunk-combining isn't working.
+        """
+        with pytest.raises(
+            ValueError,
+            match=(
+                "'combine_text_under_n_chars' argument must not exceed `max_characters` value,"
+                f" got {combine_text_under_n_chars} > {expected_hard_max}"
+            ),
+        ):
+            _ByTitleChunkingOptions.new(
+                max_characters=max_characters, combine_text_under_n_chars=combine_text_under_n_chars
+            )
+
+    def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
+        """Caller can specify `new_after_n_chars` arg without specifying any other options.
+
+        In particular, `combine_text_under_n_chars` value is adjusted down to the
+        `new_after_n_chars` value when the default for `combine_text_under_n_chars` exceeds the
+        value of `new_after_n_chars`.
+        """
+        try:
+            opts = _ByTitleChunkingOptions(new_after_n_chars=200)
+        except ValueError:
+            pytest.fail("did not accept `new_after_n_chars` as option by itself")
+
+        assert opts.soft_max == 200
+        assert opts.combine_text_under_n_chars == 200

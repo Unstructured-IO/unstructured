@@ -24,6 +24,7 @@ from unstructured.utils import lazyproperty
 
 def chunk_by_title(
     elements: Iterable[Element],
+    *,
     max_characters: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
     combine_text_under_n_chars: Optional[int] = None,
@@ -127,6 +128,50 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         )
         self._validate()
         return self
+
+    @lazyproperty
+    def combine_text_under_n_chars(self) -> int:
+        """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
+
+        - Does not combine table chunks with text chunks even if they would both fit in the
+          chunking window.
+        - Does not combine text chunks if together they would exceed the chunking window.
+        - Defaults to `max_characters` when not specified.
+        - Is reduced to `new_after_n_chars` when it exceeds that value.
+        """
+        max_characters = self.hard_max
+        soft_max = self.soft_max
+        arg_value = self._combine_text_under_n_chars_arg
+
+        # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
+        combine_text_under_n_chars = max_characters if arg_value is None else arg_value
+
+        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
+        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+
+    def _validate(self) -> None:
+        """Raise ValueError if request option-set is invalid."""
+        # -- start with base-class validations --
+        super()._validate()
+
+        if (combine_text_under_n_chars_arg := self._combine_text_under_n_chars_arg) is not None:
+            # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+            # -- but a negative value is not
+            if combine_text_under_n_chars_arg < 0:
+                raise ValueError(
+                    f"'combine_text_under_n_chars' argument must be >= 0,"
+                    f" got {combine_text_under_n_chars_arg}"
+                )
+
+            # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
+            # -- users. The chunking behavior would be no different than when
+            # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
+            # -- default (500) then it can look like chunk-combining isn't working.
+            if combine_text_under_n_chars_arg > self.hard_max:
+                raise ValueError(
+                    f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
+                    f" value, got {combine_text_under_n_chars_arg} > {self.hard_max}"
+                )
 
 
 class _ByTitlePreChunker(BasePreChunker):

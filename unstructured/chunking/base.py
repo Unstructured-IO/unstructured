@@ -101,6 +101,7 @@ class ChunkingOptions:
 
     def __init__(
         self,
+        *,
         combine_text_under_n_chars: Optional[int] = None,
         max_characters: Optional[int] = None,
         multipage_sections: Optional[bool] = None,
@@ -120,7 +121,7 @@ class ChunkingOptions:
     @classmethod
     def new(
         cls,
-        combine_text_under_n_chars: Optional[int] = None,
+        *,
         max_characters: Optional[int] = None,
         multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
@@ -133,37 +134,25 @@ class ChunkingOptions:
         Raises `ValueError` on invalid arguments like overlap > max_chars.
         """
         self = cls(
-            combine_text_under_n_chars,
-            max_characters,
-            multipage_sections,
-            new_after_n_chars,
-            overlap,
-            overlap_all,
-            text_splitting_separators,
+            max_characters=max_characters,
+            multipage_sections=multipage_sections,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+            text_splitting_separators=text_splitting_separators,
         )
         self._validate()
         return self
 
     @lazyproperty
     def combine_text_under_n_chars(self) -> int:
-        """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
+        """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
-        - Does not combine table chunks with text chunks even if they would both fit in the
-          chunking window.
-        - Does not combine text chunks if together they would exceed the chunking window.
-        - Defaults to `max_characters` when not specified.
-        - Is reduced to `new_after_n_chars` when it exceeds that value.
+        Default applied here is `0` which essentially disables chunk combining. Must be overridden
+        by subclass where combining behavior is supported.
         """
-        max_characters = self.hard_max
-        soft_max = self.soft_max
-        arg = self._combine_text_under_n_chars_arg
-
-        # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
-        # -- capped at max-chars
-        combine_text_under_n_chars = max_characters if arg is None or arg > max_characters else arg
-
-        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+        arg_value = self._combine_text_under_n_chars_arg
+        return arg_value if arg_value is not None else 0
 
     @lazyproperty
     def hard_max(self) -> int:
@@ -256,28 +245,15 @@ class ChunkingOptions:
         if max_characters <= 0:
             raise ValueError(f"'max_characters' argument must be > 0," f" got {max_characters}")
 
-        # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-        # -- but a negative value is not
-        combine_text_under_n_chars = self._combine_text_under_n_chars_arg
-        if combine_text_under_n_chars is not None and combine_text_under_n_chars < 0:
-            raise ValueError(
-                f"'combine_text_under_n_chars' argument must be >= 0,"
-                f" got {combine_text_under_n_chars}"
-            )
-
-        # -- a negative value for `new_after_n_chars` is assumed to
-        # -- be a mistake the caller will want to know about
+        # -- a negative value for `new_after_n_chars` is assumed to be a mistake the caller will
+        # -- want to know about
         new_after_n_chars = self._new_after_n_chars_arg
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(
                 f"'new_after_n_chars' argument must be >= 0," f" got {new_after_n_chars}"
             )
 
-        # -- overlap must be less than max-chars or the chunk text will
-        # -- never be consumed
-        # TODO: consider a heuristic like never overlap more than half,
-        # otherwise there could be corner cases leading to an infinite
-        # loop (I think).
+        # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= max_characters:
             raise ValueError(
                 f"'overlap' argument must be less than `max_characters`,"
