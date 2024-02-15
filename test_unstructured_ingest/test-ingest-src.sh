@@ -11,6 +11,8 @@ fi
 touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
 
+EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
+
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
 export OMP_THREAD_LIMIT=1
 
@@ -121,6 +123,6 @@ all_eval=(
 for eval in "${all_eval[@]}"; do
   CURRENT_TEST="evaluation-metrics.sh $eval"
   echo "--------- RUNNING SCRIPT evaluation-metrics.sh $eval ---------"
-  ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
+  ./test_unstructured_ingest/evaluation-metrics.sh "$eval" "$EVAL_OUTPUT_ROOT"
   echo "--------- FINISHED SCRIPT evaluation-metrics.sh $eval ---------"
 done

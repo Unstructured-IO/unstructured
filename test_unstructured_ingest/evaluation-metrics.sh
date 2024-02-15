@@ -5,12 +5,15 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
+EVAL_NAME="$1"
+
 # List all structured outputs to use in this evaluation
-OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+
+# If no OUTPUT_ROOT is passed, the variable will check the env OUTPUT_ROOT, 
+# if still not existed, it will use the SCRIPT_DIR as OUTPUT_ROOT
+OUTPUT_ROOT=${2:-${OUTPUT_ROOT:-$SCRIPT_DIR}}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output-eval
 mkdir -p "$OUTPUT_DIR"
-
-EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
   METRIC_STRATEGY="measure-text-extraction-accuracy-command"
