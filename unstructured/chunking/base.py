@@ -68,9 +68,6 @@ class ChunkingOptions:
         when not specified, which effectively disables this behavior. Specifying 0 for this
         argument causes each element to appear in a chunk by itself (although an element with text
         longer than `max_characters` will be still be split into two or more chunks).
-    multipage_sections
-        Indicates that page-boundaries should not be respected while chunking, i.e. elements
-        appearing on two different pages can appear in the same chunk.
     combine_text_under_n_chars
         Provides a way to "recombine" small chunks formed by breaking on a semantic boundary. Only
         relevant for a chunking strategy that specifies higher-level semantic boundaries to be
@@ -104,7 +101,6 @@ class ChunkingOptions:
         *,
         combine_text_under_n_chars: Optional[int] = None,
         max_characters: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
         overlap: Optional[int] = None,
         overlap_all: Optional[bool] = None,
@@ -112,7 +108,6 @@ class ChunkingOptions:
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
         self._max_characters_arg = max_characters
-        self._multipage_sections_arg = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
         self._overlap_arg = overlap
         self._overlap_all_arg = overlap_all
@@ -123,7 +118,6 @@ class ChunkingOptions:
         cls,
         *,
         max_characters: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
         overlap: Optional[int] = None,
         overlap_all: Optional[bool] = None,
@@ -135,7 +129,6 @@ class ChunkingOptions:
         """
         self = cls(
             max_characters=max_characters,
-            multipage_sections=multipage_sections,
             new_after_n_chars=new_after_n_chars,
             overlap=overlap,
             overlap_all=overlap_all,
@@ -173,12 +166,6 @@ class ChunkingOptions:
         text-splitting boundaries that arise from splitting an oversized element.
         """
         return self.overlap if self._overlap_all_arg else 0
-
-    @lazyproperty
-    def multipage_sections(self) -> bool:
-        """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._multipage_sections_arg
-        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     @lazyproperty
     def overlap(self) -> int:

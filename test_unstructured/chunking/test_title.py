@@ -8,7 +8,7 @@ from typing import Optional
 
 import pytest
 
-from unstructured.chunking.base import ChunkingOptions, TablePreChunk, TextPreChunk
+from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT, TablePreChunk, TextPreChunk
 from unstructured.chunking.title import _ByTitleChunkingOptions, _ByTitlePreChunker, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
@@ -66,7 +66,7 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = _ByTitlePreChunker.iter_pre_chunks(elements, opts=ChunkingOptions.new())
+    pre_chunks = _ByTitlePreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
 
     pre_chunk = next(pre_chunks)
     assert isinstance(pre_chunk, TextPreChunk)
@@ -626,3 +626,13 @@ class Describe_ByTitleChunkingOptions:
 
         assert opts.soft_max == 200
         assert opts.combine_text_under_n_chars == 200
+
+    @pytest.mark.parametrize(
+        ("multipage_sections", "expected_value"),
+        [(True, True), (False, False), (None, CHUNK_MULTI_PAGE_DEFAULT)],
+    )
+    def it_knows_whether_to_break_chunks_on_page_boundaries(
+        self, multipage_sections: bool, expected_value: bool
+    ):
+        opts = _ByTitleChunkingOptions(multipage_sections=multipage_sections)
+        assert opts.multipage_sections is expected_value

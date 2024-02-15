@@ -10,6 +10,7 @@ from typing import Iterable, Iterator, Optional
 from typing_extensions import Self
 
 from unstructured.chunking.base import (
+    CHUNK_MULTI_PAGE_DEFAULT,
     BasePreChunker,
     BoundaryPredicate,
     ChunkingOptions,
@@ -85,7 +86,14 @@ def chunk_by_title(
 
 
 class _ByTitleChunkingOptions(ChunkingOptions):
-    """Adds the by-title-specific chunking options to the base case."""
+    """Adds the by-title-specific chunking options to the base case.
+
+    `by_title`-specific options:
+
+    multipage_sections
+        Indicates that page-boundaries should not be respected while chunking, i.e. elements
+        appearing on two different pages can appear in the same chunk.
+    """
 
     def __init__(
         self,
@@ -100,11 +108,11 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         super().__init__(
             combine_text_under_n_chars=combine_text_under_n_chars,
             max_characters=max_characters,
-            multipage_sections=multipage_sections,
             new_after_n_chars=new_after_n_chars,
             overlap=overlap,
             overlap_all=overlap_all,
         )
+        self._multipage_sections_arg = multipage_sections
 
     @classmethod
     def new(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -148,6 +156,12 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
         return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+
+    @lazyproperty
+    def multipage_sections(self) -> bool:
+        """When False, break pre-chunks on page-boundaries."""
+        arg_value = self._multipage_sections_arg
+        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     def _validate(self) -> None:
         """Raise ValueError if request option-set is invalid."""
