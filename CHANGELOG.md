@@ -26,7 +26,6 @@
 * **Add title to Vectara upload - was not separated out from initial connector **
 * **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test**
 
-
 ## 0.12.3
 
 ### Enhancements
