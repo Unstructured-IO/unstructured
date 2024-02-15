@@ -78,7 +78,7 @@ class _BasicChunkingOptions(ChunkingOptions):
     """Options for `basic` chunking."""
 
     @classmethod
-    def new(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def new(
         cls,
         *,
         max_characters: Optional[int] = None,

@@ -115,7 +115,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         self._multipage_sections_arg = multipage_sections
 
     @classmethod
-    def new(  # pyright: ignore[reportIncompatibleMethodOverride]
+    def new(
         cls,
         *,
         max_characters: Optional[int] = None,

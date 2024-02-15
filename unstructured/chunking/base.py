@@ -7,7 +7,7 @@ import copy
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, Sequence, cast
 
 import regex
-from typing_extensions import Self, TypeAlias
+from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -112,30 +112,6 @@ class ChunkingOptions:
         self._overlap_arg = overlap
         self._overlap_all_arg = overlap_all
         self._text_splitting_separators = text_splitting_separators
-
-    @classmethod
-    def new(
-        cls,
-        *,
-        max_characters: Optional[int] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-        text_splitting_separators: Sequence[str] = ("\n", " "),
-    ) -> Self:
-        """Construct validated instance.
-
-        Raises `ValueError` on invalid arguments like overlap > max_chars.
-        """
-        self = cls(
-            max_characters=max_characters,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-            text_splitting_separators=text_splitting_separators,
-        )
-        self._validate()
-        return self
 
     @lazyproperty
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
