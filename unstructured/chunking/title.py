@@ -79,7 +79,7 @@ def chunk_by_title(
     )
 
     pre_chunks = PreChunkCombiner(
-        _ByTitlePreChunker.iter_pre_chunks(elements, opts), opts=opts
+        BasePreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
@@ -138,6 +138,23 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         return self
 
     @lazyproperty
+    def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks.
+
+        For the `by_title` strategy these are sections indicated by a title (section-heading), an
+        explicit section metadata item (only present for certain document types), and optionally
+        page boundaries.
+        """
+
+        def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
+            yield is_title
+            yield is_in_next_section()
+            if not self.multipage_sections:
+                yield is_on_next_page()
+
+        return tuple(iter_boundary_predicates())
+
+    @lazyproperty
     def combine_text_under_n_chars(self) -> int:
         """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
 
@@ -186,23 +203,3 @@ class _ByTitleChunkingOptions(ChunkingOptions):
                     f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
                     f" value, got {combine_text_under_n_chars_arg} > {self.hard_max}"
                 )
-
-
-class _ByTitlePreChunker(BasePreChunker):
-    """Pre-chunker for the "by_title" chunking strategy.
-
-    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates a
-    new "section", hence the "by-title" designation.
-    """
-
-    @lazyproperty
-    def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
-        """The semantic-boundary detectors to be applied to break pre-chunks."""
-
-        def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
-            yield is_title
-            yield is_in_next_section()
-            if not self._opts.multipage_sections:
-                yield is_on_next_page()
-
-        return tuple(iter_boundary_predicates())

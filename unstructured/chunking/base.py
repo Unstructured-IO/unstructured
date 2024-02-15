@@ -138,6 +138,14 @@ class ChunkingOptions:
         return self
 
     @lazyproperty
+    def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks.
+
+        Overridden by sub-typs to provide semantic-boundary isolation behaviors.
+        """
+        return ()
+
+    @lazyproperty
     def combine_text_under_n_chars(self) -> int:
         """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
@@ -428,7 +436,7 @@ class BasePreChunker:
     @lazyproperty
     def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
-        return ()
+        return self._opts.boundary_predicates
 
     def _is_in_new_semantic_unit(self, element: Element) -> bool:
         """True when `element` begins a new semantic unit such as a section or page."""

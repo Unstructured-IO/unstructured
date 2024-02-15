@@ -8,8 +8,13 @@ from typing import Optional
 
 import pytest
 
-from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT, TablePreChunk, TextPreChunk
-from unstructured.chunking.title import _ByTitleChunkingOptions, _ByTitlePreChunker, chunk_by_title
+from unstructured.chunking.base import (
+    CHUNK_MULTI_PAGE_DEFAULT,
+    BasePreChunker,
+    TablePreChunk,
+    TextPreChunk,
+)
+from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
     CheckBox,
@@ -66,7 +71,7 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = _ByTitlePreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
+    pre_chunks = BasePreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
 
     pre_chunk = next(pre_chunks)
     assert isinstance(pre_chunk, TextPreChunk)

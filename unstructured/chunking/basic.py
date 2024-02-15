@@ -69,7 +69,7 @@ def chunk_elements(
 
     return [
         chunk
-        for pre_chunk in BasicPreChunker.iter_pre_chunks(elements, opts)
+        for pre_chunk in BasePreChunker.iter_pre_chunks(elements, opts)
         for chunk in pre_chunk.iter_chunks()
     ]
 
@@ -98,11 +98,3 @@ class _BasicChunkingOptions(ChunkingOptions):
         )
         self._validate()
         return self
-
-
-class BasicPreChunker(BasePreChunker):
-    """Produces pre-chunks from a sequence of document-elements using the "basic" rule-set.
-
-    The "basic" rule-set is essentially "no-rules" other than `Table` is segregated into its own
-    pre-chunk.
-    """
