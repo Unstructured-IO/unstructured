@@ -17,6 +17,8 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
+from typing_extensions import Self
+
 from unstructured.chunking.base import BasePreChunker, ChunkingOptions
 from unstructured.documents.elements import Element
 
@@ -58,7 +60,7 @@ def chunk_elements(
         level of "pollution" of otherwise clean semantic chunk boundaries.
     """
     # -- raises ValueError on invalid parameters --
-    opts = ChunkingOptions.new(
+    opts = _BasicChunkingOptions.new(
         max_characters=max_characters,
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
@@ -70,6 +72,32 @@ def chunk_elements(
         for pre_chunk in BasicPreChunker.iter_pre_chunks(elements, opts)
         for chunk in pre_chunk.iter_chunks()
     ]
+
+
+class _BasicChunkingOptions(ChunkingOptions):
+    """Options for `basic` chunking."""
+
+    @classmethod
+    def new(  # pyright: ignore[reportIncompatibleMethodOverride]
+        cls,
+        *,
+        max_characters: Optional[int] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ) -> Self:
+        """Construct validated instance.
+
+        Raises `ValueError` on invalid arguments like overlap > max_chars.
+        """
+        self = cls(
+            max_characters=max_characters,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+        self._validate()
+        return self
 
 
 class BasicPreChunker(BasePreChunker):

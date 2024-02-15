@@ -7,6 +7,8 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional
 
+from typing_extensions import Self
+
 from unstructured.chunking.base import (
     BasePreChunker,
     BoundaryPredicate,
@@ -65,7 +67,7 @@ def chunk_by_title(
         elements and not subject to text-splitting. Use this with caution as it entails a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
     """
-    opts = ChunkingOptions.new(
+    opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
         max_characters=max_characters,
         multipage_sections=multipage_sections,
@@ -79,6 +81,52 @@ def chunk_by_title(
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
+
+
+class _ByTitleChunkingOptions(ChunkingOptions):
+    """Adds the by-title-specific chunking options to the base case."""
+
+    def __init__(
+        self,
+        *,
+        max_characters: Optional[int] = None,
+        combine_text_under_n_chars: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ):
+        super().__init__(
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            max_characters=max_characters,
+            multipage_sections=multipage_sections,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+
+    @classmethod
+    def new(  # pyright: ignore[reportIncompatibleMethodOverride]
+        cls,
+        *,
+        max_characters: Optional[int] = None,
+        combine_text_under_n_chars: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ) -> Self:
+        """Return instance or raises `ValueError` on invalid arguments like overlap > max_chars."""
+        self = cls(
+            max_characters=max_characters,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            multipage_sections=multipage_sections,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+        self._validate()
+        return self
 
 
 class _ByTitlePreChunker(BasePreChunker):
