@@ -764,6 +764,20 @@ def test_partition_docx_includes_hyperlink_metadata():
     assert metadata.link_urls is None
 
 
+# -- shape behaviors -----------------------------------------------------------------------------
+
+
+def test_it_considers_text_inside_shapes():
+    # -- <bracketed> text is written inside inline shapes --
+    partitioned_doc = partition_docx(example_doc_path("docx-shapes.docx"))
+    assert [element.text for element in partitioned_doc] == [
+        "Paragraph with single <inline-image> within.",
+        "Paragraph with <inline-image1> and <inline-image2> within.",
+        # -- text "<floating-shape>" in floating shape is ignored --
+        "Paragraph with floating shape attached.",
+    ]
+
+
 # -- module-level fixtures -----------------------------------------------------------------------
 
 

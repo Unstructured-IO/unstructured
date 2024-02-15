@@ -1,10 +1,10 @@
 import os
 
 from unstructured.documents.elements import Text
-from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
+from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
 embedding_encoder = OpenAIEmbeddingEncoder(
-    config=OpenAiEmbeddingConfig(api_key=os.environ["OPENAI_API_KEY"])
+    config=OpenAIEmbeddingConfig(api_key=os.environ["OPENAI_API_KEY"])
 )
 elements = embedding_encoder.embed_documents(
     elements=[Text("This is sentence 1"), Text("This is sentence 2")],
