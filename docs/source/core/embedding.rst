@@ -43,10 +43,10 @@ To obtain an api key, visit: https://platform.openai.com/account/api-keys
     import os
 
     from unstructured.documents.elements import Text
-    from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
+    from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
     # Initialize the encoder with OpenAI credentials
-    embedding_encoder = OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(api_key=os.environ["OPENAI_API_KEY"]))
+    embedding_encoder = OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(api_key=os.environ["OPENAI_API_KEY"]))
 
     # Embed a list of Elements
     elements = embedding_encoder.embed_documents(

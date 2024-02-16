@@ -15,14 +15,14 @@ if TYPE_CHECKING:
 
 
 @dataclass
-class OpenAiEmbeddingConfig(EmbeddingConfig):
+class OpenAIEmbeddingConfig(EmbeddingConfig):
     api_key: str
     model_name: str = "text-embedding-ada-002"
 
 
 @dataclass
 class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
-    config: OpenAiEmbeddingConfig
+    config: OpenAIEmbeddingConfig
     _client: Optional["OpenAIEmbeddings"] = field(init=False, default=None)
     _exemplary_embedding: Optional[List[float]] = field(init=False, default=None)
 
