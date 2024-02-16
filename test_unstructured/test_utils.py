@@ -454,3 +454,12 @@ def test_only_raises_on_non_singleton_iterable():
     singleton_iterable = [42, 0]
     with pytest.raises(ValueError):
         utils.only(singleton_iterable)
+
+
+def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
+    str1 = ""
+    str2 = "banana orange pineapple"
+    n = 2
+    percent, common_ngrams = utils.calculate_shared_ngram_percentage(str1, str2, n)
+    assert percent == 0
+    assert not bool(common_ngrams)

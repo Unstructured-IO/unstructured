@@ -19,6 +19,7 @@ from typing import (
     List,
     Optional,
     Sequence,
+    Set,
     Tuple,
     TypeVar,
     Union,
@@ -329,7 +330,7 @@ def scarf_analytics():
         pass
 
 
-def ngrams(s: str, n: int) -> List:
+def ngrams(s: List[str], n: int) -> List[Tuple[str]]:
     """Generate n-grams from a string s"""
 
     ngrams_list = []
@@ -345,17 +346,17 @@ def calculate_shared_ngram_percentage(
     first_string: str,
     second_string: str,
     n: int,
-) -> (float, List):
+) -> Tuple[float, Set[Tuple[str]]]:
     """Calculate the percentage of common_ngrams between string_A and string_B
     with reference to the total number of ngrams in string_A"""
 
     if not n:
-        return 0, {}
+        return 0, set()
     first_string_ngrams = ngrams(first_string.split(), n)
     second_string_ngrams = ngrams(second_string.split(), n)
 
     if not first_string_ngrams:
-        return 0
+        return 0, set()
 
     common_ngrams = set(first_string_ngrams) & set(second_string_ngrams)
     percentage = (len(common_ngrams) / len(first_string_ngrams)) * 100
