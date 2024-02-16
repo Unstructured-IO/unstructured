@@ -20,7 +20,7 @@ h11==0.14.0
     # via httpcore
 htmlbuilder==1.0.0
     # via -r ingest/notion.in
-httpcore==1.0.2
+httpcore==1.0.3
     # via httpx
 httpx==0.26.0
     # via notion-client
