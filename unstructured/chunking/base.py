@@ -349,12 +349,12 @@ class _TextSplitter:
 
 
 # ================================================================================================
-# BASE PRE-CHUNKER
+# PRE-CHUNKER
 # ================================================================================================
 
 
-class BasePreChunker:
-    """Base-class for per-strategy pre-chunkers.
+class PreChunker:
+    """Gathers sequential elements into pre-chunks as length constraints allow.
 
     The pre-chunker's responsibilities are:
 

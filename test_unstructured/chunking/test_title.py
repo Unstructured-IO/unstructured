@@ -10,7 +10,7 @@ import pytest
 
 from unstructured.chunking.base import (
     CHUNK_MULTI_PAGE_DEFAULT,
-    BasePreChunker,
+    PreChunker,
     TablePreChunk,
     TextPreChunk,
 )
@@ -71,7 +71,7 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = BasePreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
+    pre_chunks = PreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
 
     pre_chunk = next(pre_chunks)
     assert isinstance(pre_chunk, TextPreChunk)

@@ -11,10 +11,10 @@ from typing_extensions import Self
 
 from unstructured.chunking.base import (
     CHUNK_MULTI_PAGE_DEFAULT,
-    BasePreChunker,
     BoundaryPredicate,
     ChunkingOptions,
     PreChunkCombiner,
+    PreChunker,
     is_in_next_section,
     is_on_next_page,
     is_title,
@@ -79,7 +79,7 @@ def chunk_by_title(
     )
 
     pre_chunks = PreChunkCombiner(
-        BasePreChunker.iter_pre_chunks(elements, opts), opts=opts
+        PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]

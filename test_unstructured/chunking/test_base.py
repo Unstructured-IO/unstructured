@@ -9,10 +9,10 @@ from typing import Optional, Sequence
 import pytest
 
 from unstructured.chunking.base import (
-    BasePreChunker,
     ChunkingOptions,
     PreChunkBuilder,
     PreChunkCombiner,
+    PreChunker,
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
@@ -242,12 +242,12 @@ class Describe_TextSplitter:
 
 
 # ================================================================================================
-# BASE PRE-CHUNKER
+# PRE-CHUNKER
 # ================================================================================================
 
 
-class DescribeBasePreChunker:
-    """Unit-test suite for `unstructured.chunking.base.BasePreChunker` objects."""
+class DescribePreChunker:
+    """Unit-test suite for `unstructured.chunking.base.PreChunker` objects."""
 
     def it_gathers_elements_into_pre_chunks_respecting_the_specified_chunk_size(self):
         elements = [
@@ -262,7 +262,7 @@ class DescribeBasePreChunker:
 
         opts = ChunkingOptions(max_characters=150, new_after_n_chars=65)
 
-        pre_chunk_iter = BasePreChunker.iter_pre_chunks(elements, opts=opts)
+        pre_chunk_iter = PreChunker.iter_pre_chunks(elements, opts=opts)
 
         pre_chunk = next(pre_chunk_iter)
         assert isinstance(pre_chunk, TextPreChunk)

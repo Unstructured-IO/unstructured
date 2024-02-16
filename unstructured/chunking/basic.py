@@ -19,7 +19,7 @@ from typing import Iterable, Optional
 
 from typing_extensions import Self
 
-from unstructured.chunking.base import BasePreChunker, ChunkingOptions
+from unstructured.chunking.base import ChunkingOptions, PreChunker
 from unstructured.documents.elements import Element
 
 
@@ -69,7 +69,7 @@ def chunk_elements(
 
     return [
         chunk
-        for pre_chunk in BasePreChunker.iter_pre_chunks(elements, opts)
+        for pre_chunk in PreChunker.iter_pre_chunks(elements, opts)
         for chunk in pre_chunk.iter_chunks()
     ]
 
