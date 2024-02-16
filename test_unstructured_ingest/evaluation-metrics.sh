@@ -16,6 +16,8 @@ if [ "$EVAL_NAME" == "text-extraction" ]; then
   METRIC_STRATEGY="measure-text-extraction-accuracy-command"
 elif [ "$EVAL_NAME" == "element-type" ]; then
   METRIC_STRATEGY="measure-element-type-accuracy-command"
+elif [ "$EVAL_NAME" == "table-structure" ]; then
+  METRIC_STRATEGY="measure-table-structure-accuracy-command"
 else
   echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
   exit 1

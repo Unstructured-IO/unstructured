@@ -3,6 +3,7 @@
 import logging
 import os
 import sys
+from pathlib import Path
 from typing import List, Optional, Tuple
 
 import pandas as pd
@@ -12,6 +13,7 @@ from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
+from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
     _display,
@@ -36,7 +38,6 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
     logger.addHandler(handler)
 
 logger.setLevel(logging.DEBUG)
-
 
 agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
 
@@ -186,4 +187,115 @@ def measure_element_type_accuracy(
 
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
+    _display(agg_df)
+
+
+def measure_table_structure_accuracy(
+    output_dir: str,
+    source_dir: str,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
+    export_dir: str = "metrics",
+    visualize: bool = False,
+):
+    """
+    Loops through the list of structured output from all of `output_dir` or selected files from
+    `output_list`, and compare with gold-standard of the same file name under `source_dir` or
+    selected files from `source_list`. Supports also a json file with filenames as keys and
+    structured gold-standard output as values.
+
+    Calculates:
+        - table found accuracy
+        - element in column index accuracy
+        - element in row index accuracy
+        - element's column content accuracy
+        - element's row content accuracy
+
+    After looped through the whole list, write to tsv. Also calculates the aggregated accuracy.
+    """
+    if not output_list:
+        output_list = _listdir_recursive(output_dir)
+    if not source_list:
+        source_list = _listdir_recursive(source_dir)
+
+    rows = []
+    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
+        doc_path = Path(doc)
+        out_filename = doc_path.stem
+        doctype = Path(out_filename).suffix
+        src_gt_filename = out_filename + ".json"
+        connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
+
+        if src_gt_filename in source_list:  # type: ignore
+            prediction_file = Path(output_dir) / doc
+            if not prediction_file.exists():
+                logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+                continue
+
+            ground_truth_file = Path(source_dir) / src_gt_filename
+            if not ground_truth_file.exists():
+                logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
+                continue
+
+            processor = TableEvalProcessor.from_json_files(
+                prediction_file=prediction_file,
+                ground_truth_file=ground_truth_file,
+            )
+            report = processor.process_file()
+            rows.append(
+                [
+                    out_filename,
+                    doctype,
+                    connector,
+                    report.total_tables,
+                    report.table_level_acc,
+                    report.element_col_level_index_acc,
+                    report.element_row_level_index_acc,
+                    report.element_col_level_content_acc,
+                    report.element_row_level_content_acc,
+                ]
+            )
+
+    headers = [
+        "filename",
+        "doctype",
+        "connector",
+        "total_tables",
+        "table_level_acc",
+        "element_col_level_index_acc",
+        "element_row_level_index_acc",
+        "element_col_level_content_acc",
+        "element_row_level_content_acc",
+    ]
+    df = pd.DataFrame(rows, columns=headers)
+    if df.empty:
+        agg_df = pd.DataFrame(
+            [
+                ["total_tables", None, None, None, 0],
+                ["table_level_acc", None, None, None, 0],
+                ["element_col_level_index_acc", None, None, None, 0],
+                ["element_row_level_index_acc", None, None, None, 0],
+                ["element_col_level_content_acc", None, None, None, 0],
+                ["element_row_level_content_acc", None, None, None, 0],
+            ]
+        ).transpose()
+    else:
+        # filter out documents with no tables
+        having_table_df = df[df["total_tables"] > 0]
+        # compute aggregated metrics for tables
+        agg_df = having_table_df.agg(
+            {
+                "total_tables": [_mean, _stdev, _pstdev, "count"],
+                "table_level_acc": [_mean, _stdev, _pstdev, "count"],
+                "element_col_level_index_acc": [_mean, _stdev, _pstdev, "count"],
+                "element_row_level_index_acc": [_mean, _stdev, _pstdev, "count"],
+                "element_col_level_content_acc": [_mean, _stdev, _pstdev, "count"],
+                "element_row_level_content_acc": [_mean, _stdev, _pstdev, "count"],
+            }
+        ).transpose()
+        agg_df = agg_df.reset_index()
+        agg_df.columns = agg_headers
+
+    _write_to_file(export_dir, "all-docs-table-structure-accuracy.tsv", df)
+    _write_to_file(export_dir, "aggregate-table-structure-accuracy.tsv", agg_df)
     _display(agg_df)

@@ -6,6 +6,7 @@ import click
 
 from unstructured.metrics.evaluate import (
     measure_element_type_accuracy,
+    measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
 
@@ -126,6 +127,50 @@ def measure_element_type_accuracy_command(
     source_list: Optional[List[str]] = None,
 ):
     return measure_element_type_accuracy(
+        output_dir, source_dir, output_list, source_list, export_dir, visualize
+    )
+
+
+@main.command()
+@click.option("--output_dir", type=str, help="Directory to structured output.")
+@click.option("--source_dir", type=str, help="Directory to structured source.")
+@click.option(
+    "--output_list",
+    type=str,
+    multiple=True,
+    help="Optional: list of selected structured output file names under the \
+        directory to be evaluate. If none, all files under directory will be used.",
+)
+@click.option(
+    "--source_list",
+    type=str,
+    multiple=True,
+    help="Optional: list of selected source file names under the directory \
+        to be evaluate. If none, all files under directory will be used.",
+)
+@click.option(
+    "--export_dir",
+    type=str,
+    default="metrics",
+    help="Directory to save the output evaluation metrics to. Default to \
+        your/working/dir/metrics/",
+)
+@click.option(
+    "--visualize",
+    is_flag=True,
+    show_default=True,
+    default=False,
+    help="Add the flag to show progress bar.",
+)
+def measure_table_structure_accuracy_command(
+    output_dir: str,
+    source_dir: str,
+    export_dir: str,
+    visualize: bool,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
+):
+    return measure_table_structure_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize
     )
 
