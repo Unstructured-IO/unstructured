@@ -7,6 +7,7 @@ import pytest
 
 from unstructured.metrics.evaluate import (
     measure_element_type_accuracy,
+    measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
 
@@ -20,7 +21,9 @@ TESTING_FILE_DIR = os.path.join(EXAMPLE_DOCS_DIRECTORY, "test_evaluate_files")
 UNSTRUCTURED_OUTPUT_DIRNAME = "unstructured_output"
 GOLD_CCT_DIRNAME = "gold_standard_cct"
 GOLD_ELEMENT_TYPE_DIRNAME = "gold_standard_element_type"
+GOLD_TABLE_STRUCTURE_DIRNAME = "gold_standard_table_structure"
 UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
+UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME = "unstructured_output_table_structure"
 
 
 @pytest.fixture()
@@ -81,6 +84,23 @@ def test_element_type_evaluation():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"), sep="\t")
     assert len(df) == 1
     assert len(df.columns) == 4
+    assert df.iloc[0].filename == "IRS-form-1987.pdf"
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_table_structure_evaluation():
+    output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME)
+    source_dir = os.path.join(TESTING_FILE_DIR, GOLD_TABLE_STRUCTURE_DIRNAME)
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_table_structure")
+    measure_table_structure_accuracy(
+        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
+    )
+    assert os.path.isfile(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"))
+    assert os.path.isfile(os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"))
+    df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
+    assert len(df) == 1
+    assert len(df.columns) == 9
     assert df.iloc[0].filename == "IRS-form-1987.pdf"
 
 
