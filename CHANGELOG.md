@@ -5,6 +5,7 @@
 ### Features
 
 * **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+* **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
 
 ### Fixes
 
