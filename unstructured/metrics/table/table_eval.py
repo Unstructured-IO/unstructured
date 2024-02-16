@@ -15,15 +15,9 @@ The purpose of this script is to create a comprehensive metric for table evaluat
        in which case the table is considered failed.
 
 Example
-python unstructured_table_eval.py  \
-    --prediction_file "model_output.json" \
-    --ground_truth_file "ground_truth.json" \
-    --table_type UNSTRUCTURED
-
-python unstructured_table_eval.py  \
-    --prediction_file "afr_output.json" \
-    --ground_truth_file "ground_truth.json" \
-    --table_type AZURE_FORM
+python table_eval.py  \
+    --prediction_file "model_output.pdf.json" \
+    --ground_truth_file "ground_truth.pdf.json"
 """
 
 import json
