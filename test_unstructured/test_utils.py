@@ -141,7 +141,7 @@ def test_only_raises_if_empty(iterator):
                         "overlapping_case": "nested NarrativeText in Title",
                         "overlap_percentage": "100%",
                         "metadata": {
-                            "largest_ngram_percentage": None,
+                            "largest_ngram_percentage": 0,
                             "overlap_percentage_total": "5.88%",
                             "max_area": "9pxˆ2",
                             "min_area": "9pxˆ2",
@@ -210,7 +210,7 @@ def test_only_raises_if_empty(iterator):
                         "overlapping_case": "partial overlap with duplicate text",
                         "overlap_percentage": "11.11%",
                         "metadata": {
-                            "largest_ngram_percentage": None,
+                            "largest_ngram_percentage": 0,
                             "overlap_percentage_total": "5.88%",
                             "max_area": "9pxˆ2",
                             "min_area": "9pxˆ2",
@@ -246,7 +246,7 @@ def test_only_raises_if_empty(iterator):
                         ),
                         "overlap_percentage": "11.11%",
                         "metadata": {
-                            "largest_ngram_percentage": None,
+                            "largest_ngram_percentage": 0,
                             "overlap_percentage_total": "5.88%",
                             "max_area": "9pxˆ2",
                             "min_area": "9pxˆ2",
@@ -280,7 +280,7 @@ def test_only_raises_if_empty(iterator):
                         "overlapping_case": "partial overlap with empty content in 0. Title",
                         "overlap_percentage": "11.11%",
                         "metadata": {
-                            "largest_ngram_percentage": None,
+                            "largest_ngram_percentage": 0,
                             "overlap_percentage_total": "5.88%",
                             "max_area": "9pxˆ2",
                             "min_area": "9pxˆ2",
@@ -348,7 +348,7 @@ def test_only_raises_if_empty(iterator):
                         "overlapping_case": "Small partial overlap",
                         "overlap_percentage": "8.33%",
                         "metadata": {
-                            "largest_ngram_percentage": None,
+                            "largest_ngram_percentage": 0,
                             "overlap_percentage_total": "3.23%",
                             "max_area": "20pxˆ2",
                             "min_area": "12pxˆ2",
