@@ -28,7 +28,7 @@ h2==4.1.0
     # via httpx
 hpack==4.0.0
     # via h2
-httpcore==1.0.2
+httpcore==1.0.3
     # via httpx
 httpx[http2]==0.26.0
     # via
@@ -41,7 +41,7 @@ idna==3.6
     #   -c ingest/../base.txt
     #   anyio
     #   httpx
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c ingest/../base.txt
     #   qdrant-client
@@ -55,7 +55,7 @@ pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   qdrant-client
-qdrant-client==1.7.2
+qdrant-client==1.7.3
     # via -r ingest/qdrant.in
 sniffio==1.3.0
     # via

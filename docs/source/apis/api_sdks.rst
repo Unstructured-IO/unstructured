@@ -91,7 +91,7 @@ Below is a basic example of how to use the JavaScript SDK:
         # Note that this currently only supports a single file
         files: {
             content: data,
-            files: filename,
+            fileName: filename,
         },
         # Other partition params
         strategy: "fast",

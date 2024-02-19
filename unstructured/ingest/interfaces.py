@@ -196,9 +196,9 @@ class EmbeddingConfig(BaseConfig):
             kwargs["model_name"] = self.model_name
         # TODO make this more dynamic to map to encoder configs
         if self.provider == "langchain-openai":
-            from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
+            from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
-            return OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(**kwargs))
+            return OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(**kwargs))
         elif self.provider == "langchain-huggingface":
             from unstructured.embed.huggingface import (
                 HuggingFaceEmbeddingConfig,

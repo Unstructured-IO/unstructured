@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.2.1
     # via -r test.in
-black==24.1.1
+black==24.2.0
     # via -r test.in
 certifi==2024.2.2
     # via
@@ -111,7 +111,7 @@ requests==2.31.0
     # via
     #   -c base.txt
     #   label-studio-sdk
-ruff==0.2.0
+ruff==0.2.1
     # via -r test.in
 six==1.16.0
     # via

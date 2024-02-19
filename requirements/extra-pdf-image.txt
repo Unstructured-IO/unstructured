@@ -37,7 +37,7 @@ filelock==3.13.1
     #   transformers
 flatbuffers==23.5.26
     # via onnxruntime
-fonttools==4.47.2
+fonttools==4.49.0
     # via matplotlib
 fsspec==2024.2.0
     # via
@@ -79,7 +79,7 @@ mpmath==1.3.0
     # via sympy
 networkx==3.2.1
     # via torch
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c base.txt
     #   contourpy
@@ -128,7 +128,7 @@ pdfminer-six==20221105
     # via
     #   -r extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.10.3
+pdfplumber==0.10.4
     # via layoutparser
 pikepdf==8.11.0
     # via -r extra-pdf-image.in
@@ -164,7 +164,7 @@ pyparsing==3.0.9
     #   matplotlib
 pypdf==4.0.1
     # via -r extra-pdf-image.in
-pypdfium2==4.26.0
+pypdfium2==4.27.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -173,7 +173,7 @@ python-dateutil==2.8.2
     #   -c base.txt
     #   matplotlib
     #   pandas
-python-multipart==0.0.7
+python-multipart==0.0.9
     # via unstructured-inference
 pytz==2024.1
     # via pandas
@@ -217,7 +217,7 @@ sympy==1.12
     #   torch
 timm==0.9.12
     # via effdet
-tokenizers==0.15.1
+tokenizers==0.15.2
     # via transformers
 torch==2.2.0
     # via
@@ -231,7 +231,7 @@ torchvision==0.17.0
     #   effdet
     #   layoutparser
     #   timm
-tqdm==4.66.1
+tqdm==4.66.2
     # via
     #   -c base.txt
     #   huggingface-hub
@@ -246,7 +246,7 @@ typing-extensions==4.9.0
     #   iopath
     #   pypdf
     #   torch
-tzdata==2023.4
+tzdata==2024.1
     # via pandas
 unstructured-inference==0.7.23
     # via -r extra-pdf-image.in
