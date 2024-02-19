@@ -166,21 +166,21 @@ class TableEvalProcessor:
 
         return TableEvaluation(
             total_tables=total_tables,
-            table_level_acc=round(total_predicted_tables / total_tables, 2)
-            if total_tables
-            else -1.0,
-            element_col_level_index_acc=round(np.mean(total_col_index_acc), 2)
-            if len(total_col_index_acc) > 0
-            else -1.0,
-            element_row_level_index_acc=round(np.mean(total_row_index_acc), 2)
-            if len(total_row_index_acc) > 0
-            else -1.0,
-            element_col_level_content_acc=round(np.mean(total_col_content_acc), 2)
-            if len(total_col_content_acc) > 0
-            else -1.0,
-            element_row_level_content_acc=round(np.mean(total_row_content_acc), 2)
-            if len(total_row_content_acc) > 0
-            else -1.0,
+            table_level_acc=(
+                round(total_predicted_tables / total_tables, 2) if total_tables else -1.0
+            ),
+            element_col_level_index_acc=(
+                round(np.mean(total_col_index_acc), 2) if len(total_col_index_acc) > 0 else -1.0
+            ),
+            element_row_level_index_acc=(
+                round(np.mean(total_row_index_acc), 2) if len(total_row_index_acc) > 0 else -1.0
+            ),
+            element_col_level_content_acc=(
+                round(np.mean(total_col_content_acc), 2) if len(total_col_content_acc) > 0 else -1.0
+            ),
+            element_row_level_content_acc=(
+                round(np.mean(total_row_content_acc), 2) if len(total_row_content_acc) > 0 else -1.0
+            ),
         )
 
 
