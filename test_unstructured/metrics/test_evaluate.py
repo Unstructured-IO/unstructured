@@ -101,7 +101,7 @@ def test_table_structure_evaluation():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
     assert len(df) == 1
     assert len(df.columns) == 9
-    assert df.iloc[0].filename == "IRS-form-1987.pdf"
+    assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
