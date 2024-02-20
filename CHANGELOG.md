@@ -3,6 +3,7 @@
 ### Enhancements
 
 ### Features
+* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 
 ### Fixes
 
