@@ -151,6 +151,7 @@ def partition_pdf(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -204,6 +205,9 @@ def partition_pdf(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
     exactly_one(filename=filename, file=file)
@@ -223,6 +227,7 @@ def partition_pdf(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        date_from_file_object=date_from_file_object,
         **kwargs,
     )
 
@@ -242,6 +247,7 @@ def partition_pdf_or_image(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -258,6 +264,7 @@ def partition_pdf_or_image(
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
         filename=filename,
+        date_from_file_object=date_from_file_object,
     )
 
     extracted_elements = []
@@ -356,12 +363,15 @@ def extractable_elements(
 def get_the_last_modification_date_pdf_or_img(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     filename: Optional[str] = "",
+    date_from_file_object: bool = False,
 ) -> Union[str, None]:
     last_modification_date = None
     if not file and filename:
         last_modification_date = get_last_modified_date(filename=filename)
     elif not filename and file:
-        last_modification_date = get_last_modified_date_from_file(file=file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     return last_modification_date
 
 
