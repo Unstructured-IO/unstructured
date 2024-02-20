@@ -238,7 +238,7 @@ def test_partition_xlsx_with_custom_metadata_date(mocker: MockerFixture):
 
 
 def test_partition_xlsx_from_file_metadata_date(mocker: MockerFixture):
-    """File's last-modified date is used when that's the best available source."""
+    """File's last-modified date (from bytes) isn't used unless it's explicitly requested."""
     mocker.patch(
         "unstructured.partition.xlsx.get_last_modified_date_from_file",
         return_value="2029-07-05T09:24:28",
@@ -246,6 +246,19 @@ def test_partition_xlsx_from_file_metadata_date(mocker: MockerFixture):
 
     with open("example-docs/stanley-cups.xlsx", "rb") as f:
         elements = partition_xlsx(file=f)
+
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_xlsx_from_file_explicit_get_metadata_date(mocker: MockerFixture):
+    """File's last-modified date (from bytes) is used only when it's explicitly requested."""
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date_from_file",
+        return_value="2029-07-05T09:24:28",
+    )
+
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        elements = partition_xlsx(file=f, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
@@ -261,6 +274,17 @@ def test_partition_xlsx_from_file_with_custom_metadata_date(mocker: MockerFixtur
         elements = partition_xlsx(file=f, metadata_last_modified="2020-07-05T09:24:28")
 
     assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+
+
+def test_partition_xlsx_from_file_without_metadata_date():
+    """Test partition_xlsx() with file that are not possible to get last modified date"""
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_xlsx(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_xlsx_with_json():
