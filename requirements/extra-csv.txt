@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=extra-csv.txt extra-csv.in
 #
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c base.txt
     #   pandas
@@ -20,5 +20,5 @@ six==1.16.0
     # via
     #   -c base.txt
     #   python-dateutil
-tzdata==2023.4
+tzdata==2024.1
     # via pandas
