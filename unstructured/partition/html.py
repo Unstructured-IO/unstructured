@@ -47,6 +47,7 @@ def partition_html(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -89,6 +90,9 @@ def partition_html(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
@@ -106,7 +110,9 @@ def partition_html(
         )
 
     elif file is not None:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
         _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(
             file_text,
@@ -163,6 +169,7 @@ def convert_and_partition_html(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
+    date_from_file_object: bool = False,
 ) -> List[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
@@ -188,13 +195,18 @@ def convert_and_partition_html(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
     last_modification_date = None
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     html_text = convert_file_to_html_text(
         source_format=source_format,
         filename=filename,
