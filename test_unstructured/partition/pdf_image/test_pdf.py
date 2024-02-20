@@ -686,20 +686,28 @@ def test_partition_pdf_exclude_metadata(
     ],
 )
 @pytest.mark.parametrize("last_modification_date", [None, "2020-07-05T09:24:28"])
+@pytest.mark.parametrize("date_from_file_object", [True, False])
 def test_partition_pdf_metadata_date(
     mocker,
     file_mode,
     strategy,
     last_modification_date,
+    date_from_file_object,
     filename=example_doc_path("copy-protected.pdf"),
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = (
         last_modification_date if last_modification_date else mocked_last_modification_date
     )
+    if not date_from_file_object and not last_modification_date and file_mode != "filename":
+        expected_last_modification_date = None
 
     mocker.patch(
-        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
@@ -708,6 +716,7 @@ def test_partition_pdf_metadata_date(
             filename=filename,
             strategy=strategy,
             metadata_last_modified=last_modification_date,
+            date_from_file_object=date_from_file_object,
         )
     elif file_mode == "rb":
         with open(filename, "rb") as f:
@@ -715,6 +724,7 @@ def test_partition_pdf_metadata_date(
                 file=f,
                 strategy=strategy,
                 metadata_last_modified=last_modification_date,
+                date_from_file_object=date_from_file_object,
             )
     else:
         with open(filename, "rb") as test_file:
@@ -725,6 +735,7 @@ def test_partition_pdf_metadata_date(
                 file=spooled_temp_file,
                 strategy=strategy,
                 metadata_last_modified=last_modification_date,
+                date_from_file_object=date_from_file_object,
             )
 
     assert {el.metadata.last_modified for el in elements} == {expected_last_modification_date}
