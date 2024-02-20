@@ -60,6 +60,7 @@ def partition_pptx(
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -93,6 +94,9 @@ def partition_pptx(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     # -- verify only one source-file argument was provided --
     exactly_one(filename=filename, file=file)
@@ -114,6 +118,7 @@ def partition_pptx(
         infer_table_structure,
         metadata_filename,
         metadata_last_modified,
+        date_from_file_object=date_from_file_object,
     )
     elements = apply_lang_metadata(
         elements=elements,
@@ -137,6 +142,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         infer_table_structure: bool = True,
         metadata_filename: Optional[str] = None,
         metadata_last_modified: Optional[str] = None,
+        date_from_file_object: bool = False,
     ) -> None:
         self._file = file
         self._include_page_breaks = include_page_breaks
@@ -145,6 +151,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         self._metadata_filename = metadata_filename
         self._metadata_last_modified = metadata_last_modified
         self._page_counter = 0
+        self._date_from_file_object = date_from_file_object
 
     @classmethod
     def iter_presentation_elements(
@@ -155,6 +162,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         infer_table_structure: bool,
         metadata_filename: Optional[str],
         metadata_last_modified: Optional[str],
+        date_from_file_object: bool = False,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return cls(
@@ -164,6 +172,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             infer_table_structure,
             metadata_filename,
             metadata_last_modified,
+            date_from_file_object,
         )._iter_presentation_elements()
 
     def _iter_presentation_elements(self) -> Iterator[Element]:
@@ -205,7 +214,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         return (
             self._metadata_filename
             if self._metadata_filename
-            else self._file if isinstance(self._file, str) else None
+            else self._file
+            if isinstance(self._file, str)
+            else None
         )
 
     def _increment_page_number(self) -> Iterator[PageBreak]:
@@ -355,7 +366,9 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         # -- otherwise try getting it from the file-like object; this can work if `file` comes from
         # -- `with open(abc.pptx, "rb") as file:`, but I can't see folks doing that much when they
         # -- can just send us "abc.pptx" instead.
-        return get_last_modified_date_from_file(file)
+        if self._date_from_file_object:
+            return get_last_modified_date_from_file(file)
+        return None
 
     def _order_shapes(self, slide: Slide) -> Tuple[Optional[Shape], Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
