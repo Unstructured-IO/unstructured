@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 import shutil
 
 import pandas as pd
@@ -28,12 +29,14 @@ def _cleanup_after_test():
     # This is where the test runs
     yield
 
-    os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    pattern = re.compile(r"^test_evaluate_results_cct.*$")
 
-    # Cleanup the directory and file
-    if os.path.exists(export_dir):
-        shutil.rmtree(export_dir)
+    for directory in os.listdir(TESTING_FILE_DIR):
+        if pattern.match(directory):
+            export_dir = os.path.join(TESTING_FILE_DIR, directory)
+
+            # Cleanup the directory and its contents
+            shutil.rmtree(export_dir)
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
