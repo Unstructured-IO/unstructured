@@ -40,6 +40,7 @@ def partition_md(
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions a markdown file into its constituent elements
@@ -69,6 +70,9 @@ def partition_md(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     # Verify that only one of the arguments was provided
     if text is None:
@@ -83,7 +87,9 @@ def partition_md(
             text = optional_decode(f.read())
 
     elif file is not None:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
         text = optional_decode(file.read())
 
     elif url is not None:
