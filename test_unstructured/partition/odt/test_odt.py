@@ -194,7 +194,7 @@ def test_partition_odt_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_doc_from_file_without_metadata_date(
+def test_partition_odt_from_file_without_metadata_date(
     filename="example-docs/fake.odt",
 ):
     """Test partition_odt() with file that are not possible to get last modified date"""
