@@ -54,6 +54,7 @@ def partition_xlsx(
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     find_subtable: bool = True,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -83,6 +84,9 @@ def partition_xlsx(
         The day of the last modification
     include_header
         Determines whether or not header info is included in text and medatada.text_as_html
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     last_modification_date = None
     header = 0 if include_header else None
@@ -103,7 +107,9 @@ def partition_xlsx(
         sheets = pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
             f, sheet_name=None, header=header
         )
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     else:
         raise ValueError("Either 'filename' or 'file' argument must be specified")
 
