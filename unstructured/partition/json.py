@@ -12,6 +12,7 @@ from __future__ import annotations
 import json
 from typing import IO, Any, Optional
 
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
     FileType,
@@ -28,6 +29,7 @@ from unstructured.staging.base import dict_to_elements
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
+@add_chunking_strategy()
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

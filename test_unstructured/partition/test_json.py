@@ -9,6 +9,7 @@ import tempfile
 import pytest
 from pytest_mock import MockFixture
 
+from unstructured.documents.elements import CompositeElement
 from unstructured.file_utils.filetype import FileType, detect_filetype
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -28,6 +29,15 @@ test_files = [
 ]
 
 is_in_docker = os.path.exists("/.dockerenv")
+
+
+def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
+    chunks = partition_json(
+        "example-docs/spring-weather.html.json", chunking_strategy="basic", max_characters=1500
+    )
+
+    assert len(chunks) == 10
+    assert all(isinstance(ch, CompositeElement) for ch in chunks)
 
 
 @pytest.mark.parametrize("filename", test_files)
