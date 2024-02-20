@@ -341,7 +341,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
         "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
-    elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -378,7 +378,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     )
     elements = image.partition_image(
         filename=filename,
-        stratefy=PartitionStrategy.HI_RES,
+        strategy=PartitionStrategy.HI_RES,
         metadata_last_modified=expected_last_modification_date,
     )
 
@@ -411,7 +411,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = image.partition_image(file=f, stratefy=PartitionStrategy.HI_RES)
+        elements = image.partition_image(file=f, strategy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -451,7 +451,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         elements = image.partition_image(
             file=f,
             metadata_last_modified=expected_last_modification_date,
-            stratefy=PartitionStrategy.HI_RES,
+            strategy=PartitionStrategy.HI_RES,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
