@@ -38,6 +38,7 @@ def partition_csv(
     languages: Optional[List[str]] = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
@@ -66,6 +67,9 @@ def partition_csv(
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -77,7 +81,9 @@ def partition_csv(
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
