@@ -1,6 +1,15 @@
 [tool.black]
 line-length = 100
 
+[tool.pyright]
+pythonPlatform = "Linux"
+pythonVersion = "3.8"
+reportUnnecessaryCast = true
+reportUnnecessaryTypeIgnoreComment = true
+stubPath = "./typings"
+typeCheckingMode = "strict"
+verboseOutput = true
+
 [tool.ruff]
 line-length = 100
 

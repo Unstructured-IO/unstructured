@@ -1,7 +1,7 @@
 import copy
 from io import BytesIO
 from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, Iterator, List, Optional, Union, cast
+from typing import IO, Any, BinaryIO, Iterator, List, Optional, Union, cast
 
 from lxml import etree
 
@@ -84,7 +84,7 @@ def _get_leaf_elements(
 @add_chunking_strategy()
 def partition_xml(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,
     text: Optional[str] = None,
     xml_keep_tags: bool = False,
     xml_path: Optional[str] = None,
@@ -96,7 +96,7 @@ def partition_xml(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an XML document into its document elements.
 

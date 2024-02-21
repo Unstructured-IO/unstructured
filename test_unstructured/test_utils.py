@@ -139,6 +139,7 @@ def test_only_raises_if_empty(iterator):
                 [
                     {
                         "overlapping_elements": ["Title(ix=0)", "NarrativeText(ix=1)"],
+                        "parent_element": "Title(ix=0)",
                         "overlapping_case": "nested NarrativeText in Title",
                         "overlap_percentage": "100%",
                         "metadata": {
@@ -174,6 +175,7 @@ def test_only_raises_if_empty(iterator):
                 [
                     {
                         "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                        "parent_element": None,
                         "overlapping_case": "partial overlap sharing 50.0% of the text from1. "
                         "NarrativeText(2-gram)",
                         "overlap_percentage": "11.11%",
@@ -210,6 +212,7 @@ def test_only_raises_if_empty(iterator):
                 [
                     {
                         "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                        "parent_element": None,
                         "overlapping_case": "partial overlap with duplicate text",
                         "overlap_percentage": "11.11%",
                         "metadata": {
@@ -245,6 +248,7 @@ def test_only_raises_if_empty(iterator):
                 [
                     {
                         "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                        "parent_element": None,
                         "overlapping_case": "partial overlap without sharing text",
                         "overlap_percentage": "11.11%",
                         "metadata": {
@@ -280,6 +284,7 @@ def test_only_raises_if_empty(iterator):
                 [
                     {
                         "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                        "parent_element": None,
                         "overlapping_case": "Small partial overlap",
                         "overlap_percentage": "8.33%",
                         "metadata": {
