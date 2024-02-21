@@ -1,3 +1,4 @@
+import base64
 import contextlib
 import json
 import os
@@ -8,7 +9,7 @@ import pytest
 import requests
 from unstructured_client.general import General
 
-from unstructured.documents.elements import NarrativeText
+from unstructured.documents.elements import NarrativeText, ElementType
 from unstructured.partition.api import partition_multiple_via_api, partition_via_api
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
@@ -208,6 +209,22 @@ def test_partition_via_api_valid_request_data_kwargs():
     elements = partition_via_api(filename=filename, strategy="fast", api_key=get_api_key())
 
     assert isinstance(elements, list)
+
+
+def test_partition_via_api_image_block_extraction():
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "embedded-images-tables.pdf")
+    elements = partition_via_api(
+        filename=filename,
+        strategy="hi_res",
+        extract_image_block_types=["image", "table"],
+        api_key=get_api_key(),
+    )
+    image_elements = [el for el in elements if el.category == ElementType.IMAGE]
+    for el in image_elements:
+        assert el.metadata.image_base64 is not None
+        assert el.metadata.image_mime_type is not None
+        image_data = base64.b64decode(el.metadata.image_base64)
+        assert isinstance(image_data, bytes)
 
 
 # Note(austin) - This test is way too noisy against the hosted api
