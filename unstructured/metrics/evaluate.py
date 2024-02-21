@@ -174,7 +174,11 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
     _display(agg_df)
 
-def group_text_extraction_acc(grouping, df, export_filename):
+
+def group_text_extraction_acc(
+    grouping: str, df: pd.DataFrame, export_filename: str
+) -> Tuple[pd.DataFrame, str]:
+    """Aggregate the evaluation score on `grouping` type."""
     if grouping in ["doctype", "connector"]:
         grouped_acc = (
             df.groupby(grouping)
