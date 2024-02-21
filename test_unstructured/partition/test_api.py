@@ -9,7 +9,7 @@ import pytest
 import requests
 from unstructured_client.general import General
 
-from unstructured.documents.elements import NarrativeText, ElementType
+from unstructured.documents.elements import ElementType, NarrativeText
 from unstructured.partition.api import partition_multiple_via_api, partition_via_api
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
