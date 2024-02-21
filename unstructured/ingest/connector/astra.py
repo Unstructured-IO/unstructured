@@ -1,7 +1,6 @@
 import copy
-import uuid
 import typing as t
-
+import uuid
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -17,7 +16,6 @@ from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
-
 
 if t.TYPE_CHECKING:
     from astrapy.db import AstraDB, AstraDBCollection
@@ -61,7 +59,7 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
 
         if hasattr(self_cp, "_astra_db_collection"):
             setattr(self_cp, "_astra_db_collection", None)
-        
+
         return _asdict(self_cp, **kwargs)
 
     @property
@@ -96,7 +94,7 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise SourceConnectionNetworkError(f"failed to validate connection: {e}")
-        
+
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(f"Inserting / updating {len(elements_dict)} documents to AstraDB.")
 

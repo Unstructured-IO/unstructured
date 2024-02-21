@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig, Dict
+from unstructured.ingest.cli.interfaces import CliConfig
 from unstructured.ingest.connector.astra import AstraDBWriteConfig, SimpleAstraDBConfig
 
 
