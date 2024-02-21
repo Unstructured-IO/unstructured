@@ -66,7 +66,7 @@ A RAG workflow can be broken down into the following steps:
 
 4. **Embedding**: After chunking, you must convert the text into a numerical representation (vector embedding) that an LLM can understand. To use the various embedding models using Unstructured tools, please refer to `this page <https://unstructured-io.github.io/unstructured/core/embedding.html>`__.
 
-5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are many options for your vector database (ChromaDB, Milvus, Pinecone, Qdrant, Weaviate, and more). For complete list of Unstructured ``Destination Connectors``, please visit `this page <https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html>`__.
+5. **Vector Database**: The next step is to choose a location for storing your chunked embeddings. There are many options for your vector database (ChromaDB, Clarifai, Milvus, Pinecone, Qdrant, Weaviate, and more). For complete list of Unstructured ``Destination Connectors``, please visit `this page <https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html>`__.
 
 6. **User Prompt**: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.
 

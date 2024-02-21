@@ -162,6 +162,7 @@ setup(
         "slack": load_requirements("requirements/ingest/slack.in"),
         "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
         "weaviate": load_requirements("requirements/ingest/weaviate.in"),
+        "clarifai": load_requirements("requirements/ingest/clarifai.in"),
         # Legacy extra requirements
         "huggingface": load_requirements("requirements/huggingface.in"),
         "local-inference": all_doc_reqs,
