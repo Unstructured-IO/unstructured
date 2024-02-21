@@ -105,8 +105,8 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
 
     def normalize_dict(self, element_dict: dict) -> dict:
         return {
-            "id": str(uuid.uuid4()),
-            "vector": element_dict.pop("embeddings", None),
+            "_id": str(uuid.uuid4()),
+            "$vector": element_dict.pop("embeddings", None),
             "content": element_dict.pop("text", None),
             "metadata": flatten_dict(
                 element_dict, separator="-", flatten_lists=True, remove_none=True
