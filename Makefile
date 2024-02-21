@@ -237,7 +237,7 @@ install-ingest-chroma:
 
 .PHONY: install-ingest-clarifai
 install-ingest-clarifai:
-    python3 -m pip install -r requirements/ingest/clarifai.txt
+	python3 -m pip install -r requirements/ingest/clarifai.txt
 
 .PHONY: install-ingest-postgres
 install-ingest-postgres:
