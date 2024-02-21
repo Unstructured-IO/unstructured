@@ -7,6 +7,9 @@ from unstructured_inference.models.eval import compare_contents_as_df
 
 
 class TableAlignment:
+    def __init__(self, cutoff: float = 0.8):
+        self.cutoff = cutoff
+
     @staticmethod
     def get_content_in_tables(table_data: List[List[Dict[str, Any]]]) -> List[str]:
         # Replace below docstring with google-style docstring
@@ -59,14 +62,15 @@ class TableAlignment:
         predicted_table_data: List[List[Dict[str, Any]]],
         ground_truth_table_data: List[List[Dict[str, Any]]],
         matched_indices: List[int],
+        cutoff: float = 0.8,
     ) -> Dict[str, float]:
         """Aligns elements of the predicted tables with the ground truth tables at the cell level.
 
         Args:
           predicted_table_data: A list of predicted tables.
           ground_truth_table_data: A list of ground truth tables.
-          matched_indices: Indices of the best matching ground truth table for
-        each predicted table.
+          matched_indices: Indices of the best matching ground truth table for each predicted table.
+          cutoff: The cutoff value for the close matches.
 
         Returns:
           A dictionary with column and row alignment accuracies.
@@ -106,7 +110,7 @@ class TableAlignment:
                 matches = difflib.get_close_matches(
                     content,
                     ground_truth_td_contents_list,
-                    cutoff=0.8,
+                    cutoff=cutoff,
                     n=1,
                 )
                 matched_idx = ground_truth_td_contents_list.index(matches[0]) if matches else -1

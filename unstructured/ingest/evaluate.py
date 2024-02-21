@@ -162,6 +162,14 @@ def measure_element_type_accuracy_command(
     default=False,
     help="Add the flag to show progress bar.",
 )
+@click.option(
+    "--cutoff",
+    type=float,
+    show_default=True,
+    default=0.8,
+    help="The cutoff value for the element level alignment. \
+        If not set, a default value is used",
+)
 def measure_table_structure_accuracy_command(
     output_dir: str,
     source_dir: str,
@@ -169,9 +177,10 @@ def measure_table_structure_accuracy_command(
     visualize: bool,
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
+    cutoff: Optional[float] = None,
 ):
     return measure_table_structure_accuracy(
-        output_dir, source_dir, output_list, source_list, export_dir, visualize
+        output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
     )
 
 

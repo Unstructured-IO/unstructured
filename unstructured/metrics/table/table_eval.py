@@ -23,7 +23,7 @@ python table_eval.py  \
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import click
 import numpy as np
@@ -66,6 +66,7 @@ class TableEvalProcessor:
         self,
         prediction: List[Dict[str, Any]],
         ground_truth: List[Dict[str, Any]],
+        cutoff: float = 0.8,
     ):
         """
         Initializes the TableEvalProcessor prediction and ground truth.
@@ -73,6 +74,7 @@ class TableEvalProcessor:
         Args:
             prediction: Predicted table data.
             ground_truth: Ground truth table data. The tables text should be in the deckerd format.
+            cutoff: The cutoff value for the element level alignment. Default is 0.8.
 
         Examples:
             ground_truth: [
@@ -104,18 +106,22 @@ class TableEvalProcessor:
         """
         self.prediction = prediction
         self.ground_truth = ground_truth
+        self.cutoff = cutoff
 
     @classmethod
     def from_json_files(
         cls,
         prediction_file: Path,
         ground_truth_file: Path,
+        cutoff: Optional[float] = None,
     ) -> "TableEvalProcessor":
         """Factory classmethod to initialize the object with path to json files instead of dicts
 
         Args:
           prediction_file: Path to the json file containing the predicted table data.
           ground_truth_file: Path to the json file containing the ground truth table data.
+          cutoff: The cutoff value for the element level alignment.
+            If not set, class default value is used (=0.8).
 
         Returns:
           TableEvalProcessor: An instance of the class initialized with the provided data.
@@ -124,7 +130,10 @@ class TableEvalProcessor:
             prediction = json.load(f)
         with open(ground_truth_file) as f:
             ground_truth = json.load(f)
-        return cls(prediction=prediction, ground_truth=ground_truth)
+        if cutoff is not None:
+            return cls(prediction=prediction, ground_truth=ground_truth, cutoff=cutoff)
+        else:
+            return cls(prediction=prediction, ground_truth=ground_truth)
 
     def process_file(self) -> TableEvaluation:
         """Processes the files and computes table-level and element-level accuracy.
@@ -157,6 +166,7 @@ class TableEvalProcessor:
             predicted_table_data,
             ground_truth_table_data,
             matched_indices,
+            cutoff=self.cutoff,
         )
         if metrics:
             total_col_index_acc.append(metrics["col_index_acc"])
