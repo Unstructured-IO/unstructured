@@ -50,7 +50,7 @@ mpmath==1.3.0
     # via sympy
 networkx==3.2.1
     # via torch
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c base.txt
     #   transformers
@@ -87,13 +87,13 @@ six==1.16.0
     #   langdetect
 sympy==1.12
     # via torch
-tokenizers==0.15.1
+tokenizers==0.15.2
     # via transformers
 torch==2.2.0
     # via
     #   -c constraints.in
     #   -r huggingface.in
-tqdm==4.66.1
+tqdm==4.66.2
     # via
     #   -c base.txt
     #   huggingface-hub

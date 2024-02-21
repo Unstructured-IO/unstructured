@@ -15,6 +15,7 @@
 * **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
 * **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
 
 ## 0.12.4
 
