@@ -5,6 +5,7 @@
 ### Features
 
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
+* **Separate grouping function for evaluation** Separate the grouping functionality to avoid duplicated evaluation when the granular level eval is already available.
 
 ### Fixes
 
