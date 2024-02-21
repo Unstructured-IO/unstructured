@@ -197,6 +197,7 @@ def measure_table_structure_accuracy(
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
     visualize: bool = False,
+    cutoff: Optional[float] = None,
 ):
     """
     Loops through the list of structured output from all of `output_dir` or selected files from
@@ -240,6 +241,7 @@ def measure_table_structure_accuracy(
             processor = TableEvalProcessor.from_json_files(
                 prediction_file=prediction_file,
                 ground_truth_file=ground_truth_file,
+                cutoff=cutoff,
             )
             report = processor.process_file()
             rows.append(
