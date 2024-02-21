@@ -33,7 +33,7 @@ def run_check(token, api_endpoint, collection_name, embedding_dimension):
     )
 
     # Generate a random embedding of the appropriate length
-    random_vector = [round(random.uniform(0, 1), 1) for _ in range(embedding_dimension)]
+    # random_vector = [round(random.uniform(0, 1), 1) for _ in range(embedding_dimension)]
 
     find_one = astra_db_collection.find_one()
     random_vector = find_one["data"]["document"]["vector"]
@@ -43,6 +43,8 @@ def run_check(token, api_endpoint, collection_name, embedding_dimension):
     # Perform a similarity search
     find_result = astra_db_collection.vector_find(random_vector, limit=1)
     print(find_result)
+
+    breakpoint()
 
     # Check that we retrieved the coded cleats copy data
     # assert find_result[0]["name"] == random_text
