@@ -1,4 +1,5 @@
 import sys
+from os import environ
 from functools import lru_cache
 from typing import List, Tuple
 
@@ -17,10 +18,11 @@ CACHE_MAX_SIZE: Final[int] = 128
 
 def _download_nltk_package_if_not_present(package_name: str, package_category: str):
     """If the required nlt package is not present, download it."""
+    download_dir = environ.get("NLTK_DATA") or None
     try:
         nltk.find(f"{package_category}/{package_name}")
     except LookupError:
-        nltk.download(package_name)
+        nltk.download(package_name, download_dir)
 
 
 @lru_cache(maxsize=CACHE_MAX_SIZE)
