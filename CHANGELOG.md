@@ -4,6 +4,8 @@
 
 ### Features
 
+* **Add Astra DB integration** Adds support for writing partitioned documents into a Astra DB database.
+
 ### Fixes
 
 * **Add OctoAI embedder** Adds support for embeddings via OctoAI.
