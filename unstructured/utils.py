@@ -284,7 +284,8 @@ def first(it: Iterable[Any]) -> Any:
 def only(it: Iterable[Any]) -> Any:
     """Returns the only element from a singleton iterable.
 
-    Raises an error if the iterable is not a singleton."""
+    Raises an error if the iterable is not a singleton.
+    """
     out, iterator = _first_and_remaining_iterator(it)
     if any(True for _ in iterator):
         raise ValueError(
@@ -353,10 +354,7 @@ def calculate_shared_ngram_percentage(
     second_string: str,
     n: int,
 ) -> tuple[float, set[tuple[str, ...]]]:
-    """Calculate the percentage of common_ngrams between string_A and string_B
-
-    with reference to the total number of ngrams in string_A"""
-
+    """Calculate the percentage of common_ngrams between string A and B with reference to A"""
     if not n:
         return 0, set()
     first_string_ngrams = ngrams(first_string.split(), n)
@@ -380,7 +378,6 @@ def calculate_largest_ngram_percentage(
         - A set containing the shared n-grams found during the calculation.
         - A string representation of the size of the largest shared n-grams found.
     """
-
     shared_ngrams: set[tuple[str, ...]] = set()
     if len(first_string.split()) < len(second_string.split()):
         n = len(first_string.split()) - 1
@@ -406,8 +403,8 @@ def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bo
     """True if the child_target bounding box is nested in the parent_target.
 
     Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
-    The parameter 'add' is the pixel error tolerance for extra pixels outside the parent region"""
-
+    The parameter 'add' is the pixel error tolerance for extra pixels outside the parent region
+    """
     if len(parent_target) != 4:
         return False
     parent_targets = [0, 0, 0, 0]
@@ -437,10 +434,11 @@ def calculate_overlap_percentage(
     box2: Points,
     intersection_ratio_method: str = "total",
 ) -> tuple[float, float, float, float]:
-    """Calculate the percentage of overlapped region with reference to
+    """Calculate the percentage of overlapped region.
 
+    Calculate the percentage with reference to
     the biggest element-region (intersection_ratio_method="parent"),
-    the smallest element-region (intersection_ratio_method="partial"), or to
+    the smallest element-region (intersection_ratio_method="partial"), or
     the disjunctive union region (intersection_ratio_method="total")
     """
     x1, y1 = box1[0]
@@ -551,7 +549,7 @@ def identify_overlapping_case(
             overlapping_case = "partial overlap with duplicate text"
 
         else:
-            (largest_ngram_percentage, _, largest_n) = calculate_largest_ngram_percentage(
+            largest_ngram_percentage, _, largest_n = calculate_largest_ngram_percentage(
                 text1, text2
             )
             largest_ngram_percentage = round(largest_ngram_percentage, 2)
@@ -585,7 +583,8 @@ def _convert_coordinates_to_box(coordinates: Points):
     """Accepts a set of Points and returns the lower-left and upper-right coordinates.
 
     Expects four coordinates representing the corners of a rectangle, listed in this order:
-    bottom-left, top-left, top-right, bottom-right."""
+    bottom-left, top-left, top-right, bottom-right.
+    """
     x_bottom_left_1, y_bottom_left_1 = coordinates[0]
     x_top_right_1, y_top_right_1 = coordinates[2]
     return x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1
