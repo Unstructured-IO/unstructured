@@ -14,7 +14,6 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    Dict,
     Generic,
     Iterable,
     Iterator,
@@ -23,7 +22,6 @@ from typing import (
     Sequence,
     Tuple,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -35,10 +33,10 @@ from unstructured.__version__ import __version__
 if TYPE_CHECKING:
     from unstructured.documents.elements import Text
 
-Point: TypeAlias = Tuple[float, float]
-Points: TypeAlias = Tuple[Point, ...]
 # Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right]
 Box: TypeAlias = Tuple[float, float, float, float]
+Point: TypeAlias = Tuple[float, float]
+Points: TypeAlias = Tuple[Point, ...]
 
 DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT%H:%M:%S%z")
 
@@ -196,7 +194,7 @@ def read_from_jsonl(filename: str) -> list[dict[str, Any]]:
 
 
 def requires_dependencies(
-    dependencies: Union[str, list[str]],
+    dependencies: str | list[str],
     extras: Optional[str] = None,
 ) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     if isinstance(dependencies, str):
@@ -237,6 +235,7 @@ def dependency_exists(dependency: str):
 
 def validate_date_args(date: Optional[str] = None) -> bool:
     """Validate whether the provided date string satisfies any of the supported date formats.
+
     Used by unstructured/ingest/connector/biomed.py
 
     Returns `True` if the date string satisfies any of the supported formats, otherwise raises
@@ -260,11 +259,11 @@ def validate_date_args(date: Optional[str] = None) -> bool:
 
     raise ValueError(
         f"The argument {date} does not satisfy the format:"
-        " YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SS±HHMM",
+        f" YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS or YYYY-MM-DD+HH:MM:SS or YYYY-MM-DDTHH:MM:SS±HHMM",
     )
 
 
-def _first_and_remaining_iterator(it: Iterable[Any]) -> Tuple[Any, Iterator[Any]]:
+def _first_and_remaining_iterator(it: Iterable[Any]) -> tuple[Any, Iterator[Any]]:
     iterator = iter(it)
     try:
         out = next(iterator)
@@ -283,8 +282,9 @@ def first(it: Iterable[Any]) -> Any:
 
 
 def only(it: Iterable[Any]) -> Any:
-    """Returns the only element from a singleton iterable. Raises an error if the iterable is not a
-    singleton."""
+    """Returns the only element from a singleton iterable.
+
+    Raises an error if the iterable is not a singleton."""
     out, iterator = _first_and_remaining_iterator(it)
     if any(True for _ in iterator):
         raise ValueError(
@@ -354,6 +354,7 @@ def calculate_shared_ngram_percentage(
     n: int,
 ) -> tuple[float, set[tuple[str, ...]]]:
     """Calculate the percentage of common_ngrams between string_A and string_B
+
     with reference to the total number of ngrams in string_A"""
 
     if not n:
@@ -370,11 +371,9 @@ def calculate_shared_ngram_percentage(
 
 
 def calculate_largest_ngram_percentage(
-    first_string: str,
-    second_string: str,
+    first_string: str, second_string: str
 ) -> tuple[float, set[tuple[str, ...]], str]:
-    """Iteratively calculate_shared_ngram_percentage starting from the biggest
-    ngram possible until is >0.0%
+    """From two strings, calculate the shared ngram percentage.
 
     Returns a tuple containing...
         - The largest n-gram percentage shared between the two strings.
@@ -389,6 +388,7 @@ def calculate_largest_ngram_percentage(
         n = len(second_string.split()) - 1
         first_string, second_string = second_string, first_string
     ngram_percentage = 0
+    # Start from the biggest ngram possible (`n`) until the ngram_percentage is >0.0% or n == 0
     while not ngram_percentage:
         ngram_percentage, shared_ngrams = calculate_shared_ngram_percentage(
             first_string,
@@ -402,34 +402,31 @@ def calculate_largest_ngram_percentage(
     return round(ngram_percentage, 2), shared_ngrams, str(n + 1)
 
 
-def is_parent_box(
-    parent_target: Box,
-    child_target: Box,
-    add: float = 0.0,
-) -> bool:
+def is_parent_box(parent_target: Box, child_target: Box, add: float = 0.0) -> bool:
     """True if the child_target bounding box is nested in the parent_target.
+
     Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right].
     The parameter 'add' is the pixel error tolerance for extra pixels outside the parent region"""
 
     if len(parent_target) != 4:
         return False
-    list_parent_target = [0, 0, 0, 0]
+    parent_targets = [0, 0, 0, 0]
     if add and len(parent_target) == 4:
-        list_parent_target = list(parent_target)
-        list_parent_target[0] -= add
-        list_parent_target[1] -= add
-        list_parent_target[2] += add
-        list_parent_target[3] += add
+        parent_targets = list(parent_target)
+        parent_targets[0] -= add
+        parent_targets[1] -= add
+        parent_targets[2] += add
+        parent_targets[3] += add
 
     if (
         len(child_target) == 4
-        and (child_target[0] >= list_parent_target[0] and child_target[1] >= list_parent_target[1])
-        and (child_target[2] <= list_parent_target[2] and child_target[3] <= list_parent_target[3])
+        and (child_target[0] >= parent_targets[0] and child_target[1] >= parent_targets[1])
+        and (child_target[2] <= parent_targets[2] and child_target[3] <= parent_targets[3])
     ):
         return True
     if len(child_target) == 2 and (
-        list_parent_target[0] <= child_target[0] <= list_parent_target[2]
-        and list_parent_target[1] <= child_target[1] <= list_parent_target[3]
+        parent_targets[0] <= child_target[0] <= parent_targets[2]
+        and parent_targets[1] <= child_target[1] <= parent_targets[3]
     ):
         return True
     return False
@@ -440,7 +437,8 @@ def calculate_overlap_percentage(
     box2: Points,
     intersection_ratio_method: str = "total",
 ) -> tuple[float, float, float, float]:
-    """Calculates the percentage of overlapped region with reference to
+    """Calculate the percentage of overlapped region with reference to
+
     the biggest element-region (intersection_ratio_method="parent"),
     the smallest element-region (intersection_ratio_method="partial"), or to
     the disjunctive union region (intersection_ratio_method="total")
@@ -483,13 +481,14 @@ def calculate_overlap_percentage(
 
 
 def identify_overlapping_case(
-    box_pair: Union[List[Points], Tuple[Points, Points]],
-    label_pair: Union[List[str], Tuple[str, str]],
-    text_pair: Union[List[str], Tuple[str, str]],
-    ix_pair: Union[List[str], Tuple[str, str]],
+    box_pair: list[Points] | tuple[Points, Points],
+    label_pair: list[str] | tuple[str, str],
+    text_pair: list[str] | tuple[str, str],
+    ix_pair: list[str] | tuple[str, str],
     sm_overlap_threshold: float = 10.0,
 ):
     """Classifies the overlapping case for an element_pair input.
+
     There are 5 cases of overlapping:
         'Small partial overlap'
         'Partial overlap with empty content'
@@ -552,11 +551,9 @@ def identify_overlapping_case(
             overlapping_case = "partial overlap with duplicate text"
 
         else:
-            (
-                largest_ngram_percentage,
-                _,
-                largest_n,
-            ) = calculate_largest_ngram_percentage(text1, text2)
+            (largest_ngram_percentage, _, largest_n) = calculate_largest_ngram_percentage(
+                text1, text2
+            )
             largest_ngram_percentage = round(largest_ngram_percentage, 2)
             if not largest_ngram_percentage:
                 overlapping_elements = [
@@ -585,6 +582,10 @@ def identify_overlapping_case(
 
 
 def _convert_coordinates_to_box(coordinates: Points):
+    """Accepts a set of Points and returns the lower-left and upper-right coordinates.
+
+    Expects four coordinates representing the corners of a rectangle, listed in this order:
+    bottom-left, top-left, top-right, bottom-right."""
     x_bottom_left_1, y_bottom_left_1 = coordinates[0]
     x_top_right_1, y_top_right_1 = coordinates[2]
     return x_bottom_left_1, y_bottom_left_1, x_top_right_1, y_top_right_1
@@ -592,14 +593,13 @@ def _convert_coordinates_to_box(coordinates: Points):
 
 # x1, y1 = box1[0]
 def identify_overlapping_or_nesting_case(
-    box_pair: Union[List[Points], Tuple[Points, Points]],
-    label_pair: Union[List[str], Tuple[str, str]],
-    text_pair: Union[List[str], Tuple[str, str]],
+    box_pair: list[Points] | tuple[Points, Points],
+    label_pair: list[str] | tuple[str, str],
+    text_pair: list[str] | tuple[str, str],
     nested_error_tolerance_px: int = 5,
     sm_overlap_threshold: float = 10.0,
 ):
-    """Identify if there are nested or overlapping elements. If overlapping is present,
-    it identifies the case calling the method identify_overlapping_case
+    """Identify if overlapping or nesting elements exist and, if so, the type of overlapping case.
 
     Returns:
     overlapping_elements: List[str] - List of element types & their `ix` value. Ex: ['Title(ix=0)']
@@ -696,10 +696,10 @@ def identify_overlapping_or_nesting_case(
 
 
 def catch_overlapping_and_nested_bboxes(
-    elements: List["Text"],
+    elements: list["Text"],
     nested_error_tolerance_px: int = 5,
     sm_overlap_threshold: float = 10.0,
-) -> tuple[bool, List[Dict[str, Any]]]:
+) -> tuple[bool, list[dict[str, Any]]]:
     """Catch overlapping and nested bounding boxes cases across a list of elements."""
 
     num_pages = elements[-1].metadata.page_number or 0

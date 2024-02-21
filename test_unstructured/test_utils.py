@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 import pytest
 
@@ -313,42 +314,40 @@ def test_validate_data_args():
         utils.validate_date_args(None)
 
 
-def test_validate_date_args_accepts_standard_formats():
-    assert utils.validate_date_args("1990-12-01")
-    assert utils.validate_date_args("2050-01-01T00:00:00")
-    assert utils.validate_date_args("2050-01-01+00:00:00")
-    assert utils.validate_date_args("2022-02-12T14:30:00-0500")
+@pytest.mark.parametrize(
+    "date", ["1990-12-01", "2050-01-01T00:00:00", "2050-01-01+00:00:00", "2022-02-12T14:30:00-0500"]
+)
+def test_validate_date_args_accepts_standard_formats(date):
+    assert utils.validate_date_args(date)
 
 
-def test_validate_date_args_raises_for_invalid_formats():
-    with pytest.raises(ValueError):
-        assert utils.validate_date_args(None)
-        assert utils.validate_date_args("not a date")
-        assert utils.validate_date_args("1990-12-33")
-        assert utils.validate_date_args("2022-02-12T14:30:00-2000")
+@pytest.mark.parametrize("date", [None, "not a date", "1990-12-33"])
+def test_validate_date_args_raises_for_invalid_formats(date):
+    pattern1 = re.compile(r"The argument.*?(?:is None).*")
+    pattern2 = re.compile(r"The argument.*?(?:does not satisfy the format: YYYY-MM-DD).*")
+    combined_pattern = re.compile(f"({pattern1.pattern}|{pattern2.pattern})")
+    with pytest.raises(ValueError, match=combined_pattern):
+        assert utils.validate_date_args(date)
 
 
 def test_htmlify_matrix_handles_empty_cells():
-    matrix = [["cell1", "", "cell3"], ["", "cell5", ""]]
-    expected_html = (
+    assert utils.htmlify_matrix_of_cell_texts([["cell1", "", "cell3"], ["", "cell5", ""]]) == (
         "<table><tr><td>cell1</td><td></td><td>cell3</td></tr>"
         "<tr><td></td><td>cell5</td><td></td></tr></table>"
     )
-    assert utils.htmlify_matrix_of_cell_texts(matrix) == expected_html
 
 
 def test_htmlify_matrix_handles_special_characters():
-    matrix = [['<>&"', "newline\n"]]
-    expected_html = "<table><tr><td>&lt;&gt;&amp;&quot;</td><td>newline<br/></td></tr></table>"
-    assert utils.htmlify_matrix_of_cell_texts(matrix) == expected_html
+    assert utils.htmlify_matrix_of_cell_texts([['<>&"', "newline\n"]]) == (
+        "<table><tr><td>&lt;&gt;&amp;&quot;</td><td>newline<br/></td></tr></table>"
+    )
 
 
 def test_htmlify_matrix_handles_multiple_rows_and_cells():
-    matrix = [["cell1", "cell2"], ["cell3", "cell4"]]
-    expected_html = (
-        "<table><tr><td>cell1</td><td>cell2</td></tr><tr><td>cell3</td><td>cell4</td></tr></table>"
+    assert utils.htmlify_matrix_of_cell_texts([["cell1", "cell2"], ["cell3", "cell4"]]) == (
+        "<table><tr><td>cell1</td><td>cell2</td></tr>"
+        "<tr><td>cell3</td><td>cell4</td></tr></table>"
     )
-    assert utils.htmlify_matrix_of_cell_texts(matrix) == expected_html
 
 
 def test_htmlify_matrix_handles_empty_matrix():
