@@ -16,7 +16,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -30,7 +30,7 @@ jobs:
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
     runs-on: ubuntu-latest
@@ -71,11 +71,20 @@ jobs:
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@master
 
+  shfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup shfmt
+        uses: mfinelli/setup-shfmt@v3
+      - name: Run shfmt
+        run: shfmt -i 2 -d .
+
 
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -141,7 +150,7 @@ jobs:
   test_unit_no_extras:
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -167,7 +176,7 @@ jobs:
     # NOTE(newelh) - Split extras into separate steps in the same pipeline (avoid using matrix)
     strategy:
       matrix:
-        python-version: ["3.8"]
+        python-version: ["3.10"]
         extra: ["csv", "docx", "odt", "markdown", "pypandoc", "msg", "pdf-image", "pptx", "xlsx"]
     runs-on: ubuntu-latest
     env:
@@ -209,7 +218,7 @@ jobs:
   setup_ingest:
     strategy:
       matrix:
-        python-version: [ "3.8","3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10","3.11" ]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -223,7 +232,7 @@ jobs:
   test_ingest_unit:
     strategy:
       matrix:
-        python-version: [ "3.8","3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10","3.11" ]
     runs-on: ubuntu-latest
     needs: [ setup_ingest, lint ]
     steps:
@@ -249,7 +258,7 @@ jobs:
   test_ingest_src:
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -287,6 +296,8 @@ jobs:
         HUBSPOT_API_TOKEN: ${{ secrets.HUBSPOT_API_TOKEN }}
         JIRA_INGEST_API_TOKEN: ${{ secrets.JIRA_INGEST_API_TOKEN }}
         JIRA_INGEST_USER_EMAIL: ${{ secrets.JIRA_INGEST_USER_EMAIL }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         MS_CLIENT_CRED: ${{ secrets.MS_CLIENT_CRED }}
         MS_CLIENT_ID: ${{ secrets.MS_CLIENT_ID }}
         MS_TENANT_ID: ${{ secrets.MS_TENANT_ID }}
@@ -311,7 +322,7 @@ jobs:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
-        OCR_AGENT: "tesseract"
+        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
@@ -329,7 +340,7 @@ jobs:
     environment: ci
     strategy:
       matrix:
-        python-version: ["3.8","3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -368,8 +379,11 @@ jobs:
         MONGODB_DATABASE_NAME: ${{ secrets.MONGODB_DATABASE_NAME }}
         AZURE_DEST_CONNECTION_STR: ${{ secrets.AZURE_DEST_CONNECTION_STR }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
+        VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
+        VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
+        VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
         TABLE_OCR: "tesseract"
-        OCR_AGENT: "tesseract"
+        OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
@@ -385,8 +399,8 @@ jobs:
   test_unstructured_api_unit:
     strategy:
       matrix:
-        # NOTE(yuming): Unstructured API only use Python 3.8
-        python-version: ["3.8"]
+        # NOTE(yuming): Unstructured API only use Python 3.10
+        python-version: ["3.10"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data

@@ -17,8 +17,8 @@ way to see the structure and content of each Table element.
 
 # Check for the presence of an argument
 if [ "$#" -ne 1 ]; then
-    echo "$USAGE_MESSAGE"
-    exit 1
+  echo "$USAGE_MESSAGE"
+  exit 1
 fi
 
 # The JSON file to be processed is the first argument
@@ -57,11 +57,11 @@ jq -c '.[] | select(.type == "Table") | .metadata.text_as_html' "$JSON_FILE" | w
   COUNTER=$((COUNTER + 1))
 
   # Save the HTML content to a file
-  echo "$HTML_CONTENT" > "$HTML_FILENAME"
+  echo "$HTML_CONTENT" >"$HTML_FILENAME"
 
   if [ "$(uname)" == "Darwin" ]; then
     # Open the file in a new browser window
-    open -a "Safari" "$HTML_FILENAME"&
+    open -a "Safari" "$HTML_FILENAME" &
   else
     echo "$HTML_FILENAME"
   fi

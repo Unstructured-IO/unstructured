@@ -74,6 +74,8 @@ class FileType(enum.Enum):
     JPG = 30
     PNG = 31
     TIFF = 32
+    BMP = 33
+    HEIC = 34
 
     # Plain Text Types
     EML = 40
@@ -97,6 +99,9 @@ class FileType(enum.Enum):
     # Open Office Types
     ODT = 70
 
+    # Audio Files
+    WAV = 80
+
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
@@ -108,7 +113,16 @@ STR_TO_FILETYPE = {
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document": FileType.DOCX,
     "image/jpeg": FileType.JPG,
     "image/png": FileType.PNG,
+    "image/heic": FileType.HEIC,
     "image/tiff": FileType.TIFF,
+    "image/bmp": FileType.BMP,
+    # NOTE(robinson) - https://mimetype.io/application/yaml
+    # In the future, we may have special processing for YAML
+    # files instead of treating them as plaintext
+    "application/yaml": FileType.TXT,
+    "application/x-yaml": FileType.TXT,
+    "text/x-yaml": FileType.TXT,
+    "text/yaml": FileType.TXT,
     "text/plain": FileType.TXT,
     "text/x-csv": FileType.CSV,
     "application/csv": FileType.CSV,
@@ -136,6 +150,12 @@ STR_TO_FILETYPE = {
     "message/rfc822": FileType.EML,
     "application/x-ole-storage": FileType.MSG,
     "application/vnd.ms-outlook": FileType.MSG,
+    # NOTE(robinson) - https://mimetype.io/audio/wav
+    "audio/vnd.wav": FileType.WAV,
+    "audio/vnd.wave": FileType.WAV,
+    "audio/wave": FileType.WAV,
+    "audio/x-pn-wav": FileType.WAV,
+    "audio/x-wav": FileType.WAV,
     "inode/x-empty": FileType.EMPTY,
 }
 
@@ -161,6 +181,7 @@ EXT_TO_FILETYPE = {
     ".log": FileType.TXT,
     ".eml": FileType.EML,
     ".xml": FileType.XML,
+    ".heic": FileType.HEIC,
     ".htm": FileType.HTML,
     ".html": FileType.HTML,
     ".md": FileType.MD,
@@ -168,6 +189,7 @@ EXT_TO_FILETYPE = {
     ".rst": FileType.RST,
     ".xlsx": FileType.XLSX,
     ".pptx": FileType.PPTX,
+    ".p7s": FileType.EML,
     ".png": FileType.PNG,
     ".doc": FileType.DOC,
     ".zip": FileType.ZIP,
@@ -182,6 +204,8 @@ EXT_TO_FILETYPE = {
     ".tsv": FileType.TSV,
     ".tab": FileType.TSV,
     ".tiff": FileType.TIFF,
+    ".bmp": FileType.BMP,
+    ".wav": FileType.WAV,
     # NOTE(robinson) - for now we are treating code files as plain text
     ".js": FileType.TXT,
     ".py": FileType.TXT,
@@ -196,6 +220,8 @@ EXT_TO_FILETYPE = {
     ".swift": FileType.TXT,
     ".ts": FileType.TXT,
     ".go": FileType.TXT,
+    ".yaml": FileType.TXT,
+    ".yml": FileType.TXT,
     None: FileType.UNK,
 }
 
@@ -203,6 +229,7 @@ PLAIN_TEXT_EXTENSIONS = [
     ".txt",
     ".text",
     ".eml",
+    ".p7s",
     ".md",
     ".rtf",
     ".html",
@@ -304,6 +331,7 @@ def detect_filetype(
 
         if extension in [
             ".eml",
+            ".p7s",
             ".md",
             ".rtf",
             ".html",
@@ -336,7 +364,7 @@ def detect_filetype(
             return FileType.EML
 
         if extension in PLAIN_TEXT_EXTENSIONS:
-            return EXT_TO_FILETYPE.get(extension)
+            return EXT_TO_FILETYPE.get(extension, FileType.UNK)
 
         # Safety catch
         if mime_type in STR_TO_FILETYPE:
@@ -449,7 +477,15 @@ def _is_text_file_a_json(
         encoding=encoding,
     )
     try:
-        json.loads(file_text)
+        output = json.loads(file_text)
+        # NOTE(robinson) - Per RFC 4627 which defines the application/json media type,
+        # a string is a valid JSON. For our purposes, however, we want to treat that
+        # as a text file even if it is serializable as json.
+        # References:
+        # https://stackoverflow.com/questions/7487869/is-this-simple-string-considered-valid-json
+        # https://www.ietf.org/rfc/rfc4627.txt
+        if isinstance(output, str):
+            return False
         return True
     except json.JSONDecodeError:
         return False

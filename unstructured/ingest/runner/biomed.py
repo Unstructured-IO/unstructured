@@ -1,30 +1,28 @@
 import hashlib
-import logging
 import typing as t
+from dataclasses import dataclass
 
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.interfaces import BaseSourceConnector
+from unstructured.ingest.logger import logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.biomed import SimpleBiomedConfig
 
+
+@dataclass
 class BiomedRunner(Runner):
-    def run(
-        self,
-        max_request_time: int = 45,
-        path: t.Optional[str] = None,
-        api_id: t.Optional[str] = None,
-        api_from: t.Optional[str] = None,
-        api_until: t.Optional[str] = None,
-        **kwargs,
-    ):
-        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
+    connector_config: "SimpleBiomedConfig"
+
+    def update_read_config(self):
         base_path = (
-            path
-            if path
+            self.connector_config.path
+            if self.connector_config.path
             else "{}-{}-{}".format(
-                api_id if api_id else "",
-                api_from if api_from else "",
-                api_until if api_until else "",
+                self.connector_config.api_id if self.connector_config.api_id else "",
+                self.connector_config.api_from if self.connector_config.api_from else "",
+                self.connector_config.api_until if self.connector_config.api_until else "",
             )
         )
 
@@ -39,21 +37,9 @@ class BiomedRunner(Runner):
             logger=logger,
         )
 
+    def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
         from unstructured.ingest.connector.biomed import (
             BiomedSourceConnector,
-            SimpleBiomedConfig,
         )
 
-        source_doc_connector = BiomedSourceConnector(  # type: ignore
-            processor_config=self.processor_config,
-            connector_config=SimpleBiomedConfig(
-                path=path,
-                id_=api_id,
-                from_=api_from,
-                until=api_until,
-                request_timeout=max_request_time,
-            ),
-            read_config=self.read_config,
-        )
-
-        self.process_documents(source_doc_connector=source_doc_connector)
+        return BiomedSourceConnector

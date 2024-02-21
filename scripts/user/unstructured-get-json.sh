@@ -67,55 +67,55 @@ S3=""
 
 while [[ "$#" -gt 0 ]]; do
   case "$1" in
-    --hi-res)
-      HI_RES=true
-      shift
-      ;;
-    --fast)
-      FAST=true
-      shift
-      ;;
-    --ocr-only)
-      OCR_ONLY=true
-      shift
-      ;;
-    --trace)
-      TRACE=true
-      shift
-      ;;
-    --verbose)
-      VERBOSE=true
-      shift
-      ;;
-    --s3)
-      S3=true
-      shift
-      ;;
-    --tables)
-      TABLES=true
-      shift
-      ;;
-    --coordinates)
-      COORDINATES=true
-      shift
-      ;;
-    --api-key)
-      if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
-        API_KEY=$2
-        shift 2
-      else
-        echo "Error: Argument for $1 is missing" >&2
-        exit 1
-      fi
-      ;;
-    --help)
-      echo "$USAGE_MESSAGE"
-      exit 0
-      ;;
-    *)
-      INPUT="$1"
-      shift
-      ;;
+  --hi-res)
+    HI_RES=true
+    shift
+    ;;
+  --fast)
+    FAST=true
+    shift
+    ;;
+  --ocr-only)
+    OCR_ONLY=true
+    shift
+    ;;
+  --trace)
+    TRACE=true
+    shift
+    ;;
+  --verbose)
+    VERBOSE=true
+    shift
+    ;;
+  --s3)
+    S3=true
+    shift
+    ;;
+  --tables)
+    TABLES=true
+    shift
+    ;;
+  --coordinates)
+    COORDINATES=true
+    shift
+    ;;
+  --api-key)
+    if [ -n "$2" ] && [ "${2:0:1}" != "-" ]; then
+      API_KEY=$2
+      shift 2
+    else
+      echo "Error: Argument for $1 is missing" >&2
+      exit 1
+    fi
+    ;;
+  --help)
+    echo "$USAGE_MESSAGE"
+    exit 0
+    ;;
+  *)
+    INPUT="$1"
+    shift
+    ;;
   esac
 done
 
@@ -139,17 +139,17 @@ else
   INPUT_FILEPATH=${INPUT}
 fi
 
-if $HI_RES ; then
+if $HI_RES; then
   if $VERBOSE; then echo "Sending API request with hi_res strategy"; fi
   STRATEGY="-hi-res"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=hi_res")
-elif $FAST ; then
+elif $FAST; then
   if $VERBOSE; then echo "Sending API request with fast strategy"; fi
   STRATEGY="-fast"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=fast")
-elif $OCR_ONLY ; then
+elif $OCR_ONLY; then
   STRATEGY="-ocr-only"
   JSON_OUTPUT_FILEPATH=${TMP_OUTPUTS_DIR}/${FILENAME}${STRATEGY}.json
   CURL_STRATEGY=(-F "strategy=ocr_only")
@@ -173,32 +173,31 @@ curl -q -X 'POST' \
   "${CURL_STRATEGY[@]}" "${CURL_COORDINATES[@]}" "${CURL_TABLES[@]}" -F "files=@${INPUT_FILEPATH}" \
   -o "${JSON_OUTPUT_FILEPATH}"
 
-
-JSON_FILE_SIZE=$(wc -c < "${JSON_OUTPUT_FILEPATH}")
+JSON_FILE_SIZE=$(wc -c <"${JSON_OUTPUT_FILEPATH}")
 if [ "$JSON_FILE_SIZE" -lt 10 ]; then
-    echo "Error: JSON file ${JSON_OUTPUT_FILEPATH} has no elements."
-    cat "$JSON_OUTPUT_FILEPATH"
-    exit 1
+  echo "Error: JSON file ${JSON_OUTPUT_FILEPATH} has no elements."
+  cat "$JSON_OUTPUT_FILEPATH"
+  exit 1
 else
-    # shellcheck disable=SC2046
-    if $VERBOSE; then
-	echo "first 8 elements: "
-	jq '.[0:8]' "${JSON_OUTPUT_FILEPATH}"
-    fi
-    # shellcheck disable=SC2046
-    echo "total number of elements: " $(jq 'length' "${JSON_OUTPUT_FILEPATH}")
+  # shellcheck disable=SC2046
+  if $VERBOSE; then
+    echo "first 8 elements: "
+    jq '.[0:8]' "${JSON_OUTPUT_FILEPATH}"
+  fi
+  # shellcheck disable=SC2046
+  echo "total number of elements: " $(jq 'length' "${JSON_OUTPUT_FILEPATH}")
 fi
 echo "JSON Output file: ${JSON_OUTPUT_FILEPATH}"
 
 # write .json output to s3 location
 if [ -n "$S3" ]; then
 
-  if [ -z "$S3_URI_PREFIX" ] ; then
+  if [ -z "$S3_URI_PREFIX" ]; then
     echo
     echo "You must define your s3 output location in the env var UNST_S3_JSON_OUTPUT_URI"
     echo "e.g. UNST_S3_JSON_OUTPUT_URI='s3://bucket/path/'"
     exit 0
-  elif [ -z "$S3_REGION" ] ; then
+  elif [ -z "$S3_REGION" ]; then
     echo
     echo "You must define your s3 region in the env var UNST_S3_JSON_OUTPUT_REGION"
     echo "e.g. UNST_S3_JSON_OUTPUT_REGION=us-west-2"
@@ -208,7 +207,7 @@ if [ -n "$S3" ]; then
   SHA_SUM_PREFIX=$(sha256sum "${JSON_OUTPUT_FILEPATH}" | cut -c1-7)
   CURRENT_TIMESTAMP=$(date -u +%s)
   APR27_2023_TIMESTAMP=$(date -u -d "2023-04-27 00:00:00" +%s)
-  TENS_OF_SECS_SINCE_APR27_2023=$(( (CURRENT_TIMESTAMP - APR27_2023_TIMESTAMP) / 10 ))
+  TENS_OF_SECS_SINCE_APR27_2023=$(((CURRENT_TIMESTAMP - APR27_2023_TIMESTAMP) / 10))
 
   S3_UPLOAD_PATH="${S3_URI_PREFIX}${TENS_OF_SECS_SINCE_APR27_2023}-${SHA_SUM_PREFIX}${STRATEGY}/${FILENAME}.json"
   if $VERBOSE; then echo "Uploading JSON to S3"; fi

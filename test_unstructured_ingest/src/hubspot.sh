@@ -25,8 +25,8 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$HUBSPOT_API_TOKEN" ]; then
-   echo "Skipping HubSpot ingest test because the HUBSPOT_API_TOKEN env var is not set."
-   exit 8
+  echo "Skipping HubSpot ingest test because the HUBSPOT_API_TOKEN env var is not set."
+  exit 8
 fi
 
 # Required arguments:
@@ -35,21 +35,21 @@ fi
 #       Check https://developers.hubspot.com/docs/api/private-apps
 
 # Optional arguments:
-# --object HubSpot object (i.e ticket) to process. 
+# --object HubSpot object (i.e ticket) to process.
 #   Can be used multiple times to specify multiple objects.
 # --custom-properties Custom property to process information from. Comma separated list.
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    hubspot \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --download-dir "$DOWNLOAD_DIR" \
-    --output-dir "$OUTPUT_DIR" \
-    --api-token "$HUBSPOT_API_TOKEN" \
-    --object-types "calls,communications,emails,notes,products,tickets" \
-    --custom-properties '{"products":["my_custom_property"],"tickets":["another_custom_property"]}' \
-    --work-dir "$WORK_DIR" \
-    --preserve-downloads \
-    --verbose \
+  hubspot \
+  --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --download-dir "$DOWNLOAD_DIR" \
+  --output-dir "$OUTPUT_DIR" \
+  --api-token "$HUBSPOT_API_TOKEN" \
+  --object-types "calls,communications,emails,notes,products,tickets" \
+  --custom-properties '{"products":["my_custom_property"],"tickets":["another_custom_property"]}' \
+  --work-dir "$WORK_DIR" \
+  --preserve-downloads \
+  --verbose
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

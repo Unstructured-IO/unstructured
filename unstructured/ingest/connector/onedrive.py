@@ -4,8 +4,10 @@ from datetime import datetime
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -24,9 +26,14 @@ MAX_MB_SIZE = 512_000_000
 
 
 @dataclass
+class OneDriveAccessConfig(AccessConfig):
+    client_credential: str = enhanced_field(repr=False, sensitive=True, overload_name="client_cred")
+
+
+@dataclass
 class SimpleOneDriveConfig(BaseConnectorConfig):
+    access_config: OneDriveAccessConfig
     client_id: str
-    client_credential: str = field(repr=False)
     user_pname: str
     tenant: str = field(repr=False)
     authority_url: t.Optional[str] = field(repr=False, default="https://login.microsoftonline.com")
@@ -34,7 +41,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
     recursive: bool = False
 
     def __post_init__(self):
-        if not (self.client_id and self.client_credential and self.user_pname):
+        if not (self.client_id and self.access_config.client_credential and self.user_pname):
             raise ValueError(
                 "Please provide all the following mandatory values:"
                 "\n-ms-client_id\n-ms-client_cred\n-ms-user-pname",
@@ -50,7 +57,7 @@ class SimpleOneDriveConfig(BaseConnectorConfig):
             app = ConfidentialClientApplication(
                 authority=f"{self.authority_url}/{self.tenant}",
                 client_id=self.client_id,
-                client_credential=self.client_credential,
+                client_credential=self.access_config.client_credential,
             )
             token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
         except ValueError as exc:

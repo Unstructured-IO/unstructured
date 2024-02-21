@@ -14,8 +14,7 @@
 # For example, to download the documents in the path: https://ftp.ncbi.nlm.nih.gov/pub/pmc/oa_pdf/07/
 # The path needed is oa_pdf/07/
 
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 # The example below will ingest the PDF from the "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" path.
@@ -24,12 +23,12 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # WARNING: There are many documents in that path.
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    biomed \
-    --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
-    --output-dir biomed-ingest-output-path \
-    --num-processes 2 \
-    --verbose \
-    --preserve-downloads
+  biomed \
+  --path "oa_pdf/07/07/sbaa031.073.PMC7234218.pdf" \
+  --output-dir biomed-ingest-output-path \
+  --num-processes 2 \
+  --verbose \
+  --preserve-downloads
 
 # Alternatively, you can call it using:
 # unstructured-ingest --biomed-path ...

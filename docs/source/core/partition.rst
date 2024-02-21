@@ -31,7 +31,7 @@ to the appropriate partitioning function. If you already know your document type
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | HTML Pages (`.html`/`.htm`)                                                                         | `partition_html`               | N/A                                    | No             | Encoding; Include Page Breaks                                                                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
-| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`)                                                              | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
+| Images (`.png`/`.jpg`/`.jpeg`/`.tiff`/`.bmp`/`.heic`)                                               | `partition_image`              | "auto", "hi_res", "ocr_only"           | Yes            | Encoding; Include Page Breaks; Infer Table Structure; OCR Languages, Strategy                                    |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
 | Markdown (`.md`)                                                                                    | `partition_md`                 | N/A                                    | Yes            | Include Page Breaks                                                                                              |
 +-----------------------------------------------------------------------------------------------------+--------------------------------+----------------------------------------+----------------+------------------------------------------------------------------------------------------------------------------+
@@ -118,9 +118,9 @@ file type and route it to the appropriate partitioning function. All partitionin
 called within ``partition`` are called using the default kwargs. Use the document-type
 specific functions if you need to apply non-default settings.
 ``partition`` currently supports ``.docx``, ``.doc``, ``.odt``, ``.pptx``, ``.ppt``, ``.xlsx``, ``.csv``, ``.tsv``, ``.eml``, ``.msg``, ``.rtf``, ``.epub``, ``.html``, ``.xml``, ``.pdf``,
-``.png``, ``.jpg``, and ``.txt`` files.
+``.png``, ``.jpg``, ``.heic``, and ``.txt`` files.
 If you set the ``include_page_breaks`` kwarg to ``True``, the output will include page breaks. This is only supported for ``.pptx``, ``.html``, ``.pdf``,
-``.png``, and ``.jpg``.
+``.png``, ``.heic``, and ``.jpg``.
 The ``strategy`` kwarg controls the strategy for partitioning documents. Generally available strategies are `"fast"` for
 faster processing and `"hi_res"` for more accurate processing.
 
@@ -402,10 +402,10 @@ For more information about the ``partition_html`` function, you can check the `s
 
 The ``partition_image`` function has the same API as ``partition_pdf``, which is document above.
 The only difference is that ``partition_image`` does not need to convert a PDF to an image
-prior to processing. The ``partition_image`` function supports ``.png`` and ``.jpg`` files.
+prior to processing. The ``partition_image`` function supports ``.png``, ``.heic``, and ``.jpg`` files.
 
-You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
-use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+You can also specify what languages to use for OCR with the ``languages`` kwarg. For example,
+use ``languages=["eng", "deu"]`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
 install instructions.
 
@@ -420,7 +420,7 @@ Examples:
   elements = partition_image("example-docs/layout-parser-paper-fast.jpg")
 
   # Applies the English and Swedish language pack for ocr
-  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", ocr_languages="eng+swe")
+  elements = partition_image("example-docs/layout-parser-paper-fast.jpg", languages=["eng", "swe"])
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
@@ -449,7 +449,7 @@ have the Korean language pack for Tesseract installed on your system.
   from unstructured.partition.image import partition_image
 
   filename = "example-docs/english-and-korean.png"
-  elements = partition_image(filename=filename, ocr_languages="eng+kor", strategy="ocr_only")
+  elements = partition_image(filename=filename, languages=["eng", "kor"], strategy="ocr_only")
 
 For more information about the ``partition_image`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/image.py>`__.
 
@@ -595,7 +595,7 @@ For more information about the ``partition_org`` function, you can check the `so
 
 
 ``partition_pdf``
----------------------
+-----------------
 
 The ``partition_pdf`` function segments a PDF document by using a document image analysis model.
 If you set ``url=None``, the document image analysis model will execute locally. You need to install ``unstructured[local-inference]``
@@ -604,8 +604,8 @@ If you set the URL, ``partition_pdf`` will make a call to a remote inference ser
 ``partition_pdf`` also includes a ``token`` function that allows you to pass in an authentication
 token for a remote API call.
 
-You can also specify what languages to use for OCR with the ``ocr_languages`` kwarg. For example,
-use ``ocr_languages="eng+deu"`` to use the English and German language packs. See the
+You can also specify what languages to use for OCR with the ``languages`` kwarg. For example,
+use ``languages=["eng", "deu"]`` to use the English and German language packs. See the
 `Tesseract documentation <https://github.com/tesseract-ocr/tessdata>`_ for a full list of languages and
 install instructions. OCR is only applied if the text is not already available in the PDF document.
 
@@ -620,30 +620,37 @@ Examples:
 
   # Applies the English and Swedish language pack for ocr. OCR is only applied
   # if the text is not available in the PDF.
-  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", ocr_languages="eng+swe")
+  elements = partition_pdf("example-docs/layout-parser-paper-fast.pdf", languages=["eng", "swe"])
 
 
 The ``strategy`` kwarg controls the method that will be used to process the PDF.
 The available strategies for PDFs are ``"auto"``, ``"hi_res"``, ``"ocr_only"``, and ``"fast"``.
 
-The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs.
-If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that
-currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``"fast"`` if the PDF text is extractable and
-``"ocr_only"`` otherwise. ``"auto"`` is the default strategy.
+* The ``"auto"`` strategy will choose the partitioning strategy based on document characteristics and the function kwargs. If ``infer_table_structure`` is passed, the strategy will be ``"hi_res"`` because that is the only strategy that currently extracts tables for PDFs. Otherwise, ``"auto"`` will choose ``"fast"`` if the PDF text is extractable and ``"ocr_only"`` otherwise. ``"auto"`` is the default strategy.
 
-The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that
-it uses the document layout to gain additional information about document elements. We recommend using this strategy
-if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available,
-the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
+* The ``"hi_res"`` strategy will identify the layout of the document using ``detectron2``. The advantage of `"hi_res"` is that it uses the document layout to gain additional information about document elements. We recommend using this strategy if your use case is highly sensitive to correct classifications for document elements. If ``detectron2`` is not available, the ``"hi_res"`` strategy will fall back to the ``"ocr_only"`` strategy.
 
-The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``.
-Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with
-multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls
-back to ``"fast"`` if Tesseract is not available and the document has extractable text.
+* The ``"ocr_only"`` strategy runs the document through Tesseract for OCR and then runs the raw text through ``partition_text``. Currently, ``"hi_res"`` has difficulty ordering elements for documents with multiple columns. If you have a document with multiple columns that does not have extractable text, we recommend using the ``"ocr_only"`` strategy. ``"ocr_only"`` falls back to ``"fast"`` if Tesseract is not available and the document has extractable text.
 
-The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``.
-If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the
-``"fast"`` strategy in most cases where the PDF has extractable text.
+* The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``. If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the ``"fast"`` strategy in most cases where the PDF has extractable text.
+
+To extract images and elements as image blocks from a PDF, it is mandatory to set ``strategy="hi_res"`` when setting ``extract_images_in_pdf=True``. With this configuration, detected images are saved in a specified directory or encoded within the file. However, keep in mind that ``extract_images_in_pdf`` is being phased out in favor of ``extract_image_block_types``. This option allows you to specify types of images or elements, like "Image" or "Table". If some extracted images have content clipped, you can adjust the padding by specifying two environment variables "EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD" and "EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD" (for example, EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD = 20, EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD = 10). For integrating these images directly into web applications or APIs, ``extract_image_block_to_payload`` can be used to convert them into ``base64`` format, including details about the image type, currently it's always ``image/jpeg``. Lastly, the ``extract_image_block_output_dir`` can be used to specify the filesystem path for saving the extracted images when not embedding them in payloads.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.partition.pdf import partition_pdf
+
+  partition_pdf(
+      filename="path/to/your/pdf_file.pdf",                  # mandatory
+      strategy="hi_res",                                     # mandatory to use ``hi_res`` strategy
+      extract_images_in_pdf=True,                            # mandatory to set as ``True``
+      extract_image_block_types=["Image", "Table"],          # optional
+      extract_image_block_to_payload=False,                  # optional
+      extract_image_block_output_dir="path/to/save/images",  # optional - only works when ``extract_image_block_to_payload=False``
+      )
+
 
 If a PDF is copy protected, ``partition_pdf`` can process the document with the ``"hi_res"`` strategy (which
 will treat it like an image), but cannot process the document with the ``"fast"`` strategy.
@@ -852,7 +859,7 @@ type for the file. If you do not explicitly pass it, the MIME type will be infer
     elements = partition_via_api(file=f, metadata_filename=filename, api_key="MY_API_KEY")
 
 
-You can pass additional settings such as ``strategy``, ``ocr_languages`` and ``encoding`` to the
+You can pass additional settings such as ``strategy``, ``languages`` and ``encoding`` to the
 API through optional kwargs. These options get added to the request body when the
 API is called.
 See `the API documentation <https://api.unstructured.io/general/docs>`_ for a full list of
@@ -868,6 +875,20 @@ settings supported by the API.
     filename=filename, api_key=api_key, strategy="auto", pdf_infer_table_structure="true"
   )
 
+If you are using the `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at your Unstructured SaaS API URL.
+
+.. code:: python
+
+  from unstructured.partition.api import partition_via_api
+
+  filename = "example-docs/eml/fake-email.eml"
+
+  elements = partition_via_api(
+    filename=filename,
+    api_key=<<REPLACE WITH YOUR API KEY>>,
+    api_url="https://<<REPLACE WITH YOUR API URL>>/general/v0/general"
+  )
+
 If you are self-hosting or running the API locally, you can use the ``api_url`` kwarg
 to point the ``partition_via_api`` function at your self-hosted or local API.
 See `here <https://github.com/Unstructured-IO/unstructured-api#dizzy-instructions-for-using-the-docker-image>`_ for
@@ -881,7 +902,8 @@ documentation on how to run the API as a container locally.
   filename = "example-docs/eml/fake-email.eml"
 
   elements = partition_via_api(
-    filename=filename, api_url="http://localhost:5000/general/v0/general"
+    filename=filename,
+    api_url="http://localhost:5000/general/v0/general"
   )
 
 For more information about the ``partition_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.

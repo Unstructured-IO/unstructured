@@ -1,12 +1,15 @@
+import copy
 import json
 import typing as t
 from dataclasses import dataclass, field
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -17,10 +20,22 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class WeaviateAccessConfig(AccessConfig):
+    access_token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    refresh_token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    client_secret: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    scope: t.Optional[t.List[str]] = None
+    username: t.Optional[str] = None
+    password: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    anonymous: bool = False
+
+
+@dataclass
 class SimpleWeaviateConfig(BaseConnectorConfig):
+    access_config: WeaviateAccessConfig
     host_url: str
     class_name: str
-    auth_keys: t.Optional[t.Dict[str, str]] = None
 
 
 @dataclass
@@ -33,6 +48,18 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
     write_config: WeaviateWriteConfig
     connector_config: SimpleWeaviateConfig
     _client: t.Optional["Client"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _client variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
 
     @property
     @requires_dependencies(["weaviate"], extras="weaviate")
@@ -58,33 +85,34 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def _resolve_auth_method(self):
-        if self.connector_config.auth_keys is None:
+        access_configs = self.connector_config.access_config
+        if access_configs.anonymous:
             return None
 
-        if access_token := self.connector_config.auth_keys.get("access_token"):
+        if access_configs.access_token:
             from weaviate.auth import AuthBearerToken
 
             return AuthBearerToken(
-                access_token=access_token,
-                refresh_token=self.connector_config.auth_keys.get("refresh_token"),
+                access_token=access_configs.access_token,
+                refresh_token=access_configs.refresh_token,
             )
-        elif api_key := self.connector_config.auth_keys.get("api_key"):
+        elif access_configs.api_key:
             from weaviate.auth import AuthApiKey
 
-            return AuthApiKey(api_key=api_key)
-        elif client_secret := self.connector_config.auth_keys.get("client_secret"):
+            return AuthApiKey(api_key=access_configs.api_key)
+        elif access_configs.client_secret:
             from weaviate.auth import AuthClientCredentials
 
             return AuthClientCredentials(
-                client_secret=client_secret, scope=self.connector_config.auth_keys.get("scope")
+                client_secret=access_configs.client_secret, scope=access_configs.scope
             )
-        elif (username := self.connector_config.auth_keys.get("username")) and (
-            pwd := self.connector_config.auth_keys.get("password")
-        ):
+        elif access_configs.username and access_configs.password:
             from weaviate.auth import AuthClientPassword
 
             return AuthClientPassword(
-                username=username, password=pwd, scope=self.connector_config.auth_keys.get("scope")
+                username=access_configs.username,
+                password=access_configs.password,
+                scope=access_configs.scope,
             )
         return None
 
@@ -144,32 +172,19 @@ class WeaviateDestinationConnector(BaseDestinationConnector):
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
 
-    def write_dict(self, *args, json_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(
-            f"writing {len(json_list)} objects to destination "
+            f"writing {len(elements_dict)} objects to destination "
             f"class {self.connector_config.class_name} "
             f"at {self.connector_config.host_url}",
         )
+
         self.client.batch.configure(batch_size=self.write_config.batch_size)
         with self.client.batch as b:
-            for e in json_list:
-                self.conform_dict(e)
+            for e in elements_dict:
                 vector = e.pop("embeddings", None)
                 b.add_data_object(
                     e,
                     self.connector_config.class_name,
                     vector=vector,
                 )
-
-    @requires_dependencies(["weaviate"], extras="weaviate")
-    def write(self, docs: t.List[BaseIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
-        self.write_dict(json_list=json_list)

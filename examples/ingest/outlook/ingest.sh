@@ -15,18 +15,17 @@
 # Assign the neccesary permissions for the application to read from mail.
 # https://learn.microsoft.com/en-us/graph/permissions-reference
 
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    outlook \
-    --client-id "$MS_CLIENT_ID" \
-    --client-cred "$MS_CLIENT_CRED" \
-    --tenant "$MS_TENANT_ID" \
-    --user-email "$MS_USER_EMAIL" \
-    --outlook-folders Inbox,"Sent Items" \
-    --output-dir outlook-output \
-    --num-processes 2 \
-    --recursive \
-    --verbose
+  outlook \
+  --client-id "$MS_CLIENT_ID" \
+  --client-cred "$MS_CLIENT_CRED" \
+  --tenant "$MS_TENANT_ID" \
+  --user-email "$MS_USER_EMAIL" \
+  --outlook-folders "Inbox,Sent Items" \
+  --output-dir outlook-output \
+  --num-processes 2 \
+  --recursive \
+  --verbose

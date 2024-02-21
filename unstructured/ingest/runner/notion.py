@@ -1,42 +1,38 @@
 import hashlib
-import logging
 import typing as t
-from uuid import UUID
+from dataclasses import dataclass
 
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.interfaces import BaseSourceConnector
+from unstructured.ingest.logger import logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.notion.connector import SimpleNotionConfig
 
+
+@dataclass
 class NotionRunner(Runner):
-    def run(
-        self,
-        notion_api_key: str,
-        recursive: bool = False,
-        max_retries: t.Optional[int] = None,
-        max_time: t.Optional[float] = None,
-        page_ids: t.Optional[t.List[str]] = None,
-        database_ids: t.Optional[t.List[str]] = None,
-        **kwargs,
-    ):
-        page_ids = [str(UUID(p.strip())) for p in page_ids] if page_ids else []
-        database_ids = [str(UUID(d.strip())) for d in database_ids] if database_ids else []
+    connector_config: "SimpleNotionConfig"
 
-        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
-        if not page_ids and not database_ids:
+    def update_read_config(self):
+        if not self.connector_config.page_ids and not self.connector_config.database_ids:
             raise ValueError("no page ids nor database ids provided")
 
-        if page_ids and database_ids:
+        if self.connector_config.page_ids and self.connector_config.database_ids:
             hashed_dir_name = hashlib.sha256(
-                "{},{}".format(",".join(page_ids), ",".join(database_ids)).encode("utf-8"),
+                "{},{}".format(
+                    ",".join(self.connector_config.page_ids),
+                    ",".join(self.connector_config.database_ids),
+                ).encode("utf-8"),
             )
-        elif page_ids:
+        elif self.connector_config.page_ids:
             hashed_dir_name = hashlib.sha256(
-                ",".join(page_ids).encode("utf-8"),
+                ",".join(self.connector_config.page_ids).encode("utf-8"),
             )
-        elif database_ids:
+        elif self.connector_config.database_ids:
             hashed_dir_name = hashlib.sha256(
-                ",".join(database_ids).encode("utf-8"),
+                ",".join(self.connector_config.database_ids).encode("utf-8"),
             )
         else:
             raise ValueError("could not create local cache directory name")
@@ -48,21 +44,18 @@ class NotionRunner(Runner):
             logger=logger,
         )
 
+    def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
         from unstructured.ingest.connector.notion.connector import (
             NotionSourceConnector,
-            SimpleNotionConfig,
         )
 
-        source_doc_connector = NotionSourceConnector(  # type: ignore
-            connector_config=SimpleNotionConfig(
-                page_ids=page_ids,
-                database_ids=database_ids,
-                notion_api_key=notion_api_key,
-                recursive=recursive,
-            ),
-            read_config=self.read_config,
+        return NotionSourceConnector
+
+    def get_source_connector(self) -> BaseSourceConnector:
+        source_connector_cls = self.get_source_connector_cls()
+        return source_connector_cls(
             processor_config=self.processor_config,
+            connector_config=self.connector_config,
+            read_config=self.read_config,
             retry_strategy_config=self.retry_strategy_config,
         )
-
-        self.process_documents(source_doc_connector=source_doc_connector)

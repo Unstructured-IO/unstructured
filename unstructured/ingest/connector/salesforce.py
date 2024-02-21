@@ -7,6 +7,8 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
+
+import json
 import typing as t
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -16,10 +18,10 @@ from pathlib import Path
 from string import Template
 from textwrap import dedent
 
-from dateutil import parser  # type: ignore
-
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -59,23 +61,47 @@ $htmlbody
 
 
 @dataclass
+class SalesforceAccessConfig(AccessConfig):
+    consumer_key: str = enhanced_field(sensitive=True)
+    private_key: str = enhanced_field(sensitive=True)
+
+    @requires_dependencies(["cryptography"])
+    def get_private_key_value_and_type(self) -> t.Tuple[str, t.Type]:
+        from cryptography.hazmat.primitives import serialization
+
+        try:
+            serialization.load_pem_private_key(data=self.private_key.encode("utf-8"), password=None)
+        except ValueError:
+            pass
+        else:
+            return self.private_key, str
+
+        if Path(self.private_key).is_file():
+            return self.private_key, Path
+
+        raise ValueError("private_key does not contain PEM private key or path")
+
+
+@dataclass
 class SimpleSalesforceConfig(BaseConnectorConfig):
     """Connector specific attributes"""
 
+    access_config: SalesforceAccessConfig
     categories: t.List[str]
     username: str
-    consumer_key: str
-    private_key_path: str
     recursive: bool = False
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_client(self):
         from simple_salesforce import Salesforce
 
+        pkey_value, pkey_type = self.access_config.get_private_key_value_and_type()
+
         return Salesforce(
             username=self.username,
-            consumer_key=self.consumer_key,
-            privatekey_file=self.private_key_path,
+            consumer_key=self.access_config.consumer_key,
+            privatekey_file=pkey_value if pkey_type is Path else None,
+            privatekey=pkey_value if pkey_type is str else None,
             version=SALESFORCE_API_VERSION,
         )
 
@@ -94,20 +120,24 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             self._record = self.get_record()
         return self._record
 
-    def _tmp_download_file(self) -> Path:
+    def get_file_extension(self) -> str:
         if self.record_type == "EmailMessage":
-            record_file = self.record_id + ".eml"
+            extension = ".eml"
         elif self.record_type in ["Account", "Lead", "Case", "Campaign"]:
-            record_file = self.record_id + ".xml"
+            extension = ".xml"
         else:
             raise MissingCategoryError(
                 f"There are no categories with the name: {self.record_type}",
             )
+        return extension
+
+    def _tmp_download_file(self) -> Path:
+        record_file = self.record_id + self.get_file_extension()
         return Path(self.read_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self) -> Path:
-        record_file = self.record_id + ".json"
+        record_file = self.record_id + self.get_file_extension() + ".json"
         return Path(self.processor_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
@@ -132,6 +162,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         return xml_string
 
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
+        from dateutil import parser  # type: ignore
+
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),
@@ -158,10 +190,12 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def get_record(self) -> OrderedDict:
         # Get record from Salesforce based on id
         response = self._get_response()
-        logger.debug(f"response from salesforce record request: {response}")
+        logger.debug(f"response was returned for salesforce record id: {self.record_id}")
         records = response["records"]
         if not records:
-            raise ValueError(f"No record found with record id {self.record_id}: {response}")
+            raise ValueError(
+                f"No record found with record id {self.record_id}: {json.dumps(response)}"
+            )
         record_json = records[0]
         return record_json
 

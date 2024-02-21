@@ -137,6 +137,7 @@ def test_partition_email_from_filename_malformed_encoding():
         ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("fake-email-b64.eml", EXPECTED_OUTPUT),
         ("email-no-utf8-2008-07-16.062410.eml", None),
         ("email-no-utf8-2014-03-17.111517.eml", None),
         ("email-replace-mime-encodings-error-1.eml", None),
@@ -172,6 +173,7 @@ def test_partition_email_from_file():
         ("fake-email-utf-16.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-be.eml", EXPECTED_OUTPUT),
         ("fake-email-utf-16-le.eml", EXPECTED_OUTPUT),
+        ("fake-email-b64.eml", EXPECTED_OUTPUT),
         ("email-no-utf8-2008-07-16.062410.eml", None),
         ("email-no-utf8-2014-03-17.111517.eml", None),
         ("email-replace-mime-encodings-error-1.eml", None),
@@ -344,6 +346,16 @@ def test_extract_email_text_matches_html():
         assert element.metadata.filename == "fake-email-attachment.eml"
 
 
+def test_extract_base64_email_text_matches_html():
+    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-b64.eml")
+    elements_from_text = partition_email(filename=filename, content_source="text/plain")
+    elements_from_html = partition_email(filename=filename, content_source="text/html")
+    assert len(elements_from_text) == len(elements_from_html)
+    for i, element in enumerate(elements_from_text):
+        assert element == elements_from_text[i]
+        assert element.metadata.filename == "fake-email-b64.eml"
+
+
 def test_extract_attachment_info():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email-attachment.eml")
     with open(filename) as f:
@@ -394,10 +406,12 @@ def test_convert_to_iso_8601(time, expected):
     assert iso_time == expected
 
 
-def test_partition_email_still_works_with_no_content():
+def test_partition_email_still_works_with_no_content(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     elements = partition_email(filename=filename)
-    assert elements == []
+    assert len(elements) == 1
+    assert elements[0].text.startswith("Hey there")
+    assert "text/html was not found. Falling back to text/plain" in caplog.text
 
 
 def test_partition_email_from_filename_exclude_metadata():
@@ -619,3 +633,10 @@ def test_partition_eml_respects_detect_language_per_element():
     langs = {element.metadata.languages[0] for element in elements}
     assert "eng" in langs
     assert "spa" in langs
+
+
+def test_partition_eml_add_signature_to_metadata():
+    elements = partition_email(filename="example-docs/eml/signed-doc.p7s")
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"

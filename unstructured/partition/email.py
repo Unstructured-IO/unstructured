@@ -7,7 +7,7 @@ import sys
 from email.message import Message
 from functools import partial
 from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
-from typing import IO, Callable, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
@@ -27,7 +27,7 @@ if sys.version_info < (3, 8):
 else:
     from typing import Final
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_extra_whitespace, replace_mime_encodings
 from unstructured.cleaners.extract import (
     extract_datetimetz,
@@ -112,12 +112,27 @@ def partition_email_header(msg: Message) -> List[Element]:
     return elements
 
 
+def find_signature(msg: Message) -> Optional[str]:
+    """Extracts the signature from an email message, if it's available."""
+    payload = msg.get_payload()
+    if not isinstance(payload, list):
+        return None
+
+    for item in payload:
+        if item.get_content_type().endswith("signature"):
+            return item.get_payload()
+
+    return None
+
+
 def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
+    signature = find_signature(msg)
+
     header_dict = dict(msg.raw_items())
     email_date = header_dict.get("Date")
     if email_date is not None:
@@ -135,6 +150,7 @@ def build_email_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
+        signature=signature,
         last_modified=metadata_last_modified or email_date,
         filename=filename,
     )
@@ -249,7 +265,7 @@ def parse_email(
 @add_chunking_strategy()
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,
@@ -259,12 +275,12 @@ def partition_email(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable] = None,
+    attachment_partitioner: Optional[Callable[..., List[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
@@ -353,9 +369,32 @@ def partition_email(
         if content_type.endswith("encrypted"):
             is_encrypted = True
 
-        content_map[content_type] = part.get_payload()
+        # NOTE(andymli) - we can determine if text is base64 encoded via the
+        # content-transfer-encoding property of a part
+        # https://www.w3.org/Protocols/rfc1341/5_Content-Transfer-Encoding.html
+        if (
+            part.get_content_maintype() == "text"
+            and part.get("content-transfer-encoding", None) == "base64"
+        ):
+            try:
+                content_map[content_type] = part.get_payload(decode=True).decode(encoding)
+            except (UnicodeDecodeError, UnicodeError):
+                content_map[content_type] = part.get_payload()
+        else:
+            content_map[content_type] = part.get_payload()
 
-    content = content_map.get(content_source, "")
+    if content_source in content_map:
+        content = content_map.get(content_source)
+    # NOTE(robinson) - If the chosen content source is not available and there is
+    # another valid content source, fall back to the other valid source
+    else:
+        for _content_source in VALID_CONTENT_SOURCES:
+            content = content_map.get(_content_source, "")
+            if content:
+                logger.warning(
+                    f"{content_source} was not found. Falling back to {_content_source}."
+                )
+                break
 
     elements: List[Element] = []
 

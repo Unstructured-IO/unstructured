@@ -16,12 +16,9 @@ class AzureCognitiveSearchWriter(Writer):
     connector_config: "SimpleAzureCognitiveSearchStorageConfig"
     write_config: "AzureCognitiveSearchWriteConfig"
 
-    def get_connector(self, overwrite: bool = False, **kwargs) -> BaseDestinationConnector:
+    def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
         from unstructured.ingest.connector.azure_cognitive_search import (
             AzureCognitiveSearchDestinationConnector,
         )
 
-        return AzureCognitiveSearchDestinationConnector(
-            write_config=self.write_config,
-            connector_config=self.connector_config,
-        )
+        return AzureCognitiveSearchDestinationConnector

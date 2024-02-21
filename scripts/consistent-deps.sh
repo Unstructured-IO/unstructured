@@ -37,9 +37,8 @@ reqstring="-r ${reqstring}"
 
 # This pip command will attempt to resolve the dependencies without installing anything.
 pipcommand="pip install --dry-run --ignore-installed ${reqstring}"
-if $pipcommand >> /dev/null;
-then
-    echo "Everything looks fine!";
+if $pipcommand >>/dev/null; then
+  echo "Everything looks fine!"
 else
-    exit 1
+  exit 1
 fi

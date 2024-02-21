@@ -40,14 +40,14 @@ function check() {
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    local \
-    --num-processes "$max_processes" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --strategy fast \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --input-path "$SCRIPT_DIR"/failed-partition-docs \
-    --work-dir "$WORK_DIR"
+  local \
+  --num-processes "$max_processes" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --strategy fast \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --input-path "$SCRIPT_DIR"/failed-partition-docs \
+  --work-dir "$WORK_DIR"
 
 check

@@ -30,18 +30,16 @@ ls "$INPUT_PATH"
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    local \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --strategy fast \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --file-glob "*.pdf" \
-    --input-path "$INPUT_PATH" \
-    --recursive \
-    --work-dir "$WORK_DIR"
-
-
+  local \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --strategy fast \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --file-glob "*.pdf" \
+  --input-path "$INPUT_PATH" \
+  --recursive \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

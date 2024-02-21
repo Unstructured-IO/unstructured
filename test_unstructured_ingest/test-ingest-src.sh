@@ -2,7 +2,7 @@
 
 set -u -o pipefail
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 SKIPPED_FILES_LOG=$SCRIPT_DIR/skipped-files.txt
 # If the file already exists, reset it
 if [ -f "$SKIPPED_FILES_LOG" ]; then
@@ -10,6 +10,8 @@ if [ -f "$SKIPPED_FILES_LOG" ]; then
 fi
 touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
+
+EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
 
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
 export OMP_THREAD_LIMIT=1
@@ -43,6 +45,7 @@ all_tests=(
   # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
   # 'airtable-large.sh'
   'local-single-file.sh'
+  'local-single-file-basic-chunking.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
   'notion.sh'
@@ -53,6 +56,8 @@ all_tests=(
   'hubspot.sh'
   'local-embed.sh'
   'sftp.sh'
+  'mongodb.sh'
+  'opensearch.sh'
 )
 
 full_python_matrix_tests=(
@@ -90,7 +95,7 @@ for test in "${all_tests[@]}"; do
   CURRENT_TEST="$test"
   # IF: python_version is not 3.10 (wildcarded to match any subminor version) AND the current test is not in full_python_matrix_tests
   # Note: to test we expand the full_python_matrix_tests array to a string and then regex match the current test
-  if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]] ; then
+  if [[ "$python_version" != "Python 3.10"* ]] && [[ ! "${full_python_matrix_tests[*]}" =~ $test ]]; then
     echo "--------- SKIPPING SCRIPT $test ---------"
     continue
   fi
@@ -118,6 +123,6 @@ all_eval=(
 for eval in "${all_eval[@]}"; do
   CURRENT_TEST="evaluation-metrics.sh $eval"
   echo "--------- RUNNING SCRIPT evaluation-metrics.sh $eval ---------"
-  ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
+  ./test_unstructured_ingest/evaluation-metrics.sh "$eval" "$EVAL_OUTPUT_ROOT"
   echo "--------- FINISHED SCRIPT evaluation-metrics.sh $eval ---------"
 done

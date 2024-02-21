@@ -2,9 +2,9 @@
 set +u
 
 if [ -z "$1" ]; then
-    echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
-    echo "Ex: ${0} abertl"
-    exit 1
+  echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
+  echo "Ex: ${0} abertl"
+  exit 1
 fi
 
 set -eux
@@ -14,11 +14,12 @@ pac="yum"
 
 # If we're not running as root, we want to prefix certain commands with sudo
 if [[ $(whoami) == 'root' ]]; then
-    $pac update -y
-    $pac install -y sudo
-    sudo=''; else
-    type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
-    sudo='sudo'
+  $pac update -y
+  $pac install -y sudo
+  sudo=''
+else
+  type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
+  sudo='sudo'
 fi
 
 # Set user account for which we're configuring the tools
@@ -43,7 +44,7 @@ $sudo $pac install -y git
 
 #### Python
 # Install tools needed to build python
-$sudo $pac install -y bzip2 sqlite zlib-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel bzip2-devel 
+$sudo $pac install -y bzip2 sqlite zlib-devel readline-devel sqlite-devel openssl-devel tk-devel libffi-devel bzip2-devel
 # Install pyenv
 sudo -u "$USER_ACCOUNT" -i <<'EOF'
     if [[ ! -d "$HOME"/.pyenv ]]; then
@@ -69,7 +70,7 @@ eval "$(pyenv virtualenv-init -)"
 EOT
         # install python
         source "$HOME"/.bashrc
-        pyenv install 3.8.15
+        pyenv install 3.10.4
     fi
 EOF
 
@@ -97,7 +98,7 @@ cd autoconf-archive-2017.09.28
 $sudo cp m4/* /usr/share/aclocal
 cd ..
 # Install tesseract
-git clone --depth 1  https://github.com/tesseract-ocr/tesseract.git tesseract-ocr
+git clone --depth 1 https://github.com/tesseract-ocr/tesseract.git tesseract-ocr
 cd tesseract-ocr
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 ./autogen.sh

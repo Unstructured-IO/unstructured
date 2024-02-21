@@ -14,7 +14,7 @@ from pptx.shapes.shapetree import _BaseGroupShapes  # pyright: ignore [reportPri
 from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -205,9 +205,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         return (
             self._metadata_filename
             if self._metadata_filename
-            else self._file
-            if isinstance(self._file, str)
-            else None
+            else self._file if isinstance(self._file, str) else None
         )
 
     def _increment_page_number(self) -> Iterator[PageBreak]:

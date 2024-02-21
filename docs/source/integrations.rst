@@ -2,13 +2,13 @@ Integrations
 =============
 Integrate your model development pipeline with your favorite machine learning frameworks and libraries,
 and prepare your data for ingestion into downstream systems. Most of our integrations come in the form of
-`staging functions <https://unstructured-io.github.io/unstructured/functions.html#staging>`_,
+`staging functions <https://unstructured-io.github.io/unstructured/core/staging.html>`_,
 which take a list of ``Element`` objects as input and return formatted dictionaries as output.
 
 
 ``Integration with Argilla``
 ----------------------------
-You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ ``Dataset`` using the `stage_for_argilla <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-argilla>`_ staging function. Specify the type of dataset to be generated using the ``argilla_task`` parameter. Valid values are ``"text_classification"``, ``"token_classification"``, and ``"text2text"``. Follow the link for more details on usage.
+You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.io/>`_ ``Dataset`` using the `stage_for_argilla <https://unstructured-io.github.io/unstructured/core/staging.html#stage-for-argilla>`_ staging function. Specify the type of dataset to be generated using the ``argilla_task`` parameter. Valid values are ``"text_classification"``, ``"token_classification"``, and ``"text2text"``. Follow the link for more details on usage.
 
 
 ``Integration with Baseplate``
@@ -16,26 +16,26 @@ You can convert a list of ``Text`` elements to an `Argilla <https://www.argilla.
 `Baseplate <https://docs.baseplate.ai/introduction>`_ is a backend optimized for use with LLMs that has an easy to use spreadsheet
 interface. The ``unstructured`` library offers a staging function to convert a list of ``Element`` objects into the
 `rows format <https://docs.baseplate.ai/api-reference/documents/overview>`_ required by the Baseplate API. See the
-`stage_for_baseplate <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-baseplate>`_ documentation for
+`stage_for_baseplate <https://unstructured-io.github.io/unstructured/core/staging.html#stage-for-baseplate>`_ documentation for
 information on how to stage elements for ingestion into Baseplate.
 
 
 ``Integration with Datasaur``
 ------------------------------
-You can format a list of ``Text`` elements as input to token based tasks in `Datasaur <https://datasaur.ai/>`_ using the `stage_for_datasaur <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-datasaur>`_ staging function. You will obtain a list of dictionaries indexed by the keys ``"text"`` with the content of the element, and ``"entities"`` with an empty list. Follow the link to learn how to customise your entities and for more details on usage.
+You can format a list of ``Text`` elements as input to token based tasks in `Datasaur <https://datasaur.ai/>`_ using the `stage_for_datasaur <https://unstructured-io.github.io/unstructured/core/staging.html#stage-for-datasaur>`_ staging function. You will obtain a list of dictionaries indexed by the keys ``"text"`` with the content of the element, and ``"entities"`` with an empty list. Follow the link to learn how to customise your entities and for more details on usage.
 
 
 ``Integration with Hugging Face``
 ----------------------------------
 You can prepare ``Text`` elements for processing in Hugging Face `Transformers <https://huggingface.co/docs/transformers/index>`_
-pipelines by splitting the elements into chunks that fit into the model's attention window using the `stage_for_transformers <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-transformers>`_ staging function. You can customise the transformation by defining
+pipelines by splitting the elements into chunks that fit into the model's attention window using the `stage_for_transformers <https://unstructured-io.github.io/unstructured/core/staging.html#stage-for-transformers>`_ staging function. You can customise the transformation by defining
 the ``buffer`` and ``window_size``, the ``split_function`` and the ``chunk_separator``. if you need to operate on
 text directly instead of ``unstructured`` ``Text`` objects, use the `chunk_by_attention_window <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-transformers>`_ helper function. Follow the links for more details on usage.
 
 
 ``Integration with Labelbox``
 ------------------------------
-You can format your outputs for use with `LabelBox <https://labelbox.com/>`_ using the `stage_for_label_box <https://unstructured-io.github.io/unstructured/functions/staging.html#stage-for-label-box>`_ staging function. LabelBox accepts cloud-hosted data and does not support importing text directly. With this integration you can stage the data files in the ``output_directory`` to be uploaded to a cloud storage service (such as S3 buckets) and get a config of type ``List[Dict[str, Any]]`` that can be written to a ``.json`` file and imported into LabelBox. Follow the link to see how to generate the ``config.json`` file that can be used with LabelBox, how to upload the staged data files to an S3 bucket, and for more details on usage.
+You can format your outputs for use with `LabelBox <https://labelbox.com/>`_ using the `stage_for_label_box <https://unstructured-io.github.io/unstructured/core/staging.html#stage-for-label-box>`_ staging function. LabelBox accepts cloud-hosted data and does not support importing text directly. With this integration you can stage the data files in the ``output_directory`` to be uploaded to a cloud storage service (such as S3 buckets) and get a config of type ``List[Dict[str, Any]]`` that can be written to a ``.json`` file and imported into LabelBox. Follow the link to see how to generate the ``config.json`` file that can be used with LabelBox, how to upload the staged data files to an S3 bucket, and for more details on usage.
 
 
 ``Integration with Label Studio``

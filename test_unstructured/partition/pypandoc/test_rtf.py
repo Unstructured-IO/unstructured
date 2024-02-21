@@ -15,8 +15,7 @@ def test_partition_rtf_from_filename():
     assert len(elements) > 0
     assert elements[0] == Title("My First Heading")
     assert elements[-1] == Table(
-        text="Column 1 \n Column 2 \n Row 1, Cell 1 \n Row 1, "
-        "Cell 2 \n Row 2, Cell 1 \n Row 2, Cell 2",
+        text="Column 1 Column 2 Row 1, Cell 1 Row 1, Cell 2 Row 2, Cell 1 Row 2, Cell 2"
     )
     for element in elements:
         assert element.metadata.filename == "fake-doc.rtf"

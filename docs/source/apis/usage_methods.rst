@@ -64,8 +64,7 @@ Method 2: Local Deployment Using ``unstructured-api`` Library
   - Parallel processing for PDFs with environment variables.
   - Server load management with UNSTRUCTURED_MEMORY_FREE_MINIMUM_MB.
 
-- **Using Docker Image**:
-Docker commands for pulling and running the container.
+- **Using Docker Image**: Docker commands for pulling and running the container.
 
 - **More Details**: Check out the `unstructured-api GitHub Repository <https://github.com/Unstructured-IO/unstructured-api>`_ for further information.
 

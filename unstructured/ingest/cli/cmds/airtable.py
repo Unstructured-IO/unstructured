@@ -7,12 +7,11 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import (
     CliConfig,
 )
+from unstructured.ingest.connector.airtable import SimpleAirtableConfig
 
 
 @dataclass
-class AirtableCliConfig(CliConfig):
-    personal_access_token: t.Optional[str] = None
-
+class AirtableCliConfig(SimpleAirtableConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -63,5 +62,8 @@ class AirtableCliConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="airtable", cli_config=AirtableCliConfig)
+    cmd_cls = BaseSrcCmd(
+        cmd_name="airtable",
+        cli_config=AirtableCliConfig,
+    )
     return cmd_cls

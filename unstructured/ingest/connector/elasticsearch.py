@@ -1,23 +1,29 @@
+import copy
 import hashlib
 import typing as t
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from dataclasses_json.core import Json
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import SourceConnectionError
+from unstructured.ingest.enhanced_dataclass.core import _asdict
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
+    BaseDestinationConnector,
     BaseIngestDocBatch,
     BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
+    WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
@@ -73,7 +79,7 @@ class SimpleElasticsearchConfig(BaseConnectorConfig):
 
     index_name: str
     batch_size: int = 100
-    fields: t.List[str] = field(default=list)
+    fields: t.List[str] = field(default_factory=list)
     access_config: ElasticsearchAccessConfig = None
 
 
@@ -224,7 +230,8 @@ class ElasticsearchIngestDocBatch(BaseIngestDocBatch):
             doc_body = doc["_source"]
             filename = ingest_doc.filename
             flattened_dict = flatten_dict(dictionary=doc_body)
-            concatenated_values = "\n".join(flattened_dict.values())
+            str_values = [str(value) for value in flattened_dict.values()]
+            concatenated_values = "\n".join(str_values)
 
             filename.parent.mkdir(parents=True, exist_ok=True)
             with open(filename, "w", encoding="utf8") as f:
@@ -299,3 +306,92 @@ class ElasticsearchSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnec
             )
             for batched_ids in id_batches
         ]
+
+
+@dataclass
+class ElasticsearchWriteConfig(WriteConfig):
+    batch_size_bytes: int = 15_000_000
+    num_processes: int = 1
+
+
+@dataclass
+class ElasticsearchDestinationConnector(BaseDestinationConnector):
+    write_config: ElasticsearchWriteConfig
+    connector_config: SimpleElasticsearchConfig
+    _client: t.Optional["Elasticsearch"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _client variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+        if hasattr(self_cp, "_client"):
+            setattr(self_cp, "_client", None)
+        return _asdict(self_cp, **kwargs)
+
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def generate_client(self) -> "Elasticsearch":
+        from elasticsearch import Elasticsearch
+
+        return Elasticsearch(
+            **self.connector_config.access_config.to_dict(apply_name_overload=False)
+        )
+
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = self.generate_client()
+        return self._client
+
+    def initialize(self):
+        _ = self.client
+
+    @DestinationConnectionError.wrap
+    def check_connection(self):
+        try:
+            assert self.client.ping()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
+
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+        logger.info(
+            f"writing document batches to destination"
+            f" index named {self.connector_config.index_name}"
+            f" at {self.connector_config.access_config.hosts}"
+            f" with batch size (in bytes) {self.write_config.batch_size_bytes}"
+            f" with {self.write_config.num_processes} (number of) processes"
+        )
+        from elasticsearch.helpers import parallel_bulk
+
+        for batch in generator_batching_wbytes(
+            elements_dict, batch_size_limit_bytes=self.write_config.batch_size_bytes
+        ):
+            for success, info in parallel_bulk(
+                self.client, batch, thread_count=self.write_config.num_processes
+            ):
+                if not success:
+                    logger.error(
+                        "upload failed for a batch in elasticsearch destination connector:", info
+                    )
+
+    def normalize_dict(self, element_dict: dict) -> dict:
+        return {
+            "_index": self.connector_config.index_name,
+            "_id": str(uuid.uuid4()),
+            "_source": {
+                "element_id": element_dict.pop("element_id", None),
+                "embeddings": element_dict.pop("embeddings", None),
+                "text": element_dict.pop("text", None),
+                "type": element_dict.pop("type", None),
+                "metadata": flatten_dict(
+                    element_dict.pop("metadata", None),
+                    separator="-",
+                ),
+            },
+        }

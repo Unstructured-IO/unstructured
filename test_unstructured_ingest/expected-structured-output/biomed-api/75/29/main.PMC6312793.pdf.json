@@ -13,6 +13,19 @@
     "type": "Header"
   },
   {
+    "element_id": "73862c31b60251b2f838a92c4265b6d2",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "ELSEVIER",
+    "type": "Image"
+  },
+  {
     "element_id": "721bbccb8e92736ad5776ad812dc8bca",
     "metadata": {
       "data_source": {},
@@ -26,7 +39,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "01a8470646d06d1c29b9f43915ac04e0",
+    "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -50,6 +63,19 @@
     },
     "text": "journal homepage: www.elsevier.com/locate/dib",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
   },
   {
     "element_id": "8bdb2c4b6997a1bbd7b948d7aeb402e2",
@@ -78,6 +104,19 @@
     "type": "Title"
   },
   {
+    "element_id": "e3b0c44298fc1c149afbf4c8996fb924",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "",
+    "type": "Image"
+  },
+  {
     "element_id": "77b037daa0a8a3f7349bd57dda36499f",
     "metadata": {
       "data_source": {},
@@ -101,7 +140,7 @@
       "page_number": 1
     },
     "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b",
-    "type": "Title"
+    "type": "NarrativeText"
   },
   {
     "element_id": "cd24a5d2989d27bd46eede4ea54cb41e",
@@ -128,19 +167,6 @@
     },
     "text": "a r t i c l e i n f o",
     "type": "NarrativeText"
-  },
-  {
-    "element_id": "3d71760ba4f1cc95873ee36178f97d82",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "ARTICLE INFO",
-    "type": "Title"
   },
   {
     "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
@@ -244,7 +270,7 @@
       "page_number": 2
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "83c8f5958f7caaf2d10c1d0692b48beb",
@@ -286,7 +312,7 @@
     "type": "Title"
   },
   {
-    "element_id": "f2fdefc49840022ffb3a88bd4a3512d0",
+    "element_id": "20f64ced2215ecdb636021e3b4eb0670",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -295,24 +321,11 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "fc52e4abc1c21ce5eefec2a08463bf06",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 2
-    },
-    "text": "performance of the algorithms for the MDVSP.",
+    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP.",
     "type": "ListItem"
   },
   {
-    "element_id": "69010f31402211bc0029986b9c2c2a27",
+    "element_id": "aaedb0d8a48db639a022b216035c56de",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -321,11 +334,11 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
+    "text": "© The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
     "type": "ListItem"
   },
   {
-    "element_id": "e69dab6e2bc16d11cfd2d80a804d89fb",
+    "element_id": "f3c5ed1c1de057195ad9a900adbbb7f3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -334,7 +347,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can",
+    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can",
     "type": "NarrativeText"
   },
   {
@@ -351,7 +364,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "1c1d6b35ac0925a35ea3bb4d018e675f",
+    "element_id": "7c65dd387d814178eedf5ad13d1cf394",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -360,7 +373,7 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes.",
+    "text": "© The dataset includes a program that can generate similar problem instances of different sizes.",
     "type": "NarrativeText"
   },
   {
@@ -429,7 +442,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f2506416c6fe350d3366f89be8d932cb",
+    "element_id": "427a379ae3e6b749a8893bac35e20ab8",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -438,7 +451,20 @@
       ],
       "page_number": 2
     },
-    "text": "(cid:2) The travel time, δij, between any two locations i; j A 1; …; l.",
+    "text": "and",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "eb21bd15b23d5be59290e5a063011a28",
+    "metadata": {
+      "data_source": {},
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "e The travel time, 6j, between any two locations i,j ¢1,...,1.",
     "type": "ListItem"
   },
   {
@@ -468,7 +494,7 @@
     "type": "Header"
   },
   {
-    "element_id": "906c45a5da3d7f5a24920bb99bcadb9c",
+    "element_id": "ff8c0c213a7dad3b06bc15b65e59ad15",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -477,21 +503,8 @@
       ],
       "page_number": 3
     },
-    "text": "486",
-    "type": "Header"
-  },
-  {
-    "element_id": "f64bebb0be23116b44b4ad54968178a0",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 3
-    },
-    "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "Header"
+    "text": "486 S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
+    "type": "NarrativeText"
   },
   {
     "element_id": "a34ec26cfe7e88199e3455fc4297cf2e",
@@ -507,7 +520,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "5f9fb229a1da066e2639569d950c70b8",
+    "element_id": "6f8d7d65038065cc1b16faefa2230af4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -516,7 +529,7 @@
       ],
       "page_number": 3
     },
-    "text": "j , the vehicle must travel empty from le j (cid:3)te i Þ. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisﬁed:",
+    "text": "A trip j can be covered after trip i by the same vehicle, if t} > tf +5ee- If lh 4 f, the vehicle must travel empty from I; to hi. otherwise, the vehicle may require waiting at I; for the duration of (Gj —¢). Aschedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisfied:",
     "type": "NarrativeText"
   },
   {

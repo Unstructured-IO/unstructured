@@ -80,7 +80,7 @@
     "type": "Title"
   },
   {
-    "element_id": "4da978e09ded2156643e427e0f71cf88",
+    "element_id": "d8fd37c3fba4b2c9819c8741de320953",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -96,7 +96,7 @@
       ],
       "page_number": 1
     },
-    "text": "Zejiang Shen1 ((cid:0)), Ruochen Zhang2, Melissa Dell3, Benjamin Charles Germain Lee4, Jacob Carlson3, and Weining Li5",
+    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson’, and Weining Li>",
     "type": "NarrativeText"
   },
   {
@@ -1522,7 +1522,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "6e6e9ba62b25fdfb8734842354a7ce64",
+    "element_id": "af06fb28ab7a6dca955fc3670fb995fa",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1538,7 +1538,7 @@
       ],
       "page_number": 10
     },
-    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable HEE company type Column Categories (J tite we) adaress —_ (7) section Header by ‘e * Column reading order a a (a) Illustration of the original Japanese Maximum Allowed Height BRE B>e EER eR (b) Illustration of the recreated document with dense text structure for better OCR performance",
+    "text": "Intra-column reading order Token Categories tie (Adress 2) tee (NE sumber Variable Column reading order HEE company type Column Categories (J tite Adress _] ree [7] Section Header Maximum Allowed Height (b) Illustration of the recreated document with dense text structure for better OCR performance",
     "type": "Image"
   },
   {
@@ -2382,7 +2382,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "2f103adde52e35a8853cbb476720a6ef",
+    "element_id": "c91f2756d863040422ec8d6d73e34e59",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2398,7 +2398,7 @@
       ],
       "page_number": 15
     },
-    "text": "[8] Gardner, M., Grus, J., Neumann, M., Tafjord, O., Dasigi, P., Liu, N., Peters, M., Schmitz, M., Zettlemoyer, L.: Allennlp: A deep semantic natural language processing platform. arXiv preprint arXiv:1803.07640 (2018) (cid:32)Lukasz Garncarek, Powalski, R., Stanis(cid:32)lawek, T., Topolski, B., Halama, P., Grali´nski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
+    "text": "Gardner, M., Grus, J., Neumann, M., Tafjord, O., Dasigi, P., Liu, N., Peters, M., Schmitz, M., Zettlemoyer, L.: Allennlp: A deep semantic natural language processing platform. arXiv preprint arXiv:1803.07640 (2018) Lukasz Garncarek, Powalski, R., Stanistawek, T., Topolski, B., Halama, P., Graliriski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
     "type": "NarrativeText"
   },
   {

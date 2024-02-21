@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "b2d356b3e28717647c73b8767da6c485",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "Recent Press"
+    "text": "Recent Press",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "22f92b2ebdefec36664fc1cb69221f2b",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: Telling employees about news about your company is important because it helps them stay informed about the direction of the company and their role in it."
+    "text": "💡\n      \n      Notion Tip: Telling employees about news about your company is important because it helps them stay informed about the direction of the company and their role in it.",
+    "type": "NarrativeText"
   }
 ]

@@ -9,8 +9,10 @@ from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSessionHandle,
     BaseSingleIngestDoc,
@@ -88,13 +90,18 @@ def create_service_account_object(key_path: t.Union[str, dict], id=None):
 
 
 @dataclass
+class GoogleDriveAccessConfig(AccessConfig):
+    service_account_key: t.Union[str, dict] = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where drive_id is the id of the document to process or
     the folder to process all documents from."""
 
     # Google Drive Specific Options
     drive_id: str
-    service_account_key: t.Union[str, dict]
+    access_config: GoogleDriveAccessConfig
     extension: t.Optional[str] = None
     recursive: bool = False
 
@@ -108,7 +115,7 @@ class SimpleGoogleDriveConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     def create_session_handle(
         self,
     ) -> GoogleDriveSessionHandle:
-        service = create_service_account_object(self.service_account_key)
+        service = create_service_account_object(self.access_config.service_account_key)
         return GoogleDriveSessionHandle(service=service)
 
 

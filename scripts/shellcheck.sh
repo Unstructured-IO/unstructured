@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 
-find scripts -name "*.sh" -exec shellcheck {} +
-
+find . -name "*.sh" -exec shellcheck {} +

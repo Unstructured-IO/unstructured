@@ -29,24 +29,24 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    local \
-    --num-processes "$max_processes" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/fake-memo.pdf \
-    --work-dir "$WORK_DIR" \
-    s3 \
-    --anonymous \
-    --remote-url "$DESTINATION_S3"
+  local \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --reprocess \
+  --input-path example-docs/fake-memo.pdf \
+  --work-dir "$WORK_DIR" \
+  s3 \
+  --anonymous \
+  --remote-url "$DESTINATION_S3"
 
 # Simply check the number of files uploaded
 expected_num_files=1
 num_files_in_s3=$(aws s3 ls "${DESTINATION_S3}" --region us-east-2 | grep -c "\.json$")
 if [ "$num_files_in_s3" -ne "$expected_num_files" ]; then
-    echo "Expected $expected_num_files files to be uploaded to s3, but found $num_files_in_s3 files."
-    exit 1
+  echo "Expected $expected_num_files files to be uploaded to s3, but found $num_files_in_s3 files."
+  exit 1
 else
   echo "Expected number of files found: $num_files_in_s3/$expected_num_files"
 fi

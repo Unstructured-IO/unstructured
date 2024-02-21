@@ -1,0 +1,162 @@
+[
+  {
+    "element_id": "a56b54e1c5933a83f79b301d0c08410a",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "1901",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "4ac0e6885374a20d6a442d736a8fadb6",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Love by the Light of the Moon",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "American",
+    "type": "Title"
+  },
+  {
+    "element_id": "b764cdc0eab7137467211272fa539f12",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Unknown",
+    "type": "Title"
+  },
+  {
+    "element_id": "9b2d5b4678781e53038e91ea5324530a",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "nan",
+    "type": "Title"
+  },
+  {
+    "element_id": "b23a6a8439c0dde5515893e7c90c1e32",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "unknown",
+    "type": "Title"
+  },
+  {
+    "element_id": "a17f29d859c7d863ac057c3840671356",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "https://en.wikipedia.org/wiki/Love_by_the_Light_of_the_Moon",
+    "type": "Title"
+  },
+  {
+    "element_id": "ccf16e9a0ab2043e06911497f3e02db1",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-01-09T20:39:22+00:00",
+        "record_locator": {
+          "collection": "sample-mongodb-data",
+          "document_id": "659daefa21dd8c9054b084b7",
+          "host": null
+        }
+      },
+      "filename": "659daefa21dd8c9054b084b7.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "The moon, painted with a smiling face hangs over a park at night. A young couple walking past a fence learn on a railing and look up. The moon smiles. They embrace, and the moon's smile gets bigger. They then sit down on a bench by a tree. The moon's view is blocked, causing him to frown. In the last scene, the man fans the woman with his hat because the moon has left the sky and is perched over her shoulder to see everything better.",
+    "type": "NarrativeText"
+  }
+]

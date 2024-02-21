@@ -13,10 +13,9 @@ EVAL_OUTPUT_DIR=$EVAL_OUTPUT_ROOT/structured-output-eval/$CONNECTOR_TYPE
 
 mkdir -p "$EVAL_OUTPUT_DIR"
 
-while IFS= read -r json_filename
-do
-  if find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -print -quit | grep -q . ; then
-      echo "evaluation: copying $json_filename to $EVAL_OUTPUT_DIR"
-      find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -exec cp {} "$EVAL_OUTPUT_DIR" \;
+while IFS= read -r json_filename; do
+  if find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -print -quit | grep -q .; then
+    echo "evaluation: copying $json_filename to $EVAL_OUTPUT_DIR"
+    find "$EXPECTED_OUTPUTS_DIR" -name "$json_filename" -exec cp {} "$EVAL_OUTPUT_DIR" \;
   fi
-done < "$SCRIPT_DIR/metrics/metrics-json-manifest.txt"
+done <"$SCRIPT_DIR/metrics/metrics-json-manifest.txt"

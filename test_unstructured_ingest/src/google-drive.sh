@@ -26,9 +26,9 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
-    echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
-    echo "The Google Drive test content can be found at https://drive.google.com/drive/folders/1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr"
-    exit 8
+  echo "Skipping Google Drive ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
+  echo "The Google Drive test content can be found at https://drive.google.com/drive/folders/1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr"
+  exit 8
 fi
 
 # Create temporary service key file
@@ -37,19 +37,18 @@ echo "$GCP_INGEST_SERVICE_KEY" >"$GCP_INGEST_SERVICE_KEY_FILE"
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    google-drive \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadata.data_source.version \
-    --num-processes "$max_processes" \
-    --strategy hi_res \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
-    --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
-    --work-dir "$WORK_DIR"
-
+  google-drive \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadata.data_source.version \
+  --num-processes "$max_processes" \
+  --strategy hi_res \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --drive-id 1OQZ66OHBE30rNsNa7dweGLfRmXvkT_jr \
+  --service-account-key "$GCP_INGEST_SERVICE_KEY_FILE" \
+  --work-dir "$WORK_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
@@ -57,8 +56,8 @@ EXIT_CODE=$?
 set -e
 
 if [ "$EXIT_CODE" -ne 0 ]; then
-    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
-    # Handle the error or exit
+  echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+  # Handle the error or exit
 fi
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

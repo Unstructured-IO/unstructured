@@ -7,16 +7,15 @@
 
 # Uses fsspec and paramiko to connect to the sftp server
 
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   sftp \
-   --remote-url sftp://address:port/upload \
-   --username foo \
-   --password bar \
-   --output-dir sftp-output \
-   --num-processes 2 \
-   --recursive \
-   --verbose
+  sftp \
+  --remote-url sftp://address:port/upload \
+  --username foo \
+  --password bar \
+  --output-dir sftp-output \
+  --num-processes 2 \
+  --recursive \
+  --verbose

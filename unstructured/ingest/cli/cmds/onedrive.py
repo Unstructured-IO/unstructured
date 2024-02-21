@@ -8,17 +8,11 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     CliRecursiveConfig,
 )
+from unstructured.ingest.connector.onedrive import SimpleOneDriveConfig
 
 
 @dataclass
-class OnedriveCliConfig(CliConfig):
-    client_id: str
-    client_cred: str
-    user_pname: str
-    tenant: str = "common"
-    path: t.Optional[str] = None
-    authority_url: t.Optional[str] = "https://login.microsoftonline.com"
-
+class OnedriveCliConfig(SimpleOneDriveConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

@@ -21,15 +21,15 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    local \
-    --num-processes "$max_processes" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/book-war-and-peace-1p.txt \
-    --work-dir "$WORK_DIR" \
-    --embedding-provider "langchain-huggingface"
+  local \
+  --num-processes "$max_processes" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --reprocess \
+  --input-path example-docs/book-war-and-peace-1p.txt \
+  --work-dir "$WORK_DIR" \
+  --embedding-provider "langchain-huggingface"
 
 set +e
 

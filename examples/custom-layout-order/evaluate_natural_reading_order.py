@@ -8,7 +8,7 @@ import pdf2image
 from PIL import Image
 
 from unstructured.documents.elements import PageBreak
-from unstructured.partition.pdf_image.pdf import partition_pdf
+from unstructured.partition.pdf import partition_pdf
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 from unstructured.partition.utils.xycut import (
     bbox2points,

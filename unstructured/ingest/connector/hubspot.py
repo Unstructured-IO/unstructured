@@ -1,11 +1,13 @@
 import typing as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 from functools import reduce
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSessionHandle,
     BaseSingleIngestDoc,
@@ -40,8 +42,13 @@ class HubSpotSessionHandle(BaseSessionHandle):
 
 
 @dataclass
+class HubSpotAccessConfig(AccessConfig):
+    api_token: str = enhanced_field(repr=False, sensitive=True)
+
+
+@dataclass
 class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
-    api_token: str = field(repr=False)
+    access_config: HubSpotAccessConfig
     params: t.Optional[str] = None
     properties: t.Optional[dict] = None
     object_types: t.Optional[t.List[str]] = None
@@ -51,7 +58,7 @@ class SimpleHubSpotConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     def create_session_handle(self) -> HubSpotSessionHandle:
         from hubspot import HubSpot
 
-        service = HubSpot(access_token=self.api_token)
+        service = HubSpot(access_token=self.access_config.api_token)
         return HubSpotSessionHandle(service=service)
 
 

@@ -10,24 +10,24 @@ CONTAINER_NAME=unstructured-smoke-test
 DOCKER_IMAGE="${DOCKER_IMAGE:-unstructured:dev}"
 
 # Change to the root of the repository
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/.. || exit 1
 
 start_container() {
-    echo Starting container "$CONTAINER_NAME"
-    docker run -dt --rm --name "$CONTAINER_NAME" "$DOCKER_IMAGE"
+  echo Starting container "$CONTAINER_NAME"
+  docker run -dt --rm --name "$CONTAINER_NAME" "$DOCKER_IMAGE"
 }
 
 await_container() {
-    echo Waiting for container to start
-    until [ "$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)" == "running" ]; do
-        sleep 1
-    done
+  echo Waiting for container to start
+  until [ "$(docker inspect -f '{{.State.Status}}' $CONTAINER_NAME)" == "running" ]; do
+    sleep 1
+  done
 }
 
 stop_container() {
-    echo Stopping container "$CONTAINER_NAME"
-    docker stop "$CONTAINER_NAME"
+  echo Stopping container "$CONTAINER_NAME"
+  docker stop "$CONTAINER_NAME"
 }
 
 start_container

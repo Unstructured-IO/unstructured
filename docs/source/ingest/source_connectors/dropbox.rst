@@ -15,43 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          dropbox \
-          --remote-url "dropbox:// /" \
-          --output-dir dropbox-output \
-          --token  "$DROPBOX_TOKEN" \
-          --num-processes 2 \
-          --recursive \
-          --verbose
+      .. literalinclude:: ./code/bash/dropbox.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import DropboxRunner
-
-        if __name__ == "__main__":
-            runner = DropboxRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="dropbox-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
-            )
-            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
+      .. literalinclude:: ./code/python/dropbox.py
+         :language: python
 
 Run via the API
 ---------------
@@ -62,48 +32,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          dropbox \
-          --remote-url "dropbox:// /" \
-          --output-dir dropbox-output \
-          --token  "$DROPBOX_TOKEN" \
-          --num-processes 2 \
-          --recursive \
-          --verbose
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/dropbox_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import DropboxRunner
-
-        if __name__ == "__main__":
-            runner = DropboxRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="dropbox-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-                fsspec_config=FsspecConfig(remote_url="dropbox:// /", recursive=True),
-            )
-            runner.run(token=os.getenv("DROPBOX_ACCESS_TOKEN"))
+      .. literalinclude:: ./code/python/dropbox_api.py
+         :language: python
 
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.

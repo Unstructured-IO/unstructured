@@ -6,8 +6,10 @@ from pathlib import Path
 
 import requests
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -23,6 +25,11 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class ConfluenceAccessConfig(AccessConfig):
+    api_token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleConfluenceConfig(BaseConnectorConfig):
     """Connector config where:
     user_email is the email to authenticate into Confluence Cloud,
@@ -34,10 +41,10 @@ class SimpleConfluenceConfig(BaseConnectorConfig):
     """
 
     user_email: str
-    api_token: str
+    access_config: ConfluenceAccessConfig
     url: str
-    max_number_of_spaces: int
-    max_number_of_docs_from_each_space: int
+    max_num_of_spaces: int = 500
+    max_num_of_docs_from_each_space: int = 100
     spaces: t.List[str] = field(default_factory=list)
 
 
@@ -59,7 +66,7 @@ def scroll_wrapper(func):
         del kwargs["number_of_items_to_fetch"]
 
         kwargs["limit"] = min(100, number_of_items_to_fetch)
-        kwargs["start"] = 0 if "start" not in kwargs else kwargs["start"]
+        kwargs["start"] = kwargs.get("start", 0)
 
         all_results = []
         num_iterations = math.ceil(number_of_items_to_fetch / kwargs["limit"])
@@ -125,7 +132,7 @@ class ConfluenceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             confluence = Confluence(
                 self.connector_config.url,
                 username=self.connector_config.user_email,
-                password=self.connector_config.api_token,
+                password=self.connector_config.access_config.api_token,
             )
             result = confluence.get_page_by_id(
                 page_id=self.document_meta.document_id,
@@ -197,7 +204,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
             self._confluence = Confluence(
                 url=self.connector_config.url,
                 username=self.connector_config.user_email,
-                password=self.connector_config.api_token,
+                password=self.connector_config.access_config.api_token,
             )
         return self._confluence
 
@@ -215,7 +222,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         self.list_of_spaces = None
         if self.connector_config.spaces:
             self.list_of_spaces = self.connector_config.spaces
-            if self.connector_config.max_number_of_spaces:
+            if self.connector_config.max_num_of_spaces:
                 logger.warning(
                     """--confluence-list-of-spaces and --confluence-num-of-spaces cannot
                     be used at the same time. Connector will only fetch the
@@ -229,7 +236,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         get_spaces_with_scroll = scroll_wrapper(self.confluence.get_all_spaces)
 
         all_results = get_spaces_with_scroll(
-            number_of_items_to_fetch=self.connector_config.max_number_of_spaces,
+            number_of_items_to_fetch=self.connector_config.max_num_of_spaces,
         )
 
         space_ids = [space["key"] for space in all_results]
@@ -244,7 +251,7 @@ class ConfluenceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
         get_pages_with_scroll = scroll_wrapper(self.confluence.get_all_pages_from_space)
         results = get_pages_with_scroll(
             space=space_id,
-            number_of_items_to_fetch=self.connector_config.max_number_of_docs_from_each_space,
+            number_of_items_to_fetch=self.connector_config.max_num_of_docs_from_each_space,
             content_type=content_type,
         )
 

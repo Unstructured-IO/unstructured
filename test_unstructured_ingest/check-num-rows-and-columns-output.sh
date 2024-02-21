@@ -16,7 +16,7 @@ ROWS=$(python "$SCRIPT_PATH" --structured-output-file-path "$OUTPUT_FILE_NAME")
 
 # Compare the actual output with the expected output
 if [[ $ROWS -ne $EXPECTED_ROWS ]]; then
-   echo
-   echo "ERROR:  $ROWS rows created. $EXPECTED_ROWS rows should have been created."
-   exit 1
+  echo
+  echo "ERROR:  $ROWS rows created. $EXPECTED_ROWS rows should have been created."
+  exit 1
 fi

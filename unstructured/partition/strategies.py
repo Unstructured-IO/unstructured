@@ -1,5 +1,4 @@
-from tempfile import SpooledTemporaryFile
-from typing import BinaryIO, Optional, Union
+from typing import List, Optional
 
 from unstructured.logger import logger
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -24,11 +23,11 @@ def validate_strategy(strategy: str, is_image: bool = False):
 
 def determine_pdf_or_image_strategy(
     strategy: str,
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
+    extract_image_block_types: Optional[List[str]] = None,
 ):
     """Determines what strategy to use for processing PDFs or images, accounting for fallback
     logic if some dependencies are not available."""
@@ -36,17 +35,15 @@ def determine_pdf_or_image_strategy(
     unstructured_inference_installed = dependency_exists("unstructured_inference")
 
     if strategy == PartitionStrategy.AUTO:
+        extract_element = extract_images_in_pdf or bool(extract_image_block_types)
         if is_image:
             strategy = _determine_image_auto_strategy()
         else:
             strategy = _determine_pdf_auto_strategy(
                 pdf_text_extractable=pdf_text_extractable,
                 infer_table_structure=infer_table_structure,
-                extract_images_in_pdf=extract_images_in_pdf,
+                extract_element=extract_element,
             )
-
-    if file is not None:
-        file.seek(0)  # type: ignore
 
     if all(
         [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
@@ -97,13 +94,13 @@ def _determine_image_auto_strategy():
 def _determine_pdf_auto_strategy(
     pdf_text_extractable: bool = False,
     infer_table_structure: bool = False,
-    extract_images_in_pdf: bool = False,
+    extract_element: bool = False,
 ):
     """If "auto" is passed in as the strategy, determines what strategy to use
     for PDFs."""
     # NOTE(robinson) - Currently "hi_res" is the only strategy where
     # infer_table_structure and extract_images_in_pdf are used.
-    if infer_table_structure or extract_images_in_pdf:
+    if infer_table_structure or extract_element:
         return PartitionStrategy.HI_RES
 
     if pdf_text_extractable:

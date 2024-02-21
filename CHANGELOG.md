@@ -1,20 +1,223 @@
-## 0.11.4-dev6
+## 0.12.5-dev7
 
 ### Enhancements
 
-* **Refactor image extraction code.** The image extraction code is moved from `unstructured-inference` to `unstructured`. 
-* **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
-* **Improve handling of auth data for fsspec connectors.** Leverage an extension of the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
-* **Add glob support for fsspec connectors** Similar to the glob support in the ingest local source connector, similar filters are now enabled on all fsspec based source connectors to limit files being partitioned.
+### Features
+
+* **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
+
+### Fixes
+
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
+* **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
+
+## 0.12.4
+
+### Enhancements
+
+* **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
+* **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
+* **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for the signed message is extracted and added to metadata.
+* **Fallback to valid content types for emails** If the user selected content type does not exist on the email message, `partition_email` now falls back to anoter valid content type if it's available.
 
 ### Features
 
+* **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+* **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+* **Add ability to detect text in .docx inline shapes** extensions of docx partition, extracts text from inline shapes and includes them in paragraph's text
+
+### Fixes
+
+* **Fix `partition_pdf()` not working when using chipper model with `file`**
+* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
+* **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies**
+* **Add missing dependency files to package manifest**. Updates the file path for the ingest
+  dependencies and adds missing extra dependencies.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies **
+* **Add title to Vectara upload - was not separated out from initial connector **
+* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
+
+
+## 0.12.3
+
+### Enhancements
+
+* **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
+  MongoDB connector.
+
+### Features
+
+* **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
+
+### Fixes
+
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
+* **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
+  files as text.
+* **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
+* **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
+* **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
+* **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
+* **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
+
+## 0.12.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix index error in table processing.** Bumps the `unstructured-inference` version to address and
+  index error that occurs on some tables in the table transformer object.
+
+## 0.12.1
+
+### Enhancements
+
+* **Allow setting image block crop padding parameter** In certain circumstances, adjusting the image block crop padding can improve image block extraction by preventing extracted image blocks from being clipped.
+* **Add suport for bitmap images in `partition_image`** Adds support for `.bmp` files in
+  `partition`, `partition_image`, and `detect_filetype`.
+* **Keep all image elements when using "hi_res" strategy** Previously, `Image` elements with small chunks of text were ignored unless the image block extraction parameters (`extract_images_in_pdf` or `extract_image_block_types`) were specified. Now, all image elements are kept regardless of whether the image block extraction parameters are specified.
+* **Add filetype detection for `.wav` files.** Add filetpye detection for `.wav` files.
+* **Add "basic" chunking strategy.** Add baseline chunking strategy that includes all shared chunking behaviors without breaking chunks on section or page boundaries.
+* **Add overlap option for chunking.** Add option to overlap chunks. Intra-chunk and inter-chunk overlap are requested separately. Intra-chunk overlap is applied only to the second and later chunks formed by text-splitting an oversized chunk. Inter-chunk overlap may also be specified; this applies overlap between "normal" (not-oversized) chunks.
+* **Salesforce connector accepts private key path or value.** Salesforce parameter `private-key-file` has been renamed to `private-key`. Private key can be provided as path to file or file contents.
+* **Update documentation**: (i) added verbiage about the free API cap limit, (ii) added deprecation warning on ``Staging`` bricks in favor of ``Destination Connectors``, (iii) added warning and code examples to use the SaaS API Endpoints using CLI-vs-SDKs, (iv) fixed example pages formatting, (v) added deprecation on ``model_name`` in favor of ``hi_res_model_name``, (vi) added ``extract_images_in_pdf`` usage in ``partition_pdf`` section, (vii) reorganize and improve the documentation introduction section, and (viii) added PDF table extraction best practices.
+* **Add "basic" chunking to ingest CLI.** Add options to ingest CLI allowing access to the new "basic" chunking strategy and overlap options.
+* **Make Elasticsearch Destination connector arguments optional.** Elasticsearch Destination connector write settings are made optional and will rely on default values when not specified.
+* **Normalize Salesforce artifact names.** Introduced file naming pattern present in other connectors to Salesforce connector.
+* **Install Kapa AI chatbot.** Added Kapa.ai website widget on the documentation.
+
+### Features
+* **MongoDB Source Connector.** New source connector added to all CLI ingest commands to support downloading/partitioning files from MongoDB.
+* **Add OpenSearch source and destination connectors.** OpenSearch, a fork of Elasticsearch, is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added OpenSearch source connector to support downloading/partitioning files. Added OpenSearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into OpenSearch.
+
+### Fixes
+
+* **Fix GCS connector converting JSON to string with single quotes.** FSSpec serialization caused conversion of JSON token to string with single quotes. GCS requires token in form of dict so this format is now assured.
+* **Pin version of unstructured-client** Set minimum version of unstructured-client to avoid raising a TypeError when passing `api_key_auth` to `UnstructuredClient`
+* **Fix the serialization of the Pinecone destination connector.** Presence of the PineconeIndex object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix the serialization of the Elasticsearch destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix the serialization of the Postgres destination connector.** Presence of the _client object breaks serialization due to TypeError: cannot pickle '_thread.lock' object. This removes that object before serialization.
+* **Fix documentation and sample code for Chroma.** Was pointing to wrong examples..
+* **Fix flatten_dict to be able to flatten tuples inside dicts** Update flatten_dict function to support flattening tuples inside dicts. This is necessary for objects like Coordinates, when the object is not written to the disk, therefore not being converted to a list before getting flattened (still being a tuple).
+* **Fix the serialization of the Chroma destination connector.** Presence of the ChromaCollection object breaks serialization due to TypeError: cannot pickle 'module' object. This removes that object before serialization.
+* **Fix fsspec connectors returning version as integer.** Connector data source versions should always be string values, however we were using the integer checksum value for the version for fsspec connectors. This casts that value to a string.
+
+## 0.12.0
+
+### Enhancements
+
+* **Drop support for python3.8** All dependencies are now built off of the minimum version of python being `3.10`
+
+## 0.11.9
+
+### Enhancements
+
+* **Rename kwargs related to extracting image blocks** Rename the kwargs related to extracting image blocks for consistency and API usage.
+
+### Features
+
+* **Add PostgreSQL/SQLite destination connector** PostgreSQL and SQLite connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a PostgreSQL or SQLite database. And write embeddings to PostgreSQL pgvector database.
+
+### Fixes
+
+* **Handle users providing fully spelled out languages** Occasionally some users are defining the `languages` param as a fully spelled out language instead of a language code. This adds a dictionary for common languages so those small mistakes are caught and silently fixed.
+* **Fix unequal row-length in HTMLTable.text_as_html.** Fixes to other aspects of partition_html() in v0.11 allowed unequal cell-counts in table rows. Make the cells in each row correspond 1:1 with cells in the original table row. This fix also removes "noise" cells resulting from HTML-formatting whitespace and eliminates the "column-shifting" of cells that previously resulted from noise-cells.
+* **Fix MongoDB connector URI password redaction.** MongoDB documentation states that characters `$ : / ? # [ ] @` must be percent encoded. URIs with password containing such special character were not redacted.
+
+## 0.11.8
+
+### Enhancements
+
+* **Add SaaS API User Guide.** This documentation serves as a guide for Unstructured SaaS API users to register, receive an API key and URL, and manage your account and billing information.
+* **Add inter-chunk overlap capability.** Implement overlap between chunks. This applies to all chunks prior to any text-splitting of oversized chunks so is a distinct behavior; overlap at text-splits of oversized chunks is independent of inter-chunk overlap (distinct chunk boundaries) and can be requested separately. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap_all` kwarg on partition functions.
+
+### Features
+
+### Fixes
+
+## 0.11.7
+
+### Enhancements
+
+* **Add intra-chunk overlap capability.** Implement overlap for split-chunks where text-splitting is used to divide an oversized chunk into two or more chunks that fit in the chunking window. Note this capability is not yet available from the API but will shortly be made accessible using a new `overlap` kwarg on partition functions.
+* **Update encoders to leverage dataclasses** All encoders now follow a class approach which get annotated with the dataclass decorator. Similar to the connectors, it uses a nested dataclass for the configs required to configure a client as well as a field/property approach to cache the client. This makes sure any variable associated with the class exists as a dataclass field.
+
+### Features
+
+* **Add Qdrant destination connector.** Adds support for writing documents and embeddings into a Qdrant collection.
+* **Store base64 encoded image data in metadata fields.** Rather than saving to file, stores base64 encoded data of the image bytes and the mimetype for the image in metadata fields: `image_base64` and `image_mime_type` (if that is what the user specifies by some other param like `pdf_extract_to_payload`). This would allow the API to have parity with the library.
+
+### Fixes
+
+* **Fix table structure metric script** Update the call to table agent to now provide OCR tokens as required
+* **Fix element extraction not working when using "auto" strategy for pdf and image** If element extraction is specified, the "auto" strategy falls back to the "hi_res" strategy.
+* **Fix a bug passing a custom url to `partition_via_api`** Users that self host the api were not able to pass their custom url to `partition_via_api`.
+
+## 0.11.6
+
+### Enhancements
+
+* **Update the layout analysis script.** The previous script only supported annotating `final` elements. The updated script also supports annotating `inferred` and `extracted` elements.
+* **AWS Marketplace API documentation**: Added the user guide, including setting up VPC and CloudFormation, to deploy Unstructured API on AWS platform.
+* **Azure Marketplace API documentation**: Improved the user guide to deploy Azure Marketplace API by adding references to Azure documentation.
+* **Integration documentation**: Updated URLs for the `staging_for` bricks
+
+### Features
+
+* **Partition emails with base64-encoded text.** Automatically handles and decodes base64 encoded text in emails with content type `text/plain` and `text/html`.
+* **Add Chroma destination connector** Chroma database connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned/embedded data to a Chroma vector database.
+* **Add Elasticsearch destination connector.** Problem: After ingesting data from a source, users might want to move their data into a destination. Elasticsearch is a popular storage solution for various functionality such as search, or providing intermediary caches within data pipelines. Feature: Added Elasticsearch destination connector to be able to ingest documents from any supported source, embed them and write the embeddings / documents into Elasticsearch.
+
+### Fixes
+
+* **Enable --fields argument omission for elasticsearch connector** Solves two bugs where removing the optional parameter --fields broke the connector due to an integer processing error and using an elasticsearch config for a destination connector resulted in a serialization issue when optional parameter --fields was not provided.
+* **Add hi_res_model_name** Adds kwarg to relevant functions and add comments that model_name is to be deprecated.
+
+## 0.11.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix `partition_pdf()` and `partition_image()` importation issue.** Reorganize `pdf.py` and `image.py` modules to be consistent with other types of document import code.
+
+## 0.11.4
+
+### Enhancements
+
+* **Refactor image extraction code.** The image extraction code is moved from `unstructured-inference` to `unstructured`.
+* **Refactor pdfminer code.** The pdfminer code is moved from `unstructured-inference` to `unstructured`.
+* **Improve handling of auth data for fsspec connectors.** Leverage an extension of the dataclass paradigm to support a `sensitive` annotation for fields related to auth (i.e. passwords, tokens). Refactor all fsspec connectors to use explicit access configs rather than a generic dictionary.
+* **Add glob support for fsspec connectors** Similar to the glob support in the ingest local source connector, similar filters are now enabled on all fsspec based source connectors to limit files being partitioned.
+* Define a constant for the splitter "+" used in tesseract ocr languages.
+
+### Features
+
+* **Save tables in PDF's separately as images.** The "table" elements are saved as `table-<pageN>-<tableN>.jpg`. This filename is presented in the `image_path` metadata field for the Table element. The default would be to not do this.
 * **Add Weaviate destination connector** Weaviate connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data from over 20 data sources (so far) to a Weaviate object collection.
 * **Sftp Source Connector.** New source connector added to support downloading/partitioning files from Sftp.
 
 ### Fixes
 
-## 0.11.3
+* **Fix pdf `hi_res` partitioning failure when pdfminer fails.** Implemented logic to fall back to the "inferred_layout + OCR" if pdfminer fails in the `hi_res` strategy.
+* **Fix a bug where image can be scaled too large for tesseract** Adds a limit to prevent auto-scaling an image beyond the maximum size `tesseract` can handle for ocr layout detection
+* **Update partition_csv to handle different delimiters** CSV files containing both non-comma delimiters and commas in the data were throwing an error in Pandas. `partition_csv` now identifies the correct delimiter before the file is processed.
+* **partition returning cid code in `hi_res`** occasionally pdfminer can fail to decode the text in an pdf file and return cid code as text. Now when this happens the text from OCR is used.
+
+## 0.11.2
 
 ### Enhancements
 

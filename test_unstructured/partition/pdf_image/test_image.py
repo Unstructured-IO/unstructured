@@ -1,5 +1,6 @@
 import os
 import pathlib
+import tempfile
 from unittest import mock
 
 import pytest
@@ -7,10 +8,12 @@ from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
 
+from test_unstructured.partition.pdf_image.test_pdf import assert_element_extraction
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import ElementType
-from unstructured.partition.pdf_image import image, ocr, pdf
+from unstructured.partition import image, pdf
+from unstructured.partition.pdf_image import ocr
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -160,6 +163,24 @@ def test_partition_image_with_multipage_tiff(
     assert elements[-1].metadata.page_number == 2
 
 
+def test_partition_image_with_bmp(
+    tmpdir,
+    filename="example-docs/layout-parser-paper-with-table.jpg",
+):
+    bmp_filename = os.path.join(tmpdir.dirname, "example.bmp")
+    img = Image.open(filename)
+    img.save(bmp_filename)
+
+    elements = image.partition_image(
+        filename=bmp_filename,
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+    )
+    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(table) == 1
+    assert "<table><thead><th>" in table[0]
+
+
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
     with mock.patch.object(
         ocr,
@@ -284,7 +305,7 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
     assert elements[idx].metadata.detection_class_prob is not None
@@ -303,7 +324,7 @@ def test_partition_image_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(filename=filename)
@@ -317,7 +338,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
@@ -333,7 +354,7 @@ def test_partition_image_metadata_date_custom_metadata_date(
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(
@@ -352,7 +373,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date",
+        "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
     elements = image.partition_image(
@@ -370,7 +391,7 @@ def test_partition_image_from_file_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
@@ -385,7 +406,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
 ):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
@@ -403,7 +424,7 @@ def test_partition_image_from_file_metadata_date_custom_metadata_date(
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
@@ -423,7 +444,7 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
     expected_last_modification_date = "2009-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     with open(filename, "rb") as f:
@@ -535,10 +556,22 @@ def test_partition_image_uses_model_name():
         assert mockpartition.call_args.kwargs["model_name"]
 
 
+def test_partition_image_uses_hi_res_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        image.partition_image("example-docs/layout-parser-paper-fast.jpg", hi_res_model_name="test")
+        print(mockpartition.call_args)
+        assert "model_name" not in mockpartition.call_args.kwargs
+        assert "hi_res_model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["hi_res_model_name"] == "test"
+
+
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 3),
+        ("entire_page", 2),
         ("individual_blocks", 1),
     ],
 )
@@ -619,3 +652,42 @@ def test_partition_image_has_filename(inference_results):
     assert element.metadata.filetype == "JPEG"
     # This should be kept from the filename we originally gave
     assert element.metadata.filename == filename
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_partition_image_element_extraction(
+    file_mode,
+    extract_image_block_to_payload,
+    filename=example_doc_path("embedded-images-tables.jpg"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if file_mode == "filename":
+            elements = image.partition_image(
+                filename=filename,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                extract_image_block_output_dir=tmpdir,
+            )
+        else:
+            with open(filename, "rb") as f:
+                elements = image.partition_image(
+                    file=f,
+                    extract_image_block_types=extract_image_block_types,
+                    extract_image_block_to_payload=extract_image_block_to_payload,
+                    extract_image_block_output_dir=tmpdir,
+                )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
+
+
+def test_partition_image_works_on_heic_file(
+    filename="example-docs/DA-1p.heic",
+):
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
+    titles = [el.text for el in elements if el.category == ElementType.TITLE]
+    assert "CREATURES" in titles

@@ -1,15 +1,17 @@
 import json
 import os
 import typing as t
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
 from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSingleIngestDoc,
     BaseSourceConnector,
@@ -31,21 +33,28 @@ CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
 
 
 @dataclass
+class SharepointAccessConfig(AccessConfig):
+    client_cred: str = enhanced_field(repr=False, sensitive=True)
+
+
+@dataclass
 class SimpleSharepointConfig(BaseConnectorConfig):
+    access_config: SharepointAccessConfig
     client_id: str
-    client_credential: str = field(repr=False)
-    site_url: str
+    site: str
     path: str
-    process_pages: bool = False
+    process_pages: bool = enhanced_field(default=True, init=False)
     recursive: bool = False
+    files_only: bool = False
     permissions_config: t.Optional[SharepointPermissionsConfig] = None
 
     def __post_init__(self):
-        if not (self.client_id and self.client_credential and self.site_url):
+        if not (self.client_id and self.access_config.client_cred and self.site):
             raise ValueError(
                 "Please provide one of the following mandatory values:"
                 "\n--client-id\n--client-cred\n--site",
             )
+        self.process_pages = not self.files_only
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def get_site_client(self, site_url: str = "") -> "ClientContext":
@@ -53,8 +62,8 @@ class SimpleSharepointConfig(BaseConnectorConfig):
         from office365.sharepoint.client_context import ClientContext
 
         try:
-            site_client = ClientContext(site_url or self.site_url).with_credentials(
-                ClientCredential(self.client_id, self.client_credential),
+            site_client = ClientContext(site_url or self.site).with_credentials(
+                ClientCredential(self.client_id, self.access_config.client_cred),
             )
         except Exception:
             logger.error("Couldn't set Sharepoint client.")
@@ -207,9 +216,11 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 version=page.get_property("Version", ""),
                 source_url=page.absolute_url,
                 exists=True,
-                permissions_data=self.update_permissions_data()
-                if self.connector_config.permissions_config
-                else None,
+                permissions_data=(
+                    self.update_permissions_data()
+                    if self.connector_config.permissions_config
+                    else None
+                ),
             )
             return
 
@@ -228,9 +239,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
-            permissions_data=self.update_permissions_data()
-            if self.connector_config.permissions_config
-            else None,
+            permissions_data=(
+                self.update_permissions_data() if self.connector_config.permissions_config else None
+            ),
         )
 
     def _download_page(self):

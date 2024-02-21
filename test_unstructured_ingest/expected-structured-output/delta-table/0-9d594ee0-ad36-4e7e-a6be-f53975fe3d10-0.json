@@ -3,7 +3,6 @@
     "element_id": "1179e2d00598bd0a193ebff787b5c02c",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-16 13:30:38.644000",
         "date_modified": "2023-08-16 13:30:38.604000",
         "url": "s3://utic-dev-tech-fixtures/sample-delta-lake-data/deltatable/0-9d594ee0-ad36-4e7e-a6be-f53975fe3d10-0.parquet",
         "version": "264934223616864047145159629306912568989"

@@ -23,18 +23,18 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    azure \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --strategy hi_res \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --account-name azureunstructured1 \
-    --remote-url abfs://container1/ \
-    --work-dir "$WORK_DIR"
+  azure \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --strategy hi_res \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --account-name azureunstructured1 \
+  --remote-url abfs://container1/ \
+  --work-dir "$WORK_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
@@ -42,8 +42,8 @@ EXIT_CODE=$?
 set -e
 
 if [ "$EXIT_CODE" -ne 0 ]; then
-    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
-    # Handle the error or exit
+  echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+  # Handle the error or exit
 fi
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

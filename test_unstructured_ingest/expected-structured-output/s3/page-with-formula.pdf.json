@@ -3,7 +3,7 @@
     "element_id": "1fced17e7fb29d9a55193a3c33b57446",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -24,7 +24,7 @@
     "element_id": "2034a880526bd0e8273295f7d63a2286",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -45,7 +45,7 @@
     "element_id": "27b36f031306ed6ef5cf87c24b66bd0c",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -66,7 +66,7 @@
     "element_id": "b64b0c84c1b06a2d8249079dd71405d8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -87,7 +87,7 @@
     "element_id": "640df3a8e4d5fae30486497226b5c9b8",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -108,7 +108,7 @@
     "element_id": "6cae52b99feb7821d42d1e968612c58e",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -129,7 +129,7 @@
     "element_id": "4750f5c635c72f7add8147f05e46a812",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -150,7 +150,7 @@
     "element_id": "5c4f25461422e00e53ecfd09bbe78dfa",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -171,7 +171,7 @@
     "element_id": "e9caf0a0f1f415cf9842ac607eaff0ff",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -192,7 +192,7 @@
     "element_id": "b59bd0cd0e3c6ed28f3567ec55e14bc7",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -213,7 +213,7 @@
     "element_id": "9d4113060fbfb7435932cad61b0e922a",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -234,7 +234,7 @@
     "element_id": "582ef9f4f3483f1f73bc5ec175bc8892",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -255,7 +255,7 @@
     "element_id": "e5c3cb7f77f5a0ce57a7bc1ee967ebb9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -276,7 +276,7 @@
     "element_id": "bf361fe9e95971d11badc9dedd8de25d",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -297,7 +297,7 @@
     "element_id": "bb81a72db74d77059c459701be1193a4",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -318,7 +318,7 @@
     "element_id": "e43d418c6a8817cfb09fcfd081bfd256",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"
@@ -339,7 +339,7 @@
     "element_id": "aec400e3e65dc09b31513694bc9893b9",
     "metadata": {
       "data_source": {
-        "date_modified": "2023-10-17T23:20:41",
+        "date_modified": "2023-10-17T23:20:41+00:00",
         "record_locator": {
           "protocol": "s3",
           "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/page-with-formula.pdf"

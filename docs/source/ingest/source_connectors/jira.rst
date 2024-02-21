@@ -16,43 +16,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          jira \
-          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-          --url https://unstructured-jira-connector-test.atlassian.net \
-          --user-email 12345678@unstructured.io \
-          --api-token ABCDE1234ABDE1234ABCDE1234 \
-          --output-dir jira-ingest-output \
-          --num-processes 2
+      .. literalinclude:: ./code/bash/jira.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import JiraRunner
-
-        if __name__ == "__main__":
-            runner = JiraRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="jira-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
-                ),
-            )
-            runner.run(
-                url="https://unstructured-jira-connector-test.atlassian.net",
-                user_email="12345678@unstructured.io",
-                api_token="ABCDE1234ABDE1234ABCDE1234",
-            )
+      .. literalinclude:: ./code/python/jira.py
+         :language: python
 
 Run via the API
 ---------------
@@ -63,47 +33,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          jira \
-          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-          --url https://unstructured-jira-connector-test.atlassian.net \
-          --user-email 12345678@unstructured.io \
-          --api-token ABCDE1234ABDE1234ABCDE1234 \
-          --output-dir jira-ingest-output \
-          --num-processes 2 \
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/jira_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import JiraRunner
-
-        if __name__ == "__main__":
-            runner = JiraRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="jira-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                    metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
-                ),
-            )
-            runner.run(
-                url="https://unstructured-jira-connector-test.atlassian.net",
-                user_email="12345678@unstructured.io",
-                api_token="ABCDE1234ABDE1234ABCDE1234",
-            )
+      .. literalinclude:: ./code/python/jira_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

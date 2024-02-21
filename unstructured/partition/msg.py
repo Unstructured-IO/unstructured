@@ -4,7 +4,7 @@ from typing import IO, Callable, Dict, List, Optional
 
 import msg_parser
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger

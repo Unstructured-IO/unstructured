@@ -18,15 +18,14 @@
 # and set up the app config.json file here:
 # https://developer.box.com/guides/authentication/jwt/with-sdk/
 
-
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 cd "$SCRIPT_DIR"/../../.. || exit 1
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-   box \
-   --box-app-config "$BOX_APP_CONFIG_PATH" \
-   --remote-url box://utic-test-ingest-fixtures \
-   --output-dir box-output \
-   --num-processes 2 \
-   --recursive \
-   --verbose
+  box \
+  --box-app-config "$BOX_APP_CONFIG_PATH" \
+  --remote-url box://utic-test-ingest-fixtures \
+  --output-dir box-output \
+  --num-processes 2 \
+  --recursive \
+  --verbose

@@ -1,5 +1,5 @@
-Python and JavaScript SDK for Unstructured API
-===============================================
+Python and JavaScript SDK
+=========================
 
 This documentation covers the usage of the Python and JavaScript SDKs for interacting with the Unstructured API.
 
@@ -70,7 +70,7 @@ Usage
 
 Below is a basic example of how to use the JavaScript SDK:
 
-.. code-block:: bash
+.. code-block:: python
 
     import { UnstructuredClient } from "unstructured-client";
     import { PartitionResponse } from "unstructured-client/dist/sdk/models/operations";
@@ -91,7 +91,7 @@ Below is a basic example of how to use the JavaScript SDK:
         # Note that this currently only supports a single file
         files: {
             content: data,
-            files: filename,
+            fileName: filename,
         },
         # Other partition params
         strategy: "fast",

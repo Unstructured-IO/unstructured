@@ -1,6 +1,6 @@
 import pytest
 
-from unstructured.partition.pdf_image import pdf
+from unstructured.partition import pdf
 from unstructured.partition.utils.constants import PartitionStrategy
 
 
@@ -29,4 +29,14 @@ def test_chipper_not_losing_parents(chipper_results, chipper_children):
     assert all(
         [el for el in chipper_results if el.id == child.metadata.parent_id]
         for child in chipper_children
+    )
+
+
+def chipper_test_pdfminer_repeated(chipper_results):
+    """
+    Test to verify that PDFMiner has not been run together with Chipper
+    """
+    elements = chipper_results
+    assert len([element.text for element in elements]) == len(
+        {element.text for element in elements}
     )

@@ -1,10 +1,11 @@
+import csv
 from tempfile import SpooledTemporaryFile
 from typing import IO, BinaryIO, List, Optional, Union, cast
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -71,7 +72,8 @@ def partition_csv(
     header = 0 if include_header else None
 
     if filename:
-        table = pd.read_csv(filename, header=header)
+        delimiter = get_delimiter(file_path=filename)
+        table = pd.read_csv(filename, header=header, sep=delimiter)
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
@@ -79,7 +81,8 @@ def partition_csv(
         f = spooled_to_bytes_io_if_needed(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
-        table = pd.read_csv(f, header=header)
+        delimiter = get_delimiter(file=f)
+        table = pd.read_csv(f, header=header, sep=delimiter)
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
@@ -101,3 +104,21 @@ def partition_csv(
     )
 
     return list(elements)
+
+
+def get_delimiter(file_path=None, file=None):
+    """
+    Use the standard csv sniffer to determine the delimiter.
+    Read just a small portion in case the file is large.
+    """
+    sniffer = csv.Sniffer()
+
+    num_bytes = 8192
+    if file:
+        data = file.read(num_bytes).decode("utf-8")
+        file.seek(0)
+    else:
+        with open(file_path) as f:
+            data = f.read(num_bytes)
+
+    return sniffer.sniff(data, delimiters=[",", ";"]).delimiter

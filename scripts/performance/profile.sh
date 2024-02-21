@@ -25,7 +25,6 @@
 
 # NOTE: because memray does not build wheels for ARM-Linux, this script can not run in an ARM Docker container on an M1 Mac (though emulated AMD would work).
 
-
 # Validate dependencies
 check_python_module() {
   if ! python3 -c "import $1" >/dev/null 2>&1; then
@@ -70,9 +69,9 @@ fi
 
 check_display() {
   if system_profiler SPDisplaysDataType 2>/dev/null | grep -q "Display Type"; then
-    return 0  # Display is present
+    return 0 # Display is present
   else
-    return 1  # Display is not present (headless context)
+    return 1 # Display is not present (headless context)
   fi
 }
 
@@ -83,7 +82,7 @@ view_profile_headless() {
   result_file="${result_file%.*}$extension"
 
   if [[ ! -f "$result_file" ]]; then
-    unset result_file  # Unset the result_file variable to go back to the "Select a file" view
+    unset result_file # Unset the result_file variable to go back to the "Select a file" view
     echo "Result file not found. Please choose a different profile type or go back."
   else
     while true; do
@@ -91,25 +90,25 @@ view_profile_headless() {
       echo
 
       if [[ $visualization_type == "b" ]]; then
-        unset result_file  # Unset the result_file variable to go back to the "Select a file" view
+        unset result_file # Unset the result_file variable to go back to the "Select a file" view
         break
       elif [[ $visualization_type == "q" ]]; then
         exit 0
       fi
 
       case $visualization_type in
-        "1")
-          python3 -m memray tree "$result_file"
-          ;;
-        "2")
-          python3 -m memray summary "$result_file"
-          ;;
-        "3")
-          python3 -m memray stats "$result_file"
-          ;;
-        *)
-          echo "Invalid visualization type. Please try again."
-          ;;
+      "1")
+        python3 -m memray tree "$result_file"
+        ;;
+      "2")
+        python3 -m memray summary "$result_file"
+        ;;
+      "3")
+        python3 -m memray stats "$result_file"
+        ;;
+      *)
+        echo "Invalid visualization type. Please try again."
+        ;;
       esac
     done
   fi
@@ -121,7 +120,7 @@ view_profile_with_head() {
     echo
 
     if [[ $profile_type == "b" ]]; then
-      unset result_file  # Unset the result_file variable to go back to the "Select a file" view
+      unset result_file # Unset the result_file variable to go back to the "Select a file" view
       break
     elif [[ $profile_type == "q" ]]; then
       exit 0
@@ -146,7 +145,7 @@ view_profile_with_head() {
     fi
 
     if [[ $profile_type == "3" ]]; then
-	    speedscope "$result_file"
+      speedscope "$result_file"
     elif [[ $profile_type == "2" ]]; then
       while true; do
         read -r -p "Choose visualization type: (1) flamegraph (2) table (3) tree (4) summary (5) stats (b) back, (q) quit: " -n 1 visualization_type
@@ -159,28 +158,28 @@ view_profile_with_head() {
         fi
 
         case $visualization_type in
-          "1")
-            rm -f "${result_file}.memray.html"
-            python3 -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
-            open "${result_file}.memray.html"
-            ;;
-          "2")
-            rm -f "${result_file}.table.html"
-            python3 -m memray table -o "${result_file}.table.html" "$result_file"
-            open "${result_file}.table.html"
-            ;;
-          "3")
-            python3 -m memray tree "$result_file"
-            ;;
-          "4")
-            python3 -m memray summary "$result_file"
-            ;;
-          "5")
-            python3 -m memray stats "$result_file"
-            ;;
-          *)
-            echo "Invalid visualization type. Please try again."
-            ;;
+        "1")
+          rm -f "${result_file}.memray.html"
+          python3 -m memray flamegraph -o "${result_file}.memray.html" "$result_file"
+          open "${result_file}.memray.html"
+          ;;
+        "2")
+          rm -f "${result_file}.table.html"
+          python3 -m memray table -o "${result_file}.table.html" "$result_file"
+          open "${result_file}.table.html"
+          ;;
+        "3")
+          python3 -m memray tree "$result_file"
+          ;;
+        "4")
+          python3 -m memray summary "$result_file"
+          ;;
+        "5")
+          python3 -m memray stats "$result_file"
+          ;;
+        *)
+          echo "Invalid visualization type. Please try again."
+          ;;
         esac
       done
     else
@@ -195,23 +194,23 @@ view_profile_with_head() {
         fi
 
         case $visualization_type in
-          "1")
-            flameprof_file="${result_file}.flameprof.svg"
-            rm -f "$flameprof_file"
-            python3 -m flameprof "$result_file" > "$flameprof_file"
-            open "$flameprof_file"
-            ;;
-          "2")
-            snakeviz "$result_file"
-            ;;
-          *)
-            echo "Invalid visualization type. Please try again."
-            ;;
+        "1")
+          flameprof_file="${result_file}.flameprof.svg"
+          rm -f "$flameprof_file"
+          python3 -m flameprof "$result_file" >"$flameprof_file"
+          open "$flameprof_file"
+          ;;
+        "2")
+          snakeviz "$result_file"
+          ;;
+        *)
+          echo "Invalid visualization type. Please try again."
+          ;;
         esac
       done
     fi
 
-    break  # Return to the beginning
+    break # Return to the beginning
   done
 }
 
@@ -229,7 +228,7 @@ view_profile() {
         return
       fi
 
-      for ((i=0; i<${#result_files[@]}; i++)); do
+      for ((i = 0; i < ${#result_files[@]}; i++)); do
         filename="${result_files[$i]##*/}"
         filename="${filename%.*}"
         echo "$i. $filename"
@@ -272,7 +271,7 @@ run_profile() {
         return
       fi
 
-      for ((i=0; i<${#test_files[@]}; i++)); do
+      for ((i = 0; i < ${#test_files[@]}; i++)); do
         echo "$i. ${test_files[$i]}"
       done
 
@@ -297,7 +296,7 @@ run_profile() {
 
     # Pick the strategy
     while true; do
-	read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (4) ocr_only (b) back, (q) quit: " -n 1 strategy_option
+      read -r -p "Choose a strategy: 1) auto, (2) fast, (3) hi_res, (4) ocr_only (b) back, (q) quit: " -n 1 strategy_option
       echo
 
       if [[ $strategy_option == "b" ]]; then
@@ -307,25 +306,25 @@ run_profile() {
       fi
 
       case $strategy_option in
-        "1")
-          strategy="auto"
-          break
-          ;;
-        "2")
-          strategy="fast"
-          break
-          ;;
-        "3")
-          strategy="hi_res"
-          break
-          ;;
-        "4")
-          strategy="ocr_only"
-          break
-          ;;
-        *)
-          echo "Invalid strategy option. Please try again."
-          ;;
+      "1")
+        strategy="auto"
+        break
+        ;;
+      "2")
+        strategy="fast"
+        break
+        ;;
+      "3")
+        strategy="hi_res"
+        break
+        ;;
+      "4")
+        strategy="ocr_only"
+        break
+        ;;
+      *)
+        echo "Invalid strategy option. Please try again."
+        ;;
       esac
     done
 
@@ -356,7 +355,7 @@ while true; do
   if [[ $mode == "1" ]]; then
     run_profile
   elif [[ $mode == "2" ]]; then
-    unset result_file  # Unset the result_file variable before entering the "View" mode
+    unset result_file # Unset the result_file variable before entering the "View" mode
     view_profile
   elif [[ $mode == "q" ]]; then
     exit 0

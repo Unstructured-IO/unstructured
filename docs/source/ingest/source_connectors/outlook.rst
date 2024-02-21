@@ -15,47 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-            outlook \
-            --client-id "$MS_CLIENT_ID" \
-            --client-cred "$MS_CLIENT_CRED" \
-            --tenant "$MS_TENANT_ID" \
-            --user-email "$MS_USER_EMAIL" \
-            --outlook-folders Inbox,"Sent Items" \
-            --output-dir outlook-output \
-            --num-processes 2 \
-            --recursive \
-            --verbose
+      .. literalinclude:: ./code/bash/outlook.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import OutlookRunner
-
-        if __name__ == "__main__":
-            runner = OutlookRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="outlook-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-            )
-            runner.run(
-                client_id=os.getenv("MS_CLIENT_ID"),
-                client_cred=os.getenv("MS_CLIENT_CRED"),
-                tenant=os.getenv("MS_TENANT_ID"),
-                user_email=os.getenv("MS_USER_EMAIL"),
-                outlook_folders=["Inbox", "Sent Items"],
-                recursive=True,
-            )
+      .. literalinclude:: ./code/python/outlook.py
+         :language: python
 
 Run via the API
 ---------------
@@ -66,48 +32,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          airtable \
-          --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-          --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-          --output-dir airtable-ingest-output \
-          --num-processes 2 \
-          --reprocess \
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/outlook_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import OutlookRunner
-
-        if __name__ == "__main__":
-            runner = OutlookRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="outlook-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-            )
-            runner.run(
-                client_id=os.getenv("MS_CLIENT_ID"),
-                client_cred=os.getenv("MS_CLIENT_CRED"),
-                tenant=os.getenv("MS_TENANT_ID"),
-                user_email=os.getenv("MS_USER_EMAIL"),
-                outlook_folders=["Inbox", "Sent Items"],
-                recursive=True,
-            )
+      .. literalinclude:: ./code/python/outlook_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

@@ -17,6 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from typing import List, Optional, Union
 
 from setuptools import find_packages, setup
@@ -83,7 +84,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
-    python_requires=">=3.7.0",
+    python_requires=">=3.9.0,<3.12",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -92,7 +93,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -134,6 +134,7 @@ setup(
         ),
         "biomed": load_requirements("requirements/ingest/biomed.in"),
         "box": load_requirements("requirements/ingest/box.in"),
+        "chroma": load_requirements("requirements/ingest/chroma.in"),
         "confluence": load_requirements("requirements/ingest/confluence.in"),
         "delta-table": load_requirements("requirements/ingest/delta-table.in"),
         "discord": load_requirements("requirements/ingest/discord.in"),
@@ -145,10 +146,14 @@ setup(
         "google-drive": load_requirements("requirements/ingest/google-drive.in"),
         "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
+        "mongodb": load_requirements("requirements/ingest/mongodb.in"),
         "notion": load_requirements("requirements/ingest/notion.in"),
         "onedrive": load_requirements("requirements/ingest/onedrive.in"),
+        "opensearch": load_requirements("requirements/ingest/opensearch.in"),
         "outlook": load_requirements("requirements/ingest/outlook.in"),
         "pinecone": load_requirements("requirements/ingest/pinecone.in"),
+        "postgres": load_requirements("requirements/ingest/postgres.in"),
+        "qdrant": load_requirements("requirements/ingest/qdrant.in"),
         "reddit": load_requirements("requirements/ingest/reddit.in"),
         "s3": load_requirements("requirements/ingest/s3.in"),
         "sharepoint": load_requirements("requirements/ingest/sharepoint.in"),
@@ -164,7 +169,7 @@ setup(
         "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
-        "mongodb": load_requirements("requirements/ingest/mongodb.in"),
+        "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},

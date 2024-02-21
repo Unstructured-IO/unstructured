@@ -1,6 +1,6 @@
-from typing import IO, List, Optional
+from typing import IO, Any, List, Optional
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
@@ -22,7 +22,7 @@ def partition_epub(
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
     partitioned using partition_html.

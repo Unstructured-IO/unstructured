@@ -2,7 +2,6 @@
 
 set -e
 
-
 SRC_PATH=$(dirname "$(realpath "$0")")
 SCRIPT_DIR=$(dirname "$SRC_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
@@ -26,18 +25,18 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    s3 \
-    --num-processes "$max_processes" \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --strategy hi_res \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
-    --anonymous \
-    --work-dir "$WORK_DIR"
+  s3 \
+  --num-processes "$max_processes" \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --strategy hi_res \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --remote-url s3://utic-dev-tech-fixtures/small-pdf-set/ \
+  --anonymous \
+  --work-dir "$WORK_DIR"
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
@@ -45,8 +44,8 @@ EXIT_CODE=$?
 set -e
 
 if [ "$EXIT_CODE" -ne 0 ]; then
-    echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
-    # Handle the error or exit
+  echo "The last script run exited with a non-zero exit code: $EXIT_CODE."
+  # Handle the error or exit
 fi
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"

@@ -3,7 +3,7 @@
 import pathlib
 import re
 from tempfile import SpooledTemporaryFile
-from typing import Dict, List, cast
+from typing import Dict, List
 
 import docx
 import pytest
@@ -293,7 +293,7 @@ def test_partition_docx_raises_with_neither():
 
 def test_parition_docx_from_team_chat():
     """Docx with no sections partitions recognizing both paragraphs and tables."""
-    elements = cast(List[Text], partition_docx(example_doc_path("teams_chat.docx")))
+    elements = partition_docx(example_doc_path("teams_chat.docx"))
     assert [e.text for e in elements] == [
         "0:0:0.0 --> 0:0:1.510\nSome Body\nOK. Yeah.",
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
@@ -681,7 +681,7 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
 
 
 def test_partition_docx_includes_hyperlink_metadata():
-    elements = cast(List[Text], partition_docx(example_doc_path("hlink-meta.docx")))
+    elements = partition_docx(example_doc_path("hlink-meta.docx"))
 
     # -- regular paragraph, no hyperlinks --
     element = elements[0]
@@ -762,6 +762,20 @@ def test_partition_docx_includes_hyperlink_metadata():
     assert metadata.links is None
     assert metadata.link_texts is None
     assert metadata.link_urls is None
+
+
+# -- shape behaviors -----------------------------------------------------------------------------
+
+
+def test_it_considers_text_inside_shapes():
+    # -- <bracketed> text is written inside inline shapes --
+    partitioned_doc = partition_docx(example_doc_path("docx-shapes.docx"))
+    assert [element.text for element in partitioned_doc] == [
+        "Paragraph with single <inline-image> within.",
+        "Paragraph with <inline-image1> and <inline-image2> within.",
+        # -- text "<floating-shape>" in floating shape is ignored --
+        "Paragraph with floating shape attached.",
+    ]
 
 
 # -- module-level fixtures -----------------------------------------------------------------------

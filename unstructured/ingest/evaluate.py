@@ -55,18 +55,34 @@ def main():
     default=False,
     help="Add the flag to show progress bar.",
 )
+@click.option(
+    "--output_type",
+    type=str,
+    default="json",
+    show_default=True,
+    help="Takes in either `txt` or `json` as output_type.",
+)
 def measure_text_extraction_accuracy_command(
     output_dir: str,
     source_dir: str,
-    output_list: Optional[List[str]],
-    source_list: Optional[List[str]],
     export_dir: str,
-    grouping: Optional[str],
     weights: Tuple[int, int, int],
     visualize: bool,
+    output_type: str,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
+    grouping: Optional[str] = None,
 ):
     return measure_text_extraction_accuracy(
-        output_dir, source_dir, output_list, source_list, export_dir, grouping, weights, visualize
+        output_dir,
+        source_dir,
+        output_list,
+        source_list,
+        export_dir,
+        grouping,
+        weights,
+        visualize,
+        output_type,
     )
 
 
@@ -104,10 +120,10 @@ def measure_text_extraction_accuracy_command(
 def measure_element_type_accuracy_command(
     output_dir: str,
     source_dir: str,
-    output_list: Optional[List[str]],
-    source_list: Optional[List[str]],
     export_dir: str,
     visualize: bool,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
 ):
     return measure_element_type_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize

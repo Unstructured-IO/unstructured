@@ -25,27 +25,26 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_TENANT_ID" ] || [ -z "$MS_USER_EMAIL" ]; then
-   echo "Skipping Outlook ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED or MS_TENANT_ID or MS_USER_EMAIL env var is not set."
-   exit 8
+  echo "Skipping Outlook ingest test because the MS_CLIENT_ID or MS_CLIENT_CRED or MS_TENANT_ID or MS_USER_EMAIL env var is not set."
+  exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    outlook \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --client-cred "$MS_CLIENT_CRED" \
-    --client-id "$MS_CLIENT_ID" \
-    --tenant "$MS_TENANT_ID" \
-    --user-email "$MS_USER_EMAIL" \
-    --outlook-folders IntegrationTest \
-    --recursive \
-    --work-dir "$WORK_DIR"
-
+  outlook \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --client-cred "$MS_CLIENT_CRED" \
+  --client-id "$MS_CLIENT_ID" \
+  --tenant "$MS_TENANT_ID" \
+  --user-email "$MS_USER_EMAIL" \
+  --outlook-folders IntegrationTest \
+  --recursive \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

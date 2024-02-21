@@ -21,10 +21,10 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # --max-num-of-docs-from-each-space 250 \
 #     --> The maximum number of documents to be ingested from each space. Set as 250 in the example.
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        confluence \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-        --url https://unstructured-ingest-test.atlassian.net \
-        --user-email 12345678@unstructured.io \
-        --api-token ABCDE1234ABDE1234ABCDE1234 \
-        --output-dir confluence-ingest-output \
-        --num-processes 2
+  confluence \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+  --url https://unstructured-ingest-test.atlassian.net \
+  --user-email 12345678@unstructured.io \
+  --api-token ABCDE1234ABDE1234ABCDE1234 \
+  --output-dir confluence-ingest-output \
+  --num-processes 2

@@ -3,11 +3,12 @@ import typing as t
 import uuid
 from dataclasses import dataclass, field
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
-    BaseSingleIngestDoc,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -18,9 +19,14 @@ if t.TYPE_CHECKING:
 
 
 @dataclass
+class AzureCognitiveSearchAccessConfig(AccessConfig):
+    key: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleAzureCognitiveSearchStorageConfig(BaseConnectorConfig):
     endpoint: str
-    key: str
+    access_config: AzureCognitiveSearchAccessConfig
 
 
 @dataclass
@@ -34,12 +40,13 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
     connector_config: SimpleAzureCognitiveSearchStorageConfig
     _client: t.Optional["SearchClient"] = field(init=False, default=None)
 
+    @requires_dependencies(["azure.search"], extras="azure-cognitive-search")
     def generate_client(self) -> "SearchClient":
         from azure.core.credentials import AzureKeyCredential
         from azure.search.documents import SearchClient
 
         # Create a client
-        credential = AzureKeyCredential(self.connector_config.key)
+        credential = AzureKeyCredential(self.connector_config.access_config.key)
         return SearchClient(
             endpoint=self.connector_config.endpoint,
             index_name=self.write_config.index,
@@ -135,17 +142,3 @@ class AzureCognitiveSearchDestinationConnector(BaseDestinationConnector):
                     ],
                 ),
             )
-
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        json_list: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                json_content = json.load(json_file)
-                for content in json_content:
-                    self.conform_dict(data=content)
-                logger.info(
-                    f"appending {len(json_content)} json elements from content in {local_path}",
-                )
-                json_list.extend(json_content)
-        self.write_dict(elements_dict=json_list)

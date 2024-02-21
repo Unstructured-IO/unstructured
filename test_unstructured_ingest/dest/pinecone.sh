@@ -9,11 +9,11 @@ OUTPUT_FOLDER_NAME=s3-pinecone-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-writer_processes=$(( (max_processes - 1) > 1 ? (max_processes - 1) : 2 ))
+writer_processes=$(((max_processes - 1) > 1 ? (max_processes - 1) : 2))
 
 if [ -z "$PINECONE_API_KEY" ]; then
-   echo "Skipping Pinecone ingest test because PINECONE_API_KEY env var is not set."
-   exit 0
+  echo "Skipping Pinecone ingest test because PINECONE_API_KEY env var is not set."
+  exit 0
 fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
@@ -41,9 +41,9 @@ function cleanup {
     echo ""
     echo "deleting index $PINECONE_INDEX"
     curl --request DELETE \
-    "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
-    --header "Api-Key: $PINECONE_API_KEY" \
-    --header 'content-type: application/json'
+      "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
+      --header "Api-Key: $PINECONE_API_KEY" \
+      --header 'content-type: application/json'
 
   else
     echo "There was an error during index deletion for index $PINECONE_INDEX, with response code: $response_code. It might be that index $PINECONE_INDEX does not exist, so there is nothing to delete."
@@ -58,20 +58,19 @@ trap cleanup EXIT
 
 echo "Creating index $PINECONE_INDEX"
 response_code=$(curl \
-     -s -o /dev/null \
-     -w "%{http_code}" \
-     --request POST \
-     --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases" \
-     --header "accept: text/plain" \
-     --header "content-type: application/json" \
-     --header "Api-Key: $PINECONE_API_KEY" \
-     --data '
+  -s -o /dev/null \
+  -w "%{http_code}" \
+  --request POST \
+  --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases" \
+  --header "accept: text/plain" \
+  --header "content-type: application/json" \
+  --header "Api-Key: $PINECONE_API_KEY" \
+  --data '
 {
   "name": "'"$PINECONE_INDEX"'",
   "dimension": 384,
   "metric": "cosine",
   "pods": 1,
-  "replicas": 1,
   "pod_type": "p1.x1"
 }
 ')
@@ -93,10 +92,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
-  --chunk-combine-text-under-n-chars 200\
-  --chunk-new-after-n-chars 2500\
-  --chunk-max-characters 38000\
-  --chunk-multipage-sections \
+  --chunk-combine-text-under-n-chars 200 --chunk-new-after-n-chars 2500 --chunk-max-characters 38000 --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
@@ -115,19 +111,19 @@ while [ "$num_of_vectors_remote" -eq 0 ] && [ "$attempt" -lt 4 ]; do
   sleep $sleep_amount
 
   num_of_vectors_remote=$(curl --request POST \
-      -s \
-      --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
-      --header "accept: application/json" \
-      --header "content-type: application/json" \
-      --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
+    -s \
+    --url "https://$PINECONE_INDEX-$PINECONE_PROJECT_ID.svc.$PINECONE_ENVIRONMENT.pinecone.io/describe_index_stats" \
+    --header "accept: application/json" \
+    --header "content-type: application/json" \
+    --header "Api-Key: $PINECONE_API_KEY" | jq -r '.totalVectorCount')
 
   echo "vector count in Pinecone: $num_of_vectors_remote"
-  attempt=$((attempt+1))
+  attempt=$((attempt + 1))
 done
 
 EXPECTED=1404
 
-if [ "$num_of_vectors_remote" -ne $EXPECTED ];then
+if [ "$num_of_vectors_remote" -ne $EXPECTED ]; then
   echo "Number of vectors in Pinecone are $num_of_vectors_remote when the expected number is $EXPECTED. Test failed."
   exit 1
 fi

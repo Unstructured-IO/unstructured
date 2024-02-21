@@ -9,7 +9,6 @@ from unstructured.ingest.cli.common import (
 )
 from unstructured.ingest.cli.interfaces import CliFilesStorageConfig
 from unstructured.ingest.cli.utils import Group, add_options, conform_click_options, extract_configs
-from unstructured.ingest.interfaces import FsspecConfig
 from unstructured.ingest.logger import ingest_log_streaming_init, logger
 from unstructured.ingest.runner import runner_map
 
@@ -18,8 +17,8 @@ from unstructured.ingest.runner import runner_map
 class BaseSrcCmd(BaseCmd):
     def get_source_runner(self, options: dict):
         addition_configs = self.addition_configs
-        if self.is_fsspec and "fsspec_config" not in addition_configs:
-            addition_configs["fsspec_config"] = FsspecConfig
+        if "connector_config" not in addition_configs:
+            addition_configs["connector_config"] = self.cli_config
         configs = extract_configs(
             options,
             validate=[self.cli_config] if self.cli_config else None,

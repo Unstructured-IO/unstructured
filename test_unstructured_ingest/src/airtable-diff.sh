@@ -31,23 +31,23 @@ VARIED_DATA_BASE_ID="app5YQxSfp220fWtm"
 VARIED_DATA_BASE_ID_2="appJ43QmP8I17zu88"
 
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
-   echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
-   exit 8
+  echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
+  exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    airtable \
-    --download-dir "$DOWNLOAD_DIR" \
-    --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-    --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadatda.languages \
-    --num-processes "$max_processes" \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --work-dir "$WORK_DIR" \
-    --max-retry-time 10 \
-    --verbose
+  airtable \
+  --download-dir "$DOWNLOAD_DIR" \
+  --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+  --list-of-paths "$VARIED_DATA_BASE_ID $VARIED_DATA_BASE_ID_2" \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadatda.languages \
+  --num-processes "$max_processes" \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --work-dir "$WORK_DIR" \
+  --max-retry-time 10 \
+  --verbose
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

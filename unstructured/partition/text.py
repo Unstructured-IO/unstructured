@@ -3,7 +3,7 @@ import re
 import textwrap
 from typing import IO, Any, Callable, List, Optional, Tuple
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
     auto_paragraph_grouper,
     clean_bullets,

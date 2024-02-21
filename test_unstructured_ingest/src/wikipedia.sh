@@ -26,15 +26,15 @@ trap cleanup EXIT
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    wikipedia \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --strategy hi_res \
-    --preserve-downloads \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --page-title "Open Source Software" \
-    --work-dir "$WORK_DIR"
+  wikipedia \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude coordinates,filename,file_directory,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --strategy hi_res \
+  --preserve-downloads \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --page-title "Open Source Software" \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-num-files-output.sh 3 $OUTPUT_FOLDER_NAME

@@ -1,6 +1,8 @@
+import base64
 import logging
 import math
 import os
+import tempfile
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
@@ -15,14 +17,15 @@ from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
+    ElementType,
     ListItem,
     NarrativeText,
     Text,
     Title,
 )
-from unstructured.partition import strategies
-from unstructured.partition.pdf_image import ocr, pdf, pdfminer_processing
-from unstructured.partition.pdf_image.pdf import get_uris_from_annots
+from unstructured.partition import pdf, strategies
+from unstructured.partition.pdf import get_uris_from_annots
+from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -199,7 +202,40 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+@pytest.mark.parametrize("model_name", ["checkbox", "yolox", "chipper"])
 def test_partition_pdf_with_model_name(
+    monkeypatch,
+    model_name,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            model_name=model_name,
+        )
+        assert mock_process.call_args[1]["model_name"] == model_name
+
+    with mock.patch.object(
+        layout,
+        "process_data_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        with open(filename, "rb") as f:
+            pdf.partition_pdf(
+                file=f,
+                strategy=PartitionStrategy.HI_RES,
+                model_name=model_name,
+            )
+            assert mock_process.call_args[1]["model_name"] == model_name
+
+
+def test_partition_pdf_with_hi_res_model_name(
     monkeypatch,
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
@@ -210,8 +246,26 @@ def test_partition_pdf_with_model_name(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(
-            filename=filename, strategy=PartitionStrategy.HI_RES, model_name="checkbox"
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
         )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
+        assert mock_process.call_args[1]["model_name"] == "checkbox"
+
+
+def test_partition_pdf_or_image_with_hi_res_model_name(
+    monkeypatch,
+    filename=example_doc_path("layout-parser-paper-fast.pdf"),
+):
+    monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
+    with mock.patch.object(
+        layout,
+        "process_file_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        pdf.partition_pdf_or_image(
+            filename=filename, strategy=PartitionStrategy.HI_RES, hi_res_model_name="checkbox"
+        )
+        # unstructured-ingest uses `model_name` instead of `hi_res_model_name`
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
@@ -479,7 +533,7 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
     assert elements[idx].metadata.detection_class_prob is not None
@@ -645,7 +699,7 @@ def test_partition_pdf_metadata_date(
     )
 
     mocker.patch(
-        "unstructured.partition.pdf_image.pdf.get_the_last_modification_date_pdf_or_img",
+        "unstructured.partition.pdf.get_the_last_modification_date_pdf_or_img",
         return_value=mocked_last_modification_date,
     )
 
@@ -705,14 +759,6 @@ def test_partition_pdf_formats_languages_for_tesseract():
 def test_partition_pdf_warns_with_ocr_languages(caplog):
     filename = example_doc_path("chevron-page.pdf")
     pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng")
-    assert "The ocr_languages kwarg will be deprecated" in caplog.text
-
-
-def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
-    filename = example_doc_path("DA-1p.pdf")
-    pdf.partition_pdf_or_image(
-        filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
-    )
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
@@ -798,6 +844,22 @@ def test_partition_pdf_uses_model_name():
         assert mockpartition.call_args.kwargs["model_name"]
 
 
+def test_partition_pdf_uses_hi_res_model_name():
+    with mock.patch.object(
+        pdf,
+        "_partition_pdf_or_image_local",
+    ) as mockpartition:
+        pdf.partition_pdf(
+            example_doc_path("layout-parser-paper-fast.pdf"),
+            hi_res_model_name="test",
+            strategy=PartitionStrategy.HI_RES,
+        )
+
+        mockpartition.assert_called_once()
+        assert "hi_res_model_name" in mockpartition.call_args.kwargs
+        assert mockpartition.call_args.kwargs["hi_res_model_name"]
+
+
 def test_partition_pdf_word_bbox_not_char(
     filename=example_doc_path("interface-config-guide-p93.pdf"),
 ):
@@ -836,18 +898,16 @@ def test_check_annotations_within_element(threshold, expected):
 
 
 @pytest.mark.parametrize(
-    ("infer_table_structure", "env", "expected"),
+    ("env", "expected"),
     [
-        (False, None, "yolox_quantized"),
-        (True, None, "yolox"),
-        (False, "test", "test"),
-        (True, "test", "test"),
+        (None, "yolox"),
+        ("test", "test"),
     ],
 )
-def test_default_hi_res_model(infer_table_structure, env, expected, monkeypatch):
+def test_default_hi_res_model(env, expected, monkeypatch):
     if env is not None:
         monkeypatch.setenv("UNSTRUCTURED_HI_RES_MODEL_NAME", env)
-    assert pdf.default_hi_res_model(infer_table_structure) == expected
+    assert pdf.default_hi_res_model() == expected
 
 
 def test_partition_model_name_default_to_None():
@@ -858,6 +918,18 @@ def test_partition_model_name_default_to_None():
             strategy=PartitionStrategy.HI_RES,
             ocr_languages="eng",
             model_name=None,
+        )
+    except AttributeError:
+        pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
+
+
+def test_partition_hi_res_model_name_default_to_None():
+    filename = example_doc_path("DA-1p.pdf")
+    try:
+        pdf.partition_pdf(
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            hi_res_model_name=None,
         )
     except AttributeError:
         pytest.fail("partition_pdf() raised AttributeError unexpectedly!")
@@ -1055,10 +1127,81 @@ def test_partition_pdf_with_bad_color_profile():
     [
         ("invalid-pdf-structure-pdfminer-entire-doc.pdf", "Repairing the PDF document ..."),
         ("invalid-pdf-structure-pdfminer-one-page.pdf", "Repairing the PDF page 2 ..."),
-        ("failure-after-repair.pdf", "PDFMiner failed to process PDF page 26 after repairing it."),
     ],
 )
 def test_extractable_elements_repair_invalid_pdf_structure(filename, expected_log, caplog):
     caplog.set_level(logging.INFO)
     assert pdf.extractable_elements(filename=example_doc_path(filename))
     assert expected_log in caplog.text
+
+
+def assert_element_extraction(
+    elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+):
+    extracted_elements = []
+    for el_type in extract_image_block_types:
+        extracted_elements_by_type = []
+        for el in elements:
+            if el.category == el_type:
+                extracted_elements_by_type.append(el)
+        extracted_elements.append(extracted_elements_by_type)
+
+    for extracted_elements_by_type in extracted_elements:
+        for i, el in enumerate(extracted_elements_by_type):
+            if extract_image_block_to_payload:
+                assert el.metadata.image_base64 is not None
+                assert el.metadata.image_mime_type == "image/jpeg"
+                image_data = base64.b64decode(el.metadata.image_base64)
+                assert isinstance(image_data, bytes)
+                assert el.metadata.image_path is None
+            else:
+                basename = "table" if el.category == ElementType.TABLE else "figure"
+                expected_image_path = os.path.join(
+                    str(tmpdir), f"{basename}-{el.metadata.page_number}-{i + 1}.jpg"
+                )
+                assert el.metadata.image_path == expected_image_path
+                assert os.path.isfile(expected_image_path)
+                assert el.metadata.image_base64 is None
+                assert el.metadata.image_mime_type is None
+
+
+@pytest.mark.parametrize("file_mode", ["filename", "rb"])
+@pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
+def test_partition_pdf_element_extraction(
+    file_mode,
+    extract_image_block_to_payload,
+    filename=example_doc_path("embedded-images-tables.pdf"),
+):
+    extract_image_block_types = ["Image", "Table"]
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        if file_mode == "filename":
+            elements = pdf.partition_pdf(
+                filename=filename,
+                extract_image_block_types=extract_image_block_types,
+                extract_image_block_to_payload=extract_image_block_to_payload,
+                extract_image_block_output_dir=tmpdir,
+            )
+        else:
+            with open(filename, "rb") as f:
+                elements = pdf.partition_pdf(
+                    file=f,
+                    extract_image_block_types=extract_image_block_types,
+                    extract_image_block_to_payload=extract_image_block_to_payload,
+                    extract_image_block_output_dir=tmpdir,
+                )
+
+        assert_element_extraction(
+            elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
+        )
+
+
+def test_partition_pdf_always_keep_all_image_elements(
+    filename=example_doc_path("embedded-images.pdf"),
+):
+    elements = pdf.partition_pdf(
+        filename=filename,
+        strategy="hi_res",
+    )
+    image_elements = [el for el in elements if el.category == ElementType.IMAGE]
+    assert len(image_elements) == 3

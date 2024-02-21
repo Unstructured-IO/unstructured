@@ -29,8 +29,8 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$AIRTABLE_PERSONAL_ACCESS_TOKEN" ]; then
-   echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
-   exit 8
+  echo "Skipping Airtable ingest test because the AIRTABLE_PERSONAL_ACCESS_TOKEN is not set."
+  exit 8
 fi
 
 # Provides component IDs such as LARGE_TEST_LIST_OF_PATHS,
@@ -40,17 +40,16 @@ source ./scripts/airtable-test-helpers/component_ids.sh
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    airtable \
-    --download-dir "$DOWNLOAD_DIR" \
-    --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
-    --list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
-    --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --work-dir "$WORK_DIR"
-
+  airtable \
+  --download-dir "$DOWNLOAD_DIR" \
+  --personal-access-token "$AIRTABLE_PERSONAL_ACCESS_TOKEN" \
+  --list-of-paths "$LARGE_TEST_LIST_OF_PATHS" \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed,metadata.date,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --work-dir "$WORK_DIR"
 
 # We are expecting fifteen directories: fourteen bases and the parent directory
 "$SCRIPT_DIR"/check-num-dirs-output.sh 15 "$OUTPUT_FOLDER_NAME"

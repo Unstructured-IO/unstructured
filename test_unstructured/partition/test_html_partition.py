@@ -276,7 +276,7 @@ def test_partition_html_on_ideas_page(filename="example-docs/ideas-page.html"):
     elements = partition_html(filename=filename)
     assert len(elements) == 1
     assert elements[0] == Table(
-        text="January 2023 ( Someone  fed my essays into GPT to make something "
+        text="January 2023 ( Someone fed my essays into GPT to make something "
         "that could answer\nquestions based on them, then asked it where good "
         "ideas come from.  The\nanswer was ok, but not what I would have said. "
         "This is what I would have said.) The way to get new ideas is to notice "

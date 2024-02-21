@@ -2,7 +2,7 @@ from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional
 
 import requests
 
-from unstructured.chunking.title import add_chunking_strategy
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
 from unstructured.documents.xml import VALID_PARSERS

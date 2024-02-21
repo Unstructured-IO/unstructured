@@ -6,8 +6,10 @@ from datetime import datetime
 from functools import cached_property
 from pathlib import Path
 
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseSessionHandle,
     BaseSingleIngestDoc,
@@ -66,6 +68,11 @@ def create_jira_object(url, user_email, api_token):
 
 
 @dataclass
+class JiraAccessConfig(AccessConfig):
+    api_token: str = enhanced_field(sensitive=True)
+
+
+@dataclass
 class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """Connector config where:
     user_email is the email to authenticate into Atlassian (Jira) Cloud,
@@ -78,7 +85,7 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     """
 
     user_email: str
-    api_token: str
+    access_config: JiraAccessConfig
     url: str
     projects: t.Optional[t.List[str]] = None
     boards: t.Optional[t.List[str]] = None
@@ -87,7 +94,9 @@ class SimpleJiraConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     def create_session_handle(
         self,
     ) -> JiraSessionHandle:
-        service = create_jira_object(self.url, self.user_email, self.api_token)
+        service = create_jira_object(
+            url=self.url, user_email=self.user_email, api_token=self.access_config.api_token
+        )
         return JiraSessionHandle(service=service)
 
 
@@ -216,7 +225,7 @@ def scroll_wrapper(func, results_key="results"):
             number_of_items_to_fetch = 100
 
         kwargs["limit"] = min(100, number_of_items_to_fetch)
-        kwargs["start"] = 0 if "start" not in kwargs else kwargs["start"]
+        kwargs["start"] = kwargs.get("start", 0)
 
         all_results = []
         num_iterations = math.ceil(number_of_items_to_fetch / kwargs["limit"])
@@ -333,7 +342,6 @@ class JiraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSing
             f.write(document)
 
 
-@requires_dependencies(["atlassian"], extras="jira")
 @dataclass
 class JiraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Fetches issues from projects in an Atlassian (Jira) Cloud instance."""

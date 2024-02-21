@@ -26,16 +26,15 @@ cd "$SCRIPT_DIR"/../../.. || exit 1
 # Note: When any of the optional arguments are provided, connector will ingest only those components, and nothing else.
 #       When none of the optional arguments are provided, all issues in all projects will be ingested.
 
-
 PYTHONPATH=. ./unstructured/ingest/main.py \
-        jira \
-        --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-        --url https://unstructured-jira-connector-test.atlassian.net \
-        --user-email "$JIRA_USER_EMAIL" \
-        --api-token "$JIRA_API_TOKEN" \
-        --output-dir jira-ingest-output \
-        --num-processes 2 \
-        --reprocess
-        # --list-of-projects <your project keys/ids here (space separated)> \
-        # --list-of-boards <your board keys/ids here (space separated)> \
-        # --list-of-issues <your issue keys/ids here (space separated)> \
+  jira \
+  --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
+  --url https://unstructured-jira-connector-test.atlassian.net \
+  --user-email "$JIRA_USER_EMAIL" \
+  --api-token "$JIRA_API_TOKEN" \
+  --output-dir jira-ingest-output \
+  --num-processes 2 \
+  --reprocess
+# --list-of-projects <your project keys/ids here (space separated)> \
+# --list-of-boards <your board keys/ids here (space separated)> \
+# --list-of-issues <your issue keys/ids here (space separated)> \

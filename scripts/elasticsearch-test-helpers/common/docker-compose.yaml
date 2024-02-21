@@ -1,0 +1,17 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.0
+    container_name: es-test
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - xpack.security.enabled=true
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_USER=${ELASTIC_USER}
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail -u ${ELASTIC_USER}:${ELASTIC_PASSWORD} localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 30s
+      retries: 3

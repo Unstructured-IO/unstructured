@@ -19,8 +19,8 @@ NUM_FILES=$(find "$EXPECTED_OUTPUT_DIR" -type f -size +"$EXPECTED_SIZE" | wc -l)
 
 # Note: single brackets and "-ne" operator were necessary for evaluation in CI
 if [ "$NUM_FILES" -ne "$EXPECTED_NUM_FILES" ] && [ "$OVERWRITE_FIXTURES" != "true" ]; then
-    echo "The test fixtures in $EXPECTED_OUTPUT_DIR look suspicious."
-    echo "Expected $EXPECTED_NUM_FILES files, but found $NUM_FILES files found."
-    echo "Did you overwrite test fixtures with bad outputs?"
-    exit 1
+  echo "The test fixtures in $EXPECTED_OUTPUT_DIR look suspicious."
+  echo "Expected $EXPECTED_NUM_FILES files, but found $NUM_FILES files found."
+  echo "Did you overwrite test fixtures with bad outputs?"
+  exit 1
 fi

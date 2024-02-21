@@ -19,7 +19,6 @@ function cleanup {
   echo "Stopping Weaviate Docker container"
   docker-compose -f scripts/weaviate-test-helpers/docker-compose.yml down --remove-orphans -v
 
-
   # Local file cleanup
   cleanup_dir "$WORK_DIR"
   cleanup_dir "$OUTPUT_DIR"
@@ -47,5 +46,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   weaviate \
   --host-url http://localhost:8080 \
   --class-name elements \
+  --anonymous
 
 "$SCRIPT_DIR"/python/test-ingest-weaviate-output.py

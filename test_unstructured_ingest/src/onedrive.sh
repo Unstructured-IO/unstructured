@@ -25,27 +25,27 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$MS_CLIENT_ID" ] || [ -z "$MS_CLIENT_CRED" ] || [ -z "$MS_USER_PNAME" ]; then
-   echo "Skipping OneDrive ingest test because the MS_CLIENT_ID, MS_CLIENT_CRED, MS_USER_PNAME env var is not set."
-   exit 8
+  echo "Skipping OneDrive ingest test because the MS_CLIENT_ID, MS_CLIENT_CRED, MS_USER_PNAME env var is not set."
+  exit 8
 fi
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
-    onedrive \
-    --download-dir "$DOWNLOAD_DIR" \
-    --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
-    --num-processes "$max_processes" \
-    --strategy hi_res \
-    --preserve-downloads \
-    --reprocess \
-    --output-dir "$OUTPUT_DIR" \
-    --verbose \
-    --client-cred "$MS_CLIENT_CRED" \
-    --client-id "$MS_CLIENT_ID" \
-    --tenant "$MS_TENANT_ID" \
-    --user-pname "$MS_USER_PNAME" \
-    --path '/utic-test-ingest-fixtures' \
-    --recursive \
-    --work-dir "$WORK_DIR"
+  onedrive \
+  --download-dir "$DOWNLOAD_DIR" \
+  --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
+  --num-processes "$max_processes" \
+  --strategy hi_res \
+  --preserve-downloads \
+  --reprocess \
+  --output-dir "$OUTPUT_DIR" \
+  --verbose \
+  --client-cred "$MS_CLIENT_CRED" \
+  --client-id "$MS_CLIENT_ID" \
+  --tenant "$MS_TENANT_ID" \
+  --user-pname "$MS_USER_PNAME" \
+  --path '/utic-test-ingest-fixtures' \
+  --recursive \
+  --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

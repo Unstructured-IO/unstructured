@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Usage: 
+# Usage:
 #   - Set the required environment variables (listed below)
 #   - Run the script: ./scripts/performance/benchmark.sh
 
@@ -20,23 +20,22 @@ S3_RESULTS_DIR="performance-test/results"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GIT_HASH="$(git rev-parse --short HEAD)"
 
-
 # Save the results filename to a temporary file
 RESULTS_FILENAME_FILE=$(mktemp)
 trap 'rm -f $RESULTS_FILENAME_FILE' EXIT
 
 function read_benchmark_logs_for_results() {
-    if [[ $line =~ Results\ saved\ to:\ ([^\ ]+) ]]; then
-        results_filename="${BASH_REMATCH[1]}"
-        echo "CSV file value found: $results_filename"
-        echo "$results_filename" > "$RESULTS_FILENAME_FILE"  # Store the value in the temporary file
-    fi
+  if [[ $line =~ Results\ saved\ to:\ ([^\ ]+) ]]; then
+    results_filename="${BASH_REMATCH[1]}"
+    echo "CSV file value found: $results_filename"
+    echo "$results_filename" >"$RESULTS_FILENAME_FILE" # Store the value in the temporary file
+  fi
 }
 
 if [[ "$DOCKER_TEST" == "true" ]]; then
-    DOCKER_IMAGE=unstructured:perf-test make docker-build 
-    docker rm -f unstructured-perf-test > /dev/null 2>&1
-    docker run \
+  DOCKER_IMAGE=unstructured:perf-test make docker-build
+  docker rm -f unstructured-perf-test >/dev/null 2>&1
+  docker run \
     --name unstructured-perf-test \
     --rm \
     -e NUM_ITERATIONS="$NUM_ITERATIONS" \
@@ -47,22 +46,22 @@ if [[ "$DOCKER_TEST" == "true" ]]; then
     -v "${SCRIPT_DIR}":/home/notebook-user/scripts/performance \
     unstructured:perf-test \
     bash /home/notebook-user/scripts/performance/benchmark-local.sh 2>&1 | tee >(while IFS= read -r line; do
-        read_benchmark_logs_for_results
+      read_benchmark_logs_for_results
     done)
 else
-    NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" GIT_HASH="$GIT_HASH" SLOW_FILES="${SLOW_FILES[*]}" HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 | \
+  NUM_ITERATIONS="$NUM_ITERATIONS" INSTANCE_TYPE="$INSTANCE_TYPE" GIT_HASH="$GIT_HASH" SLOW_FILES="${SLOW_FILES[*]}" HI_RES_STRATEGY_FILES="${HI_RES_STRATEGY_FILES[*]}" "$SCRIPT_DIR"/benchmark-local.sh 2>&1 |
     tee >(while IFS= read -r line; do
-        read_benchmark_logs_for_results
+      read_benchmark_logs_for_results
     done)
 fi
 # Read the result filename from the temporary file
 results_filename=$(<"$RESULTS_FILENAME_FILE")
 if [[ -z $results_filename ]]; then
-    echo "Error: Results filename value not found in the benchmark logs."
-    exit 1
+  echo "Error: Results filename value not found in the benchmark logs."
+  exit 1
 fi
 if [[ "$PUBLISH_RESULTS" == "true" ]]; then
-    S3_RESULTS_PATH="$S3_BUCKET/$S3_RESULTS_DIR"
-    echo "Publishing results to S3 bucket: $S3_RESULTS_PATH"
-    aws s3 cp "$SCRIPT_DIR/benchmark_results/$results_filename" "s3://$S3_RESULTS_PATH/"
+  S3_RESULTS_PATH="$S3_BUCKET/$S3_RESULTS_DIR"
+  echo "Publishing results to S3 bucket: $S3_RESULTS_PATH"
+  aws s3 cp "$SCRIPT_DIR/benchmark_results/$results_filename" "s3://$S3_RESULTS_PATH/"
 fi

@@ -5,12 +5,12 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
+EVAL_NAME="$1"
+
 # List all structured outputs to use in this evaluation
-OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_ROOT=${2:-${OUTPUT_ROOT:-$SCRIPT_DIR}}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output-eval
 mkdir -p "$OUTPUT_DIR"
-
-EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
   METRIC_STRATEGY="measure-text-extraction-accuracy-command"
@@ -47,7 +47,7 @@ function generate_args() {
 
   args=("--${argtype}_dir" "$dirpath")
   for filename in "${list[@]}"; do
-      args+=("--${argtype}_list" "$filename")
+    args+=("--${argtype}_list" "$filename")
   done
   echo "${args[@]}"
 }
@@ -59,12 +59,12 @@ OUTPUT_LIST=(
 SOURCE_LIST=(
 )
 
-read -ra output_args <<< "$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}")"
-read -ra source_args <<< "$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
+read -ra output_args <<<"$(generate_args "output" "$OUTPUT_DIR" "${OUTPUT_LIST[@]}")"
+read -ra source_args <<<"$(generate_args "source" "$SOURCE_DIR" "${SOURCE_LIST[@]}")"
 
 # mkdir export_dir is handled in python script
 PYTHONPATH=. ./unstructured/ingest/evaluate.py \
-    $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
-    --export_dir "$EXPORT_DIR"
+  $METRIC_STRATEGY "${output_args[@]}" "${source_args[@]}" \
+  --export_dir "$EXPORT_DIR"
 
 "$SCRIPT_DIR"/check-diff-evaluation-metrics.sh "$EVAL_NAME"

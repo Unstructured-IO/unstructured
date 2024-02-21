@@ -6,7 +6,6 @@ from ftplib import FTP, error_perm
 from pathlib import Path
 
 import requests
-from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
@@ -42,19 +41,19 @@ class SimpleBiomedConfig(BaseConnectorConfig):
 
     path: t.Optional[str] = None
     # OA Web Service API Options
-    id_: t.Optional[str] = None
-    from_: t.Optional[str] = None
-    until: t.Optional[str] = None
-    request_timeout: int = 45
+    api_id: t.Optional[str] = None
+    api_from: t.Optional[str] = None
+    api_until: t.Optional[str] = None
+    max_request_time: int = 45
 
     def validate_api_inputs(self):
         valid = False
 
-        if self.from_:
-            valid = validate_date_args(self.from_)
+        if self.api_from:
+            valid = validate_date_args(self.api_from)
 
-        if self.until:
-            valid = validate_date_args(self.until)
+        if self.api_until:
+            valid = validate_date_args(self.api_until)
 
         return valid
 
@@ -155,18 +154,20 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def get_base_endpoints_url(self) -> str:
         endpoint_url = "https://www.ncbi.nlm.nih.gov/pmc/utils/oa/oa.fcgi?format=pdf"
 
-        if self.connector_config.id_:
-            endpoint_url += f"&id={self.connector_config.id_}"
+        if self.connector_config.api_id:
+            endpoint_url += f"&id={self.connector_config.api_id}"
 
-        if self.connector_config.from_:
-            endpoint_url += f"&from={self.connector_config.from_}"
+        if self.connector_config.api_from:
+            endpoint_url += f"&from={self.connector_config.api_from}"
 
-        if self.connector_config.until:
-            endpoint_url += f"&until={self.connector_config.until}"
+        if self.connector_config.api_until:
+            endpoint_url += f"&until={self.connector_config.api_until}"
 
         return endpoint_url
 
     def _list_objects_api(self) -> t.List[BiomedFileMeta]:
+        from bs4 import BeautifulSoup
+
         def urls_to_metadata(urls):
             files = []
             for url in urls:
@@ -213,7 +214,7 @@ class BiomedSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     @SourceConnectionNetworkError.wrap
     def _get_request(self, session: requests.Session, endpoint_url: str) -> requests.Response:
-        return session.get(endpoint_url, timeout=self.connector_config.request_timeout)
+        return session.get(endpoint_url, timeout=self.connector_config.max_request_time)
 
     def _list_objects(self) -> t.List[BiomedFileMeta]:
         files = []

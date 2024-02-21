@@ -1,25 +1,23 @@
 import hashlib
-import logging
 import typing as t
+from dataclasses import dataclass
 
-from unstructured.ingest.logger import ingest_log_streaming_init, logger
+from unstructured.ingest.interfaces import BaseSourceConnector
+from unstructured.ingest.logger import logger
 from unstructured.ingest.runner.base_runner import Runner
 from unstructured.ingest.runner.utils import update_download_dir_hash
 
+if t.TYPE_CHECKING:
+    from unstructured.ingest.connector.google_drive import SimpleGoogleDriveConfig
 
+
+@dataclass
 class GoogleDriveRunner(Runner):
-    def run(
-        self,
-        service_account_key: t.Union[str, dict],
-        drive_id: str,
-        recursive: bool = False,
-        extension: t.Optional[str] = None,
-        **kwargs,
-    ):
-        ingest_log_streaming_init(logging.DEBUG if self.processor_config.verbose else logging.INFO)
+    connector_config: "SimpleGoogleDriveConfig"
 
+    def update_read_config(self):
         hashed_dir_name = hashlib.sha256(
-            drive_id.encode("utf-8"),
+            self.connector_config.drive_id.encode("utf-8"),
         )
 
         self.read_config.download_dir = update_download_dir_hash(
@@ -29,20 +27,9 @@ class GoogleDriveRunner(Runner):
             logger=logger,
         )
 
+    def get_source_connector_cls(self) -> t.Type[BaseSourceConnector]:
         from unstructured.ingest.connector.google_drive import (
             GoogleDriveSourceConnector,
-            SimpleGoogleDriveConfig,
         )
 
-        source_doc_connector = GoogleDriveSourceConnector(  # type: ignore
-            connector_config=SimpleGoogleDriveConfig(
-                drive_id=drive_id,
-                service_account_key=service_account_key,
-                recursive=recursive,
-                extension=extension,
-            ),
-            read_config=self.read_config,
-            processor_config=self.processor_config,
-        )
-
-        self.process_documents(source_doc_connector=source_doc_connector)
+        return GoogleDriveSourceConnector

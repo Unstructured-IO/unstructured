@@ -7,8 +7,8 @@ channels:
   - pytorch
 
 dependencies:
-  - python=3.8
-  - pytorch=1.12.1
+  - python=3.10
+  - pytorch=2.1.2
   - pywin32
   - poppler
   - torchvision

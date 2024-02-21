@@ -5,7 +5,12 @@ import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, DelimitedString
-from unstructured.ingest.connector.elasticsearch import SimpleElasticsearchConfig
+from unstructured.ingest.connector.elasticsearch import (
+    ElasticsearchWriteConfig,
+    SimpleElasticsearchConfig,
+)
+
+CMD_NAME = "elasticsearch"
 
 
 @dataclass
@@ -17,7 +22,7 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
                 ["--index-name"],
                 required=True,
                 type=str,
-                help="Name for the Elasticsearch index to pull data from",
+                help="Name of the Elasticsearch index to pull data from, or upload data to.",
             ),
             click.Option(
                 ["--hosts"],
@@ -80,10 +85,49 @@ class ElasticsearchCliConfig(SimpleElasticsearchConfig, CliConfig):
         return options
 
 
+@dataclass
+class ElasticsearchCliWriteConfig(ElasticsearchWriteConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--batch-size-bytes"],
+                required=False,
+                default=15_000_000,
+                type=int,
+                help="Size limit (in bytes) for each batch of items to be uploaded. Check"
+                " https://www.elastic.co/guide/en/elasticsearch/guide/current/bulk.html"
+                "#_how_big_is_too_big for more information.",
+            ),
+            click.Option(
+                ["--num-processes"],
+                required=False,
+                default=1,
+                type=int,
+                help="Number of processes to be used while uploading content",
+            ),
+        ]
+        return options
+
+
 def get_base_src_cmd() -> BaseSrcCmd:
     cmd_cls = BaseSrcCmd(
         cmd_name="elasticsearch",
         cli_config=ElasticsearchCliConfig,
-        addition_configs={"connector_config": SimpleElasticsearchConfig},
+    )
+    return cmd_cls
+
+
+def get_base_dest_cmd():
+    from unstructured.ingest.cli.base.dest import BaseDestCmd
+
+    cmd_cls = BaseDestCmd(
+        cmd_name="elasticsearch",
+        cli_config=ElasticsearchCliConfig,
+        additional_cli_options=[ElasticsearchCliWriteConfig],
+        addition_configs={
+            "connector_config": SimpleElasticsearchConfig,
+            "write_config": ElasticsearchCliWriteConfig,
+        },
     )
     return cmd_cls

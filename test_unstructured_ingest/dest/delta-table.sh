@@ -32,15 +32,15 @@ else
 fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-    local \
-    --num-processes "$max_processes" \
-    --output-dir "$OUTPUT_DIR" \
-    --strategy fast \
-    --verbose \
-    --reprocess \
-    --input-path example-docs/fake-memo.pdf \
-    --work-dir "$WORK_DIR" \
-    delta-table \
-    --table-uri "$DESTINATION_TABLE"
+  local \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --reprocess \
+  --input-path example-docs/fake-memo.pdf \
+  --work-dir "$WORK_DIR" \
+  delta-table \
+  --table-uri "$DESTINATION_TABLE"
 
 python "$SCRIPT_DIR"/python/test-ingest-delta-table-output.py --table-uri "$DESTINATION_TABLE"

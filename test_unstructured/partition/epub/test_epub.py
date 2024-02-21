@@ -29,10 +29,10 @@ def test_partition_epub_from_filename_returns_table_in_elements():
     assert (
         elements[14].text.replace("\n", " ")
         == Table(
-            text="Contents.   List of Illustrations   "
+            text="Contents. List of Illustrations "
             "(In certain versions of this etext [in certain browsers] "
             "clicking on the image will bring up a larger version.) "
-            "  (etext transcriber's note)",
+            "(etext transcriber's note)",
         ).text
     )
 

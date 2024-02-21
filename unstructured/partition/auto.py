@@ -17,7 +17,7 @@ from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
 from unstructured.partition.lang import (
-    convert_old_ocr_languages_to_languages,
+    check_language_args,
 )
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import PartitionStrategy
@@ -78,13 +78,13 @@ if dependency_exists("msg_parser"):
 
 pdf_imports = ["pdf2image", "pdfminer", "PIL"]
 if all(dependency_exists(dep) for dep in pdf_imports):
-    from unstructured.partition.pdf_image.pdf import partition_pdf
+    from unstructured.partition.pdf import partition_pdf
 
     PARTITION_WITH_EXTRAS_MAP["pdf"] = partition_pdf
 
 
 if dependency_exists("unstructured_inference"):
-    from unstructured.partition.pdf_image.image import partition_image
+    from unstructured.partition.image import partition_image
 
     PARTITION_WITH_EXTRAS_MAP["image"] = partition_image
 
@@ -101,6 +101,15 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
     from unstructured.partition.xlsx import partition_xlsx
 
     PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
+
+
+IMAGE_FILETYPES = [
+    FileType.HEIC,
+    FileType.PNG,
+    FileType.JPG,
+    FileType.TIFF,
+    FileType.BMP,
+]
 
 
 def _get_partition_with_extras(
@@ -130,18 +139,22 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
-    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx"],
+    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
-    pdf_extract_images: bool = False,
-    pdf_image_output_dir_path: Optional[str] = None,
+    extract_images_in_pdf: bool = False,
+    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_output_dir: Optional[str] = None,
+    extract_image_block_to_payload: bool = False,
     xml_keep_tags: bool = False,
     data_source_metadata: Optional[DataSourceMetadata] = None,
     metadata_filename: Optional[str] = None,
     request_timeout: Optional[int] = None,
+    hi_res_model_name: Optional[str] = None,
+    model_name: Optional[str] = None,  # to be deprecated
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -190,18 +203,39 @@ def partition(
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
         The "text" field for a partitioned Table Element is always present, whether True or False.
-    pdf_extract_images
-        If True and strategy=hi_res, any detected images will be saved in the path specified by
-        pdf_image_output_dir_path.
-    pdf_image_output_dir_path
-        If pdf_extract_images=True and strategy=hi_res, any detected images will be saved in the
-        given path
+    extract_images_in_pdf
+        Only applicable if `strategy=hi_res`.
+        If True, any detected images will be saved in the path specified by
+        'extract_image_block_output_dir' or stored as base64 encoded data within metadata fields.
+        Deprecation Note: This parameter is marked for deprecation. Future versions will use
+        'extract_image_block_types' for broader extraction capabilities.
+    extract_image_block_types
+        Only applicable if `strategy=hi_res`.
+        Images of the element type(s) specified in this list (e.g., ["Image", "Table"]) will be
+        saved in the path specified by 'extract_image_block_output_dir' or stored as base64
+        encoded data within metadata fields.
+    extract_image_block_to_payload
+        Only applicable if `strategy=hi_res`.
+        If True, images of the element type(s) defined in 'extract_image_block_types' will be
+        encoded as base64 data and stored in two metadata fields: 'image_base64' and
+        'image_mime_type'.
+        This parameter facilitates the inclusion of element data directly within the payload,
+        especially for web-based applications or APIs.
+    extract_image_block_output_dir
+        Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
+        The filesystem path for saving images of the element type(s)
+        specified in 'extract_image_block_types'.
     xml_keep_tags
         If True, will retain the XML tags in the output. Otherwise it will simply extract
         the text from within the tags. Only applies to partition_xml.
     request_timeout
         The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
         requests will block indefinitely.
+    hi_res_model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`.
+    model_name
+        The layout detection model used when partitioning strategy is set to `hi_res`. To be
+        deprecated in favor of `hi_res_model_name`.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -219,23 +253,7 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
-    if ocr_languages == "":
-        ocr_languages = None
-
-    if ocr_languages is not None:
-        # check if languages was set to anything not the default value
-        # languages and ocr_languages were therefore both provided - raise error
-        if languages is not None:
-            raise ValueError(
-                "Only one of languages and ocr_languages should be specified. "
-                "languages is preferred. ocr_languages is marked for deprecation.",
-            )
-        else:
-            languages = convert_old_ocr_languages_to_languages(ocr_languages)
-            logger.warning(
-                "The ocr_languages kwarg will be deprecated in a future version of unstructured. "
-                "Please use languages instead.",
-            )
+    languages = check_language_args(languages or [], ocr_languages)
 
     if url is not None:
         file, filetype = file_and_type_from_url(
@@ -389,11 +407,14 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
-            extract_images_in_pdf=pdf_extract_images,
-            image_output_dir_path=pdf_image_output_dir_path,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             **kwargs,
         )
-    elif (filetype == FileType.PNG) or (filetype == FileType.JPG) or (filetype == FileType.TIFF):
+    elif filetype in IMAGE_FILETYPES:
         elements = partition_image(
             filename=filename,  # type: ignore
             file=file,  # type: ignore
@@ -402,6 +423,11 @@ def partition(
             infer_table_structure=infer_table_structure,
             strategy=strategy,
             languages=languages,
+            hi_res_model_name=hi_res_model_name or model_name,
+            extract_images_in_pdf=extract_images_in_pdf,
+            extract_image_block_types=extract_image_block_types,
+            extract_image_block_output_dir=extract_image_block_output_dir,
+            extract_image_block_to_payload=extract_image_block_to_payload,
             **kwargs,
         )
     elif filetype == FileType.TXT:

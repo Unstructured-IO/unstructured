@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "7b544ee99a84930c8049d5c91f8e7541",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "New Page"
+    "text": "New Page",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "be23aed1a36d4a5aa33b4dc454eff351",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you."
+    "text": "💡\n      \n      Notion Tip: When creating a page, it's important to give it a clear title and provide some content. This could include verifying the information, summarizing the topic, or sharing your thoughts and opinions on something that matters to you.",
+    "type": "NarrativeText"
   }
 ]

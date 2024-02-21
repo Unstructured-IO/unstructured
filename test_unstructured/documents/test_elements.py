@@ -25,6 +25,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     NoID,
+    Points,
     RegexMetadata,
     Text,
 )
@@ -37,9 +38,13 @@ def test_text_id():
 
 def test_text_uuid():
     text_element = Text(text="hello there!", element_id=UUID())
-    assert len(text_element.id) == 36
-    assert text_element.id.count("-") == 4
-    # Test that the element is JSON serializable. This shold run without an error
+
+    id = text_element.id
+
+    assert isinstance(id, str)
+    assert len(id) == 36
+    assert id.count("-") == 4
+    # -- Test that the element is JSON serializable. This shold run without an error --
     json.dumps(text_element.to_dict())
 
 
@@ -71,9 +76,13 @@ def test_text_element_apply_multiple_cleaners():
 
 
 def test_apply_raises_if_func_does_not_produce_string():
+    def bad_cleaner(s: str):
+        return 1
+
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
-    with pytest.raises(ValueError):
-        text_element.apply(lambda s: 1)
+
+    with pytest.raises(ValueError, match="Cleaner produced a non-string output."):
+        text_element.apply(bad_cleaner)  # pyright: ignore[reportGeneralTypeIssues]
 
 
 @pytest.mark.parametrize(
@@ -106,22 +115,27 @@ def test_apply_raises_if_func_does_not_produce_string():
     ],
 )
 def test_convert_coordinates_to_new_system(
-    coordinates,
-    orientation1,
-    orientation2,
-    expected_coords,
+    coordinates: Points,
+    orientation1: Orientation,
+    orientation2: Orientation,
+    expected_coords: Points,
 ):
     coord1 = CoordinateSystem(100, 200)
     coord1.orientation = orientation1
     coord2 = CoordinateSystem(1000, 2000)
     coord2.orientation = orientation2
     element = Element(coordinates=coordinates, coordinate_system=coord1)
+
     new_coords = element.convert_coordinates_to_new_system(coord2)
-    for new_coord, expected_coord in zip(new_coords, expected_coords):
-        new_coord == pytest.approx(expected_coord)
+
+    assert new_coords is not None
+    for new_coord, expected in zip(new_coords, expected_coords):
+        assert new_coord == pytest.approx(expected)  # pyright: ignore[reportUnknownMemberType]
     element.convert_coordinates_to_new_system(coord2, in_place=True)
-    for new_coord, expected_coord in zip(element.metadata.coordinates.points, expected_coords):
-        assert new_coord == pytest.approx(expected_coord)
+    assert element.metadata.coordinates is not None
+    assert element.metadata.coordinates.points is not None
+    for new_coord, expected in zip(element.metadata.coordinates.points, expected_coords):
+        assert new_coord == pytest.approx(expected)  # pyright: ignore[reportUnknownMemberType]
     assert element.metadata.coordinates.system == coord2
 
 
@@ -195,6 +209,7 @@ def test_element_to_dict():
             },
         },
         "type": None,
+        "text": "",
         "element_id": "awt32t1",
     }
 

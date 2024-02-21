@@ -15,48 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          box \
-          --box_app_config "$BOX_APP_CONFIG_PATH" \
-          --remote-url box://utic-test-ingest-fixtures \
-          --output-dir box-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose
+      .. literalinclude:: ./code/bash/box.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import BoxRunner
-
-        if __name__ == "__main__":
-            runner = BoxRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="box-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                fsspec_config=FsspecConfig(
-                    remote_url="box://utic-test-ingest-fixtures",
-                    recursive=True,
-                ),
-            )
-            runner.run(
-                box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
-            )
+      .. literalinclude:: ./code/python/box.py
+         :language: python
 
 
 Run via the API
@@ -68,53 +33,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          box \
-          --box_app_config "$BOX_APP_CONFIG_PATH" \
-          --remote-url box://utic-test-ingest-fixtures \
-          --output-dir box-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose \
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/box_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import BoxRunner
-
-        if __name__ == "__main__":
-            runner = BoxRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="box-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-                fsspec_config=FsspecConfig(
-                    remote_url="box://utic-test-ingest-fixtures",
-                    recursive=True,
-                ),
-            )
-            runner.run(
-                box_app_config=os.getenv("BOX_APP_CONFIG_PATH"),
-            )
+      .. literalinclude:: ./code/python/box_api.py
+         :language: python
 
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.

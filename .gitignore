@@ -141,6 +141,7 @@ dmypy.json
 test_unstructured_ingest/workdir/
 test_unstructured_ingest/delta-table-dest/
 test_unstructured_ingest/skipped-files.txt
+test_unstructured_ingest/chroma-dest/
 
 # suggested ingest mirror directory
 /mirror

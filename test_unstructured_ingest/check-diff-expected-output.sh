@@ -38,30 +38,30 @@ trap cleanup EXIT
 
 # to update ingest test fixtures, run scripts/ingest-test-fixtures-update.sh on x86_64
 if [ "$OVERWRITE_FIXTURES" != "false" ]; then
-    # remove folder if it exists
-    if [ -d "$EXPECTED_OUTPUT_DIR" ]; then
-        rm -rf "$EXPECTED_OUTPUT_DIR"
-    fi
-    mkdir -p "$EXPECTED_OUTPUT_DIR"
-    cp -rf "$OUTPUT_DIR" "$OUTPUT_ROOT/expected-structured-output"
-elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR" ; then
-    "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
-    "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"
-    "$SCRIPT_DIR"/clean-permissions-files.sh "$OUTPUT_DIR_TEXT"
-    diff -ru "$EXPECTED_OUTPUT_DIR_TEXT" "$OUTPUT_DIR_TEXT"> outputdiff.txt
-    cat outputdiff.txt
-    diffstat -c outputdiff.txt
-    echo
-    echo "There are differences from the previously checked-in structured outputs."
-    echo
-    echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
-    echo
-    echo "  export OVERWRITE_FIXTURES=true"
-    echo
-    echo "and then rerun this script."
-    echo
-    echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
-    echo "to update fixtures for CI."
-    echo
-    exit 1
+  # remove folder if it exists
+  if [ -d "$EXPECTED_OUTPUT_DIR" ]; then
+    rm -rf "$EXPECTED_OUTPUT_DIR"
+  fi
+  mkdir -p "$EXPECTED_OUTPUT_DIR"
+  cp -rf "$OUTPUT_DIR" "$OUTPUT_ROOT/expected-structured-output"
+elif ! diff -ru "$EXPECTED_OUTPUT_DIR" "$OUTPUT_DIR"; then
+  "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$EXPECTED_OUTPUT_DIR" "$EXPECTED_OUTPUT_DIR_TEXT"
+  "$SCRIPT_DIR"/json-to-clean-text-folder.sh "$OUTPUT_DIR" "$OUTPUT_DIR_TEXT"
+  "$SCRIPT_DIR"/clean-permissions-files.sh "$OUTPUT_DIR_TEXT"
+  diff -ru "$EXPECTED_OUTPUT_DIR_TEXT" "$OUTPUT_DIR_TEXT" >outputdiff.txt
+  cat outputdiff.txt
+  diffstat -c outputdiff.txt
+  echo
+  echo "There are differences from the previously checked-in structured outputs."
+  echo
+  echo "If these differences are acceptable, overwrite by the fixtures by setting the env var:"
+  echo
+  echo "  export OVERWRITE_FIXTURES=true"
+  echo
+  echo "and then rerun this script."
+  echo
+  echo "NOTE: You'll likely just want to run scripts/ingest-test-fixtures-update.sh on x86_64 hardware"
+  echo "to update fixtures for CI."
+  echo
+  exit 1
 fi

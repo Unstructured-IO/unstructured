@@ -2,6 +2,7 @@
 through Unstructured."""
 
 import functools
+import json
 import os
 import re
 import typing as t
@@ -13,16 +14,15 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
+from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
+from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.partition.api import partition_via_api
-from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
@@ -49,6 +49,12 @@ class BaseSessionHandle(ABC):
 @dataclass
 class BaseConfig(EnhancedDataClassJsonMixin, ABC):
     pass
+
+
+@dataclass
+class AccessConfig(BaseConfig):
+    """Meant to designate holding any sensitive information associated with other configs
+    and also for access specific configs."""
 
 
 @dataclass
@@ -113,12 +119,6 @@ class FileStorageConfig(BaseConfig):
 
 
 @dataclass
-class AccessConfig(BaseConfig):
-    # Meant to designate holding any sensitive information associated with other configs
-    pass
-
-
-@dataclass
 class FsspecConfig(FileStorageConfig):
     access_config: AccessConfig = None
     protocol: str = field(init=False)
@@ -175,7 +175,7 @@ class FsspecConfig(FileStorageConfig):
 @dataclass
 class ReadConfig(BaseConfig):
     # where raw documents are stored for processing, and then removed if not preserve_downloads
-    download_dir: str = ""
+    download_dir: t.Optional[str] = ""
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
@@ -194,37 +194,75 @@ class EmbeddingConfig(BaseConfig):
             kwargs["api_key"] = self.api_key
         if self.model_name:
             kwargs["model_name"] = self.model_name
+        # TODO make this more dynamic to map to encoder configs
+        if self.provider == "langchain-openai":
+            from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
-        cls = EMBEDDING_PROVIDER_TO_CLASS_MAP[self.provider]
-        return cls(**kwargs)
+            return OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-huggingface":
+            from unstructured.embed.huggingface import (
+                HuggingFaceEmbeddingConfig,
+                HuggingFaceEmbeddingEncoder,
+            )
+
+            return HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig(**kwargs))
+        elif self.provider == "octoai":
+            from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
+
+            return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        else:
+            raise ValueError(f"{self.provider} not a recognized encoder")
 
 
 @dataclass
 class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
-    multipage_sections: bool = True
-    combine_text_under_n_chars: int = 500
-    max_characters: int = 1500
+    chunking_strategy: t.Optional[str] = None
+    combine_text_under_n_chars: t.Optional[int] = None
+    max_characters: int = CHUNK_MAX_CHARS_DEFAULT
+    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT
     new_after_n_chars: t.Optional[int] = None
+    overlap: int = 0
+    overlap_all: bool = False
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        if self.chunk_elements:
-            return chunk_by_title(
+        chunking_strategy = (
+            self.chunking_strategy
+            if self.chunking_strategy in ("basic", "by_title")
+            else "by_title" if self.chunk_elements is True else None
+        )
+        return (
+            chunk_by_title(
                 elements=elements,
-                multipage_sections=self.multipage_sections,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 max_characters=self.max_characters,
+                multipage_sections=self.multipage_sections,
                 new_after_n_chars=self.new_after_n_chars,
+                overlap=self.overlap,
+                overlap_all=self.overlap_all,
             )
-        else:
-            return elements
+            if chunking_strategy == "by_title"
+            else (
+                chunk_elements(
+                    elements=elements,
+                    max_characters=self.max_characters,
+                    new_after_n_chars=self.new_after_n_chars,
+                    overlap=self.overlap,
+                    overlap_all=self.overlap_all,
+                )
+                if chunking_strategy == "basic"
+                else elements
+            )
+        )
 
 
 @dataclass
 class PermissionsConfig(BaseConfig):
-    application_id: t.Optional[str]
-    tenant: t.Optional[str]
-    client_cred: t.Optional[str] = enhanced_field(sensitive=True)
+    application_id: t.Optional[str] = enhanced_field(overload_name="permissions_application_id")
+    tenant: t.Optional[str] = enhanced_field(overload_name="permissions_tenant")
+    client_cred: t.Optional[str] = enhanced_field(
+        default=None, sensitive=True, overload_name="permissions_client_cred"
+    )
 
 
 # module-level variable to store session handle
@@ -236,7 +274,8 @@ class WriteConfig(BaseConfig):
     pass
 
 
-class BaseConnectorConfig(EnhancedDataClassJsonMixin, ABC):
+@dataclass
+class BaseConnectorConfig(BaseConfig, ABC):
     """Abstract definition on which to define connector-specific attributes."""
 
 
@@ -286,6 +325,8 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
 
     def to_dict(self, **kwargs) -> t.Dict[str, Json]:
         as_dict = _asdict(self, **kwargs)
+        if "_session_handle" in as_dict:
+            as_dict.pop("_session_handle", None)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         if getattr(self, "_source_metadata") is not None:
             self.add_props(as_dict=as_dict, props=self.metadata_properties)
@@ -500,6 +541,9 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> t.List[Element]:
+        from unstructured.partition.api import partition_via_api
+        from unstructured.partition.auto import partition
+
         if not partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(
@@ -639,22 +683,58 @@ class BaseDestinationConnector(BaseConnector, ABC):
         self.write_config = write_config
         self.connector_config = connector_config
 
+    def conform_dict(self, data: dict) -> None:
+        """
+        When the original dictionary needs to be modified in place
+        """
+        return
+
+    def normalize_dict(self, element_dict: dict) -> dict:
+        """
+        When the original dictionary needs to be mapped to a new one
+        """
+        return element_dict
+
     @abstractmethod
     def initialize(self):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
 
-    @abstractmethod
     def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        pass
+        elements_dict = self.get_elements_dict(docs=docs)
+        self.modify_and_write_dict(elements_dict=elements_dict)
+
+    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
+        dict_list: t.List[t.Dict[str, t.Any]] = []
+        for doc in docs:
+            local_path = doc._output_filename
+            with open(local_path) as json_file:
+                dict_content = json.load(json_file)
+                logger.info(
+                    f"Extending {len(dict_content)} json elements from content in {local_path}",
+                )
+                dict_list.extend(dict_content)
+        return dict_list
 
     @abstractmethod
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         pass
 
+    def modify_and_write_dict(
+        self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs
+    ) -> None:
+        """
+        Modify in this instance means this method wraps calls to conform_dict() and
+        normalize() before actually processing the content via write_dict()
+        """
+        for d in elements_dict:
+            self.conform_dict(data=d)
+        elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
+        return self.write_dict(*args, elements_dict=elements_dict_normalized, **kwargs)
+
     def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
-        self.write_dict(*args, elements_dict=elements_dict, **kwargs)
+        self.modify_and_write_dict(*args, elements_dict=elements_dict, **kwargs)
 
 
 class SourceConnectorCleanupMixin:
@@ -694,7 +774,7 @@ class PermissionsCleanupMixin:
         """Recursively clean up downloaded files and directories."""
         if cur_dir is None:
             cur_dir = Path(self.processor_config.output_dir, "permissions_data")
-        if cur_dir is None:
+        if not Path(cur_dir).exists():
             return
         if Path(cur_dir).is_file():
             cur_file = cur_dir

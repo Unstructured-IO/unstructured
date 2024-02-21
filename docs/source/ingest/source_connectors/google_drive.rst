@@ -15,41 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          google-drive \
-          --drive-id "<file or folder id>" \
-          --service-account-key "<path to drive service account key>" \
-          --output-dir google-drive-ingest-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose \
+      .. literalinclude:: ./code/bash/google_drive.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import GoogleDriveRunner
-
-        if __name__ == "__main__":
-            runner = GoogleDriveRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="google-drive-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-            )
-            runner.run(
-                drive_id="POPULATE WITH FILE OR FOLDER ID",
-                service_account_key="POPULATE WITH DRIVE SERVICE ACCOUNT KEY",
-                recursive=True,
-            )
+      .. literalinclude:: ./code/python/google_drive.py
+         :language: python
 
 Run via the API
 ---------------
@@ -60,46 +32,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          google-drive \
-          --drive-id "<file or folder id>" \
-          --service-account-key "<path to drive service account key>" \
-          --output-dir google-drive-ingest-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose \
-          --partition-by-api \
-          --api-key "<UNSTRUCTURED-API-KEY>"
+      .. literalinclude:: ./code/bash/google_drive_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
-        from unstructured.ingest.runner import GoogleDriveRunner
-
-        if __name__ == "__main__":
-            runner = GoogleDriveRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="google-drive-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-            )
-            runner.run(
-                drive_id="POPULATE WITH FILE OR FOLDER ID",
-                service_account_key="POPULATE WITH DRIVE SERVICE ACCOUNT KEY",
-                recursive=True,
-            )
+      .. literalinclude:: ./code/python/google_drive_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

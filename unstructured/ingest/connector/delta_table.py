@@ -1,13 +1,9 @@
-import json
 import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime as dt
 from multiprocessing import Process
 from pathlib import Path
-
-import pandas as pd
-from dataclasses_json.core import Json
 
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -21,7 +17,6 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -34,20 +29,6 @@ class SimpleDeltaTableConfig(BaseConnectorConfig):
     version: t.Optional[int] = None
     storage_options: t.Optional[t.Dict[str, str]] = None
     without_files: bool = False
-
-    @classmethod
-    def from_dict(cls, kvs: Json, **kwargs):
-        if (
-            isinstance(kvs, dict)
-            and "storage_options" in kvs
-            and isinstance(kvs["storage_options"], str)
-        ):
-            kvs["storage_options"] = cls.storage_options_from_str(kvs["storage_options"])
-        return super().from_dict(kvs=kvs, **kwargs)
-
-    @staticmethod
-    def storage_options_from_str(options_str: str) -> t.Dict[str, str]:
-        return {s.split("=")[0].strip(): s.split("=")[1].strip() for s in options_str.split(",")}
 
 
 @dataclass
@@ -117,7 +98,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         df.to_csv(self.filename)
 
     @SourceConnectionNetworkError.wrap
-    def _get_df(self, filesystem) -> pd.DataFrame:
+    def _get_df(self, filesystem):
         import pyarrow.parquet as pq
 
         return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
@@ -187,8 +168,11 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     def check_connection(self):
         pass
 
+    @requires_dependencies(["deltalake"], extras="delta-table")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
+
+        from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 
         df = convert_to_pandas_dataframe(
             elements_dict=elements_dict,
@@ -213,14 +197,3 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
         )
         writer.start()
         writer.join()
-
-    @requires_dependencies(["deltalake"], extras="delta-table")
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
-        elements_dict: t.List[t.Dict[str, t.Any]] = []
-        for doc in docs:
-            local_path = doc._output_filename
-            with open(local_path) as json_file:
-                element_dict = json.load(json_file)
-                logger.info(f"converting {len(element_dict)} rows from content in {local_path}")
-                elements_dict.extend(element_dict)
-        self.write_dict(elements_dict=elements_dict)

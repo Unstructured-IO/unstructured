@@ -8,17 +8,11 @@ from unstructured.ingest.cli.interfaces import (
     CliConfig,
     DelimitedString,
 )
+from unstructured.ingest.connector.confluence import SimpleConfluenceConfig
 
 
 @dataclass
-class ConfluenceCliConfig(CliConfig):
-    api_token: str
-    url: str
-    user_email: str
-    spaces: t.Optional[t.List[str]] = None
-    max_num_of_docs_from_each_space: int = 100
-    max_num_of_spaces: int = 500
-
+class ConfluenceCliConfig(SimpleConfluenceConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -68,5 +62,8 @@ class ConfluenceCliConfig(CliConfig):
 
 
 def get_base_src_cmd() -> BaseSrcCmd:
-    cmd_cls = BaseSrcCmd(cmd_name="confluence", cli_config=ConfluenceCliConfig)
+    cmd_cls = BaseSrcCmd(
+        cmd_name="confluence",
+        cli_config=ConfluenceCliConfig,
+    )
     return cmd_cls

@@ -15,45 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          azure \
-          --remote-url abfs://container1/ \
-          --account-name azureunstructured1 \
-          --output-dir azure-ingest-output \
-          --num-processes 2
+      .. literalinclude:: ./code/bash/azure.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import AzureRunner
-
-        if __name__ == "__main__":
-            runner = AzureRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="azure-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                fsspec_config=FsspecConfig(
-                    remote_url="abfs://container1/",
-                ),
-            )
-            runner.run(
-                account_name="azureunstructured1",
-            )
+      .. literalinclude:: ./code/python/azure.py
+         :language: python
 
 
 Run via the API
@@ -65,38 +33,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
+      .. literalinclude:: ./code/bash/azure_api.sh
+         :language: bash
 
-        import os
+   .. tab:: Python
 
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import AzureRunner
-
-        if __name__ == "__main__":
-            runner = AzureRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="azure-ingest-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-                fsspec_config=FsspecConfig(
-                    remote_url="abfs://container1/",
-                ),
-            )
-            runner.run(
-                account_name="azureunstructured1",
-            )
-
+      .. literalinclude:: ./code/python/azure_api.py
+         :language: python
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.
 

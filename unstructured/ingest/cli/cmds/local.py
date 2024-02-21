@@ -4,14 +4,16 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import CliConfig, CliRecursiveConfig, DelimitedString
+from unstructured.ingest.cli.interfaces import (
+    CliConfig,
+    CliRecursiveConfig,
+    DelimitedString,
+)
+from unstructured.ingest.connector.local import SimpleLocalConfig
 
 
 @dataclass
-class LocalCliConfig(CliConfig):
-    input_path: str
-    file_glob: t.Optional[str] = None
-
+class LocalCliConfig(SimpleLocalConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [

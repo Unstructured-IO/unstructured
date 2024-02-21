@@ -1,0 +1,54 @@
+import os
+
+from unstructured.ingest.connector.local import SimpleLocalConfig
+from unstructured.ingest.connector.pinecone import (
+    PineconeAccessConfig,
+    PineconeWriteConfig,
+    SimplePineconeConfig,
+)
+from unstructured.ingest.interfaces import (
+    ChunkingConfig,
+    EmbeddingConfig,
+    PartitionConfig,
+    ProcessorConfig,
+    ReadConfig,
+)
+from unstructured.ingest.runner import LocalRunner
+from unstructured.ingest.runner.writers.base_writer import Writer
+from unstructured.ingest.runner.writers.pinecone import (
+    PineconeWriter,
+)
+
+
+def get_writer() -> Writer:
+    return PineconeWriter(
+        connector_config=SimplePineconeConfig(
+            access_config=PineconeAccessConfig(api_key=os.getenv("PINECONE_API_KEY")),
+            index_name=os.getenv("PINECONE_INDEX_NAME"),
+            environment=os.getenv("PINECONE_ENVIRONMENT_NAME"),
+        ),
+        write_config=PineconeWriteConfig(batch_size=80),
+    )
+
+
+if __name__ == "__main__":
+    writer = get_writer()
+    runner = LocalRunner(
+        processor_config=ProcessorConfig(
+            verbose=True,
+            output_dir="local-output-to-pinecone",
+            num_processes=2,
+        ),
+        connector_config=SimpleLocalConfig(
+            input_path="example-docs/book-war-and-peace-1225p.txt",
+        ),
+        read_config=ReadConfig(),
+        partition_config=PartitionConfig(),
+        chunking_config=ChunkingConfig(chunk_elements=True),
+        embedding_config=EmbeddingConfig(
+            provider="langchain-huggingface",
+        ),
+        writer=writer,
+        writer_kwargs={},
+    )
+    runner.run()

@@ -15,44 +15,13 @@ Run Locally
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          gcs \
-          --remote-url gs://utic-test-ingest-fixtures-public/ \
-          --output-dir gcs-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose
+      .. literalinclude:: ./code/bash/gcs.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import GCSRunner
-
-        if __name__ == "__main__":
-            runner = GCSRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="gcs-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(),
-                fsspec_config=FsspecConfig(
-                    remote_url="gs://utic-test-ingest-fixtures-public/", recursive=True
-                ),
-            )
-            runner.run()
+      .. literalinclude:: ./code/python/gcs.py
+         :language: python
 
 
 Run via the API
@@ -64,47 +33,13 @@ You can also use upstream connectors with the ``unstructured`` API. For this you
 
    .. tab:: Shell
 
-      .. code:: shell
-
-        unstructured-ingest \
-          gcs \
-          --remote-url gs://utic-test-ingest-fixtures-public/ \
-          --output-dir gcs-output \
-          --num-processes 2 \
-          --recursive \
-          --verbose
+      .. literalinclude:: ./code/bash/gcs_api.sh
+         :language: bash
 
    .. tab:: Python
 
-      .. code:: python
-
-        import os
-
-        from unstructured.ingest.interfaces import (
-            FsspecConfig,
-            PartitionConfig,
-            ProcessorConfig,
-            ReadConfig,
-        )
-        from unstructured.ingest.runner import GCSRunner
-
-        if __name__ == "__main__":
-            runner = GCSRunner(
-                processor_config=ProcessorConfig(
-                    verbose=True,
-                    output_dir="gcs-output",
-                    num_processes=2,
-                ),
-                read_config=ReadConfig(),
-                partition_config=PartitionConfig(
-                    partition_by_api=True,
-                    api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-                ),
-                fsspec_config=FsspecConfig(
-                    remote_url="gs://utic-test-ingest-fixtures-public/", recursive=True
-                ),
-            )
-            runner.run()
+      .. literalinclude:: ./code/python/gcs_api.py
+         :language: python
 
 
 Additionally, you will need to pass the ``--partition-endpoint`` if you're running the API locally. You can find more information about the ``unstructured`` API `here <https://github.com/Unstructured-IO/unstructured-api>`_.

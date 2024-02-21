@@ -2,9 +2,9 @@
 set +u
 
 if [ -z "$1" ]; then
-    echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
-    echo "Ex: ${0} abertl"
-    exit 1
+  echo "When running this script, please supply the name of the user account for which to set up unstructured dependencies."
+  echo "Ex: ${0} abertl"
+  exit 1
 fi
 
 set -eux
@@ -14,11 +14,12 @@ pac="apt"
 
 # If we're not running as root, we want to prefix certain commands with sudo
 if [[ $(whoami) == 'root' ]]; then
-    $pac update -y
-    $pac install -y sudo
-    sudo=''; else
-    type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
-    sudo='sudo'
+  $pac update -y
+  $pac install -y sudo
+  sudo=''
+else
+  type -p sudo >/dev/null || (echo "Please have an administrator install sudo and add you to the sudo group before continuing." && exit 1)
+  sudo='sudo'
 fi
 
 # Set user account for which we're configuring the tools
@@ -30,8 +31,8 @@ USER_ACCOUNT=$1
 # get hung up on a screen asking us which services we want to restart after upgrading packages.
 $sudo $pac update -y
 if [[ -d /etc/needrestart/conf.d ]]; then
-    # shellcheck disable=SC2016
-    echo '$nrconf{restart} = '"'a';" | $sudo tee /etc/needrestart/conf.d/99z_temp_disable.conf
+  # shellcheck disable=SC2016
+  echo '$nrconf{restart} = '"'a';" | $sudo tee /etc/needrestart/conf.d/99z_temp_disable.conf
 fi
 $sudo $pac upgrade -y
 
@@ -71,7 +72,7 @@ eval "$(pyenv virtualenv-init -)"
 EOT
         # install python
         source "$HOME"/.bashrc
-        pyenv install 3.8.17
+        pyenv install 3.10.4
     fi
 EOF
 
@@ -95,5 +96,5 @@ $sudo $pac install -y libmagic-dev
 
 #### Put needrestart back the way it was and clean up
 if [[ -d /etc/needrestart/conf.d/ ]]; then
-    $sudo rm -f /etc/needrestart/conf.d/99z_temp_disable.conf
+  $sudo rm -f /etc/needrestart/conf.d/99z_temp_disable.conf
 fi

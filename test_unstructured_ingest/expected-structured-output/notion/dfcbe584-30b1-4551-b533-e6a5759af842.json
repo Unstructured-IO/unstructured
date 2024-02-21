@@ -1,6 +1,5 @@
 [
   {
-    "type": "Title",
     "element_id": "b2c1cf36a9b45cdefac07d1899b96ff1",
     "metadata": {
       "data_source": {
@@ -13,10 +12,10 @@
       ],
       "page_number": 1
     },
-    "text": "Corporate Travel"
+    "text": "Corporate Travel",
+    "type": "Title"
   },
   {
-    "type": "NarrativeText",
     "element_id": "ea6b271473e6accb79547f998e68f3d2",
     "metadata": {
       "data_source": {
@@ -29,6 +28,7 @@
       ],
       "page_number": 1
     },
-    "text": "💡\n      \n      Notion Tip: A corporate travel policy is crucial for controlling costs, ensuring compliance, and guaranteeing the safety of employees when traveling for the company."
+    "text": "💡\n      \n      Notion Tip: A corporate travel policy is crucial for controlling costs, ensuring compliance, and guaranteeing the safety of employees when traveling for the company.",
+    "type": "NarrativeText"
   }
 ]

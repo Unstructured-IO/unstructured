@@ -66,9 +66,6 @@ def get_base_dest_cmd():
         cmd_name="pinecone",
         cli_config=PineconeCliConfig,
         additional_cli_options=[PineconeCliWriteConfig],
-        addition_configs={
-            "connector_config": SimplePineconeConfig,
-            "write_config": PineconeWriteConfig,
-        },
+        write_config=PineconeWriteConfig,
     )
     return cmd_cls
