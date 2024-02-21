@@ -118,21 +118,7 @@ def measure_text_extraction_accuracy(
     agg_df.columns = agg_headers
 
     if grouping:
-        if grouping in ["doctype", "connector"]:
-            grouped_acc = (
-                df.groupby(grouping)
-                .agg({"cct-accuracy": [_mean, _stdev, "count"]})
-                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-            )
-            grouped_miss = (
-                df.groupby(grouping)
-                .agg({"cct-%missing": [_mean, _stdev, "count"]})
-                .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-            )
-            df = _format_grouping_output(grouped_acc, grouped_miss)
-            export_filename = f"all-{grouping}-agg-cct"
-        else:
-            print("No field to group by. Returning a non-group evaluation.")
+        df, export_filename = group_text_extraction_acc(grouping, df, export_filename)
 
     _write_to_file(export_dir, f"{export_filename}.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
@@ -187,3 +173,21 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
     _display(agg_df)
+
+def group_text_extraction_acc(grouping, df, export_filename):
+    if grouping in ["doctype", "connector"]:
+        grouped_acc = (
+            df.groupby(grouping)
+            .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+            .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+        )
+        grouped_miss = (
+            df.groupby(grouping)
+            .agg({"cct-%missing": [_mean, _stdev, "count"]})
+            .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+        )
+        df = _format_grouping_output(grouped_acc, grouped_miss)
+        export_filename = f"all-{grouping}-agg-cct"
+    else:
+        print("No field to group by. Returning a non-group evaluation.")
+    return df, export_filename
