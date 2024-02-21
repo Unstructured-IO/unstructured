@@ -1,6 +1,8 @@
-## 0.12.5-dev7
+## 0.12.5-dev8
 
 ### Enhancements
+
+* **Support passing list type parameters when calling unstructured API via `partition_via_api()`**
 
 ### Features
 
