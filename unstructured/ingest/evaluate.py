@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple
 import click
 
 from unstructured.metrics.evaluate import (
+    group_text_extraction_accuracy,
     measure_element_type_accuracy,
     measure_text_extraction_accuracy,
 )
@@ -128,6 +129,30 @@ def measure_element_type_accuracy_command(
     return measure_element_type_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize
     )
+
+
+@main.command()
+@click.option(
+    "--grouping",
+    type=str,
+    required=True,
+    help="The category to group by; valid values are 'doctype' and 'connector'.",
+)
+@click.option(
+    "--data_input",
+    type=str,
+    required=True,
+    help="Path to the CSV/TSV file containing the data or a DataFrame.",
+)
+@click.option(
+    "--export_dir",
+    type=str,
+    required=True,
+    default="metrics",
+    help="The directory where the aggregated results will be exported as a TSV file.",
+)
+def group_text_extraction_accuracy_command(grouping: str, data_input: str, export_dir: str):
+    return group_text_extraction_accuracy(grouping, data_input, export_dir)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@
 import logging
 import os
 import sys
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import pandas as pd
 from tqdm import tqdm
@@ -15,7 +15,6 @@ from unstructured.metrics.element_type import (
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
     _display,
-    _format_grouping_output,
     _listdir_recursive,
     _mean,
     _prepare_output_cct,
@@ -110,18 +109,18 @@ def measure_text_extraction_accuracy(
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
-    export_filename = "all-docs-cct"
 
     acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
     miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
     agg_df = pd.concat((acc, miss)).reset_index()
     agg_df.columns = agg_headers
 
-    if grouping:
-        df, export_filename = group_text_extraction_acc(grouping, df, export_filename)
-
-    _write_to_file(export_dir, f"{export_filename}.tsv", df)
+    _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
+
+    if grouping:
+        group_text_extraction_accuracy(grouping, df, export_dir)
+
     _display(agg_df)
 
 
@@ -175,23 +174,50 @@ def measure_element_type_accuracy(
     _display(agg_df)
 
 
-def group_text_extraction_acc(
-    grouping: str, df: pd.DataFrame, export_filename: str
-) -> Tuple[pd.DataFrame, str]:
-    """Aggregate the evaluation score on `grouping` type."""
-    if grouping in ["doctype", "connector"]:
-        grouped_acc = (
-            df.groupby(grouping)
-            .agg({"cct-accuracy": [_mean, _stdev, "count"]})
-            .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-        )
-        grouped_miss = (
-            df.groupby(grouping)
-            .agg({"cct-%missing": [_mean, _stdev, "count"]})
-            .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-        )
-        df = _format_grouping_output(grouped_acc, grouped_miss)
-        export_filename = f"all-{grouping}-agg-cct"
+def group_text_extraction_accuracy(
+    grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str
+) -> None:
+    """
+    Aggregates accuracy and missing metrics by 'doctype' or 'connector', exporting to TSV.
+
+    Args:
+        grouping (str): Grouping category ('doctype' or 'connector').
+        data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
+        export_dir (str): Directory for the exported TSV file.
+    """
+    if grouping not in ("doctype", "connector"):
+        raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
+    if isinstance(data_input, str):
+        if not os.path.exists(data_input):
+            raise FileNotFoundError(f"File {data_input} not found.")
+        if data_input.endswith(".csv"):
+            df = pd.read_csv(data_input)
+        elif data_input.endswith((".tsv", ".txt")):
+            df = pd.read_csv(data_input, sep="\t")
+        else:
+            raise ValueError("Please provide a .csv or .tsv file.")
     else:
-        print("No field to group by. Returning a non-group evaluation.")
-    return df, export_filename
+        df = data_input
+    if df.empty or grouping not in df.columns or df[grouping].isnull().all():
+        print(
+            f"Data cannot be aggregated by '{grouping}'. \
+              Check if it's empty or the column is missing/empty."
+        )
+        return  # Exit the function as aggregation cannot proceed
+    # grouped_acc = (
+    #     df.groupby(grouping)
+    #     .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+    #     .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+    # )
+    # grouped_miss = (
+    #     df.groupby(grouping)
+    #     .agg({"cct-%missing": [_mean, _stdev, "count"]})
+    #     .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+    # )
+    # df = _format_grouping_output(grouped_acc, grouped_miss)
+    grouped_df = (
+        df.groupby(grouping)
+        .agg({"cct-accuracy": ["mean", "std", "count"], "cct-%missing": ["mean", "std", "count"]})
+        .rename(columns={"mean": "mean", "std": "stdev"})
+    )
+    _write_to_file(export_dir, f"all-{grouping}-agg-cct.tsv", grouped_df)
