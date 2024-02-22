@@ -15,6 +15,7 @@ from unstructured.metrics.element_type import (
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
     _display,
+    _format_grouping_output,
     _listdir_recursive,
     _mean,
     _prepare_output_cct,
@@ -199,25 +200,16 @@ def group_text_extraction_accuracy(
     else:
         df = data_input
     if df.empty or grouping not in df.columns or df[grouping].isnull().all():
-        print(
-            f"Data cannot be aggregated by '{grouping}'. \
-              Check if it's empty or the column is missing/empty."
-        )
-        return  # Exit the function as aggregation cannot proceed
-    # grouped_acc = (
-    #     df.groupby(grouping)
-    #     .agg({"cct-accuracy": [_mean, _stdev, "count"]})
-    #     .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-    # )
-    # grouped_miss = (
-    #     df.groupby(grouping)
-    #     .agg({"cct-%missing": [_mean, _stdev, "count"]})
-    #     .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-    # )
-    # df = _format_grouping_output(grouped_acc, grouped_miss)
-    grouped_df = (
+        raise SystemExit("Data cannot be aggregated by '{grouping}'. Check if it's empty or the column is missing/empty.") 
+    grouped_acc = (
         df.groupby(grouping)
-        .agg({"cct-accuracy": ["mean", "std", "count"], "cct-%missing": ["mean", "std", "count"]})
-        .rename(columns={"mean": "mean", "std": "stdev"})
+        .agg({"cct-accuracy": [_mean, _stdev, "count"]})
+        .rename(columns={"_mean": "mean", "_stdev": "stdev"})
     )
+    grouped_miss = (
+        df.groupby(grouping)
+        .agg({"cct-%missing": [_mean, _stdev, "count"]})
+        .rename(columns={"_mean": "mean", "_stdev": "stdev"})
+    )
+    grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
     _write_to_file(export_dir, f"all-{grouping}-agg-cct.tsv", grouped_df)
