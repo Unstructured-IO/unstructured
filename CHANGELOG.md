@@ -5,12 +5,11 @@
 ### Features
 
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
-* **Separate grouping function for evaluation** Separate the grouping functionality to avoid duplicated evaluation when the granular level eval is already available.
 
 ### Fixes
 
 * **Add OctoAI embedder** Adds support for embeddings via OctoAI.
-* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
 * **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
 * **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
