@@ -1,6 +1,6 @@
 import copy
 import typing as t
-import uuid
+# import uuid
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -105,7 +105,6 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
 
     def normalize_dict(self, element_dict: dict) -> dict:
         return {
-            "_id": str(uuid.uuid4()),
             "$vector": element_dict.pop("embeddings", None),
             "content": element_dict.pop("text", None),
             "metadata": flatten_dict(

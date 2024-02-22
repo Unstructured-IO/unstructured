@@ -8,8 +8,6 @@ cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=astra-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
-DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
-DESTINATION_PATH=$SCRIPT_DIR/astra-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 if [ -z "$ASTRA_DB_APPLICATION_TOKEN" ]; then
@@ -30,10 +28,8 @@ EMBEDDING_DIMENSION=384
 source "$SCRIPT_DIR"/cleanup.sh
 
 function cleanup() {
-  cleanup_dir "$DESTINATION_PATH"
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
-  cleanup_dir "$DOWNLOAD_DIR"
 }
 
 trap cleanup EXIT
