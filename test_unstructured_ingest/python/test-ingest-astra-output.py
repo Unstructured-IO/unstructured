@@ -1,5 +1,3 @@
-import random
-
 import click
 from astrapy.db import AstraDB
 
@@ -43,7 +41,6 @@ def run_check(token, api_endpoint, collection_name, embedding_dimension):
 
     # Perform a similarity search
     find_result = astra_db_collection.vector_find(random_vector, limit=1)
-
 
     # Check that we retrieved the coded cleats copy data
     assert find_result[0]["content"] == random_text

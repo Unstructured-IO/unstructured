@@ -1,6 +1,5 @@
 import copy
 import typing as t
-# import uuid
 from dataclasses import dataclass, field
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
