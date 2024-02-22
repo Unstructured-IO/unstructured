@@ -15,19 +15,19 @@ started.
 
 from __future__ import annotations
 
-from typing import List, Optional, Sequence
+from typing import Iterable, Optional
 
-from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, BasePreChunker, ChunkingOptions
+from unstructured.chunking.base import BasePreChunker, ChunkingOptions
 from unstructured.documents.elements import Element
 
 
 def chunk_elements(
-    elements: Sequence[Element],
+    elements: Iterable[Element],
+    max_characters: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
-    max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-    overlap: int = 0,
-    overlap_all: bool = False,
-) -> List[Element]:
+    overlap: Optional[int] = None,
+    overlap_all: Optional[bool] = None,
+) -> list[Element]:
     """Combine sequential `elements` into chunks, respecting specified text-length limits.
 
     Produces a sequence of `CompositeElement`, `Table`, and `TableChunk` elements (chunks).

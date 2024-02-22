@@ -574,11 +574,13 @@ def identify_overlapping_or_nesting_case(
     vertical_overlap = y_bottom_left_1 < y_top_right_2 and y_top_right_1 > y_bottom_left_2
     (
         overlapping_elements,
+        parent_element,
         overlapping_case,
         overlap_percentage,
         overlap_percentage_total,
         largest_ngram_percentage,
     ) = (
+        None,
         None,
         None,
         None,
@@ -606,6 +608,7 @@ def identify_overlapping_or_nesting_case(
             ]
             overlapping_case = f"nested {type2} in {type1}"
             overlap_percentage = 100
+            parent_element = f"{type1}(ix={ix_element1})"
 
         elif is_parent_box(box2_corners, box1_corners, add=nested_error_tolerance_px):
             overlapping_elements = [
@@ -614,6 +617,7 @@ def identify_overlapping_or_nesting_case(
             ]
             overlapping_case = f"nested {type1} in {type2}"
             overlap_percentage = 100
+            parent_element = f"{type2}(ix={ix_element2})"
 
         else:
             (
@@ -633,6 +637,7 @@ def identify_overlapping_or_nesting_case(
             )
     return (
         overlapping_elements,
+        parent_element,
         overlapping_case,
         overlap_percentage,
         overlap_percentage_total,
@@ -679,6 +684,7 @@ def catch_overlapping_and_nested_bboxes(
         ):
             (
                 overlapping_elements,
+                parent_element,
                 overlapping_case,
                 overlap_percentage,
                 overlap_percentage_total,
@@ -698,6 +704,7 @@ def catch_overlapping_and_nested_bboxes(
                 overlapping_cases.append(
                     {
                         "overlapping_elements": overlapping_elements,
+                        "parent_element": parent_element,
                         "overlapping_case": overlapping_case,
                         "overlap_percentage": f"{overlap_percentage}%",
                         "metadata": {
