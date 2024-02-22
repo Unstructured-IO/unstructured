@@ -201,11 +201,20 @@ class TableEvalProcessor:
 @click.option(
     "--ground_truth_file", help="Path to the ground truth JSON file", type=click.Path(exists=True)
 )
-def run(prediction_file: str, ground_truth_file: str):
+@click.option(
+    "--cutoff",
+    type=float,
+    show_default=True,
+    default=0.8,
+    help="The cutoff value for the element level alignment. \
+        If not set, a default value is used",
+)
+def run(prediction_file: str, ground_truth_file: str, cutoff: Optional[float]):
     """Runs the table evaluation process and prints the computed metrics."""
     processor = TableEvalProcessor.from_json_files(
         Path(prediction_file),
         Path(ground_truth_file),
+        cutoff=cutoff,
     )
     report = processor.process_file()
     print(report)
