@@ -1,11 +1,11 @@
 import os
 
-from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.connector.astra import (
     AstraDBAccessConfig,
     AstraDBWriteConfig,
     SimpleAstraDBConfig,
 )
+from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.interfaces import (
     ChunkingConfig,
     EmbeddingConfig,
@@ -14,10 +14,10 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
 )
 from unstructured.ingest.runner import LocalRunner
-from unstructured.ingest.runner.writers.base_writer import Writer
 from unstructured.ingest.runner.writers.astra import (
     AstraDBWriter,
 )
+from unstructured.ingest.runner.writers.base_writer import Writer
 
 
 def get_writer() -> Writer:
