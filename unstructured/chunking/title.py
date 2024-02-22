@@ -5,11 +5,9 @@ Main entry point is the `@add_chunking_strategy()` decorator.
 
 from __future__ import annotations
 
-from typing import Iterator, List, Optional, Tuple
+from typing import Iterable, Iterator, Optional
 
 from unstructured.chunking.base import (
-    CHUNK_MAX_CHARS_DEFAULT,
-    CHUNK_MULTI_PAGE_DEFAULT,
     BasePreChunker,
     BoundaryPredicate,
     ChunkingOptions,
@@ -23,14 +21,14 @@ from unstructured.utils import lazyproperty
 
 
 def chunk_by_title(
-    elements: List[Element],
-    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
+    elements: Iterable[Element],
+    max_characters: Optional[int] = None,
+    multipage_sections: Optional[bool] = None,
     combine_text_under_n_chars: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
-    max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-    overlap: int = 0,
-    overlap_all: bool = False,
-) -> List[Element]:
+    overlap: Optional[int] = None,
+    overlap_all: Optional[bool] = None,
+) -> list[Element]:
     """Uses title elements to identify sections within the document for chunking.
 
     Splits off into a new CompositeElement when a title is detected or if metadata changes, which
@@ -91,7 +89,7 @@ class _ByTitlePreChunker(BasePreChunker):
     """
 
     @lazyproperty
-    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+    def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
 
         def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
