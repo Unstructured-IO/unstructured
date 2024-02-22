@@ -4,11 +4,11 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.interfaces import CliConfig
-from unstructured.ingest.connector.astra import AstraDBWriteConfig, SimpleAstraDBConfig
+from unstructured.ingest.connector.astra import AstraWriteConfig, SimpleAstraConfig
 
 
 @dataclass
-class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
+class AstraCliConfig(SimpleAstraConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -47,7 +47,7 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
 
 
 @dataclass
-class AstraDBCliWriteConfig(AstraDBWriteConfig, CliConfig):
+class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.Option]:
         options = [
@@ -66,8 +66,8 @@ def get_base_dest_cmd():
 
     cmd_cls = BaseDestCmd(
         cmd_name="astra",
-        cli_config=AstraDBCliConfig,
-        additional_cli_options=[AstraDBCliWriteConfig],
-        write_config=AstraDBWriteConfig,
+        cli_config=AstraCliConfig,
+        additional_cli_options=[AstraCliWriteConfig],
+        write_config=AstraWriteConfig,
     )
     return cmd_cls

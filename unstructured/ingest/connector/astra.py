@@ -23,27 +23,27 @@ NON_INDEXED_FIELDS = ["metadata._node_content", "content"]
 
 
 @dataclass
-class AstraDBAccessConfig(AccessConfig):
+class AstraAccessConfig(AccessConfig):
     token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     api_endpoint: t.Optional[str] = enhanced_field(default=None, sensitive=True)
 
 
 @dataclass
-class SimpleAstraDBConfig(BaseConnectorConfig):
-    access_config: AstraDBAccessConfig
+class SimpleAstraConfig(BaseConnectorConfig):
+    access_config: AstraAccessConfig
     collection_name: str
     embedding_dimension: int
 
 
 @dataclass
-class AstraDBWriteConfig(WriteConfig):
+class AstraWriteConfig(WriteConfig):
     batch_size: int = 20
 
 
 @dataclass
-class AstraDBDestinationConnector(BaseDestinationConnector):
-    write_config: AstraDBWriteConfig
-    connector_config: SimpleAstraDBConfig
+class AstraDestinationConnector(BaseDestinationConnector):
+    write_config: AstraWriteConfig
+    connector_config: SimpleAstraConfig
     _astra_db: t.Optional["AstraDB"] = field(init=False, default=None)
     _astra_db_collection: t.Optional["AstraDBCollection"] = field(init=False, default=None)
 
@@ -95,7 +95,7 @@ class AstraDBDestinationConnector(BaseDestinationConnector):
             raise SourceConnectionNetworkError(f"failed to validate connection: {e}")
 
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-        logger.info(f"Inserting / updating {len(elements_dict)} documents to AstraDB.")
+        logger.info(f"Inserting / updating {len(elements_dict)} documents to Astra.")
 
         astra_batch_size = self.write_config.batch_size
 

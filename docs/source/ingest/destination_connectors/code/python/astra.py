@@ -1,9 +1,9 @@
 import os
 
 from unstructured.ingest.connector.astra import (
-    AstraDBAccessConfig,
-    AstraDBWriteConfig,
-    SimpleAstraDBConfig,
+    AstraAccessConfig,
+    AstraWriteConfig,
+    SimpleAstraConfig,
 )
 from unstructured.ingest.connector.local import SimpleLocalConfig
 from unstructured.ingest.interfaces import (
@@ -15,21 +15,21 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.runner import LocalRunner
 from unstructured.ingest.runner.writers.astra import (
-    AstraDBWriter,
+    AstraWriter,
 )
 from unstructured.ingest.runner.writers.base_writer import Writer
 
 
 def get_writer() -> Writer:
-    return AstraDBWriter(
-        connector_config=SimpleAstraDBConfig(
-            access_config=AstraDBAccessConfig(
+    return AstraWriter(
+        connector_config=SimpleAstraConfig(
+            access_config=AstraAccessConfig(
                 token=os.getenv("ASTRA_DB_TOKEN"), api_endpoint=os.getenv("ASTRA_DB_ENDPOINT")
             ),
             collection_name="test_collection",
             embedding_dimension=384,
         ),
-        write_config=AstraDBWriteConfig(batch_size=80),
+        write_config=AstraWriteConfig(batch_size=80),
     )
 
 
