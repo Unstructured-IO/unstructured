@@ -14,6 +14,7 @@ from unstructured.metrics.element_type import (
 )
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
+    _count,
     _display,
     _format_grouping_output,
     _listdir_recursive,
@@ -111,10 +112,13 @@ def measure_text_extraction_accuracy(
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
 
-    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
-    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, "count"]).transpose()
-    agg_df = pd.concat((acc, miss)).reset_index()
-    agg_df.columns = agg_headers
+    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
+    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
+    if acc.shape[1] == 0 and miss.shape[1] == 0:
+        agg_df = pd.DataFrame(columns=agg_headers)
+    else:
+        agg_df = pd.concat((acc, miss)).reset_index()
+        agg_df.columns = agg_headers
 
     _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
