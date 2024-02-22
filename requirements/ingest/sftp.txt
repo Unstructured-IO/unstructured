@@ -10,9 +10,9 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-cryptography==41.0.7
+cryptography==42.0.2
     # via paramiko
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via -r ingest/sftp.in
 paramiko==3.4.0
     # via -r ingest/sftp.in

@@ -1,9 +1,58 @@
-## 0.12.3-dev5
+## 0.12.5-dev9
 
 ### Enhancements
 
+### Features
+
 * **Header and footer detection for fast strategy.** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
+* **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
+* **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
+
+### Fixes
+
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
+* **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
+
+## 0.12.4
+
+### Enhancements
+
+* **Apply New Version of `black` formatting** The `black` library recently introduced a new major version that introduces new formatting conventions. This change brings code in the `unstructured` repo into compliance with the new conventions.
+* **Move ingest imports to local scopes** Moved ingest dependencies into local scopes to be able to import ingest connector classes without the need of installing imported external dependencies. This allows lightweight use of the classes (not the instances. to use the instances as intended you'll still need the dependencies).
+* **Add support for `.p7s` files** `partition_email` can now process `.p7s` files. The signature for the signed message is extracted and added to metadata.
+* **Fallback to valid content types for emails** If the user selected content type does not exist on the email message, `partition_email` now falls back to anoter valid content type if it's available.
+
+### Features
+
+* **Add .heic file partitioning** .heic image files were previously unsupported and are now supported though partition_image()
+* **Add the ability to specify an alternate OCR** implementation by implementing an `OCRAgent` interface and specify it using `OCR_AGENT` environment variable.
+* **Add Vectara destination connector** Adds support for writing partitioned documents into a Vectara index.
+* **Add ability to detect text in .docx inline shapes** extensions of docx partition, extracts text from inline shapes and includes them in paragraph's text
+
+### Fixes
+
+* **Fix `partition_pdf()` not working when using chipper model with `file`**
+* **Handle common incorrect arguments for `languages` and `ocr_languages`** Users are regularly receiving errors on the API because they are defining `ocr_languages` or `languages` with additional quotationmarks, brackets, and similar mistakes. This update handles common incorrect arguments and raises an appropriate warning.
+* **Default `hi_res_model_name` now relies on `unstructured-inference`** When no explicit `hi_res_model_name` is passed into `partition` or `partition_pdf_or_image` the default model is picked by `unstructured-inference`'s settings or os env variable `UNSTRUCTURED_HI_RES_MODEL_NAME`; it now returns the same model name regardless of `infer_table_structure`'s value; this function will be deprecated in the future and the default model name will simply rely on `unstructured-inference` and will not consider os env in a future release.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies**
+* **Add missing dependency files to package manifest**. Updates the file path for the ingest
+  dependencies and adds missing extra dependencies.
+* **Fix remove Vectara requirements from setup.py - there are no dependencies **
+* **Add title to Vectara upload - was not separated out from initial connector **
+* **Fix change OpenSearch port to fix potential conflict with Elasticsearch in ingest test **
+
+
+## 0.12.3
+
+### Enhancements
+
 * **Driver for MongoDB connector.** Adds a driver with `unstructured` version information to the
   MongoDB connector.
 
@@ -12,9 +61,15 @@
 * **Add Databricks Volumes destination connector** Databricks Volumes connector added to ingest CLI.  Users may now use `unstructured-ingest` to write partitioned data to a Databricks Volumes storage service.
 
 ### Fixes
+
+* **Fix support for different Chipper versions and prevent running PDFMiner with Chipper**
+* **Treat YAML files as text.** Adds YAML MIME types to the file detection code and treats those
+  files as text.
 * **Fix FSSpec destination connectors check_connection.** FSSpec destination connectors did not use `check_connection`. There was an error when trying to `ls` destination directory - it may not exist at the moment of connector creation. Now `check_connection` calls `ls` on bucket root and this method is called on `initialize` of destination connector.
 * **Fix databricks-volumes extra location.** `setup.py` is currently pointing to the wrong location for the databricks-volumes extra requirements. This results in errors when trying to build the wheel for unstructured. This change updates to point to the correct path.
 * **Fix uploading None values to Chroma and Pinecone.** Removes keys with None values with Pinecone and Chroma destinations. Pins Pinecone dependency
+* **Update documentation.** (i) best practice for table extration by using 'skip_infer_table_types' param, instead of 'pdf_infer_table_structure', and (ii) fixed CSS, RST issues and typo in the documentation.
+* **Fix postgres storage of link_texts.** Formatting of link_texts was breaking metadata storage.
 
 ## 0.12.2
 

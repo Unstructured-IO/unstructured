@@ -1,6 +1,8 @@
 # pyright: reportPrivateUsage=false
 
-from typing import List
+"""Unit-test suite for the `unstructured.chunking.title` module."""
+
+from __future__ import annotations
 
 import pytest
 
@@ -23,7 +25,7 @@ from unstructured.partition.html import partition_html
 
 
 def test_it_splits_a_large_element_into_multiple_chunks():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("Introduction"),
         Text(
             "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed lectus"
@@ -41,7 +43,7 @@ def test_it_splits_a_large_element_into_multiple_chunks():
 
 
 def test_split_elements_by_title_and_table():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
@@ -91,7 +93,7 @@ def test_split_elements_by_title_and_table():
 
 
 def test_chunk_by_title():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("A Great Day", metadata=ElementMetadata(emphasized_text_contents=["Day"])),
         Text("Today is a great day.", metadata=ElementMetadata(emphasized_text_contents=["day"])),
         Text("It is sunny outside."),
@@ -129,7 +131,7 @@ def test_chunk_by_title():
 
 
 def test_chunk_by_title_respects_section_change():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("A Great Day", metadata=ElementMetadata(section="first")),
         Text("Today is a great day.", metadata=ElementMetadata(section="second")),
         Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
@@ -166,7 +168,7 @@ def test_chunk_by_title_respects_section_change():
 
 
 def test_chunk_by_title_separates_by_page_number():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
@@ -207,7 +209,7 @@ def test_chunk_by_title_does_not_break_on_regex_metadata_change():
     A regex-metadata match in an element does not signify a semantic boundary and a pre-chunk should
     not be split based on such a difference.
     """
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title(
             "Lorem Ipsum",
             metadata=ElementMetadata(
@@ -244,7 +246,7 @@ def test_chunk_by_title_consolidates_and_adjusts_offsets_of_regex_metadata():
     The `start` and `end` offsets of each regex-match are adjusted to reflect their new position in
     the chunk after element text has been concatenated.
     """
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title(
             "Lorem Ipsum",
             metadata=ElementMetadata(
@@ -286,7 +288,7 @@ def test_chunk_by_title_consolidates_and_adjusts_offsets_of_regex_metadata():
 
 
 def test_chunk_by_title_groups_across_pages():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
@@ -401,7 +403,7 @@ def test_add_chunking_strategy_on_partition_html_respects_multipage():
 
 
 def test_chunk_by_title_drops_detection_class_prob():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title(
             "A Great Day",
             metadata=ElementMetadata(
@@ -441,7 +443,7 @@ def test_chunk_by_title_drops_detection_class_prob():
 
 
 def test_chunk_by_title_drops_extra_metadata():
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title(
             "A Great Day",
             metadata=ElementMetadata(
@@ -525,7 +527,7 @@ def test_chunk_by_title_drops_extra_metadata():
 
 def test_it_considers_separator_length_when_pre_chunking():
     """PreChunker includes length of separators when computing remaining space."""
-    elements: List[Element] = [
+    elements: list[Element] = [
         Title("Chunking Priorities"),  # 19 chars
         ListItem("Divide text into manageable chunks"),  # 34 chars
         ListItem("Preserve semantic boundaries"),  # 28 chars

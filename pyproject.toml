@@ -1,9 +1,20 @@
 [tool.black]
 line-length = 100
 
-# changes made here should also be made in `.pre-commit-config.yaml` and `Makefile`
+[tool.pyright]
+pythonPlatform = "Linux"
+pythonVersion = "3.8"
+reportUnnecessaryCast = true
+reportUnnecessaryTypeIgnoreComment = true
+stubPath = "./typings"
+typeCheckingMode = "strict"
+verboseOutput = true
+
 [tool.ruff]
 line-length = 100
+
+# -- changes made here should also be made in `.pre-commit-config.yaml` and `Makefile` --
+[tool.ruff.lint]
 select = [
     "C4",       # -- flake8-comprehensions --
     "COM",      # -- flake8-commas --

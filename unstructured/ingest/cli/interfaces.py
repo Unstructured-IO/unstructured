@@ -12,7 +12,7 @@ import click
 from dataclasses_json.core import Json
 from typing_extensions import Self
 
-from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
+from unstructured.chunking import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.ingest.interfaces import (
     BaseConfig,
     ChunkingConfig,
@@ -452,7 +452,7 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
             }
             if len(new_kvs.keys()) == 0:
                 return None
-            if not new_kvs.get("provider", None):
+            if not new_kvs.get("provider"):
                 return None
             return super().from_dict(new_kvs, **kwargs)
         return super().from_dict(kvs, **kwargs)

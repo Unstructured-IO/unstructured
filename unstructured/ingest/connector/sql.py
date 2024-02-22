@@ -52,7 +52,7 @@ class SimpleSqlConfig(BaseConnectorConfig):
 
         return connect(database=self.database)
 
-    @requires_dependencies(["psycopg2"], extras="postgresql")
+    @requires_dependencies(["psycopg2"], extras="postgres")
     def _make_psycopg_connection(self):
         from psycopg2 import connect
 
@@ -93,9 +93,13 @@ class SqlDestinationConnector(BaseDestinationConnector):
         _ = self.client
 
     def check_connection(self):
-        cursor = self.client.cursor()
-        cursor.execute("SELECT 1;")
-        cursor.close()
+        try:
+            cursor = self.client.cursor()
+            cursor.execute("SELECT 1;")
+            cursor.close()
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     def conform_dict(self, data: dict) -> None:
         """
@@ -126,9 +130,6 @@ class SqlDestinationConnector(BaseDestinationConnector):
             data.get("metadata", {}).get("data_source", {}).get("permissions_data")
         ):
             data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
-
-        if link_texts := data.get("metadata", {}).get("link_texts", {}):
-            data["metadata"]["link_texts"] = str(json.dumps(link_texts))
 
         if sent_from := data.get("metadata", {}).get("sent_from", {}):
             data["metadata"]["sent_from"] = str(json.dumps(sent_from))

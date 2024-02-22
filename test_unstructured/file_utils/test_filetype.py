@@ -4,6 +4,7 @@ import zipfile
 
 import magic
 import pytest
+import yaml
 from PIL import Image
 
 from unstructured.file_utils import filetype
@@ -163,6 +164,17 @@ def test_detect_text_python_from_file(monkeypatch, filename="unstructured/logger
 
 def test_detects_go_mime_type():
     assert _is_code_mime_type("text/x-go") is True
+
+
+def test_detect_xml_application_go(monkeypatch, tmpdir):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/x-go")
+
+    filename = os.path.join(tmpdir, "fake.go")
+    with open(filename, "w") as f:
+        f.write("")
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(filename=filename) == FileType.TXT
 
 
 def test_detect_xml_application_rtf(monkeypatch):
@@ -410,6 +422,7 @@ def test_filetype_order():
         (b"d\xe2\x80", False),  # Invalid JSON
         (b'[{"key": "value"}]', True),  # Valid JSON
         (b"", False),  # Empty content
+        (b'"This is not a JSON"', False),  # Serializable as JSON, but we want to treat it as txt
     ],
 )
 def test_is_text_file_a_json(content, expected):
@@ -481,3 +494,23 @@ def test_detect_wav_from_filename(filename="example-docs/CantinaBand3.wav"):
 def test_detect_wav_from_file(filename="example-docs/CantinaBand3.wav"):
     with open(filename, "rb") as f:
         assert detect_filetype(file=f) == FileType.WAV
+
+
+def test_detect_yaml_as_text_from_filename(tmpdir):
+    data = {"hi": "there", "this is": "yaml"}
+    filename = os.path.join(tmpdir.dirname, "test.yaml")
+    with open(filename, "w") as f:
+        yaml.dump(data, f)
+
+    assert detect_filetype(filename=filename) == FileType.TXT
+
+
+def test_detect_yaml_as_text_from_file(tmpdir, monkeypatch):
+    monkeypatch.setattr(magic, "from_file", lambda *args, **kwargs: "text/yaml")
+    data = {"hi": "there", "this is": "yaml"}
+    filename = os.path.join(tmpdir.dirname, "test.yaml")
+    with open(filename, "w") as f:
+        yaml.dump(data, f)
+
+    with open(filename, "rb") as f:
+        assert detect_filetype(file=f) == FileType.TXT

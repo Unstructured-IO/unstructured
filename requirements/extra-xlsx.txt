@@ -8,25 +8,25 @@ et-xmlfile==1.1.0
     # via openpyxl
 networkx==3.2.1
     # via -r extra-xlsx.in
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c base.txt
     #   pandas
 openpyxl==3.1.2
     # via -r extra-xlsx.in
-pandas==2.1.4
+pandas==2.2.0
     # via -r extra-xlsx.in
 python-dateutil==2.8.2
     # via
     #   -c base.txt
     #   pandas
-pytz==2023.3.post1
+pytz==2024.1
     # via pandas
 six==1.16.0
     # via
     #   -c base.txt
     #   python-dateutil
-tzdata==2023.4
+tzdata==2024.1
     # via pandas
 xlrd==2.0.1
     # via -r extra-xlsx.in

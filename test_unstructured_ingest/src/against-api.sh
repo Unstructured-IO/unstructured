@@ -42,7 +42,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path "example-docs/$TEST_FILE_NAME" \
   --work-dir "$WORK_DIR"
 
-RESULT_FILE_PATH="$OUTPUT_DIR/example-docs/$TEST_FILE_NAME.json"
+RESULT_FILE_PATH="$OUTPUT_DIR/$TEST_FILE_NAME.json"
 # validate that there is at least one table with text_as_html in the results
 if [ "$(jq 'any(.[]; .metadata.text_as_html != null)' "$RESULT_FILE_PATH")" = "false" ]; then
   echo "No table with text_as_html found in $RESULT_FILE_PATH but at least one was expected."

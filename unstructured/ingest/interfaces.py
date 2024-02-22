@@ -14,7 +14,6 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
@@ -23,8 +22,6 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, e
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.partition.api import partition_via_api
-from unstructured.partition.auto import partition
 from unstructured.staging.base import convert_to_dict, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
@@ -198,9 +195,9 @@ class EmbeddingConfig(BaseConfig):
             kwargs["model_name"] = self.model_name
         # TODO make this more dynamic to map to encoder configs
         if self.provider == "langchain-openai":
-            from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
+            from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
-            return OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(**kwargs))
+            return OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(**kwargs))
         elif self.provider == "langchain-huggingface":
             from unstructured.embed.huggingface import (
                 HuggingFaceEmbeddingConfig,
@@ -208,6 +205,10 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig(**kwargs))
+        elif self.provider == "octoai":
+            from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
+
+            return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
@@ -217,19 +218,17 @@ class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
     chunking_strategy: t.Optional[str] = None
     combine_text_under_n_chars: t.Optional[int] = None
-    max_characters: int = CHUNK_MAX_CHARS_DEFAULT
-    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT
+    max_characters: t.Optional[int] = None
+    multipage_sections: t.Optional[bool] = None
     new_after_n_chars: t.Optional[int] = None
-    overlap: int = 0
-    overlap_all: bool = False
+    overlap: t.Optional[int] = None
+    overlap_all: t.Optional[bool] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title"
-            if self.chunk_elements is True
-            else None
+            else "by_title" if self.chunk_elements is True else None
         )
         return (
             chunk_by_title(
@@ -242,15 +241,17 @@ class ChunkingConfig(BaseConfig):
                 overlap_all=self.overlap_all,
             )
             if chunking_strategy == "by_title"
-            else chunk_elements(
-                elements=elements,
-                max_characters=self.max_characters,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
+            else (
+                chunk_elements(
+                    elements=elements,
+                    max_characters=self.max_characters,
+                    new_after_n_chars=self.new_after_n_chars,
+                    overlap=self.overlap,
+                    overlap_all=self.overlap_all,
+                )
+                if chunking_strategy == "basic"
+                else elements
             )
-            if chunking_strategy == "basic"
-            else elements
         )
 
 
@@ -539,6 +540,9 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> t.List[Element]:
+        from unstructured.partition.api import partition_via_api
+        from unstructured.partition.auto import partition
+
         if not partition_config.partition_by_api:
             logger.debug("Using local partition")
             elements = partition(

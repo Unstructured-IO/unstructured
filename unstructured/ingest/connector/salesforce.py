@@ -7,6 +7,7 @@ Using JWT authorization
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_key_and_cert.htm
 https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_auth_connected_app.htm
 """
+
 import json
 import typing as t
 from collections import OrderedDict
@@ -16,8 +17,6 @@ from email.utils import formatdate
 from pathlib import Path
 from string import Template
 from textwrap import dedent
-
-from dateutil import parser  # type: ignore
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
@@ -163,6 +162,8 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         return xml_string
 
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
+        from dateutil import parser  # type: ignore
+
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
             date=formatdate(parser.parse(email_json.get("MessageDate")).timestamp()),

@@ -170,7 +170,7 @@ class FsspecSourceConnector(
             fs = get_filesystem_class(self.connector_config.protocol)(
                 **self.connector_config.get_access_config(),
             )
-            fs.ls(path=self.connector_config.path_without_protocol)
+            fs.ls(path=self.connector_config.path_without_protocol, detail=False)
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
@@ -186,7 +186,7 @@ class FsspecSourceConnector(
         )
 
         """Verify that can get metadata for an object, validates connections info."""
-        ls_output = self.fs.ls(self.connector_config.path_without_protocol)
+        ls_output = self.fs.ls(self.connector_config.path_without_protocol, detail=False)
         if len(ls_output) < 1:
             raise ValueError(
                 f"No objects found in {self.connector_config.remote_url}.",
@@ -308,7 +308,7 @@ class FsspecDestinationConnector(BaseDestinationConnector):
             bucket_name += self.connector_config.dir_path.split("/")[0]
 
             logger.info(f"checking connection for destination {bucket_name}")
-            fs.ls(path=bucket_name)
+            fs.ls(path=bucket_name, detail=False)
         except Exception as e:
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")

@@ -8,6 +8,7 @@ forward slash to any path, whether using the / shorthand or joinpath, causes the
 starting path to disappear. So the `/` needs to be stripped off.
 3) To list and get files from the root directory Dropbox you need a ""," ", or " /"
 """
+
 import re
 from dataclasses import dataclass
 from pathlib import Path

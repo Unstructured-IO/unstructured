@@ -204,8 +204,10 @@ def test_partition_pdf_with_model_name_env_var(
         assert mock_process.call_args[1]["model_name"] == "checkbox"
 
 
+@pytest.mark.parametrize("model_name", ["checkbox", "yolox", "chipper"])
 def test_partition_pdf_with_model_name(
     monkeypatch,
+    model_name,
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
     monkeypatch.setattr(pdf, "extractable_elements", lambda *args, **kwargs: [])
@@ -215,9 +217,24 @@ def test_partition_pdf_with_model_name(
         mock.MagicMock(),
     ) as mock_process:
         pdf.partition_pdf(
-            filename=filename, strategy=PartitionStrategy.HI_RES, model_name="checkbox"
+            filename=filename,
+            strategy=PartitionStrategy.HI_RES,
+            model_name=model_name,
         )
-        assert mock_process.call_args[1]["model_name"] == "checkbox"
+        assert mock_process.call_args[1]["model_name"] == model_name
+
+    with mock.patch.object(
+        layout,
+        "process_data_with_model",
+        mock.MagicMock(),
+    ) as mock_process:
+        with open(filename, "rb") as f:
+            pdf.partition_pdf(
+                file=f,
+                strategy=PartitionStrategy.HI_RES,
+                model_name=model_name,
+            )
+            assert mock_process.call_args[1]["model_name"] == model_name
 
 
 def test_partition_pdf_with_hi_res_model_name(
@@ -518,7 +535,7 @@ def test_partition_pdf_with_copy_protection():
     filename = os.path.join("example-docs", "copy-protected.pdf")
     elements = pdf.partition_pdf(filename=filename, strategy=PartitionStrategy.HI_RES)
     title = "LayoutParser: A Uniﬁed Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert {element.metadata.page_number for element in elements} == {1, 2}
     assert elements[idx].metadata.detection_class_prob is not None
@@ -747,14 +764,6 @@ def test_partition_pdf_warns_with_ocr_languages(caplog):
     assert "The ocr_languages kwarg will be deprecated" in caplog.text
 
 
-def test_partition_pdf_or_image_warns_with_ocr_languages(caplog):
-    filename = example_doc_path("DA-1p.pdf")
-    pdf.partition_pdf_or_image(
-        filename=filename, strategy=PartitionStrategy.HI_RES, ocr_languages="eng"
-    )
-    assert "The ocr_languages kwarg will be deprecated" in caplog.text
-
-
 def test_partition_categorization_backup():
     text = "This is Clearly a Title"
     with mock.patch.object(pdf, "_partition_pdf_or_image_local", return_value=[Text(text)]):
@@ -891,18 +900,16 @@ def test_check_annotations_within_element(threshold, expected):
 
 
 @pytest.mark.parametrize(
-    ("infer_table_structure", "env", "expected"),
+    ("env", "expected"),
     [
-        (False, None, "yolox_quantized"),
-        (True, None, "yolox"),
-        (False, "test", "test"),
-        (True, "test", "test"),
+        (None, "yolox"),
+        ("test", "test"),
     ],
 )
-def test_default_hi_res_model(infer_table_structure, env, expected, monkeypatch):
+def test_default_hi_res_model(env, expected, monkeypatch):
     if env is not None:
         monkeypatch.setenv("UNSTRUCTURED_HI_RES_MODEL_NAME", env)
-    assert pdf.default_hi_res_model(infer_table_structure) == expected
+    assert pdf.default_hi_res_model() == expected
 
 
 def test_partition_model_name_default_to_None():

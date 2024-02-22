@@ -305,7 +305,7 @@ def test_partition_image_default_strategy_hi_res():
         elements = image.partition_image(file=f)
 
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
     assert elements[idx].metadata.detection_class_prob is not None
@@ -571,7 +571,7 @@ def test_partition_image_uses_hi_res_model_name():
 @pytest.mark.parametrize(
     ("ocr_mode", "idx_title_element"),
     [
-        ("entire_page", 3),
+        ("entire_page", 2),
         ("individual_blocks", 1),
     ],
 )
@@ -683,3 +683,11 @@ def test_partition_image_element_extraction(
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )
+
+
+def test_partition_image_works_on_heic_file(
+    filename="example-docs/DA-1p.heic",
+):
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
+    titles = [el.text for el in elements if el.category == ElementType.TITLE]
+    assert "CREATURES" in titles

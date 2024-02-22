@@ -12,7 +12,7 @@ boxsdk[jwt]==3.9.2
     # via
     #   boxfs
     #   boxsdk
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
@@ -23,9 +23,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==41.0.7
+cryptography==42.0.2
     # via boxsdk
-fsspec==2023.12.2
+fsspec==2024.2.0
     # via
     #   -r ingest/box.in
     #   boxfs

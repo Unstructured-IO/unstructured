@@ -4,13 +4,13 @@
 #
 #    pip-compile --output-file=ingest/jira.txt ingest/jira.in
 #
-atlassian-python-api==3.41.8
+atlassian-python-api==3.41.10
     # via -r ingest/jira.in
 beautifulsoup4==4.12.3
     # via
     #   -c ingest/../base.txt
     #   atlassian-python-api
-certifi==2023.11.17
+certifi==2024.2.2
     # via
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in

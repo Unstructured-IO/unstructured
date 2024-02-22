@@ -6,7 +6,7 @@
         "record_locator": {
           "document_id": "0",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -27,7 +27,7 @@
         "record_locator": {
           "document_id": "0",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -48,7 +48,7 @@
         "record_locator": {
           "document_id": "0",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -69,7 +69,7 @@
         "record_locator": {
           "document_id": "0",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -90,7 +90,7 @@
         "record_locator": {
           "document_id": "0",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },

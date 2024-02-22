@@ -446,7 +446,7 @@ def test_partition_pdf_doesnt_raise_warning():
     ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "image/jpeg"), (True, "image/jpeg"), (True, None)],
 )
-def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, content_type):
+def test_auto_partition_image(pass_metadata_filename, content_type):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "layout-parser-paper-fast.jpg")
     metadata_filename = filename if pass_metadata_filename else None
     elements = partition(
@@ -458,7 +458,7 @@ def test_auto_partition_image_default_strategy_hi_res(pass_metadata_filename, co
 
     # should be same result as test_partition_image_default_strategy_hi_res() in test_image.py
     title = "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis"
-    idx = 3
+    idx = 2
     assert elements[idx].text == title
     assert elements[idx].metadata.coordinates is not None
 
@@ -724,6 +724,7 @@ supported_filetypes = [
 FILETYPE_TO_MODULE = {
     FileType.JPG: "image",
     FileType.PNG: "image",
+    FileType.HEIC: "image",
     FileType.TXT: "text",
     FileType.EML: "email",
 }
@@ -734,9 +735,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
-    filetype_module = (
-        extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
-    )
+    filetype_module = FILETYPE_TO_MODULE.get(filetype, extension)
     fun_name = "partition_" + filetype_module
     module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
@@ -936,7 +935,7 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
-    assert len(elements) == 18
+    assert len(elements) == 14
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
@@ -1283,3 +1282,10 @@ def test_partition_image_with_bmp_with_auto(
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
     assert "<table><thead><th>" in table[0]
+
+
+def test_auto_partition_eml_add_signature_to_metadata():
+    elements = partition(filename="example-docs/eml/signed-doc.p7s")
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"
