@@ -200,8 +200,10 @@ def group_text_extraction_accuracy(
     else:
         df = data_input
     if df.empty or grouping not in df.columns or df[grouping].isnull().all():
-        raise SystemExit("Data cannot be aggregated by '{grouping}'. \
-                         Check if it's empty or the column is missing/empty.") 
+        raise SystemExit(
+            "Data cannot be aggregated by '{grouping}'. \
+                         Check if it's empty or the column is missing/empty."
+        )
     grouped_acc = (
         df.groupby(grouping)
         .agg({"cct-accuracy": [_mean, _stdev, "count"]})

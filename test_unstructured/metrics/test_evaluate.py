@@ -28,14 +28,15 @@ DUMMY_DF = pd.DataFrame(
         "filename": [
             "Bank Good Credit Loan.pptx",
             "Performance-Audit-Discussion.pdf",
-            "currency.csv"
+            "currency.csv",
         ],
         "doctype": ["pptx", "pdf", "csv"],
         "connector": ["connector1", "connector1", "connector2"],
         "cct-accuracy": [0.812, 0.994, 0.887],
-        "cct-%missing": [0.001, 0.002, 0.041]
+        "cct-%missing": [0.001, 0.002, 0.041],
     }
 )
+
 
 @pytest.fixture()
 def _cleanup_after_test():
