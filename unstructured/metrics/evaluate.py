@@ -205,7 +205,7 @@ def group_text_extraction_accuracy(
         df = data_input
     if df.empty or grouping not in df.columns or df[grouping].isnull().all():
         raise SystemExit(
-            "Data cannot be aggregated by '{grouping}'. \
+            f"Data cannot be aggregated by '{grouping}'. \
                          Check if it's empty or the column is missing/empty."
         )
     grouped_acc = (
