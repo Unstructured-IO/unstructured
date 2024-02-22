@@ -47,8 +47,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   astra \
-  --token "$ASTRA_DB_APPLICATION_TOKEN" \
-  --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
+  --token "$ASTRA_DB_TOKEN" \
+  --api-endpoint "$ASTRA_DB_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \
   --embedding-dimension "$EMBEDDING_DIMENSION"
 

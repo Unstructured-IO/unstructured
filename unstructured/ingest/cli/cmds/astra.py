@@ -17,12 +17,16 @@ class AstraDBCliConfig(SimpleAstraDBConfig, CliConfig):
                 required=True,
                 type=str,
                 help="Astra DB Token with access to the database.",
+                envvar="ASTRA_DB_TOKEN",
+                show_envvar=True,
             ),
             click.Option(
                 ["--api-endpoint"],
                 required=True,
                 type=str,
                 help="The API endpoint for the Astra DB.",
+                envvar="ASTRA_DB_ENDPOINT",
+                show_envvar=True,
             ),
             click.Option(
                 ["--collection-name"],

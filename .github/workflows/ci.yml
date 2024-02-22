@@ -382,6 +382,8 @@ jobs:
         VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
         VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
         VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
+        ASTRA_DB_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+        ASTRA_DB_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
