@@ -1,6 +1,5 @@
 import os
 import pathlib
-import re
 import shutil
 
 import pandas as pd
@@ -26,17 +25,20 @@ UNSTRUCTURED_CCT_DIRNAME = "unstructured_output_cct"
 
 @pytest.fixture()
 def _cleanup_after_test():
-    # This is where the test runs
+    """Fixture for removing side-effects of running tests in this file."""
+    # Run test as normal
     yield
 
-    pattern = re.compile(r"^test_evaluate_results_cct.*$")
+    def remove_generated_directories():
+        """Remove directories created from running tests"""
+        # Directories to be removed:
+        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt"]
+        subdirs = (d for d in os.scandir(TESTING_FILE_DIR) if d.is_dir())
+        for d in subdirs:
+            if d.name in target_dir_names:
+                shutil.rmtree(d.path)
 
-    for directory in os.listdir(TESTING_FILE_DIR):
-        if pattern.match(directory):
-            export_dir = os.path.join(TESTING_FILE_DIR, directory)
-
-            # Cleanup the directory and its contents
-            shutil.rmtree(export_dir)
+    remove_generated_directories()
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
