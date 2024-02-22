@@ -1,10 +1,11 @@
-## 0.12.5-dev8
+## 0.12.5-dev9
 
 ### Enhancements
 
 ### Features
 
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
+* **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
 * **Add AstraDB destination connector** Adds support for writing embedded documents into an AstraDB index.
 
 ### Fixes
