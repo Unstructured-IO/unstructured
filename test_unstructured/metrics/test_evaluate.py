@@ -160,9 +160,9 @@ def test_group_text_extraction_tsv_input():
     measure_text_extraction_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
-    filename = os.path.join(export_dir, f"all-docs-cct.tsv")
+    filename = os.path.join(export_dir, "all-docs-cct.tsv")
     group_text_extraction_accuracy(grouping="doctype", data_input=filename, export_dir=export_dir)
-    grouped_df = pd.read_csv(os.path.join(export_dir, f"all-doctype-agg-cct.tsv"), sep="\t")
+    grouped_df = pd.read_csv(os.path.join(export_dir, "all-doctype-agg-cct.tsv"), sep="\t")
     assert grouped_df["doctype"].dropna().nunique() == 3
 
 
