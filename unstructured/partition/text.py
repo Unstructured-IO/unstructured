@@ -208,35 +208,39 @@ def is_empty_bullet(text: str) -> bool:
     return UNICODE_BULLETS_RE.match(text) and len(text) == 1
 
 
-def is_in_header_position(
-    text: str,
+def _get_height_percentage(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
-    threshold: float = 0.05,
+) -> float:
+    avg_y = sum([coordinate[1] for coordinate in coordinates]) / len(coordinates)
+    return avg_y / coordinate_system.height
+
+
+def is_in_header_position(
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
+    threshold: float = 0.07,
 ) -> bool:
     """Checks to see if the position of the text indicates that the text belongs
     to a header."""
     if coordinates is None or coordinate_system is None:
         return False
 
-    min_y = min([coordinate[1] for coordinate in coordinates])
-    height_percentage = min_y / coordinate_system.height
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
     return height_percentage < threshold
 
 
 def is_in_footer_position(
-    text: str,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
-    threshold: float = 0.95,
+    threshold: float = 0.93,
 ) -> bool:
     """Checks to see if the position of the text indicates that the text belongs
     to a footer."""
     if coordinates is None or coordinate_system is None:
         return False
 
-    max_y = max([coordinate[1] for coordinate in coordinates])
-    height_percentage = max_y / coordinate_system.height
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
     return height_percentage > threshold
 
 
@@ -245,13 +249,13 @@ def element_from_text(
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
-    if is_in_header_position(text, coordinates, coordinate_system):
+    if is_in_header_position(coordinates, coordinate_system):
         return Header(
             text=text,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
         )
-    elif is_in_footer_position(text, coordinates, coordinate_system):
+    elif is_in_footer_position(coordinates, coordinate_system):
         return Footer(
             text=text,
             coordinates=coordinates,
