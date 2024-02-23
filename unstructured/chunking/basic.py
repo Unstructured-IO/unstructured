@@ -17,7 +17,9 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
-from unstructured.chunking.base import BasePreChunker, ChunkingOptions
+from typing_extensions import Self
+
+from unstructured.chunking.base import ChunkingOptions, PreChunker
 from unstructured.documents.elements import Element
 
 
@@ -58,7 +60,7 @@ def chunk_elements(
         level of "pollution" of otherwise clean semantic chunk boundaries.
     """
     # -- raises ValueError on invalid parameters --
-    opts = ChunkingOptions.new(
+    opts = _BasicChunkingOptions.new(
         max_characters=max_characters,
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
@@ -67,14 +69,32 @@ def chunk_elements(
 
     return [
         chunk
-        for pre_chunk in BasicPreChunker.iter_pre_chunks(elements, opts)
+        for pre_chunk in PreChunker.iter_pre_chunks(elements, opts)
         for chunk in pre_chunk.iter_chunks()
     ]
 
 
-class BasicPreChunker(BasePreChunker):
-    """Produces pre-chunks from a sequence of document-elements using the "basic" rule-set.
+class _BasicChunkingOptions(ChunkingOptions):
+    """Options for `basic` chunking."""
 
-    The "basic" rule-set is essentially "no-rules" other than `Table` is segregated into its own
-    pre-chunk.
-    """
+    @classmethod
+    def new(
+        cls,
+        *,
+        max_characters: Optional[int] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ) -> Self:
+        """Construct validated instance.
+
+        Raises `ValueError` on invalid arguments like overlap > max_chars.
+        """
+        self = cls(
+            max_characters=max_characters,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+        self._validate()
+        return self
