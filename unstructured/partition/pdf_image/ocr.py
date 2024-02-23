@@ -245,9 +245,6 @@ def supplement_page_layout_with_ocr(
             elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
             tables_agent=tables.tables_agent,
-            ocr_languages=ocr_languages,
-            ocr_agent=ocr_agent,
-            extracted_regions=extracted_regions,
         )
 
     return page_layout
@@ -257,9 +254,6 @@ def supplement_element_with_table_extraction(
     elements: List["LayoutElement"],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
-    ocr_languages: str = "eng",
-    ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
-    extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -268,24 +262,15 @@ def supplement_element_with_table_extraction(
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
-        padding = env_config.TABLE_IMAGE_CROP_PAD
-        padded_element = pad_element_bboxes(element, padding=padding)
-        cropped_image = image.crop(
-            (
-                padded_element.bbox.x1,
-                padded_element.bbox.y1,
-                padded_element.bbox.x2,
-                padded_element.bbox.y2,
-            ),
-        )
-        table_tokens = get_table_tokens(
-            table_element_image=cropped_image,
-            ocr_languages=ocr_languages,
-            ocr_agent=ocr_agent,
-            extracted_regions=extracted_regions,
-            table_element=padded_element,
-        )
-        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+        table_tokens = [
+            el
+            for el in elements
+            if el != element
+            and el.bbox.is_in(element.bbox, error_margin=0.0)
+        ]
+        table_tokens = get_table_tokens_from_layout(table_tokens)
+
+        element.text_as_html = tables_agent.predict(image, ocr_tokens=table_tokens)
     return elements
 
 
@@ -302,6 +287,11 @@ def get_table_tokens(
         image=table_element_image,
         ocr_languages=ocr_languages,
     )
+    return get_table_tokens_from_layout(ocr_layout)
+
+
+def get_table_tokens_from_layout(ocr_layout: list["TextRegion"]) -> List[Dict]:
+    """Get OCR tokens from ocr layout"""
     table_tokens = []
     for ocr_region in ocr_layout:
         table_tokens.append(
