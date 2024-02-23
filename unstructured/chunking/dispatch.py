@@ -110,8 +110,27 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
     return wrapper
 
 
+def chunk(elements: Iterable[Element], chunking_strategy: str, **kwargs: Any) -> list[Element]:
+    """Dispatch chunking of `elements` to the chunking function for `chunking_strategy`."""
+    chunker_spec = _chunker_registry.get(chunking_strategy)
+
+    if chunker_spec is None:
+        raise ValueError(f"unrecognized chunking strategy {repr(chunking_strategy)}")
+
+    # -- `kwargs` will in general be an omnibus dict of all keyword arguments to the partitioner;
+    # -- pick out and use only those supported by this chunker.
+    chunking_kwargs = {k: v for k, v in kwargs.items() if k in chunker_spec.kw_arg_names}
+
+    return chunker_spec.chunker(elements, **chunking_kwargs)
+
+
+def register_chunking_strategy(name: str, chunker: Chunker) -> None:
+    """Make chunker available by using `name` as `chunking_strategy` arg in partitioner call."""
+    _chunker_registry[name] = _ChunkerSpec(chunker)
+
+
 @dc.dataclass(frozen=True)
-class _ChunkerSpec:  # pyright: ignore[reportUnusedClass]
+class _ChunkerSpec:
     """A registry entry for a chunker."""
 
     chunker: Chunker
@@ -125,3 +144,9 @@ class _ChunkerSpec:  # pyright: ignore[reportUnusedClass]
         """
         sig = inspect.signature(self.chunker)
         return tuple(key for key in sig.parameters if key != "elements")
+
+
+_chunker_registry: dict[str, _ChunkerSpec] = {
+    "basic": _ChunkerSpec(chunk_elements),
+    "by_title": _ChunkerSpec(chunk_by_title),
+}
