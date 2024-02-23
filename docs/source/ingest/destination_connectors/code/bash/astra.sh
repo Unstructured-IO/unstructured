@@ -5,7 +5,7 @@ EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER:-"langchain-huggingface"}
 unstructured-ingest \
   local \
   --input-path example-docs/book-war-and-peace-1p.txt \
-  --output-dir local-output-to-pinecone \
+  --output-dir local-output-to-astra \
   --strategy fast \
   --chunk-elements \
   --embedding-provider "$EMBEDDING_PROVIDER" \

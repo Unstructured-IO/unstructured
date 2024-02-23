@@ -3,7 +3,7 @@ Astra
 
 Batch process all your records using ``unstructured-ingest`` to store structured outputs and embeddings locally on your filesystem and upload those to a Astra DB index.
 
-First you'll need to install the Pinecone dependencies as shown here.
+First you'll need to install the Astra dependencies as shown here.
 
 .. code:: shell
 
