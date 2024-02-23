@@ -450,7 +450,7 @@ jobs:
     # need to checkout otherwise paths-filter will fail on merge-queue trigger
     - uses: actions/checkout@v3
     - if: github.ref != 'refs/heads/main'
-      uses: dorny/paths-filter@v2
+      uses: dorny/paths-filter@v3
       id: changes
       with:
         filters: |
