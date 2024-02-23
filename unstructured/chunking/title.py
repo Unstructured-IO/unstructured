@@ -7,11 +7,14 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional
 
+from typing_extensions import Self
+
 from unstructured.chunking.base import (
-    BasePreChunker,
+    CHUNK_MULTI_PAGE_DEFAULT,
     BoundaryPredicate,
     ChunkingOptions,
     PreChunkCombiner,
+    PreChunker,
     is_in_next_section,
     is_on_next_page,
     is_title,
@@ -22,6 +25,7 @@ from unstructured.utils import lazyproperty
 
 def chunk_by_title(
     elements: Iterable[Element],
+    *,
     max_characters: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
     combine_text_under_n_chars: Optional[int] = None,
@@ -65,7 +69,7 @@ def chunk_by_title(
         elements and not subject to text-splitting. Use this with caution as it entails a certain
         level of "pollution" of otherwise clean semantic chunk boundaries.
     """
-    opts = ChunkingOptions.new(
+    opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
         max_characters=max_characters,
         multipage_sections=multipage_sections,
@@ -75,27 +79,127 @@ def chunk_by_title(
     )
 
     pre_chunks = PreChunkCombiner(
-        _ByTitlePreChunker.iter_pre_chunks(elements, opts), opts=opts
+        PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
 
     return [chunk for pre_chunk in pre_chunks for chunk in pre_chunk.iter_chunks()]
 
 
-class _ByTitlePreChunker(BasePreChunker):
-    """Pre-chunker for the "by_title" chunking strategy.
+class _ByTitleChunkingOptions(ChunkingOptions):
+    """Adds the by-title-specific chunking options to the base case.
 
-    The "by-title" strategy specifies breaking on section boundaries; a `Title` element indicates a
-    new "section", hence the "by-title" designation.
+    `by_title`-specific options:
+
+    multipage_sections
+        Indicates that page-boundaries should not be respected while chunking, i.e. elements
+        appearing on two different pages can appear in the same chunk.
     """
 
+    def __init__(
+        self,
+        *,
+        max_characters: Optional[int] = None,
+        combine_text_under_n_chars: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ):
+        super().__init__(
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            max_characters=max_characters,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+        self._multipage_sections_arg = multipage_sections
+
+    @classmethod
+    def new(
+        cls,
+        *,
+        max_characters: Optional[int] = None,
+        combine_text_under_n_chars: Optional[int] = None,
+        multipage_sections: Optional[bool] = None,
+        new_after_n_chars: Optional[int] = None,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
+    ) -> Self:
+        """Return instance or raises `ValueError` on invalid arguments like overlap > max_chars."""
+        self = cls(
+            max_characters=max_characters,
+            combine_text_under_n_chars=combine_text_under_n_chars,
+            multipage_sections=multipage_sections,
+            new_after_n_chars=new_after_n_chars,
+            overlap=overlap,
+            overlap_all=overlap_all,
+        )
+        self._validate()
+        return self
+
     @lazyproperty
-    def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
-        """The semantic-boundary detectors to be applied to break pre-chunks."""
+    def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks.
+
+        For the `by_title` strategy these are sections indicated by a title (section-heading), an
+        explicit section metadata item (only present for certain document types), and optionally
+        page boundaries.
+        """
 
         def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
             yield is_title
             yield is_in_next_section()
-            if not self._opts.multipage_sections:
+            if not self.multipage_sections:
                 yield is_on_next_page()
 
         return tuple(iter_boundary_predicates())
+
+    @lazyproperty
+    def combine_text_under_n_chars(self) -> int:
+        """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
+
+        - Does not combine table chunks with text chunks even if they would both fit in the
+          chunking window.
+        - Does not combine text chunks if together they would exceed the chunking window.
+        - Defaults to `max_characters` when not specified.
+        - Is reduced to `new_after_n_chars` when it exceeds that value.
+        """
+        max_characters = self.hard_max
+        soft_max = self.soft_max
+        arg_value = self._combine_text_under_n_chars_arg
+
+        # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
+        combine_text_under_n_chars = max_characters if arg_value is None else arg_value
+
+        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
+        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+
+    @lazyproperty
+    def multipage_sections(self) -> bool:
+        """When False, break pre-chunks on page-boundaries."""
+        arg_value = self._multipage_sections_arg
+        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
+
+    def _validate(self) -> None:
+        """Raise ValueError if request option-set is invalid."""
+        # -- start with base-class validations --
+        super()._validate()
+
+        if (combine_text_under_n_chars_arg := self._combine_text_under_n_chars_arg) is not None:
+            # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+            # -- but a negative value is not
+            if combine_text_under_n_chars_arg < 0:
+                raise ValueError(
+                    f"'combine_text_under_n_chars' argument must be >= 0,"
+                    f" got {combine_text_under_n_chars_arg}"
+                )
+
+            # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
+            # -- users. The chunking behavior would be no different than when
+            # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
+            # -- default (500) then it can look like chunk-combining isn't working.
+            if combine_text_under_n_chars_arg > self.hard_max:
+                raise ValueError(
+                    f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
+                    f" value, got {combine_text_under_n_chars_arg} > {self.hard_max}"
+                )
