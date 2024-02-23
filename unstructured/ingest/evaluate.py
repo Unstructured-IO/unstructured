@@ -143,10 +143,7 @@ def measure_element_type_accuracy_command(
     "--data_input",
     type=str,
     required=True,
-    help="Path to the CSV/TSV file containing the data or a DataFrame.",
-    required=True,
-    default="metrics",
-    help="The directory where the aggregated results will be exported as a TSV file.",
+    help="A datafram or path to the CSV/TSV file containing the data",
 )
 @click.option(
     "--export_dir",
@@ -158,7 +155,7 @@ def measure_element_type_accuracy_command(
 def group_text_extraction_accuracy_command(grouping: str, data_input: str, export_dir: str):
     return group_text_extraction_accuracy(grouping, data_input, export_dir)
 
-  
+
 @main.command()
 @click.option("--output_dir", type=str, help="Directory to structured output.")
 @click.option("--source_dir", type=str, help="Directory to structured source.")
@@ -210,7 +207,3 @@ def measure_table_structure_accuracy_command(
     return measure_table_structure_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
     )
-
-
-if __name__ == "__main__":
-    main()
