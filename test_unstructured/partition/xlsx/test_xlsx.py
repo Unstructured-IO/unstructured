@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import sys
 import tempfile
+from typing import cast
 
 import pandas as pd
 import pandas.testing as pdt
@@ -20,7 +21,12 @@ from test_unstructured.partition.test_constants import (
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, Table, Text, Title
-from unstructured.partition.xlsx import _SubtableParser, partition_xlsx
+from unstructured.partition.xlsx import (
+    _CellCoordinate,
+    _ConnectedComponent,
+    _SubtableParser,
+    partition_xlsx,
+)
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -345,6 +351,41 @@ def test_partition_xlsx_with_more_than_1k_cells():
 # These test components used by `partition_xlsx()` in isolation such that all edge cases can be
 # exercised.
 # ------------------------------------------------------------------------------------------------
+
+
+class Describe_ConnectedComponent:
+    """Unit-test suite for `unstructured.partition.xlsx._ConnectedComponent` objects."""
+
+    def it_knows_its_top_and_left_extents(self):
+        component = _ConnectedComponent(pd.DataFrame(), {(0, 1), (2, 2), (1, 1), (2, 3), (1, 2)})
+
+        assert component.min_x == 0
+        assert component.max_x == 2
+
+    def it_can_merge_with_another_component_to_make_a_new_component(self):
+        df = pd.DataFrame()
+        component = _ConnectedComponent(df, {(0, 1), (0, 2), (1, 1)})
+        other = _ConnectedComponent(df, {(0, 4), (1, 3), (1, 4)})
+
+        merged = component.merge(other)
+
+        assert merged._worksheet is df
+        assert merged._cell_coordinate_set == {(0, 1), (0, 2), (1, 1), (0, 4), (1, 3), (1, 4)}
+
+    def it_can_extract_the_rectangular_subtable_containing_its_cells_from_the_worksheet(self):
+        worksheet_df = pd.DataFrame(
+            [["a", "b", "c"], [], ["d", "e"], ["f", "g"], [None, "h"], [], ["i"]],
+            index=[0, 1, 2, 3, 4, 5, 6],
+        )
+        cell_coordinate_set = cast("set[_CellCoordinate]", {(2, 0), (2, 1), (3, 0), (3, 1), (4, 1)})
+        component = _ConnectedComponent(worksheet_df, cell_coordinate_set)
+
+        subtable = component.subtable
+
+        print(f"{subtable=}")
+        pdt.assert_frame_equal(
+            subtable, pd.DataFrame([["d", "e"], ["f", "g"], [None, "h"]], index=[2, 3, 4])
+        )
 
 
 class Describe_SubtableParser:

@@ -20,8 +20,8 @@ repos:
         args: ["--line-length=100"]
         language_version: python3
 
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.230"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.1
     hooks:
       - id: ruff
         args:
