@@ -317,7 +317,7 @@
       "page_number": 2
     },
     "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________",
-    "type": "UncategorizedText"
+    "type": "Header"
   },
   {
     "element_id": "4c5f925a7db08289f19dbe8635d8b4cd",
@@ -497,6 +497,6 @@
       "page_number": 2
     },
     "text": "2",
-    "type": "UncategorizedText"
+    "type": "Footer"
   }
 ]
