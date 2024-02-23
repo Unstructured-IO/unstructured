@@ -182,8 +182,7 @@ def measure_element_type_accuracy(
 def group_text_extraction_accuracy(
     grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str
 ) -> None:
-    """
-    Aggregates accuracy and missing metrics by 'doctype' or 'connector', exporting to TSV.
+    """Aggregates accuracy and missing metrics by 'doctype' or 'connector', exporting to TSV.
 
     Args:
         grouping (str): Grouping category ('doctype' or 'connector').
@@ -205,8 +204,8 @@ def group_text_extraction_accuracy(
         df = data_input
     if df.empty or grouping not in df.columns or df[grouping].isnull().all():
         raise SystemExit(
-            f"Data cannot be aggregated by `{grouping}`. \
-                         Check if it's empty or the column is missing/empty."
+            f"Data cannot be aggregated by `{grouping}`."
+            f" Check if it's empty or the column is missing/empty."
         )
     grouped_acc = (
         df.groupby(grouping)
