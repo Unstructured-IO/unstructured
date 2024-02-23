@@ -247,6 +247,10 @@ install-ingest-mongodb:
 install-ingest-databricks-volumes:
 	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
 
+.PHONY: install-ingest-astra
+install-ingest-astra:
+	python3 -m pip install -r requirements/ingest/astra.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
