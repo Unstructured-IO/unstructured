@@ -4,9 +4,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterable, Optional
 
 from unstructured.chunking import add_chunking_strategy
+from unstructured.chunking.dispatch import _ChunkerSpec
 from unstructured.documents.elements import CompositeElement, Element, Text
 
 
@@ -28,7 +29,34 @@ class Describe_add_chunking_strategy:
         assert elements == [Text("Lorem ipsum."), Text("Sit amet.")]
 
 
+class Describe_ChunkerSpec:
+    """Unit-test suite for `unstructured.chunking.dispatch._ChunkerSpec` objects."""
+
+    def it_provides_access_to_the_chunking_function(self):
+        spec = _ChunkerSpec(chunk_by_something_else)
+        assert spec.chunker is chunk_by_something_else
+
+    def it_knows_which_keyword_args_the_chunking_function_can_accept(self):
+        spec = _ChunkerSpec(chunk_by_something_else)
+        assert spec.kw_arg_names == ("max_characters", "whizbang")
+
+
 # -- MODULE-LEVEL FIXTURES -----------------------------------------------------------------------
+
+
+def chunk_by_something_else(
+    elements: Iterable[Element],
+    max_characters: Optional[int] = None,
+    whizbang: Optional[float] = None,
+) -> list[Element]:
+    """A "fake" minimal chunker suitable for use in tests."""
+    els = list(elements)
+    return [
+        CompositeElement(
+            f"chunked {len(els)} elements with"
+            f" `(max_characters={max_characters}, whizbang={whizbang})`"
+        )
+    ]
 
 
 def partition_this(**kwargs: Any) -> list[Element]:

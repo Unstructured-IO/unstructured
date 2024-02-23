@@ -6,17 +6,34 @@ chunking dispatch.
 
 from __future__ import annotations
 
+import dataclasses as dc
 import functools
 import inspect
-from typing import Any, Callable
+from typing import Any, Callable, Iterable, Optional, Protocol
 
 from typing_extensions import ParamSpec
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element
+from unstructured.utils import lazyproperty
 
 _P = ParamSpec("_P")
+
+
+class Chunker(Protocol):
+    """Abstract interface for chunking functions."""
+
+    def __call__(
+        self, elements: Iterable[Element], *, max_characters: Optional[int]
+    ) -> list[Element]:
+        """A chunking function must have this signature.
+
+        In particular it must minimally have an `elements` parameter and all chunkers will have a
+        `max_characters` parameter (doesn't need to follow `elements` directly). All others can
+        vary by chunker.
+        """
+        ...
 
 
 def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
@@ -91,3 +108,20 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
         return elements
 
     return wrapper
+
+
+@dc.dataclass(frozen=True)
+class _ChunkerSpec:  # pyright: ignore[reportUnusedClass]
+    """A registry entry for a chunker."""
+
+    chunker: Chunker
+    """The "chunk_by_{x}() function that implements this chunking strategy."""
+
+    @lazyproperty
+    def kw_arg_names(self) -> tuple[str, ...]:
+        """Keyword arguments supported by this chunker.
+
+        These are all arguments other than the required `elements: list[Element]` first parameter.
+        """
+        sig = inspect.signature(self.chunker)
+        return tuple(key for key in sig.parameters if key != "elements")
