@@ -137,6 +137,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
+    include_header_footer: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
@@ -160,6 +161,8 @@ def partition_pdf(
         A string defining the target filename path.
     file
         A file-like object as bytes --> open(filename, "rb").
+    include_header_footer
+        Determine whether to include headers and footers
     strategy
         The strategy to use for partitioning the PDF. Valid strategies are "hi_res",
         "ocr_only", and "fast". When using the "hi_res" strategy, the function uses
@@ -214,6 +217,7 @@ def partition_pdf(
         filename=filename,
         file=file,
         include_page_breaks=include_page_breaks,
+        include_header_footer=include_header_footer,
         strategy=strategy,
         infer_table_structure=infer_table_structure,
         languages=languages,
@@ -232,6 +236,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
+    include_header_footer: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
@@ -314,7 +319,7 @@ def partition_pdf_or_image(
             out_elements = _process_uncategorized_text_elements(elements)
 
     elif strategy == PartitionStrategy.FAST:
-        return extracted_elements
+        out_elements = extracted_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -329,6 +334,12 @@ def partition_pdf_or_image(
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
+    else:
+        out_elements = []
+
+    if not include_header_footer:
+        exclude_types = [ElementType.HEADER, ElementType.FOOTER]
+        out_elements = [el for el in out_elements if el.category not in exclude_types]
 
     return out_elements
 
