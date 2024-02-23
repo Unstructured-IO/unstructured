@@ -17,7 +17,7 @@
       "page_number": 1
     },
     "text": "S32",
-    "type": "UncategorizedText"
+    "type": "Header"
   },
   {
     "element_id": "f7573da2765829e5fcbc8eed02057106",
@@ -117,7 +117,7 @@
       "page_number": 1
     },
     "text": "SIRS 2020 Abstracts",
-    "type": "Title"
+    "type": "Footer"
   },
   {
     "element_id": "b8b976f4707d2af116239c70acf8f2be",
@@ -137,7 +137,7 @@
       "page_number": 1
     },
     "text": "Poster Session I",
-    "type": "Title"
+    "type": "Header"
   },
   {
     "element_id": "e77987c7b17439bcfe8150c849de15a9",
