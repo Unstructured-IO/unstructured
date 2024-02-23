@@ -30,9 +30,6 @@ def run_check(token, api_endpoint, collection_name, embedding_dimension):
         f"doesn't match expected value: {expected_embeddings}"
     )
 
-    # Generate a random embedding of the appropriate length
-    # random_vector = [round(random.uniform(0, 1), 1) for _ in range(embedding_dimension)]
-
     # Grab an embedding from the collection and search against itself
     # Should get the same document back as the most similar
     find_one = astra_db_collection.find_one()
