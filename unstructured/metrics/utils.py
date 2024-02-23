@@ -205,6 +205,13 @@ def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union
     return round(statistics.pstdev(scores), rounding)
 
 
+def _count(scores: List[Optional[float]]) -> float:
+    """
+    Returns the row count of the list.
+    """
+    return len(scores)
+
+
 def _read_text_file(path):
     """
     Reads the contents of a text file and returns it as a string.

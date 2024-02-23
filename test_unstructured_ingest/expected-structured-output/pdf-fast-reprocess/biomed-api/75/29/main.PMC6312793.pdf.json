@@ -24,7 +24,7 @@
       "page_number": 1
     },
     "text": "Data in Brief 22 (2019) 484–487",
-    "type": "UncategorizedText"
+    "type": "Header"
   },
   {
     "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
@@ -399,7 +399,7 @@
       "page_number": 2
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "5844a72aee9269a68da28cae55c706d8",
@@ -1013,7 +1013,7 @@
       "page_number": 3
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "ab861dc146a84a52e48a75be2ba3f190",
@@ -1613,7 +1613,7 @@
       "page_number": 4
     },
     "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484–487",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
     "element_id": "6ad378122bcd6e47bbfc3a3d2c23984a",
