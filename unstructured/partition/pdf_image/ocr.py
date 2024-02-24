@@ -198,13 +198,13 @@ def supplement_page_layout_with_ocr(
     """
 
     ocr_agent = get_ocr_agent()
-    if ocr_mode == OCRMode.FULL_PAGE.value or infer_table_structure:
+    ocr_layout = None
+
+    if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = ocr_agent.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
         )
-
-    if ocr_mode == OCRMode.FULL_PAGE.value:
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
@@ -243,6 +243,12 @@ def supplement_page_layout_with_ocr(
         if tables.tables_agent is None:
             raise RuntimeError("Unable to load table extraction agent.")
 
+        if ocr_layout is None:
+            ocr_layout = ocr_agent.get_layout_from_image(
+                image,
+                ocr_languages=ocr_languages,
+            )
+
         page_layout.elements[:] = supplement_element_with_table_extraction(
             elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
@@ -267,7 +273,9 @@ def supplement_element_with_table_extraction(
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
         table_tokens = [
-            token for token in ocr_layout if token.bbox.is_in(element.bbox, error_margin=0.0)
+            token
+            for token in ocr_layout
+            if token.bbox.is_in(element.bbox, error_margin=env_config.TABLE_TOKEN_ERROR_MARGIN)
         ]
         table_tokens = get_table_tokens_from_layout(table_tokens)
 
