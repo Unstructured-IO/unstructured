@@ -1136,6 +1136,25 @@ def test_partition_pdf_with_fast_finds_headers_footers(filename="example-docs/he
     ]
 
 
+@pytest.mark.parametrize("strategy", ["auto", "fast", "ocr_only", "hi_res"])
+@pytest.mark.parametrize("include_header_footer", [True, False])
+def test_partition_pdf_with_headers_footers(
+    strategy,
+    include_header_footer,
+    filename="example-docs/header-test-doc.pdf",
+):
+    elements = pdf.partition_pdf(
+        filename, strategy=strategy, include_header_footer=include_header_footer
+    )
+    header_footer_elements = [
+        el for el in elements if el.category in [ElementType.HEADER, ElementType.FOOTER]
+    ]
+    if include_header_footer:
+        assert len(header_footer_elements) > 0
+    else:
+        assert len(header_footer_elements) == 0
+
+
 @pytest.mark.parametrize(
     ("filename", "expected_log"),
     [
