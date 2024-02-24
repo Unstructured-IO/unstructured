@@ -198,11 +198,13 @@ def supplement_page_layout_with_ocr(
     """
 
     ocr_agent = get_ocr_agent()
-    if ocr_mode == OCRMode.FULL_PAGE.value:
+    if ocr_mode == OCRMode.FULL_PAGE.value or infer_table_structure:
         ocr_layout = ocr_agent.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
         )
+
+    if ocr_mode == OCRMode.FULL_PAGE.value:
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
             out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
@@ -245,6 +247,7 @@ def supplement_page_layout_with_ocr(
             elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
             tables_agent=tables.tables_agent,
+            ocr_layout=ocr_layout,
         )
 
     return page_layout
@@ -254,6 +257,7 @@ def supplement_element_with_table_extraction(
     elements: List["LayoutElement"],
     image: PILImage,
     tables_agent: "UnstructuredTableTransformerModel",
+    ocr_layout: List["TextRegion"],
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata field "text_as_html" where
@@ -263,10 +267,7 @@ def supplement_element_with_table_extraction(
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
         table_tokens = [
-            el
-            for el in elements
-            if el != element
-            and el.bbox.is_in(element.bbox, error_margin=0.0)
+            token for token in ocr_layout if token.bbox.is_in(element.bbox, error_margin=0.0)
         ]
         table_tokens = get_table_tokens_from_layout(table_tokens)
 

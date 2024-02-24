@@ -521,12 +521,36 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
         strategy=PartitionStrategy.HI_RES,
         infer_table_structure=True,
     )
-    table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
-    assert len(table) == 2
-    assert "<table><thead><th>" in table[0]
-    assert "Layouts of history Japanese documents" in table[0]
-    assert "Layouts of scanned modern magazines and scientific report" in table[0]
-    assert "Layouts of scanned US newspapers from the 20th century" in table[0]
+    tables = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
+    assert len(tables) == 2
+    assert "<table><thead><th>" in tables[0]
+    assert "Layouts of history Japanese documents" in tables[0]
+    assert "Layouts of scanned modern magazines and scientific report" in tables[0]
+    assert "Layouts of scanned US newspapers from the 20th century" in tables[0]
+
+
+@pytest.mark.parametrize(
+    "ocr_mode",
+    [
+        "entire_page",
+        "individual_blocks",
+    ],
+)
+def test_acciona(ocr_mode):
+    filename = example_doc_path("acciona.pdf")
+    elements = pdf.partition_pdf(
+        filename=filename,
+        ocr_mode=ocr_mode,
+        strategy=PartitionStrategy.HI_RES,
+        infer_table_structure=True,
+    )
+    assert elements is not None
+
+    tables = [el.metadata.text_as_html for el in elements if el.category == "Table"]
+    assert len(tables) == 1
+    assert """<table><thead><th colspan="10">""" in tables[0]
+    assert "<tr><td>Spain</td><td>2,673</td><td>367</td><td>51</td><td>-0.7" in tables[0]
+    assert "<tr><td>Germany</td><td>12</td><td>75</td><td>-8</td><td>-0.1</td>" in tables[0]
 
 
 def test_partition_pdf_with_copy_protection():
