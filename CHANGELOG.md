@@ -1,9 +1,10 @@
-## 0.12.5-dev10
+## 0.12.5-dev11
 
 ### Enhancements
 
 ### Features
 
+* **Add support for including/excluding headers and footers when partitioning pdfs**
 * **Header and footer detection for fast strategy.** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
