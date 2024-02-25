@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable
 
 from typing_extensions import ParamSpec
 
@@ -16,17 +16,19 @@ from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element
 
+__all__ = ["CHUNK_MAX_CHARS_DEFAULT", "CHUNK_MULTI_PAGE_DEFAULT", "add_chunking_strategy"]
+
 _P = ParamSpec("_P")
 
 
-def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+def add_chunking_strategy() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Decorator for chunking text.
 
     Chunks the element sequence produced by the partitioner it decorates when a `chunking_strategy`
     argument is present in the partitioner call and it names an available chunking strategy.
     """
 
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         # -- Patch the docstring of the decorated function to add chunking strategy and
         # -- chunking-related argument documentation. This only applies when `chunking_strategy`
         # -- is an explicit argument of the decorated function and "chunking_strategy" is not
@@ -53,13 +55,13 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
             )
 
         @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             """The decorated function is replaced with this one."""
 
-            def get_call_args_applying_defaults() -> Dict[str, Any]:
+            def get_call_args_applying_defaults() -> dict[str, Any]:
                 """Map both explicit and default arguments of decorated func call by param name."""
                 sig = inspect.signature(func)
-                call_args: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+                call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
                 for param in sig.parameters.values():
                     if param.name not in call_args and param.default is not param.empty:
                         call_args[param.name] = param.default
@@ -74,23 +76,21 @@ def add_chunking_strategy() -> Callable[[Callable[_P, List[Element]]], Callable[
             if call_args.get("chunking_strategy") == "by_title":
                 return chunk_by_title(
                     elements,
-                    combine_text_under_n_chars=call_args.get("combine_text_under_n_chars", None),
-                    max_characters=call_args.get("max_characters", CHUNK_MAX_CHARS_DEFAULT),
-                    multipage_sections=call_args.get(
-                        "multipage_sections", CHUNK_MULTI_PAGE_DEFAULT
-                    ),
-                    new_after_n_chars=call_args.get("new_after_n_chars", None),
-                    overlap=call_args.get("overlap", 0),
-                    overlap_all=call_args.get("overlap_all", False),
+                    combine_text_under_n_chars=call_args.get("combine_text_under_n_chars"),
+                    max_characters=call_args.get("max_characters"),
+                    multipage_sections=call_args.get("multipage_sections"),
+                    new_after_n_chars=call_args.get("new_after_n_chars"),
+                    overlap=call_args.get("overlap"),
+                    overlap_all=call_args.get("overlap_all"),
                 )
 
             if call_args.get("chunking_strategy") == "basic":
                 return chunk_elements(
                     elements,
-                    max_characters=call_args.get("max_characters", CHUNK_MAX_CHARS_DEFAULT),
-                    new_after_n_chars=call_args.get("new_after_n_chars", None),
-                    overlap=call_args.get("overlap", 0),
-                    overlap_all=call_args.get("overlap_all", False),
+                    max_characters=call_args.get("max_characters"),
+                    new_after_n_chars=call_args.get("new_after_n_chars"),
+                    overlap=call_args.get("overlap"),
+                    overlap_all=call_args.get("overlap_all"),
                 )
 
             return elements

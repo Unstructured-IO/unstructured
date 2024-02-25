@@ -14,7 +14,6 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.chunking.base import CHUNK_MAX_CHARS_DEFAULT, CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
@@ -219,11 +218,11 @@ class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
     chunking_strategy: t.Optional[str] = None
     combine_text_under_n_chars: t.Optional[int] = None
-    max_characters: int = CHUNK_MAX_CHARS_DEFAULT
-    multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT
+    max_characters: t.Optional[int] = None
+    multipage_sections: t.Optional[bool] = None
     new_after_n_chars: t.Optional[int] = None
-    overlap: int = 0
-    overlap_all: bool = False
+    overlap: t.Optional[int] = None
+    overlap_all: t.Optional[bool] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
         chunking_strategy = (
