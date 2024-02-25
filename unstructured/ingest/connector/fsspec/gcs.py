@@ -15,7 +15,7 @@ from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import AccessConfig
 from unstructured.utils import requires_dependencies
-
+from unstructured.ingest.utils.string_utils import json_to_dict
 
 @dataclass
 class GcsAccessConfig(AccessConfig):
@@ -25,24 +25,36 @@ class GcsAccessConfig(AccessConfig):
 
     def __post_init__(self):
         ALLOWED_AUTH_VALUES = "google_default", "cache", "anon", "browser", "cloud"
+        print("****")
+        print(self.token)
+        print("****")
+
         # Case: null value
         if not self.token:
+            print("not self token")
             return
         # Case: one of auth constants
         if self.token in ALLOWED_AUTH_VALUES:
+            print("******************* we gotta constant")
             return
         # Case: token as json
-        try:
-            str_token = self.token.replace("'", '"')
-            str_token = json.loads(str_token)
-        except json.JSONDecodeError:
-            # Not neccessary an error if it is a path
-            pass
-        else:
-            self.token = str_token
+        if isinstance(json_to_dict(self.token), dict):
+            print("******************* we gotta dict")
+            self.token = json_to_dict(self.token)
             return
+
+        # try:
+        #     str_token = self.token.replace("'", '"')
+        #     str_token = json.loads(str_token)
+        # except json.JSONDecodeError:
+        #     # Not neccessary an error if it is a path
+        #     pass
+        # else:
+        #     self.token = str_token
+        #     return
         # Case: path to token
         if Path(self.token).is_file():
+            print("******************* we gotta path")
             return
 
         raise ValueError("Invalid auth token value")
