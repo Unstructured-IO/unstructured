@@ -207,3 +207,7 @@ def measure_table_structure_accuracy_command(
     return measure_table_structure_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
     )
+
+
+if __name__ == "__main__":
+    main()
