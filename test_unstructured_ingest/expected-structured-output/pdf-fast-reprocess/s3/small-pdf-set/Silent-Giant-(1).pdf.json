@@ -277,7 +277,7 @@
       "page_number": 3
     },
     "text": "1",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
@@ -297,7 +297,7 @@
       "page_number": 4
     },
     "text": "2",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "2960604e965650bbf4215790bc9db0c1",
@@ -1337,7 +1337,7 @@
       "page_number": 5
     },
     "text": "3",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
@@ -1357,7 +1357,7 @@
       "page_number": 6
     },
     "text": "4",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "1e5daa43ba0635dfd0531f977293b55d",
@@ -1897,7 +1897,7 @@
       "page_number": 7
     },
     "text": "5",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
@@ -1917,7 +1917,7 @@
       "page_number": 8
     },
     "text": "6",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "4acd9d695e499834265cbd3b43734f02",
@@ -3477,7 +3477,7 @@
       "page_number": 9
     },
     "text": "7",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "2c624232cdd221771294dfbb310aca00",
@@ -3497,7 +3497,7 @@
       "page_number": 10
     },
     "text": "8",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "3c6336f12bcbf4d1ca36bef92d77efea",
@@ -3877,7 +3877,7 @@
       "page_number": 12
     },
     "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org",
-    "type": "Title"
+    "type": "Header"
   },
   {
     "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
@@ -3917,6 +3917,6 @@
       "page_number": 12
     },
     "text": "The Silent Giant © 2019 World Nuclear Association. Registered in England and Wales, company number 01215741",
-    "type": "NarrativeText"
+    "type": "Footer"
   }
 ]

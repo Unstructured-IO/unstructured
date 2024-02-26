@@ -14,6 +14,8 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     EmailAddress,
+    Footer,
+    Header,
     ListItem,
     NarrativeText,
     Text,
@@ -213,12 +215,60 @@ def is_empty_bullet(text: str) -> bool:
     return UNICODE_BULLETS_RE.match(text) and len(text) == 1
 
 
+def _get_height_percentage(
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
+) -> float:
+    avg_y = sum([coordinate[1] for coordinate in coordinates]) / len(coordinates)
+    return avg_y / coordinate_system.height
+
+
+def is_in_header_position(
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
+    threshold: float = 0.07,
+) -> bool:
+    """Checks to see if the position of the text indicates that the text belongs
+    to a header."""
+    if coordinates is None or coordinate_system is None:
+        return False
+
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
+    return height_percentage < threshold
+
+
+def is_in_footer_position(
+    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinate_system: Optional[CoordinateSystem] = None,
+    threshold: float = 0.93,
+) -> bool:
+    """Checks to see if the position of the text indicates that the text belongs
+    to a footer."""
+    if coordinates is None or coordinate_system is None:
+        return False
+
+    height_percentage = _get_height_percentage(coordinates, coordinate_system)
+    return height_percentage > threshold
+
+
 def element_from_text(
     text: str,
     coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
-    if is_bulleted_text(text):
+    if is_in_header_position(coordinates, coordinate_system):
+        return Header(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    elif is_in_footer_position(coordinates, coordinate_system):
+        return Footer(
+            text=text,
+            coordinates=coordinates,
+            coordinate_system=coordinate_system,
+        )
+    elif is_bulleted_text(text):
         clean_text = clean_bullets(text)
         return ListItem(
             text=clean_text,
