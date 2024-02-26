@@ -137,7 +137,7 @@ def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
     include_page_breaks: bool = False,
-    include_header_footer: bool = False,
+    include_header_footer: bool = True,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
@@ -236,7 +236,7 @@ def partition_pdf_or_image(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
-    include_header_footer: bool = False,
+    include_header_footer: bool = True,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
@@ -338,8 +338,10 @@ def partition_pdf_or_image(
         out_elements = []
 
     if not include_header_footer:
-        exclude_types = [ElementType.HEADER, ElementType.FOOTER]
-        out_elements = [el for el in out_elements if el.category not in exclude_types]
+        # remove "Header" and "Footer" elements
+        out_elements = [
+            el for el in out_elements if el.category not in [ElementType.HEADER, ElementType.FOOTER]
+        ]
 
     return out_elements
 
