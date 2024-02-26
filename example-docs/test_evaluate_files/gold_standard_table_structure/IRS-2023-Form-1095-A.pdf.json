@@ -1,0 +1,1045 @@
+[
+    {
+        "type": "Title",
+        "text": "CAUTION: NOT FOR FILING"
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Form 1095-A is provided here for informational purposes only. "
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Health Insurance Marketplaces use Form 1095-A to report information on enrollments in a qualified health plan in the individual market through the Marketplace. As the form is to be completed by the Marketplaces, individuals cannot complete and use Form 1095-A available on IRS.gov. Individuals receiving a completed Form 1095-A from the Health Insurance Marketplace will use the information received on the form and the guidance in the instructions to assist them in filing an accurate tax return."
+    },
+    {
+        "type": "OtherText",
+        "text": "Form"
+    },
+    {
+        "type": "OtherText",
+        "text": "1095-A"
+    },
+    {
+        "type": "OtherText",
+        "text": "Department of the Treasury Internal Revenue Service"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "OtherText",
+        "text": "Do not attach to your tax return. Keep for your records. Go to www.irs.gov/Form1095A for instructions and the latest information."
+    },
+    {
+        "type": "FieldName",
+        "text": "VOID"
+    },
+    {
+        "type": "Checkbox"
+    },
+    {
+        "type": "FieldName",
+        "text": "CORRECTED"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "OtherText",
+        "text": "OMB No. 1545-2232"
+    },
+    {
+        "type": "OtherText",
+        "text": 2023
+    },
+    {
+        "type": "Title",
+        "text": "Part I Recipient Information"
+    },
+    {
+        "type": "FieldName",
+        "text": "1 Marketplace identifier"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "2 Marketplace-assigned policy number"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "3 Policy issuer\u2019s name"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "4 Recipient\u2019s name"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "5 Recipient\u2019s SSN"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "6 Recipient\u2019s date of birth"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "7 Recipient\u2019s spouse\u2019s name"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "Title",
+        "text": "8 Recipient\u2019s spouse\u2019s SSN"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "9 Recipient\u2019s spouse\u2019s date of birth "
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "10 Policy start date"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "11 Policy termination date"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "12 Street address (including apartment no.) "
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "13 City or town"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "14 State or province"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "FieldName",
+        "text": "15 Country and ZIP or foreign postal code"
+    },
+    {
+        "type": "Form"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "657563c9-c171-44ed-9ab8-a6d08b05048c",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "A. Covered individual name"
+            },
+            {
+                "id": "8595ae30-7d54-43d7-bdf5-13a7873cff46",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "0867f85f-3f71-44db-9609-dfda44a52dd4",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "16"
+            },
+            {
+                "id": "0ca9e7e7-d11f-459e-8101-d00de55f2316",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "17"
+            },
+            {
+                "id": "feb5cadc-96a7-4e89-9ade-01ac2b05ec36",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "18"
+            },
+            {
+                "id": "f8579ca6-6acd-46df-ac84-3cb7e13a64a9",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "19"
+            },
+            {
+                "id": "360ecc1b-96ad-4391-91a5-f94535e9c9ab",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "B. Covered individual SSN"
+            },
+            {
+                "id": "faaa1b8b-e0bb-46f3-b65f-bcf6ffc8e863",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "fc65f43e-23c2-477a-8a24-adab039eed8b",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5f36b45f-b2e4-4e74-ba1e-6881f8b03aa0",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "66869fdb-cb54-4b98-923d-2756f1a27b1d",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "6fb02efd-4ce2-4a9b-a387-963496b14261",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "77268843-8604-443c-9f30-5bdf7de9e1b8",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "C. Covered individual date of birth"
+            },
+            {
+                "id": "7ba37a21-edec-4108-b6b3-673d1de14aa5",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "7bc45ede-99e9-4516-9ed5-de8342cc072a",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "37bfef7a-cf69-4129-ae7e-63c858687cf4",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "778da61f-3ec4-4576-950b-9c66dba79c32",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5f70aa45-40dd-421d-945a-e28e1768f646",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "314f8733-09b2-4351-9eeb-4ac5ea5140df",
+                "x": 4,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "D. Coverage start date"
+            },
+            {
+                "id": "6839a7e6-79d1-400f-ae2f-4debe8042c3c",
+                "x": 3,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "aa7f81da-3643-49d5-ab6e-c9b5b6ec1e77",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5039c0ea-22b3-4bf7-b9a2-02598387524d",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "8aa03b68-8e7f-4500-99a5-91b144ccfb71",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "12eb0226-1ac1-4663-a98d-e50d767db65f",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "343dbfed-8303-4e17-bb23-1089b41cd78c",
+                "x": 5,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "E. Coverage termination date"
+            },
+            {
+                "id": "946c5432-7c9b-495b-b00b-d04d4d3cc13a",
+                "x": 4,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "905db137-d39d-4e92-8cc0-9f57a2ea0ffc",
+                "x": 4,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "3a7735c5-30e2-44a1-8add-e73801b4e797",
+                "x": 4,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "4532505b-3bdb-4c27-b2d1-33e4a23eda4f",
+                "x": 4,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "04d29ccb-beb2-478f-ae6b-e16817c984c2",
+                "x": 4,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "b7df1987-72e1-4688-b194-39c55944ea96",
+                "x": 5,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "e960f84d-3f41-4d58-a08b-78792a196b97",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "20"
+            },
+            {
+                "id": "da482938-3c09-45d8-bd63-c7e5a1dd6d8c",
+                "x": 5,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "d25a7209-ca80-4f25-8c6b-66855d1eff17",
+                "x": 5,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "81faf9d9-96aa-4962-9fca-2c146eabc2d4",
+                "x": 5,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "4d339204-d94b-44f9-b4b5-08a18fcb38a3",
+                "x": 5,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            }
+        ]
+    },
+    {
+        "type": "Title",
+        "text": "Part III Coverage Information"
+    },
+    {
+        "type": "Table",
+        "text": [
+            {
+                "id": "ea5f49f2-6687-48c1-8299-eefc78d11351",
+                "x": 0,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "Month"
+            },
+            {
+                "id": "8ee50481-a80e-4ee4-b04e-7d9bbe878d53",
+                "x": 0,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": "21 January"
+            },
+            {
+                "id": "57f29578-aa65-4610-ba1c-7719ba0f6f5f",
+                "x": 0,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": "22 February"
+            },
+            {
+                "id": "59b3bd88-73a0-48ed-8c6a-ac55a570af57",
+                "x": 0,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": "23 March"
+            },
+            {
+                "id": "46d83d2b-10cf-45e8-869d-4a84b2ef32e8",
+                "x": 0,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": "24 April"
+            },
+            {
+                "id": "0820b904-aa4e-4646-8965-79e97b9e86b7",
+                "x": 0,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": "25 May"
+            },
+            {
+                "id": "e6baa1e5-6719-4e4e-b5cd-426f7f6b48d8",
+                "x": 0,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": "26 June"
+            },
+            {
+                "id": "fc376860-8f6b-45c8-892d-7063333c94e5",
+                "x": 0,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": "27 July"
+            },
+            {
+                "id": "5069545a-383b-4736-8c18-b6dbb3de34ec",
+                "x": 0,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": "28 August"
+            },
+            {
+                "id": "37eb374e-3a4e-4bd9-ab22-7ba5ef81b9bc",
+                "x": 0,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": "29 September"
+            },
+            {
+                "id": "763a6649-3dcc-463c-ab98-b887c3fe1374",
+                "x": 0,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": "30 October"
+            },
+            {
+                "id": "66cdcf85-7bea-43da-b77e-7678ae0cb2b8",
+                "x": 0,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": "31 November"
+            },
+            {
+                "id": "b9a69368-9484-4d0f-8c51-c818c0e76586",
+                "x": 0,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": "32 December"
+            },
+            {
+                "id": "4a0f9346-e038-43f5-8900-79ad2da3fe0d",
+                "x": 1,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "A. Monthly enrollment premiums"
+            },
+            {
+                "id": "caf8421a-aa60-4396-815a-86b9411b73cd",
+                "x": 1,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "ebc58619-132b-4b46-8faf-b2f87c92710b",
+                "x": 1,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "a16a0b58-146c-4fb8-9ebc-99ba46f6892a",
+                "x": 1,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "6ec88b21-3c50-4c0b-8413-245b7294bd37",
+                "x": 1,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "ef3780a5-237a-4e94-bca0-27120d7e79b5",
+                "x": 1,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "014e36e3-85ef-4351-b6e5-c076b642c8de",
+                "x": 1,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "28e929b4-1442-47b6-b2fc-3affbfa2c1b0",
+                "x": 1,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5a17c05c-cab2-4bf7-a8bb-4a800ed41fea",
+                "x": 1,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "0b7eb731-614d-4e1d-afe5-2ac07f380c64",
+                "x": 1,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "318416a3-37fc-49ce-91b5-23d36c6dc118",
+                "x": 1,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "010a7b94-e7d5-4cc6-95db-c9d3253cf293",
+                "x": 1,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "af1fe85f-bce1-48f5-9d68-aa77f074a6fa",
+                "x": 1,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "3ab4a7ab-6b56-4ab1-8b06-c0f90b2f3119",
+                "x": 2,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "B. Monthly second lowest cost silver plan (SLCSP) premium"
+            },
+            {
+                "id": "d786af08-d2c4-4777-b718-17dacd8425ab",
+                "x": 2,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "0a6144b8-4e44-46c1-bce5-ff71a9cb25bf",
+                "x": 2,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "42b5bc05-91d1-4346-b35a-1eaf55a226a7",
+                "x": 2,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "736a49c9-8c01-4292-bb95-529553bd2657",
+                "x": 2,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "58b56847-4221-43d1-b4a6-986342a2e530",
+                "x": 2,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "e773a8f1-a291-4dbc-8d15-5a6f489bbcc4",
+                "x": 2,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "7c81e3fa-1396-4f33-b5b0-3fb32d5cc4e1",
+                "x": 2,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "45b005dd-f00f-47a7-a9a7-081605cbf478",
+                "x": 2,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "cae5e9c3-fe6d-43d4-b2dd-4e3c188fc121",
+                "x": 2,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "d7420d14-8bcf-4edb-8ca3-a651017155f5",
+                "x": 2,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "3557079d-affc-493f-b61d-4c5fe2189b78",
+                "x": 2,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "d117ff25-7ee7-42eb-80d3-8d0fbc1fe266",
+                "x": 2,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "690af963-4d2b-4ebd-8d19-53211bb3053b",
+                "x": 3,
+                "y": 0,
+                "w": 1,
+                "h": 1,
+                "content": "C. Monthly advance payment of premium tax credit"
+            },
+            {
+                "id": "387f2f5c-ac2d-45c7-ad1f-c2a18fe2cd8f",
+                "x": 3,
+                "y": 1,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "45cb6141-959c-4a58-ba12-eecad5d35dec",
+                "x": 3,
+                "y": 2,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "eba1dd01-22b1-46b4-8625-c100ec96f930",
+                "x": 3,
+                "y": 3,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "8d3509d1-f062-471f-9902-ba496641e31e",
+                "x": 3,
+                "y": 4,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "91e64816-75ab-48cf-9966-c8f69e3913f8",
+                "x": 3,
+                "y": 5,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "94dc0295-452e-497a-ba03-1e6b7c69d056",
+                "x": 3,
+                "y": 6,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "90931669-311d-4848-bf16-ab54c0203e0c",
+                "x": 3,
+                "y": 7,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "b7478ae4-208d-4b3d-b6b2-a98ec39ab0bd",
+                "x": 3,
+                "y": 8,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "5beef0b5-404a-46d3-9b14-a25bfb114f01",
+                "x": 3,
+                "y": 9,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "87e5ff19-84e0-4a88-876d-6ab3e63f23c2",
+                "x": 3,
+                "y": 10,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "ba40ad11-e974-4a22-92a8-b0cf5428e612",
+                "x": 3,
+                "y": 11,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "69a0c5f0-f744-45c6-b696-2ad9d5de78e8",
+                "x": 3,
+                "y": 12,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "2667d7fa-8fbe-419a-8cd2-5d44625b3c46",
+                "x": 0,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": "33 Annual Totals"
+            },
+            {
+                "id": "74c54cc7-c832-4a96-8948-28a32827ffa4",
+                "x": 1,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "be4cbc81-5453-4676-9a41-cb8ed38031af",
+                "x": 2,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            },
+            {
+                "id": "cbf8519e-91b5-46b3-b5ab-3623ec70548a",
+                "x": 3,
+                "y": 13,
+                "w": 1,
+                "h": 1,
+                "content": ""
+            }
+        ]
+    },
+    {
+        "type": "OtherText",
+        "text": "For Privacy Act and Paperwork Reduction Act Notice, see separate instructions."
+    },
+    {
+        "type": "OtherText",
+        "text": "Cat. No. 60703Q"
+    },
+    {
+        "type": "OtherText",
+        "text": "Form 1095-A (2023)"
+    },
+    {
+        "type": "Checkbox"
+    },
+    {
+        "type": "OtherText",
+        "text": "Form 1095-A (2023)"
+    },
+    {
+        "type": "Header"
+    },
+    {
+        "type": "PageNumber",
+        "text": "Page 2"
+    },
+    {
+        "type": "Title",
+        "text": 1
+    },
+    {
+        "type": "NarrativeText",
+        "text": "You received this Form 1095-A because you or a family member enrolled in health insurance coverage through the Health Insurance Marketplace. This Form 1095-A provides information you need to complete Form 8962, Premium Tax Credit (PTC). You must complete Form 8962 and file it with your tax return (Form 1040, Form 1040-SR, or Form 1040-NR) if any amount other than zero is shown in Part III, column C, of this Form 1095-A (meaning that you received premium assistance through advance payments of the premium tax credit (also called advance credit payments)) or if you want to take the premium tax credit. The filing requirement applies whether or not you\u2019re otherwise required to file a tax return. If you are filing Form 8962, you cannot file Form 1040-NR-EZ, Form 1040-SS, or Form 1040-PR. The Marketplace has also reported the information on this form to the IRS. If you or your family members enrolled at the Marketplace in more than one qualified health plan policy, you will receive a Form 1095-A for each policy. Check the information on this form carefully. Please contact your Marketplace if you have questions concerning its accuracy. If you or your family members were enrolled in a Marketplace catastrophic health plan or separate dental policy, you aren\u2019t entitled to take a premium tax credit for this coverage when you file your return, even if you received a Form 1095-A for this coverage. For additional information related to Form 1095-A, go to www.irs.gov/Affordable-Care-Act/Individuals-and- Families/Health-Insurance-Marketplace-Statements."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Additional information. For additional information about the tax provisions of the Affordable Care Act (ACA), including the premium tax credit, see www.irs.gov/Affordable-Care-Act/Individuals-and-Families or call the IRS Healthcare Hotline for ACA questions (800-919-0452)."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "VOID box. If the \u201cVOID\u201d box is checked at the top of the form, you previously received a Form 1095-A for the policy described in Part I. That Form 1095-A was sent in error. You shouldn\u2019t have received a Form 1095-A for this policy. Don\u2019t use the information on this or the previously received Form 1095-A to figure your premium tax credit on Form 8962."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "CORRECTED box. If the \u201cCORRECTED\u201d box is checked at the top of the form, use the information on this Form 1095-A to figure the premium tax credit and reconcile any advance credit payments on Form 8962. Don\u2019t use the information on the original Form 1095-A you received for this policy."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Part I. Recipient Information, lines 1\u201315. Part I reports information about you, the insurance company that issued your policy, and the Marketplace where you enrolled in the coverage."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 1. This line identifies the state where you enrolled in coverage through the Marketplace."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 2. This line is the policy number assigned by the Marketplace to identify the policy in which you enrolled. If you are completing Part IV of Form 8962, enter this number on line 30, 31, 32, or 33, box a."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 3. This is the name of the insurance company that issued your policy."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 4. You are the recipient because you are the person the Marketplace identified at enrollment who is expected to file a tax return and who, if qualified, would take the premium tax credit for the year of coverage."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 5. This is your social security number (SSN). For your protection, this form may show only the last four digits. However, the Marketplace has reported your complete SSN to the IRS."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Line 6. A date of birth will be entered if there is no SSN on line 5."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Lines 7, 8, and 9. Information about your spouse will be entered only if advance credit payments were made for your coverage. The date of birth will be entered on line 9 only if line 8 is blank."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Lines 10 and 11. These are the starting and ending dates of the policy."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Lines 12 through 15. Your address is entered on these lines."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Part II. Covered Individuals, lines 16\u201320. Part II reports information about each individual who is covered under your policy. This information includes the name, SSN, date of birth, and the starting and ending dates of coverage for each covered individual. For each line, a date of birth is reported in column C only if an SSN isn\u2019t entered in column B."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "If advance credit payments are made, the only individuals listed on Form 1095-A will be those whom you certified to the Marketplace would be in your tax family for the year of coverage (yourself, spouse, and dependents). If you certified to the Marketplace at enrollment that one or more of the individuals who enrolled in the plan aren\u2019t individuals who would be in your tax family for the year of coverage, those individuals won\u2019t be listed on your Form 1095-A. For example, if you indicated to the Marketplace at enrollment that an individual enrolling in the policy is your adult child who will not be your dependent for the year of coverage, that child will receive a separate Form 1095-A and won\u2019t be listed in Part II on your Form 1095-A."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "If advance credit payments are made and you certify that one or more enrolled individuals aren\u2019t individuals who would be in your tax family for the year of coverage, your Form 1095-A will include coverage information in Part III that is applicable solely to the individuals listed on your Form 1095-A, and separately issued Forms 1095-A will include coverage information, including dollar amounts, applicable to those individuals not in your tax family."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "If advance credit payments weren\u2019t made and you didn\u2019t identify at enrollment the individuals who would be in your tax family for the year of coverage, Form 1095-A will list all enrolled individuals in Part II on your Form 1095-A."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "If there are more than five individuals covered by a policy, you will receive one or more additional Forms 1095-A that continue Part II. Part III. Coverage Information, lines 21\u201333."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Part III reports information about your insurance coverage that you will need to complete Form 8962 to reconcile advance credit payments or to take the premium tax credit when you file your return."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Column A. This column is the monthly premiums for the plan in which you or family members were enrolled, including premiums that you paid and premiums that were paid through advance payments of the premium tax credit. If you or a family member enrolled in a separate dental plan with pediatric benefits, this column includes the portion of the dental plan premiums for the pediatric benefits. If your plan covered benefits that aren\u2019t essential health benefits, such as adult dental or vision benefits, the amount in this column will be reduced by the premiums for the nonessential benefits. If the policy was terminated by your insurance company due to nonpayment of premiums for 1 or more months, then a -0- will appear in this column for these months regardless of whether advance credit payments were made for these months. See the instructions for Form 8962, Part II, on how to complete Form 8962 if -0- is reported for 1 or more months."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Column B. This column is the monthly premium for the second lowest cost silver plan (SLCSP) that the Marketplace has determined applies to members of your family enrolled in the coverage. The applicable SLCSP premium is used to compute your monthly advance credit payments and the premium tax credit you take on your return. See the instructions for Form 8962, Part II, on how to use the information in this column or how to complete Form 8962 if there is no information entered, the information is incorrect, or the information is reported as -0-. If the policy was terminated by your insurance company due to nonpayment of premiums for 1 or more months, then a -0- will appear in this column for the months, regardless of whether advance credit payments were made for these months."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Column C. This column is the monthly amount of advance credit payments that were made to your insurance company on your behalf to pay for all or part of the premiums for your coverage. If this is the only column in Part III that is filled in with an amount other than zero for a month, it means your policy was terminated by your insurance company due to nonpayment of premiums, and you aren\u2019t entitled to take the premium tax credit for that month when you file your tax return. You must still reconcile the entire advance payment that was paid on your behalf for that month using Form 8962. No information will be entered in this column if no advance credit payments were made."
+    },
+    {
+        "type": "NarrativeText",
+        "text": "Lines 21\u201333. The Marketplace will report the amounts in columns A, B, and C on lines 21\u201332 for each month and enter the totals on line 33. Use this information to complete Form 8962, line 11 or lines 12\u201323."
+    }
+]

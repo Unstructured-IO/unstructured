@@ -1,7 +1,6 @@
 import tempfile
 from typing import Any, BinaryIO, List, Tuple
 
-import pikepdf
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTContainer, LTImage
 from pdfminer.pdfinterp import PDFPageInterpreter, PDFResourceManager
@@ -9,7 +8,7 @@ from pdfminer.pdfpage import PDFPage
 from pdfminer.pdfparser import PSSyntaxError
 
 from unstructured.logger import logger
-from unstructured.partition.pdf_image.pypdf_utils import get_page_data
+from unstructured.utils import requires_dependencies
 
 
 def init_pdfminer():
@@ -79,10 +78,15 @@ def rect_to_bbox(
     return (x1, y1, x2, y2)
 
 
+@requires_dependencies(["pikepdf", "pypdf"])
 def open_pdfminer_pages_generator(
     fp: BinaryIO,
 ):
     """Open PDF pages using PDFMiner, handling and repairing invalid dictionary constructs."""
+
+    import pikepdf
+
+    from unstructured.partition.pdf_image.pypdf_utils import get_page_data
 
     device, interpreter = init_pdfminer()
     try:

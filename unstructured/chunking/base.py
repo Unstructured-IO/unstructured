@@ -4,22 +4,10 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import (
-    Any,
-    Callable,
-    DefaultDict,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    cast,
-)
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, Sequence, cast
 
 import regex
-from typing_extensions import Self, TypeAlias
+from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -36,13 +24,19 @@ from unstructured.utils import lazyproperty
 # -- CONSTANTS -----------------------------------
 
 CHUNK_MAX_CHARS_DEFAULT: int = 500
-"""Hard-max chunk-length when no explicit value specified in `max_characters` argument."""
+"""Hard-max chunk-length when no explicit value specified in `max_characters` argument.
+
+Provided for reference only, for example so the ingest CLI can advertise the default value in its
+UI. External chunking-related functions (e.g. in ingest or decorators) should use
+`max_characters: Optional[int] = None` and not apply this default themselves. Only
+`ChunkingOptions.max_characters` should apply a default value.
+"""
 
 CHUNK_MULTI_PAGE_DEFAULT: bool = True
 """When False, respect page-boundaries (no two elements from different page in same chunk).
 
 Only operative for "by_title" chunking strategy.
-w"""
+"""
 
 
 # -- TYPES ---------------------------------------
@@ -74,9 +68,6 @@ class ChunkingOptions:
         when not specified, which effectively disables this behavior. Specifying 0 for this
         argument causes each element to appear in a chunk by itself (although an element with text
         longer than `max_characters` will be still be split into two or more chunks).
-    multipage_sections
-        Indicates that page-boundaries should not be respected while chunking, i.e. elements
-        appearing on two different pages can appear in the same chunk.
     combine_text_under_n_chars
         Provides a way to "recombine" small chunks formed by breaking on a semantic boundary. Only
         relevant for a chunking strategy that specifies higher-level semantic boundaries to be
@@ -107,69 +98,38 @@ class ChunkingOptions:
 
     def __init__(
         self,
+        *,
         combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
+        max_characters: Optional[int] = None,
         new_after_n_chars: Optional[int] = None,
-        overlap: int = 0,
-        overlap_all: bool = False,
+        overlap: Optional[int] = None,
+        overlap_all: Optional[bool] = None,
         text_splitting_separators: Sequence[str] = ("\n", " "),
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
-        self._max_characters = max_characters
-        self._multipage_sections = multipage_sections
+        self._max_characters_arg = max_characters
         self._new_after_n_chars_arg = new_after_n_chars
-        self._overlap = overlap
-        self._overlap_all = overlap_all
+        self._overlap_arg = overlap
+        self._overlap_all_arg = overlap_all
         self._text_splitting_separators = text_splitting_separators
 
-    @classmethod
-    def new(
-        cls,
-        combine_text_under_n_chars: Optional[int] = None,
-        max_characters: int = CHUNK_MAX_CHARS_DEFAULT,
-        multipage_sections: bool = CHUNK_MULTI_PAGE_DEFAULT,
-        new_after_n_chars: Optional[int] = None,
-        overlap: int = 0,
-        overlap_all: bool = False,
-        text_splitting_separators: Sequence[str] = ("\n", " "),
-    ) -> Self:
-        """Construct validated instance.
+    @lazyproperty
+    def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks.
 
-        Raises `ValueError` on invalid arguments like overlap > max_chars.
+        Overridden by sub-typs to provide semantic-boundary isolation behaviors.
         """
-        self = cls(
-            combine_text_under_n_chars,
-            max_characters,
-            multipage_sections,
-            new_after_n_chars,
-            overlap,
-            overlap_all,
-            text_splitting_separators,
-        )
-        self._validate()
-        return self
+        return ()
 
     @lazyproperty
     def combine_text_under_n_chars(self) -> int:
-        """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
+        """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
-        - Does not combine table chunks with text chunks even if they would both fit in the
-          chunking window.
-        - Does not combine text chunks if together they would exceed the chunking window.
-        - Defaults to `max_characters` when not specified.
-        - Is reduced to `new_after_n_chars` when it exceeds that value.
+        Default applied here is `0` which essentially disables chunk combining. Must be overridden
+        by subclass where combining behavior is supported.
         """
-        max_characters = self._max_characters
-        soft_max = self.soft_max
-        arg = self._combine_text_under_n_chars_arg
-
-        # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
-        # -- capped at max-chars
-        combine_text_under_n_chars = max_characters if arg is None or arg > max_characters else arg
-
-        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+        arg_value = self._combine_text_under_n_chars_arg
+        return arg_value if arg_value is not None else 0
 
     @lazyproperty
     def hard_max(self) -> int:
@@ -179,7 +139,8 @@ class ChunkingOptions:
         exceeds this size. Such a pre-chunk is subject to mid-text splitting later in the chunking
         process.
         """
-        return self._max_characters
+        arg_value = self._max_characters_arg
+        return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
     @lazyproperty
     def inter_chunk_overlap(self) -> int:
@@ -188,12 +149,7 @@ class ChunkingOptions:
         This applies only to boundaries between chunks formed from whole elements and not to
         text-splitting boundaries that arise from splitting an oversized element.
         """
-        return self.overlap if self._overlap_all else 0
-
-    @lazyproperty
-    def multipage_sections(self) -> bool:
-        """When False, break pre-chunks on page-boundaries."""
-        return self._multipage_sections
+        return self.overlap if self._overlap_all_arg else 0
 
     @lazyproperty
     def overlap(self) -> int:
@@ -202,25 +158,35 @@ class ChunkingOptions:
         The actual overlap will not exceed this number of characters but may be less as required to
         respect splitting-character boundaries.
         """
-        return self._overlap
+        return self._overlap_arg or 0
 
     @lazyproperty
     def soft_max(self) -> int:
         """A pre-chunk of this size or greater is considered full.
 
-        ??? Is a value of 0 valid? It would produce the behavior: "put each element into its own
-        chunk".
+        Note that while a value of `0` is valid, it essentially disables chunking by putting
+        each element into its own chunk.
         """
-        max_chars = self._max_characters
-        new_after_n_chars = self._new_after_n_chars_arg
-        return (
-            max_chars
-            if (new_after_n_chars is None or new_after_n_chars < 0 or new_after_n_chars > max_chars)
-            else new_after_n_chars
-        )
+        hard_max = self.hard_max
+        new_after_n_chars_arg = self._new_after_n_chars_arg
+
+        # -- default value is == max_characters --
+        if new_after_n_chars_arg is None:
+            return hard_max
+
+        # -- we silently fix an invalid value, maybe we shouldn't --
+        if new_after_n_chars_arg < 0:
+            return hard_max
+
+        # -- new_after_n_chars > max_characters behaves the same as ==max_characters --
+        if new_after_n_chars_arg > hard_max:
+            return hard_max
+
+        # -- otherwise, give them what they asked for --
+        return new_after_n_chars_arg
 
     @lazyproperty
-    def split(self) -> Callable[[str], Tuple[str, str]]:
+    def split(self) -> Callable[[str], tuple[str, str]]:
         """A text-splitting function suitable for splitting the text of an oversized pre-chunk.
 
         The function is pre-configured with the chosen chunking window size and any other applicable
@@ -239,41 +205,31 @@ class ChunkingOptions:
         return "\n\n"
 
     @lazyproperty
-    def text_splitting_separators(self) -> Tuple[str, ...]:
+    def text_splitting_separators(self) -> tuple[str, ...]:
         """Sequence of text-splitting target strings to be used in order of preference."""
         return tuple(self._text_splitting_separators)
 
     def _validate(self) -> None:
         """Raise ValueError if requestion option-set is invalid."""
-        max_characters = self._max_characters
+        max_characters = self.hard_max
         # -- chunking window must have positive length --
         if max_characters <= 0:
             raise ValueError(f"'max_characters' argument must be > 0," f" got {max_characters}")
 
-        # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-        # -- but a negative value is not
-        combine_text_under_n_chars = self._combine_text_under_n_chars_arg
-        if combine_text_under_n_chars is not None and combine_text_under_n_chars < 0:
-            raise ValueError(
-                f"'combine_text_under_n_chars' argument must be >= 0,"
-                f" got {combine_text_under_n_chars}"
-            )
-
-        # -- a negative value for `new_after_n_chars` is assumed to
-        # -- be a mistake the caller will want to know about
+        # -- a negative value for `new_after_n_chars` is assumed to be a mistake the caller will
+        # -- want to know about
         new_after_n_chars = self._new_after_n_chars_arg
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(
                 f"'new_after_n_chars' argument must be >= 0," f" got {new_after_n_chars}"
             )
 
-        # -- overlap must be less than max-chars or the chunk text will
-        # -- never be consumed
-        # TODO: consider a heuristic like never overlap more than half,
-        # otherwise there could be corner cases leading to an infinite
-        # loop (I think).
-        if self._overlap >= max_characters:
-            raise ValueError(f"'overlap' must be less than max_characters," f" got {self._overlap}")
+        # -- overlap must be less than max-chars or the chunk text will never be consumed --
+        if self.overlap >= max_characters:
+            raise ValueError(
+                f"'overlap' argument must be less than `max_characters`,"
+                f" got {self.overlap} >= {max_characters}"
+            )
 
 
 class _TextSplitter:
@@ -298,7 +254,7 @@ class _TextSplitter:
     def __init__(self, opts: ChunkingOptions):
         self._opts = opts
 
-    def __call__(self, s: str) -> Tuple[str, str]:
+    def __call__(self, s: str) -> tuple[str, str]:
         """Return pair of strings split from `s` on the best match of configured patterns.
 
         The first string is the split, the second is the remainder of the string. The split string
@@ -336,7 +292,7 @@ class _TextSplitter:
         return s[:maxlen].rstrip(), s[maxlen - self._opts.overlap :].lstrip()
 
     @lazyproperty
-    def _patterns(self) -> Tuple[Tuple[regex.Pattern[str], int], ...]:
+    def _patterns(self) -> tuple[tuple[regex.Pattern[str], int], ...]:
         """Sequence of (pattern, len) pairs to match against.
 
         Patterns appear in order of preference, those following are "fall-back" patterns to be used
@@ -351,7 +307,7 @@ class _TextSplitter:
 
     def _split_from_maxlen(
         self, pattern: regex.Pattern[str], sep_len: int, s: str
-    ) -> Tuple[str, str]:
+    ) -> tuple[str, str]:
         """Return (split, remainder) pair split from `s` on the right-most match before `maxlen`.
 
         Returns `"", s` if no suitable match was found. Also returns `"", s` if splitting on this
@@ -393,12 +349,12 @@ class _TextSplitter:
 
 
 # ================================================================================================
-# BASE PRE-CHUNKER
+# PRE-CHUNKER
 # ================================================================================================
 
 
-class BasePreChunker:
-    """Base-class for per-strategy pre-chunkers.
+class PreChunker:
+    """Gathers sequential elements into pre-chunks as length constraints allow.
 
     The pre-chunker's responsibilities are:
 
@@ -420,13 +376,13 @@ class BasePreChunker:
     a new "section", hence the "by-title" designation.
     """
 
-    def __init__(self, elements: Sequence[Element], opts: ChunkingOptions):
+    def __init__(self, elements: Iterable[Element], opts: ChunkingOptions):
         self._elements = elements
         self._opts = opts
 
     @classmethod
     def iter_pre_chunks(
-        cls, elements: Sequence[Element], opts: ChunkingOptions
+        cls, elements: Iterable[Element], opts: ChunkingOptions
     ) -> Iterator[PreChunk]:
         """Generate pre-chunks from the element-stream provided on construction."""
         return cls(elements, opts)._iter_pre_chunks()
@@ -454,9 +410,9 @@ class BasePreChunker:
         yield from pre_chunk_builder.flush()
 
     @lazyproperty
-    def _boundary_predicates(self) -> Tuple[BoundaryPredicate, ...]:
+    def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
-        return ()
+        return self._opts.boundary_predicates
 
     def _is_in_new_semantic_unit(self, element: Element) -> bool:
         """True when `element` begins a new semantic unit such as a section or page."""
@@ -601,7 +557,7 @@ class TextPreChunk:
         return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
-    def _all_metadata_values(self) -> Dict[str, List[Any]]:
+    def _all_metadata_values(self) -> dict[str, list[Any]]:
         """Collection of all populated metadata values across elements.
 
         The resulting dict has one key for each `ElementMetadata` field that had a non-None value in
@@ -618,7 +574,7 @@ class TextPreChunk:
         resolve the list of values for each field to a single consolidated value.
         """
 
-        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[Tuple[str, Any]]:
+        def iter_populated_fields(metadata: ElementMetadata) -> Iterator[tuple[str, Any]]:
             """(field_name, value) pair for each non-None field in single `ElementMetadata`."""
             return (
                 (field_name, value)
@@ -626,7 +582,7 @@ class TextPreChunk:
                 if value is not None
             )
 
-        field_values: DefaultDict[str, List[Any]] = collections.defaultdict(list)
+        field_values: DefaultDict[str, list[Any]] = collections.defaultdict(list)
 
         # -- collect all non-None field values in a list for each field, in element-order --
         for e in self._elements:
@@ -649,13 +605,13 @@ class TextPreChunk:
         return ElementMetadata(**self._meta_kwargs)
 
     @lazyproperty
-    def _consolidated_regex_meta(self) -> Dict[str, List[RegexMetadata]]:
+    def _consolidated_regex_meta(self) -> dict[str, list[RegexMetadata]]:
         """Consolidate the regex-metadata in `regex_metadata_dicts` into a single dict.
 
         This consolidated value is suitable for use in the chunk metadata. `start` and `end`
         offsets of each regex match are also adjusted for their new positions.
         """
-        chunk_regex_metadata: Dict[str, List[RegexMetadata]] = {}
+        chunk_regex_metadata: dict[str, list[RegexMetadata]] = {}
         separator_len = len(self._opts.text_separator)
         running_text_len = len(self._overlap_prefix) if self._overlap_prefix else 0
         start_offset = running_text_len
@@ -698,7 +654,7 @@ class TextPreChunk:
             yield e.text
 
     @lazyproperty
-    def _meta_kwargs(self) -> Dict[str, Any]:
+    def _meta_kwargs(self) -> dict[str, Any]:
         """The consolidated metadata values as a dict suitable for constructing ElementMetadata.
 
         This is where consolidation strategies are actually applied. The output is suitable for use
@@ -707,7 +663,7 @@ class TextPreChunk:
         CS = ConsolidationStrategy
         field_consolidation_strategies = ConsolidationStrategy.field_consolidation_strategies()
 
-        def iter_kwarg_pairs() -> Iterator[Tuple[str, Any]]:
+        def iter_kwarg_pairs() -> Iterator[tuple[str, Any]]:
             """Generate (field-name, value) pairs for each field in consolidated metadata."""
             for field_name, values in self._all_metadata_values.items():
                 strategy = field_consolidation_strategies.get(field_name)
@@ -715,7 +671,7 @@ class TextPreChunk:
                     yield field_name, values[0]
                 # -- concatenate lists from each element that had one, in order --
                 elif strategy is CS.LIST_CONCATENATE:
-                    yield field_name, sum(values, cast(List[Any], []))
+                    yield field_name, sum(values, cast("list[Any]", []))
                 # -- union lists from each element, preserving order of appearance --
                 elif strategy is CS.LIST_UNIQUE:
                     # -- Python 3.7+ maintains dict insertion order --
@@ -725,7 +681,7 @@ class TextPreChunk:
                     yield field_name, self._consolidated_regex_meta
                 elif strategy is CS.DROP:
                     continue
-                else:
+                else:  # pragma: no cover
                     # -- not likely to hit this since we have a test in `text_elements.py` that
                     # -- ensures every ElementMetadata fields has an assigned strategy.
                     raise NotImplementedError(
@@ -771,12 +727,12 @@ class PreChunkBuilder:
     def __init__(self, opts: ChunkingOptions) -> None:
         self._opts = opts
         self._separator_len = len(opts.text_separator)
-        self._elements: List[Element] = []
+        self._elements: list[Element] = []
 
         # -- overlap is only between pre-chunks so starts empty --
         self._overlap_prefix: str = ""
         # -- only includes non-empty element text, e.g. PageBreak.text=="" is not included --
-        self._text_segments: List[str] = []
+        self._text_segments: list[str] = []
         # -- combined length of text-segments, not including separators --
         self._text_len: int = 0
 

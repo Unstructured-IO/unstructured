@@ -935,7 +935,7 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
-    assert len(elements) == 18
+    assert len(elements) == 14
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional

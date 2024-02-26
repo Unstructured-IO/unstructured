@@ -1,5 +1,15 @@
-import sys
+# pyright: reportPrivateUsage=false
 
+"""Test-suite for the `unstructured.partition.xlsx` module."""
+
+from __future__ import annotations
+
+import sys
+import tempfile
+from typing import cast
+
+import pandas as pd
+import pandas.testing as pdt
 import pytest
 from pytest_mock import MockerFixture
 
@@ -10,8 +20,13 @@ from test_unstructured.partition.test_constants import (
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.cleaners.core import clean_extra_whitespace
-from unstructured.documents.elements import Table, Text, Title
-from unstructured.partition.xlsx import partition_xlsx
+from unstructured.documents.elements import ListItem, Table, Text, Title
+from unstructured.partition.xlsx import (
+    _CellCoordinate,
+    _ConnectedComponent,
+    _SubtableParser,
+    partition_xlsx,
+)
 
 EXPECTED_FILETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
@@ -41,11 +56,51 @@ def test_partition_xlsx_from_filename():
     assert elements[1].metadata.filename == "stanley-cups.xlsx"
 
 
-def test_partition_xlsx_from_filename_with_emoji():
-    elements = partition_xlsx("example-docs/emoji.xlsx", include_header=False)
+def test_partition_xlsx_from_filename_no_subtables():
+    """Partition to a single `Table` element per worksheet."""
+    assert partition_xlsx("example-docs/stanley-cups.xlsx", find_subtable=False) == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+
+
+def test_partition_xlsx_from_filename_no_subtables_no_metadata():
+    elements = partition_xlsx(
+        "example-docs/stanley-cups.xlsx", find_subtable=False, include_metadata=False
+    )
+
+    assert elements == [
+        Table(
+            "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\n"
+            "Flyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n"
+        ),
+        Table(
+            "\n\n\nStanley Cups Since 67\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n"
+            "1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n"
+        ),
+    ]
+    assert all(e.metadata.text_as_html is None for e in elements)
+
+
+def test_partition_xlsx_from_SpooledTemporaryFile_with_emoji():
+    f = tempfile.SpooledTemporaryFile()
+    with open("example-docs/emoji.xlsx", "rb") as g:
+        f.write(g.read())
+    elements = partition_xlsx(file=f, include_header=False)
     assert sum(isinstance(element, Text) for element in elements) == 1
     assert len(elements) == 1
     assert clean_extra_whitespace(elements[0].text) == "🤠😅"
+
+
+def test_partition_xlsx_raises_on_no_file_or_path_provided():
+    with pytest.raises(ValueError, match="Either 'filename' or 'file' argument must be specif"):
+        partition_xlsx()
 
 
 def test_partition_xlsx_from_filename_with_metadata_filename():
@@ -228,9 +283,42 @@ def test_partition_xlsx_metadata_language_from_filename():
 
 
 def test_partition_xlsx_subtables():
-    elements = partition_xlsx("example-docs/vodafone.xlsx")
-    assert sum(isinstance(element, Table) for element in elements) == 3
-    assert len(elements) == 6
+    assert partition_xlsx("example-docs/xlsx-subtable-cases.xlsx") == [
+        Table("\n\n\na\nb\n\n\n\n\nc\nd\n\ne\n\n\n"),
+        ListItem("f"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        ListItem("2. e"),
+        Table("\n\n\na\nb\n\n\nc\nd\n\n\n"),
+        Title("e"),
+        Title("f"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("f"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Title("g"),
+        Title("a"),
+        Table("\n\n\nb\nc\n\n\nd\ne\n\n\n"),
+        Title("f"),
+        Title("g"),
+        Title("a"),
+        Title("b"),
+        Table("\n\n\nc\nd\n\n\ne\nf\n\n\n"),
+        Title("g"),
+        Title("h"),
+        Table("\n\n\na\nb\nc\n\n\n"),
+        Title("a"),
+        Table("\n\n\nb\nc\nd\n\n\n"),
+        Table("\n\n\na\nb\nc\n\n\n"),
+        Title("d"),
+        Title("e"),
+    ]
 
 
 def test_partition_xlsx_element_metadata_has_languages():
@@ -255,3 +343,188 @@ def test_partition_xlsx_with_more_than_1k_cells():
         partition_xlsx("example-docs/more-than-1k-cells.xlsx")
     finally:
         sys.setrecursionlimit(old_recursion_limit)
+
+
+# ------------------------------------------------------------------------------------------------
+# UNIT TESTS
+# ------------------------------------------------------------------------------------------------
+# These test components used by `partition_xlsx()` in isolation such that all edge cases can be
+# exercised.
+# ------------------------------------------------------------------------------------------------
+
+
+class Describe_ConnectedComponent:
+    """Unit-test suite for `unstructured.partition.xlsx._ConnectedComponent` objects."""
+
+    def it_knows_its_top_and_left_extents(self):
+        component = _ConnectedComponent(pd.DataFrame(), {(0, 1), (2, 2), (1, 1), (2, 3), (1, 2)})
+
+        assert component.min_x == 0
+        assert component.max_x == 2
+
+    def it_can_merge_with_another_component_to_make_a_new_component(self):
+        df = pd.DataFrame()
+        component = _ConnectedComponent(df, {(0, 1), (0, 2), (1, 1)})
+        other = _ConnectedComponent(df, {(0, 4), (1, 3), (1, 4)})
+
+        merged = component.merge(other)
+
+        assert merged._worksheet is df
+        assert merged._cell_coordinate_set == {(0, 1), (0, 2), (1, 1), (0, 4), (1, 3), (1, 4)}
+
+    def it_can_extract_the_rectangular_subtable_containing_its_cells_from_the_worksheet(self):
+        worksheet_df = pd.DataFrame(
+            [["a", "b", "c"], [], ["d", "e"], ["f", "g"], [None, "h"], [], ["i"]],
+            index=[0, 1, 2, 3, 4, 5, 6],
+        )
+        cell_coordinate_set = cast("set[_CellCoordinate]", {(2, 0), (2, 1), (3, 0), (3, 1), (4, 1)})
+        component = _ConnectedComponent(worksheet_df, cell_coordinate_set)
+
+        subtable = component.subtable
+
+        print(f"{subtable=}")
+        pdt.assert_frame_equal(
+            subtable, pd.DataFrame([["d", "e"], ["f", "g"], [None, "h"]], index=[2, 3, 4])
+        )
+
+
+class Describe_SubtableParser:
+    """Unit-test suite for `unstructured.partition.xlsx._SubtableParser` objects."""
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            # -- 1. no leading or trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 2. one leading single-cell row --
+            (
+                pd.DataFrame([["a"], ["b", "c"], ["d", "e"]], index=[0, 1, 2]),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 3. two leading single-cell rows --
+            (
+                pd.DataFrame(
+                    [[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]], index=[0, 1, 2, 3]
+                ),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 4. one trailing single-cell row --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]], index=[0, 1, 2]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 5. two trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]], index=[0, 1, 2, 3]),
+                pd.DataFrame([["a", "b"], ["c", "d"]], index=[0, 1]),
+            ),
+            # -- 6. one leading, one trailing single-cell rows --
+            (
+                pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]], index=[0, 1, 2, 3]),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 7. two leading, one trailing single-cell rows --
+            (
+                pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]], index=[0, 1, 2, 3, 4]),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 8. one leading, two trailing single-cell rows --
+            (
+                pd.DataFrame(
+                    [[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]],
+                    index=[0, 1, 2, 3, 4],
+                ),
+                pd.DataFrame([["b", "c"], ["d", "e"]], index=[1, 2]),
+            ),
+            # -- 9. two leading, two trailing single-cell rows --
+            (
+                pd.DataFrame(
+                    [["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]], index=[0, 1, 2, 3, 4, 5]
+                ),
+                pd.DataFrame([["c", "d"], ["e", "f"]], index=[2, 3]),
+            ),
+            # -- 10. single-row core-table, no leading or trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+            ),
+            # -- 11. single-row core-table, one leading single-cell row --
+            (
+                pd.DataFrame([["a"], ["b", "c", "d"]], index=[0, 1]),
+                pd.DataFrame([["b", "c", "d"]], index=[1]),
+            ),
+            # -- 12. single-row core-table, two trailing single-cell rows --
+            (
+                pd.DataFrame([["a", "b", "c"], ["d"], ["e"]], index=[0, 1, 2]),
+                pd.DataFrame([["a", "b", "c"]], index=[0]),
+            ),
+        ],
+    )
+    def it_extracts_the_core_table_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        """core-table is correctly distinguished from leading and trailing single-cell rows."""
+        subtable_parser = _SubtableParser(subtable)
+
+        core_table = subtable_parser.core_table
+
+        assert core_table is not None
+        pdt.assert_frame_equal(core_table, expected_value)
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            (pd.DataFrame([["a", "b"], ["c", "d"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"]]), ["a"]),
+            (pd.DataFrame([[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]]), ["a", "b"]),
+            (pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]]), []),
+            (pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]]), ["a"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]]), ["a", "b"]),
+            (pd.DataFrame([[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]]), ["a"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]]), ["a", "b"]),
+            (pd.DataFrame([["a", "b", "c"]]), []),
+            (pd.DataFrame([["a"], ["b", "c", "d"]]), ["a"]),
+            (pd.DataFrame([["a", "b", "c"], ["d"], ["e"]]), []),
+        ],
+    )
+    def it_extracts_the_leading_single_cell_rows_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        subtable_parser = _SubtableParser(subtable)
+        leading_single_cell_row_texts = list(subtable_parser.iter_leading_single_cell_rows_texts())
+        assert leading_single_cell_row_texts == expected_value
+
+    @pytest.mark.parametrize(
+        ("subtable", "expected_value"),
+        [
+            (pd.DataFrame([["a", "b"], ["c", "d"]]), []),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"]]), []),
+            (pd.DataFrame([[None, "a"], [None, "b"], ["c", "d"], ["e", "f"]]), []),
+            (pd.DataFrame([["a", "b"], ["c", "d"], [None, "e"]]), ["e"]),
+            (pd.DataFrame([["a", "b"], ["c", "d"], ["e"], ["f"]]), ["e", "f"]),
+            (pd.DataFrame([["a"], ["b", "c"], ["d", "e"], [None, "f"]]), ["f"]),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"]]), ["g"]),
+            (
+                pd.DataFrame([[None, "a"], ["b", "c"], ["d", "e"], [None, "f"], [None, "g"]]),
+                ["f", "g"],
+            ),
+            (pd.DataFrame([["a"], ["b"], ["c", "d"], ["e", "f"], ["g"], ["h"]]), ["g", "h"]),
+            (pd.DataFrame([["a", "b", "c"]]), []),
+            (pd.DataFrame([["a"], ["b", "c", "d"]]), []),
+            (pd.DataFrame([["a", "b", "c"], ["d"], ["e"]]), ["d", "e"]),
+        ],
+    )
+    def it_extracts_the_trailing_single_cell_rows_from_a_subtable(
+        self, subtable: pd.DataFrame, expected_value: pd.DataFrame
+    ):
+        subtable_parser = _SubtableParser(subtable)
+
+        trailing_single_cell_row_texts = list(
+            subtable_parser.iter_trailing_single_cell_rows_texts()
+        )
+
+        assert trailing_single_cell_row_texts == expected_value

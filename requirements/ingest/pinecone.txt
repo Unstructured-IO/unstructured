@@ -21,7 +21,7 @@ idna==3.6
     #   requests
 loguru==0.7.2
     # via pinecone-client
-numpy==1.26.3
+numpy==1.26.4
     # via
     #   -c ingest/../base.txt
     #   pinecone-client
@@ -41,7 +41,7 @@ six==1.16.0
     # via
     #   -c ingest/../base.txt
     #   python-dateutil
-tqdm==4.66.1
+tqdm==4.66.2
     # via
     #   -c ingest/../base.txt
     #   pinecone-client
