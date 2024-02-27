@@ -24,7 +24,7 @@ Method 1: Partition via API (``partition_via_api``)
 
       filename = "example-docs/DA-1p.pdf"
       elements = partition_via_api(
-        filename=filename, api_key="MY_API_KEY", strategy="auto", pdf_infer_table_structure="true"
+        filename=filename, api_key="MY_API_KEY", strategy="auto"
       )
 
   - **Self-Hosting or Local API**::
