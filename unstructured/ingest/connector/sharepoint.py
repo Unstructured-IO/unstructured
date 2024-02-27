@@ -3,11 +3,11 @@ import os
 import typing as t
 from dataclasses import dataclass
 from datetime import datetime
-from dateutil import parser
-
 from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
+
+from dateutil import parser
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -204,7 +204,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         return permissions_data
 
-
     def _ensure_isoformat_datetime(self, timestamp: t.Union[datetime, str]) -> str:
         """
         Ensures that the input value is converted to an ISO format datetime string.
@@ -218,12 +217,9 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 dt = parser.parse(timestamp)
                 return dt.isoformat()
             except ValueError as e:
-                raise ValueError(
-                    f"String '{timestamp}' could not be parsed as a datetime."
-                ) from e
+                raise ValueError(f"String '{timestamp}' could not be parsed as a datetime.") from e
         else:
             raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
-
 
     def update_source_metadata(self, **kwargs):
         if self.is_page:
