@@ -81,7 +81,7 @@ class RetryStrategyConfig(BaseConfig):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = False
+    pdf_infer_table_structure: bool = True
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
@@ -228,7 +228,9 @@ class ChunkingConfig(BaseConfig):
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
+            else "by_title"
+            if self.chunk_elements is True
+            else None
         )
         return (
             chunk_by_title(
