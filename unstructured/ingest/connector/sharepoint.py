@@ -235,12 +235,33 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         logger.info(type(file.time_created))
         logger.info(file.time_last_modified)
         logger.info(type(file.time_last_modified))
+        try:
+            date_created = datetime.strptime(
+                str(file.time_created), "%Y-%m-%d %H:%M:%S"
+            ).isoformat()
+        except:  # noqa
+            logger.info("no created 1")
+        try:
+            date_created = datetime.strptime(
+                str(file.time_created), "%Y-%m-%dT%H:%M:%SZ"
+            ).isoformat()
+        except:  # noqa
+            logger.info("no created 2")
+        try:
+            date_modified = datetime.strptime(
+                str(file.time_last_modified), "%Y-%m-%d %H:%M:%S"
+            ).isoformat()
+        except:  # noqa
+            logger.info("no modified 1")
+        try:
+            date_modified = datetime.strptime(
+                str(file.time_last_modified), "%Y-%m-%dT%H:%M:%SZ"
+            ).isoformat()
+        except:  # noqa
+            logger.info("no modified 2")
         self.source_metadata = SourceMetadata(
-            date_created=datetime.strptime(str(file.time_created), "%Y-%m-%d %H:%M:%S").isoformat(),
-            date_modified=datetime.strptime(
-                str(file.time_last_modified),
-                "%Y-%m-%d %H:%M:%S",
-            ).isoformat(),
+            date_created=date_created,
+            date_modified=date_modified,
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
