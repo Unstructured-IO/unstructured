@@ -60,7 +60,7 @@ languages
 pdf_infer_table_structure
 -------------------------
 - **Type**: boolean
-- **Description**: If True and strategy=hi_res, any Table Elements extracted from a PDF will include an additional metadata field, 'text_as_html'.
+- **Description**: Deprecated! Use skip_infer_table_types to opt out of table extraction for any file type. If False and strategy=hi_res, no Table Elements will be extracted from pdf files regardless of skip_infer_table_types contents.
 
 skip_infer_table_types
 ----------------------
