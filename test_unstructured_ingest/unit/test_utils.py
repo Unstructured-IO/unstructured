@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from unstructured.ingest.cli.utils import extract_config
 from unstructured.ingest.interfaces import BaseConfig
+from unstructured.ingest.utils.string_utils import json_to_dict
 
 
 @dataclass
@@ -99,3 +100,27 @@ def test_extract_config_dict():
     c = extract_config(flat_data=flat_data, config=C)
     expected_result = {"c": True, "b": {}}
     assert c.to_json(sort_keys=True) == json.dumps(expected_result, sort_keys=True)
+
+def test_json_to_dict_valid_json():
+    json_string = '{"key": "value"}'
+    expected_result = {"key": "value"}
+    assert json_to_dict(json_string) == expected_result
+    assert isinstance(json_to_dict(json_string), dict)
+
+def test_json_to_dict_malformed_json():
+    json_string = '{"key": "value"'
+    expected_result = '{"key": "value"'
+    assert json_to_dict(json_string) == expected_result
+    assert isinstance(json_to_dict(json_string), str)
+
+def test_json_to_dict_single_quotes():
+    json_string = "{'key': 'value'}"
+    expected_result = {"key": "value"}
+    assert json_to_dict(json_string) == expected_result
+    assert isinstance(json_to_dict(json_string), dict)
+
+def test_json_to_dict_path):
+    json_string = "/path/to/file.json"
+    expected_result = "/path/to/file.json"
+    assert json_to_dict(json_string) == expected_result
+    assert isinstance(json_to_dict(json_string), str)
