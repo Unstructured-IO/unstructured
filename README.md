@@ -119,7 +119,7 @@ installation.
     - `poppler-utils` (images and PDFs)
     - `tesseract-ocr` (images and PDFs, install `tesseract-lang` for additional language support)
     - `libreoffice` (MS Office docs)
-    - `pandoc` (EPUBs, RTFs and Open Office docs)
+    - `pandoc` (EPUBs, RTFs and Open Office docs). Please note that to handle RTF files, you need version `2.14.2` or newer. Running either `make install-pandoc` or `./scripts/install-pandoc.sh` will install the correct version for you.
 
 - For suggestions on how to install on the Windows and to learn about dependencies for other features, see the
   installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
