@@ -8,7 +8,7 @@ from unstructured.ingest.interfaces import ProcessorConfig, ReadConfig
 
 
 @pytest.mark.parametrize(
-    "time_created,time_last_modified,expected_created,expected_modified",
+    ("time_created", "time_last_modified", "expected_created", "expected_modified"),
     [
         (
             "2023-06-16T05:05:05+00:00",
