@@ -1,4 +1,3 @@
-import json
 import typing as t
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,8 +13,9 @@ from unstructured.ingest.connector.fsspec.fsspec import (
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import AccessConfig
-from unstructured.utils import requires_dependencies
 from unstructured.ingest.utils.string_utils import json_to_dict
+from unstructured.utils import requires_dependencies
+
 
 @dataclass
 class GcsAccessConfig(AccessConfig):

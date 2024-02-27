@@ -1,8 +1,18 @@
+## 0.12.6-dev0
+
+### Enhancements
+
+### Features
+
 ## 0.12.5
 
 ### Enhancements
 
 ### Features
+
+### Fixes
+
+* **Fix Google Drive source key** Allow passing string for source connector key.
 
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
