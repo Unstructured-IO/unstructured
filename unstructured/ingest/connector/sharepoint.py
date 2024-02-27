@@ -230,11 +230,16 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
                 exists=False,
             )
             return
+        print("*******")
+        print(file.time_created)
+        print(type(file.time_created))
+        print(file.time_last_modified)
+        print(type(file.time_last_modified))
         self.source_metadata = SourceMetadata(
-            date_created=datetime.strptime(file.time_created, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            date_created=datetime.strptime(str(file.time_created), "%Y-%m-%d %H:%M:%S").isoformat(),
             date_modified=datetime.strptime(
-                file.time_last_modified,
-                "%Y-%m-%dT%H:%M:%SZ",
+                str(file.time_last_modified),
+                "%Y-%m-%d %H:%M:%S",
             ).isoformat(),
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
