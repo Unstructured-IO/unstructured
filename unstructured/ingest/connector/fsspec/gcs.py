@@ -36,7 +36,6 @@ class GcsAccessConfig(AccessConfig):
         if isinstance(json_to_dict(self.token), dict):
             self.token = json_to_dict(self.token)
             return
-
         # Case: path to token
         if Path(self.token).is_file():
             return
