@@ -4,15 +4,15 @@
 
 ### Features
 
+### Fixes
+
+* **Fix Google Drive source key** Allow passing string for source connector key.
+
 ## 0.12.5
 
 ### Enhancements
 
 ### Features
-
-### Fixes
-
-* **Fix Google Drive source key** Allow passing string for source connector key.
 
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
@@ -23,13 +23,12 @@
 ### Fixes
 
 * **Fix passing list type parameters when calling unstructured API via `partition_via_api()`** Update `partition_via_api()` to convert all list type parameters to JSON formatted strings before calling the unstructured client SDK. This will support image block extraction via `partition_via_api()`.
-* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
-* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
-* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
 * **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
-* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
 
 ## 0.12.4
