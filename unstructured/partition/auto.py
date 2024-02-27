@@ -139,7 +139,7 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
-    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
+    skip_infer_table_types: List[str] = [],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
