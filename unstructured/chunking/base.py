@@ -7,7 +7,7 @@ import copy
 from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, Sequence, cast
 
 import regex
-from typing_extensions import Self, TypeAlias
+from typing_extensions import TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -68,9 +68,6 @@ class ChunkingOptions:
         when not specified, which effectively disables this behavior. Specifying 0 for this
         argument causes each element to appear in a chunk by itself (although an element with text
         longer than `max_characters` will be still be split into two or more chunks).
-    multipage_sections
-        Indicates that page-boundaries should not be respected while chunking, i.e. elements
-        appearing on two different pages can appear in the same chunk.
     combine_text_under_n_chars
         Provides a way to "recombine" small chunks formed by breaking on a semantic boundary. Only
         relevant for a chunking strategy that specifies higher-level semantic boundaries to be
@@ -101,9 +98,9 @@ class ChunkingOptions:
 
     def __init__(
         self,
+        *,
         combine_text_under_n_chars: Optional[int] = None,
         max_characters: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
         new_after_n_chars: Optional[int] = None,
         overlap: Optional[int] = None,
         overlap_all: Optional[bool] = None,
@@ -111,59 +108,28 @@ class ChunkingOptions:
     ):
         self._combine_text_under_n_chars_arg = combine_text_under_n_chars
         self._max_characters_arg = max_characters
-        self._multipage_sections_arg = multipage_sections
         self._new_after_n_chars_arg = new_after_n_chars
         self._overlap_arg = overlap
         self._overlap_all_arg = overlap_all
         self._text_splitting_separators = text_splitting_separators
 
-    @classmethod
-    def new(
-        cls,
-        combine_text_under_n_chars: Optional[int] = None,
-        max_characters: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-        text_splitting_separators: Sequence[str] = ("\n", " "),
-    ) -> Self:
-        """Construct validated instance.
+    @lazyproperty
+    def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
+        """The semantic-boundary detectors to be applied to break pre-chunks.
 
-        Raises `ValueError` on invalid arguments like overlap > max_chars.
+        Overridden by sub-typs to provide semantic-boundary isolation behaviors.
         """
-        self = cls(
-            combine_text_under_n_chars,
-            max_characters,
-            multipage_sections,
-            new_after_n_chars,
-            overlap,
-            overlap_all,
-            text_splitting_separators,
-        )
-        self._validate()
-        return self
+        return ()
 
     @lazyproperty
     def combine_text_under_n_chars(self) -> int:
-        """Combine consecutive text pre-chunks if former is smaller than this and both will fit.
+        """Combine two consecutive text pre-chunks if first is smaller than this and both will fit.
 
-        - Does not combine table chunks with text chunks even if they would both fit in the
-          chunking window.
-        - Does not combine text chunks if together they would exceed the chunking window.
-        - Defaults to `max_characters` when not specified.
-        - Is reduced to `new_after_n_chars` when it exceeds that value.
+        Default applied here is `0` which essentially disables chunk combining. Must be overridden
+        by subclass where combining behavior is supported.
         """
-        max_characters = self.hard_max
-        soft_max = self.soft_max
-        arg = self._combine_text_under_n_chars_arg
-
-        # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified and is
-        # -- capped at max-chars
-        combine_text_under_n_chars = max_characters if arg is None or arg > max_characters else arg
-
-        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+        arg_value = self._combine_text_under_n_chars_arg
+        return arg_value if arg_value is not None else 0
 
     @lazyproperty
     def hard_max(self) -> int:
@@ -184,12 +150,6 @@ class ChunkingOptions:
         text-splitting boundaries that arise from splitting an oversized element.
         """
         return self.overlap if self._overlap_all_arg else 0
-
-    @lazyproperty
-    def multipage_sections(self) -> bool:
-        """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._multipage_sections_arg
-        return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     @lazyproperty
     def overlap(self) -> int:
@@ -256,28 +216,15 @@ class ChunkingOptions:
         if max_characters <= 0:
             raise ValueError(f"'max_characters' argument must be > 0," f" got {max_characters}")
 
-        # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-        # -- but a negative value is not
-        combine_text_under_n_chars = self._combine_text_under_n_chars_arg
-        if combine_text_under_n_chars is not None and combine_text_under_n_chars < 0:
-            raise ValueError(
-                f"'combine_text_under_n_chars' argument must be >= 0,"
-                f" got {combine_text_under_n_chars}"
-            )
-
-        # -- a negative value for `new_after_n_chars` is assumed to
-        # -- be a mistake the caller will want to know about
+        # -- a negative value for `new_after_n_chars` is assumed to be a mistake the caller will
+        # -- want to know about
         new_after_n_chars = self._new_after_n_chars_arg
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(
                 f"'new_after_n_chars' argument must be >= 0," f" got {new_after_n_chars}"
             )
 
-        # -- overlap must be less than max-chars or the chunk text will
-        # -- never be consumed
-        # TODO: consider a heuristic like never overlap more than half,
-        # otherwise there could be corner cases leading to an infinite
-        # loop (I think).
+        # -- overlap must be less than max-chars or the chunk text will never be consumed --
         if self.overlap >= max_characters:
             raise ValueError(
                 f"'overlap' argument must be less than `max_characters`,"
@@ -402,12 +349,12 @@ class _TextSplitter:
 
 
 # ================================================================================================
-# BASE PRE-CHUNKER
+# PRE-CHUNKER
 # ================================================================================================
 
 
-class BasePreChunker:
-    """Base-class for per-strategy pre-chunkers.
+class PreChunker:
+    """Gathers sequential elements into pre-chunks as length constraints allow.
 
     The pre-chunker's responsibilities are:
 
@@ -465,7 +412,7 @@ class BasePreChunker:
     @lazyproperty
     def _boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
         """The semantic-boundary detectors to be applied to break pre-chunks."""
-        return ()
+        return self._opts.boundary_predicates
 
     def _is_in_new_semantic_unit(self, element: Element) -> bool:
         """True when `element` begins a new semantic unit such as a section or page."""

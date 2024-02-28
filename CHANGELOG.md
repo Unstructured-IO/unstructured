@@ -1,14 +1,18 @@
-## 0.12.5-dev9
+## 0.12.5
 
 ### Enhancements
 
 ### Features
 
+* **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
+  detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
 * **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
+* **Add AstraDB destination connector** Adds support for writing embedded documents into an AstraDB vector database.
 
 ### Fixes
 
+* **Fix passing list type parameters when calling unstructured API via `partition_via_api()`** Update `partition_via_api()` to convert all list type parameters to JSON formatted strings before calling the unstructured client SDK. This will support image block extraction via `partition_via_api()`.
 * **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
 * **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.

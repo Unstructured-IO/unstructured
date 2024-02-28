@@ -17,7 +17,7 @@
       "page_number": 1
     },
     "text": "INTERNATIONAL MONETARY FUND",
-    "type": "Title"
+    "type": "Header"
   },
   {
     "element_id": "86ea6f300d673f87f5841379f956e24d",
@@ -4657,7 +4657,7 @@
       "page_number": 11
     },
     "text": "WEO Update © 2023 • ISBN: 979-8-40023-224-4",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "ef2d127de37b942baad06145e54b0c61",
