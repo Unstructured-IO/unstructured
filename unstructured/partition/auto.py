@@ -102,6 +102,27 @@ if dependency_exists("pandas") and dependency_exists("openpyxl"):
 
     PARTITION_WITH_EXTRAS_MAP["xlsx"] = partition_xlsx
 
+if dependency_exists("tree_sitter"):
+    from unstructured.partition.code import partition_code
+
+    PARTITION_CODE_AS_TEXT = False
+else:
+    PARTITION_CODE_AS_TEXT = True
+
+
+CODE_FILETYPES = [
+    FileType.JS,
+    FileType.PY,
+    FileType.JAVA,
+    FileType.CPP,
+    FileType.C,
+    FileType.CSHARP,
+    FileType.PHP,
+    FileType.RB,
+    FileType.SWIFT,
+    FileType.TS,
+    FileType.GO,
+]
 
 IMAGE_FILETYPES = [
     FileType.HEIC,
@@ -285,6 +306,9 @@ def partition(
         skip_infer_table_types,
         pdf_infer_table_structure,
     )
+
+    if PARTITION_CODE_AS_TEXT and filetype in CODE_FILETYPES:
+        filetype = FileType.TXT
 
     if filetype == FileType.DOC:
         _partition_doc = _get_partition_with_extras("doc")
@@ -507,6 +531,13 @@ def partition(
             file=file,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            **kwargs,
+        )
+    elif filetype in CODE_FILETYPES:
+        elements = partition_code(
+            filename=filename,
+            file=file,
+            languages=languages,
             **kwargs,
         )
     elif filetype == FileType.EMPTY:

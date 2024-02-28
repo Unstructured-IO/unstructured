@@ -20,6 +20,7 @@ from unstructured.partition.common import (
     exactly_one,
     set_element_hierarchy,
 )
+from unstructured.utils import dependency_exists
 
 try:
     import magic
@@ -102,6 +103,19 @@ class FileType(enum.Enum):
     # Audio Files
     WAV = 80
 
+    # Code files
+    PY = 101
+    JS = 102
+    TS = 103
+    C = 104
+    CPP = 105
+    JAVA = 106
+    CSHARP = 107
+    PHP = 108
+    RB = 109
+    SWIFT = 110
+    GO = 111
+
     # NOTE(robinson) - This is to support sorting for pandas groupby functions
     def __lt__(self, other):
         return self.name < other.name
@@ -157,6 +171,22 @@ STR_TO_FILETYPE = {
     "audio/x-pn-wav": FileType.WAV,
     "audio/x-wav": FileType.WAV,
     "inode/x-empty": FileType.EMPTY,
+    # NOTE(Pierre) - Need to check the mimetypes detected by Libmagic
+    "text/javascript": FileType.JS,
+    "text/x-typescript": FileType.TS,
+    "text/x-python": FileType.PY,
+    "text/x-script.python": FileType.PY,
+    "text/x-c": FileType.C,
+    "text/x-csrc": FileType.C,
+    "text/x-chdr": FileType.C,
+    "text/x-c++": FileType.CPP,
+    "text/x-c++hdr": FileType.CPP,
+    "text/x-c++src": FileType.CPP,
+    "text/x-go": FileType.GO,
+    "text/x-csharp": FileType.CSHARP,
+    "text/x-php": FileType.PHP,
+    "text/x-ruby": FileType.RB,
+    "text/x-swift": FileType.SWIFT,
 }
 
 MIMETYPES_TO_EXCLUDE = [
@@ -206,20 +236,22 @@ EXT_TO_FILETYPE = {
     ".tiff": FileType.TIFF,
     ".bmp": FileType.BMP,
     ".wav": FileType.WAV,
-    # NOTE(robinson) - for now we are treating code files as plain text
-    ".js": FileType.TXT,
-    ".py": FileType.TXT,
-    ".java": FileType.TXT,
-    ".cpp": FileType.TXT,
-    ".cc": FileType.TXT,
-    ".cxx": FileType.TXT,
-    ".c": FileType.TXT,
-    ".cs": FileType.TXT,
-    ".php": FileType.TXT,
-    ".rb": FileType.TXT,
-    ".swift": FileType.TXT,
-    ".ts": FileType.TXT,
-    ".go": FileType.TXT,
+    ".js": FileType.JS,
+    ".py": FileType.PY,
+    ".java": FileType.JAVA,
+    ".hpp": FileType.CPP,
+    ".cpp": FileType.CPP,
+    ".cc": FileType.CPP,
+    ".cxx": FileType.CPP,
+    ".h": FileType.C,
+    ".c": FileType.C,
+    ".cu": FileType.C,
+    ".cs": FileType.CSHARP,
+    ".php": FileType.PHP,
+    ".rb": FileType.RB,
+    ".swift": FileType.SWIFT,
+    ".ts": FileType.TS,
+    ".go": FileType.GO,
     ".yaml": FileType.TXT,
     ".yml": FileType.TXT,
     None: FileType.UNK,
@@ -395,10 +427,10 @@ def detect_filetype(
             return EXT_TO_FILETYPE.get(extension, filetype)
 
     elif _is_code_mime_type(mime_type):
-        # NOTE(robinson) - we'll treat all code files as plain text for now.
-        # we can update this logic and add filetypes for specific languages
-        # later if needed.
-        return FileType.TXT
+        if dependency_exists("tree_sitter"):
+            return STR_TO_FILETYPE.get(mime_type, FileType.TXT)
+        else:
+            return FileType.TXT
 
     elif mime_type.endswith("empty"):
         return FileType.EMPTY

@@ -40,6 +40,7 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
     return requirements
 
 
+code_reqs = load_requirements('requirements/extra-code.in')
 csv_reqs = load_requirements("requirements/extra-csv.in")
 doc_reqs = load_requirements("requirements/extra-docx.in")
 docx_reqs = load_requirements("requirements/extra-docx.in")
@@ -59,7 +60,8 @@ xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
 
 all_doc_reqs = list(
     set(
-        csv_reqs
+        code_reqs
+        + csv_reqs
         + docx_reqs
         + epub_reqs
         + image_reqs
@@ -110,6 +112,7 @@ setup(
     extras_require={
         # Document specific extra requirements
         "all-docs": all_doc_reqs,
+        "code": code_reqs,
         "csv": csv_reqs,
         "doc": doc_reqs,
         "docx": docx_reqs,
