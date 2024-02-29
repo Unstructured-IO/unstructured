@@ -37,7 +37,8 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
             f"{err}\n\n{additional_info}\n\n"
             f"Current version of pandoc: {pypandoc.get_pandoc_version()}\n"
             "Make sure you have the right version installed in your system. "
-            "Please, follow the pandoc installation instructions in README.md to install the right version."
+            "Please, follow the pandoc installation instructions "
+            "in README.md to install the right version."
         )
         raise RuntimeError(msg)
 
