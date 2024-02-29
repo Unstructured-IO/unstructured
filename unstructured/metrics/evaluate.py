@@ -125,7 +125,7 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
     if grouping:
-        get_mean_grouping(grouping, df, export_dir, "text-extraction")
+        get_mean_grouping(grouping, df, export_dir, "text_extraction")
 
     _display(agg_df)
 
@@ -194,7 +194,7 @@ def get_mean_grouping(
         grouping (str): Grouping category ('doctype' or 'connector').
         data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
         export_dir (str): Directory for the exported TSV file.
-        metric_strategy (str): Evaluated metric ('text-extraction' or 'element-type').
+        metric_strategy (str): Evaluated metric ('text_extraction' or 'element_type').
     """
     if grouping not in ("doctype", "connector"):
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
