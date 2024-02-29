@@ -180,7 +180,7 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
 
     if grouping:
-        get_mean_grouping(grouping, df, export_dir, "element-type")
+        get_mean_grouping(grouping, df, export_dir, "element_type")
 
     _display(agg_df)
 
