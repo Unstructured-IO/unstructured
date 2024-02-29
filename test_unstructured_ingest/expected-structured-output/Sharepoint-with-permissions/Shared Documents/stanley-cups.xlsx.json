@@ -3,8 +3,8 @@
     "element_id": "c37e2cb941a2e20a9f728fbea5f9e400",
     "metadata": {
       "data_source": {
-        "date_created": "2023-06-16T05:05:05",
-        "date_modified": "2023-06-16T05:05:05",
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
             "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
@@ -123,8 +123,8 @@
     "element_id": "c00fc0e5ac303c40f9089791e5e485b1",
     "metadata": {
       "data_source": {
-        "date_created": "2023-06-16T05:05:05",
-        "date_modified": "2023-06-16T05:05:05",
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
             "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
@@ -243,8 +243,8 @@
     "element_id": "98656277bdadc9ef7d1a9e1bc969579b",
     "metadata": {
       "data_source": {
-        "date_created": "2023-06-16T05:05:05",
-        "date_modified": "2023-06-16T05:05:05",
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
             "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
@@ -363,8 +363,8 @@
     "element_id": "31421b5cd94fedb10dc82738503b4505",
     "metadata": {
       "data_source": {
-        "date_created": "2023-06-16T05:05:05",
-        "date_modified": "2023-06-16T05:05:05",
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
             "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
