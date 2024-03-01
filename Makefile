@@ -443,7 +443,7 @@ check-deps:
 
 .PHONY: check-extras
 check-extras:
-	scripts/consistent-extras.sh
+	scripts/check-extras.sh
 
 ##########
 # Docker #
