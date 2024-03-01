@@ -598,7 +598,11 @@ def _process_uncategorized_text_elements(elements: List[Element]):
     out_elements = []
     for el in elements:
         if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-            new_el = element_from_text(cast(Text, el).text)
+            new_el = element_from_text(
+                text=cast(Text, el).text,
+                coordinates=el.metadata.coordinates.points,
+                coordinate_system=el.metadata.coordinates.system,
+            )
             new_el.metadata = el.metadata
         else:
             new_el = el
