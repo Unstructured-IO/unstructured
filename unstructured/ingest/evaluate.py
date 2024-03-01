@@ -5,7 +5,7 @@ from typing import List, Optional, Tuple
 import click
 
 from unstructured.metrics.evaluate import (
-    group_text_extraction_accuracy,
+    get_mean_grouping,
     measure_element_type_accuracy,
     measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
@@ -152,8 +152,15 @@ def measure_element_type_accuracy_command(
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
-def group_text_extraction_accuracy_command(grouping: str, data_input: str, export_dir: str):
-    return group_text_extraction_accuracy(grouping, data_input, export_dir)
+@click.option(
+    "--metric_strategy",
+    type=str,
+    help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
+)
+def get_mean_grouping_command(
+    grouping: str, data_input: str, export_dir: str, metric_strategy: str
+):
+    return get_mean_grouping(grouping, data_input, export_dir, metric_strategy)
 
 
 @main.command()
