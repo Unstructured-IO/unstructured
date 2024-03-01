@@ -1190,9 +1190,9 @@ def check_annotations_within_element(
         element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
         page_number (int): The page number to which the annotations and element belong.
-        annotation_threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines
-            the minimum overlap required for an annotation to be considered within the element.
-            Default is 0.9.
+        annotation_threshold (float, optional): The threshold value (between 0.0 and 1.0)
+            that determines the minimum overlap required for an annotation to be considered
+            within the element. Default is 0.9.
 
     Returns:
         List[Dict[str,Any]]: A list of dictionaries containing information about annotations
