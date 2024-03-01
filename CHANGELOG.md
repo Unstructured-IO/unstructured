@@ -1,11 +1,11 @@
-## 0.12.6-dev0
+## 0.12.6-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
- 
+
 * **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
 
 ## 0.12.5
