@@ -66,7 +66,7 @@ def _rename_aggregated_columns(df):
         '_stdev': 'stdev',
         '_count': 'count'
     }
-    return df.rename(columns=rename_map).reset_index()
+    return df.rename(columns=rename_map)
 
 
 def _format_grouping_output(*df):
@@ -74,7 +74,7 @@ def _format_grouping_output(*df):
     Concatenates multiple pandas DataFrame objects along the columns (side-by-side)
     and resets the index.
     """
-    return pd.concat(df, axis=1).reset_index(drop=True)
+    return pd.concat(df, axis=1).reset_index()
 
 
 def _display(df):
