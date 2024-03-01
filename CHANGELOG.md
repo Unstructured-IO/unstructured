@@ -1,6 +1,9 @@
-## 0.12.6-dev0
+## 0.12.6-dev1
 
 ### Enhancements
+
+* **add support for `start_index` in `html` links extraction**
+* **improve embedded links extraction in `partition_pdf()` for `fast` strategy**
 
 ### Features
 
