@@ -51,12 +51,30 @@ def _listdir_recursive(dir: str) -> List[str]:
     return listdir
 
 
+def _rename_aggregated_columns(df):
+    """
+    Renames aggregated columns in a DataFrame based on a predefined mapping.
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame with aggregated columns to rename.
+
+    Returns:
+    pandas.DataFrame: A new DataFrame with renamed aggregated columns.
+    """
+    rename_map = {
+        '_mean': 'mean',
+        '_stdev': 'stdev',
+        '_count': 'count'
+    }
+    return df.rename(columns=rename_map).reset_index()
+
+
 def _format_grouping_output(*df):
     """
     Concatenates multiple pandas DataFrame objects along the columns (side-by-side)
     and resets the index.
     """
-    return pd.concat(df, axis=1).reset_index()
+    return pd.concat(df, axis=1).reset_index(drop=True)
 
 
 def _display(df):

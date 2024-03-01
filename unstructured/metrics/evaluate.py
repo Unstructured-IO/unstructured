@@ -24,6 +24,7 @@ from unstructured.metrics.utils import (
     _prepare_output_cct,
     _pstdev,
     _read_text_file,
+    _rename_aggregated_columns,
     _stdev,
     _write_to_file,
 )
@@ -215,23 +216,20 @@ def get_mean_grouping(
             f" Check if it's empty or the column is missing/empty."
         )
     if metric_strategy == "text_extraction":
-        grouped_acc = (
+        grouped_acc = _rename_aggregated_columns(
             df.groupby(grouping)
             .agg({"cct-accuracy": [_mean, _stdev, _count]})
-            .rename(columns={"_mean": "mean", "_stdev": "stdev", "_count": "count"})
         )
-        grouped_miss = (
+        grouped_miss = _rename_aggregated_columns(
             df.groupby(grouping)
             .agg({"cct-%missing": [_mean, _stdev, _count]})
-            .rename(columns={"_mean": "mean", "_stdev": "stdev", "_count": "count"})
         )
         grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
         metric_strategy = "cct"
     elif metric_strategy == "element_type":
-        grouped_df = (
+        grouped_df = _rename_aggregated_columns(
             df.groupby(grouping)
             .agg({"element-type-accuracy": [_mean, _stdev, _count]})
-            .rename(columns={"_mean": "mean", "_stdev": "stdev", "_count": "count"})
         )
         grouped_df = _format_grouping_output(grouped_df)
         metric_strategy = "element-type"
