@@ -217,19 +217,16 @@ def get_mean_grouping(
         )
     if metric_strategy == "text_extraction":
         grouped_acc = _rename_aggregated_columns(
-            df.groupby(grouping)
-            .agg({"cct-accuracy": [_mean, _stdev, _count]})
+            df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, _count]})
         )
         grouped_miss = _rename_aggregated_columns(
-            df.groupby(grouping)
-            .agg({"cct-%missing": [_mean, _stdev, _count]})
+            df.groupby(grouping).agg({"cct-%missing": [_mean, _stdev, _count]})
         )
         grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
         metric_strategy = "cct"
     elif metric_strategy == "element_type":
         grouped_df = _rename_aggregated_columns(
-            df.groupby(grouping)
-            .agg({"element-type-accuracy": [_mean, _stdev, _count]})
+            df.groupby(grouping).agg({"element-type-accuracy": [_mean, _stdev, _count]})
         )
         grouped_df = _format_grouping_output(grouped_df)
         metric_strategy = "element-type"

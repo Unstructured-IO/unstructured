@@ -157,7 +157,9 @@ def measure_element_type_accuracy_command(
     type=str,
     help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
 )
-def get_mean_grouping_command(grouping: str, data_input: str, export_dir: str, metric_strategy: str):
+def get_mean_grouping_command(
+    grouping: str, data_input: str, export_dir: str, metric_strategy: str
+):
     return get_mean_grouping(grouping, data_input, export_dir, metric_strategy)
 
 
