@@ -1,11 +1,22 @@
-## 0.12.5-dev11
+## 0.12.6-dev1
 
 ### Enhancements
 
 ### Features
 
 * **Add support for including/excluding headers and footers when partitioning pdfs**
-* **Header and footer detection for fast strategy.** `partition_pdf` with `fast` strategy now
+
+### Fixes
+
+* **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
+
+## 0.12.5
+
+### Enhancements
+
+### Features
+
+* **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
 * **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
