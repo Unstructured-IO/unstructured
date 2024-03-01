@@ -7,7 +7,6 @@
         "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Owners"
@@ -15,7 +14,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Owners",
                 "id": "3",
                 "loginName": "Communication site Owners"
@@ -29,7 +27,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Visitors"
@@ -37,7 +34,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Visitors",
                 "id": "4",
                 "loginName": "Communication site Visitors"
@@ -51,7 +47,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Members"
@@ -59,7 +54,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Members",
                 "id": "5",
                 "loginName": "Communication site Members"
@@ -73,7 +67,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Global Administrator",
@@ -87,7 +80,6 @@
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               },
               "siteUser": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Global Administrator",
                 "id": "7",
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
@@ -127,7 +119,6 @@
         "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Owners"
@@ -135,7 +126,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Owners",
                 "id": "3",
                 "loginName": "Communication site Owners"
@@ -149,7 +139,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Visitors"
@@ -157,7 +146,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Visitors",
                 "id": "4",
                 "loginName": "Communication site Visitors"
@@ -171,7 +159,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Members"
@@ -179,7 +166,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Members",
                 "id": "5",
                 "loginName": "Communication site Members"
@@ -193,7 +179,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Global Administrator",
@@ -207,7 +192,6 @@
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               },
               "siteUser": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Global Administrator",
                 "id": "7",
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
@@ -247,7 +231,6 @@
         "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Owners"
@@ -255,7 +238,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Owners",
                 "id": "3",
                 "loginName": "Communication site Owners"
@@ -269,7 +251,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Visitors"
@@ -277,7 +258,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Visitors",
                 "id": "4",
                 "loginName": "Communication site Visitors"
@@ -291,7 +271,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Members"
@@ -299,7 +278,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Members",
                 "id": "5",
                 "loginName": "Communication site Members"
@@ -313,7 +291,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Global Administrator",
@@ -327,7 +304,6 @@
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               },
               "siteUser": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Global Administrator",
                 "id": "7",
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
@@ -367,7 +343,6 @@
         "date_modified": "2023-06-16T05:05:05+00:00",
         "permissions_data": [
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Owners"
@@ -375,7 +350,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Owners",
                 "id": "3",
                 "loginName": "Communication site Owners"
@@ -389,7 +363,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE93bmVycw"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Visitors"
@@ -397,7 +370,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Visitors",
                 "id": "4",
                 "loginName": "Communication site Visitors"
@@ -411,7 +383,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIFZpc2l0b3Jz"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Communication site Members"
@@ -419,7 +390,6 @@
             },
             "grantedToV2": {
               "siteGroup": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Communication site Members",
                 "id": "5",
                 "loginName": "Communication site Members"
@@ -433,7 +403,6 @@
             "shareId": "Q29tbXVuaWNhdGlvbiBzaXRlIE1lbWJlcnM"
           },
           {
-            "@deprecated.GrantedTo": "GrantedTo has been deprecated. Refer to GrantedToV2",
             "grantedTo": {
               "user": {
                 "displayName": "Global Administrator",
@@ -447,7 +416,6 @@
                 "id": "fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
               },
               "siteUser": {
-                "@odata.type": "#microsoft.graph.sharePointIdentity",
                 "displayName": "Global Administrator",
                 "id": "7",
                 "loginName": "c:0t.c|tenant|fc095592-c25a-4ac7-b2a1-31e0d01e4b51"
