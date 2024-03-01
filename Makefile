@@ -441,6 +441,10 @@ check-coverage:
 check-deps:
 	scripts/consistent-deps.sh
 
+.PHONY: check-extras
+check-extras:
+	scripts/consistent-extras.sh
+
 ##########
 # Docker #
 ##########
