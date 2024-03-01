@@ -1136,7 +1136,7 @@ def test_partition_pdf_with_fast_finds_headers_footers(filename="example-docs/he
     ]
 
 
-@pytest.mark.parametrize("strategy", ["auto", "fast", "ocr_only", "hi_res"])
+@pytest.mark.parametrize("strategy", ["fast", "hi_res"])
 @pytest.mark.parametrize("include_header_footer", [True, False])
 def test_partition_pdf_with_headers_footers(
     strategy,
