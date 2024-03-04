@@ -56,7 +56,7 @@ response_code=$(curl \
     --location --request POST "https://api.clarifai.com/v2/users/$USER_ID/apps/" \
     --header "Content-Type: application/json" \
     --header "Authorization: Key $CLARIFAI_PAT" \
-    --data-raw "{\"apps\": [{\"id\": \"$APP_ID\"}]}"
+    --data-raw "{\"apps\": [{\"id\": \"$APP_ID\", \"default_workflow_id\": \"Universal\"}]}"
 )
 if [ "$response_code" -lt 400 ]; then 
     echo "App created successfully: $APP_ID"
@@ -82,23 +82,39 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --num-processes "$writer_processes" 
 
 no_of_inputs=0
-sleep_time=10
+sleep_time=5
+
+max_retries=4
+retry_count=0
 
 while [ "$no_of_inputs" -eq 0 ]; do
     echo "checking for no of inputs in clarifai app"
     sleep $sleep_time
 
+    if [ "$retry_count" -eq "$max_retries" ]; then
+        echo "Reached maximum retries limit. Exiting..."
+        break
+    fi
+
     resp=$(curl \
      -s GET "https://api.clarifai.com/v2/users/$USER_ID/apps/$APP_ID/inputs/status" \
      -H "Authorization: Key $CLARIFAI_PAT")
 
+    if [ $? -ne 0 ]; then
+        echo "Error: Curl command failed" 
+        break
+    fi
+
+
     no_of_inputs=$(echo "$resp" |jq -r '.counts.processed' | sed 's/\x1b\[[0-9;]*m//g')
     echo "Processed count: $no_of_inputs"
+    retry_count=$((retry_count + 1))
+
 done
 
 EXPECTED=8729
 
-if [ "$no_of_inputs" -lt 1 ] || [ "$no_of_inputs" -ne "$EXPECTED" ]; then  
+if [ "$no_of_inputs" -ne "$EXPECTED" ]; then  
     echo "Number of inputs in the clarifai app $APP_ID is less than expected. Test failed."
     exit 1
 
