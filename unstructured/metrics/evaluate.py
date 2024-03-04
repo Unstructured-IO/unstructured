@@ -24,6 +24,7 @@ from unstructured.metrics.utils import (
     _prepare_output_cct,
     _pstdev,
     _read_text_file,
+    _rename_aggregated_columns,
     _stdev,
     _write_to_file,
 )
@@ -125,7 +126,7 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
     if grouping:
-        group_text_extraction_accuracy(grouping, df, export_dir)
+        get_mean_grouping(grouping, df, export_dir, "text_extraction")
 
     _display(agg_df)
 
@@ -136,6 +137,7 @@ def measure_element_type_accuracy(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
+    grouping: Optional[str] = None,
     visualize: bool = False,
 ):
     """
@@ -177,11 +179,15 @@ def measure_element_type_accuracy(
 
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
+
+    if grouping:
+        get_mean_grouping(grouping, df, export_dir, "element_type")
+
     _display(agg_df)
 
 
-def group_text_extraction_accuracy(
-    grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str
+def get_mean_grouping(
+    grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str, metric_strategy: str
 ) -> None:
     """Aggregates accuracy and missing metrics by 'doctype' or 'connector', exporting to TSV.
 
@@ -189,6 +195,7 @@ def group_text_extraction_accuracy(
         grouping (str): Grouping category ('doctype' or 'connector').
         data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
         export_dir (str): Directory for the exported TSV file.
+        metric_strategy (str): Evaluated metric ('text_extraction' or 'element_type').
     """
     if grouping not in ("doctype", "connector"):
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
@@ -208,18 +215,24 @@ def group_text_extraction_accuracy(
             f"Data cannot be aggregated by `{grouping}`."
             f" Check if it's empty or the column is missing/empty."
         )
-    grouped_acc = (
-        df.groupby(grouping)
-        .agg({"cct-accuracy": [_mean, _stdev, "count"]})
-        .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-    )
-    grouped_miss = (
-        df.groupby(grouping)
-        .agg({"cct-%missing": [_mean, _stdev, "count"]})
-        .rename(columns={"_mean": "mean", "_stdev": "stdev"})
-    )
-    grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
-    _write_to_file(export_dir, f"all-{grouping}-agg-cct.tsv", grouped_df)
+    if metric_strategy == "text_extraction":
+        grouped_acc = _rename_aggregated_columns(
+            df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, _count]})
+        )
+        grouped_miss = _rename_aggregated_columns(
+            df.groupby(grouping).agg({"cct-%missing": [_mean, _stdev, _count]})
+        )
+        grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
+        metric_strategy = "cct"
+    elif metric_strategy == "element_type":
+        grouped_df = _rename_aggregated_columns(
+            df.groupby(grouping).agg({"element-type-accuracy": [_mean, _stdev, _count]})
+        )
+        grouped_df = _format_grouping_output(grouped_df)
+        metric_strategy = "element-type"
+    else:
+        raise ValueError("Unknown metric. Expected `text_extraction` or `element_type`.")
+    _write_to_file(export_dir, f"all-{grouping}-agg-{metric_strategy}.tsv", grouped_df)
 
 
 def measure_table_structure_accuracy(
