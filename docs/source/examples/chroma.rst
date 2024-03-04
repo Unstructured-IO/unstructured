@@ -20,9 +20,9 @@ First, we gather links from the CNN Lite homepage using the `partition_html` fun
     links = []
 
     for element in elements:
-        if element.metadata.links is not None:
-            relative_link = element.metadata.links[0]["url"][1:]
-            if relative_link.startswith("2023"):
+        if element.metadata.link_urls:
+            relative_link = element.metadata.link_urls[0][1:]
+            if relative_link.startswith("2024"):
                 links.append(f"{cnn_lite_url}{relative_link}")
 
 Ingest Individual Articles with UnstructuredURLLoader
