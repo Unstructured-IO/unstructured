@@ -229,7 +229,7 @@ def get_mean_grouping(
             df.groupby(grouping).agg({"element-type-accuracy": [_mean, _stdev, _count]})
         )
         grouped_df = _format_grouping_output(grouped_df)
-        eval_name  = "element-type"
+        eval_name = "element-type"
     else:
         raise ValueError("Unknown metric. Expected `text_extraction` or `element_type`.")
     _write_to_file(export_dir, f"all-{grouping}-agg-{eval_name}.tsv", grouped_df)
