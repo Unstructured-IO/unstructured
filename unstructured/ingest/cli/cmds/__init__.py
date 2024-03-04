@@ -7,6 +7,7 @@ from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.cmds.fsspec.sftp import get_base_src_cmd as sftp_base_src_cmd
 
 from .airtable import get_base_src_cmd as airtable_base_src_cmd
+from .astra import get_base_dest_cmd as astra_base_dest_cmd
 from .azure_cognitive_search import get_base_dest_cmd as azure_cognitive_search_base_dest_cmd
 from .biomed import get_base_src_cmd as biomed_base_src_cmd
 from .chroma import get_base_dest_cmd as chroma_base_dest_cmd
@@ -100,6 +101,7 @@ if src_duplicates:
     )
 
 base_dest_cmd_fns: t.List[t.Callable[[], "BaseDestCmd"]] = [
+    astra_base_dest_cmd,
     azure_base_dest_cmd,
     box_base_dest_cmd,
     chroma_base_dest_cmd,

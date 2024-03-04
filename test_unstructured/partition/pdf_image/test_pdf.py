@@ -18,6 +18,8 @@ from unstructured.documents.elements import (
     CoordinatesMetadata,
     ElementMetadata,
     ElementType,
+    Footer,
+    Header,
     ListItem,
     NarrativeText,
     Text,
@@ -1120,6 +1122,18 @@ def test_partition_pdf_with_all_number_table_and_ocr_only_strategy():
 def test_partition_pdf_with_bad_color_profile():
     filename = example_doc_path("pdf-bad-color-space.pdf")
     assert pdf.partition_pdf(filename, strategy="fast")
+
+
+def test_partition_pdf_with_fast_finds_headers_footers(filename="example-docs/header-test-doc.pdf"):
+    elements = pdf.partition_pdf(filename, strategy="fast")
+    assert isinstance(elements[0], Header)
+    assert isinstance(elements[-1], Footer)
+    assert [element.text for element in elements] == [
+        "I Am A Header",
+        "Title",
+        "Here is a lovely sentences.",
+        "I Am A Footer",
+    ]
 
 
 @pytest.mark.parametrize(
