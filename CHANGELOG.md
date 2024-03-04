@@ -1,4 +1,4 @@
-## 0.12.6-dev0
+## 0.12.6-dev1
 
 ### Enhancements
 
@@ -9,6 +9,7 @@
 * **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
 * **Include warnings** about the potential risk of installing a version of `pandoc` which does not support RTF files + instructions that will help resolve that issue.
 * **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
+* **Fix Google Drive source key** Allow passing string for source connector key.
 
 ## 0.12.5
 
@@ -21,17 +22,17 @@
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
 * **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
 * **Add AstraDB destination connector** Adds support for writing embedded documents into an AstraDB vector database.
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 
 ### Fixes
 
 * **Fix passing list type parameters when calling unstructured API via `partition_via_api()`** Update `partition_via_api()` to convert all list type parameters to JSON formatted strings before calling the unstructured client SDK. This will support image block extraction via `partition_via_api()`.
-* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
-* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
-* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
 * **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
-* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
 
 ## 0.12.4
