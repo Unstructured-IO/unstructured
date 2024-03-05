@@ -40,9 +40,9 @@ class Partitioner(PartitionNode):
                 "hi_res_model_name": self.partition_config.hi_res_model_name,
             }
             if self.partition_config.skip_infer_table_types:
-                partition_kwargs["skip_infer_table_types"] = (
-                    self.partition_config.skip_infer_table_types
-                )
+                partition_kwargs[
+                    "skip_infer_table_types"
+                ] = self.partition_config.skip_infer_table_types
             if self.partition_config.additional_partition_args:
                 partition_kwargs.update(self.partition_config.additional_partition_args)
             elements = doc.process_file(
