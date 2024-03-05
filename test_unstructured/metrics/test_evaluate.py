@@ -247,9 +247,7 @@ def test_get_mean_grouping_missing_grouping_column():
 def test_get_mean_grouping_all_null_grouping_column():
     df_with_null_grouping = pd.DataFrame({"doctype": [None, None, None]})
     with pytest.raises(SystemExit):
-        get_mean_grouping(
-            "doctype", df_with_null_grouping, "some_dir", eval_name="text_extraction"
-        )
+        get_mean_grouping("doctype", df_with_null_grouping, "some_dir", eval_name="text_extraction")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
