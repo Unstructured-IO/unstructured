@@ -10,6 +10,7 @@
 * **Include warnings** about the potential risk of installing a version of `pandoc` which does not support RTF files + instructions that will help resolve that issue.
 * **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
 * **Fix Google Drive source key** Allow passing string for source connector key.
+* **Fix Sharepoint-with-permissions test** Ignore permissions metadata, update test.
 
 ## 0.12.5
 
