@@ -1,6 +1,8 @@
-## 0.12.6-dev1 
- 
+## 0.12.6-dev2
+
 ### Enhancements
+
+* **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
 
 ### Features
 
