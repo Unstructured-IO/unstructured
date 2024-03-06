@@ -449,20 +449,22 @@ def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
     As a convenience to simplify client code, also returns `file` unchanged if it is already bytes.
     """
     if isinstance(file, bytes):
-        f_bytes = file
-    elif isinstance(file, SpooledTemporaryFile):
+        return file
+
+    if isinstance(file, SpooledTemporaryFile):
         file.seek(0)
         f_bytes = file.read()
         file.seek(0)
-    elif isinstance(file, BytesIO):
-        f_bytes = file.getvalue()
-    elif isinstance(file, (TextIOWrapper, BufferedReader)):
-        with open(file.name, "rb") as f:
-            f_bytes = f.read()
-    else:
-        raise ValueError("Invalid file-like object type")
+        return f_bytes
 
-    return f_bytes
+    if isinstance(file, BytesIO):
+        return file.getvalue()
+
+    if isinstance(file, (TextIOWrapper, BufferedReader)):
+        with open(file.name, "rb") as f:
+            return f.read()
+
+    raise ValueError("Invalid file-like object type")
 
 
 def convert_ms_office_table_to_text(table: PptxTable, as_html: bool = True) -> str:
