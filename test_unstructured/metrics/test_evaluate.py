@@ -183,13 +183,13 @@ def test_text_extraction_wrong_type():
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 @pytest.mark.parametrize(("grouping", "count_row"), [("doctype", 3), ("connector", 2)])
-def test_get_mean_grouping_df_input(grouping, count_row):
+def test_get_mean_grouping_df_input(grouping: str, count_row: int):
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     get_mean_grouping(
         grouping=grouping,
         data_input=DUMMY_DF_CCT,
         export_dir=export_dir,
-        metric_strategy="text_extraction",
+        eval_name="text_extraction",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, f"all-{grouping}-agg-cct.tsv"), sep="\t")
     assert grouped_df[grouping].dropna().nunique() == count_row
@@ -209,7 +209,7 @@ def test_get_mean_grouping_tsv_input():
         grouping="doctype",
         data_input=filename,
         export_dir=export_dir,
-        metric_strategy="text_extraction",
+        eval_name="text_extraction",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "all-doctype-agg-cct.tsv"), sep="\t")
     assert grouped_df["doctype"].dropna().nunique() == 3
@@ -230,7 +230,7 @@ def test_get_mean_grouping_invalid_group():
             grouping="invalid",
             data_input=df,
             export_dir=export_dir,
-            metric_strategy="text_extraction",
+            eval_name="text_extraction",
         )
 
 
@@ -238,7 +238,7 @@ def test_get_mean_grouping_invalid_group():
 def test_text_extraction_grouping_empty_df():
     empty_df = pd.DataFrame()
     with pytest.raises(SystemExit):
-        get_mean_grouping("doctype", empty_df, "some_dir", metric_strategy="text_extraction")
+        get_mean_grouping("doctype", empty_df, "some_dir", eval_name="text_extraction")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -252,27 +252,25 @@ def test_get_mean_grouping_missing_grouping_column():
 def test_get_mean_grouping_all_null_grouping_column():
     df_with_null_grouping = pd.DataFrame({"doctype": [None, None, None]})
     with pytest.raises(SystemExit):
-        get_mean_grouping(
-            "doctype", df_with_null_grouping, "some_dir", metric_strategy="text_extraction"
-        )
+        get_mean_grouping("doctype", df_with_null_grouping, "some_dir", eval_name="text_extraction")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-def test_get_mean_grouping_invalid_metric_strategy():
+def test_get_mean_grouping_invalid_eval_name():
     with pytest.raises(ValueError):
-        get_mean_grouping("doctype", DUMMY_DF_ELEMENT_TYPE, "some_dir", metric_strategy="invalid")
+        get_mean_grouping("doctype", DUMMY_DF_ELEMENT_TYPE, "some_dir", eval_name="invalid")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 @pytest.mark.parametrize(("grouping", "count_row"), [("doctype", 3), ("connector", 2)])
-def test_get_mean_grouping_element_type(grouping, count_row):
+def test_get_mean_grouping_element_type(grouping: str, count_row: int):
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_element_type")
     get_mean_grouping(
         grouping=grouping,
         data_input=DUMMY_DF_ELEMENT_TYPE,
         export_dir=export_dir,
-        metric_strategy="element_type",
+        eval_name="element_type",
     )
     grouped_df = pd.read_csv(
         os.path.join(export_dir, f"all-{grouping}-agg-element-type.tsv"), sep="\t"
