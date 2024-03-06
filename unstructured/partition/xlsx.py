@@ -42,7 +42,7 @@ DETECTION_ORIGIN: str = "xlsx"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XLSX)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_xlsx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
