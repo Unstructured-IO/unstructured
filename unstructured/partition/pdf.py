@@ -135,7 +135,7 @@ def default_hi_res_model() -> str:
 @add_chunking_strategy
 def partition_pdf(
     filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
@@ -151,7 +151,7 @@ def partition_pdf(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
