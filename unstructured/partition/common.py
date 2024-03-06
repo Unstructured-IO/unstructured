@@ -68,11 +68,19 @@ HIERARCHY_RULE_SET = {
 
 
 def get_last_modified_date(filename: str) -> Optional[str]:
+    """Modification time of file at path `filename`, if it exists.
+
+    Returns `None` when `filename` is not a path to a file on the local filesystem.
+
+    Otherwise returns date and time in ISO 8601 string format (YYYY-MM-DDTHH:MM:SS) like
+    "2024-03-05T17:02:53".
+    """
     modify_date = datetime.fromtimestamp(os.path.getmtime(filename))
     return modify_date.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 def get_last_modified_date_from_file(file: IO[bytes] | bytes) -> Optional[str]:
+    """Modified timestamp of `file` if it corresponds to a file on the local filesystem."""
     filename = None
     if hasattr(file, "name"):
         filename = file.name
@@ -270,8 +278,10 @@ def add_element_metadata(
     languages: Optional[List[str]] = None,
     **kwargs: Any,
 ) -> Element:
-    """Adds document metadata to the document element. Document metadata includes information
-    like the filename, source url, and page number."""
+    """Adds document metadata to the document element.
+
+    Document metadata includes information like the filename, source url, and page number.
+    """
 
     coordinates_metadata = (
         CoordinatesMetadata(
@@ -324,9 +334,10 @@ def add_element_metadata(
 
 
 def remove_element_metadata(layout_elements) -> list[Element]:
-    """Removes document metadata from the document element. Document metadata includes information
-    like the filename, source url, and page number."""
-    # Init an empty list of elements to write to
+    """Removes document metadata from the document element.
+
+    Document metadata includes information like the filename, source url, and page number.
+    """
     elements: List[Element] = []
     metadata = ElementMetadata()
     for layout_element in layout_elements:
@@ -433,6 +444,10 @@ def spooled_to_bytes_io_if_needed(
 
 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
+    """Extract the bytes from `file` without preventing it from being read again later.
+
+    As a convenience to simplify client code, also returns `file` unchanged if it is already bytes.
+    """
     if isinstance(file, bytes):
         f_bytes = file
     elif isinstance(file, SpooledTemporaryFile):
@@ -454,7 +469,7 @@ def convert_ms_office_table_to_text(table: PptxTable, as_html: bool = True) -> s
     """Convert a PPTX table object to an HTML table string using the tabulate library.
 
     Args:
-        table (Table): A docx.table.Table object.
+        table (Table): A pptx.table.Table object.
         as_html (bool): Whether to return the table as an HTML string (True) or a
             plain text string (False)
 
