@@ -255,7 +255,7 @@ def set_element_hierarchy(
     return elements
 
 
-def _add_element_metadata(
+def add_element_metadata(
     element: Element,
     filename: Optional[str] = None,
     filetype: Optional[str] = None,
@@ -323,7 +323,7 @@ def _add_element_metadata(
     return element
 
 
-def _remove_element_metadata(layout_elements) -> list[Element]:
+def remove_element_metadata(layout_elements) -> list[Element]:
     """Removes document metadata from the document element. Document metadata includes information
     like the filename, source url, and page number."""
     # Init an empty list of elements to write to
@@ -581,7 +581,7 @@ def document_to_element_list(
                 layout_element.image_path if hasattr(layout_element, "image_path") else None
             )
 
-            _add_element_metadata(
+            add_element_metadata(
                 element,
                 page_number=i + 1,
                 filetype=image_format,
