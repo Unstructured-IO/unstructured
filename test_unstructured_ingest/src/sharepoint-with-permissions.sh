@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Original intent of this test was to diff the permissions metadata. Unfortunately this is unstable.
+# Since we still want to test the permission login functionality, we will test the permissions metadata when we get there.
+
 set -e
 
 SRC_PATH=$(dirname "$(realpath "$0")")
