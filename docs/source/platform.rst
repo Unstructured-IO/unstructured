@@ -7,6 +7,10 @@ The Unstructured Platform stands out with its advanced features: it includes eve
 
 Its key functionalities are enhanced with `chunking strategies <https://unstructured-io.github.io/unstructured/core/chunking.html>`__, `embedding generation <https://unstructured-io.github.io/unstructured/core/embedding.html>`__ for RAG, and compatibility with multiple file types (text, images, PDFs, and many more). Additionally, it's designed for global reach with SOC 2 compliance and support for over 50 languages, ensuring a secure, versatile, and comprehensive data management solution.
 
+  **Note**: Unstructured Platform is currently in beta. Fill out the form on the
+  `Platform product page <https://unstructured.io/platform>`__ on our website to join the
+  wait list.
+
 
 Table of Content
 ****************
@@ -14,7 +18,6 @@ Table of Content
 .. toctree::
    :maxdepth: 2
 
-   platforms/account
    platforms/workflow
    platforms/job
    platforms/source_platform
