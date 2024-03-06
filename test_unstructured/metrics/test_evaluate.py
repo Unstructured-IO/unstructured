@@ -57,11 +57,10 @@ DUMMY_DF_ELEMENT_TYPE = pd.DataFrame(
 @pytest.fixture()
 def _cleanup_after_test():
     """Fixture for removing side-effects of running tests in this file."""
-    # Run test as normal
-    yield
 
     def remove_generated_directories():
-        """Remove directories created from running tests"""
+        """Remove directories created from running tests."""
+
         # Directories to be removed:
         target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt"]
         subdirs = (d for d in os.scandir(TESTING_FILE_DIR) if d.is_dir())
@@ -69,6 +68,8 @@ def _cleanup_after_test():
             if d.name in target_dir_names:
                 shutil.rmtree(d.path)
 
+    # Run test as normal
+    yield
     remove_generated_directories()
 
 
