@@ -92,7 +92,7 @@ def get_last_modified_date_from_file(
     if hasattr(file, "name"):
         filename = file.name
 
-    if not filename:
+    if not filename or not os.path.isfile(filename):
         return None
 
     modify_date = get_last_modified_date(filename)
