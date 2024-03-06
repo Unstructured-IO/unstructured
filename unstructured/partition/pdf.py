@@ -132,7 +132,7 @@ def default_hi_res_model() -> str:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_pdf(
     filename: str = "",
     file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,

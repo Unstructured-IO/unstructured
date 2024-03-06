@@ -21,10 +21,10 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
 
 .PHONY: install-base-ci
-install-base-ci: install-base-pip-packages install-nltk-models install-test
+install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -246,6 +246,10 @@ install-ingest-mongodb:
 .PHONY: install-ingest-databricks-volumes
 install-ingest-databricks-volumes:
 	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
+
+.PHONY: install-ingest-astra
+install-ingest-astra:
+	python3 -m pip install -r requirements/ingest/astra.txt
 
 .PHONY: install-embed-huggingface
 install-embed-huggingface:

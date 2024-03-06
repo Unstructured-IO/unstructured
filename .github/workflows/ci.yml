@@ -106,7 +106,6 @@ jobs:
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
@@ -327,7 +326,8 @@ jobs:
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
@@ -382,13 +382,16 @@ jobs:
         VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
         VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
         VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
+        ASTRA_DB_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+        ASTRA_DB_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
@@ -435,7 +438,6 @@ jobs:
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version

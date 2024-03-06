@@ -7,7 +7,7 @@ import sys
 from email.message import Message
 from functools import partial
 from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
-from typing import IO, Callable, Dict, List, Optional, Tuple, Union
+from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Union
 
 from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
@@ -262,10 +262,10 @@ def parse_email(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,
@@ -275,12 +275,12 @@ def partition_email(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable] = None,
+    attachment_partitioner: Optional[Callable[..., List[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
+    **kwargs: Any,
 ) -> List[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters

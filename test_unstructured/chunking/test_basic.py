@@ -1,4 +1,4 @@
-"""Unit-test suite for the `unstructured.chunking.basic` module.
+"""Test suite for the `unstructured.chunking.basic` module.
 
 That module implements the baseline chunking strategy. The baseline strategy has all behaviors
 shared by all chunking strategies and no extra rules like perserve section or page boundaries.

@@ -51,6 +51,20 @@ def _listdir_recursive(dir: str) -> List[str]:
     return listdir
 
 
+def _rename_aggregated_columns(df):
+    """
+    Renames aggregated columns in a DataFrame based on a predefined mapping.
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame with aggregated columns to rename.
+
+    Returns:
+    pandas.DataFrame: A new DataFrame with renamed aggregated columns.
+    """
+    rename_map = {"_mean": "mean", "_stdev": "stdev", "_count": "count"}
+    return df.rename(columns=rename_map)
+
+
 def _format_grouping_output(*df):
     """
     Concatenates multiple pandas DataFrame objects along the columns (side-by-side)
@@ -203,6 +217,13 @@ def _pstdev(scores: List[Optional[float]], rounding: Optional[int] = 3) -> Union
     if not rounding:
         return statistics.pstdev(scores)
     return round(statistics.pstdev(scores), rounding)
+
+
+def _count(scores: List[Optional[float]]) -> float:
+    """
+    Returns the row count of the list.
+    """
+    return len(scores)
 
 
 def _read_text_file(path):

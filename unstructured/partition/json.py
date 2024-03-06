@@ -1,6 +1,18 @@
-import json
-from typing import IO, Any, List, Optional
+"""Provides `partition_json()`.
 
+Note this does not partition arbitrary JSON. Its only use-case is to "rehydrate" unstructured
+document elements serialized to JSON, essentially the same function as `elements_from_json()`, but
+this allows a document of already-partitioned elements to be combined transparently with other
+documents in a partitioning run. It also allows multiple (low-cost) chunking runs to be performed on
+a document while only incurring partitioning cost once.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import IO, Any, Optional
+
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import (
     FileType,
@@ -17,6 +29,7 @@ from unstructured.staging.base import dict_to_elements
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
+@add_chunking_strategy
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -25,7 +38,7 @@ def partition_json(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions serialized Unstructured output into its constituent elements.
 
     Parameters
@@ -45,6 +58,7 @@ def partition_json(
     exactly_one(filename=filename, file=file, text=text)
 
     last_modification_date = None
+    file_text = ""
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         with open(filename, encoding="utf8") as f:

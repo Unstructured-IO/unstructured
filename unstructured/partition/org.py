@@ -9,7 +9,7 @@ DETECTION_ORIGIN: str = "org"
 
 
 @add_metadata_with_filetype(FileType.ORG)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_org(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

@@ -217,7 +217,7 @@
       "page_number": 3
     },
     "text": "1",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "d4735e3a265e16eee03f59718b9b5d03",
@@ -237,7 +237,7 @@
       "page_number": 4
     },
     "text": "2",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "f193ae2dc90e6bc6856125ad88fdab12",
@@ -1737,7 +1737,7 @@
       "page_number": 5
     },
     "text": "2012 UNSCEAR report and the 2015 US NRC SOARCA study.",
-    "type": "Title"
+    "type": "Footer"
   },
   {
     "element_id": "4e07408562bedb8b60ce05c1decfe3ad",
@@ -1757,7 +1757,7 @@
       "page_number": 5
     },
     "text": "3",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "4b227777d4dd1fc61c6f884f48641d02",
@@ -1777,7 +1777,7 @@
       "page_number": 6
     },
     "text": "4",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "f5bda7d6ba9ea7120d7f4c11c8b8f1ae",
@@ -2117,7 +2117,7 @@
       "page_number": 7
     },
     "text": "5",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "e7f6c011776e8db7cd330b54174fd76f",
@@ -2137,7 +2137,7 @@
       "page_number": 8
     },
     "text": "6",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "b5b9075460067db9eb092a70c73a83a4",
@@ -2297,7 +2297,7 @@
       "page_number": 9
     },
     "text": "7",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "2c624232cdd221771294dfbb310aca00",
@@ -2317,7 +2317,7 @@
       "page_number": 10
     },
     "text": "8",
-    "type": "UncategorizedText"
+    "type": "Footer"
   },
   {
     "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
@@ -2857,7 +2857,7 @@
       "page_number": 12
     },
     "text": "+44 (0)20 7451 1520 www.world-nuclear.org info@world-nuclear.org",
-    "type": "Title"
+    "type": "Header"
   },
   {
     "element_id": "20ef77d9aa66e60f1443750cdbaa9014",
@@ -2897,6 +2897,6 @@
       "page_number": 12
     },
     "text": "Recalibrating risk © 2021 World Nuclear Association. Registered in England and Wales, company number 01215741",
-    "type": "NarrativeText"
+    "type": "Footer"
   }
 ]
