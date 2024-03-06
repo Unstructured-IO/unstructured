@@ -263,7 +263,7 @@ def validate_date_args(date: Optional[str] = None) -> bool:
     )
 
 
-def _first_and_remaining_iterator(it: Iterable[Any]) -> tuple[Any, Iterator[Any]]:
+def _first_and_remaining_iterator(it: Iterable[_T]) -> Tuple[_T, Iterator[_T]]:
     iterator = iter(it)
     try:
         out = next(iterator)
@@ -275,7 +275,7 @@ def _first_and_remaining_iterator(it: Iterable[Any]) -> tuple[Any, Iterator[Any]
     return out, iterator
 
 
-def first(it: Iterable[Any]) -> Any:
+def first(it: Iterable[_T]) -> _T:
     """Returns the first item from an iterable. Raises an error if the iterable is empty."""
     out, _ = _first_and_remaining_iterator(it)
     return out

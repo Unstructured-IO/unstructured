@@ -5,7 +5,8 @@ import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
 from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -28,7 +29,7 @@ from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DO
 
 
 class MockPageLayout(layout.PageLayout):
-    def __init__(self, number: int, image: Image):
+    def __init__(self, number: int, image: Image.Image):
         self.number = number
         self.image = image
 
