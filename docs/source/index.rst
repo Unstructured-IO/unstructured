@@ -13,6 +13,9 @@ Library Documentation
 :doc:`api`
   Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
 
+:doc:`platform`
+  Explore the enterprise-grade platform for enterprises and high-growth companies with large data volume looking to automatically retrieve, transform, and stage their data for LLMs.
+
 :doc:`core`
   Learn more about the core partitioning, chunking, cleaning, and staging functionality within the
   Unstructured library.
@@ -42,6 +45,7 @@ Library Documentation
    introduction
    installing
    api
+   platform
    core
    ingest/index
    metadata
