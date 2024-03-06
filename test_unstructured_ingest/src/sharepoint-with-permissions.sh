@@ -35,6 +35,7 @@ if [ -z "$SHAREPOINT_PERMISSIONS_APP_ID" ] || [ -z "$SHAREPOINT_PERMISSIONS_APP_
 fi
 
 # excluding metadata.last_modified since this will always update as date processed because the Sharepoint connector creates documents on the fly
+# excluding metadata.data_source.permissions_data since the api has deprecation warnings. Will want to do a separate test for permissions data
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   sharepoint \

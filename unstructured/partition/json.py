@@ -29,7 +29,7 @@ from unstructured.staging.base import dict_to_elements
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

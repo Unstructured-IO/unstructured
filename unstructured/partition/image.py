@@ -13,7 +13,7 @@ from unstructured.partition.utils.constants import PartitionStrategy
 
 @process_metadata()
 @add_metadata
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
