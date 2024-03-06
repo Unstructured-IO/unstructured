@@ -1,4 +1,4 @@
-## 0.12.6-dev2
+## 0.12.6-dev3
 
 ### Enhancements
 
@@ -13,6 +13,7 @@
 * **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
 * **Fix Google Drive source key** Allow passing string for source connector key.
 * **Fix table structure evaluations calculations** Replaced special value `-1.0` with `np.nan` and corrected rows filtering of files metrics basing on that.
+* **Fix Sharepoint-with-permissions test** Ignore permissions metadata, update test.
 
 ## 0.12.5
 
