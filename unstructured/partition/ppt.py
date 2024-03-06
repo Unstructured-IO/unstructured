@@ -16,7 +16,7 @@ from unstructured.partition.pptx import partition_pptx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PPT)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_ppt(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

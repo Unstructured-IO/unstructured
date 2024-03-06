@@ -17,7 +17,7 @@ from unstructured.partition.text import partition_text
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MSG)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_msg(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
