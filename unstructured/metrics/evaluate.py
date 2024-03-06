@@ -327,20 +327,20 @@ def measure_table_structure_accuracy(
             ]
         ).transpose()
     else:
-        # filter out documents with no tables
-        having_table_df = df[df["total_tables"] > 0]
-        # compute aggregated metrics for tables
-        agg_df = having_table_df.agg(
-            {
-                "total_tables": [_mean, _stdev, _pstdev, "count"],
-                "table_level_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-            }
-        ).transpose()
-        agg_df = agg_df.reset_index()
+        element_metrics_results = {}
+        for metric in [
+            "total_tables",
+            "table_level_acc",
+            "element_col_level_index_acc",
+            "element_row_level_index_acc",
+            "element_col_level_content_acc",
+            "element_row_level_content_acc",
+        ]:
+            metric_df = df[df[metric].notnull()]
+            element_metrics_results[metric] = (
+                metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+            )
+        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
         agg_df.columns = agg_headers
 
     _write_to_file(export_dir, "all-docs-table-structure-accuracy.tsv", df)

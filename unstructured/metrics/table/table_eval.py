@@ -143,10 +143,6 @@ class TableEvalProcessor:
         """
         total_predicted_tables = 0
         total_tables = 0
-        total_row_index_acc = []
-        total_col_index_acc = []
-        total_row_content_acc = []
-        total_col_content_acc = []
 
         predicted_table_data = extract_and_convert_tables_from_prediction(
             self.prediction,
@@ -168,29 +164,16 @@ class TableEvalProcessor:
             matched_indices,
             cutoff=self.cutoff,
         )
-        if metrics:
-            total_col_index_acc.append(metrics["col_index_acc"])
-            total_row_index_acc.append(metrics["row_index_acc"])
-            total_col_content_acc.append(metrics["col_content_acc"])
-            total_row_content_acc.append(metrics["row_content_acc"])
 
         return TableEvaluation(
             total_tables=total_tables,
             table_level_acc=(
-                round(total_predicted_tables / total_tables, 2) if total_tables else -1.0
+                round(total_predicted_tables / total_tables, 2) if total_tables else np.nan
             ),
-            element_col_level_index_acc=(
-                round(np.mean(total_col_index_acc), 2) if len(total_col_index_acc) > 0 else -1.0
-            ),
-            element_row_level_index_acc=(
-                round(np.mean(total_row_index_acc), 2) if len(total_row_index_acc) > 0 else -1.0
-            ),
-            element_col_level_content_acc=(
-                round(np.mean(total_col_content_acc), 2) if len(total_col_content_acc) > 0 else -1.0
-            ),
-            element_row_level_content_acc=(
-                round(np.mean(total_row_content_acc), 2) if len(total_row_content_acc) > 0 else -1.0
-            ),
+            element_col_level_index_acc=metrics.get("col_index_acc", np.nan),
+            element_row_level_index_acc=metrics.get("row_index_acc", np.nan),
+            element_col_level_content_acc=metrics.get("col_content_acc", np.nan),
+            element_row_level_content_acc=metrics.get("row_content_acc", np.nan),
         )
 
 
