@@ -303,7 +303,6 @@ def _add_element_metadata(
     links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
-    link_start_indexs = [link.get("start_index") for link in links] if links else None
     emphasized_texts = (
         element.emphasized_texts
         if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
@@ -330,7 +329,6 @@ def _add_element_metadata(
         text_as_html=text_as_html,
         link_urls=link_urls,
         link_texts=link_texts,
-        link_start_indexs=link_start_indexs,
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
         section=section,
