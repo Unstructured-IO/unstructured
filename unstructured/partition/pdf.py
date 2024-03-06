@@ -680,6 +680,7 @@ def _process_pdfminer_pages(
     languages: List[str],
     metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
+    annotation_threshold: Optional[float] = 0.9,
     **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
@@ -710,6 +711,7 @@ def _process_pdfminer_pages(
                     annotation_list,
                     bbox,
                     i + 1,
+                    annotation_threshold,
                 )
                 _, words = get_word_bounding_box_from_element(obj, height)
                 for annot in annotations_within_element:
@@ -1177,7 +1179,7 @@ def check_annotations_within_element(
     annotation_list: List[Dict[str, Any]],
     element_bbox: Tuple[float, float, float, float],
     page_number: int,
-    threshold: float = 0.9,
+    annotation_threshold: float,
 ) -> List[Dict[str, Any]]:
     """
     Filter annotations that are within or highly overlap with a specified element on a page.
@@ -1188,9 +1190,9 @@ def check_annotations_within_element(
         element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
         page_number (int): The page number to which the annotations and element belong.
-        threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines
-            the minimum overlap required for an annotation to be considered within the element.
-            Default is 0.9.
+        annotation_threshold (float, optional): The threshold value (between 0.0 and 1.0)
+            that determines the minimum overlap required for an annotation to be considered
+            within the element. Default is 0.9.
 
     Returns:
         List[Dict[str,Any]]: A list of dictionaries containing information about annotations
@@ -1203,7 +1205,7 @@ def check_annotations_within_element(
             annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
             if annotation_bbox_size and (
                 calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
-                > threshold
+                > annotation_threshold
             ):
                 annotations_within_element.append(annotation)
     return annotations_within_element
