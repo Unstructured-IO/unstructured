@@ -317,8 +317,8 @@ def measure_table_structure_accuracy(
     df = pd.DataFrame(rows, columns=headers)
     has_tables_df = df[df["total_tables"] > 0]
 
-    def get_empty_results():
-        empty_df = pd.DataFrame(
+    if has_tables_df.empty:
+        agg_df = pd.DataFrame(
             [
                 ["total_tables", None, None, None, 0],
                 ["table_level_acc", None, None, None, 0],
@@ -327,12 +327,7 @@ def measure_table_structure_accuracy(
                 ["element_col_level_content_acc", None, None, None, 0],
                 ["element_row_level_content_acc", None, None, None, 0],
             ]
-        )
-        empty_df.columns = agg_headers
-        return empty_df
-
-    if has_tables_df.empty:
-        agg_df = get_empty_results()
+        ).reset_index()
     else:
         element_metrics_results = {}
         for metric in [
@@ -344,15 +339,16 @@ def measure_table_structure_accuracy(
             "element_row_level_content_acc",
         ]:
             metric_df = has_tables_df[has_tables_df[metric].notnull()]
-            element_metrics_results[metric] = (
-                metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
-            )
-        if any(metric_df.empty for metric_df in element_metrics_results.values()):
-            agg_df = get_empty_results()
-        else:
-            agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
-            agg_df.columns = agg_headers
+            agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+            if agg_metric.empty:
+                element_metrics_results[metric] = pd.Series(
+                    data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                )
+            else:
+                element_metrics_results[metric] = agg_metric
+        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
 
+    agg_df.columns = agg_headers
     _write_to_file(
         export_dir, "all-docs-table-structure-accuracy.tsv", _rename_aggregated_columns(df)
     )
