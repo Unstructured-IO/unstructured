@@ -294,14 +294,19 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     """Hyperlinks within and below `tag_elem`."""
     links: List[Link] = []
     href = tag_elem.get("href")
-    start_index = len(tag_elem.text)
     if href:
-        links.append({"text": tag_elem.text, "url": href, "start_index": 0})
+        links.append({"text": tag_elem.text, "url": href, "start_index": -1})
+
+    start_index = len(tag_elem.text) if tag_elem.text else 0
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
             links.append({"text": tag.text, "url": href, "start_index": start_index})
-        start_index = start_index + len(tag.tail) + len(tag.text)
+
+        if tag.text:
+            start_index = start_index + len(tag.text)
+        if tag.tail:
+            start_index = start_index + len(tag.tail)
     return links
 
 
