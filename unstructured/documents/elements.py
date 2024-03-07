@@ -188,7 +188,7 @@ class ElementMetadata:
     last_modified: Optional[str]
     link_texts: Optional[List[str]]
     link_urls: Optional[List[str]]
-    link_start_indexs: Optional[List[int]]
+    link_start_indexes: Optional[List[int]]
     links: Optional[List[Link]]
     # -- the worksheet name in XLXS documents --
     page_name: Optional[str]
@@ -234,7 +234,7 @@ class ElementMetadata:
         last_modified: Optional[str] = None,
         link_texts: Optional[List[str]] = None,
         link_urls: Optional[List[str]] = None,
-        link_start_indexs: Optional[List[int]] = None,
+        link_start_indexes: Optional[List[int]] = None,
         links: Optional[List[Link]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
@@ -273,7 +273,7 @@ class ElementMetadata:
         self.last_modified = last_modified
         self.link_texts = link_texts
         self.link_urls = link_urls
-        self.link_start_indexs = link_start_indexs
+        self.link_start_indexes = link_start_indexes
         self.links = links
         self.page_name = page_name
         self.page_number = page_number
@@ -476,7 +476,7 @@ class ConsolidationStrategy(enum.Enum):
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,
             "link_urls": cls.LIST_CONCATENATE,
-            "link_start_indexs": cls.LIST_CONCATENATE,
+            "link_start_indexes": cls.LIST_CONCATENATE,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "page_name": cls.FIRST,
