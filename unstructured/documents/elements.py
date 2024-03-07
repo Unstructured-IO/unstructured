@@ -903,7 +903,7 @@ class Footer(Text):
     category = "Footer"
 
 
-TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, Any] = {
+TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
     ElementType.HEADLINE: Title,
