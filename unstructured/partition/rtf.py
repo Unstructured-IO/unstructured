@@ -10,7 +10,7 @@ DETECTION_ORIGIN: str = "rtf"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.RTF)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_rtf(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
