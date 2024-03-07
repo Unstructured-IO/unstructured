@@ -27,7 +27,7 @@ from unstructured.__version__ import __version__
 
 def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List[str]:
     if file_list is None:
-        file_list = ["requirements/base.in"]
+        file_list = ["requirements/base.txt"]
     if isinstance(file_list, str):
         file_list = [file_list]
     requirements: List[str] = []
@@ -40,22 +40,22 @@ def load_requirements(file_list: Optional[Union[str, List[str]]] = None) -> List
     return requirements
 
 
-csv_reqs = load_requirements("requirements/extra-csv.in")
-doc_reqs = load_requirements("requirements/extra-docx.in")
-docx_reqs = load_requirements("requirements/extra-docx.in")
-epub_reqs = load_requirements("requirements/extra-epub.in")
-image_reqs = load_requirements("requirements/extra-pdf-image.in")
-markdown_reqs = load_requirements("requirements/extra-markdown.in")
-msg_reqs = load_requirements("requirements/extra-msg.in")
-odt_reqs = load_requirements("requirements/extra-odt.in")
-org_reqs = load_requirements("requirements/extra-pandoc.in")
-pdf_reqs = load_requirements("requirements/extra-pdf-image.in")
-ppt_reqs = load_requirements("requirements/extra-pptx.in")
-pptx_reqs = load_requirements("requirements/extra-pptx.in")
-rtf_reqs = load_requirements("requirements/extra-pandoc.in")
-rst_reqs = load_requirements("requirements/extra-pandoc.in")
-tsv_reqs = load_requirements("requirements/extra-csv.in")
-xlsx_reqs = load_requirements("requirements/extra-xlsx.in")
+csv_reqs = load_requirements("requirements/extra-csv.txt")
+doc_reqs = load_requirements("requirements/extra-docx.txt")
+docx_reqs = load_requirements("requirements/extra-docx.txt")
+epub_reqs = load_requirements("requirements/extra-epub.txt")
+image_reqs = load_requirements("requirements/extra-pdf-image.txt")
+markdown_reqs = load_requirements("requirements/extra-markdown.txt")
+msg_reqs = load_requirements("requirements/extra-msg.txt")
+odt_reqs = load_requirements("requirements/extra-odt.txt")
+org_reqs = load_requirements("requirements/extra-pandoc.txt")
+pdf_reqs = load_requirements("requirements/extra-pdf-image.txt")
+ppt_reqs = load_requirements("requirements/extra-pptx.txt")
+pptx_reqs = load_requirements("requirements/extra-pptx.txt")
+rtf_reqs = load_requirements("requirements/extra-pandoc.txt")
+rst_reqs = load_requirements("requirements/extra-pandoc.txt")
+tsv_reqs = load_requirements("requirements/extra-csv.txt")
+xlsx_reqs = load_requirements("requirements/extra-xlsx.txt")
 
 all_doc_reqs = list(
     set(
@@ -104,7 +104,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     entry_points={
-        "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
+        "console_scripts": ["unstructured-ingest=unstructured.txtgest.main:main"],
     },
     install_requires=load_requirements(),
     extras_require={
@@ -127,50 +127,50 @@ setup(
         "tsv": tsv_reqs,
         "xlsx": xlsx_reqs,
         # Extra requirements for data connectors
-        "airtable": load_requirements("requirements/ingest/airtable.in"),
-        "astra": load_requirements("requirements/ingest/astra.in"),
-        "azure": load_requirements("requirements/ingest/azure.in"),
+        "airtable": load_requirements("requirements/ingest/airtable.txt"),
+        "astra": load_requirements("requirements/ingest/astra.txt"),
+        "azure": load_requirements("requirements/ingest/azure.txt"),
         "azure-cognitive-search": load_requirements(
-            "requirements/ingest/azure-cognitive-search.in",
+            "requirements/ingest/azure-cognitive-search.txt",
         ),
-        "biomed": load_requirements("requirements/ingest/biomed.in"),
-        "box": load_requirements("requirements/ingest/box.in"),
-        "chroma": load_requirements("requirements/ingest/chroma.in"),
-        "confluence": load_requirements("requirements/ingest/confluence.in"),
-        "delta-table": load_requirements("requirements/ingest/delta-table.in"),
-        "discord": load_requirements("requirements/ingest/discord.in"),
-        "dropbox": load_requirements("requirements/ingest/dropbox.in"),
-        "elasticsearch": load_requirements("requirements/ingest/elasticsearch.in"),
-        "gcs": load_requirements("requirements/ingest/gcs.in"),
-        "github": load_requirements("requirements/ingest/github.in"),
-        "gitlab": load_requirements("requirements/ingest/gitlab.in"),
-        "google-drive": load_requirements("requirements/ingest/google-drive.in"),
-        "hubspot": load_requirements("requirements/ingest/hubspot.in"),
-        "jira": load_requirements("requirements/ingest/jira.in"),
-        "mongodb": load_requirements("requirements/ingest/mongodb.in"),
-        "notion": load_requirements("requirements/ingest/notion.in"),
-        "onedrive": load_requirements("requirements/ingest/onedrive.in"),
-        "opensearch": load_requirements("requirements/ingest/opensearch.in"),
-        "outlook": load_requirements("requirements/ingest/outlook.in"),
-        "pinecone": load_requirements("requirements/ingest/pinecone.in"),
-        "postgres": load_requirements("requirements/ingest/postgres.in"),
-        "qdrant": load_requirements("requirements/ingest/qdrant.in"),
-        "reddit": load_requirements("requirements/ingest/reddit.in"),
-        "s3": load_requirements("requirements/ingest/s3.in"),
-        "sharepoint": load_requirements("requirements/ingest/sharepoint.in"),
-        "salesforce": load_requirements("requirements/ingest/salesforce.in"),
-        "sftp": load_requirements("requirements/ingest/sftp.in"),
-        "slack": load_requirements("requirements/ingest/slack.in"),
-        "wikipedia": load_requirements("requirements/ingest/wikipedia.in"),
-        "weaviate": load_requirements("requirements/ingest/weaviate.in"),
+        "biomed": load_requirements("requirements/ingest/biomed.txt"),
+        "box": load_requirements("requirements/ingest/box.txt"),
+        "chroma": load_requirements("requirements/ingest/chroma.txt"),
+        "confluence": load_requirements("requirements/ingest/confluence.txt"),
+        "delta-table": load_requirements("requirements/ingest/delta-table.txt"),
+        "discord": load_requirements("requirements/ingest/discord.txt"),
+        "dropbox": load_requirements("requirements/ingest/dropbox.txt"),
+        "elasticsearch": load_requirements("requirements/ingest/elasticsearch.txt"),
+        "gcs": load_requirements("requirements/ingest/gcs.txt"),
+        "github": load_requirements("requirements/ingest/github.txt"),
+        "gitlab": load_requirements("requirements/ingest/gitlab.txt"),
+        "google-drive": load_requirements("requirements/ingest/google-drive.txt"),
+        "hubspot": load_requirements("requirements/ingest/hubspot.txt"),
+        "jira": load_requirements("requirements/ingest/jira.txt"),
+        "mongodb": load_requirements("requirements/ingest/mongodb.txt"),
+        "notion": load_requirements("requirements/ingest/notion.txt"),
+        "onedrive": load_requirements("requirements/ingest/onedrive.txt"),
+        "opensearch": load_requirements("requirements/ingest/opensearch.txt"),
+        "outlook": load_requirements("requirements/ingest/outlook.txt"),
+        "pinecone": load_requirements("requirements/ingest/pinecone.txt"),
+        "postgres": load_requirements("requirements/ingest/postgres.txt"),
+        "qdrant": load_requirements("requirements/ingest/qdrant.txt"),
+        "reddit": load_requirements("requirements/ingest/reddit.txt"),
+        "s3": load_requirements("requirements/ingest/s3.txt"),
+        "sharepoint": load_requirements("requirements/ingest/sharepoint.txt"),
+        "salesforce": load_requirements("requirements/ingest/salesforce.txt"),
+        "sftp": load_requirements("requirements/ingest/sftp.txt"),
+        "slack": load_requirements("requirements/ingest/slack.txt"),
+        "wikipedia": load_requirements("requirements/ingest/wikipedia.txt"),
+        "weaviate": load_requirements("requirements/ingest/weaviate.txt"),
         # Legacy extra requirements
-        "huggingface": load_requirements("requirements/huggingface.in"),
+        "huggingface": load_requirements("requirements/huggingface.txt"),
         "local-inference": all_doc_reqs,
-        "paddleocr": load_requirements("requirements/extra-paddleocr.in"),
-        "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
-        "openai": load_requirements("requirements/ingest/embed-openai.in"),
-        "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
-        "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
+        "paddleocr": load_requirements("requirements/extra-paddleocr.txt"),
+        "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.txt"),
+        "openai": load_requirements("requirements/ingest/embed-openai.txt"),
+        "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.txt"),
+        "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.txt"),
     },
     package_dir={"unstructured": "unstructured"},
     package_data={"unstructured": ["nlp/*.txt"]},
