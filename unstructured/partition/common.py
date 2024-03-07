@@ -151,7 +151,7 @@ def normalize_layout_element(
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
-        assert isinstance(element_type, str)
+        assert isinstance(element_type, str)  # Added to resolve type-error
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
         _element_class = _element_class(
             text=text,
