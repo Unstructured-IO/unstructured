@@ -16,6 +16,7 @@
 * **Fix Google Drive source key** Allow passing string for source connector key.
 * **Fix table structure evaluations calculations** Replaced special value `-1.0` with `np.nan` and corrected rows filtering of files metrics basing on that.
 * **Fix Sharepoint-with-permissions test** Ignore permissions metadata, update test.
+* **Fix table structure evaluations for edge case** Fixes the issue when the prediction does not contain any table - no longer errors in such case.
 
 ## 0.12.5
 
