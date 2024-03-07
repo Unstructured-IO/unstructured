@@ -1,3 +1,7 @@
+import datetime as dt
+import io
+import os
+import pathlib
 from dataclasses import dataclass
 from unittest import mock
 
@@ -540,3 +544,64 @@ def test_ocr_data_to_elements(
             points=layout_el.bbox.coordinates,
             system=coordinate_system,
         )
+
+
+class Describe_get_last_modified_date:
+
+    def it_gets_the_modified_time_of_a_file_identified_by_a_path(self, tmp_path: pathlib.Path):
+        modified_timestamp = dt.datetime(
+            year=2024, month=3, day=5, hour=17, minute=43, second=40
+        ).timestamp()
+        file_path = tmp_path / "some_file.txt"
+        file_path.write_text("abcdefg")
+        os.utime(file_path, (modified_timestamp, modified_timestamp))
+
+        last_modified_date = common.get_last_modified_date(str(file_path))
+
+        assert last_modified_date == "2024-03-05T17:43:40"
+
+    def but_it_returns_None_when_there_is_no_file_at_that_path(self, tmp_path: pathlib.Path):
+        file_path = tmp_path / "some_file_that_does_not_exist.txt"
+
+        last_modified_date = common.get_last_modified_date(str(file_path))
+
+        assert last_modified_date is None
+
+
+class Describe_get_last_modified_date_from_file:
+
+    def it_gets_the_modified_time_of_a_file_like_object_corresponding_to_a_filesystem_file(
+        self, tmp_path: pathlib.Path
+    ):
+        modified_timestamp = dt.datetime(
+            year=2024, month=3, day=5, hour=20, minute=48, second=26
+        ).timestamp()
+        file_path = tmp_path / "some_file_2.txt"
+        file_path.write_text("abcdefg")
+        os.utime(file_path, (modified_timestamp, modified_timestamp))
+
+        with open(file_path, "rb") as f:
+            last_modified_date = common.get_last_modified_date_from_file(f)
+
+        assert last_modified_date == "2024-03-05T20:48:26"
+
+    def but_it_returns_None_when_the_argument_is_a_bytes_object(self):
+        assert common.get_last_modified_date_from_file(b"abcdefg") is None
+
+    def and_it_returns_None_when_the_file_like_object_has_no_name_attribute(self):
+        file = io.BytesIO(b"abcdefg")
+        assert hasattr(file, "name") is False
+
+        last_modified_date = common.get_last_modified_date_from_file(file)
+
+        assert last_modified_date is None
+
+    def and_it_returns_None_when_the_file_like_object_name_is_not_a_path_to_a_file(
+        self, tmp_path: pathlib.Path
+    ):
+        file = io.BytesIO(b"abcdefg")
+        file.name = str(tmp_path / "a_file_that_isn't_here.txt")
+
+        last_modified_date = common.get_last_modified_date_from_file(file)
+
+        assert last_modified_date is None

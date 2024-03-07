@@ -1,4 +1,4 @@
-## 0.12.6-dev7
+## 0.12.6-dev8
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 
 ### Fixes
 
+* **Partitioning raises on file-like object with `.name` not a local file path.** When partitioning a file using the `file=` argument, and `file` is a file-like object (e.g. io.BytesIO) having a `.name` attribute, and the value of `file.name` is not a valid path to a file present on the local filesystem, `FileNotFoundError` is raised. This prevents use of the `file.name` attribute for downstream purposes to, for example, describe the source of a document retrieved from a network location via HTTP.
 * **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
 * **Include warnings** about the potential risk of installing a version of `pandoc` which does not support RTF files + instructions that will help resolve that issue.
 * **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
