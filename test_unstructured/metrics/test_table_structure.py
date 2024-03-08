@@ -33,7 +33,7 @@ def test_table_eval_processor_simple():
         {
             "type": "Table",
             "metadata": {
-                "text_as_html": """<table><thead><<th>r1c1</th><th>r1c2</th></thead>
+                "text_as_html": """<table><thead><th>r1c1</th><th>r1c2</th></thead>
                     <tbody><tr><td>r2c1</td><td>r2c2</td></tr></tbody></table>"""
             },
         }
