@@ -31,6 +31,7 @@ from unstructured.documents.html import (
     TagsMixin,
     _parse_HTMLTable_from_table_elem,
 )
+from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -926,6 +927,34 @@ def test_line_break_in_text_tag(tag):
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
     assert doc.elements[1].text == "World"
+
+
+def test_partition_html_links():
+    html_text = """<html>
+        <a href="/loner">A lone link!</a>
+        <p>Hello <a href="/link">link!</a></p>
+        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>   
+    </html>"""
+
+    elements = partition_html(text=html_text)
+
+    assert len(elements[0].metadata.link_texts) == 1
+    assert elements[0].metadata.link_texts[0] == "A lone link!"
+    assert elements[0].metadata.link_urls[0] == "/loner"
+    assert elements[0].metadata.link_start_indexes[0] == -1
+
+    assert len(elements[1].metadata.link_texts) == 1
+    assert elements[1].metadata.link_texts[0] == "link!"
+    assert elements[1].metadata.link_urls[0] == "/link"
+    assert elements[1].metadata.link_start_indexes[0] == 6
+
+    assert len(elements[2].metadata.link_texts) == 2
+    assert elements[2].metadata.link_texts[0] == "Parrots"
+    assert elements[2].metadata.link_urls[0] == "/wiki/parrots"
+    assert elements[2].metadata.link_start_indexes[0] == 0
+    assert elements[2].metadata.link_texts[1] == "Dogs"
+    assert elements[2].metadata.link_urls[1] == "/wiki/dogs"
+    assert elements[2].metadata.link_start_indexes[1] == 12
 
 
 # -- unit-level tests ----------------------------------------------------------------------------
