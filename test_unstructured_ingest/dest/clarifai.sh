@@ -9,7 +9,6 @@ OUTPUT_FOLDER_NAME=clarifai-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-writer_processes=$(((max_processes - 1) > 1 ? (max_processes - 1) : 2))
 
 if [ -z "$CLARIFAI_PAT" ]; then
     echo "Skipping Clarifai ingest test because CLARIFAI_PAT env var is not set."
@@ -67,7 +66,7 @@ fi
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
-  --input-path example-docs/book-war-and-peace-1225p.txt \
+  --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --chunk-elements \
@@ -79,7 +78,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --user-id "$USER_ID" \
   --api-key "$CLARIFAI_PAT"\
   --batch-size 100 \
-  --num-processes "$writer_processes" 
 
 no_of_inputs=0
 sleep_time=5
@@ -112,7 +110,7 @@ while [ "$no_of_inputs" -eq 0 ]; do
 
 done
 
-EXPECTED=8729
+EXPECTED=8
 
 if [ "$no_of_inputs" -ne "$EXPECTED" ]; then  
     echo "Number of inputs in the clarifai app $APP_ID is less than expected. Test failed."

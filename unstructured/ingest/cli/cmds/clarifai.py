@@ -18,22 +18,22 @@ class ClarifaiCliConfig(SimpleClarifaiConfig, CliConfig):
         options = [
             click.Option(
                 ["--api-key"],
+                required=True,
                 type=str,
-                default=None,
                 help="The CLARIFAI_PAT of the user to access clarifai platform apps and models",
                 envvar="CLARIFAI_PAT",
                 show_envvar=True
             ),
             click.Option(
                 ["--app-id"],
+                required=True,
                 type=str,
-                default=None,
                 help="Clarifai app name/id",
             ),
             click.Option(
                 ["--user-id"],
+                required=True,
                 type=str,
-                default=None,
                 help="Clarifai User name/ID",
             ),
         ]
@@ -50,12 +50,6 @@ class ClarifaiCliWriteConfig(ClarifaiWriteConfig, CliConfig):
                 type=int,
                 default=50,
                 help="No of inputs upload per batch",
-            ),
-            click.Option(
-                ["--num-processes"],
-                type=int,
-                default=1,
-                help="No of parallel processes for upload",
             ),
         ]
         return options

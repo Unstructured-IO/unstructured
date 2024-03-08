@@ -30,13 +30,12 @@ class ClarifaiAccessConfig(AccessConfig):
 @dataclass
 class SimpleClarifaiConfig(BaseConnectorConfig):
     access_config: ClarifaiAccessConfig
-    app_id: t.Optional[str] = None
-    user_id: t.Optional[str] = None
+    app_id: str
+    user_id: str
     
 @dataclass
 class ClarifaiWriteConfig(WriteConfig):
     batch_size: int = 50
-    num_processes: int = 1
 
 @dataclass
 class ClarifaiDestinationConnector(BaseDestinationConnector):
