@@ -20,6 +20,7 @@ python table_eval.py  \
     --ground_truth_file "ground_truth.pdf.json"
 """
 
+import difflib
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -45,6 +46,27 @@ class TableEvaluation:
     element_row_level_index_acc: float
     element_col_level_content_acc: float
     element_row_level_content_acc: float
+
+
+def table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices):
+    """computes for each predicted table its accurary compared to ground truth.
+
+    The accuracy is defined as the SequenceMatcher.ratio() between those two strings. If a
+    prediction does not have a matched ground truth its accuracy is 0
+    """
+    score = np.zeros((len(matched_indices),))
+    ground_truth_text = TableAlignment.get_content_in_tables(ground_truth_table_data)
+    for idx, predicted in enumerate(predicted_table_data):
+        matched_idx = matched_indices[idx]
+        if matched_idx == -1:
+            # false positive; default score 0
+            continue
+        score[idx] = difflib.SequenceMatcher(
+            None,
+            TableAlignment.get_content_in_tables([predicted])[0],
+            ground_truth_text[matched_idx],
+        ).ratio()
+    return score
 
 
 def _count_predicted_tables(matched_indices: List[int]) -> int:
@@ -141,8 +163,6 @@ class TableEvalProcessor:
         Returns:
             TableEvaluation: A dataclass object containing the computed metrics.
         """
-        total_predicted_tables = 0
-        total_tables = 0
 
         predicted_table_data = extract_and_convert_tables_from_prediction(
             self.prediction,
@@ -155,8 +175,16 @@ class TableEvalProcessor:
             predicted_table_data,
             ground_truth_table_data,
         )
-        total_predicted_tables += _count_predicted_tables(matched_indices)
-        total_tables += len(ground_truth_table_data)
+        if matched_indices:
+            predicted_table_acc = np.mean(
+                table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices)
+            )
+        elif ground_truth_table_data:
+            # no matching prediction but has actual table -> total failure
+            predicted_table_acc = 0
+        else:
+            # no predicted and no actual table -> good job
+            predicted_table_acc = 1
 
         metrics = TableAlignment.get_element_level_alignment(
             predicted_table_data,
@@ -166,10 +194,8 @@ class TableEvalProcessor:
         )
 
         return TableEvaluation(
-            total_tables=total_tables,
-            table_level_acc=(
-                round(total_predicted_tables / total_tables, 2) if total_tables else np.nan
-            ),
+            total_tables=len(ground_truth_table_data),
+            table_level_acc=predicted_table_acc,
             element_col_level_index_acc=metrics.get("col_index_acc", np.nan),
             element_row_level_index_acc=metrics.get("row_index_acc", np.nan),
             element_col_level_content_acc=metrics.get("col_content_acc", np.nan),
