@@ -135,7 +135,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
-      UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
     needs: [setup, lint]
     steps:
     - uses: actions/checkout@v3
@@ -216,7 +215,6 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        UNSTRUCTURED_HF_TOKEN: ${{ secrets.HF_TOKEN }}
       run: |
         source .venv-${{ matrix.extra }}/bin/activate
         # NOTE(newelh) - determine what needs to be installed here
