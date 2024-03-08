@@ -16,12 +16,12 @@ function usage {
 }
 
 function getopts-extra() {
-  declare i=1
+  declare -i i=1
   # if the next argument is not an option, then append it to array OPTARG
   while [[ ${OPTIND} -le $# && ${!OPTIND:0:1} != '-' ]]; do
     OPTARG[i]=${!OPTIND}
-    i+=1
-    OPTIND+=1
+    ((i += 1))
+    ((OPTIND += 1))
   done
 }
 
