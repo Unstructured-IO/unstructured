@@ -195,7 +195,7 @@ class TableEvalProcessor:
 
         return TableEvaluation(
             total_tables=len(ground_truth_table_data),
-            table_level_acc=round(predicted_table_acc, 2),
+            table_level_acc=predicted_table_acc,
             element_col_level_index_acc=metrics.get("col_index_acc", np.nan),
             element_row_level_index_acc=metrics.get("row_index_acc", np.nan),
             element_col_level_content_acc=metrics.get("col_content_acc", np.nan),
