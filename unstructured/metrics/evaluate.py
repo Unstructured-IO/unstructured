@@ -187,7 +187,7 @@ def measure_element_type_accuracy(
 
 
 def get_mean_grouping(
-    grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str, metric_strategy: str
+    grouping: str, data_input: Union[pd.DataFrame, str], export_dir: str, eval_name: str
 ) -> None:
     """Aggregates accuracy and missing metrics by 'doctype' or 'connector', exporting to TSV.
 
@@ -195,7 +195,7 @@ def get_mean_grouping(
         grouping (str): Grouping category ('doctype' or 'connector').
         data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
         export_dir (str): Directory for the exported TSV file.
-        metric_strategy (str): Evaluated metric ('text_extraction' or 'element_type').
+        eval_name (str): Evaluated metric ('text_extraction' or 'element_type').
     """
     if grouping not in ("doctype", "connector"):
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
@@ -215,7 +215,7 @@ def get_mean_grouping(
             f"Data cannot be aggregated by `{grouping}`."
             f" Check if it's empty or the column is missing/empty."
         )
-    if metric_strategy == "text_extraction":
+    if eval_name == "text_extraction":
         grouped_acc = _rename_aggregated_columns(
             df.groupby(grouping).agg({"cct-accuracy": [_mean, _stdev, _count]})
         )
@@ -223,16 +223,16 @@ def get_mean_grouping(
             df.groupby(grouping).agg({"cct-%missing": [_mean, _stdev, _count]})
         )
         grouped_df = _format_grouping_output(grouped_acc, grouped_miss)
-        metric_strategy = "cct"
-    elif metric_strategy == "element_type":
+        eval_name = "cct"
+    elif eval_name == "element_type":
         grouped_df = _rename_aggregated_columns(
             df.groupby(grouping).agg({"element-type-accuracy": [_mean, _stdev, _count]})
         )
         grouped_df = _format_grouping_output(grouped_df)
-        metric_strategy = "element-type"
+        eval_name = "element-type"
     else:
         raise ValueError("Unknown metric. Expected `text_extraction` or `element_type`.")
-    _write_to_file(export_dir, f"all-{grouping}-agg-{metric_strategy}.tsv", grouped_df)
+    _write_to_file(export_dir, f"all-{grouping}-agg-{eval_name}.tsv", grouped_df)
 
 
 def measure_table_structure_accuracy(
@@ -315,7 +315,9 @@ def measure_table_structure_accuracy(
         "element_row_level_content_acc",
     ]
     df = pd.DataFrame(rows, columns=headers)
-    if df.empty:
+    has_tables_df = df[df["total_tables"] > 0]
+
+    if has_tables_df.empty:
         agg_df = pd.DataFrame(
             [
                 ["total_tables", None, None, None, 0],
@@ -325,24 +327,32 @@ def measure_table_structure_accuracy(
                 ["element_col_level_content_acc", None, None, None, 0],
                 ["element_row_level_content_acc", None, None, None, 0],
             ]
-        ).transpose()
+        ).reset_index()
     else:
-        # filter out documents with no tables
-        having_table_df = df[df["total_tables"] > 0]
-        # compute aggregated metrics for tables
-        agg_df = having_table_df.agg(
-            {
-                "total_tables": [_mean, _stdev, _pstdev, "count"],
-                "table_level_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-            }
-        ).transpose()
-        agg_df = agg_df.reset_index()
-        agg_df.columns = agg_headers
+        element_metrics_results = {}
+        for metric in [
+            "total_tables",
+            "table_level_acc",
+            "element_col_level_index_acc",
+            "element_row_level_index_acc",
+            "element_col_level_content_acc",
+            "element_row_level_content_acc",
+        ]:
+            metric_df = has_tables_df[has_tables_df[metric].notnull()]
+            agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+            if agg_metric.empty:
+                element_metrics_results[metric] = pd.Series(
+                    data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                )
+            else:
+                element_metrics_results[metric] = agg_metric
+        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
 
-    _write_to_file(export_dir, "all-docs-table-structure-accuracy.tsv", df)
-    _write_to_file(export_dir, "aggregate-table-structure-accuracy.tsv", agg_df)
+    agg_df.columns = agg_headers
+    _write_to_file(
+        export_dir, "all-docs-table-structure-accuracy.tsv", _rename_aggregated_columns(df)
+    )
+    _write_to_file(
+        export_dir, "aggregate-table-structure-accuracy.tsv", _rename_aggregated_columns(agg_df)
+    )
     _display(agg_df)
