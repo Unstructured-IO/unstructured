@@ -41,6 +41,20 @@ jobs:
     - name: Check for dependency conflicts
       run: make check-deps
 
+  check-extras:
+    strategy:
+      matrix:
+        python-version: [ "3.9","3.10","3.11" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install all extras
+        run: make check-extras
+
   lint:
     strategy:
       matrix:
@@ -106,7 +120,6 @@ jobs:
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
@@ -327,7 +340,8 @@ jobs:
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
@@ -390,7 +404,8 @@ jobs:
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
@@ -437,7 +452,6 @@ jobs:
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version

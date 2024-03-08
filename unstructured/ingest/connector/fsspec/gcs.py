@@ -1,4 +1,3 @@
-import json
 import typing as t
 from dataclasses import dataclass
 from pathlib import Path
@@ -14,6 +13,7 @@ from unstructured.ingest.connector.fsspec.fsspec import (
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import AccessConfig
+from unstructured.ingest.utils.string_utils import json_to_dict
 from unstructured.utils import requires_dependencies
 
 
@@ -25,6 +25,7 @@ class GcsAccessConfig(AccessConfig):
 
     def __post_init__(self):
         ALLOWED_AUTH_VALUES = "google_default", "cache", "anon", "browser", "cloud"
+
         # Case: null value
         if not self.token:
             return
@@ -32,14 +33,8 @@ class GcsAccessConfig(AccessConfig):
         if self.token in ALLOWED_AUTH_VALUES:
             return
         # Case: token as json
-        try:
-            str_token = self.token.replace("'", '"')
-            str_token = json.loads(str_token)
-        except json.JSONDecodeError:
-            # Not neccessary an error if it is a path
-            pass
-        else:
-            self.token = str_token
+        if isinstance(json_to_dict(self.token), dict):
+            self.token = json_to_dict(self.token)
             return
         # Case: path to token
         if Path(self.token).is_file():

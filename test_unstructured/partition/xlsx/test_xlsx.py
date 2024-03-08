@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import io
 import sys
 import tempfile
 from typing import cast
@@ -161,6 +162,23 @@ def test_partition_xlsx_from_file():
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
     assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
     assert elements[1].metadata.filename is None
+
+
+def test_partition_xlsx_from_file_like_object_with_name():
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        file = io.BytesIO(f.read())
+    file.name = "stanley-cups-downloaded-from-network.xlsx"
+
+    elements = partition_xlsx(file=file, include_header=False)
+
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 4
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
 
 
 def test_partition_xlsx_from_file_with_metadata_filename():
