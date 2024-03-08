@@ -933,7 +933,7 @@ def test_partition_html_links():
     html_text = """<html>
         <a href="/loner">A lone link!</a>
         <p>Hello <a href="/link">link!</a></p>
-        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>   
+        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>
     </html>"""
 
     elements = partition_html(text=html_text)
