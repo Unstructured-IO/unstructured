@@ -20,6 +20,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.interfaces import PermissionsConfig as SharepointPermissionsConfig
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -248,8 +249,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             )
             return
         self.source_metadata = SourceMetadata(
-            date_created=self.ensure_isoformat_datetime(timestamp=file.time_created),
-            date_modified=self.ensure_isoformat_datetime(timestamp=file.time_last_modified),
+            date_created=ensure_isoformat_datetime(timestamp=file.time_created),
+            date_modified=ensure_isoformat_datetime(timestamp=file.time_last_modified),
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,

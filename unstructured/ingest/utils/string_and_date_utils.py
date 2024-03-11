@@ -21,7 +21,7 @@ def json_to_dict(json_string: str) -> t.Union[str, t.Dict[str, t.Any]]:
     return json_string
 
 
-def ensure_isoformat_datetime(self, timestamp: t.Union[datetime, str]) -> str:
+def ensure_isoformat_datetime(timestamp: t.Union[datetime, str]) -> str:
     """
     Ensures that the input value is converted to an ISO format datetime string.
     Handles both datetime objects and strings.

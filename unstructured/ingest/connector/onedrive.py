@@ -15,6 +15,7 @@ from unstructured.ingest.interfaces import (
     SourceMetadata,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -148,8 +149,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             #     file.last_modified_datetime,
             #     "%Y-%m-%dT%H:%M:%SZ",
             # ).isoformat(),
-            date_created=self._ensure_isoformat_datetime(timestamp=file.created_datetime),
-            date_modified=self._ensure_isoformat_datetime(timestamp=file.last_modified_datetime),
+            date_created=ensure_isoformat_datetime(timestamp=file.created_datetime),
+            date_modified=ensure_isoformat_datetime(timestamp=file.last_modified_datetime),
             version=version,
             source_url=file.parent_reference.path + "/" + self.file_name,
             exists=True,
