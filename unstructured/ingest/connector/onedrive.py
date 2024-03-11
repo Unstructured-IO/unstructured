@@ -21,7 +21,7 @@ from unstructured.utils import requires_dependencies
 if t.TYPE_CHECKING:
     from office365.graph_client import GraphClient
     from office365.onedrive.driveitems.driveItem import DriveItem
-
+from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 MAX_MB_SIZE = 512_000_000
 
 
@@ -144,11 +144,13 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             version = file.versions[n_versions - 1].properties.get("id", None)
 
         self.source_metadata = SourceMetadata(
-            date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
-            date_modified=datetime.strptime(
-                file.last_modified_datetime,
-                "%Y-%m-%dT%H:%M:%SZ",
-            ).isoformat(),
+            # date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            # date_modified=datetime.strptime(
+            #     file.last_modified_datetime,
+            #     "%Y-%m-%dT%H:%M:%SZ",
+            # ).isoformat(),
+            date_created=self._ensure_isoformat_datetime(timestamp=file.created_datetime),
+            date_modified=self._ensure_isoformat_datetime(timestamp=file.last_modified_datetime),
             version=version,
             source_url=file.parent_reference.path + "/" + self.file_name,
             exists=True,

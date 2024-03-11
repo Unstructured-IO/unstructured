@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 
 from unstructured.ingest.cli.utils import extract_config
 from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.utils.string_utils import json_to_dict
+from unstructured.ingest.utils.string_and_date_utils import json_to_dict
 
 
 @dataclass
