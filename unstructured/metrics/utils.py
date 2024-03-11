@@ -61,7 +61,7 @@ def _rename_aggregated_columns(df):
     Returns:
     pandas.DataFrame: A new DataFrame with renamed aggregated columns.
     """
-    rename_map = {"_mean": "mean", "_stdev": "stdev", "_count": "count"}
+    rename_map = {"_mean": "mean", "_stdev": "stdev", "_pstdev": "pstdev", "_count": "count"}
     return df.rename(columns=rename_map)
 
 

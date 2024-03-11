@@ -181,7 +181,7 @@ def test_text_extraction_wrong_type():
 def test_get_mean_grouping_df_input(grouping: str, count_row: int):
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     get_mean_grouping(
-        grouping=grouping,
+        group_by=grouping,
         data_input=DUMMY_DF_CCT,
         export_dir=export_dir,
         eval_name="text_extraction",
@@ -201,7 +201,7 @@ def test_get_mean_grouping_tsv_input():
     )
     filename = os.path.join(export_dir, "all-docs-cct.tsv")
     get_mean_grouping(
-        grouping="doctype",
+        group_by="doctype",
         data_input=filename,
         export_dir=export_dir,
         eval_name="text_extraction",
@@ -222,7 +222,7 @@ def test_get_mean_grouping_invalid_group():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     with pytest.raises(ValueError):
         get_mean_grouping(
-            grouping="invalid",
+            group_by="invalid",
             data_input=df,
             export_dir=export_dir,
             eval_name="text_extraction",
@@ -240,7 +240,7 @@ def test_text_extraction_grouping_empty_df():
 def test_get_mean_grouping_missing_grouping_column():
     df_with_no_grouping = pd.DataFrame({"some_column": [1, 2, 3]})
     with pytest.raises(SystemExit):
-        get_mean_grouping("doctype", df_with_no_grouping, "some_dir", "text-extraction")
+        get_mean_grouping("doctype", df_with_no_grouping, "some_dir", "text_extraction")
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -262,7 +262,7 @@ def test_get_mean_grouping_invalid_eval_name():
 def test_get_mean_grouping_element_type(grouping: str, count_row: int):
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_element_type")
     get_mean_grouping(
-        grouping=grouping,
+        group_by=grouping,
         data_input=DUMMY_DF_ELEMENT_TYPE,
         export_dir=export_dir,
         eval_name="element_type",
@@ -271,3 +271,57 @@ def test_get_mean_grouping_element_type(grouping: str, count_row: int):
         os.path.join(export_dir, f"all-{grouping}-agg-element-type.tsv"), sep="\t"
     )
     assert grouped_df[grouping].dropna().nunique() == count_row
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_get_mean_grouping_filename():
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    get_mean_grouping(
+        group_by="filename",
+        data_input=DUMMY_DF_CCT,
+        export_dir=export_dir,
+        eval_name="text_extraction",
+        group_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
+        export_name="all-filename-agg-cct.tsv",
+    )
+    grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
+    assert float(grouped_df.iloc[1, 0]) == 0.903
+    assert float(grouped_df.iloc[1, 1]) == 0.129
+    assert float(grouped_df.iloc[1, 2]) == 0.091
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_get_mean_grouping_filename_without_group_list():
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    with pytest.raises(ValueError):
+        get_mean_grouping(
+            group_by="filename",
+            data_input=DUMMY_DF_CCT,
+            export_dir=export_dir,
+            eval_name="text_extraction",
+            export_name="all-filename-agg-cct.tsv",
+        )
+
+
+# from text file
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_get_mean_grouping_group_list_from_txt():
+    with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
+        file.write("Bank Good Credit Loan.pptx\n")
+        file.write("Performance-Audit-Discussion.pdf\n")
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    get_mean_grouping(
+        group_by="filename",
+        data_input=DUMMY_DF_CCT,
+        export_dir=export_dir,
+        eval_name="text_extraction",
+        group_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
+        export_name="all-filename-agg-cct.tsv",
+    )
+    grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
+    assert float(grouped_df.iloc[1, 0]) == 0.903
+    assert float(grouped_df.iloc[1, 1]) == 0.129
+    assert float(grouped_df.iloc[1, 2]) == 0.091
