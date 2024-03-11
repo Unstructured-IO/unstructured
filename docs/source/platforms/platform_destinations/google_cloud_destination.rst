@@ -27,6 +27,6 @@ Step-by-Step Guide
   - ``Remote URL`` (*required*): Enter the Google Cloud Storage bucket URL where the data will be stored.
   - ``Service Account Key`` (*required*): Provide the Service Account Key that has been granted access to the specified Google Cloud Storage bucket.
 
-    - Note: the ``Service Account Key`` must have the **Storage Object Creator** role at minimum to ensure proper access permissions. Please refer to `GCS IAM documentation `here <https://cloud.google.com/storage/docs/access-control/iam>`__.
+    - Note: the ``Service Account Key`` must have the **Storage Object Creator** role at minimum to ensure proper access permissions. Please refer to `GCS IAM documentation <https://cloud.google.com/storage/docs/access-control/iam>`__.
 
 4. **Submit**. Review all the details entered to ensure accuracy. Click 'Submit' to finalize the creation of the Destination Connector. The newly completed Google Cloud Storage connector will be listed on the Destinations dashboard.
