@@ -331,10 +331,10 @@ def test_evaluate_with_filter_list():
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     measure_text_extraction_accuracy(
-        output_dir=output_dir, 
-        source_dir=source_dir, 
-        export_dir=export_dir, 
-        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"]
+        output_dir=output_dir,
+        source_dir=source_dir,
+        export_dir=export_dir,
+        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
     )
     df = pd.read_csv(os.path.join(export_dir, "all-filtered-docs-cct.tsv"), sep="\t")
     assert len(df) == 2
