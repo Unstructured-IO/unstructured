@@ -51,8 +51,9 @@ def measure_text_extraction_accuracy(
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
     grouping: Optional[str] = None,
-    weights: Tuple[int, int, int] = (2, 1, 1),
+    weights: Tuple[int, int, int] = (1, 1, 1),
     visualize: bool = False,
+    filter_list: Optional[Union[List[str], str]] = None,
     output_type: str = "json",
 ) -> None:
     """
@@ -125,6 +126,10 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
+    if filter_list:
+        filtered_df = df[df["filename"].isin(filter_list)]
+        _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
+
     if grouping:
         get_mean_grouping(grouping, df, export_dir, "text_extraction")
 
@@ -138,6 +143,7 @@ def measure_element_type_accuracy(
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
     grouping: Optional[str] = None,
+    filter_list: Optional[Union[List[str], str]] = None,
     visualize: bool = False,
 ):
     """
@@ -173,12 +179,17 @@ def measure_element_type_accuracy(
     if df.empty:
         agg_df = pd.DataFrame(["element-type-accuracy", None, None, None, 0]).transpose()
     else:
-        agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, "count"]}).transpose()
+        agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, _count]}).transpose()
         agg_df = agg_df.reset_index()
+
     agg_df.columns = agg_headers
 
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
+
+    if filter_list:
+        filtered_df = df[df["filename"].isin(filter_list)]
+        _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
 
     if grouping:
         get_mean_grouping(grouping, df, export_dir, "element_type")
@@ -191,7 +202,7 @@ def get_mean_grouping(
     data_input: Union[pd.DataFrame, str],
     export_dir: str,
     eval_name: str,
-    group_list: Optional[Union[List[str], str]] = None,
+    filter_list: Optional[Union[List[str], str]] = None,
     agg_name: Optional[str] = None,
     export_name: Optional[str] = None,
 ) -> None:
@@ -212,7 +223,7 @@ def get_mean_grouping(
     """
     if group_by not in ("doctype", "connector") and group_by != "filename":
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
-    if group_by == "filename" and not group_list:
+    if group_by == "filename" and not filter_list:
         raise ValueError("`group_list` must be provided when grouping by `filename`")
 
     if eval_name == "text_extraction":
@@ -249,9 +260,9 @@ def get_mean_grouping(
                 )
             )
     if group_by == "filename":
-        if isinstance(group_list, str):
-            group_list = _read_text_file(group_list).split("\n")
-        df = df[df["filename"].isin(group_list)]
+        if isinstance(filter_list, str):
+            filter_list = _read_text_file(filter_list).split("\n")
+        df = df[df["filename"].isin(filter_list)]
         if df.empty:
             raise SystemExit(
                 "No common file names between calculated metric and `group_list`." "Exiting."

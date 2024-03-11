@@ -76,7 +76,6 @@ def test_text_extraction_evaluation():
     measure_text_extraction_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
-    assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
@@ -92,7 +91,6 @@ def test_text_extraction_evaluation_type_txt():
     measure_text_extraction_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="txt"
     )
-    assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
@@ -282,7 +280,7 @@ def test_get_mean_grouping_filename():
         data_input=DUMMY_DF_CCT,
         export_dir=export_dir,
         eval_name="text_extraction",
-        group_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
+        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
         export_name="all-filename-agg-cct.tsv",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
@@ -305,7 +303,6 @@ def test_get_mean_grouping_filename_without_group_list():
         )
 
 
-# from text file
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
 def test_get_mean_grouping_group_list_from_txt():
@@ -318,10 +315,26 @@ def test_get_mean_grouping_group_list_from_txt():
         data_input=DUMMY_DF_CCT,
         export_dir=export_dir,
         eval_name="text_extraction",
-        group_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
+        filter_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
         export_name="all-filename-agg-cct.tsv",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
     assert float(grouped_df.iloc[1, 0]) == 0.903
     assert float(grouped_df.iloc[1, 1]) == 0.129
     assert float(grouped_df.iloc[1, 2]) == 0.091
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_evaluate_with_filter_list():
+    output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
+    source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+    measure_text_extraction_accuracy(
+        output_dir=output_dir, 
+        source_dir=source_dir, 
+        export_dir=export_dir, 
+        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"]
+    )
+    df = pd.read_csv(os.path.join(export_dir, "all-filtered-docs-cct.tsv"), sep="\t")
+    assert len(df) == 2
