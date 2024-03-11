@@ -16,6 +16,11 @@ from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
+# For version tracking
+from unstructured import __name__ as integration_name
+from unstructured.__version__ import __version__ as integration_version
+
+
 if t.TYPE_CHECKING:
     from astrapy.db import AstraDB, AstraDBCollection
 
@@ -71,6 +76,8 @@ class AstraDestinationConnector(BaseDestinationConnector):
             self._astra_db = AstraDB(
                 api_endpoint=self.connector_config.access_config.api_endpoint,
                 token=self.connector_config.access_config.token,
+                caller_name=integration_name,
+                caller_version=integration_version,
             )
 
             # Create and connect to the newly created collection
