@@ -131,7 +131,7 @@ def measure_text_extraction_accuracy(
         _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
 
     if grouping:
-        get_mean_grouping(grouping, df, export_dir, "text_extraction")
+        get_mean_grouping(grouping, df, export_dir, "text_extraction", filter_list)
 
     _display(agg_df)
 
@@ -192,7 +192,7 @@ def measure_element_type_accuracy(
         _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
 
     if grouping:
-        get_mean_grouping(grouping, df, export_dir, "element_type")
+        get_mean_grouping(grouping, df, export_dir, "text_extraction", filter_list)
 
     _display(agg_df)
 
