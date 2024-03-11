@@ -12,4 +12,4 @@ unstructured-ingest \
   --app-id "<your clarifai app name>" \
   --user-id "<your clarifai user id>" \
   --api-key "<your clarifai PAT key>" \
-  --batch-size 100 
+  --batch-size 100
