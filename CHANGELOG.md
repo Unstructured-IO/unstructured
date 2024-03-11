@@ -1,3 +1,12 @@
+## 0.12.7-dev0
+
+### Enhancements
+
+### Features
+* **Added Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
+
+### Fixes
+
 ## 0.12.6
 
 ### Enhancements

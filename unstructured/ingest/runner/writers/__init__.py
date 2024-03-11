@@ -27,7 +27,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "azure_cognitive_search": AzureCognitiveSearchWriter,
     "box": BoxWriter,
     "chroma": ChromaWriter,
-    "clarifai" : ClarifaiWriter,
+    "clarifai": ClarifaiWriter,
     "databricks_volumes": DatabricksVolumesWriter,
     "delta_table": DeltaTableWriter,
     "dropbox": DropboxWriter,

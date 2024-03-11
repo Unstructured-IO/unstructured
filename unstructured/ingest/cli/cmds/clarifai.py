@@ -11,6 +11,7 @@ from unstructured.ingest.connector.clarifai import (
 
 CMD_NAME = "clarifai"
 
+
 @dataclass
 class ClarifaiCliConfig(SimpleClarifaiConfig, CliConfig):
     @staticmethod
@@ -22,7 +23,7 @@ class ClarifaiCliConfig(SimpleClarifaiConfig, CliConfig):
                 type=str,
                 help="The CLARIFAI_PAT of the user to access clarifai platform apps and models",
                 envvar="CLARIFAI_PAT",
-                show_envvar=True
+                show_envvar=True,
             ),
             click.Option(
                 ["--app-id"],
@@ -37,20 +38,17 @@ class ClarifaiCliConfig(SimpleClarifaiConfig, CliConfig):
                 help="Clarifai User name/ID",
             ),
             click.Option(
-                ["--dataset-id"],
-                type=str,
-                default=None,
-                help="Clarifai App Dataset ID (optional)"
+                ["--dataset-id"], type=str, default=None, help="Clarifai App Dataset ID (optional)"
             ),
         ]
         return options
-    
+
 
 @dataclass
 class ClarifaiCliWriteConfig(ClarifaiWriteConfig, CliConfig):
     @staticmethod
     def get_cli_options() -> t.List[click.option]:
-        options =[
+        options = [
             click.Option(
                 ["--batch-size"],
                 type=int,
@@ -59,13 +57,15 @@ class ClarifaiCliWriteConfig(ClarifaiWriteConfig, CliConfig):
             ),
         ]
         return options
+
+
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
-    cmd_cls= BaseDestCmd(
+    cmd_cls = BaseDestCmd(
         cmd_name=CMD_NAME,
         cli_config=ClarifaiCliConfig,
         additional_cli_options=[ClarifaiCliWriteConfig],
-        write_config=ClarifaiWriteConfig
+        write_config=ClarifaiWriteConfig,
     )
     return cmd_cls

@@ -14,8 +14,6 @@ class ClarifaiWriter(Writer):
     connector_config: "SimpleClarifaiConfig"
 
     def get_connector_cls(self) -> t.Type[BaseDestinationConnector]:
-        from unstructured.ingest.connector.clarifai import (
-            ClarifaiDestinationConnector
-        )
+        from unstructured.ingest.connector.clarifai import ClarifaiDestinationConnector
 
         return ClarifaiDestinationConnector
