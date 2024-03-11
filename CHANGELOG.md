@@ -1,9 +1,10 @@
-## 0.12.6-dev8
+## 0.12.6
 
 ### Enhancements
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
+* **Redefine `table_level_acc` metric for table evaluation.** `table_level_acc` now is an average of individual predicted table's accuracy. A predicted table's accuracy is defined as the sequence matching ratio between itself and its corresponding ground truth table.
 
 ### Features
 * **Added Unstructured Platform Documentation** The Unstructured Platform is currently in beta. The documentation provides how-to guides for setting up workflow automation, job scheduling, and configuring source and destination connectors.
