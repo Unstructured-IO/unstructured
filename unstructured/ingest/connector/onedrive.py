@@ -142,7 +142,8 @@ class OneDriveIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             version = file.versions[n_versions - 1].properties.get("id", None)
 
         self.source_metadata = SourceMetadata(
-            # date_created=datetime.strptime(file.created_datetime, "%Y-%m-%dT%H:%M:%SZ").isoformat(),
+            # date_created=datetime.strptime(file.created_datetime,
+            # "%Y-%m-%dT%H:%M:%SZ").isoformat(),
             # date_modified=datetime.strptime(
             #     file.last_modified_datetime,
             #     "%Y-%m-%dT%H:%M:%SZ",

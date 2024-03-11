@@ -214,7 +214,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     #             dt = parser.parse(timestamp)
     #             return dt.isoformat()
     #         except ValueError as e:
-    #             raise ValueError(f"String '{timestamp}' could not be parsed as a datetime.") from e
+    #             raise ValueError(f"String '{timestamp}' \
+    #       could not be parsed as a datetime.") from e
     #     else:
     #         raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
 

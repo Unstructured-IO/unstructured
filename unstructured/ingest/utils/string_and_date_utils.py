@@ -2,6 +2,8 @@ import json
 import typing as t
 from datetime import datetime
 
+from dateutil import parser
+
 
 def json_to_dict(json_string: str) -> t.Union[str, t.Dict[str, t.Any]]:
     """Helper function attempts to deserialize json string to a dictionary."""
