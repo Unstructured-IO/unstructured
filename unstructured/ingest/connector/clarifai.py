@@ -32,6 +32,7 @@ class SimpleClarifaiConfig(BaseConnectorConfig):
     access_config: ClarifaiAccessConfig
     app_id: str
     user_id: str
+    dataset_id: t.Optional[str] = None
     
 @dataclass
 class ClarifaiWriteConfig(WriteConfig):
@@ -48,16 +49,16 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
     def client(self) -> "Inputs":
         if self._client is None:
             from clarifai.client.input import Inputs
-        access_conf = self.connector_config.access_config
-        try:
-            if access_conf.api_key is not None :
-                clarifai_pat = access_conf.api_key   
-        except Exception as e:
-            raise (f"please provide clarifai PAT key : {e}")
-    
-        self._client = Inputs(app_id = self.connector_config.app_id, 
-                             user_id = self.connector_config.user_id, 
-                             pat = clarifai_pat)
+            access_conf = self.connector_config.access_config
+            try:
+                if access_conf.api_key is not None :
+                    clarifai_pat = access_conf.api_key   
+            except Exception as e:
+                raise (f"please provide clarifai PAT key : {e}")
+        
+            self._client = Inputs(app_id = self.connector_config.app_id, 
+                                user_id = self.connector_config.user_id, 
+                                pat = clarifai_pat)
         return self._client
         
         
@@ -68,7 +69,8 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
        
     def check_connection(self):
         try:
-            _ = self.client
+            _ = [inp 
+            for inp in self.client.list_inputs(page_no=1,per_page=1)]
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
@@ -114,6 +116,7 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
                     input_batch.append(self._client.get_text_input(
                             input_id=elem["input_id"],
                             raw_text=elem["text"],
+                            dataset_id=self.connector_config.dataset_id,
                             metadata=meta_struct,)
                         )
                 result_id = self._client.upload_inputs(inputs=input_batch)

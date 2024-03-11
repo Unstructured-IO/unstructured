@@ -113,7 +113,7 @@ done
 EXPECTED=8
 
 if [ "$no_of_inputs" -ne "$EXPECTED" ]; then  
-    echo "Number of inputs in the clarifai app $APP_ID is less than expected. Test failed."
+    echo "Number of inputs in the clarifai app $APP_ID is not equal to expected. Test failed."
     exit 1
 
 fi

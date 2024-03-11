@@ -36,6 +36,12 @@ class ClarifaiCliConfig(SimpleClarifaiConfig, CliConfig):
                 type=str,
                 help="Clarifai User name/ID",
             ),
+            click.Option(
+                ["--dataset-id"],
+                type=str,
+                default=None,
+                help="Clarifai App Dataset ID (optional)"
+            ),
         ]
         return options
     
