@@ -2,12 +2,9 @@ import json
 import os
 import typing as t
 from dataclasses import dataclass
-from datetime import datetime
 from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
-
-from dateutil import parser
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -24,7 +21,7 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.interfaces import PermissionsConfig as SharepointPermissionsConfig
 from unstructured.ingest.logger import logger
 from unstructured.utils import requires_dependencies
-from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
+
 if t.TYPE_CHECKING:
     from office365.sharepoint.client_context import ClientContext
     from office365.sharepoint.files.file import File

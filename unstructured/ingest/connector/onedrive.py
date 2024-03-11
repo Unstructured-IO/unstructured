@@ -1,6 +1,5 @@
 import typing as t
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
@@ -21,7 +20,6 @@ from unstructured.utils import requires_dependencies
 if t.TYPE_CHECKING:
     from office365.graph_client import GraphClient
     from office365.onedrive.driveitems.driveItem import DriveItem
-from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 MAX_MB_SIZE = 512_000_000
 
 
