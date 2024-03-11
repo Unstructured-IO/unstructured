@@ -536,14 +536,22 @@ class TextPreChunk:
 
     def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
+        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
+        # -- generate any chunks.
+        if not self._text:
+            return
+
         split = self._opts.split
-        metadata = self._consolidated_metadata
 
-        remainder = self._text
+        # -- emit first chunk --
+        s, remainder = split(self._text)
+        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
 
+        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
+        # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=metadata)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata)
 
     @lazyproperty
     def overlap_tail(self) -> str:
@@ -603,6 +611,20 @@ class TextPreChunk:
         "consolidated".
         """
         return ElementMetadata(**self._meta_kwargs)
+
+    @lazyproperty
+    def _continuation_metadata(self) -> ElementMetadata:
+        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+
+        The same metadata as the first text-split chunk but includes `.is_continuation = True`.
+        Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+        """
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
+        # -- required though since we're not changing any collection fields.
+        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata.is_continuation = True
+        return continuation_metadata
 
     @lazyproperty
     def _consolidated_regex_meta(self) -> dict[str, list[RegexMetadata]]:
