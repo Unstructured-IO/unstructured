@@ -10,8 +10,8 @@ OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
-if [ -z "$CLARIFAI_PAT" ]; then
-    echo "Skipping Clarifai ingest test because CLARIFAI_PAT env var is not set."
+if [ -z "$CLARIFAI_API_KEY" ]; then
+    echo "Skipping Clarifai ingest test because CLARIFAI_API_KEY env var is not set."
     exit 0
 
 fi
@@ -29,14 +29,14 @@ function cleanup {
     -s -o /dev/null \
     -w "%{http_code}" \
     --request GET "https://api.clarifai.com/v2/users/$USER_ID/apps/$APP_ID" \
-    --header "Authorization: Key $CLARIFAI_PAT" )
+    --header "Authorization: Key $CLARIFAI_API_KEY" )
 
     # Cleanup (delete) index if it exists
     if [ "$response_code" == "200" ]; then
         echo ""
         echo "deleting clarifai app $APP_ID"
         curl --request DELETE "https://api.clarifai.com/v2/users/$USER_ID/apps/$APP_ID" \
-        -H "Authorization: Key $CLARIFAI_PAT"
+        -H "Authorization: Key $CLARIFAI_API_KEY"
     
     else
         echo "There was an error during deletion of clarifai app $APP_ID, with response code: $response_code. App might not exists in your account."
@@ -54,7 +54,7 @@ response_code=$(curl \
     -w "%{http_code}" \
     --location --request POST "https://api.clarifai.com/v2/users/$USER_ID/apps/" \
     --header "Content-Type: application/json" \
-    --header "Authorization: Key $CLARIFAI_PAT" \
+    --header "Authorization: Key $CLARIFAI_API_KEY" \
     --data-raw "{\"apps\": [{\"id\": \"$APP_ID\", \"default_workflow_id\": \"Universal\"}]}"
 )
 if [ "$response_code" -lt 400 ]; then 
@@ -76,7 +76,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   clarifai \
   --app-id "$APP_ID" \
   --user-id "$USER_ID" \
-  --api-key "$CLARIFAI_PAT"\
+  --api-key "$CLARIFAI_API_KEY"\
   --batch-size 100 \
 
 no_of_inputs=0
@@ -96,9 +96,9 @@ while [ "$no_of_inputs" -eq 0 ]; do
 
     resp=$(curl \
      -s GET "https://api.clarifai.com/v2/users/$USER_ID/apps/$APP_ID/inputs/status" \
-     -H "Authorization: Key $CLARIFAI_PAT")
+     -H "Authorization: Key $CLARIFAI_API_KEY")
 
-    if [ $? -ne 0 ]; then
+    if ! resp; then
         echo "Error: Curl command failed" 
         break
     fi
