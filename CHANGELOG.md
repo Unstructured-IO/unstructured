@@ -1,3 +1,13 @@
+## 0.12.7-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
+
 ## 0.12.6
 
 ### Enhancements
