@@ -113,7 +113,7 @@ opencv-contrib-python==4.8.0.76
     # via
     #   -c constraints.in
     #   unstructured-paddleocr
-opencv-python==4.8.0.76
+opencv-python-headless==4.8.0.76
     # via
     #   -c constraints.in
     #   imgaug

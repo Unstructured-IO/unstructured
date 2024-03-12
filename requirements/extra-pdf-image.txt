@@ -103,7 +103,7 @@ onnxruntime==1.15.1
     # via
     #   -c constraints.in
     #   unstructured-inference
-opencv-python==4.8.0.76
+opencv-python-headless==4.8.0.76
     # via
     #   -c constraints.in
     #   layoutparser
