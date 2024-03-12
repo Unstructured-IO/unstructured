@@ -1,4 +1,4 @@
-## 0.12.7-dev0
+## 0.12.7-dev1
 
 ### Enhancements
 
@@ -6,6 +6,7 @@
 
 ### Fixes
 
+* **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 
 ## 0.12.6
