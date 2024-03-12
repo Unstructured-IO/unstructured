@@ -225,9 +225,9 @@ def get_mean_grouping(
         if not os.path.exists(data_input):
             raise FileNotFoundError(f"File {data_input} not found.")
         if data_input.endswith(".csv"):
-            df = pd.read_csv(data_input)
+            df = pd.read_csv(data_input, header=None)
         elif data_input.endswith((".tsv", ".txt")):
-            df = pd.read_csv(data_input, sep="\t")
+            df = pd.read_csv(data_input, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
     else:
@@ -396,9 +396,9 @@ def filter_metrics(
         if not os.path.exists(data_input):
             raise FileNotFoundError(f"File {data_input} not found.")
         if data_input.endswith(".csv"):
-            df = pd.read_csv(data_input)
+            df = pd.read_csv(data_input, header=None)
         elif data_input.endswith((".tsv", ".txt")):
-            df = pd.read_csv(data_input, sep="\t")
+            df = pd.read_csv(data_input, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
     else:
