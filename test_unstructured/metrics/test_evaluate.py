@@ -56,15 +56,21 @@ DUMMY_DF_ELEMENT_TYPE = pd.DataFrame(
 
 @pytest.fixture()
 def _cleanup_after_test():
-    # This is where the test runs
+    """Fixture for removing side-effects of running tests in this file."""
+
+    def remove_generated_directories():
+        """Remove directories created from running tests."""
+
+        # Directories to be removed:
+        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt"]
+        subdirs = (d for d in os.scandir(TESTING_FILE_DIR) if d.is_dir())
+        for d in subdirs:
+            if d.name in target_dir_names:
+                shutil.rmtree(d.path)
+
+    # Run test as normal
     yield
-
-    os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-
-    # Cleanup the directory and file
-    if os.path.exists(export_dir):
-        shutil.rmtree(export_dir)
+    remove_generated_directories()
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
