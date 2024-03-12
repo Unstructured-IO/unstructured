@@ -1,10 +1,12 @@
 ## 0.12.7-dev0
 
-### Enhancements 
+### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
 
 ## 0.12.6
 
