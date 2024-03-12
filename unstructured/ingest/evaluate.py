@@ -1,16 +1,16 @@
 #! /usr/bin/env python3
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import click
 
 from unstructured.metrics.evaluate import (
+    filter_metrics,
     get_mean_grouping,
     measure_element_type_accuracy,
     measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
-
 
 @click.group()
 def main():
@@ -211,6 +211,52 @@ def measure_table_structure_accuracy_command(
 ):
     return measure_table_structure_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
+    )
+
+
+@main.command()
+@click.option(
+    "--data_input",
+    type=str,
+    required=True, 
+    help="Takes in path to data file as .tsv .csv .txt"
+)
+@click.option(
+    "--filter_list",
+    type=str,
+    required=True,
+    help="Takes in list of string to filter the data_input."
+)
+@click.option(
+    "--filter_by",
+    type=str,
+    required=True,
+    help="Field from data_input to match with filter_list. Default is `filename`."
+)
+@click.option(
+    "--export_filename",
+    type=str,
+    help="Export filename. Required when return_type is `file`"
+)
+@click.option(
+    "--export_dir",
+    type=str,
+    help="Export directory."
+)
+@click.option(
+    "--return_type",
+    type=str,
+    help="`dataframe` or `file`. Default is `file`."
+)
+def filter_metrics_command(
+    data_input: str, 
+    filter_list: Union[str, List[str]], 
+    filter_by: str, export_filename: str, 
+    export_dir: str, 
+    return_type: str
+):
+    return filter_metrics(
+        data_input, filter_list, filter_by, export_filename, export_dir, return_type
     )
 
 

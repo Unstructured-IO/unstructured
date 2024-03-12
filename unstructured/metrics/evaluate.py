@@ -126,10 +126,6 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
-    # if filter_list:
-    #     filtered_df = df[df["filename"].isin(filter_list)]
-    #     _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
-
     if grouping:
         get_mean_grouping(grouping, df, export_dir, "text_extraction")
 
@@ -186,16 +182,6 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
 
-    # if filter_list:
-    #     filtered_df = df[df["filename"].isin(filter_list)]
-    #     _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
-
-    # if isinstance(filter_list, str):
-    #     if "multicolumn" in filter_list:
-    #         group_export_name = "agg-filtered-multicolumn-docs-cct.tsv"
-    #     if "pdf" in filter_list:
-    #         group_export_name = "agg-filtered-pdf-images-docs-cct.tsv"
-
     if grouping:            
         get_mean_grouping(grouping, df, export_dir, "element_type")
 
@@ -207,29 +193,24 @@ def get_mean_grouping(
     data_input: Union[pd.DataFrame, str],
     export_dir: str,
     eval_name: str,
-    filter_list: Optional[Union[List[str], str]] = None,
     agg_name: Optional[str] = None,
     export_name: Optional[str] = None,
 ) -> None:
-    """Aggregates accuracy and missing metrics by 'doctype' or 'connector' or 'filename',
+    """Aggregates accuracy and missing metrics by 'doctype' or 'connector' or 'all',
     exporting to TSV.
-    If `filename` then `group_list` must also be provided and export_name is recommended.
+    If `all`, passing export_name is recommended.
 
     Args:
-        group_by (str): Grouping category ('doctype' or 'connector' or 'filename' or 'all').
+        group_by (str): Grouping category ('doctype' or 'connector' or 'all').
         data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
         export_dir (str): Directory for the exported TSV file.
         eval_name (str): Evaluated metric ('text_extraction' or 'element_type').
-        group_list (str, optional): A list of string or a text file that contains filename to
-            filter the data from data_input
         agg_name (str, optional): String to use with export filename. Default is `cct` for
             group_by `text_extraction` and `element-type` for `element_type`
         export_name (str, optional): Export filename.
     """
-    if group_by not in ("doctype", "connector") and group_by != "filename":
+    if group_by not in ("doctype", "connector") and group_by != "all":
         raise ValueError("Invalid grouping category. Returning a non-group evaluation.")
-    if group_by == "filename" and not filter_list:
-        raise ValueError("`group_list` must be provided when grouping by `filename`")
 
     if eval_name == "text_extraction":
         agg_fields = ["cct-accuracy", "cct-%missing"]
@@ -251,27 +232,26 @@ def get_mean_grouping(
             raise ValueError("Please provide a .csv or .tsv file.")
     else:
         df = data_input
-    if df.empty or group_by not in df.columns or df[group_by].isnull().all():
+
+    if df.empty:
+        raise SystemExit(
+            "Data is empty. Exiting."
+        )
+    elif group_by != "all" and (group_by not in df.columns or df[group_by].isnull().all()):
         raise SystemExit(
             f"Data cannot be aggregated by `{group_by}`."
             f" Check if it's empty or the column is missing/empty."
         )
+
     grouped_df = []
-    if group_by and group_by != "filename":
+    if group_by and group_by != "all":
         for field in agg_fields:
             grouped_df.append(
                 _rename_aggregated_columns(
                     df.groupby(group_by).agg({field: [_mean, _stdev, _pstdev, _count]})
                 )
             )
-    if group_by == "filename":
-        if isinstance(filter_list, str):
-            filter_list = _read_text_file(filter_list).split("\n")
-        df = df[df["filename"].isin(filter_list)]
-        if df.empty:
-            raise SystemExit(
-                "No common file names between calculated metric and `group_list`." "Exiting."
-            )
+    if group_by == "all":
         df["grouping_key"] = 0
         for field in agg_fields:
             grouped_df.append(
@@ -402,3 +382,56 @@ def measure_table_structure_accuracy(
     _write_to_file(export_dir, "all-docs-table-structure-accuracy.tsv", df)
     _write_to_file(export_dir, "aggregate-table-structure-accuracy.tsv", agg_df)
     _display(agg_df)
+
+
+def filter_metrics(
+    data_input: Union[str, pd.DataFrame],
+    filter_list: Union[str, List[str]],
+    filter_by: str = "filename",
+    export_filename: Optional[str] = None,
+    export_dir: str = "metrics",
+    return_type: str = "file",
+):
+    if isinstance(data_input, str):
+        if not os.path.exists(data_input):
+            raise FileNotFoundError(f"File {data_input} not found.")
+        if data_input.endswith(".csv"):
+            df = pd.read_csv(data_input)
+        elif data_input.endswith((".tsv", ".txt")):
+            df = pd.read_csv(data_input, sep="\t")
+        else:
+            raise ValueError("Please provide a .csv or .tsv file.")
+    else:
+        df = data_input
+
+    if isinstance(filter_list, str):
+        if not os.path.exists(filter_list):
+            raise FileNotFoundError(f"File {filter_list} not found.")
+        if filter_list.endswith(".csv"):
+            filter_df = pd.read_csv(filter_list, header=None)
+        elif filter_list.endswith((".tsv", ".txt")):
+            filter_df = pd.read_csv(filter_list, sep="\t", header=None)
+        else:
+            raise ValueError("Please provide a .csv or .tsv file.")
+        filter_list = filter_df.iloc[:, 0].astype(str).values.tolist()
+    elif not isinstance(filter_list, list):
+        raise ValueError("Please provide a List of strings or path to file.")
+
+    if filter_by not in df.columns:
+        raise ValueError("`filter_by` key does not exists in the data provided.")
+
+    res = df[df[filter_by].isin(filter_list)]
+
+    if res.empty:
+        raise SystemExit(
+            "No common file names between data_input and filter_list. Exiting."
+        )
+    
+    if return_type == "dataframe":
+        return res
+    elif return_type == "file" and export_filename:
+        _write_to_file(export_dir, export_filename, res)
+    elif return_type == "file" and not export_filename:
+        raise ValueError("Please provide `export_filename`.")
+    else:
+        raise ValueError("Return type must be either `dataframe` or `file`.")

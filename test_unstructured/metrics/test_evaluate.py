@@ -6,12 +6,12 @@ import pandas as pd
 import pytest
 
 from unstructured.metrics.evaluate import (
+    filter_metrics,
     get_mean_grouping,
     measure_element_type_accuracy,
     measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
-from unstructured.metrics.utils import filter_metrics
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -274,59 +274,6 @@ def test_get_mean_grouping_element_type(group_by: str, count_row: int):
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
-def test_get_mean_grouping_filename():
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    get_mean_grouping(
-        group_by="filename",
-        data_input=DUMMY_DF_CCT,
-        export_dir=export_dir,
-        eval_name="text_extraction",
-        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
-        export_name="all-filename-agg-cct.tsv",
-    )
-    grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
-    assert float(grouped_df.iloc[1, 0]) == 0.903
-    assert float(grouped_df.iloc[1, 1]) == 0.129
-    assert float(grouped_df.iloc[1, 2]) == 0.091
-
-
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.usefixtures("_cleanup_after_test")
-def test_get_mean_grouping_filename_without_group_list():
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    with pytest.raises(ValueError):
-        get_mean_grouping(
-            group_by="filename",
-            data_input=DUMMY_DF_CCT,
-            export_dir=export_dir,
-            eval_name="text_extraction",
-            export_name="all-filename-agg-cct.tsv",
-        )
-
-
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.usefixtures("_cleanup_after_test")
-def test_get_mean_grouping_group_list_from_txt():
-    with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
-        file.write("Bank Good Credit Loan.pptx\n")
-        file.write("Performance-Audit-Discussion.pdf\n")
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    get_mean_grouping(
-        group_by="filename",
-        data_input=DUMMY_DF_CCT,
-        export_dir=export_dir,
-        eval_name="text_extraction",
-        filter_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
-        export_name="all-filename-agg-cct.tsv",
-    )
-    grouped_df = pd.read_csv(os.path.join(export_dir, "all-filename-agg-cct.tsv"), sep="\t")
-    assert float(grouped_df.iloc[1, 0]) == 0.903
-    assert float(grouped_df.iloc[1, 1]) == 0.129
-    assert float(grouped_df.iloc[1, 2]) == 0.091
-
-
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.usefixtures("_cleanup_after_test")
 def test_filter_metrics():
     with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
         file.write("Bank Good Credit Loan.pptx\n")
@@ -344,3 +291,67 @@ def test_filter_metrics():
     filtered_df = pd.read_csv(os.path.join(export_dir, "filtered_metrics.tsv"), sep="\t")
     assert len(filtered_df) == 2
     assert filtered_df["filename"].iloc[0] == "Bank Good Credit Loan.pptx"
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_get_mean_grouping_all_file():
+    with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
+        file.write("Bank Good Credit Loan.pptx\n")
+        file.write("Performance-Audit-Discussion.pdf\n")
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+
+    filter_metrics(
+        data_input=DUMMY_DF_CCT,
+        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
+        filter_by="filename",
+        export_filename="filtered_metrics.tsv",
+        export_dir=export_dir,
+        return_type="file",
+    )
+    filtered_df = pd.read_csv(os.path.join(export_dir, "filtered_metrics.tsv"), sep="\t")
+
+    get_mean_grouping(
+        group_by="all",
+        data_input=filtered_df,
+        export_dir=export_dir,
+        eval_name="text_extraction",
+        export_name="two-filename-agg-cct.tsv",
+    )
+    grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
+
+    assert float(grouped_df.iloc[1, 0]) == 0.903
+    assert float(grouped_df.iloc[1, 1]) == 0.129
+    assert float(grouped_df.iloc[1, 2]) == 0.091
+
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_get_mean_grouping_all_file_txt():
+    with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
+        file.write("Bank Good Credit Loan.pptx\n")
+        file.write("Performance-Audit-Discussion.pdf\n")
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+
+    filter_metrics(
+        data_input=DUMMY_DF_CCT,
+        filter_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
+        filter_by="filename",
+        export_filename="filtered_metrics.tsv",
+        export_dir=export_dir,
+        return_type="file",
+    )
+    filtered_df = pd.read_csv(os.path.join(export_dir, "filtered_metrics.tsv"), sep="\t")
+
+    get_mean_grouping(
+        group_by="all",
+        data_input=filtered_df,
+        export_dir=export_dir,
+        eval_name="text_extraction",
+        export_name="two-filename-agg-cct.tsv",
+    )
+    grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
+
+    assert float(grouped_df.iloc[1, 0]) == 0.903
+    assert float(grouped_df.iloc[1, 1]) == 0.129
+    assert float(grouped_df.iloc[1, 2]) == 0.091
