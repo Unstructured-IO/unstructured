@@ -226,7 +226,9 @@ def get_mean_grouping(
             raise FileNotFoundError(f"File {data_input} not found.")
         if data_input.endswith(".csv"):
             df = pd.read_csv(data_input, header=None)
-        elif data_input.endswith((".tsv", ".txt")):
+        elif data_input.endswith(".tsv"):
+            df = pd.read_csv(data_input, sep="\t")
+        elif data_input.endswith(".txt"):
             df = pd.read_csv(data_input, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
@@ -389,13 +391,15 @@ def filter_metrics(
     export_filename: Optional[str] = None,
     export_dir: str = "metrics",
     return_type: str = "file",
-):
+) -> Optional[pd.DataFrame]:
     if isinstance(data_input, str):
         if not os.path.exists(data_input):
             raise FileNotFoundError(f"File {data_input} not found.")
         if data_input.endswith(".csv"):
             df = pd.read_csv(data_input, header=None)
-        elif data_input.endswith((".tsv", ".txt")):
+        elif data_input.endswith(".tsv"):
+            df = pd.read_csv(data_input, sep="\t")
+        elif data_input.endswith(".txt"):
             df = pd.read_csv(data_input, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
@@ -406,9 +410,11 @@ def filter_metrics(
         if not os.path.exists(filter_list):
             raise FileNotFoundError(f"File {filter_list} not found.")
         if filter_list.endswith(".csv"):
-            filter_df = pd.read_csv(filter_list, header=None)
-        elif filter_list.endswith((".tsv", ".txt")):
-            filter_df = pd.read_csv(filter_list, sep="\t", header=None)
+            filter_df = pd.read_csv(data_input, header=None)
+        elif filter_list.endswith(".tsv"):
+            filter_df = pd.read_csv(data_input, sep="\t")
+        elif filter_list.endswith(".txt"):
+            filter_df = pd.read_csv(data_input, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
         filter_list = filter_df.iloc[:, 0].astype(str).values.tolist()
