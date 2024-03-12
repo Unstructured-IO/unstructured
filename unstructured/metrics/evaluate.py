@@ -126,12 +126,12 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
-    if filter_list:
-        filtered_df = df[df["filename"].isin(filter_list)]
-        _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
+    # if filter_list:
+    #     filtered_df = df[df["filename"].isin(filter_list)]
+    #     _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
 
     if grouping:
-        get_mean_grouping(grouping, df, export_dir, "text_extraction", filter_list)
+        get_mean_grouping(grouping, df, export_dir, "text_extraction")
 
     _display(agg_df)
 
@@ -143,7 +143,6 @@ def measure_element_type_accuracy(
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
     grouping: Optional[str] = None,
-    filter_list: Optional[Union[List[str], str]] = None,
     visualize: bool = False,
 ):
     """
@@ -187,20 +186,18 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
 
-    if filter_list:
-        filtered_df = df[df["filename"].isin(filter_list)]
-        _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
+    # if filter_list:
+    #     filtered_df = df[df["filename"].isin(filter_list)]
+    #     _write_to_file(export_dir, "all-filtered-docs-cct.tsv", filtered_df)
 
-    if isinstance(filter_list, str):
-        if "multicolumn" in filter_list:
-            group_export_name = "agg-filtered-multicolumn-docs-cct.tsv"
-        if "pdf" in filter_list:
-            group_export_name = "agg-filtered-pdf-images-docs-cct.tsv"
+    # if isinstance(filter_list, str):
+    #     if "multicolumn" in filter_list:
+    #         group_export_name = "agg-filtered-multicolumn-docs-cct.tsv"
+    #     if "pdf" in filter_list:
+    #         group_export_name = "agg-filtered-pdf-images-docs-cct.tsv"
 
-    if grouping:
-        get_mean_grouping(
-            grouping, df, export_dir, "text_extraction", filter_list, export_name=group_export_name
-        )
+    if grouping:            
+        get_mean_grouping(grouping, df, export_dir, "element_type")
 
     _display(agg_df)
 
@@ -219,7 +216,7 @@ def get_mean_grouping(
     If `filename` then `group_list` must also be provided and export_name is recommended.
 
     Args:
-        group_by (str): Grouping category ('doctype' or 'connector' or 'filename').
+        group_by (str): Grouping category ('doctype' or 'connector' or 'filename' or 'all').
         data_input (Union[pd.DataFrame, str]): DataFrame or path to a CSV/TSV file.
         export_dir (str): Directory for the exported TSV file.
         eval_name (str): Evaluated metric ('text_extraction' or 'element_type').
