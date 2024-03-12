@@ -202,24 +202,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         return permissions_data
 
-    # def _ensure_isoformat_datetime(self, timestamp: t.Union[datetime, str]) -> str:
-    #     """
-    #     Ensures that the input value is converted to an ISO format datetime string.
-    #     Handles both datetime objects and strings.
-    #     """
-    #     if isinstance(timestamp, datetime):
-    #         return timestamp.isoformat()
-    #     elif isinstance(timestamp, str):
-    #         try:
-    #             # Parse the datetime string in various formats
-    #             dt = parser.parse(timestamp)
-    #             return dt.isoformat()
-    #         except ValueError as e:
-    #             raise ValueError(f"String '{timestamp}' \
-    #       could not be parsed as a datetime.") from e
-    #     else:
-    #         raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
-
     def update_source_metadata(self, **kwargs):
         if self.is_page:
             page = self._fetch_page()
