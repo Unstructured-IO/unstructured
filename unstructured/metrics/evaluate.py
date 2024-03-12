@@ -197,14 +197,9 @@ def measure_element_type_accuracy(
         if "pdf" in filter_list:
             group_export_name = "agg-filtered-pdf-images-docs-cct.tsv"
 
-    if grouping:            
+    if grouping:
         get_mean_grouping(
-            grouping, 
-            df, 
-            export_dir, 
-            "text_extraction", 
-            filter_list, 
-            export_name=group_export_name
+            grouping, df, export_dir, "text_extraction", filter_list, export_name=group_export_name
         )
 
     _display(agg_df)

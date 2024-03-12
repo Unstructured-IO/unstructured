@@ -11,6 +11,7 @@ from unstructured.metrics.evaluate import (
     measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
+from unstructured.metrics.utils import filter_metrics
 
 is_in_docker = os.path.exists("/.dockerenv")
 
@@ -256,19 +257,19 @@ def test_get_mean_grouping_invalid_eval_name():
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.usefixtures("_cleanup_after_test")
-@pytest.mark.parametrize(("grouping", "count_row"), [("doctype", 3), ("connector", 2)])
-def test_get_mean_grouping_element_type(grouping: str, count_row: int):
+@pytest.mark.parametrize(("group_by", "count_row"), [("doctype", 3), ("connector", 2)])
+def test_get_mean_grouping_element_type(group_by: str, count_row: int):
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_element_type")
     get_mean_grouping(
-        group_by=grouping,
+        group_by=group_by,
         data_input=DUMMY_DF_ELEMENT_TYPE,
         export_dir=export_dir,
         eval_name="element_type",
     )
     grouped_df = pd.read_csv(
-        os.path.join(export_dir, f"all-{grouping}-agg-element-type.tsv"), sep="\t"
+        os.path.join(export_dir, f"all-{group_by}-agg-element-type.tsv"), sep="\t"
     )
-    assert grouped_df[grouping].dropna().nunique() == count_row
+    assert grouped_df[group_by].dropna().nunique() == count_row
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -323,3 +324,23 @@ def test_get_mean_grouping_group_list_from_txt():
     assert float(grouped_df.iloc[1, 1]) == 0.129
     assert float(grouped_df.iloc[1, 2]) == 0.091
 
+
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
+def test_filter_metrics():
+    with open(os.path.join(TESTING_FILE_DIR, "filter_list.txt"), "w") as file:
+        file.write("Bank Good Credit Loan.pptx\n")
+        file.write("Performance-Audit-Discussion.pdf\n")
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
+
+    filter_metrics(
+        data_input=DUMMY_DF_CCT,
+        filter_list=os.path.join(TESTING_FILE_DIR, "filter_list.txt"),
+        filter_by="filename",
+        export_filename="filtered_metrics.tsv",
+        export_dir=export_dir,
+        return_type="file",
+    )
+    filtered_df = pd.read_csv(os.path.join(export_dir, "filtered_metrics.tsv"), sep="\t")
+    assert len(filtered_df) == 2
+    assert filtered_df["filename"].iloc[0] == "Bank Good Credit Loan.pptx"
