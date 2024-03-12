@@ -77,6 +77,7 @@ def test_text_extraction_evaluation():
     measure_text_extraction_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
+    assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5

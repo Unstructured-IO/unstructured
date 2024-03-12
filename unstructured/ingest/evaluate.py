@@ -251,9 +251,10 @@ def measure_table_structure_accuracy_command(
 def filter_metrics_command(
     data_input: str, 
     filter_list: Union[str, List[str]], 
-    filter_by: str, export_filename: str, 
-    export_dir: str, 
-    return_type: str
+    filter_by: str = "filename", 
+    export_filename: Optional[str] = None, 
+    export_dir: str = "metrics", 
+    return_type: str = "file"
 ):
     return filter_metrics(
         data_input, filter_list, filter_by, export_filename, export_dir, return_type
