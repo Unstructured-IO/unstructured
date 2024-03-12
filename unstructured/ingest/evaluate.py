@@ -12,6 +12,7 @@ from unstructured.metrics.evaluate import (
     measure_text_extraction_accuracy,
 )
 
+
 @click.group()
 def main():
     pass
@@ -216,45 +217,32 @@ def measure_table_structure_accuracy_command(
 
 @main.command()
 @click.option(
-    "--data_input",
-    type=str,
-    required=True, 
-    help="Takes in path to data file as .tsv .csv .txt"
+    "--data_input", type=str, required=True, help="Takes in path to data file as .tsv .csv .txt"
 )
 @click.option(
     "--filter_list",
     type=str,
     required=True,
-    help="Takes in list of string to filter the data_input."
+    help="Takes in list of string to filter the data_input.",
 )
 @click.option(
     "--filter_by",
     type=str,
     required=True,
-    help="Field from data_input to match with filter_list. Default is `filename`."
+    help="Field from data_input to match with filter_list. Default is `filename`.",
 )
 @click.option(
-    "--export_filename",
-    type=str,
-    help="Export filename. Required when return_type is `file`"
+    "--export_filename", type=str, help="Export filename. Required when return_type is `file`"
 )
-@click.option(
-    "--export_dir",
-    type=str,
-    help="Export directory."
-)
-@click.option(
-    "--return_type",
-    type=str,
-    help="`dataframe` or `file`. Default is `file`."
-)
+@click.option("--export_dir", type=str, help="Export directory.")
+@click.option("--return_type", type=str, help="`dataframe` or `file`. Default is `file`.")
 def filter_metrics_command(
-    data_input: str, 
-    filter_list: Union[str, List[str]], 
-    filter_by: str = "filename", 
-    export_filename: Optional[str] = None, 
-    export_dir: str = "metrics", 
-    return_type: str = "file"
+    data_input: str,
+    filter_list: Union[str, List[str]],
+    filter_by: str = "filename",
+    export_filename: Optional[str] = None,
+    export_dir: str = "metrics",
+    return_type: str = "file",
 ):
     return filter_metrics(
         data_input, filter_list, filter_by, export_filename, export_dir, return_type

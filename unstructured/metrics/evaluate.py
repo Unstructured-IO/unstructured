@@ -182,7 +182,7 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
 
-    if grouping:            
+    if grouping:
         get_mean_grouping(grouping, df, export_dir, "element_type")
 
     _display(agg_df)
@@ -234,9 +234,7 @@ def get_mean_grouping(
         df = data_input
 
     if df.empty:
-        raise SystemExit(
-            "Data is empty. Exiting."
-        )
+        raise SystemExit("Data is empty. Exiting.")
     elif group_by != "all" and (group_by not in df.columns or df[group_by].isnull().all()):
         raise SystemExit(
             f"Data cannot be aggregated by `{group_by}`."
@@ -423,10 +421,8 @@ def filter_metrics(
     res = df[df[filter_by].isin(filter_list)]
 
     if res.empty:
-        raise SystemExit(
-            "No common file names between data_input and filter_list. Exiting."
-        )
-    
+        raise SystemExit("No common file names between data_input and filter_list. Exiting.")
+
     if return_type == "dataframe":
         return res
     elif return_type == "file" and export_filename:
