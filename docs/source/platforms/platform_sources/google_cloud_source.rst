@@ -28,6 +28,8 @@ Step-by-Step Guide
   - ``Remote URL`` (*required*): Specify the gs:// URL pointing to your Google Cloud Storage bucket and path.
   - ``Service Account Key`` (*required*): Enter the JSON content of a Google Service Account Key that has the necessary permissions to access the specified bucket.
 
+    - Note: the ``Service Account Key`` must have the **Storage Object Viewer** role at minimum to ensure proper access permissions. Please refer to `GCS IAM documentation <https://cloud.google.com/storage/docs/access-control/iam>`__.
+
 4. **Additional Settings**
 
   - Check ``Uncompress archives`` if the data to be ingested is compressed and requires uncompression.

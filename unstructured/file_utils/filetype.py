@@ -15,9 +15,9 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
-    _add_element_metadata,
-    _remove_element_metadata,
+    add_element_metadata,
     exactly_one,
+    remove_element_metadata,
     set_element_hierarchy,
 )
 
@@ -602,16 +602,11 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
                 # NOTE(robinson) - Attached files have already run through this logic
                 # in their own partitioning function
                 if element.metadata.attached_to_filename is None:
-                    _add_element_metadata(
-                        element,
-                        **metadata_kwargs,  # type: ignore
-                    )
+                    add_element_metadata(element, **metadata_kwargs)
 
             return elements
         else:
-            return _remove_element_metadata(
-                elements,
-            )
+            return remove_element_metadata(elements)
 
     return wrapper
 
@@ -639,16 +634,11 @@ def add_filetype(
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function
                     if element.metadata.attached_to_filename is None:
-                        _add_element_metadata(
-                            element,
-                            filetype=FILETYPE_TO_MIMETYPE[filetype],
-                        )
+                        add_element_metadata(element, filetype=FILETYPE_TO_MIMETYPE[filetype])
 
                 return elements
             else:
-                return _remove_element_metadata(
-                    elements,
-                )
+                return remove_element_metadata(elements)
 
         return wrapper
 
