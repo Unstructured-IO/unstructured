@@ -1,11 +1,14 @@
-## 0.12.7-dev0
+## 0.12.7-dev1
 
 ### Enhancements
 
 ### Features
+
 * **Added Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
 
 ### Fixes
+
+* **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
 
 ## 0.12.6
 
@@ -16,6 +19,7 @@
 * **Redefine `table_level_acc` metric for table evaluation.** `table_level_acc` now is an average of individual predicted table's accuracy. A predicted table's accuracy is defined as the sequence matching ratio between itself and its corresponding ground truth table.
 
 ### Features
+
 * **Added Unstructured Platform Documentation** The Unstructured Platform is currently in beta. The documentation provides how-to guides for setting up workflow automation, job scheduling, and configuring source and destination connectors.
 
 ### Fixes
