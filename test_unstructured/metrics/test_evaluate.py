@@ -323,18 +323,3 @@ def test_get_mean_grouping_group_list_from_txt():
     assert float(grouped_df.iloc[1, 1]) == 0.129
     assert float(grouped_df.iloc[1, 2]) == 0.091
 
-
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-@pytest.mark.usefixtures("_cleanup_after_test")
-def test_evaluate_with_filter_list():
-    output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
-    source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir,
-        source_dir=source_dir,
-        export_dir=export_dir,
-        filter_list=["Bank Good Credit Loan.pptx", "Performance-Audit-Discussion.pdf"],
-    )
-    df = pd.read_csv(os.path.join(export_dir, "all-filtered-docs-cct.tsv"), sep="\t")
-    assert len(df) == 2

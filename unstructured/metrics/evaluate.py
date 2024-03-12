@@ -198,7 +198,14 @@ def measure_element_type_accuracy(
             group_export_name = "agg-filtered-pdf-images-docs-cct.tsv"
 
     if grouping:            
-        get_mean_grouping(grouping, df, export_dir, "text_extraction", filter_list, export_name=group_export_name)
+        get_mean_grouping(
+            grouping, 
+            df, 
+            export_dir, 
+            "text_extraction", 
+            filter_list, 
+            export_name=group_export_name
+        )
 
     _display(agg_df)
 
@@ -284,9 +291,9 @@ def get_mean_grouping(
     if "grouping_key" in grouped_df.columns.get_level_values(0):
         grouped_df = grouped_df.drop("grouping_key", axis=1, level=0)
 
-    if not export_name.endswith(".tsv"):
-        export_name = export_name + ".tsv"
     if export_name:
+        if not export_name.endswith(".tsv"):
+            export_name = export_name + ".tsv"
         _write_to_file(export_dir, export_name, grouped_df)
     else:
         _write_to_file(export_dir, f"all-{group_by}-agg-{agg_name}.tsv", grouped_df)
