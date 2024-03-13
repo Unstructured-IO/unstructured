@@ -265,7 +265,7 @@ def parse_email(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_email(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,

@@ -25,6 +25,7 @@ from unstructured.documents.elements import Element
 
 def chunk_elements(
     elements: Iterable[Element],
+    *,
     max_characters: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,

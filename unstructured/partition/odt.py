@@ -12,7 +12,7 @@ from unstructured.partition.docx import convert_and_partition_docx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.ODT)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_odt(
     filename: Optional[str] = None,
     file: Optional[BinaryIO] = None,

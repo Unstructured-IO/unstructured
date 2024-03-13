@@ -26,7 +26,7 @@ DETECTION_ORIGIN: str = "csv"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_csv(
     filename: Optional[str] = None,
     file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,

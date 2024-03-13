@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 import pytest
 
@@ -105,7 +106,7 @@ def test_only_gives_only(iterator):
 @pytest.mark.parametrize("iterator", [[0, 1], (0, 1), range(10)])
 def test_only_raises_when_len_more_than_1(iterator):
     with pytest.raises(ValueError):
-        utils.only(iterator) == 0
+        utils.only(iterator)
 
 
 @pytest.mark.parametrize("iterator", [[], ()])
@@ -115,223 +116,199 @@ def test_only_raises_if_empty(iterator):
 
 
 @pytest.mark.parametrize(
-    ("elements", "nested_error_tolerance_px", "sm_overlap_threshold", "expectation"),
+    ("coords1", "coords2", "text1", "text2", "nested_error_tolerance_px", "expectation"),
     [
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Some lovely text",
-                    coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
-            5,
-            10.0,
-            (
-                True,
-                [
-                    {
-                        "overlapping_elements": ["Title(ix=0)", "NarrativeText(ix=1)"],
-                        "parent_element": "Title(ix=0)",
-                        "overlapping_case": "nested NarrativeText in Title",
-                        "overlap_percentage": "100%",
-                        "metadata": {
-                            "largest_ngram_percentage": None,
-                            "overlap_percentage_total": "5.88%",
-                            "max_area": "9pxˆ2",
-                            "min_area": "9pxˆ2",
-                            "total_area": "18pxˆ2",
-                        },
-                    },
-                ],
-            ),
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "Some lovely title",
+            "Some lovely text",
+            5,  # large nested_error_tolerance_px
+            {
+                "overlapping_elements": ["Title(ix=0)", "NarrativeText(ix=1)"],
+                "parent_element": "Title(ix=0)",
+                "overlapping_case": "nested NarrativeText in Title",
+                "overlap_percentage": "100%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
         ),
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Some lovely text",
-                    coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
-            1,
-            10.0,
-            (
-                True,
-                [
-                    {
-                        "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
-                        "parent_element": None,
-                        "overlapping_case": "partial overlap sharing 50.0% of the text from1. "
-                        "NarrativeText(2-gram)",
-                        "overlap_percentage": "11.11%",
-                        "metadata": {
-                            "largest_ngram_percentage": 50.0,
-                            "overlap_percentage_total": "5.88%",
-                            "max_area": "9pxˆ2",
-                            "min_area": "9pxˆ2",
-                            "total_area": "18pxˆ2",
-                        },
-                    },
-                ],
-            ),
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "Some lovely title",
+            "Some lovely text",
+            1,  # small nested_error_tolerance_px
+            {
+                "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                "parent_element": None,
+                "overlapping_case": "partial overlap sharing 50.0% of the text from1. "
+                "NarrativeText(2-gram)",
+                "overlap_percentage": "11.11%",
+                "metadata": {
+                    "largest_ngram_percentage": 50.0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
         ),
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Some lovely title",
-                    coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "Some lovely title",
+            "Some lovely title",  # same title
             1,
-            10.0,
-            (
-                True,
-                [
-                    {
-                        "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
-                        "parent_element": None,
-                        "overlapping_case": "partial overlap with duplicate text",
-                        "overlap_percentage": "11.11%",
-                        "metadata": {
-                            "largest_ngram_percentage": None,
-                            "overlap_percentage_total": "5.88%",
-                            "max_area": "9pxˆ2",
-                            "min_area": "9pxˆ2",
-                            "total_area": "18pxˆ2",
-                        },
-                    },
-                ],
-            ),
+            {
+                "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                "parent_element": None,
+                "overlapping_case": "partial overlap with duplicate text",
+                "overlap_percentage": "11.11%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
         ),
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((4, 5), (4, 8), (7, 8), (7, 5)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Something totally different here",
-                    coordinates=((2, 3), (2, 6), (5, 6), (5, 3)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "Some lovely title",
+            "",  # empty title
             1,
-            10.0,
-            (
-                True,
-                [
-                    {
-                        "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
-                        "parent_element": None,
-                        "overlapping_case": "partial overlap without sharing text",
-                        "overlap_percentage": "11.11%",
-                        "metadata": {
-                            "largest_ngram_percentage": 0,
-                            "overlap_percentage_total": "5.88%",
-                            "max_area": "9pxˆ2",
-                            "min_area": "9pxˆ2",
-                            "total_area": "18pxˆ2",
-                        },
-                    },
-                ],
-            ),
+            {
+                "overlapping_elements": ["1. NarrativeText(ix=1)", "0. Title(ix=0)"],
+                "parent_element": None,
+                "overlapping_case": ("partial overlap with empty content in 1. NarrativeText"),
+                "overlap_percentage": "11.11%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
         ),
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((5, 6), (5, 10), (8, 10), (8, 6)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Some lovely text",
-                    coordinates=((1, 3), (2, 7), (6, 7), (5, 3)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "",  # empty 1st title
+            "Some lovely title",
             1,
-            10.0,
-            (
-                True,
-                [
-                    {
-                        "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
-                        "parent_element": None,
-                        "overlapping_case": "Small partial overlap",
-                        "overlap_percentage": "8.33%",
-                        "metadata": {
-                            "largest_ngram_percentage": None,
-                            "overlap_percentage_total": "3.23%",
-                            "max_area": "20pxˆ2",
-                            "min_area": "12pxˆ2",
-                            "total_area": "32pxˆ2",
-                        },
-                    },
-                ],
-            ),
+            {
+                "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                "parent_element": None,
+                "overlapping_case": "partial overlap with empty content in 0. Title",
+                "overlap_percentage": "11.11%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
         ),
         (
-            [
-                Title(
-                    text="Some lovely title",
-                    coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-                NarrativeText(
-                    text="Some lovely text",
-                    coordinates=((6, 8), (6, 9), (9, 9), (9, 8)),
-                    coordinate_system=PixelSpace(width=20, height=20),
-                    metadata=ElementMetadata(page_number=1),
-                ),
-            ],
+            ((4, 5), (4, 8), (7, 8), (7, 5)),
+            ((2, 3), (2, 6), (5, 6), (5, 3)),
+            "Some lovely title",
+            "Something totally different here",  # diff text
             1,
-            10.0,
-            (False, []),
+            {
+                "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                "parent_element": None,
+                "overlapping_case": "partial overlap without sharing text",
+                "overlap_percentage": "11.11%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "5.88%",
+                    "max_area": "9pxˆ2",
+                    "min_area": "9pxˆ2",
+                    "total_area": "18pxˆ2",
+                },
+            },
+        ),
+        (
+            ((5, 6), (5, 10), (8, 10), (8, 6)),  # diff coordinates
+            ((1, 3), (2, 7), (6, 7), (5, 3)),
+            "Some lovely title",
+            "Some lovely text",
+            1,
+            {
+                "overlapping_elements": ["0. Title(ix=0)", "1. NarrativeText(ix=1)"],
+                "parent_element": None,
+                "overlapping_case": "Small partial overlap",
+                "overlap_percentage": "8.33%",
+                "metadata": {
+                    "largest_ngram_percentage": 0,
+                    "overlap_percentage_total": "3.23%",
+                    "max_area": "20pxˆ2",
+                    "min_area": "12pxˆ2",
+                    "total_area": "32pxˆ2",
+                },
+            },
         ),
     ],
 )
 def test_catch_overlapping_and_nested_bboxes(
-    elements,
-    expectation,
-    nested_error_tolerance_px,
-    sm_overlap_threshold,
+    coords1, coords2, text1, text2, nested_error_tolerance_px, expectation
 ):
+    elements = [
+        Title(
+            text=text1,
+            coordinates=coords1,
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+        NarrativeText(
+            text=text2,
+            coordinates=coords2,
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+    ]
     overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(
         elements,
         nested_error_tolerance_px,
-        sm_overlap_threshold,
+        sm_overlap_threshold=10.0,
     )
-    assert overlapping_flag == expectation[0]
-    assert overlapping_cases == expectation[1]
+    assert overlapping_flag is True
+    assert overlapping_cases[0] == expectation
+
+
+def test_catch_overlapping_and_nested_bboxes_non_overlapping_case():
+    elements = [
+        Title(
+            text="Some lovely title",
+            coordinates=((4, 6), (4, 7), (7, 7), (7, 6)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+        NarrativeText(
+            text="Some lovely text",
+            coordinates=((6, 8), (6, 9), (9, 9), (9, 8)),
+            coordinate_system=PixelSpace(width=20, height=20),
+            metadata=ElementMetadata(page_number=1),
+        ),
+    ]
+    overlapping_flag, overlapping_cases = utils.catch_overlapping_and_nested_bboxes(
+        elements,
+        1,
+        sm_overlap_threshold=10.0,
+    )
+    assert overlapping_flag is False
+    assert overlapping_cases == []
 
 
 def test_validate_data_args():
@@ -342,3 +319,64 @@ def test_validate_data_args():
 
     with pytest.raises(ValueError):
         utils.validate_date_args(None)
+
+
+@pytest.mark.parametrize(
+    "date", ["1990-12-01", "2050-01-01T00:00:00", "2050-01-01+00:00:00", "2022-02-12T14:30:00-0500"]
+)
+def test_validate_date_args_accepts_standard_formats(date):
+    assert utils.validate_date_args(date)
+
+
+@pytest.mark.parametrize("date", [None, "not a date", "1990-12-33"])
+def test_validate_date_args_raises_for_invalid_formats(date):
+    pattern1 = re.compile(r"The argument.*?(?:is None).*")
+    pattern2 = re.compile(r"The argument.*?(?:does not satisfy the format: YYYY-MM-DD).*")
+    combined_pattern = re.compile(f"({pattern1.pattern}|{pattern2.pattern})")
+    with pytest.raises(ValueError, match=combined_pattern):
+        assert utils.validate_date_args(date)
+
+
+def test_htmlify_matrix_handles_empty_cells():
+    assert utils.htmlify_matrix_of_cell_texts([["cell1", "", "cell3"], ["", "cell5", ""]]) == (
+        "<table><tr><td>cell1</td><td></td><td>cell3</td></tr>"
+        "<tr><td></td><td>cell5</td><td></td></tr></table>"
+    )
+
+
+def test_htmlify_matrix_handles_special_characters():
+    assert utils.htmlify_matrix_of_cell_texts([['<>&"', "newline\n"]]) == (
+        "<table><tr><td>&lt;&gt;&amp;&quot;</td><td>newline<br/></td></tr></table>"
+    )
+
+
+def test_htmlify_matrix_handles_multiple_rows_and_cells():
+    assert utils.htmlify_matrix_of_cell_texts([["cell1", "cell2"], ["cell3", "cell4"]]) == (
+        "<table><tr><td>cell1</td><td>cell2</td></tr>"
+        "<tr><td>cell3</td><td>cell4</td></tr></table>"
+    )
+
+
+def test_htmlify_matrix_handles_empty_matrix():
+    assert utils.htmlify_matrix_of_cell_texts([]) == ""
+
+
+def test_only_returns_singleton_iterable():
+    singleton_iterable = [42]
+    result = utils.only(singleton_iterable)
+    assert result == 42
+
+
+def test_only_raises_on_non_singleton_iterable():
+    singleton_iterable = [42, 0]
+    with pytest.raises(ValueError):
+        utils.only(singleton_iterable)
+
+
+def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
+    str1 = ""
+    str2 = "banana orange pineapple"
+    n = 2
+    percent, common_ngrams = utils.calculate_shared_ngram_percentage(str1, str2, n)
+    assert percent == 0
+    assert not bool(common_ngrams)

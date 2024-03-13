@@ -11,7 +11,7 @@ DETECTION_ORIGIN: str = "epub"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_epub(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
