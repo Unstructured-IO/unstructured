@@ -164,7 +164,7 @@ def test_text_extraction_with_grouping():
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, grouping="doctype"
+        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, group_by="doctype"
     )
     df = pd.read_csv(os.path.join(export_dir, "all-doctype-agg-cct.tsv"), sep="\t")
     assert len(df) == 4  # metrics row and doctype rows
