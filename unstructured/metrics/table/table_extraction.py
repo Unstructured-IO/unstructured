@@ -154,7 +154,26 @@ def extract_and_convert_tables_from_ground_truth(
 
 
 def extract_and_convert_tables_from_prediction(
-    file_elements: List[Dict[str, Any]],
+    file_elements: List[Dict[str, Any]], prediction_table_format: str = "html"
+) -> List[List[Dict[str, Any]]]:
+    """Extracts and converts table data to a structured format based on the specified table type.
+
+    Args:
+      file_elements: List of elements from the file.
+      table_type: The type of table format.
+
+    Returns:
+      A list of tables with each table represented as a list of cell data dictionaries.
+
+    """
+    if prediction_table_format == "html":
+        return extract_and_convert_tables_from_html_prediction(file_elements)
+    # a hack for now
+    return file_elements
+
+
+def extract_and_convert_tables_from_html_prediction(
+    file_elements: List[Dict[str, Any]]
 ) -> List[List[Dict[str, Any]]]:
     """Extracts and converts table data to a structured format based on the specified table type.
 

@@ -89,6 +89,7 @@ class TableEvalProcessor:
         prediction: List[Dict[str, Any]],
         ground_truth: List[Dict[str, Any]],
         cutoff: float = 0.8,
+        prediction_table_format: str = "html",
     ):
         """
         Initializes the TableEvalProcessor prediction and ground truth.
@@ -129,12 +130,14 @@ class TableEvalProcessor:
         self.prediction = prediction
         self.ground_truth = ground_truth
         self.cutoff = cutoff
+        self.prediction_table_format = prediction_table_format
 
     @classmethod
     def from_json_files(
         cls,
         prediction_file: Path,
         ground_truth_file: Path,
+        prediction_table_format: Optional[str] = "html",
         cutoff: Optional[float] = None,
     ) -> "TableEvalProcessor":
         """Factory classmethod to initialize the object with path to json files instead of dicts
@@ -153,7 +156,12 @@ class TableEvalProcessor:
         with open(ground_truth_file) as f:
             ground_truth = json.load(f)
         if cutoff is not None:
-            return cls(prediction=prediction, ground_truth=ground_truth, cutoff=cutoff)
+            return cls(
+                prediction=prediction,
+                ground_truth=ground_truth,
+                prediction_table_format=prediction_table_format,
+                cutoff=cutoff,
+            )
         else:
             return cls(prediction=prediction, ground_truth=ground_truth)
 
@@ -165,7 +173,7 @@ class TableEvalProcessor:
         """
 
         predicted_table_data = extract_and_convert_tables_from_prediction(
-            self.prediction,
+            self.prediction, self.prediction_table_format
         )
         ground_truth_table_data = extract_and_convert_tables_from_ground_truth(
             self.ground_truth,
@@ -211,6 +219,12 @@ class TableEvalProcessor:
     "--ground_truth_file", help="Path to the ground truth JSON file", type=click.Path(exists=True)
 )
 @click.option(
+    "--prediction_table_format",
+    help="html or markdown",
+    default="html",
+    type=click.Path(exists=True),
+)
+@click.option(
     "--cutoff",
     type=float,
     show_default=True,
@@ -218,12 +232,18 @@ class TableEvalProcessor:
     help="The cutoff value for the element level alignment. \
         If not set, a default value is used",
 )
-def run(prediction_file: str, ground_truth_file: str, cutoff: Optional[float]):
+def run(
+    prediction_file: str,
+    ground_truth_file: str,
+    prediction_table_format: Optional[str],
+    cutoff: Optional[float],
+):
     """Runs the table evaluation process and prints the computed metrics."""
     processor = TableEvalProcessor.from_json_files(
         Path(prediction_file),
         Path(ground_truth_file),
         cutoff=cutoff,
+        prediction_table_format=prediction_table_format,
     )
     report = processor.process_file()
     print(report)
