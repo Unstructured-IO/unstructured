@@ -195,7 +195,7 @@ def get_mean_grouping(
     agg_name: Optional[str] = None,
     export_name: Optional[str] = None,
 ) -> None:
-    """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector', 
+    """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector',
     or 'all' for all rows. Export to TSV.
     If `all`, passing export_name is recommended.
 
@@ -218,7 +218,10 @@ def get_mean_grouping(
         agg_fields = ["element-type-accuracy"]
         agg_name = "element-type"
     else:
-        raise ValueError("Unknown metric. Expected `text_extraction` or `element_type` or `table_extraction`.")
+        raise ValueError(
+            "Unknown metric. Expected `text_extraction` or \
+                         `element_type` or `table_extraction`."
+        )
 
     if isinstance(data_input, str):
         if not os.path.exists(data_input):
@@ -402,7 +405,7 @@ def filter_metrics(
     return_type: str = "file",
 ) -> Optional[pd.DataFrame]:
     """Reads the data_input file and filter only selected row available in filter_list.
-    
+
     Args:
         data_input (str, dataframe): the source data, path to file or dataframe
         filter_list (str, list): the filter, path to file or list of string
