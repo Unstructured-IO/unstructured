@@ -50,10 +50,9 @@ def measure_text_extraction_accuracy(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
-    grouping: Optional[str] = None,
+    group_by: Optional[str] = None,
     weights: Tuple[int, int, int] = (1, 1, 1),
     visualize: bool = False,
-    filter_list: Optional[Union[List[str], str]] = None,
     output_type: str = "json",
 ) -> None:
     """
@@ -126,8 +125,8 @@ def measure_text_extraction_accuracy(
     _write_to_file(export_dir, "all-docs-cct.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
 
-    if grouping:
-        get_mean_grouping(grouping, df, export_dir, "text_extraction")
+    if group_by:
+        get_mean_grouping(group_by, df, export_dir, "text_extraction")
 
     _display(agg_df)
 
@@ -138,7 +137,7 @@ def measure_element_type_accuracy(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
     export_dir: str = "metrics",
-    grouping: Optional[str] = None,
+    group_by: Optional[str] = None,
     visualize: bool = False,
 ):
     """
@@ -182,8 +181,8 @@ def measure_element_type_accuracy(
     _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
     _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
 
-    if grouping:
-        get_mean_grouping(grouping, df, export_dir, "element_type")
+    if group_by:
+        get_mean_grouping(group_by, df, export_dir, "element_type")
 
     _display(agg_df)
 

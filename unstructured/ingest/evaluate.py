@@ -135,7 +135,7 @@ def measure_element_type_accuracy_command(
 
 @main.command()
 @click.option(
-    "--grouping",
+    "--group_by",
     type=str,
     required=True,
     help="The category to group by; valid values are 'doctype' and 'connector'.",
@@ -158,8 +158,8 @@ def measure_element_type_accuracy_command(
     type=str,
     help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
 )
-def get_mean_grouping_command(grouping: str, data_input: str, export_dir: str, eval_name: str):
-    return get_mean_grouping(grouping, data_input, export_dir, eval_name)
+def get_mean_grouping_command(group_by: str, data_input: str, export_dir: str, eval_name: str):
+    return get_mean_grouping(group_by, data_input, export_dir, eval_name)
 
 
 @main.command()
