@@ -18,7 +18,7 @@ fi
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 # Set the variables with default values
-USER_ID="dp_uns"
+USER_ID="unstructured"
 APP_ID="test-app-unstructured-$RANDOM_SUFFIX"
 
 # shellcheck disable=SC1091
