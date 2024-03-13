@@ -16,7 +16,7 @@ from unstructured.partition.docx import partition_docx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOC)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

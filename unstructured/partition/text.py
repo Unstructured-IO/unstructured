@@ -113,7 +113,7 @@ def partition_text(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TXT)
-@add_chunking_strategy()
+@add_chunking_strategy
 def _partition_text(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

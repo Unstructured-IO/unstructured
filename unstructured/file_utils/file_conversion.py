@@ -21,6 +21,26 @@ def convert_file_to_text(filename: str, source_format: str, target_format: str) 
             f"{err}"
         )
         raise FileNotFoundError(msg)
+    except RuntimeError as err:
+        supported_source_formats, _ = pypandoc.get_pandoc_formats()
+
+        if source_format == "rtf" and source_format not in supported_source_formats:
+            additional_info = (
+                "Support for RTF files is not available in the current pandoc installation. "
+                "It was introduced in pandoc 2.14.2.\n"
+                "Reference: https://pandoc.org/releases.html#pandoc-2.14.2-2021-08-21"
+            )
+        else:
+            additional_info = ""
+
+        msg = (
+            f"{err}\n\n{additional_info}\n\n"
+            f"Current version of pandoc: {pypandoc.get_pandoc_version()}\n"
+            "Make sure you have the right version installed in your system. "
+            "Please, follow the pandoc installation instructions "
+            "in README.md to install the right version."
+        )
+        raise RuntimeError(msg)
 
     return text
 

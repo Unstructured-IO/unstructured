@@ -26,7 +26,7 @@ DETECTION_ORIGIN: str = "md"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.MD)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_md(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
