@@ -14,7 +14,8 @@ def test_convert_table_from_markdown():
 | Bob  | 23  | New York |
 | Alice| 25  | Seattle  |
 """
-    assert convert_table_from_markdown(md_string) == [
+
+    expected = [
         {"row_index": 0, "col_index": 0, "content": "Name"},
         {"row_index": 0, "col_index": 1, "content": "Age"},
         {"row_index": 0, "col_index": 2, "content": "Location"},
@@ -25,6 +26,8 @@ def test_convert_table_from_markdown():
         {"row_index": 2, "col_index": 1, "content": "25"},
         {"row_index": 2, "col_index": 2, "content": "Seattle"},
     ]
+    assert convert_table_from_markdown(md_string) == [expected]
+    assert convert_table_from_markdown("\n\n".join([md_string, md_string])) == [expected, expected]
 
 
 def test_calculate_edit_distance():

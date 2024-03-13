@@ -9,30 +9,54 @@ EMPTY_CELL = {
 }
 
 
-def convert_table_from_markdown(md_string: str) -> List[Dict[str, Any]]:
-    lines = md_string.strip().split("\n")
+def convert_table_from_markdown(markdown_str: str) -> List[Dict[str, Any]]:
+    lines = markdown_str.split("\n")
+    tables = []
     table = []
-    inside_table_flag = False
-    row_index = -1
+    in_table = False
 
-    for i in range(len(lines)):
-        if "|" in lines[i]:
-            if not inside_table_flag:
-                inside_table_flag = True
-            col_lines = [line.strip() for line in lines[i].split("|") if line.strip()]
-            row_index += 1
-            for col_index in range(len(col_lines)):
-                table.append(
-                    {
-                        "row_index": row_index,
-                        "col_index": col_index,
-                        "content": col_lines[col_index],
-                    }
-                )
-        elif inside_table_flag:
-            break  # end of table is reached, exit the loop
+    for i, line in enumerate(lines):
+        if "|" in line:
+            if not in_table:
+                # Assuming first row is headers
+                in_table = True
 
-    return table
+                # strip leading and trailing whitespaces and '|'
+                line = line.strip().strip("|")
+
+                # Split each table cell content by '|'
+                cells = line.split("|")
+
+                # For each cell construct the dictionary {row_index, col_index, content}
+                for j, cell in enumerate(cells):
+                    table.append({"row_index": 0, "col_index": j, "content": cell.strip()})
+
+            else:
+                # we are in the middle of a table
+                # strip leading and trailing whitespaces and '|'
+                line = line.strip().strip("|")
+
+                cells = line.split("|")
+                for j, cell in enumerate(cells):
+                    table.append(
+                        {
+                            "row_index": len(table) // len(cells),
+                            "col_index": j,
+                            "content": cell.strip(),
+                        }
+                    )
+        else:
+            if in_table:
+                # end of a table
+                in_table = False
+                tables.append(table)
+                table = []
+
+    if in_table:
+        # the last table didn't end with a blank line
+        tables.append(table)
+
+    return tables
 
 
 def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
