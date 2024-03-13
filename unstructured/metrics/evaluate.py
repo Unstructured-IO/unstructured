@@ -410,11 +410,11 @@ def filter_metrics(
         if not os.path.exists(filter_list):
             raise FileNotFoundError(f"File {filter_list} not found.")
         if filter_list.endswith(".csv"):
-            filter_df = pd.read_csv(data_input, header=None)
+            filter_df = pd.read_csv(filter_list, header=None)
         elif filter_list.endswith(".tsv"):
-            filter_df = pd.read_csv(data_input, sep="\t")
+            filter_df = pd.read_csv(filter_list, sep="\t")
         elif filter_list.endswith(".txt"):
-            filter_df = pd.read_csv(data_input, sep="\t", header=None)
+            filter_df = pd.read_csv(filter_list, sep="\t", header=None)
         else:
             raise ValueError("Please provide a .csv or .tsv file.")
         filter_list = filter_df.iloc[:, 0].astype(str).values.tolist()
