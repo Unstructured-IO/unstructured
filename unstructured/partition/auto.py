@@ -255,6 +255,12 @@ def partition(
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
 
+    if not pdf_infer_table_structure:
+        logger.warning(
+            "The pdf_infer_table_structure kwarg is deprecated. Please use skip_infer_table_types "
+            "instead."
+        )
+
     languages = check_language_args(languages or [], ocr_languages)
 
     if url is not None:
