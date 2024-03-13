@@ -222,7 +222,6 @@ class TableEvalProcessor:
     "--prediction_table_format",
     help="html or markdown",
     default="html",
-    type=click.Path(exists=True),
 )
 @click.option(
     "--cutoff",
