@@ -195,8 +195,8 @@ def get_mean_grouping(
     agg_name: Optional[str] = None,
     export_name: Optional[str] = None,
 ) -> None:
-    """Aggregates accuracy and missing metrics by 'doctype' or 'connector' or 'all',
-    exporting to TSV.
+    """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector', 
+    or 'all' for all rows. Export to TSV.
     If `all`, passing export_name is recommended.
 
     Args:
@@ -218,7 +218,7 @@ def get_mean_grouping(
         agg_fields = ["element-type-accuracy"]
         agg_name = "element-type"
     else:
-        raise ValueError("Unknown metric. Expected `text_extraction` or `element_type`.")
+        raise ValueError("Unknown metric. Expected `text_extraction` or `element_type` or `table_extraction`.")
 
     if isinstance(data_input, str):
         if not os.path.exists(data_input):
@@ -350,7 +350,9 @@ def measure_table_structure_accuracy(
         "element_row_level_content_acc",
     ]
     df = pd.DataFrame(rows, columns=headers)
-    if df.empty:
+    has_tables_df = df[df["total_tables"] > 0]
+
+    if has_tables_df.empty:
         agg_df = pd.DataFrame(
             [
                 ["total_tables", None, None, None, 0],
@@ -360,26 +362,34 @@ def measure_table_structure_accuracy(
                 ["element_col_level_content_acc", None, None, None, 0],
                 ["element_row_level_content_acc", None, None, None, 0],
             ]
-        ).transpose()
+        ).reset_index()
     else:
-        # filter out documents with no tables
-        having_table_df = df[df["total_tables"] > 0]
-        # compute aggregated metrics for tables
-        agg_df = having_table_df.agg(
-            {
-                "total_tables": [_mean, _stdev, _pstdev, "count"],
-                "table_level_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_index_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_col_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-                "element_row_level_content_acc": [_mean, _stdev, _pstdev, "count"],
-            }
-        ).transpose()
-        agg_df = agg_df.reset_index()
-        agg_df.columns = agg_headers
+        element_metrics_results = {}
+        for metric in [
+            "total_tables",
+            "table_level_acc",
+            "element_col_level_index_acc",
+            "element_row_level_index_acc",
+            "element_col_level_content_acc",
+            "element_row_level_content_acc",
+        ]:
+            metric_df = has_tables_df[has_tables_df[metric].notnull()]
+            agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+            if agg_metric.empty:
+                element_metrics_results[metric] = pd.Series(
+                    data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                )
+            else:
+                element_metrics_results[metric] = agg_metric
+        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
 
-    _write_to_file(export_dir, "all-docs-table-structure-accuracy.tsv", df)
-    _write_to_file(export_dir, "aggregate-table-structure-accuracy.tsv", agg_df)
+    agg_df.columns = agg_headers
+    _write_to_file(
+        export_dir, "all-docs-table-structure-accuracy.tsv", _rename_aggregated_columns(df)
+    )
+    _write_to_file(
+        export_dir, "aggregate-table-structure-accuracy.tsv", _rename_aggregated_columns(agg_df)
+    )
     _display(agg_df)
 
 
@@ -391,6 +401,16 @@ def filter_metrics(
     export_dir: str = "metrics",
     return_type: str = "file",
 ) -> Optional[pd.DataFrame]:
+    """Reads the data_input file and filter only selected row available in filter_list.
+    
+    Args:
+        data_input (str, dataframe): the source data, path to file or dataframe
+        filter_list (str, list): the filter, path to file or list of string
+        filter_by (str): data_input's column to filter the filter_list to
+        export_filename (str, optional): export filename. required when return_type is "file"
+        export_dir (str, optional): export directory. default to <current directory>/metrics
+        return_type (str): "file" or "dataframe"
+    """
     if isinstance(data_input, str):
         if not os.path.exists(data_input):
             raise FileNotFoundError(f"File {data_input} not found.")

@@ -2,6 +2,7 @@ import os
 import pathlib
 import shutil
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -327,9 +328,9 @@ def test_get_mean_grouping_all_file():
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
 
-    assert float(grouped_df.iloc[1, 0]) == 0.903
-    assert float(grouped_df.iloc[1, 1]) == 0.129
-    assert float(grouped_df.iloc[1, 2]) == 0.091
+    assert np.isclose(float(grouped_df.iloc[1, 0]), 0.903)
+    assert np.isclose(float(grouped_df.iloc[1, 1]), 0.129)
+    assert np.isclose(float(grouped_df.iloc[1, 2]), 0.091)
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -359,6 +360,6 @@ def test_get_mean_grouping_all_file_txt():
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
 
-    assert float(grouped_df.iloc[1, 0]) == 0.903
-    assert float(grouped_df.iloc[1, 1]) == 0.129
-    assert float(grouped_df.iloc[1, 2]) == 0.091
+    assert np.isclose(float(grouped_df.iloc[1, 0]), 0.903)
+    assert np.isclose(float(grouped_df.iloc[1, 1]), 0.129)
+    assert np.isclose(float(grouped_df.iloc[1, 2]), 0.091)
