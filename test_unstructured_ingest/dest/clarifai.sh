@@ -99,11 +99,6 @@ while [ "$no_of_inputs" -eq 0 ]; do
     -s GET "https://api.clarifai.com/v2/users/$USER_ID/apps/$APP_ID/inputs/status" \
     -H "Authorization: Key $CLARIFAI_API_KEY")
 
-  if ! resp; then
-    echo "Error: Curl command failed"
-    break
-  fi
-
   no_of_inputs=$(echo "$resp" | jq -r '.counts.processed' | sed 's/\x1b\[[0-9;]*m//g')
   echo "Processed count: $no_of_inputs"
   retry_count=$((retry_count + 1))
