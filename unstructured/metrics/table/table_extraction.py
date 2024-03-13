@@ -9,6 +9,32 @@ EMPTY_CELL = {
 }
 
 
+def convert_table_from_markdown(md_string: str) -> List[Dict[str, Any]]:
+    lines = md_string.strip().split("\n")
+    table = []
+    inside_table_flag = False
+    row_index = -1
+
+    for i in range(len(lines)):
+        if "|" in lines[i]:
+            if not inside_table_flag:
+                inside_table_flag = True
+            col_lines = [line.strip() for line in lines[i].split("|") if line.strip()]
+            row_index += 1
+            for col_index in range(len(col_lines)):
+                table.append(
+                    {
+                        "row_index": row_index,
+                        "col_index": col_index,
+                        "content": col_lines[col_index],
+                    }
+                )
+        elif inside_table_flag:
+            break  # end of table is reached, exit the loop
+
+    return table
+
+
 def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
     """Convert html format to table structure.
 

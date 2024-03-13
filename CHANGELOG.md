@@ -1,8 +1,9 @@
-## 0.12.7-dev1
+## 0.12.7-dev2
 
 ### Enhancements
 
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
+* **Add markdown to table cell conversion helper**
 
 ### Features
 

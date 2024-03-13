@@ -3,7 +3,28 @@ import re
 import pytest
 
 from unstructured.metrics import text_extraction
+from unstructured.metrics.table.table_extraction import convert_table_from_markdown
 from unstructured.partition.auto import partition
+
+
+def test_convert_table_from_markdown():
+    md_string = """
+| Name | Age | Location |
+| ---- | --- | -------- |
+| Bob  | 23  | New York |
+| Alice| 25  | Seattle  |
+"""
+    assert convert_table_from_markdown(md_string) == [
+        {"row_index": 0, "col_index": 0, "content": "Name"},
+        {"row_index": 0, "col_index": 1, "content": "Age"},
+        {"row_index": 0, "col_index": 2, "content": "Location"},
+        {"row_index": 1, "col_index": 0, "content": "Bob"},
+        {"row_index": 1, "col_index": 1, "content": "23"},
+        {"row_index": 1, "col_index": 2, "content": "New York"},
+        {"row_index": 2, "col_index": 0, "content": "Alice"},
+        {"row_index": 2, "col_index": 1, "content": "25"},
+        {"row_index": 2, "col_index": 2, "content": "Seattle"},
+    ]
 
 
 def test_calculate_edit_distance():
