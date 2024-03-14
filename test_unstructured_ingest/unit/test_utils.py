@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 
 import pytest
+import pytz
 
 from unstructured.ingest.cli.utils import extract_config
 from unstructured.ingest.interfaces import BaseConfig
@@ -136,6 +137,11 @@ def test_json_to_dict_path():
 def test_ensure_isoformat_datetime_for_datetime():
     dt = ensure_isoformat_datetime(datetime(2021, 1, 1, 12, 0, 0))
     assert dt == "2021-01-01T12:00:00"
+
+
+def test_ensure_isoformat_datetime_for_datetime_with_tz():
+    dt = ensure_isoformat_datetime(datetime(2021, 1, 1, 12, 0, 0, tzinfo=pytz.UTC))
+    assert dt == "2021-01-01T12:00:00+00:00"
 
 
 def test_ensure_isoformat_datetime_for_string():
