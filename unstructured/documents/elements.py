@@ -476,7 +476,7 @@ class ConsolidationStrategy(enum.Enum):
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,
             "link_urls": cls.LIST_CONCATENATE,
-            "link_start_indexes": cls.LIST_CONCATENATE,
+            "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "page_name": cls.FIRST,
