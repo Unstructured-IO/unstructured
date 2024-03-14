@@ -1,10 +1,12 @@
 import json
 import typing as t
 from dataclasses import dataclass, field
+from datetime import datetime
+import pytest
 
 from unstructured.ingest.cli.utils import extract_config
 from unstructured.ingest.interfaces import BaseConfig
-from unstructured.ingest.utils.string_and_date_utils import json_to_dict
+from unstructured.ingest.utils.string_and_date_utils import json_to_dict, ensure_isoformat_datetime
 
 
 @dataclass
@@ -128,3 +130,19 @@ def test_json_to_dict_path():
     expected_result = "/path/to/file.json"
     assert json_to_dict(json_string) == expected_result
     assert isinstance(json_to_dict(json_string), str)
+
+def test_ensure_isoformat_datetime_for_datetime():
+    dt = ensure_isoformat_datetime(datetime(2021, 1, 1, 12, 0, 0))
+    assert dt == "2021-01-01T12:00:00"
+
+def test_ensure_isoformat_datetime_for_string():
+    dt = ensure_isoformat_datetime("2021-01-01T12:00:00")
+    assert dt == "2021-01-01T12:00:00"
+
+def test_ensure_isoformat_datetime_fails_on_string():
+    with pytest.raises(ValueError):
+        dt = ensure_isoformat_datetime("bad timestamp")
+
+def test_ensure_isoformat_datetime_fails_on_int():
+    with pytest.raises(TypeError):
+        dt = ensure_isoformat_datetime(1111)
