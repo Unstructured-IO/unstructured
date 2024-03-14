@@ -56,6 +56,7 @@ def _asdict(
                     encode_json=encode_json,
                     redact_sensitive=redact_sensitive,
                     redacted_text=redacted_text,
+                    apply_name_overload=apply_name_overload,
                 )
             if getattr(field, "sensitive", False) and redact_sensitive and value:
                 value = redacted_text

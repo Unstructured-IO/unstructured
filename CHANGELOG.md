@@ -1,21 +1,36 @@
-## 0.12.6-dev6
+## 0.12.7-dev2
+
+### Enhancements
+
+* **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
+
+### Features
+
+### Fixes
+
+* **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
+
+## 0.12.6
 
 ### Enhancements
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
+* **Redefine `table_level_acc` metric for table evaluation.** `table_level_acc` now is an average of individual predicted table's accuracy. A predicted table's accuracy is defined as the sequence matching ratio between itself and its corresponding ground truth table.
 
 ### Features
 * **Added Unstructured Platform Documentation** The Unstructured Platform is currently in beta. The documentation provides how-to guides for setting up workflow automation, job scheduling, and configuring source and destination connectors.
 
 ### Fixes
 
+* **Partitioning raises on file-like object with `.name` not a local file path.** When partitioning a file using the `file=` argument, and `file` is a file-like object (e.g. io.BytesIO) having a `.name` attribute, and the value of `file.name` is not a valid path to a file present on the local filesystem, `FileNotFoundError` is raised. This prevents use of the `file.name` attribute for downstream purposes to, for example, describe the source of a document retrieved from a network location via HTTP.
 * **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
 * **Include warnings** about the potential risk of installing a version of `pandoc` which does not support RTF files + instructions that will help resolve that issue.
 * **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
 * **Fix Google Drive source key** Allow passing string for source connector key.
 * **Fix table structure evaluations calculations** Replaced special value `-1.0` with `np.nan` and corrected rows filtering of files metrics basing on that.
 * **Fix Sharepoint-with-permissions test** Ignore permissions metadata, update test.
+* **Fix table structure evaluations for edge case** Fixes the issue when the prediction does not contain any table - no longer errors in such case.
 
 ## 0.12.5
 

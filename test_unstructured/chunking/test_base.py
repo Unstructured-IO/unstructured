@@ -634,10 +634,29 @@ class DescribeTextPreChunk:
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
-        assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata is pre_chunk._continuation_metadata
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    def and_it_adds_the_is_continuation_flag_for_second_and_later_text_split_chunks(self):
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+
+        pre_chunk = TextPreChunk(
+            # --   |--------------------- 48 ---------------------|
+            [Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)],
+            overlap_prefix="",
+            opts=ChunkingOptions(max_characters=20),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
