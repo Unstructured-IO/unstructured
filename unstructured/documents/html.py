@@ -24,7 +24,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Table,
     Text,
-    Title,
+    Title
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -37,11 +37,14 @@ from unstructured.partition.text_type import (
 )
 from unstructured.utils import htmlify_matrix_of_cell_texts
 
+CAPTION_TAG: str = "caption"
+CAPTION_TAG_START: str = f"<{CAPTION_TAG}>"
+CAPTION_TAG_END: str = f"</{CAPTION_TAG}>"
 TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
-TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
+TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr", CAPTION_TAG]
 TEXTBREAK_TAGS: Final[List[str]] = ["br"]
 PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
 EMPTY_TAGS: Final[List[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
@@ -102,7 +105,6 @@ class HTMLListItem(TagsMixin, ListItem):
 
 class HTMLTable(TagsMixin, Table):
     """NarrativeText with tag information"""
-
 
 def has_table_ancestor(element: TagsMixin) -> bool:
     """Checks to see if an element has ancestors that are table elements. If so, we consider
@@ -337,7 +339,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     # -- cell within the table within the cell too.)
 
     trs = cast(
-        List[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+        List[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr | ./caption")
     )
 
     if not trs:
@@ -346,17 +348,21 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     def iter_cell_texts(tr: etree._Element) -> Iterator[str]:
         """Generate the text of each cell in `tr`."""
         # -- a cell can be either a "data" cell (td) or a "heading" cell (th) --
-        tds = cast(List[etree._Element], tr.xpath("./td | ./th"))
-        for td in tds:
-            # -- a cell can contain other elements like spans etc. so we can't count on the text
-            # -- being directly below the `<td>` element. `.itertext()` gets all of it recursively.
-            # -- Filter out whitespace text nodes that result from HTML formatting.
-            stripped_text_nodes = (t.strip() for t in cast(Iterator[str], td.itertext()))
-            yield " ".join(t for t in stripped_text_nodes if t)
+        if tr.tag == "caption":
+            stripped_text_nodes = (t.strip() for t in cast(Iterator[str], tr.itertext()))
+            yield " ".join(CAPTION_TAG_START+t+CAPTION_TAG_END for t in stripped_text_nodes if t)
+        else:
+            tds = cast(List[etree._Element], tr.xpath("./td | ./th"))
+            for td in tds:
+                # -- a cell can contain other elements like spans etc. so we can't count on the text
+                # -- being directly below the `<td>` element. `.itertext()` gets all of it recursively.
+                # -- Filter out whitespace text nodes that result from HTML formatting.
+                stripped_text_nodes = (t.strip() for t in cast(Iterator[str], td.itertext()))
+                yield " ".join(t for t in stripped_text_nodes if t)
 
     table_data = [list(iter_cell_texts(tr)) for tr in trs]
-    html_table = htmlify_matrix_of_cell_texts(table_data)
-    table_text = " ".join(" ".join(t for t in row if t) for row in table_data).strip()
+    html_table = htmlify_matrix_of_cell_texts(table_data, CAPTION_TAG_START)
+    table_text = " ".join(" ".join(t.replace(CAPTION_TAG_START, "\n").replace(CAPTION_TAG_END, "") for t in row if t) for row in table_data).strip()
 
     if table_text == "":
         return None

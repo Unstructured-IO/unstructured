@@ -39,7 +39,7 @@ _T = TypeVar("_T")
 _P = ParamSpec("_P")
 
 
-def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
+def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]], CAPTION_TAG_START: str) -> str:
     """Form an HTML table from "rows" and "columns" of `matrix`.
 
     Character overhead is minimized:
@@ -55,16 +55,22 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             # -- suppress emission of rows with no cells --
             if not row_cell_strs:
                 continue
-            yield f"<tr>{''.join(iter_tds(row_cell_strs))}</tr>"
+            tds = ""
+            for s in row_cell_strs:
+                if s.find(CAPTION_TAG_START) == 0:
+                    yield s
+                else:
+                    tds += iter_tds(s)
+            if tds != "":
+                yield f"<tr>{tds}</tr>"
 
-    def iter_tds(row_cell_strs: Sequence[str]) -> Iterator[str]:
-        for s in row_cell_strs:
-            # -- take care of things like '<' and '>' in the text --
-            s = html.escape(s)
-            # -- substitute <br/> elements for line-feeds in the text --
-            s = "<br/>".join(s.split("\n"))
-            # -- strip leading and trailing whitespace, wrap it up and go --
-            yield f"<td>{s.strip()}</td>"
+    def iter_tds(s: str) -> str:
+        # -- take care of things like '<' and '>' in the text --
+        s = html.escape(s)
+        # -- substitute <br/> elements for line-feeds in the text --
+        s = "<br/>".join(s.split("\n"))
+        # -- strip leading and trailing whitespace, wrap it up and go --
+        return f"<td>{s.strip()}</td>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
 
