@@ -8,7 +8,7 @@ anyio==3.7.1
     # via
     #   -c ingest/../constraints.in
     #   httpx
-astrapy==0.7.6
+astrapy==0.7.7
     # via -r ingest/astra.in
 cassandra-driver==3.29.0
     # via cassio

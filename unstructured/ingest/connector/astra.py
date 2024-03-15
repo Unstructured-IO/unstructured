@@ -2,6 +2,8 @@ import copy
 import typing as t
 from dataclasses import dataclass, field
 
+from unstructured import __name__ as integration_name
+from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionNetworkError
@@ -67,10 +69,13 @@ class AstraDestinationConnector(BaseDestinationConnector):
         if self._astra_db_collection is None:
             from astrapy.db import AstraDB
 
-            # Build the Astra DB object
+            # Build the Astra DB object.
+            # caller_name/version for AstraDB tracking
             self._astra_db = AstraDB(
                 api_endpoint=self.connector_config.access_config.api_endpoint,
                 token=self.connector_config.access_config.token,
+                caller_name=integration_name,
+                caller_version=integration_version,
             )
 
             # Create and connect to the newly created collection
