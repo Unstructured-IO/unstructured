@@ -362,7 +362,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
 
     table_data = [list(iter_cell_texts(tr)) for tr in trs]
     html_table = htmlify_matrix_of_cell_texts(table_data, CAPTION_TAG_START)
-    table_text = " ".join(" ".join(t.replace(CAPTION_TAG_START, "\n").replace(CAPTION_TAG_END, "") for t in row if t) for row in table_data).strip()
+    table_text = " ".join(" ".join(t.replace(CAPTION_TAG_START, "\n").replace(CAPTION_TAG_END, "\n") for t in row if t) for row in table_data).strip()
 
     if table_text == "":
         return None
