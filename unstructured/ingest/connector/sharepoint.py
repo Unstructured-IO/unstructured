@@ -2,12 +2,9 @@ import json
 import os
 import typing as t
 from dataclasses import dataclass
-from datetime import datetime
 from html import unescape
 from pathlib import Path
 from urllib.parse import urlparse
-
-from dateutil import parser
 
 from unstructured.file_utils.filetype import EXT_TO_FILETYPE
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -23,6 +20,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.interfaces import PermissionsConfig as SharepointPermissionsConfig
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -204,23 +202,6 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
         return permissions_data
 
-    def _ensure_isoformat_datetime(self, timestamp: t.Union[datetime, str]) -> str:
-        """
-        Ensures that the input value is converted to an ISO format datetime string.
-        Handles both datetime objects and strings.
-        """
-        if isinstance(timestamp, datetime):
-            return timestamp.isoformat()
-        elif isinstance(timestamp, str):
-            try:
-                # Parse the datetime string in various formats
-                dt = parser.parse(timestamp)
-                return dt.isoformat()
-            except ValueError as e:
-                raise ValueError(f"String '{timestamp}' could not be parsed as a datetime.") from e
-        else:
-            raise TypeError(f"Expected input type datetime or str, but got {type(timestamp)}.")
-
     def update_source_metadata(self, **kwargs):
         if self.is_page:
             page = self._fetch_page()
@@ -250,8 +231,8 @@ class SharepointIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
             )
             return
         self.source_metadata = SourceMetadata(
-            date_created=self._ensure_isoformat_datetime(timestamp=file.time_created),
-            date_modified=self._ensure_isoformat_datetime(timestamp=file.time_last_modified),
+            date_created=ensure_isoformat_datetime(timestamp=file.time_created),
+            date_modified=ensure_isoformat_datetime(timestamp=file.time_last_modified),
             version=file.major_version,
             source_url=file.properties.get("LinkingUrl", None),
             exists=True,
