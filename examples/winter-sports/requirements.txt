@@ -1,0 +1,10 @@
+chromadb
+jupyter
+langchain
+langchain-community
+langchain-openai
+openai
+tiktoken
+"unstructured[md,pdf,pptx]"
+unstructured-client
+urllib3==1.26.16
