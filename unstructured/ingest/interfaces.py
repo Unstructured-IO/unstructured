@@ -186,6 +186,9 @@ class EmbeddingConfig(BaseConfig):
     provider: str
     api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: t.Optional[str] = None
+    aws_access_key_id: t.Optional[str] = None
+    aws_secret_access_key: t.Optional[str] = None
+    aws_region: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
         kwargs = {}
@@ -209,6 +212,16 @@ class EmbeddingConfig(BaseConfig):
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-aws-bedrock":
+            from unstructured.embed.bedrock import BedrockEmbeddingConfig, BedrockEmbeddingEncoder
+
+            return BedrockEmbeddingEncoder(
+                config=BedrockEmbeddingConfig(
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                )
+            )
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
@@ -228,7 +241,9 @@ class ChunkingConfig(BaseConfig):
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
+            else "by_title"
+            if self.chunk_elements is True
+            else None
         )
         return (
             chunk_by_title(
