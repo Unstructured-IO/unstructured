@@ -4,10 +4,11 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Optional
 
 import pytest
 
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.base import (
     CHUNK_MULTI_PAGE_DEFAULT,
     PreChunker,
@@ -566,6 +567,35 @@ def test_it_considers_separator_length_when_pre_chunking():
 # These test individual components in isolation so can exercise all edge cases while still
 # performing well.
 # ================================================================================================
+
+
+class Describe_chunk_by_title:
+    """Unit-test suite for `unstructured.chunking.title.chunk_by_title()` function."""
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"include_orig_elements": True}, True),
+            ({"include_orig_elements": False}, False),
+            ({"include_orig_elements": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_include_orig_elements_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_by_title_: Mock
+    ):
+        # -- this line would raise if "include_orig_elements" was not an available parameter on
+        # -- `chunk_by_title()`.
+        chunk_by_title([], **kwargs)
+
+        _, opts = _chunk_by_title_.call_args.args
+        assert opts.include_orig_elements is expected_value
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def _chunk_by_title_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.chunking.title._chunk_by_title")
 
 
 class Describe_ByTitleChunkingOptions:
