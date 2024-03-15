@@ -13,7 +13,7 @@ from unstructured.ingest.connector.fsspec.fsspec import (
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError
 from unstructured.ingest.interfaces import AccessConfig
-from unstructured.ingest.utils.string_utils import json_to_dict
+from unstructured.ingest.utils.string_and_date_utils import json_to_dict
 from unstructured.utils import requires_dependencies
 
 

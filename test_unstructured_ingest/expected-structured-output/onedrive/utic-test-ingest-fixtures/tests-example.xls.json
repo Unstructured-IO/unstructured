@@ -3,8 +3,8 @@
     "element_id": "a5c9668a6055bca2865ea5e6d16ea1e0",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -27,8 +27,8 @@
     "element_id": "1d34c23ff08573afa07b42842b41277a",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -50,8 +50,8 @@
     "element_id": "05440c6ca94cb55f6d185d8bd92ce9d6",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -73,8 +73,8 @@
     "element_id": "e39c724f1b09a4c3286b6368538e05fc",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -97,8 +97,8 @@
     "element_id": "1d34c23ff08573afa07b42842b41277a",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -120,8 +120,8 @@
     "element_id": "85ada878f2345c23b8a74a931d2e20a4",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -143,8 +143,8 @@
     "element_id": "0e570ca6fabe24f94e52c1833f3ffd25",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -166,8 +166,8 @@
     "element_id": "4cf4ff5597274d0c1ce8ae5a17ead4df",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -189,8 +189,8 @@
     "element_id": "dd167905de0defcaf72de673ee44c074",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -212,8 +212,8 @@
     "element_id": "5f9d7b40d332fef76efdd0a97bcb8617",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -235,8 +235,8 @@
     "element_id": "2b5c3d26721ae9c350cf3009318b626f",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -258,8 +258,8 @@
     "element_id": "53d2273ac70fc31640cc45af840dbd42",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -281,8 +281,8 @@
     "element_id": "4efca0d10c5feb8e9b35eb1d994f2905",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"
@@ -304,8 +304,8 @@
     "element_id": "4c9720f1540cc84d33e30e09aca8c077",
     "metadata": {
       "data_source": {
-        "date_created": "2023-08-24T03:00:43",
-        "date_modified": "2023-08-24T03:00:43",
+        "date_created": "2023-08-24T03:00:43+00:00",
+        "date_modified": "2023-08-24T03:00:43+00:00",
         "record_locator": {
           "server_relative_path": "utic-test-ingest-fixtures/tests-example.xls",
           "user_pname": "devops@unstructuredio.onmicrosoft.com"

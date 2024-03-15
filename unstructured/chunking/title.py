@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional
 
-from typing_extensions import Self
-
 from unstructured.chunking.base import (
     CHUNK_MULTI_PAGE_DEFAULT,
     BoundaryPredicate,
@@ -77,7 +75,13 @@ def chunk_by_title(
         overlap=overlap,
         overlap_all=overlap_all,
     )
+    return _chunk_by_title(elements, opts)
 
+
+def _chunk_by_title(elements: Iterable[Element], opts: _ByTitleChunkingOptions) -> list[Element]:
+    """Implementation of actual "by-title" chunking."""
+    # -- Note(scanny): it might seem like over-abstraction for this to be a separate function but
+    # -- it eases overriding or adding individual chunking options when customizing a stock chunker.
     pre_chunks = PreChunkCombiner(
         PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
@@ -94,48 +98,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         Indicates that page-boundaries should not be respected while chunking, i.e. elements
         appearing on two different pages can appear in the same chunk.
     """
-
-    def __init__(
-        self,
-        *,
-        max_characters: Optional[int] = None,
-        combine_text_under_n_chars: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-    ):
-        super().__init__(
-            combine_text_under_n_chars=combine_text_under_n_chars,
-            max_characters=max_characters,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-        )
-        self._multipage_sections_arg = multipage_sections
-
-    @classmethod
-    def new(
-        cls,
-        *,
-        max_characters: Optional[int] = None,
-        combine_text_under_n_chars: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-    ) -> Self:
-        """Return instance or raises `ValueError` on invalid arguments like overlap > max_chars."""
-        self = cls(
-            max_characters=max_characters,
-            combine_text_under_n_chars=combine_text_under_n_chars,
-            multipage_sections=multipage_sections,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-        )
-        self._validate()
-        return self
 
     @lazyproperty
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
@@ -166,7 +128,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         """
         max_characters = self.hard_max
         soft_max = self.soft_max
-        arg_value = self._combine_text_under_n_chars_arg
+        arg_value = self._kwargs.get("combine_text_under_n_chars")
 
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
         combine_text_under_n_chars = max_characters if arg_value is None else arg_value
@@ -177,7 +139,7 @@ class _ByTitleChunkingOptions(ChunkingOptions):
     @lazyproperty
     def multipage_sections(self) -> bool:
         """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._multipage_sections_arg
+        arg_value = self._kwargs.get("multipage_sections")
         return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     def _validate(self) -> None:
@@ -185,7 +147,8 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         # -- start with base-class validations --
         super()._validate()
 
-        if (combine_text_under_n_chars_arg := self._combine_text_under_n_chars_arg) is not None:
+        combine_text_under_n_chars_arg = self._kwargs.get("combine_text_under_n_chars")
+        if combine_text_under_n_chars_arg is not None:
             # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
             # -- but a negative value is not
             if combine_text_under_n_chars_arg < 0:
