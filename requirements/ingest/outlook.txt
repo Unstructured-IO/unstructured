@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==42.0.2
+cryptography==42.0.5
     # via
     #   msal
     #   pyjwt
@@ -23,7 +23,7 @@ idna==3.6
     # via
     #   -c ingest/../base.txt
     #   requests
-msal==1.26.0
+msal==1.27.0
     # via
     #   -r ingest/outlook.in
     #   office365-rest-python-client
@@ -34,9 +34,7 @@ office365-rest-python-client==2.4.2
 pycparser==2.21
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 pytz==2024.1
     # via office365-rest-python-client
 requests==2.31.0

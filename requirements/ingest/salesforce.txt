@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==42.0.2
+cryptography==42.0.5
     # via simple-salesforce
 idna==3.6
     # via
@@ -41,7 +41,7 @@ pycparser==2.21
     # via cffi
 pyjwt==2.8.0
     # via simple-salesforce
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ingest/../base.txt
     #   pendulum
@@ -66,7 +66,7 @@ six==1.16.0
     #   -c ingest/../base.txt
     #   isodate
     #   python-dateutil
-time-machine==2.13.0
+time-machine==2.14.0
     # via pendulum
 tzdata==2024.1
     # via pendulum

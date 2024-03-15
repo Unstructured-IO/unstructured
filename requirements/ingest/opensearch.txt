@@ -20,7 +20,7 @@ idna==3.6
     #   requests
 opensearch-py==2.4.2
     # via -r ingest/opensearch.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ingest/../base.txt
     #   opensearch-py

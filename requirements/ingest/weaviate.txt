@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-cryptography==42.0.2
+cryptography==42.0.5
     # via authlib
 idna==3.6
     # via

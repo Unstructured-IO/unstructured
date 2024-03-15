@@ -10,7 +10,7 @@ lxml==5.1.0
     #   python-docx
 python-docx==1.1.0
     # via -r extra-docx.in
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -c base.txt
     #   python-docx

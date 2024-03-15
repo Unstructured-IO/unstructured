@@ -22,7 +22,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.2.0
     # via matplotlib
-cryptography==42.0.2
+cryptography==42.0.5
     # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -35,7 +35,7 @@ filelock==3.13.1
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==23.5.26
+flatbuffers==24.3.7
     # via onnxruntime
 fonttools==4.49.0
     # via matplotlib
@@ -43,7 +43,7 @@ fsspec==2024.2.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.20.3
+huggingface-hub==0.21.4
     # via
     #   timm
     #   tokenizers
@@ -55,7 +55,7 @@ idna==3.6
     # via
     #   -c base.txt
     #   requests
-importlib-resources==6.1.1
+importlib-resources==6.3.0
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -111,6 +111,7 @@ opencv-python==4.8.0.76
 packaging==23.2
     # via
     #   -c base.txt
+    #   -c constraints.in
     #   huggingface-hub
     #   matplotlib
     #   onnxruntime
@@ -118,17 +119,17 @@ packaging==23.2
     #   pytesseract
     #   transformers
     #   unstructured-pytesseract
-pandas==2.2.0
+pandas==2.2.1
     # via layoutparser
 pdf2image==1.17.0
     # via
     #   -r extra-pdf-image.in
     #   layoutparser
-pdfminer-six==20221105
+pdfminer-six==20231228
     # via
     #   -r extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.10.4
+pdfplumber==0.11.0
     # via layoutparser
 pikepdf==8.11.0
     # via -r extra-pdf-image.in
@@ -162,13 +163,15 @@ pyparsing==3.0.9
     # via
     #   -c constraints.in
     #   matplotlib
-pypdf==4.0.1
-    # via -r extra-pdf-image.in
-pypdfium2==4.27.0
+pypdf==4.1.0
+    # via
+    #   -c base.txt
+    #   -r extra-pdf-image.in
+pypdfium2==4.28.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c base.txt
     #   matplotlib
@@ -184,7 +187,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.6.1
+rapidfuzz==3.6.2
     # via
     #   -c base.txt
     #   unstructured-inference
@@ -196,7 +199,6 @@ requests==2.31.0
     # via
     #   -c base.txt
     #   huggingface-hub
-    #   torchvision
     #   transformers
 safetensors==0.3.2
     # via
@@ -215,18 +217,18 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.12
+timm==0.9.16
     # via effdet
 tokenizers==0.15.2
     # via transformers
-torch==2.2.0
+torch==2.2.1
     # via
     #   -c constraints.in
     #   effdet
     #   layoutparser
     #   timm
     #   torchvision
-torchvision==0.17.0
+torchvision==0.17.1
     # via
     #   effdet
     #   layoutparser
@@ -239,7 +241,7 @@ tqdm==4.66.2
     #   transformers
 transformers==4.37.1
     # via unstructured-inference
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -c base.txt
     #   huggingface-hub
@@ -263,5 +265,5 @@ wrapt==1.16.0
     # via
     #   -c base.txt
     #   deprecated
-zipp==3.17.0
+zipp==3.18.1
     # via importlib-resources

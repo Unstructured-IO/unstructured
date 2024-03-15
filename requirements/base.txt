@@ -22,8 +22,10 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via nltk
 dataclasses-json==0.6.4
-    # via -r base.in
-dataclasses-json-speakeasy==0.5.11
+    # via
+    #   -r base.in
+    #   unstructured-client
+deepdiff==6.7.1
     # via unstructured-client
 emoji==2.10.1
     # via -r base.in
@@ -41,10 +43,9 @@ langdetect==1.0.9
     # via -r base.in
 lxml==5.1.0
     # via -r base.in
-marshmallow==3.20.2
+marshmallow==3.21.1
     # via
     #   dataclasses-json
-    #   dataclasses-json-speakeasy
     #   unstructured-client
 mypy-extensions==1.0.0
     # via
@@ -54,17 +55,22 @@ nltk==3.8.1
     # via -r base.in
 numpy==1.26.4
     # via -r base.in
+ordered-set==4.1.0
+    # via deepdiff
 packaging==23.2
     # via
+    #   -c constraints.in
     #   marshmallow
     #   unstructured-client
-python-dateutil==2.8.2
+pypdf==4.1.0
+    # via unstructured-client
+python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.2.7
     # via -r base.in
 python-magic==0.4.27
     # via -r base.in
-rapidfuzz==3.6.1
+rapidfuzz==3.6.2
     # via -r base.in
 regex==2023.12.25
     # via nltk
@@ -83,17 +89,17 @@ tabulate==0.9.0
     # via -r base.in
 tqdm==4.66.2
     # via nltk
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -r base.in
+    #   pypdf
     #   typing-inspect
     #   unstructured-client
 typing-inspect==0.9.0
     # via
     #   dataclasses-json
-    #   dataclasses-json-speakeasy
     #   unstructured-client
-unstructured-client==0.18.0
+unstructured-client==0.22.0
     # via -r base.in
 urllib3==1.26.18
     # via

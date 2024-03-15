@@ -4,5 +4,5 @@
 #
 #    pip-compile --output-file=extra-pandoc.txt extra-pandoc.in
 #
-pypandoc==1.12
+pypandoc==1.13
     # via -r extra-pandoc.in
