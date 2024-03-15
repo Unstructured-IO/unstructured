@@ -24,7 +24,7 @@ from unstructured.ingest.interfaces import (
     SourceMetadata,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.string_utils import json_to_dict
+from unstructured.ingest.utils.string_and_date_utils import json_to_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
