@@ -1,10 +1,12 @@
-## 0.12.7-dev5
+## 0.12.7-dev6
 
 ### Enhancements
 
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
 
 ### Features
+
+* **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
 
 ### Fixes
 
