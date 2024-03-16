@@ -113,7 +113,6 @@ def test_it_chunks_elements_when_the_user_already_has_them():
     ]
 
 
-@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
 def test_it_includes_original_elements_as_metadata_when_requested():
     element = Title("Introduction")
     element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")

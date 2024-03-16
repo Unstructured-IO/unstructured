@@ -122,7 +122,7 @@ def test_chunk_by_title():
         CheckBox(),
     ]
 
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=False)
 
     assert chunks == [
         CompositeElement(

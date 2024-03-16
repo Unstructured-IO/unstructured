@@ -615,7 +615,10 @@ class TextPreChunk:
         to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
         "consolidated".
         """
-        return ElementMetadata(**self._meta_kwargs)
+        consolidated_metadata = ElementMetadata(**self._meta_kwargs)
+        if self._opts.include_orig_elements:
+            consolidated_metadata.orig_elements = self._orig_elements
+        return consolidated_metadata
 
     @lazyproperty
     def _continuation_metadata(self) -> ElementMetadata:
