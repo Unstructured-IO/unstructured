@@ -486,6 +486,22 @@ class TablePreChunk:
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
 
+    @property
+    def _metadata(self) -> ElementMetadata:
+        """The base `.metadata` value for chunks formed from this pre-chunk.
+
+        The term "base" here means that other metadata fields will be added, depending on the chunk.
+        In particular, `.metadata.text_as_html` will be different for each text-split chunk and
+        `.metadata.is_continuation` must be added for second-and-later text-split chunks.
+
+        Note this is a fresh copy of the metadata on each call since it will need to be mutated
+        differently for each chunk formed from from this pre-chunk.
+        """
+        metadata = copy.deepcopy(self._table.metadata)
+        if self._opts.include_orig_elements:
+            metadata.orig_elements = self._orig_elements
+        return metadata
+
     @lazyproperty
     def _orig_elements(self) -> list[Element]:
         """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.

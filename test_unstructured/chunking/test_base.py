@@ -469,6 +469,28 @@ class DescribeTablePreChunk:
         )
         assert pre_chunk._text == expected_value
 
+    def it_computes_metadata_for_each_chunk_to_help(self):
+        table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        metadata = pre_chunk._metadata
+
+        assert metadata.text_as_html == "<table/>"
+        # -- opts.include_orig_elements is True by default --
+        assert metadata.orig_elements == [table]
+        # -- it produces a new instance each time it is called so changing one chunk's metadata does
+        # -- not change that of any other chunk.
+        assert pre_chunk._metadata is not metadata
+
+    def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
+        pre_chunk = TablePreChunk(
+            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=False),
+        )
+
+        assert pre_chunk._metadata.orig_elements is None
+
     def it_computes_the_original_elements_list_to_help(self):
         table = Table(
             "Lorem ipsum",
