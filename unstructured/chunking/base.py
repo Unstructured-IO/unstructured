@@ -487,6 +487,21 @@ class TablePreChunk:
         return self._text[-overlap:].strip() if overlap else ""
 
     @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
+
+        Note this is not just the `Table` element, it must be adjusted to strip out any
+        `.metadata.orig_elements` value it may have when it is itself a chunk and not a direct
+        product of partitioning.
+        """
+        # -- make a copy because we're going to mutate the `Table` element and it doesn't belong to
+        # -- us (the user may have downstream purposes for it).
+        orig_table = copy.deepcopy(self._table)
+        # -- prevent recursive .orig_elements when `Table` element is a chunk --
+        orig_table.metadata.orig_elements = None
+        return [orig_table]
+
+    @lazyproperty
     def _text(self) -> str:
         """The text for this chunk, including the overlap-prefix when present."""
         overlap_prefix = self._overlap_prefix

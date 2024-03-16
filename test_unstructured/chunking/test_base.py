@@ -469,6 +469,28 @@ class DescribeTablePreChunk:
         )
         assert pre_chunk._text == expected_value
 
+    def it_computes_the_original_elements_list_to_help(self):
+        table = Table(
+            "Lorem ipsum",
+            metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
+        )
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- a TablePreChunk always has exactly one original (Table) element --
+        assert len(orig_elements) == 1
+        orig_element = orig_elements[0]
+        # -- each item in orig_elements is a copy of the original element so we can mutate it
+        # -- without changing user's data.
+        assert orig_element == table
+        assert orig_element is not table
+        # -- it strips any .metadata.orig_elements from each element to prevent a recursive data
+        # -- structure
+        assert orig_element.metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
+
 
 class DescribeTextPreChunk:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
