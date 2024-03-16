@@ -868,6 +868,32 @@ class DescribeTextPreChunk:
             },
         }
 
+    def it_computes_the_original_elements_list_to_help(self):
+        element = Title("Introduction")
+        element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
+        element_3 = CompositeElement(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(orig_elements=[Text("Porta volupat.")]),
+        )
+        pre_chunk = TextPreChunk(
+            [element, element_2, element_3],
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=True),
+        )
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- all elements of pre-chunk are included --
+        assert orig_elements == [element, element_2, element_3]
+        # -- orig_elements that are chunks (having orig-elements of their own) are copied and the
+        # -- copy is stripped of its `.metadata.orig_elements` to prevent a recursive data
+        # -- structure that nests orig_elements within orig_elements.
+        assert orig_elements[0] is element
+        assert orig_elements[2] is not element_3
+        assert orig_elements[2].metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
+
     @pytest.mark.parametrize(
         ("elements", "overlap_prefix", "expected_value"),
         [

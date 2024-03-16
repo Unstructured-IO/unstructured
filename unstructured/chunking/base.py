@@ -718,6 +718,25 @@ class TextPreChunk:
         return dict(iter_kwarg_pairs())
 
     @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
+
+        def iter_orig_elements():
+            for e in self._elements:
+                if e.metadata.orig_elements is None:
+                    yield e
+                    continue
+                # -- make copy of any element we're going to mutate because these elements don't
+                # -- belong to us (the user may have downstream purposes for them).
+                orig_element = copy.copy(e)
+                # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
+                # -- its own)
+                orig_element.metadata.orig_elements = None
+                yield orig_element
+
+        return list(iter_orig_elements())
+
+    @lazyproperty
     def _text(self) -> str:
         """The concatenated text of all elements in this pre-chunk.
 
