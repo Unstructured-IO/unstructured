@@ -52,7 +52,6 @@ def test_it_splits_a_large_element_into_multiple_chunks():
     ]
 
 
-@pytest.mark.xfail(reason="WIP", raises=AssertionError, strict=True)
 def test_it_splits_elements_by_title_and_table():
     elements: list[Element] = [
         Title("A Great Day"),

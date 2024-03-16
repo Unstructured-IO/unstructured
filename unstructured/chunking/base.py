@@ -447,10 +447,10 @@ class TablePreChunk:
         text_remainder = self._text
         html_remainder = self._table.metadata.text_as_html or ""
 
-        # -- only chunk a table when it's too big to swallow whole --
+        # -- only text-split a table when it's longer than the chunking window --
         if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
             # -- but the overlap-prefix must be added to its text --
-            yield Table(text=text_remainder, metadata=copy.deepcopy(self._table.metadata))
+            yield Table(text=text_remainder, metadata=self._metadata)
             return
 
         split = self._opts.split
@@ -459,19 +459,19 @@ class TablePreChunk:
         while text_remainder or html_remainder:
             # -- split off the next chunk-worth of characters into a TableChunk --
             chunk_text, text_remainder = split(text_remainder)
-            table_chunk = TableChunk(text=chunk_text, metadata=copy.deepcopy(self._table.metadata))
+            metadata = self._metadata
 
             # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
             # -- HTML elements that *correspond* to the TextChunk.text fragment.
             if html_remainder:
                 chunk_html, html_remainder = html_remainder[:maxlen], html_remainder[maxlen:]
-                table_chunk.metadata.text_as_html = chunk_html
+                metadata.text_as_html = chunk_html
 
             # -- mark second and later chunks as a continuation --
             if is_continuation:
-                table_chunk.metadata.is_continuation = True
+                metadata.is_continuation = True
 
-            yield table_chunk
+            yield TableChunk(text=chunk_text, metadata=metadata)
 
             is_continuation = True
 

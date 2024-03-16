@@ -352,7 +352,30 @@ class DescribeTablePreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
-    def but_it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+    def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
+        table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
+        opts = ChunkingOptions(include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, "", opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.text_as_html == "<table>foo bar</table>"
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_instructed_not_to(self):
+        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
+
+        chunk = next(pre_chunk.iter_chunks())
+
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements is None
+
+    def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
         # fixed-overhead = 8+8+9+8+9+8 = 50
         # per-row overhead = 27
         html_table = (
@@ -398,6 +421,7 @@ class DescribeTablePreChunk:
             "<tbody>\n"
             "<tr><td>Lo"
         )
+        assert not chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -408,6 +432,7 @@ class DescribeTablePreChunk:
             "rem ipsum    </td><td>A Link example</td></tr>\n"
             "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
         )
+        assert chunk.metadata.is_continuation
         # -- note that text runs out but HTML continues because it's significantly longer. So two
         # -- of these chunks have HTML but no text.
         chunk = next(chunk_iter)
@@ -418,6 +443,7 @@ class DescribeTablePreChunk:
             "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
             "<tr><td>Vivamus quis   </td><td>"
         )
+        assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -425,9 +451,33 @@ class DescribeTablePreChunk:
         assert chunk.metadata.text_as_html == (
             "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
         )
+        assert chunk.metadata.is_continuation
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    def and_it_includes_the_whole_original_Table_in_each_metadata_when_so_instructed(self):
+        """Even though text and html are split, the orig_elements metadata is not."""
+        table = Table(
+            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<table/>"),
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Header Col 1   Header Col 2"
+        assert chunk.metadata.orig_elements == [table]
+        assert not chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Lorem ipsum   dolor sit amet"
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.is_continuation
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
