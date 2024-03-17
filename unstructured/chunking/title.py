@@ -104,6 +104,10 @@ class _ByTitleChunkingOptions(ChunkingOptions):
     multipage_sections
         Indicates that page-boundaries should not be respected while chunking, i.e. elements
         appearing on two different pages can appear in the same chunk.
+    combine_text_under_n_chars
+        A remedy to over-chunking caused by elements mis-identified as Title elements.
+        Every Title element would start a new chunk and this setting mitigates that, at the
+        expense of sometimes violating legitimate semantic boundaries.
     """
 
     @lazyproperty
@@ -154,22 +158,20 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         # -- start with base-class validations --
         super()._validate()
 
-        combine_text_under_n_chars_arg = self._kwargs.get("combine_text_under_n_chars")
-        if combine_text_under_n_chars_arg is not None:
-            # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-            # -- but a negative value is not
-            if combine_text_under_n_chars_arg < 0:
-                raise ValueError(
-                    f"'combine_text_under_n_chars' argument must be >= 0,"
-                    f" got {combine_text_under_n_chars_arg}"
-                )
+        # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+        # -- but a negative value is not
+        if self.combine_text_under_n_chars < 0:
+            raise ValueError(
+                f"'combine_text_under_n_chars' argument must be >= 0,"
+                f" got {self.combine_text_under_n_chars}"
+            )
 
-            # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
-            # -- users. The chunking behavior would be no different than when
-            # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
-            # -- default (500) then it can look like chunk-combining isn't working.
-            if combine_text_under_n_chars_arg > self.hard_max:
-                raise ValueError(
-                    f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
-                    f" value, got {combine_text_under_n_chars_arg} > {self.hard_max}"
-                )
+        # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
+        # -- users. The chunking behavior would be no different than when
+        # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
+        # -- default (500) then it can look like chunk-combining isn't working.
+        if self.combine_text_under_n_chars > self.hard_max:
+            raise ValueError(
+                f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
+                f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
+            )
