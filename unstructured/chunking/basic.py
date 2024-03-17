@@ -24,6 +24,7 @@ from unstructured.documents.elements import Element
 def chunk_elements(
     elements: Iterable[Element],
     *,
+    include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
@@ -37,6 +38,11 @@ def chunk_elements(
     ----------
     elements
         A list of unstructured elements. Usually the output of a partition function.
+    include_orig_elements
+        When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field
+        of the chunk(s) formed from that pre-chunk. Among other things, this allows access to
+        original-element metadata that cannot be consolidated and is dropped in the course of
+        chunking.
     max_characters
         Hard maximum chunk length. No chunk will exceed this length. A single element that exceeds
         this length will be divided into two or more chunks using text-splitting.
@@ -60,6 +66,7 @@ def chunk_elements(
     """
     # -- raises ValueError on invalid parameters --
     opts = _BasicChunkingOptions.new(
+        include_orig_elements=include_orig_elements,
         max_characters=max_characters,
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,

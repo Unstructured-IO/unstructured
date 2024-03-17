@@ -423,7 +423,7 @@ tidy-shell:
 
 .PHONY: tidy-python
 tidy-python:
-	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
+	ruff . --fix-only || true
 	autoflake --in-place .
 	black  .
 

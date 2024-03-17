@@ -9,13 +9,14 @@ class Properties(TypedDict):
 
 
 exclude_metadata_keys = (
-    "data_source",
     "coordinates",
-    "links",
-    "regex_metadata",
-    "emphasized_texts",
+    "data_source",
     "detection_class_prob",
+    "emphasized_texts",
     "is_continuation",
+    "links",
+    "orig_elements",
+    "regex_metadata",
 )
 
 
