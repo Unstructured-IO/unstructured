@@ -444,6 +444,18 @@ def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
     with open(example_doc_path("fake.docx"), "rb") as f:
         elements = partition_docx(file=f)
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture):
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date_from_file",
+        return_value="2029-07-05T09:24:28",
+    )
+
+    with open(example_doc_path("fake.docx"), "rb") as f:
+        elements = partition_docx(file=f, date_from_file_object=True)
+
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
 
@@ -465,7 +477,7 @@ def test_partition_docx_from_file_without_metadata_date():
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_docx(file=sf)
+        elements = partition_docx(file=sf, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified is None
 

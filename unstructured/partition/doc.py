@@ -28,6 +28,7 @@ def partition_doc(
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -51,6 +52,9 @@ def partition_doc(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -73,7 +77,9 @@ def partition_doc(
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
         base_filename, _ = os.path.splitext(filename_no_path)
 
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(

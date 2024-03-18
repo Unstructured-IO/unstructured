@@ -136,6 +136,15 @@ class ChunkingOptions:
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
 
     @lazyproperty
+    def include_orig_elements(self) -> bool:
+        """When True, add original elements from pre-chunk to `.metadata.orig_elements` of chunk.
+
+        Default value is `True`.
+        """
+        arg_value = self._kwargs.get("include_orig_elements")
+        return True if arg_value is None else bool(arg_value)
+
+    @lazyproperty
     def inter_chunk_overlap(self) -> int:
         """Characters of overlap to add between chunks.
 

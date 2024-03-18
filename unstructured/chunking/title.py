@@ -24,9 +24,10 @@ from unstructured.utils import lazyproperty
 def chunk_by_title(
     elements: Iterable[Element],
     *,
+    combine_text_under_n_chars: Optional[int] = None,
+    include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
-    combine_text_under_n_chars: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
@@ -41,23 +42,28 @@ def chunk_by_title(
     ----------
     elements
         A list of unstructured elements. Usually the output of a partition function.
-    multipage_sections
-        If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
         Combines elements (for example a series of titles) until a section reaches a length of
         n characters. Defaults to `max_characters` which combines chunks whenever space allows.
         Specifying 0 for this argument suppresses combining of small chunks. Note this value is
         "capped" at the `new_after_n_chars` value since a value higher than that would not change
         this parameter's effect.
+    include_orig_elements
+        When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field
+        of the chunk(s) formed from that pre-chunk. Among other things, this allows access to
+        original-element metadata that cannot be consolidated and is dropped in the course of
+        chunking.
+    max_characters
+        Chunks elements text and text_as_html (if present) into chunks of length
+        n characters (hard max)
+    multipage_sections
+        If True, sections can span multiple pages. Defaults to True.
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max). Defaults to
         `max_characters` when not specified, which effectively disables any soft window.
         Specifying 0 for this argument causes each element to appear in a chunk by itself (although
         an element with text longer than `max_characters` will be still be split into two or more
         chunks).
-    max_characters
-        Chunks elements text and text_as_html (if present) into chunks of length
-        n characters (hard max)
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
@@ -69,6 +75,7 @@ def chunk_by_title(
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
+        include_orig_elements=include_orig_elements,
         max_characters=max_characters,
         multipage_sections=multipage_sections,
         new_after_n_chars=new_after_n_chars,
