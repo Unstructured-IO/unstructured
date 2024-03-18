@@ -933,28 +933,36 @@ def test_partition_html_links():
     html_text = """<html>
         <a href="/loner">A lone link!</a>
         <p>Hello <a href="/link">link!</a></p>
+        <p>\n    Hello <a href="/link">link!</a></p>
         <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>
     </html>"""
 
+    expected_results = [
+        [
+            {"text": "A lone link!", "url": "/loner", "start_index": -1},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "Parrots", "url": "/wiki/parrots", "start_index": 0},
+            {"text": "Dogs", "url": "/wiki/dogs", "start_index": 12},
+        ],
+    ]
+
     elements = partition_html(text=html_text)
 
-    assert len(elements[0].metadata.link_texts) == 1
-    assert elements[0].metadata.link_texts[0] == "A lone link!"
-    assert elements[0].metadata.link_urls[0] == "/loner"
-    assert elements[0].metadata.link_start_indexes[0] == -1
-
-    assert len(elements[1].metadata.link_texts) == 1
-    assert elements[1].metadata.link_texts[0] == "link!"
-    assert elements[1].metadata.link_urls[0] == "/link"
-    assert elements[1].metadata.link_start_indexes[0] == 6
-
-    assert len(elements[2].metadata.link_texts) == 2
-    assert elements[2].metadata.link_texts[0] == "Parrots"
-    assert elements[2].metadata.link_urls[0] == "/wiki/parrots"
-    assert elements[2].metadata.link_start_indexes[0] == 0
-    assert elements[2].metadata.link_texts[1] == "Dogs"
-    assert elements[2].metadata.link_urls[1] == "/wiki/dogs"
-    assert elements[2].metadata.link_start_indexes[1] == 12
+    for el_idx, el in enumerate(elements):
+        expected_result = expected_results[el_idx]
+        for link_idx, (text, url, start_index) in enumerate(
+            zip(el.metadata.link_texts, el.metadata.link_urls, el.metadata.link_start_indexes)
+        ):
+            assert text == expected_result[link_idx]["text"]
+            assert url == expected_result[link_idx]["url"]
+            assert start_index == expected_result[link_idx]["start_index"]
 
 
 # -- unit-level tests ----------------------------------------------------------------------------

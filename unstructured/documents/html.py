@@ -12,7 +12,10 @@ else:
 
 from lxml import etree
 
-from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
+from unstructured.cleaners.core import (
+    clean_bullets,
+    replace_unicode_quotes,
+)
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
@@ -297,7 +300,7 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     if href:
         links.append({"text": tag_elem.text, "url": href, "start_index": -1})
 
-    start_index = len(tag_elem.text) if tag_elem.text else 0
+    start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
     for tag in tag_elem.iterdescendants():
         href = tag.get("href")
         if href:
