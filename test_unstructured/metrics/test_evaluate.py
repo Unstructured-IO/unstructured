@@ -134,7 +134,7 @@ def test_table_structure_evaluation():
     assert os.path.isfile(os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
     assert len(df) == 1
-    assert len(df.columns) == 9
+    assert len(df.columns) == 10
     assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf"
 
 
