@@ -104,7 +104,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     entry_points={
-        "console_scripts": ["unstructured-ingest=unstructured.txtgest.main:main"],
+        "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
     install_requires=load_requirements(),
     extras_require={

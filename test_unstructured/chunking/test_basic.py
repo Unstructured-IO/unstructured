@@ -113,6 +113,27 @@ def test_it_chunks_elements_when_the_user_already_has_them():
     ]
 
 
+def test_it_includes_original_elements_as_metadata_when_requested():
+    element = Title("Introduction")
+    element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
+    element_3 = Text("In rhoncus ipsum sed lectus porta volutpat.")
+
+    chunks = chunk_elements(
+        [element, element_2, element_3], max_characters=70, include_orig_elements=True
+    )
+
+    assert len(chunks) == 2
+    chunk = chunks[0]
+    assert chunk == CompositeElement(
+        "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
+    )
+    assert chunk.metadata.orig_elements == [element, element_2]
+    # --
+    chunk = chunks[1]
+    assert chunk == CompositeElement("In rhoncus ipsum sed lectus porta volutpat.")
+    assert chunk.metadata.orig_elements == [element_3]
+
+
 # ------------------------------------------------------------------------------------------------
 # UNIT TESTS
 # ------------------------------------------------------------------------------------------------
