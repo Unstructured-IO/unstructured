@@ -39,6 +39,7 @@
 ### Enhancements
 
 ### Features
+* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.

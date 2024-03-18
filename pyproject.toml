@@ -14,8 +14,7 @@ verboseOutput = true
 line-length = 100
 
 # -- changes made here should also be made in `.pre-commit-config.yaml` and `Makefile` --
-[tool.ruff.lint]
-select = [
+lint.select = [
     "C4",       # -- flake8-comprehensions --
     "COM",      # -- flake8-commas --
     "E",        # -- pycodestyle errors --
@@ -29,7 +28,7 @@ select = [
     "UP032",    # -- Use f-string instead of `.format()` call --
     "UP034",    # -- Avoid extraneous parentheses --
 ]
-ignore = [
+lint.ignore = [
     "COM812",   # -- over aggressively insists on trailing commas where not desireable --
     "PT005",    # -- flags mock fixtures with names intentionally matching private method name --
     "PT011",    # -- pytest.raises({exc}) too broad, use match param or more specific exception --

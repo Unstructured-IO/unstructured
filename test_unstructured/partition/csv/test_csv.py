@@ -160,6 +160,25 @@ def test_partition_csv_from_file_metadata_date(
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_csv_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.csv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.csv.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_csv(file=f, include_header=False, date_from_file_object=True)
+
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
+    assert isinstance(elements[0], Table)
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -177,7 +196,10 @@ def test_partition_csv_from_file_custom_metadata_date(
 
     with open(filename, "rb") as f:
         elements = partition_csv(
-            file=f, metadata_last_modified=expected_last_modification_date, include_header=False
+            file=f,
+            metadata_last_modified=expected_last_modification_date,
+            include_header=False,
+            date_from_file_object=True,
         )
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
@@ -195,7 +217,7 @@ def test_partition_csv_from_file_without_metadata(
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_csv(file=sf)
+        elements = partition_csv(file=sf, date_from_file_object=True)
 
     assert clean_extra_whitespace(elements[0].text) == EXPECTED_TEXT
     assert isinstance(elements[0], Table)

@@ -341,7 +341,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
         "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
-    elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -378,7 +378,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     )
     elements = image.partition_image(
         filename=filename,
-        stratefy=PartitionStrategy.HI_RES,
+        strategy=PartitionStrategy.HI_RES,
         metadata_last_modified=expected_last_modification_date,
     )
 
@@ -397,6 +397,21 @@ def test_partition_image_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_image_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+    with open(filename, "rb") as f:
+        elements = image.partition_image(file=f, date_from_file_object=True)
+
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -411,7 +426,25 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = image.partition_image(file=f, stratefy=PartitionStrategy.HI_RES)
+        elements = image.partition_image(file=f, strategy=PartitionStrategy.HI_RES)
+
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_image_from_file_with_hi_res_strategy_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = image.partition_image(
+            file=f, strategy=PartitionStrategy.HI_RES, date_from_file_object=True
+        )
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -451,10 +484,23 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         elements = image.partition_image(
             file=f,
             metadata_last_modified=expected_last_modification_date,
-            stratefy=PartitionStrategy.HI_RES,
+            strategy=PartitionStrategy.HI_RES,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_image_from_file_without_metadata_date(
+    filename="example-docs/english-and-korean.png",
+):
+    """Test partition_image() with file that are not possible to get last modified date"""
+    with open(filename, "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = image.partition_image(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_msg_with_json():
