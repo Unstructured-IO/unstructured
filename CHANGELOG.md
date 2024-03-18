@@ -1,4 +1,4 @@
-## 0.12.7-dev1
+## 0.12.7-dev5
 
 ### Enhancements
 
@@ -9,10 +9,12 @@
 ### Fixes
 
 * **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
+* **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
+* **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
 
 ## 0.12.6
 
-### Enhancements
+### Enhancements 
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.

@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Optional, Sequence
+from typing import Any, Optional, Sequence
 
 import pytest
 
@@ -77,6 +77,20 @@ class DescribeChunkingOptions:
         """
         opts = ChunkingOptions(combine_text_under_n_chars=combine_text_under_n_chars)
         assert opts.combine_text_under_n_chars == expected_value
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"include_orig_elements": True}, True),
+            ({"include_orig_elements": False}, False),
+            ({"include_orig_elements": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_knows_whether_to_include_orig_elements_in_the_chunk_metadata(
+        self, kwargs: dict[str, Any], expected_value: bool
+    ):
+        assert ChunkingOptions(**kwargs).include_orig_elements is expected_value
 
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):

@@ -17,8 +17,6 @@ from __future__ import annotations
 
 from typing import Iterable, Optional
 
-from typing_extensions import Self
-
 from unstructured.chunking.base import ChunkingOptions, PreChunker
 from unstructured.documents.elements import Element
 
@@ -26,6 +24,7 @@ from unstructured.documents.elements import Element
 def chunk_elements(
     elements: Iterable[Element],
     *,
+    include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
@@ -39,6 +38,11 @@ def chunk_elements(
     ----------
     elements
         A list of unstructured elements. Usually the output of a partition function.
+    include_orig_elements
+        When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field
+        of the chunk(s) formed from that pre-chunk. Among other things, this allows access to
+        original-element metadata that cannot be consolidated and is dropped in the course of
+        chunking.
     max_characters
         Hard maximum chunk length. No chunk will exceed this length. A single element that exceeds
         this length will be divided into two or more chunks using text-splitting.
@@ -62,12 +66,20 @@ def chunk_elements(
     """
     # -- raises ValueError on invalid parameters --
     opts = _BasicChunkingOptions.new(
+        include_orig_elements=include_orig_elements,
         max_characters=max_characters,
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
         overlap_all=overlap_all,
     )
 
+    return _chunk_elements(elements, opts)
+
+
+def _chunk_elements(elements: Iterable[Element], opts: _BasicChunkingOptions) -> list[Element]:
+    """Implementation of actual basic chunking."""
+    # -- Note(scanny): it might seem like over-abstraction for this to be a separate function but
+    # -- it eases overriding or adding individual chunking options when customizing a stock chunker.
     return [
         chunk
         for pre_chunk in PreChunker.iter_pre_chunks(elements, opts)
@@ -77,25 +89,3 @@ def chunk_elements(
 
 class _BasicChunkingOptions(ChunkingOptions):
     """Options for `basic` chunking."""
-
-    @classmethod
-    def new(
-        cls,
-        *,
-        max_characters: Optional[int] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-    ) -> Self:
-        """Construct validated instance.
-
-        Raises `ValueError` on invalid arguments like overlap > max_chars.
-        """
-        self = cls(
-            max_characters=max_characters,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-        )
-        self._validate()
-        return self
