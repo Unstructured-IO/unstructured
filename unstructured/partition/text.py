@@ -57,6 +57,7 @@ def partition_text(
     chunking_strategy: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "text",
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
@@ -91,6 +92,9 @@ def partition_text(
         The minimum number of characters to include in a partition.
     metadata_last_modified
         The day of the last modification
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     return _partition_text(
         filename=filename,
@@ -107,6 +111,7 @@ def partition_text(
         chunking_strategy=chunking_strategy,
         detect_language_per_element=detect_language_per_element,
         detection_origin=detection_origin,
+        date_from_file_object=date_from_file_object,
         **kwargs,
     )
 
@@ -129,6 +134,7 @@ def _partition_text(
     chunking_strategy: Optional[str] = None,
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = "text",
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """internal API for `partition_text`"""
@@ -153,8 +159,9 @@ def _partition_text(
 
     elif file is not None:
         encoding, file_text = read_txt_file(file=file, encoding=encoding)
-        last_modification_date = get_last_modified_date_from_file(file)
-
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     elif text is not None:
         file_text = str(text)
 
