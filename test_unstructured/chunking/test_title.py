@@ -9,12 +9,7 @@ from typing import Any, Optional
 import pytest
 
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
-from unstructured.chunking.base import (
-    CHUNK_MULTI_PAGE_DEFAULT,
-    PreChunker,
-    TablePreChunk,
-    TextPreChunk,
-)
+from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
@@ -57,7 +52,7 @@ def test_it_splits_a_large_element_into_multiple_chunks():
     ]
 
 
-def test_split_elements_by_title_and_table():
+def test_it_splits_elements_by_title_and_table():
     elements: list[Element] = [
         Title("A Great Day"),
         Text("Today is a great day."),
@@ -72,39 +67,38 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = PreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=True)
 
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    assert len(chunks) == 4
+    # --
+    chunk = chunks[0]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
     ]
     # --
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TablePreChunk)
-    assert pre_chunk._table == Table("Heading\nCell text")
+    chunk = chunks[1]
+    assert isinstance(chunk, Table)
+    assert chunk.metadata.orig_elements == [Table("Heading\nCell text")]
     # ==
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    chunk = chunks[2]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
     ]
     # --
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    chunk = chunks[3]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
         CheckBox(),
     ]
-    # --
-    with pytest.raises(StopIteration):
-        next(pre_chunks)
 
 
 def test_chunk_by_title():
@@ -127,7 +121,7 @@ def test_chunk_by_title():
         CheckBox(),
     ]
 
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=False)
 
     assert chunks == [
         CompositeElement(
