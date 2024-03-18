@@ -155,6 +155,7 @@ def partition(
     request_timeout: Optional[int] = None,
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
+    date_from_file_object: bool = False,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -236,6 +237,10 @@ def partition(
     model_name
         The layout detection model used when partitioning strategy is set to `hi_res`. To be
         deprecated in favor of `hi_res_model_name`.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True and inference
+        from message header failed, attempt to infer last_modified metadata from bytes,
+        otherwise set it to None.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -252,6 +257,7 @@ def partition(
             "Please use metadata_filename instead.",
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
+    kwargs.setdefault("date_from_file_object", date_from_file_object)
 
     languages = check_language_args(languages or [], ocr_languages)
 

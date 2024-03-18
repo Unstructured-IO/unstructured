@@ -34,6 +34,7 @@ def partition_tsv(
     languages: Optional[List[str]] = ["auto"],
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partitions TSV files into document elements.
@@ -54,6 +55,9 @@ def partition_tsv(
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -68,7 +72,9 @@ def partition_tsv(
             cast(Union[BinaryIO, SpooledTemporaryFile], file),
         )
         table = pd.read_csv(f, sep="\t", header=header)
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
     text = soupparser_fromstring(html_text).text_content()
