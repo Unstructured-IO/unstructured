@@ -14,7 +14,7 @@
 
 ## 0.12.6
 
-### Enhancements
+### Enhancements 
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
@@ -39,6 +39,7 @@
 ### Enhancements
 
 ### Features
+* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
