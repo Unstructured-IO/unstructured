@@ -3,9 +3,8 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from dataclasses_json.core import Json
-
 from unstructured.__version__ import __version__ as unstructured_version
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, WriteError
 from unstructured.ingest.interfaces import (
@@ -22,7 +21,6 @@ from unstructured.ingest.interfaces import (
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
-from unstructured.ingest.enhanced_dataclass import enhanced_field
 
 if t.TYPE_CHECKING:
     from pymongo import MongoClient
@@ -39,6 +37,7 @@ def parse_userinfo(userinfo: str) -> t.Tuple[str, str]:
 @dataclass
 class MongoDBAccessConfig(AccessConfig):
     uri: t.Optional[str] = enhanced_field(sensitive=True, default=None)
+
 
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
