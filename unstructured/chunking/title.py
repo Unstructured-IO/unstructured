@@ -137,15 +137,9 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         - Defaults to `max_characters` when not specified.
         - Is reduced to `new_after_n_chars` when it exceeds that value.
         """
-        max_characters = self.hard_max
-        soft_max = self.soft_max
-        arg_value = self._kwargs.get("combine_text_under_n_chars")
-
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
-        combine_text_under_n_chars = max_characters if arg_value is None else arg_value
-
-        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+        arg_value = self._kwargs.get("combine_text_under_n_chars")
+        return self.hard_max if arg_value is None else arg_value
 
     @lazyproperty
     def multipage_sections(self) -> bool:
