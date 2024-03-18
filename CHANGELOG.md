@@ -1,4 +1,4 @@
-## 0.12.7-dev5
+## 0.12.7-dev6
 
 ### Enhancements
 
@@ -11,6 +11,7 @@
 * **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 * **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
+* **Fix MongoDB bug** Original redact secrets solution is outdated and is causing issues in platform. This uses our standard logging redact solution.
 
 ## 0.12.6
 
