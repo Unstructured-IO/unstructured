@@ -454,6 +454,9 @@
         "eng",
         "fra"
       ],
+      "link_start_indexes": [
+        0
+      ],
       "link_texts": [
         "This is the link for unstructured . io."
       ],

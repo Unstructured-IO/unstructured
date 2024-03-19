@@ -31,6 +31,7 @@ from unstructured.documents.html import (
     TagsMixin,
     _parse_HTMLTable_from_table_elem,
 )
+from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -350,6 +351,49 @@ def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[
     emphasized_texts = html._get_emphasized_texts_from_tag(el)
 
     assert emphasized_texts == expected
+
+
+@pytest.mark.parametrize(
+    ("doc", "root", "expected"),
+    [
+        (
+            "<a href='/loner'>A lone link!</a>",
+            "a",
+            [{"text": "A lone link!", "url": "/loner", "start_index": -1}],
+        ),
+        (
+            "<ul><li><a href='/wiki/Parrot'>Parrots</a></li><li>Dogs</li></ul>",
+            "ul",
+            [{"text": "Parrots", "url": "/wiki/Parrot", "start_index": 0}],
+        ),
+        (
+            "<ul><li><a href='/parrot'>Parrots</a></li><li><a href='/dog'>Dogs</a></li></ul>",
+            "ul",
+            [
+                {"text": "Parrots", "url": "/parrot", "start_index": 0},
+                {"text": "Dogs", "url": "/dog", "start_index": 7},
+            ],
+        ),
+        (
+            "<div>Here is <p>P tag</p> tail text. <a href='/link'>link!</a></div>",
+            "div",
+            [{"text": "link!", "url": "/link", "start_index": 25}],
+        ),
+        (
+            "<div>Here is <p>P tag</p><a href='/link'>link!</a></div>",
+            "div",
+            [{"text": "link!", "url": "/link", "start_index": 13}],
+        ),
+    ],
+)
+def test_get_links_from_tag(doc: str, root: str, expected: List[Dict[str, str]]):
+    document_tree = etree.fromstring(doc, etree.HTMLParser())
+    el = document_tree.find(f".//{root}")
+    assert el is not None
+
+    links = html._get_links_from_tag(el)
+
+    assert links == expected
 
 
 def test_parse_nothing():
@@ -883,6 +927,42 @@ def test_line_break_in_text_tag(tag):
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
     assert doc.elements[1].text == "World"
+
+
+def test_partition_html_links():
+    html_text = """<html>
+        <a href="/loner">A lone link!</a>
+        <p>Hello <a href="/link">link!</a></p>
+        <p>\n    Hello <a href="/link">link!</a></p>
+        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>
+    </html>"""
+
+    expected_results = [
+        [
+            {"text": "A lone link!", "url": "/loner", "start_index": -1},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "Parrots", "url": "/wiki/parrots", "start_index": 0},
+            {"text": "Dogs", "url": "/wiki/dogs", "start_index": 12},
+        ],
+    ]
+
+    elements = partition_html(text=html_text)
+
+    for el_idx, el in enumerate(elements):
+        expected_result = expected_results[el_idx]
+        for link_idx, (text, url, start_index) in enumerate(
+            zip(el.metadata.link_texts, el.metadata.link_urls, el.metadata.link_start_indexes)
+        ):
+            assert text == expected_result[link_idx]["text"]
+            assert url == expected_result[link_idx]["url"]
+            assert start_index == expected_result[link_idx]["start_index"]
 
 
 # -- unit-level tests ----------------------------------------------------------------------------
