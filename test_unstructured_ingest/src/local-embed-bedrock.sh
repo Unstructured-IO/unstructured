@@ -33,7 +33,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --embedding-aws-access-key-id "$AWS_ACCESS_KEY_ID" \
   --embedding-aws-secret-access-key "$AWS_SECRET_ACCESS_KEY"
 
-
 set +e
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
