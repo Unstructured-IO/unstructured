@@ -103,10 +103,7 @@ def test_convert_to_dataframe_maintains_fields():
 
 
 def test_default_pandas_dtypes():
-    """
-    Make sure that all the values that can exist on an element have a corresponding dtype
-    mapped in the dict returned by get_default_pandas_dtypes()
-    """
+    """Ensure all element fields have a dtype in dict returned by get_default_pandas_dtypes()."""
     full_element = Text(
         text="some text",
         element_id="123",

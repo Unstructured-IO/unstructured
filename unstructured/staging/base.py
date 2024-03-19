@@ -54,10 +54,10 @@ def elements_to_text(
     filename: Optional[str] = None,
     encoding: str = "utf-8",
 ) -> Optional[str]:
-    """
-    Convert the text from the list of elements into clean, concatenated text.
-    Saves to a txt file if filename is specified.
-    Otherwise, return the text of the elements as a string.
+    """Convert the text from a list of elements into clean, concatenated text.
+
+    Saves to a txt file if filename is specified. Otherwise, return the text of the elements as a
+    string.
     """
     element_cct = convert_to_text(elements)
     if filename is not None:
@@ -78,7 +78,7 @@ def convert_to_isd(elements: Sequence[Element]) -> list[dict[str, Any]]:
 
 
 def convert_to_dict(elements: Sequence[Element]) -> list[dict[str, Any]]:
-    """Converts a list of elements into a dictionary."""
+    """Convert a list of elements into a list of element-dicts."""
     return convert_to_isd(elements)
 
 
@@ -111,8 +111,8 @@ def elements_to_json(
     indent: int = 4,
     encoding: str = "utf-8",
 ) -> Optional[str]:
-    """
-    Saves a list of elements to a JSON file if filename is specified.
+    """Saves a list of elements to a JSON file if filename is specified.
+
     Otherwise, return the list of elements as a string.
     """
 
@@ -127,7 +127,7 @@ def elements_to_json(
 
 
 def isd_to_elements(isd: list[dict[str, Any]]) -> list[Element]:
-    """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
+    """Convert a list of element-dicts to a list of elements."""
     elements: list[Element] = []
 
     for item in isd:
@@ -159,7 +159,7 @@ def isd_to_elements(isd: list[dict[str, Any]]) -> list[Element]:
 
 
 def dict_to_elements(element_dict: list[dict[str, Any]]) -> list[Element]:
-    """Converts a dictionary representation of an element list into List[Element]."""
+    """Converts a dictionary representation of an element list into list[Element]."""
     return isd_to_elements(element_dict)
 
 
@@ -188,10 +188,13 @@ def flatten_dict(
     remove_none: bool = False,
     keys_to_omit: Optional[list[str]] = None,
 ) -> dict[str, Any]:
-    """Flattens a nested dictionary into a single level dictionary. keys_to_omit is a list of keys
-    that don't get flattened. If omitting a nested key, format as {parent_key}{separator}{key}.
-    If flatten_lists is True, then lists and tuples are flattened as well.
-    If remove_none is True, then None keys/values are removed from the flattened dictionary."""
+    """Flattens a nested dictionary into a single level dictionary.
+
+    keys_to_omit is a list of keys that don't get flattened. If omitting a nested key, format as
+    {parent_key}{separator}{key}. If flatten_lists is True, then lists and tuples are flattened as
+    well. If remove_none is True, then None keys/values are removed from the flattened
+    dictionary.
+    """
     keys_to_omit = keys_to_omit if keys_to_omit else []
     flattened_dict: dict[str, Any] = {}
     for key, value in dictionary.items():
@@ -237,10 +240,7 @@ def _get_table_fieldnames(rows: list[dict[str, Any]]):
 
 
 def convert_to_isd_csv(elements: Sequence[Element]) -> str:
-    """
-    Returns the representation of document elements as an Initial Structured Document (ISD)
-    in CSV Format.
-    """
+    """Convert a list of elements to Initial Structured Document (ISD) in CSV Format."""
     rows: list[dict[str, Any]] = convert_to_isd(elements)
     table_fieldnames = _get_table_fieldnames(rows)
     # NOTE(robinson) - flatten metadata and add it to the table
@@ -321,8 +321,9 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
 def convert_to_dataframe(
     elements: Sequence[Element], drop_empty_cols: bool = True, set_dtypes: bool = False
 ) -> "pd.DataFrame":
-    """Converts document elements to a pandas DataFrame. The dataframe contains the
-    following columns:
+    """Converts document elements to a pandas DataFrame.
+
+    The dataframe contains the following columns:
         text: the element text
         type: the text type (NarrativeText, Title, etc)
 
