@@ -101,13 +101,13 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
     `by_title`-specific options:
 
-    multipage_sections
-        Indicates that page-boundaries should not be respected while chunking, i.e. elements
-        appearing on two different pages can appear in the same chunk.
     combine_text_under_n_chars
         A remedy to over-chunking caused by elements mis-identified as Title elements.
         Every Title element would start a new chunk and this setting mitigates that, at the
         expense of sometimes violating legitimate semantic boundaries.
+    multipage_sections
+        Indicates that page-boundaries should not be respected while chunking, i.e. elements
+        appearing on two different pages can appear in the same chunk.
     """
 
     @lazyproperty

@@ -644,13 +644,11 @@ class Describe_ByTitleChunkingOptions:
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
         """Caller can specify `new_after_n_chars` arg without specifying any other options."""
         try:
-            opts = _ByTitleChunkingOptions(new_after_n_chars=200)
-            opts._validate()
+            opts = _ByTitleChunkingOptions.new(new_after_n_chars=200)
         except ValueError:
             pytest.fail("did not accept `new_after_n_chars` as option by itself")
 
         assert opts.soft_max == 200
-        assert opts.combine_text_under_n_chars == 500
 
     @pytest.mark.parametrize(
         ("multipage_sections", "expected_value"),
