@@ -1,10 +1,12 @@
-## 0.12.7-dev5
+## 0.12.7-dev6
 
 ### Enhancements
 
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
 
 ### Features
+
+* **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
 
 ### Fixes
 
@@ -14,7 +16,7 @@
 
 ## 0.12.6
 
-### Enhancements 
+### Enhancements
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.

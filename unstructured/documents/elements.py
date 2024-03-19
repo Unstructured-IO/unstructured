@@ -378,6 +378,9 @@ class ElementMetadata:
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
 
+        # -- remove `.orig_elements` for now as that won't serialize --
+        meta_dict.pop("orig_elements", None)
+
         # -- don't serialize empty lists --
         meta_dict: dict[str, Any] = {
             field_name: value
