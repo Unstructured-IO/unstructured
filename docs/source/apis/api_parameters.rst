@@ -39,6 +39,12 @@ encoding
 - **Description**: The encoding method used to decode the text input. Default: utf-8.
 - **Example**: utf-8
 
+extract_image_block_types
+-------------------------
+- **Type**: array
+- **Description**: The types of image blocks to extract from the document. Supports various Element types.
+- **Example**: ['Image', 'Table']
+
 hi_res_model_name
 -----------------
 - **Type**: string
@@ -48,7 +54,8 @@ hi_res_model_name
 include_page_breaks
 -------------------
 - **Type**: boolean
-- **Description**: If True, the output will include page breaks if the filetype supports it. Default: false.
+- **Description**: When true, the output will include page break elements when the filetype supports
+  it. Default: false.
 
 languages
 ---------
@@ -72,37 +79,66 @@ xml_keep_tags
 - **Type**: boolean
 - **Description**: If True, will retain the XML tags in the output. Otherwise it will simply extract the text from within the tags. Only applies to partition_xml.
 
+
+Chunking Parameters
+-------------------
+
+The following parameters control chunking behavior. Chunking is automatically performed after
+partitioning when a value is provided for the ``chunking_strategy`` argument. The remaining chunking
+parameters are only operative when a chunking strategy is specified. Note that not all chunking
+parameters apply to all chunking strategies. Any chunking arguments not supported by the selected
+chunker are ignored.
+
 chunking_strategy
 -----------------
 - **Type**: string
-- **Description**: Use one of the supported strategies to chunk the returned elements. Currently supports: by_title.
-- **Example**: by_title
-
-multipage_sections
-------------------
-- **Type**: boolean
-- **Description**: If chunking strategy is set, determines if sections can span multiple sections. Default: true.
+- **Description**: Use one of the supported strategies to chunk the returned elements. When omitted,
+  no chunking is performed and any other chunking parameters provided are ignored.
+- **Valid values**: ``"basic"``, ``"by_title"``
 
 combine_under_n_chars
 ---------------------
 - **Type**: integer
-- **Description**: If chunking strategy is set, combine elements until a section reaches a length of n chars. Default: 500.
+- **Applicable Chunkers**: "by_title" only
+- **Description**: When chunking strategy is set to "by_title", combine small chunks until the
+  combined chunk reaches a length of n chars. This can mitigate the appearance of small chunks
+  created by short paragraphs, not intended as section headings, being identified as ``Title``
+  elements in certain documents.
+- **Default**: the same value as ``max_characters``
 - **Example**: 500
 
-new_after_n_chars
------------------
-- **Type**: integer
-- **Description**: If chunking strategy is set, cut off new sections after reaching a length of n chars (soft max). Default: 1500.
-- **Example**: 1500
+include_orig_elements
+---------------------
+- **Type**: boolean
+- **Applicable Chunkers**: All
+- **Description**: Add the elements used to form each chunk to ``.metadata.orig_elements`` for that
+  chunk. These can be used to recover the original text and metadata for individual elements when
+  that is required, for example to identify the page-numbers or coordinates spanned by a chunk.
+  When an element larger than ``max_characters`` is divided into two or more chunks via
+  text-splitting, each of those chunks will contain the entire original chunk as the only item in
+  its ``.metadata.orig_elements`` list.
+- **Default**: true
 
 max_characters
 --------------
 - **Type**: integer
-- **Description**: If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 1500.
-- **Example**: 1500
+- **Applicable Chunkers**: All
+- **Description**: When chunking strategy is set, cut off new chunks after reaching a length of n
+  chars (hard max).
+- **Default**: 500
 
-extract_image_block_types
--------------------------
-- **Type**: array
-- **Description**: The types of image blocks to extract from the document. Supports various Element types.
-- **Example**: ['Image', 'Table']
+multipage_sections
+------------------
+- **Type**: boolean
+- **Applicable Chunkers**: "by_title" only
+- **Description**: When true and chunking strategy is set to "by_title", allows a chunk to include
+  elements from more than one page. Otherwise chunks are broken on page boundaries.
+- **Default**: true
+
+new_after_n_chars
+-----------------
+- **Type**: integer
+- **Applicable Chunkers**: "basic", "by_title"
+- **Description**: When chunking strategy is set, cut off new chunk after reaching a length of n
+  chars (soft max).
+- **Default**: 1500

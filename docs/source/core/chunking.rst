@@ -65,8 +65,8 @@ be specified when a non-default setting is required. Specific chunking strategie
   need to decide based on your use-case whether this option is right for you.
 
 
-Chunking elements
------------------
+Chunking
+--------
 
 Chunking can be performed as part of partitioning or as a separate step after
 partitioning:
@@ -170,3 +170,45 @@ following behaviors:
   ``combine_text_under_n_chars`` argument. This defaults to the same value as ``max_characters``
   such that sequential small sections are combined to maximally fill the chunking window. Setting
   this to ``0`` will disable section combining.
+
+
+Recovering Chunk Elements
+-------------------------
+
+In general, a chunk consolidates multiple document elements to maximally fill a chunk of the desired
+size. Information is naturally lost in this consolidation, for example which element a passage of
+text came from and certain metadata like page-number and coordinates which cannot always be resolved
+to a single value.
+
+The original elements combined to make a chunk can be accessed using the `.metadata.orig_elements`
+field on the chunk:
+
+.. code:: python
+
+    >>> elements = [
+    ...     Title("Lorem Ipsum"),
+    ...     NarrativeText("Lorem ipsum dolor sit."),
+    ... ]
+    >>> chunk = chunk_elements(elements)[0]
+    >>> print(chunk.text)
+    'Lorem Ipsum\n\nLorem ipsum dolor sit.'
+    >>> print(chunk.metadata.orig_elements)
+    [Title("Lorem Ipsum"), NarrativeText("Lorem ipsum dolor sit.")]
+
+These elements will contain all their original metadata so can be used to access metadata that
+cannot reliably be consolidated, for example:
+
+--code:: python
+
+    >>> {e.metadata.page_number for e in chunk.metadata.orig_elements}
+    {2, 3}
+
+    >>> [e.metadata.coordinates for e in chunk.metadata.orig_elements]
+    [<CoordinatesMetadata ...>, <CoordinatesMetadata ...>, ...]
+
+    >>> [
+        e.metadata.image_path
+        for e in chunk.metadata.orig_elements
+        if e.metadata.image_path is not None
+    ]
+    ['/tmp/lorem.jpg', '/tmp/ipsum.png']
