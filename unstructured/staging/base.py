@@ -38,27 +38,18 @@ def elements_from_dicts(element_dicts: list[dict[str, Any]]) -> list[Element]:
 
     for item in element_dicts:
         element_id: str = item.get("element_id", NoID())
-        metadata = ElementMetadata()
-        _metadata_dict = item.get("metadata")
-        if _metadata_dict is not None:
-            metadata = ElementMetadata.from_dict(_metadata_dict)
+        metadata = (
+            ElementMetadata()
+            if item.get("metadata") is None
+            else ElementMetadata.from_dict(item["metadata"])
+        )
 
         if item.get("type") in TYPE_TO_TEXT_ELEMENT_MAP:
-            _text_class = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
-            elements.append(
-                _text_class(
-                    text=item["text"],
-                    element_id=element_id,
-                    metadata=metadata,
-                ),
-            )
+            ElementCls = TYPE_TO_TEXT_ELEMENT_MAP[item["type"]]
+            elements.append(ElementCls(text=item["text"], element_id=element_id, metadata=metadata))
         elif item.get("type") == "CheckBox":
             elements.append(
-                CheckBox(
-                    checked=item["checked"],
-                    element_id=element_id,
-                    metadata=metadata,
-                ),
+                CheckBox(checked=item["checked"], element_id=element_id, metadata=metadata)
             )
 
     return elements
@@ -70,9 +61,7 @@ dict_to_elements = elements_from_dicts
 
 
 def elements_from_json(
-    filename: str = "",
-    text: str = "",
-    encoding: str = "utf-8",
+    filename: str = "", text: str = "", encoding: str = "utf-8"
 ) -> list[Element]:
     """Loads a list of elements from a JSON file or a string."""
     exactly_one(filename=filename, text=text)
@@ -80,10 +69,10 @@ def elements_from_json(
     if filename:
         with open(filename, encoding=encoding) as f:
             element_dicts = json.load(f)
-        return elements_from_dicts(element_dicts)
     else:
         element_dicts = json.loads(text)
-        return elements_from_dicts(element_dicts)
+
+    return elements_from_dicts(element_dicts)
 
 
 # == SERIALIZERS =================================
@@ -91,11 +80,7 @@ def elements_from_json(
 
 def elements_to_dicts(elements: Sequence[Element]) -> list[dict[str, Any]]:
     """Convert document elements to element-dicts."""
-    isd: list[dict[str, Any]] = []
-    for element in elements:
-        section = element.to_dict()
-        isd.append(section)
-    return isd
+    return [e.to_dict() for e in elements]
 
 
 # -- legacy aliases for elements_to_dicts() --
@@ -113,14 +98,17 @@ def elements_to_json(
 
     Otherwise, return the list of elements as a string.
     """
-    pre_processed_elements = _fix_metadata_field_precision(elements)
-    element_dict = elements_to_dicts(pre_processed_elements)
+    # -- serialize `elements` as a JSON array (str) --
+    precision_adjusted_elements = _fix_metadata_field_precision(elements)
+    element_dicts = elements_to_dicts(precision_adjusted_elements)
+    json_str = json.dumps(element_dicts, indent=indent, sort_keys=True)
+
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
-            json.dump(element_dict, f, indent=indent, sort_keys=True)
-            return None
-    else:
-        return json.dumps(element_dict, indent=indent, sort_keys=True)
+            f.write(json_str)
+        return None
+
+    return json_str
 
 
 def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
