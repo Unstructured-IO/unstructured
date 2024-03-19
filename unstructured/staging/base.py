@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import csv
 import io
 import json
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional, Sequence, cast
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -14,7 +16,7 @@ from unstructured.documents.elements import (
     NoID,
 )
 from unstructured.partition.common import exactly_one
-from unstructured.utils import dependency_exists, requires_dependencies
+from unstructured.utils import Point, dependency_exists, requires_dependencies
 
 if dependency_exists("pandas"):
     import pandas as pd
@@ -35,20 +37,20 @@ def _get_metadata_table_fieldnames():
     return metadata_fields
 
 
-TABLE_FIELDNAMES: List[str] = [
+TABLE_FIELDNAMES: list[str] = [
     "type",
     "text",
     "element_id",
 ] + _get_metadata_table_fieldnames()
 
 
-def convert_to_text(elements: List[Element]) -> str:
+def convert_to_text(elements: list[Element]) -> str:
     """Converts a list of elements into clean, concatenated text."""
     return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
 
 
 def elements_to_text(
-    elements: List[Element],
+    elements: list[Element],
     filename: Optional[str] = None,
     encoding: str = "utf-8",
 ) -> Optional[str]:
@@ -66,28 +68,29 @@ def elements_to_text(
         return element_cct
 
 
-def convert_to_isd(elements: List[Element]) -> List[Dict[str, Any]]:
+def convert_to_isd(elements: Sequence[Element]) -> list[dict[str, Any]]:
     """Represents the document elements as an Initial Structured Document (ISD)."""
-    isd: List[Dict[str, Any]] = []
+    isd: list[dict[str, Any]] = []
     for element in elements:
         section = element.to_dict()
         isd.append(section)
     return isd
 
 
-def convert_to_dict(elements: List[Element]) -> List[Dict[str, Any]]:
+def convert_to_dict(elements: Sequence[Element]) -> list[dict[str, Any]]:
     """Converts a list of elements into a dictionary."""
     return convert_to_isd(elements)
 
 
-def _fix_metadata_field_precision(elements: List[Element]) -> List[Element]:
-    out_elements = []
+def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
+    out_elements: list[Element] = []
     for element in elements:
         el = deepcopy(element)
         if el.metadata.coordinates:
             precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
             points = el.metadata.coordinates.points
-            rounded_points = []
+            assert points is not None
+            rounded_points: list[Point] = []
             for point in points:
                 x, y = point
                 rounded_point = (round(x, precision), round(y, precision))
@@ -98,11 +101,12 @@ def _fix_metadata_field_precision(elements: List[Element]) -> List[Element]:
             el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
 
         out_elements.append(el)
+
     return out_elements
 
 
 def elements_to_json(
-    elements: List[Element],
+    elements: Sequence[Element],
     filename: Optional[str] = None,
     indent: int = 4,
     encoding: str = "utf-8",
@@ -122,9 +126,9 @@ def elements_to_json(
         return json.dumps(element_dict, indent=indent, sort_keys=True)
 
 
-def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
+def isd_to_elements(isd: list[dict[str, Any]]) -> list[Element]:
     """Converts an Initial Structured Data (ISD) dictionary to a list of elements."""
-    elements: List[Element] = []
+    elements: list[Element] = []
 
     for item in isd:
         element_id: str = item.get("element_id", NoID())
@@ -154,7 +158,7 @@ def isd_to_elements(isd: List[Dict[str, Any]]) -> List[Element]:
     return elements
 
 
-def dict_to_elements(element_dict: List[Dict[str, Any]]) -> List[Element]:
+def dict_to_elements(element_dict: list[dict[str, Any]]) -> list[Element]:
     """Converts a dictionary representation of an element list into List[Element]."""
     return isd_to_elements(element_dict)
 
@@ -163,7 +167,7 @@ def elements_from_json(
     filename: str = "",
     text: str = "",
     encoding: str = "utf-8",
-) -> List[Element]:
+) -> list[Element]:
     """Loads a list of elements from a JSON file or a string."""
     exactly_one(filename=filename, text=text)
 
@@ -177,19 +181,19 @@ def elements_from_json(
 
 
 def flatten_dict(
-    dictionary,
-    parent_key="",
-    separator="_",
-    flatten_lists=False,
-    remove_none=False,
-    keys_to_omit: List[str] = None,
-):
+    dictionary: dict[str, Any],
+    parent_key: str = "",
+    separator: str = "_",
+    flatten_lists: bool = False,
+    remove_none: bool = False,
+    keys_to_omit: Optional[list[str]] = None,
+) -> dict[str, Any]:
     """Flattens a nested dictionary into a single level dictionary. keys_to_omit is a list of keys
     that don't get flattened. If omitting a nested key, format as {parent_key}{separator}{key}.
     If flatten_lists is True, then lists and tuples are flattened as well.
     If remove_none is True, then None keys/values are removed from the flattened dictionary."""
     keys_to_omit = keys_to_omit if keys_to_omit else []
-    flattened_dict = {}
+    flattened_dict: dict[str, Any] = {}
     for key, value in dictionary.items():
         new_key = f"{parent_key}{separator}{key}" if parent_key else key
         if new_key in keys_to_omit:
@@ -197,12 +201,14 @@ def flatten_dict(
         elif value is None and remove_none:
             continue
         elif isinstance(value, dict):
+            value = cast("dict[str, Any]", value)
             flattened_dict.update(
                 flatten_dict(
                     value, new_key, separator, flatten_lists, remove_none, keys_to_omit=keys_to_omit
                 ),
             )
         elif isinstance(value, (list, tuple)) and flatten_lists:
+            value = cast("list[Any] | tuple[Any]", value)
             for index, item in enumerate(value):
                 flattened_dict.update(
                     flatten_dict(
@@ -216,10 +222,11 @@ def flatten_dict(
                 )
         else:
             flattened_dict[new_key] = value
+
     return flattened_dict
 
 
-def _get_table_fieldnames(rows):
+def _get_table_fieldnames(rows: list[dict[str, Any]]):
     table_fieldnames = list(TABLE_FIELDNAMES)
     for row in rows:
         metadata = row["metadata"]
@@ -229,12 +236,12 @@ def _get_table_fieldnames(rows):
     return table_fieldnames
 
 
-def convert_to_isd_csv(elements: List[Element]) -> str:
+def convert_to_isd_csv(elements: Sequence[Element]) -> str:
     """
     Returns the representation of document elements as an Initial Structured Document (ISD)
     in CSV Format.
     """
-    rows: List[Dict[str, Any]] = convert_to_isd(elements)
+    rows: list[dict[str, Any]] = convert_to_isd(elements)
     table_fieldnames = _get_table_fieldnames(rows)
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
@@ -255,55 +262,55 @@ def convert_to_isd_csv(elements: List[Element]) -> str:
         return buffer.getvalue()
 
 
-def convert_to_csv(elements: List[Element]) -> str:
+def convert_to_csv(elements: Sequence[Element]) -> str:
     """Converts a list of elements to a CSV."""
     return convert_to_isd_csv(elements)
 
 
 @requires_dependencies(["pandas"])
-def get_default_pandas_dtypes() -> dict:
+def get_default_pandas_dtypes() -> dict[str, Any]:
     return {
-        "text": pd.StringDtype(),
-        "type": pd.StringDtype(),
-        "element_id": pd.StringDtype(),
-        "filename": pd.StringDtype(),  # Optional[str]
-        "filetype": pd.StringDtype(),  # Optional[str]
-        "file_directory": pd.StringDtype(),  # Optional[str]
-        "last_modified": pd.StringDtype(),  # Optional[str]
-        "attached_to_filename": pd.StringDtype(),  # Optional[str]
-        "parent_id": pd.StringDtype(),  # Optional[str],
+        "text": pd.StringDtype(),  # type: ignore
+        "type": pd.StringDtype(),  # type: ignore
+        "element_id": pd.StringDtype(),  # type: ignore
+        "filename": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "filetype": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "file_directory": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "last_modified": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "attached_to_filename": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "parent_id": pd.StringDtype(),  # Optional[str],  # type: ignore
         "category_depth": "Int64",  # Optional[int]
-        "image_path": pd.StringDtype(),  # Optional[str]
-        "languages": object,  # Optional[List[str]]
+        "image_path": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "languages": object,  # Optional[list[str]]
         "page_number": "Int64",  # Optional[int]
-        "page_name": pd.StringDtype(),  # Optional[str]
-        "url": pd.StringDtype(),  # Optional[str]
-        "link_urls": pd.StringDtype(),  # Optional[str]
-        "link_texts": object,  # Optional[List[str]]
+        "page_name": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "url": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "link_urls": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "link_texts": object,  # Optional[list[str]]
         "links": object,
-        "sent_from": object,  # Optional[List[str]],
-        "sent_to": object,  # Optional[List[str]]
-        "subject": pd.StringDtype(),  # Optional[str]
-        "section": pd.StringDtype(),  # Optional[str]
-        "header_footer_type": pd.StringDtype(),  # Optional[str]
-        "emphasized_text_contents": object,  # Optional[List[str]]
-        "emphasized_text_tags": object,  # Optional[List[str]]
-        "text_as_html": pd.StringDtype(),  # Optional[str]
+        "sent_from": object,  # Optional[list[str]],
+        "sent_to": object,  # Optional[list[str]]
+        "subject": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "section": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "header_footer_type": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "emphasized_text_contents": object,  # Optional[list[str]]
+        "emphasized_text_tags": object,  # Optional[list[str]]
+        "text_as_html": pd.StringDtype(),  # Optional[str]  # type: ignore
         "regex_metadata": object,
         "max_characters": "Int64",  # Optional[int]
         "is_continuation": "boolean",  # Optional[bool]
         "detection_class_prob": float,  # Optional[float],
-        "sender": pd.StringDtype(),
+        "sender": pd.StringDtype(),  # type: ignore
         "coordinates_points": object,
-        "coordinates_system": pd.StringDtype(),
+        "coordinates_system": pd.StringDtype(),  # type: ignore
         "coordinates_layout_width": float,
         "coordinates_layout_height": float,
-        "data_source_url": pd.StringDtype(),  # Optional[str]
-        "data_source_version": pd.StringDtype(),  # Optional[str]
+        "data_source_url": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "data_source_version": pd.StringDtype(),  # Optional[str]  # type: ignore
         "data_source_record_locator": object,
-        "data_source_date_created": pd.StringDtype(),  # Optional[str]
-        "data_source_date_modified": pd.StringDtype(),  # Optional[str]
-        "data_source_date_processed": pd.StringDtype(),  # Optional[str]
+        "data_source_date_created": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "data_source_date_modified": pd.StringDtype(),  # Optional[str]  # type: ignore
+        "data_source_date_processed": pd.StringDtype(),  # Optional[str]  # type: ignore
         "data_source_permissions_data": object,
         "embeddings": object,
         "regex_metadata_key": object,
@@ -312,9 +319,7 @@ def get_default_pandas_dtypes() -> dict:
 
 @requires_dependencies(["pandas"])
 def convert_to_dataframe(
-    elements: List[Element],
-    drop_empty_cols: bool = True,
-    set_dtypes=False,
+    elements: Sequence[Element], drop_empty_cols: bool = True, set_dtypes: bool = False
 ) -> "pd.DataFrame":
     """Converts document elements to a pandas DataFrame. The dataframe contains the
     following columns:
@@ -327,29 +332,27 @@ def convert_to_dataframe(
     for d in elements_as_dict:
         if metadata := d.pop("metadata", None):
             d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
-    df = pd.DataFrame.from_dict(
-        elements_as_dict,
-    )
+    df = pd.DataFrame.from_dict(elements_as_dict)  # type: ignore
     if set_dtypes:
         dt = {k: v for k, v in get_default_pandas_dtypes().items() if k in df.columns}
-        df = df.astype(dt)
+        df = df.astype(dt)  # type: ignore
     if drop_empty_cols:
-        df.dropna(axis=1, how="all", inplace=True)
+        df.dropna(axis=1, how="all", inplace=True)  # type: ignore
     return df
 
 
 def filter_element_types(
-    elements: List[Element],
-    include_element_types: Optional[List[Element]] = None,
-    exclude_element_types: Optional[List[Element]] = None,
-) -> List[Element]:
+    elements: Sequence[Element],
+    include_element_types: Optional[Sequence[type[Element]]] = None,
+    exclude_element_types: Optional[Sequence[type[Element]]] = None,
+) -> list[Element]:
     """Filters document elements by element type"""
     exactly_one(
         include_element_types=include_element_types,
         exclude_element_types=exclude_element_types,
     )
 
-    filtered_elements: List[Element] = []
+    filtered_elements: list[Element] = []
     if include_element_types:
         for element in elements:
             if type(element) in include_element_types:
@@ -364,16 +367,18 @@ def filter_element_types(
 
         return filtered_elements
 
-    return elements
+    return list(elements)
 
 
 def convert_to_coco(
-    elements: List[Element],
+    elements: Sequence[Element],
     dataset_description: Optional[str] = None,
     dataset_version: str = "1.0",
-    contributors: Tuple[str] = ("Unstructured Developers",),
-) -> List[Dict[str, Any]]:
-    coco_dataset = {}
+    contributors: tuple[str] = ("Unstructured Developers",),
+) -> dict[str, Any]:
+    from unstructured.documents.elements import TYPE_TO_TEXT_ELEMENT_MAP
+
+    coco_dataset: dict[str, Any] = {}
     # Handle Info
     coco_dataset["info"] = {
         "description": (
