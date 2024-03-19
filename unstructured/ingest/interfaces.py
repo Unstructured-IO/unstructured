@@ -22,7 +22,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, e
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.staging.base import convert_to_dict, flatten_dict
+from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -586,12 +586,11 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems_raw = self.partition_file(partition_config=partition_config, **partition_kwargs)
-        isd_elems = convert_to_dict(isd_elems_raw)
+        elements = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        element_dicts = elements_to_dicts(elements)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
-        for elem in isd_elems:
-            # type: ignore
+        for elem in element_dicts:
             if partition_config.metadata_exclude and partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "

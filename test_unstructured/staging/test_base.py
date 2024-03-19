@@ -31,9 +31,9 @@ from unstructured.partition.text import partition_text
 from unstructured.staging import base
 
 
-def test_convert_to_isd():
+def test_elements_to_dicts():
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
-    isd = base.convert_to_isd(elements)
+    isd = base.elements_to_dicts(elements)
 
     assert isd[0]["text"] == "Title 1"
     assert isd[0]["type"] == ElementType.TITLE
@@ -42,8 +42,8 @@ def test_convert_to_isd():
     assert isd[1]["type"] == "NarrativeText"
 
 
-def test_isd_to_elements():
-    isd = [
+def test_elements_from_dicts():
+    element_dicts = [
         {"text": "Blurb1", "type": "NarrativeText"},
         {"text": "Blurb2", "type": "Title"},
         {"text": "Blurb3", "type": "ListItem"},
@@ -51,7 +51,7 @@ def test_isd_to_elements():
         {"text": "No Type"},
     ]
 
-    elements = base.isd_to_elements(isd)
+    elements = base.elements_from_dicts(element_dicts)
     assert elements == [
         NarrativeText(text="Blurb1"),
         Title(text="Blurb2"),
@@ -170,13 +170,13 @@ def test_default_pandas_dtypes():
     platform.system() == "Windows",
     reason="Posix Paths are not available on Windows",
 )
-def test_convert_to_isd_serializes_with_posix_paths():
+def test_elements_to_dicts_serializes_with_posix_paths():
     metadata = ElementMetadata(filename=pathlib.PosixPath("../../fake-file.txt"))
     elements = [
         Title(text="Title 1", metadata=metadata),
         NarrativeText(text="Narrative 1", metadata=metadata),
     ]
-    output = base.convert_to_isd(elements)
+    output = base.elements_to_dicts(elements)
     # NOTE(robinson) - json.dumps should run without raising an exception
     json.dumps(output)
 
@@ -195,8 +195,8 @@ def test_all_elements_preserved_when_serialized():
         PageBreak(text=""),
     ]
 
-    isd = base.convert_to_isd(elements)
-    assert base.convert_to_isd(base.isd_to_elements(isd)) == isd
+    element_dicts = base.elements_to_dicts(elements)
+    assert base.elements_to_dicts(base.elements_from_dicts(element_dicts)) == element_dicts
 
 
 def test_serialized_deserialize_elements_to_json(tmpdir: str):

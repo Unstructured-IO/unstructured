@@ -68,8 +68,8 @@ def elements_to_text(
         return element_cct
 
 
-def convert_to_isd(elements: Sequence[Element]) -> list[dict[str, Any]]:
-    """Represents the document elements as an Initial Structured Document (ISD)."""
+def elements_to_dicts(elements: Sequence[Element]) -> list[dict[str, Any]]:
+    """Convert document elements to element-dicts."""
     isd: list[dict[str, Any]] = []
     for element in elements:
         section = element.to_dict()
@@ -77,9 +77,9 @@ def convert_to_isd(elements: Sequence[Element]) -> list[dict[str, Any]]:
     return isd
 
 
-def convert_to_dict(elements: Sequence[Element]) -> list[dict[str, Any]]:
-    """Convert a list of elements into a list of element-dicts."""
-    return convert_to_isd(elements)
+# -- legacy aliases for elements_to_dicts() --
+convert_to_isd = elements_to_dicts
+convert_to_dict = elements_to_dicts
 
 
 def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
@@ -117,7 +117,7 @@ def elements_to_json(
     """
 
     pre_processed_elements = _fix_metadata_field_precision(elements)
-    element_dict = convert_to_dict(pre_processed_elements)
+    element_dict = elements_to_dicts(pre_processed_elements)
     if filename is not None:
         with open(filename, "w", encoding=encoding) as f:
             json.dump(element_dict, f, indent=indent, sort_keys=True)
@@ -126,11 +126,11 @@ def elements_to_json(
         return json.dumps(element_dict, indent=indent, sort_keys=True)
 
 
-def isd_to_elements(isd: list[dict[str, Any]]) -> list[Element]:
+def elements_from_dicts(element_dicts: list[dict[str, Any]]) -> list[Element]:
     """Convert a list of element-dicts to a list of elements."""
     elements: list[Element] = []
 
-    for item in isd:
+    for item in element_dicts:
         element_id: str = item.get("element_id", NoID())
         metadata = ElementMetadata()
         _metadata_dict = item.get("metadata")
@@ -158,9 +158,9 @@ def isd_to_elements(isd: list[dict[str, Any]]) -> list[Element]:
     return elements
 
 
-def dict_to_elements(element_dict: list[dict[str, Any]]) -> list[Element]:
-    """Converts a dictionary representation of an element list into list[Element]."""
-    return isd_to_elements(element_dict)
+# -- legacy aliases for elements_from_dicts() --
+isd_to_elements = elements_from_dicts
+dict_to_elements = elements_from_dicts
 
 
 def elements_from_json(
@@ -173,11 +173,11 @@ def elements_from_json(
 
     if filename:
         with open(filename, encoding=encoding) as f:
-            element_dict = json.load(f)
-        return dict_to_elements(element_dict)
+            element_dicts = json.load(f)
+        return elements_from_dicts(element_dicts)
     else:
-        element_dict = json.loads(text)
-        return dict_to_elements(element_dict)
+        element_dicts = json.loads(text)
+        return elements_from_dicts(element_dicts)
 
 
 def flatten_dict(
@@ -241,7 +241,7 @@ def _get_table_fieldnames(rows: list[dict[str, Any]]):
 
 def convert_to_isd_csv(elements: Sequence[Element]) -> str:
     """Convert a list of elements to Initial Structured Document (ISD) in CSV Format."""
-    rows: list[dict[str, Any]] = convert_to_isd(elements)
+    rows: list[dict[str, Any]] = elements_to_dicts(elements)
     table_fieldnames = _get_table_fieldnames(rows)
     # NOTE(robinson) - flatten metadata and add it to the table
     for row in rows:
@@ -329,11 +329,11 @@ def convert_to_dataframe(
 
     Output is pd.DataFrame
     """
-    elements_as_dict = convert_to_dict(elements)
-    for d in elements_as_dict:
+    element_dicts = elements_to_dicts(elements)
+    for d in element_dicts:
         if metadata := d.pop("metadata", None):
             d.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
-    df = pd.DataFrame.from_dict(elements_as_dict)  # type: ignore
+    df = pd.DataFrame.from_dict(element_dicts)  # type: ignore
     if set_dtypes:
         dt = {k: v for k, v in get_default_pandas_dtypes().items() if k in df.columns}
         df = df.astype(dt)  # type: ignore
@@ -392,7 +392,7 @@ def convert_to_coco(
         "contributors": ",".join(contributors),
         "date_created": datetime.now().date().isoformat(),
     }
-    elements_dict = convert_to_dict(elements)
+    element_dicts = elements_to_dicts(elements)
     # Handle Images
     images = [
         {
@@ -410,7 +410,7 @@ def convert_to_coco(
             "file_name": el["metadata"].get("filename", ""),
             "page_number": el["metadata"].get("page_number", ""),
         }
-        for el in elements_dict
+        for el in element_dicts
     ]
     images = list({tuple(sorted(d.items())): d for d in images}.values())
     for index, d in enumerate(images):
@@ -464,7 +464,7 @@ def convert_to_coco(
                 else None
             ),
         }
-        for el in elements_dict
+        for el in element_dicts
     ]
     coco_dataset["annotations"] = annotations
     return coco_dataset
