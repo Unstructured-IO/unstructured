@@ -1,5 +1,5 @@
 -c constraints.in
-chardet
+charset-normalizer
 filetype
 python-magic
 lxml
