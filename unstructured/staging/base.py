@@ -22,108 +22,14 @@ if dependency_exists("pandas"):
     import pandas as pd
 
 
-def _get_metadata_table_fieldnames():
-    metadata_fields = list(ElementMetadata.__annotations__.keys())
-    metadata_fields.remove("coordinates")
-    metadata_fields.extend(
-        [
-            "sender",
-            "coordinates_points",
-            "coordinates_system",
-            "coordinates_layout_width",
-            "coordinates_layout_height",
-        ],
-    )
-    return metadata_fields
+# ================================================================================================
+# SERIALIZATION/DESERIALIZATION (SERDE) RELATED FUNCTIONS
+# ================================================================================================
+# These serde functions will likely relocate to `unstructured.documents.elements` since they are
+# so closely related to elements and this staging "brick" is deprecated.
+# ================================================================================================
 
-
-TABLE_FIELDNAMES: list[str] = [
-    "type",
-    "text",
-    "element_id",
-] + _get_metadata_table_fieldnames()
-
-
-def convert_to_text(elements: list[Element]) -> str:
-    """Converts a list of elements into clean, concatenated text."""
-    return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
-
-
-def elements_to_text(
-    elements: list[Element],
-    filename: Optional[str] = None,
-    encoding: str = "utf-8",
-) -> Optional[str]:
-    """Convert the text from a list of elements into clean, concatenated text.
-
-    Saves to a txt file if filename is specified. Otherwise, return the text of the elements as a
-    string.
-    """
-    element_cct = convert_to_text(elements)
-    if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(element_cct)
-            return None
-    else:
-        return element_cct
-
-
-def elements_to_dicts(elements: Sequence[Element]) -> list[dict[str, Any]]:
-    """Convert document elements to element-dicts."""
-    isd: list[dict[str, Any]] = []
-    for element in elements:
-        section = element.to_dict()
-        isd.append(section)
-    return isd
-
-
-# -- legacy aliases for elements_to_dicts() --
-convert_to_isd = elements_to_dicts
-convert_to_dict = elements_to_dicts
-
-
-def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
-    out_elements: list[Element] = []
-    for element in elements:
-        el = deepcopy(element)
-        if el.metadata.coordinates:
-            precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
-            points = el.metadata.coordinates.points
-            assert points is not None
-            rounded_points: list[Point] = []
-            for point in points:
-                x, y = point
-                rounded_point = (round(x, precision), round(y, precision))
-                rounded_points.append(rounded_point)
-            el.metadata.coordinates.points = tuple(rounded_points)
-
-        if el.metadata.detection_class_prob:
-            el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
-
-        out_elements.append(el)
-
-    return out_elements
-
-
-def elements_to_json(
-    elements: Sequence[Element],
-    filename: Optional[str] = None,
-    indent: int = 4,
-    encoding: str = "utf-8",
-) -> Optional[str]:
-    """Saves a list of elements to a JSON file if filename is specified.
-
-    Otherwise, return the list of elements as a string.
-    """
-
-    pre_processed_elements = _fix_metadata_field_precision(elements)
-    element_dict = elements_to_dicts(pre_processed_elements)
-    if filename is not None:
-        with open(filename, "w", encoding=encoding) as f:
-            json.dump(element_dict, f, indent=indent, sort_keys=True)
-            return None
-    else:
-        return json.dumps(element_dict, indent=indent, sort_keys=True)
+# == DESERIALIZERS ===============================
 
 
 def elements_from_dicts(element_dicts: list[dict[str, Any]]) -> list[Element]:
@@ -178,6 +84,115 @@ def elements_from_json(
     else:
         element_dicts = json.loads(text)
         return elements_from_dicts(element_dicts)
+
+
+# == SERIALIZERS =================================
+
+
+def elements_to_dicts(elements: Sequence[Element]) -> list[dict[str, Any]]:
+    """Convert document elements to element-dicts."""
+    isd: list[dict[str, Any]] = []
+    for element in elements:
+        section = element.to_dict()
+        isd.append(section)
+    return isd
+
+
+# -- legacy aliases for elements_to_dicts() --
+convert_to_isd = elements_to_dicts
+convert_to_dict = elements_to_dicts
+
+
+def elements_to_json(
+    elements: Sequence[Element],
+    filename: Optional[str] = None,
+    indent: int = 4,
+    encoding: str = "utf-8",
+) -> Optional[str]:
+    """Saves a list of elements to a JSON file if filename is specified.
+
+    Otherwise, return the list of elements as a string.
+    """
+    pre_processed_elements = _fix_metadata_field_precision(elements)
+    element_dict = elements_to_dicts(pre_processed_elements)
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            json.dump(element_dict, f, indent=indent, sort_keys=True)
+            return None
+    else:
+        return json.dumps(element_dict, indent=indent, sort_keys=True)
+
+
+def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
+    out_elements: list[Element] = []
+    for element in elements:
+        el = deepcopy(element)
+        if el.metadata.coordinates:
+            precision = 1 if isinstance(el.metadata.coordinates.system, PixelSpace) else 2
+            points = el.metadata.coordinates.points
+            assert points is not None
+            rounded_points: list[Point] = []
+            for point in points:
+                x, y = point
+                rounded_point = (round(x, precision), round(y, precision))
+                rounded_points.append(rounded_point)
+            el.metadata.coordinates.points = tuple(rounded_points)
+
+        if el.metadata.detection_class_prob:
+            el.metadata.detection_class_prob = round(el.metadata.detection_class_prob, 5)
+
+        out_elements.append(el)
+
+    return out_elements
+
+
+# ================================================================================================
+
+
+def _get_metadata_table_fieldnames():
+    metadata_fields = list(ElementMetadata.__annotations__.keys())
+    metadata_fields.remove("coordinates")
+    metadata_fields.extend(
+        [
+            "sender",
+            "coordinates_points",
+            "coordinates_system",
+            "coordinates_layout_width",
+            "coordinates_layout_height",
+        ],
+    )
+    return metadata_fields
+
+
+TABLE_FIELDNAMES: list[str] = [
+    "type",
+    "text",
+    "element_id",
+] + _get_metadata_table_fieldnames()
+
+
+def convert_to_text(elements: list[Element]) -> str:
+    """Converts a list of elements into clean, concatenated text."""
+    return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
+
+
+def elements_to_text(
+    elements: list[Element],
+    filename: Optional[str] = None,
+    encoding: str = "utf-8",
+) -> Optional[str]:
+    """Convert the text from a list of elements into clean, concatenated text.
+
+    Saves to a txt file if filename is specified. Otherwise, return the text of the elements as a
+    string.
+    """
+    element_cct = convert_to_text(elements)
+    if filename is not None:
+        with open(filename, "w", encoding=encoding) as f:
+            f.write(element_cct)
+            return None
+    else:
+        return element_cct
 
 
 def flatten_dict(
