@@ -42,6 +42,15 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
+table_eval_metrics = [
+    "total_tables",
+    "table_level_acc",
+    "composite_structure_acc",
+    "element_col_level_index_acc",
+    "element_row_level_index_acc",
+    "element_col_level_content_acc",
+    "element_row_level_content_acc",
+]
 
 
 def measure_text_extraction_accuracy(
@@ -332,50 +341,25 @@ def measure_table_structure_accuracy(
                     out_filename,
                     doctype,
                     connector,
-                    report.total_tables,
-                    report.table_level_acc,
-                    report.element_col_level_index_acc,
-                    report.element_row_level_index_acc,
-                    report.element_col_level_content_acc,
-                    report.element_row_level_content_acc,
                 ]
+                + [getattr(report, metric) for metric in table_eval_metrics]
             )
 
     headers = [
         "filename",
         "doctype",
         "connector",
-        "total_tables",
-        "table_level_acc",
-        "element_col_level_index_acc",
-        "element_row_level_index_acc",
-        "element_col_level_content_acc",
-        "element_row_level_content_acc",
-    ]
+    ] + table_eval_metrics
     df = pd.DataFrame(rows, columns=headers)
     has_tables_df = df[df["total_tables"] > 0]
 
     if has_tables_df.empty:
         agg_df = pd.DataFrame(
-            [
-                ["total_tables", None, None, None, 0],
-                ["table_level_acc", None, None, None, 0],
-                ["element_col_level_index_acc", None, None, None, 0],
-                ["element_row_level_index_acc", None, None, None, 0],
-                ["element_col_level_content_acc", None, None, None, 0],
-                ["element_row_level_content_acc", None, None, None, 0],
-            ]
+            [[metric, None, None, None, 0] for metric in table_eval_metrics]
         ).reset_index()
     else:
         element_metrics_results = {}
-        for metric in [
-            "total_tables",
-            "table_level_acc",
-            "element_col_level_index_acc",
-            "element_row_level_index_acc",
-            "element_col_level_content_acc",
-            "element_row_level_content_acc",
-        ]:
+        for metric in table_eval_metrics:
             metric_df = has_tables_df[has_tables_df[metric].notnull()]
             agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
             if agg_metric.empty:
