@@ -122,6 +122,11 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        43,
+        49,
+        68
+      ],
       "link_texts": [
         "OKRs",
         "project plans",
@@ -248,6 +253,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        186
+      ],
       "link_texts": [
         null
       ],
@@ -341,6 +349,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        0
       ],
       "link_texts": [
         null
@@ -630,6 +641,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        4
+      ],
       "link_texts": [
         "user profiles"
       ],
@@ -686,6 +700,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        27
+      ],
       "link_texts": [
         "blog posts"
       ],
@@ -741,6 +758,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        53
       ],
       "link_texts": [
         "content report table"

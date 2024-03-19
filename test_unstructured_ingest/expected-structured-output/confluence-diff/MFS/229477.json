@@ -60,6 +60,11 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        32,
+        55,
+        79
+      ],
       "link_texts": [
         "Template - Project plan",
         "Template - Meeting notes",
@@ -91,6 +96,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        10
       ],
       "link_texts": [
         "Get the most out of your team space"
@@ -585,6 +593,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        0
       ],
       "link_texts": [
         null

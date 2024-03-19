@@ -82,6 +82,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "Weather.gov"
       ],
@@ -110,6 +113,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "News Around NOAA"
       ],
@@ -137,6 +143,29 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        52,
+        206,
+        293,
+        382,
+        462,
+        548,
+        631,
+        713,
+        792,
+        872,
+        959,
+        1052,
+        1140,
+        1228,
+        1317,
+        1420,
+        1522,
+        1605,
+        1688,
+        1772,
+        1848
       ],
       "link_texts": [
         "Weather Safety",
@@ -206,6 +235,15 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        52,
+        208,
+        309,
+        401,
+        499,
+        600,
+        696
+      ],
       "link_texts": [
         "Safety Campaigns",
         "Seasonal Safety Campaigns",
@@ -245,6 +283,21 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        52,
+        202,
+        299,
+        395,
+        496,
+        585,
+        666,
+        765,
+        857,
+        941,
+        1025,
+        1121,
+        1201
       ],
       "link_texts": [
         "Ambassador",
@@ -298,6 +351,19 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        52,
+        201,
+        295,
+        391,
+        481,
+        582,
+        676,
+        766,
+        851,
+        950,
+        1037
+      ],
       "link_texts": [
         "Education",
         "NWS Education Home",
@@ -346,6 +412,18 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        52,
+        205,
+        294,
+        382,
+        475,
+        571,
+        657,
+        745,
+        849,
+        964
+      ],
       "link_texts": [
         "Collaboration",
         "Get Involved ",
@@ -392,6 +470,13 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        52,
+        206,
+        293,
+        377,
+        469
+      ],
       "link_texts": [
         " News & Events",
         "Latest News",
@@ -428,6 +513,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        48
+      ],
       "link_texts": [
         "International"
       ],
@@ -455,6 +543,19 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        52,
+        197,
+        283,
+        372,
+        456,
+        544,
+        641,
+        730,
+        813,
+        903,
+        992
       ],
       "link_texts": [
         "About",
@@ -604,6 +705,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        167
+      ],
       "link_texts": [
         "Spring Safety website"
       ],
@@ -631,6 +735,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        303
       ],
       "link_texts": [
         "infographics"
@@ -682,6 +789,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "US Dept of Commerce"
       ],
@@ -710,6 +820,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "National Oceanic and Atmospheric Administration"
       ],
@@ -737,6 +850,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "National Weather Service"
@@ -832,6 +948,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "Comments? Questions? Please Contact Us."
       ],
@@ -859,6 +978,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "Disclaimer"
@@ -888,6 +1010,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "Information Quality"
       ],
@@ -915,6 +1040,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "Help"
@@ -944,6 +1072,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "Glossary"
       ],
@@ -971,6 +1102,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "Privacy Policy"
@@ -1000,6 +1134,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "Freedom of Information Act (FOIA)"
       ],
@@ -1028,6 +1165,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "About Us"
       ],
@@ -1055,6 +1195,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "Career Opportunities"
