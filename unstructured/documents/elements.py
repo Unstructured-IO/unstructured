@@ -321,6 +321,8 @@ class ElementMetadata:
         This would generally be a dict formed using the `.to_dict()` method and stored as JSON
         before "rehydrating" it using this method.
         """
+        from unstructured.staging.base import elements_from_base64_gzipped_json
+
         # -- avoid unexpected mutation by working on a copy of provided dict --
         meta_dict = copy.deepcopy(meta_dict)
         self = ElementMetadata()
@@ -329,6 +331,8 @@ class ElementMetadata:
                 self.coordinates = CoordinatesMetadata.from_dict(field_value)
             elif field_name == "data_source":
                 self.data_source = DataSourceMetadata.from_dict(field_value)
+            elif field_name == "orig_elements":
+                self.orig_elements = elements_from_base64_gzipped_json(field_value)
             else:
                 setattr(self, field_name, field_value)
 
@@ -372,14 +376,13 @@ class ElementMetadata:
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
+        from unstructured.staging.base import elements_to_base64_gzipped_json
+
         meta_dict = copy.deepcopy(dict(self.fields))
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
-
-        # -- remove `.orig_elements` for now as that won't serialize --
-        meta_dict.pop("orig_elements", None)
 
         # -- don't serialize empty lists --
         meta_dict: dict[str, Any] = {
@@ -393,6 +396,8 @@ class ElementMetadata:
             meta_dict["coordinates"] = self.coordinates.to_dict()
         if self.data_source is not None:
             meta_dict["data_source"] = self.data_source.to_dict()
+        if self.orig_elements is not None:
+            meta_dict["orig_elements"] = elements_to_base64_gzipped_json(self.orig_elements)
 
         return meta_dict
 
