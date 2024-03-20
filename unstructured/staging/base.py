@@ -5,7 +5,7 @@ import io
 import json
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Optional, Sequence, cast
+from typing import Any, Iterable, Optional, Sequence, cast
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
@@ -32,7 +32,7 @@ if dependency_exists("pandas"):
 # == DESERIALIZERS ===============================
 
 
-def elements_from_dicts(element_dicts: list[dict[str, Any]]) -> list[Element]:
+def elements_from_dicts(element_dicts: Iterable[dict[str, Any]]) -> list[Element]:
     """Convert a list of element-dicts to a list of elements."""
     elements: list[Element] = []
 
@@ -78,7 +78,7 @@ def elements_from_json(
 # == SERIALIZERS =================================
 
 
-def elements_to_dicts(elements: Sequence[Element]) -> list[dict[str, Any]]:
+def elements_to_dicts(elements: Iterable[Element]) -> list[dict[str, Any]]:
     """Convert document elements to element-dicts."""
     return [e.to_dict() for e in elements]
 
@@ -89,7 +89,7 @@ convert_to_dict = elements_to_dicts
 
 
 def elements_to_json(
-    elements: Sequence[Element],
+    elements: Iterable[Element],
     filename: Optional[str] = None,
     indent: int = 4,
     encoding: str = "utf-8",
@@ -111,7 +111,7 @@ def elements_to_json(
     return json_str
 
 
-def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
+def _fix_metadata_field_precision(elements: Iterable[Element]) -> list[Element]:
     out_elements: list[Element] = []
     for element in elements:
         el = deepcopy(element)
@@ -137,7 +137,7 @@ def _fix_metadata_field_precision(elements: Sequence[Element]) -> list[Element]:
 # ================================================================================================
 
 
-def _get_metadata_table_fieldnames():
+def _get_metadata_table_fieldnames() -> list[str]:
     metadata_fields = list(ElementMetadata.__annotations__.keys())
     metadata_fields.remove("coordinates")
     metadata_fields.extend(
@@ -159,17 +159,15 @@ TABLE_FIELDNAMES: list[str] = [
 ] + _get_metadata_table_fieldnames()
 
 
-def convert_to_text(elements: list[Element]) -> str:
-    """Converts a list of elements into clean, concatenated text."""
+def convert_to_text(elements: Iterable[Element]) -> str:
+    """Convert elements into clean, concatenated text."""
     return "\n".join([e.text for e in elements if hasattr(e, "text") and e.text])
 
 
 def elements_to_text(
-    elements: list[Element],
-    filename: Optional[str] = None,
-    encoding: str = "utf-8",
+    elements: Iterable[Element], filename: Optional[str] = None, encoding: str = "utf-8"
 ) -> Optional[str]:
-    """Convert the text from a list of elements into clean, concatenated text.
+    """Convert text from each of `elements` into clean, concatenated text.
 
     Saves to a txt file if filename is specified. Otherwise, return the text of the elements as a
     string.
@@ -189,7 +187,7 @@ def flatten_dict(
     separator: str = "_",
     flatten_lists: bool = False,
     remove_none: bool = False,
-    keys_to_omit: Optional[list[str]] = None,
+    keys_to_omit: Optional[Sequence[str]] = None,
 ) -> dict[str, Any]:
     """Flattens a nested dictionary into a single level dictionary.
 
@@ -242,8 +240,8 @@ def _get_table_fieldnames(rows: list[dict[str, Any]]):
     return table_fieldnames
 
 
-def convert_to_isd_csv(elements: Sequence[Element]) -> str:
-    """Convert a list of elements to Initial Structured Document (ISD) in CSV Format."""
+def convert_to_csv(elements: Iterable[Element]) -> str:
+    """Convert `elements` to CSV format."""
     rows: list[dict[str, Any]] = elements_to_dicts(elements)
     table_fieldnames = _get_table_fieldnames(rows)
     # NOTE(robinson) - flatten metadata and add it to the table
@@ -265,9 +263,8 @@ def convert_to_isd_csv(elements: Sequence[Element]) -> str:
         return buffer.getvalue()
 
 
-def convert_to_csv(elements: Sequence[Element]) -> str:
-    """Converts a list of elements to a CSV."""
-    return convert_to_isd_csv(elements)
+# -- legacy alias for convert_to_csv --
+convert_to_isd_csv = convert_to_csv
 
 
 @requires_dependencies(["pandas"])
@@ -322,9 +319,9 @@ def get_default_pandas_dtypes() -> dict[str, Any]:
 
 @requires_dependencies(["pandas"])
 def convert_to_dataframe(
-    elements: Sequence[Element], drop_empty_cols: bool = True, set_dtypes: bool = False
+    elements: Iterable[Element], drop_empty_cols: bool = True, set_dtypes: bool = False
 ) -> "pd.DataFrame":
-    """Converts document elements to a pandas DataFrame.
+    """Convert `elements` to a pandas DataFrame.
 
     The dataframe contains the following columns:
         text: the element text
@@ -346,7 +343,7 @@ def convert_to_dataframe(
 
 
 def filter_element_types(
-    elements: Sequence[Element],
+    elements: Iterable[Element],
     include_element_types: Optional[Sequence[type[Element]]] = None,
     exclude_element_types: Optional[Sequence[type[Element]]] = None,
 ) -> list[Element]:
@@ -375,7 +372,7 @@ def filter_element_types(
 
 
 def convert_to_coco(
-    elements: Sequence[Element],
+    elements: Iterable[Element],
     dataset_description: Optional[str] = None,
     dataset_version: str = "1.0",
     contributors: tuple[str] = ("Unstructured Developers",),
