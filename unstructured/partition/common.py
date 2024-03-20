@@ -274,6 +274,7 @@ def add_element_metadata(
     filename: Optional[str] = None,
     filetype: Optional[str] = None,
     page_number: Optional[int] = None,
+    index_on_page: Optional[int] = None,
     url: Optional[str] = None,
     text_as_html: Optional[str] = None,
     coordinates: Optional[tuple[tuple[float, float], ...]] = None,
@@ -322,6 +323,7 @@ def add_element_metadata(
         filename=filename,
         filetype=filetype,
         page_number=page_number,
+        index_on_page=index_on_page,
         url=url,
         text_as_html=text_as_html,
         link_urls=link_urls,
@@ -560,7 +562,7 @@ def document_to_element_list(
         image_height = page_image_metadata.get("height")
 
         translation_mapping: list[tuple["LayoutElement", Element]] = []
-        for layout_element in page.elements:
+        for index_on_page, layout_element in enumerate(page.elements):
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
@@ -607,6 +609,7 @@ def document_to_element_list(
             add_element_metadata(
                 element,
                 page_number=i + 1,
+                index_on_page=index_on_page,
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,

@@ -321,7 +321,7 @@ def partition_pdf_or_image(
             out_elements = _process_uncategorized_text_elements(elements)
 
     elif strategy == PartitionStrategy.FAST:
-        return extracted_elements
+        out_elements = extracted_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -519,7 +519,7 @@ def _partition_pdf_or_image_local(
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
     for page in final_document_layout.pages:
-        for el in page.elements:
+        for page_el_index, el in enumerate(page.elements):
             el.text = el.text or ""
 
     elements = document_to_element_list(
