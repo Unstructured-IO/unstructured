@@ -11,6 +11,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -77,26 +78,14 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
         """Modifying schema of the dict in order to compile with clarifai input formats"""
         return {
             "input_id": str(uuid.uuid4().hex),
-            "text": element_dict.get("text"),
+            "text": element_dict.pop("text", None),
             "metadata": {
-                "url": element_dict.get("metadata", {}).get("data_source", {}).get("url"),
-                "date_created": element_dict.get("metadata", {})
-                .get("data_source", {})
-                .get("date_created"),
-                "date_modified": element_dict.get("metadata", {})
-                .get("data_source", {})
-                .get("date_modified"),
-                "date_processed": element_dict.get("metadata", {})
-                .get("data_source", {})
-                .get("date_processed"),
-                "record_locator": element_dict.get("metadata", {})
-                .get("data_source", {})
-                .get("record_locator"),
-                "file_directory": element_dict.get("metadata", {}).get("file_directory"),
-                "filename": element_dict.get("metadata", {}).get("filename"),
-                "filetype": element_dict.get("metadata", {}).get("filetype"),
-                "languages": element_dict.get("metadata", {}).get("languages"),
-                "last_modified": element_dict.get("metadata", {}).get("last_modified"),
+                **flatten_dict(
+                    element_dict,
+                    separator="_",
+                    flatten_lists=True,
+                    remove_none=True,
+                ),
             },
         }
 
@@ -109,9 +98,9 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
             f"app {self.connector_config.app_id} "
         )
         try:
-            batch = self.write_config.batch_size
-            for idx in range(0, len(elements_dict), batch):
-                batch_dict = elements_dict[idx : batch + idx]
+            batch_size = self.write_config.batch_size
+            for idx in range(0, len(elements_dict), batch_size):
+                batch_dict = elements_dict[idx : batch_size + idx]
                 input_batch = []
                 for elem in batch_dict:
                     meta_struct = Struct()

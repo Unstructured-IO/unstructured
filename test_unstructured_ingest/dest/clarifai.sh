@@ -83,7 +83,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 no_of_inputs=0
 sleep_time=5
 
-max_retries=8
+max_retries=10
 retry_count=0
 
 while [ "$no_of_inputs" -eq 0 ]; do
