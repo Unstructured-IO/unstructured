@@ -10,8 +10,7 @@ from functools import partial
 
 import pytest
 
-from unstructured.cleaners.core import clean_prefix
-from unstructured.cleaners.translate import translate_text
+from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
     Orientation,
@@ -66,13 +65,10 @@ def test_text_element_apply_cleaners():
 
 
 def test_text_element_apply_multiple_cleaners():
-    cleaners = [
-        partial(clean_prefix, pattern=r"\[\d{1,2}\]"),
-        partial(translate_text, target_lang="ru"),
-    ]
-    text_element = Text(text="[1] A Textbook on Crocodile Habitats")
+    cleaners = [partial(clean_prefix, pattern=r"\[\d{1,2}\]"), partial(clean_bullets)]
+    text_element = Text(text="[1] \u2022 A Textbook on Crocodile Habitats")
     text_element.apply(*cleaners)
-    assert str(text_element) == "Учебник по крокодильным средам обитания"
+    assert str(text_element) == "A Textbook on Crocodile Habitats"
 
 
 def test_apply_raises_if_func_does_not_produce_string():
@@ -82,7 +78,7 @@ def test_apply_raises_if_func_does_not_produce_string():
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
 
     with pytest.raises(ValueError, match="Cleaner produced a non-string output."):
-        text_element.apply(bad_cleaner)  # pyright: ignore[reportGeneralTypeIssues]
+        text_element.apply(bad_cleaner)  # pyright: ignore[reportArgumentType]
 
 
 @pytest.mark.parametrize(
@@ -241,7 +237,7 @@ class DescribeElementMetadata:
 
     def it_detects_unknown_constructor_args_at_both_development_time_and_runtime(self):
         with pytest.raises(TypeError, match="got an unexpected keyword argument 'file_name'"):
-            ElementMetadata(file_name="memo.docx")  # pyright: ignore[reportGeneralTypeIssues]
+            ElementMetadata(file_name="memo.docx")  # pyright: ignore[reportCallIssue]
 
     @pytest.mark.parametrize(
         "file_path",
@@ -289,9 +285,9 @@ class DescribeElementMetadata:
 
     def it_knows_the_types_of_its_known_members_so_type_checking_support_is_available(self):
         ElementMetadata(
-            category_depth="2",  # pyright: ignore[reportGeneralTypeIssues]
-            file_directory=True,  # pyright: ignore[reportGeneralTypeIssues]
-            text_as_html=42,  # pyright: ignore[reportGeneralTypeIssues]
+            category_depth="2",  # pyright: ignore[reportArgumentType]
+            file_directory=True,  # pyright: ignore[reportArgumentType]
+            text_as_html=42,  # pyright: ignore[reportArgumentType]
         )
         # -- it does not check types at runtime however (choosing to avoid validation overhead) --
 
@@ -526,7 +522,7 @@ class DescribeElementMetadata:
     def but_it_raises_on_attempt_to_update_from_a_non_ElementMetadata_object(self):
         meta = ElementMetadata()
         with pytest.raises(ValueError, match=r"ate\(\)' must be an instance of 'ElementMetadata'"):
-            meta.update({"coefficient": "0.56"})  # pyright: ignore[reportGeneralTypeIssues]
+            meta.update({"coefficient": "0.56"})  # pyright: ignore[reportArgumentType]
 
     # -- It knows when it is equal to another instance -------------------------------------------
 
