@@ -158,8 +158,13 @@ def measure_element_type_accuracy_command(
     type=str,
     help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
 )
-def get_mean_grouping_command(group_by: str, data_input: str, export_dir: str, eval_name: str):
-    return get_mean_grouping(group_by, data_input, export_dir, eval_name)
+@click.option(
+    "--export_name",
+    type=str,
+    help="Optional. Define your file name for the output here."
+)
+def get_mean_grouping_command(group_by: str, data_input: str, export_dir: str, eval_name: str, export_name: str):
+    return get_mean_grouping(group_by, data_input, export_dir, eval_name, export_name)
 
 
 @main.command()
