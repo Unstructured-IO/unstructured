@@ -42,7 +42,7 @@ def main():
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
-@click.option("--grouping", type=str, help="Input field for aggregration, or leave blank if none.")
+@click.option("--group_by", type=str, help="Input field for aggregration, or leave blank if none.")
 @click.option(
     "--weights",
     type=(int, int, int),
@@ -74,7 +74,7 @@ def measure_text_extraction_accuracy_command(
     output_type: str,
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
-    grouping: Optional[str] = None,
+    group_by: Optional[str] = None,
 ):
     return measure_text_extraction_accuracy(
         output_dir,
@@ -82,7 +82,7 @@ def measure_text_extraction_accuracy_command(
         output_list,
         source_list,
         export_dir,
-        grouping,
+        group_by,
         weights,
         visualize,
         output_type,
