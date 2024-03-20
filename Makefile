@@ -397,7 +397,8 @@ check-flake8-print:
 
 .PHONY: check-ruff
 check-ruff:
-	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --ignore COM812,PT011,PT012,SIM117
+    # -- ruff options are determined by pyproject.toml --
+	ruff .
 
 .PHONY: check-autoflake
 check-autoflake:
@@ -426,7 +427,7 @@ tidy-shell:
 
 .PHONY: tidy-python
 tidy-python:
-	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
+	ruff . --fix-only || true
 	autoflake --in-place .
 	black  .
 

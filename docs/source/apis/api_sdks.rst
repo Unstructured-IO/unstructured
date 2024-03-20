@@ -88,12 +88,12 @@ Below is a basic example of how to use the JavaScript SDK:
     const data = fs.readFileSync(filename);
 
     client.general.partition({
-        # Note that this currently only supports a single file
+        // Note that this currently only supports a single file
         files: {
             content: data,
             fileName: filename,
         },
-        # Other partition params
+        // Other partition params
         strategy: "fast",
     }).then((res: PartitionResponse) => {
         if (res.statusCode == 200) {

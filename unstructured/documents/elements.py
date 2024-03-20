@@ -12,7 +12,7 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, Dict, FrozenSet, List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -24,8 +24,8 @@ from unstructured.documents.coordinates import (
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import lazyproperty
 
-Point: TypeAlias = Tuple[float, float]
-Points: TypeAlias = Tuple[Point, ...]
+Point: TypeAlias = "tuple[float, float]"
+Points: TypeAlias = "tuple[Point, ...]"
 
 
 class NoID(abc.ABC):
@@ -42,17 +42,17 @@ class DataSourceMetadata:
 
     url: Optional[str] = None
     version: Optional[str] = None
-    record_locator: Optional[Dict[str, Any]] = None  # Values must be JSON-serializable
+    record_locator: Optional[dict[str, Any]] = None  # Values must be JSON-serializable
     date_created: Optional[str] = None
     date_modified: Optional[str] = None
     date_processed: Optional[str] = None
-    permissions_data: Optional[List[Dict[str, Any]]] = None
+    permissions_data: Optional[list[dict[str, Any]]] = None
 
     def to_dict(self):
         return {key: value for key, value in self.__dict__.items() if value is not None}
 
     @classmethod
-    def from_dict(cls, input_dict: Dict[str, Any]):
+    def from_dict(cls, input_dict: dict[str, Any]):
         # Only use existing fields when constructing
         supported_fields = [f.name for f in dc.fields(cls)]
         args = {k: v for k, v in input_dict.items() if k in supported_fields}
@@ -95,10 +95,10 @@ class CoordinatesMetadata:
         }
 
     @classmethod
-    def from_dict(cls, input_dict: Dict[str, Any]):
+    def from_dict(cls, input_dict: dict[str, Any]):
         # `input_dict` may contain a tuple of tuples or a list of lists
         def convert_to_points(sequence_of_sequences: Sequence[Sequence[float]]) -> Points:
-            points: List[Point] = []
+            points: list[Point] = []
             for seq in sequence_of_sequences:
                 if isinstance(seq, list):
                     points.append(cast(Point, tuple(seq)))
@@ -158,9 +158,9 @@ class ElementMetadata:
     # - Add the field declaration with type here at the top. This makes it a "known" field and
     #   enables type-checking and completion.
     # - Add a parameter with default for field in __init__() and assign it in __init__() body.
-    # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
-    #   `.field_consolidation_strategies()` to be used when consolidating metadata fields of a
-    #   section's elements during chunking.
+    # - Add a consolidation strategy for the new field in
+    #   `ConsolidationStrategy.field_consolidation_strategies()` below. This strategy will be used
+    #   to consolidate this new metadata field from each pre-chunk element during chunking.
     # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
     #   equality comparison.
 
@@ -172,8 +172,8 @@ class ElementMetadata:
     detection_class_prob: Optional[float]
     # -- DEBUG field, the detection mechanism that emitted this element --
     detection_origin: Optional[str]
-    emphasized_text_contents: Optional[List[str]]
-    emphasized_text_tags: Optional[List[str]]
+    emphasized_text_contents: Optional[list[str]]
+    emphasized_text_tags: Optional[list[str]]
     file_directory: Optional[str]
     filename: Optional[str]
     filetype: Optional[str]
@@ -184,24 +184,26 @@ class ElementMetadata:
     header_footer_type: Optional[str]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
-    languages: Optional[List[str]]
+    languages: Optional[list[str]]
     last_modified: Optional[str]
-    link_texts: Optional[List[str]]
-    link_urls: Optional[List[str]]
-    links: Optional[List[Link]]
+    link_texts: Optional[list[str]]
+    link_urls: Optional[list[str]]
+    links: Optional[list[Link]]
+    # -- used in chunks only, allowing access to element(s) chunk was formed from when enabled --
+    orig_elements: Optional[list[Element]]
     # -- the worksheet name in XLXS documents --
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
     parent_id: Optional[str | uuid.UUID | NoID | UUID]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
-    regex_metadata: Optional[Dict[str, List[RegexMetadata]]]
+    regex_metadata: Optional[dict[str, list[RegexMetadata]]]
     # -- EPUB document section --
     section: Optional[str]
 
     # -- e-mail specific metadata fields --
-    sent_from: Optional[List[str]]
-    sent_to: Optional[List[str]]
+    sent_from: Optional[list[str]]
+    sent_to: Optional[list[str]]
     subject: Optional[str]
     signature: Optional[str]
 
@@ -221,26 +223,27 @@ class ElementMetadata:
         coordinates: Optional[CoordinatesMetadata] = None,
         data_source: Optional[DataSourceMetadata] = None,
         detection_class_prob: Optional[float] = None,
-        emphasized_text_contents: Optional[List[str]] = None,
-        emphasized_text_tags: Optional[List[str]] = None,
+        emphasized_text_contents: Optional[list[str]] = None,
+        emphasized_text_tags: Optional[list[str]] = None,
         file_directory: Optional[str] = None,
         filename: Optional[str | pathlib.Path] = None,
         filetype: Optional[str] = None,
         header_footer_type: Optional[str] = None,
         image_path: Optional[str] = None,
         is_continuation: Optional[bool] = None,
-        languages: Optional[List[str]] = None,
+        languages: Optional[list[str]] = None,
         last_modified: Optional[str] = None,
-        link_texts: Optional[List[str]] = None,
-        link_urls: Optional[List[str]] = None,
-        links: Optional[List[Link]] = None,
+        link_texts: Optional[list[str]] = None,
+        link_urls: Optional[list[str]] = None,
+        links: Optional[list[Link]] = None,
+        orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
         parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
-        regex_metadata: Optional[Dict[str, List[RegexMetadata]]] = None,
+        regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
         section: Optional[str] = None,
-        sent_from: Optional[List[str]] = None,
-        sent_to: Optional[List[str]] = None,
+        sent_from: Optional[list[str]] = None,
+        sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
         subject: Optional[str] = None,
         text_as_html: Optional[str] = None,
@@ -272,6 +275,7 @@ class ElementMetadata:
         self.link_texts = link_texts
         self.link_urls = link_urls
         self.links = links
+        self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
         self.parent_id = parent_id
@@ -311,7 +315,7 @@ class ElementMetadata:
         super().__setattr__(__name, __value)
 
     @classmethod
-    def from_dict(cls, meta_dict: Dict[str, Any]) -> ElementMetadata:
+    def from_dict(cls, meta_dict: dict[str, Any]) -> ElementMetadata:
         """Construct from a metadata-dict.
 
         This would generally be a dict formed using the `.to_dict()` method and stored as JSON
@@ -362,7 +366,7 @@ class ElementMetadata:
             }
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert this metadata to dict form, suitable for JSON serialization.
 
         The returned dict is "sparse" in that no key-value pair appears for a field with value
@@ -374,8 +378,11 @@ class ElementMetadata:
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
 
+        # -- remove `.orig_elements` for now as that won't serialize --
+        meta_dict.pop("orig_elements", None)
+
         # -- don't serialize empty lists --
-        meta_dict: Dict[str, Any] = {
+        meta_dict: dict[str, Any] = {
             field_name: value
             for field_name, value in meta_dict.items()
             if value != [] and value != {}
@@ -445,7 +452,7 @@ class ConsolidationStrategy(enum.Enum):
     """Combine regex-metadata of elements, adjust start and stop offsets for concatenated text."""
 
     @classmethod
-    def field_consolidation_strategies(cls) -> Dict[str, ConsolidationStrategy]:
+    def field_consolidation_strategies(cls) -> dict[str, ConsolidationStrategy]:
         """Mapping from ElementMetadata field-name to its consolidation strategy.
 
         Note that only _TextSection objects ("pre-chunks" containing only `Text` elements that are
@@ -475,6 +482,7 @@ class ConsolidationStrategy(enum.Enum):
             "link_urls": cls.LIST_CONCATENATE,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
+            "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
@@ -492,7 +500,7 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
+def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for this document.
 
     This decorator adds a post-processing step to a document partitioner. It adds documentation for
@@ -501,7 +509,7 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
     `unique_element_ids` argument is provided and True.
     """
 
-    def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
+    def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:
         if func.__doc__:
             if (
                 "metadata_filename" in func.__code__.co_varnames
@@ -522,15 +530,15 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
                 )
 
         @functools.wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
             sig = inspect.signature(func)
-            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+            params: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
             for param in sig.parameters.values():
                 if param.name not in params and param.default is not param.empty:
                     params[param.name] = param.default
 
-            regex_metadata: Dict["str", "str"] = params.get("regex_metadata", {})
+            regex_metadata: dict["str", "str"] = params.get("regex_metadata", {})
             # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
             # -- requested, otherwise it will serialize (because it's not None) when it has no
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
@@ -549,18 +557,18 @@ def process_metadata() -> Callable[[Callable[_P, List[Element]]], Callable[_P, L
 
 
 def _add_regex_metadata(
-    elements: List[Element],
-    regex_metadata: Dict[str, str] = {},
-) -> List[Element]:
+    elements: list[Element],
+    regex_metadata: dict[str, str] = {},
+) -> list[Element]:
     """Adds metadata based on a user provided regular expression.
 
     The additional metadata will be added to the regex_metadata attrbuted in the element metadata.
     """
     for element in elements:
         if isinstance(element, Text):
-            _regex_metadata: Dict["str", List[RegexMetadata]] = {}
+            _regex_metadata: dict["str", list[RegexMetadata]] = {}
             for field_name, pattern in regex_metadata.items():
-                results: List[RegexMetadata] = []
+                results: list[RegexMetadata] = []
                 for result in re.finditer(pattern, element.text):
                     start, end = result.span()
                     results.append(
@@ -637,13 +645,13 @@ class Element(abc.ABC):
 
     def __init__(
         self,
-        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
-        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: Union[str, uuid.UUID, NoID, UUID] = element_id
+        self.id: str | uuid.UUID | NoID | UUID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -657,7 +665,7 @@ class Element(abc.ABC):
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "type": None,
             "element_id": self.id,
@@ -703,8 +711,8 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
-        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
         metadata: Optional[ElementMetadata] = None,
@@ -730,7 +738,7 @@ class CheckBox(Element):
             )
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
         out["type"] = "CheckBox"
@@ -747,16 +755,16 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
-        coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
-        embeddings: Optional[List[float]] = None,
+        embeddings: Optional[list[float]] = None,
     ):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
-        self.embeddings: Optional[List[float]] = embeddings
+        self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
@@ -788,7 +796,7 @@ class Text(Element):
     def __str__(self):
         return self.text
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
         out["element_id"] = self.id
@@ -899,7 +907,7 @@ class Footer(Text):
     category = "Footer"
 
 
-TYPE_TO_TEXT_ELEMENT_MAP: Dict[str, type[Text]] = {
+TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
     ElementType.HEADLINE: Title,

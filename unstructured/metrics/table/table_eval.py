@@ -47,6 +47,14 @@ class TableEvaluation:
     element_col_level_content_acc: float
     element_row_level_content_acc: float
 
+    @property
+    def composite_structure_acc(self) -> float:
+        return (
+            self.element_col_level_index_acc
+            + self.element_row_level_index_acc
+            + (self.element_col_level_content_acc + self.element_row_level_content_acc) / 2
+        ) / 3
+
 
 def table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices):
     """computes for each predicted table its accurary compared to ground truth.
