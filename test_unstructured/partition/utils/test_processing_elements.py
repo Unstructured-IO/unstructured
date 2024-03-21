@@ -58,8 +58,8 @@ mix_elements_inside_table = [
         type="Table",
         source=InferenceSource.YOLOX,
     ),
-    LayoutElement(bbox=Rectangle(0, 510, 50, 300), text="Inside table2", source=Source.PDFMINER),
-    LayoutElement(bbox=Rectangle(0, 550, 70, 400), text="Inside table2", source=Source.PDFMINER),
+    LayoutElement(bbox=Rectangle(0, 510, 50, 600), text="Inside table2", source=Source.PDFMINER),
+    LayoutElement(bbox=Rectangle(0, 550, 70, 650), text="Inside table2", source=Source.PDFMINER),
 ]
 
 
