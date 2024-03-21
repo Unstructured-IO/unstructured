@@ -32,6 +32,12 @@ class NoID(abc.ABC):
     """Class to indicate that an element do not have an ID."""
 
 
+class HashValue(str):
+    """Class to indicate that an element has a hash value assigned to its ID."""
+
+    pass
+
+
 class UUID(abc.ABC):
     """Class to indicate that an element should have a UUID."""
 
@@ -788,19 +794,18 @@ class Text(Element):
             detection_origin=detection_origin,
         )
 
-    def calculate_id(self, metadata: Optional[ElementMetadata] = None) -> str:
+    def calculate_id(self, metadata: Optional[ElementMetadata] = None) -> HashValue:
         if metadata is not None:
             data = f"{self.text}{metadata.page_number}{metadata.index_on_page}"
         else:
             data = self.text
-        return hashlib.sha256(data.encode()).hexdigest()[:32]
+        return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     @property
     def id(self) -> str:
-        if isinstance(self._id, NoID):
-            return self.calculate_id()
-        else:
-            return str(self._id)
+        if isinstance(self._id, (NoID, HashValue)):
+            self._id = self.calculate_id(self.metadata)
+        return str(self._id)
 
     @id.setter
     def id(self, value: str | uuid.UUID | NoID | UUID):
