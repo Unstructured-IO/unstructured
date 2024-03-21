@@ -772,28 +772,46 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
+            self._id = self.calculate_id(metadata)
         elif isinstance(element_id, UUID):
-            element_id = str(uuid.uuid4())
+            self._id = uuid.uuid4()
+        elif isinstance(element_id, str):
+            self._id = element_id
+        else:
+            raise ValueError("ID must be a string, UUID, or NoID")
 
         super().__init__(
-            element_id=element_id,
+            element_id=self._id,
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             detection_origin=detection_origin,
         )
 
-    @property
-    def id(self):
-        data = f"{self.text}{self.metadata.page_number}{self.metadata.index_on_page}"
+    def calculate_id(self, metadata: Optional[ElementMetadata] = None) -> str:
+        if metadata is not None:
+            data = f"{self.text}{metadata.page_number}{metadata.index_on_page}"
+        else:
+            data = self.text
         return hashlib.sha256(data.encode()).hexdigest()[:32]
 
+    @property
+    def id(self) -> str:
+        if isinstance(self._id, NoID):
+            return self.calculate_id()
+        else:
+            return str(self._id)
+
     @id.setter
-    def id(self, value):
-        self._id = value
+    def id(self, value: str | uuid.UUID | NoID | UUID):
+        if isinstance(value, (str, uuid.UUID)):
+            self._id = value
+        elif isinstance(value, UUID):
+            self._id = uuid.uuid4()
+        elif isinstance(value, NoID):
+            self._id = self.calculate_id(self.metadata)
+        else:
+            raise ValueError("ID must be a string, UUID, or NoID")
 
     def __eq__(self, other: object):
         if not isinstance(other, Text):
