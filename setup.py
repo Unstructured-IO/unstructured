@@ -136,6 +136,7 @@ setup(
         "biomed": load_requirements("requirements/ingest/biomed.txt"),
         "box": load_requirements("requirements/ingest/box.txt"),
         "chroma": load_requirements("requirements/ingest/chroma.txt"),
+        "clarifai": load_requirements("requirements/ingest/clarifai.txt"),
         "confluence": load_requirements("requirements/ingest/confluence.txt"),
         "delta-table": load_requirements("requirements/ingest/delta-table.txt"),
         "discord": load_requirements("requirements/ingest/discord.txt"),

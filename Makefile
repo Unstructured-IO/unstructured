@@ -251,6 +251,10 @@ install-ingest-databricks-volumes:
 install-ingest-astra:
 	python3 -m pip install -r requirements/ingest/astra.txt
 
+.PHONY: install-ingest-clarifai
+install-ingest-clarifai:
+	python3 -m pip install -r requirements/ingest/clarifai.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
