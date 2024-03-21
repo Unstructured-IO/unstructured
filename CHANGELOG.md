@@ -1,4 +1,4 @@
-## 0.12.7-dev9
+## 0.12.7-dev10
 
 ### Enhancements 
 
@@ -12,6 +12,7 @@
 
 ### Fixes
 
+* **Fix `clean_pdfminer_inner_elements()` to remove only pdfminer (embedded) elements merged with inferred elements** Previously, some embedded elements were removed even if they were not merged with inferred elements. Now, only embedded elements that are already merged with inferred elements are removed.
 * **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 * **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
