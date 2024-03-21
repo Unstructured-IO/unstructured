@@ -33,7 +33,19 @@ from unstructured.documents.elements import (
 
 def test_text_id():
     text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert text_element.id == "038d47b4730901555da92f924541b5ce"
+
+
+def test_text_id_same_page():
+    text_element_1 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
+    text_element_2 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
+    assert text_element_1.id == text_element_2.id
+
+
+def test_text_id_different_pages():
+    text_element_1 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
+    text_element_2 = Text(text="hello there!", metadata=ElementMetadata(page_number=2))
+    assert text_element_1.id != text_element_2.id
 
 
 def test_text_uuid():
