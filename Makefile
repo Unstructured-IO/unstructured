@@ -26,6 +26,10 @@ install-ci: install-base-pip-packages install-nltk-models install-huggingface in
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
 
+.PHONY: install-local-inference-branch
+install-local-inference-branch:
+	git clone -b fix/embedded-text-not-getting-merged-with-inferred-elements git@github.com:Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
+
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
 	python3 -m pip install pip==${PIP_VERSION}
