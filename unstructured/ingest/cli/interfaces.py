@@ -492,31 +492,12 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 help="The rule-set to use to form chunks. Omit to disable chunking.",
             ),
             click.Option(
-                ["--chunk-multipage-sections"],
-                is_flag=True,
-                default=CHUNK_MULTI_PAGE_DEFAULT,
-                help=(
-                    "Ignore page boundaries when chunking such that elements from two different"
-                    " pages can appear in the same chunk. Only operative for 'by_title'"
-                    " chunking-strategy."
-                ),
-            ),
-            click.Option(
                 ["--chunk-combine-text-under-n-chars"],
                 type=int,
                 help=(
                     "Combine consecutive chunks when the first does not exceed this length and"
                     " the second will fit without exceeding the hard-maximum length. Only"
                     " operative for 'by_title' chunking-strategy."
-                ),
-            ),
-            click.Option(
-                ["--chunk-new-after-n-chars"],
-                type=int,
-                help=(
-                    "Soft-maximum chunk length. Another element will not be added to a chunk of"
-                    " this length even when it would fit without exceeding the hard-maximum"
-                    " length."
                 ),
             ),
             click.Option(
@@ -527,6 +508,25 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 help=(
                     "Hard maximum chunk length. No chunk will exceed this length. An oversized"
                     " element will be divided by text-splitting to fit this window."
+                ),
+            ),
+            click.Option(
+                ["--chunk-multipage-sections"],
+                is_flag=True,
+                default=CHUNK_MULTI_PAGE_DEFAULT,
+                help=(
+                    "Ignore page boundaries when chunking such that elements from two different"
+                    " pages can appear in the same chunk. Only operative for 'by_title'"
+                    " chunking-strategy."
+                ),
+            ),
+            click.Option(
+                ["--chunk-new-after-n-chars"],
+                type=int,
+                help=(
+                    "Soft-maximum chunk length. Another element will not be added to a chunk of"
+                    " this length even when it would fit without exceeding the hard-maximum"
+                    " length."
                 ),
             ),
             click.Option(

@@ -19,7 +19,6 @@
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 * **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
 * **Support AWS Bedrock Embeddings in ingest CLI** The configs required to instantiate the bedrock embedding class are now exposed in the api and the version of boto being used meets the minimum requirement to introduce the bedrock runtime required to hit the service.
->>>>>>> 6a63c941c (bump changelog)
 
 ## 0.12.6
 

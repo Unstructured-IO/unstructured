@@ -243,8 +243,9 @@ class ChunkingConfig(BaseConfig):
             if self.chunking_strategy in ("basic", "by_title")
             else "by_title" if self.chunk_elements is True else None
         )
-        return (
-            chunk_by_title(
+
+        if chunking_strategy == "by_title":
+            return chunk_by_title(
                 elements=elements,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 max_characters=self.max_characters,
@@ -253,19 +254,17 @@ class ChunkingConfig(BaseConfig):
                 overlap=self.overlap,
                 overlap_all=self.overlap_all,
             )
-            if chunking_strategy == "by_title"
-            else (
-                chunk_elements(
-                    elements=elements,
-                    max_characters=self.max_characters,
-                    new_after_n_chars=self.new_after_n_chars,
-                    overlap=self.overlap,
-                    overlap_all=self.overlap_all,
-                )
-                if chunking_strategy == "basic"
-                else elements
+
+        if chunking_strategy == "basic":
+            return chunk_elements(
+                elements=elements,
+                max_characters=self.max_characters,
+                new_after_n_chars=self.new_after_n_chars,
+                overlap=self.overlap,
+                overlap_all=self.overlap_all,
             )
-        )
+
+        return elements
 
 
 @dataclass
