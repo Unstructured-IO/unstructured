@@ -28,7 +28,7 @@ install-base-ci: install-base-pip-packages install-nltk-models install-test inst
 
 .PHONY: install-local-inference-branch
 install-local-inference-branch:
-	git clone -b fix/embedded-text-not-getting-merged-with-inferred-elements https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
+	git clone -b fix/embedded-text-not-getting-merged-with-inferred-elements --single-branch https://github.com/Unstructured-IO/unstructured-inference.git && cd unstructured-inference && pip install -e . && cd ../
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
