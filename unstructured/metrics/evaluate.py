@@ -316,7 +316,7 @@ def measure_table_structure_accuracy(
     for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
         doc_path = Path(doc)
         out_filename = doc_path.stem
-        doctype = (Path(out_filename).suffix)
+        doctype = Path(out_filename).suffix[1:]
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
