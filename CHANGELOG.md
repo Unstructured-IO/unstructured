@@ -1,6 +1,6 @@
 ## 0.13.0-dev11
 
-### Enhancements
+### Enhancements 
 
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
 * **Add `compound_structure_acc` metric to table eval.** Add a new property to `unstructured.metrics.table_eval.TableEvaluation`: `composite_structure_acc`, which is computed from the element level row and column index and content accuracy scores
