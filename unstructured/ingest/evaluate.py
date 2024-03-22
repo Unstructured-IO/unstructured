@@ -174,7 +174,14 @@ def get_mean_grouping_command(
     agg_name: Optional[str] = None,
     export_filename: Optional[str] = None,
 ):
-    return get_mean_grouping(group_by=group_by, data_input=data_input, export_dir=export_dir, eval_name=eval_name, agg_name=agg_name, export_filename=export_filename)
+    return get_mean_grouping(
+        group_by=group_by,
+        data_input=data_input,
+        export_dir=export_dir,
+        eval_name=eval_name,
+        agg_name=agg_name,
+        export_filename=export_filename,
+    )
 
 
 @main.command()
