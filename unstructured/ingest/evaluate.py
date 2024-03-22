@@ -159,12 +159,30 @@ def measure_element_type_accuracy_command(
     help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
 )
 @click.option(
-    "--export_name", type=str, help="Optional. Define your file name for the output here."
+    "--agg_name",
+    type=str,
+    help="String to use with export filename. Default is `cct` for `text_extraction` \
+        and `element-type` for `element_type`",
+)
+@click.option(
+    "--export_filename", type=str, help="Optional. Define your file name for the output here."
 )
 def get_mean_grouping_command(
-    group_by: str, data_input: str, export_dir: str, eval_name: str, export_name: str
+    group_by: str,
+    data_input: str,
+    export_dir: str,
+    eval_name: str,
+    agg_name: Optional[str] = None,
+    export_filename: Optional[str] = None,
 ):
-    return get_mean_grouping(group_by, data_input, export_dir, eval_name, export_name)
+    return get_mean_grouping(
+        group_by=group_by,
+        data_input=data_input,
+        export_dir=export_dir,
+        eval_name=eval_name,
+        agg_name=agg_name,
+        export_filename=export_filename,
+    )
 
 
 @main.command()
