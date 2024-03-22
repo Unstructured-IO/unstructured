@@ -501,6 +501,15 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 ),
             ),
             click.Option(
+                ["--chunk-include-orig-elements/--chunk-no-include-orig-elements"],
+                is_flag=True,
+                default=True,
+                help=(
+                    "When chunking, add the original elements consolidated to form each chunk to"
+                    " `.metadata.orig_elements` on that chunk."
+                ),
+            ),
+            click.Option(
                 ["--chunk-max-characters"],
                 type=int,
                 default=CHUNK_MAX_CHARS_DEFAULT,
@@ -511,7 +520,7 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 ),
             ),
             click.Option(
-                ["--chunk-multipage-sections"],
+                ["--chunk-multipage-sections/--chunk-no-multipage-sections"],
                 is_flag=True,
                 default=CHUNK_MULTI_PAGE_DEFAULT,
                 help=(

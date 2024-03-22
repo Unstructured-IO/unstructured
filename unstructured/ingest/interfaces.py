@@ -231,6 +231,7 @@ class ChunkingConfig(BaseConfig):
     chunk_elements: bool = False
     chunking_strategy: t.Optional[str] = None
     combine_text_under_n_chars: t.Optional[int] = None
+    include_orig_elements: t.Optional[bool] = None
     max_characters: t.Optional[int] = None
     multipage_sections: t.Optional[bool] = None
     new_after_n_chars: t.Optional[int] = None
@@ -248,6 +249,7 @@ class ChunkingConfig(BaseConfig):
             return chunk_by_title(
                 elements=elements,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
+                include_orig_elements=self.include_orig_elements,
                 max_characters=self.max_characters,
                 multipage_sections=self.multipage_sections,
                 new_after_n_chars=self.new_after_n_chars,
@@ -258,6 +260,7 @@ class ChunkingConfig(BaseConfig):
         if chunking_strategy == "basic":
             return chunk_elements(
                 elements=elements,
+                include_orig_elements=self.include_orig_elements,
                 max_characters=self.max_characters,
                 new_after_n_chars=self.new_after_n_chars,
                 overlap=self.overlap,

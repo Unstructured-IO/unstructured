@@ -28,6 +28,9 @@ Configs
   series of ``Title`` elements) until a section reaches a length of n characters. Only operative for
   the ``"by_title"`` chunking strategy. Defaults to `max_characters` which combines chunks whenever
   space allows. Specifying 0 for this argument suppresses combining of small chunks.
+* ``include_orig_elements (default: True)``: Adds the document elements consolidated to form each
+  chunk to the ``chunk.metadata.orig_elements: list[Element]`` metadata field. Setting this to false
+  allows for somewhat smaller payloads when you don't need that metadata.
 * ``max_characters (Default: 500)``: Combine elements into chunks no larger than n characters (hard
   max). No chunk with text longer than this value will appear in the output stream.
 * ``multipage_sections (Default: True)``: When False, in addition to section boundaries, page
