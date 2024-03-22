@@ -624,19 +624,6 @@
     "type": "Table"
   },
   {
-    "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
-    "metadata": {
-      "data_source": {},
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 4
-    },
-    "text": "Corrosion rate (mm/year)",
-    "type": "Title"
-  },
-  {
     "element_id": "5f9848745de2ea8e033fa60c5c042a02",
     "metadata": {
       "data_source": {},
