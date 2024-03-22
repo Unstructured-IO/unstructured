@@ -161,7 +161,8 @@ def measure_element_type_accuracy_command(
 @click.option(
     "--agg_name",
     type=str,
-    help="String to use with export filename. Default is `cct` for `text_extraction` and `element-type` for `element_type`",
+    help="String to use with export filename. Default is `cct` for `text_extraction` \
+        and `element-type` for `element_type`",
 )
 @click.option(
     "--export_filename", type=str, help="Optional. Define your file name for the output here."
