@@ -158,7 +158,6 @@ jobs:
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
-        make install-local-inference-branch
         make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
 
   test_unit_no_extras:
@@ -348,7 +347,6 @@ jobs:
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
         tesseract --version
-        make install-local-inference-branch
         ./test_unstructured_ingest/test-ingest-src.sh
 
 
