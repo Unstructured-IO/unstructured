@@ -251,6 +251,10 @@ install-ingest-databricks-volumes:
 install-ingest-astra:
 	python3 -m pip install -r requirements/ingest/astra.txt
 
+.PHONY: install-ingest-clarifai
+install-ingest-clarifai:
+	python3 -m pip install -r requirements/ingest/clarifai.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
@@ -379,7 +383,7 @@ check-shfmt:
 
 .PHONY: check-black
 check-black:
-	black . --check
+	black . --check --line-length=100
 
 .PHONY: check-flake8
 check-flake8:
@@ -425,7 +429,7 @@ tidy-shell:
 tidy-python:
 	ruff . --fix-only || true
 	autoflake --in-place .
-	black  .
+	black --line-length=100 .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

@@ -434,6 +434,24 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
                 type=str,
                 default=None,
             ),
+            click.Option(
+                ["--embedding-aws-access-key-id"],
+                help="AWS access key used for AWS-based embedders, such as bedrock",
+                type=str,
+                default=None,
+            ),
+            click.Option(
+                ["--embedding-aws-secret-access-key"],
+                help="AWS secret key used for AWS-based embedders, such as bedrock",
+                type=str,
+                default=None,
+            ),
+            click.Option(
+                ["--embedding-aws-region"],
+                help="AWS region used for AWS-based embedders, such as bedrock",
+                type=str,
+                default="us-west-2",
+            ),
         ]
         return options
 

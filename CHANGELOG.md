@@ -1,26 +1,36 @@
-## 0.12.7-dev5
+## 0.13.0-dev11
 
-### Enhancements
+### Enhancements 
 
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
+* **Add `compound_structure_acc` metric to table eval.** Add a new property to `unstructured.metrics.table_eval.TableEvaluation`: `composite_structure_acc`, which is computed from the element level row and column index and content accuracy scores
+* **Add `.metadata.orig_elements` to chunks.** `.metadata.orig_elements: list[Element]` is added to chunks during the chunking process (when requested) to allow access to information from the elements each chunk was formed from. This is useful for example to recover metadata fields that cannot be consolidated to a single value for a chunk, like `page_number`, `coordinates`, and `image_base64`.
 
 ### Features
 
+* **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
+* **Add Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
+
 ### Fixes
 
+* **Fix `clean_pdfminer_inner_elements()` to remove only pdfminer (embedded) elements merged with inferred elements** Previously, some embedded elements were removed even if they were not merged with inferred elements. Now, only embedded elements that are already merged with inferred elements are removed.
 * **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
+* **Change table extraction defaults** Change table extraction defaults in favor of using `skip_infer_table_types` parameter and reflect these changes in documentation.
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 * **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
+* **Support AWS Bedrock Embeddings in ingest CLI** The configs required to instantiate the bedrock embedding class are now exposed in the api and the version of boto being used meets the minimum requirement to introduce the bedrock runtime required to hit the service.
+>>>>>>> 6a63c941c (bump changelog)
 
 ## 0.12.6
 
-### Enhancements 
+### Enhancements
 
 * **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
 * **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
 * **Redefine `table_level_acc` metric for table evaluation.** `table_level_acc` now is an average of individual predicted table's accuracy. A predicted table's accuracy is defined as the sequence matching ratio between itself and its corresponding ground truth table.
 
 ### Features
+
 * **Added Unstructured Platform Documentation** The Unstructured Platform is currently in beta. The documentation provides how-to guides for setting up workflow automation, job scheduling, and configuring source and destination connectors.
 
 ### Fixes
@@ -58,6 +68,7 @@
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
 * **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
+
 
 ## 0.12.4
 
