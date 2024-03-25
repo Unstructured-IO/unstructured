@@ -37,7 +37,13 @@ from unstructured.partition.text_type import (
 )
 from unstructured.utils import htmlify_matrix_of_cell_texts
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
+TAIL_AS_ELEMENT = True
+TAIL_AS_ELEMENT_TAG = 'tailtag'  # must be in TEXT_TAGS, and in emphaiszed_texts
+
+EMPHASIZE_ALL_DESCENDANTS = True
+
+
+TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font", TAIL_AS_ELEMENT_TAG]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
@@ -157,6 +163,16 @@ class HTMLDocument(XMLDocument):
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
+            # convert etree elemnt tail in it's own tag.
+            #   with default to True, at least you don't loose any text this way
+            if TAIL_AS_ELEMENT:
+                for tag_elem in article.iter():
+                    if tag_elem.tail is not None:
+                        _tag_elem = etree.Element(TAIL_AS_ELEMENT_TAG)
+                        _tag_elem.text = tag_elem.tail
+                        tag_elem.tail = None
+                        tag_elem.addnext(_tag_elem)
+
             descendanttag_elems: Tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
                 if tag_elem in descendanttag_elems:
@@ -180,11 +196,14 @@ class HTMLDocument(XMLDocument):
 
                 elif _is_container_with_text(tag_elem):
                     links = _get_links_from_tag(tag_elem)
-                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    emphasized_texts, found_tag_elements = _get_emphasized_texts_from_tag(tag_elem)
+                    descendanttag_elems = descendanttag_elems + tuple(found_tag_elements)
                     # -- having text is guaranteed by `_is_container_with_text()` --
                     assert tag_elem.text is not None
                     element = _text_to_element(
-                        tag_elem.text,
+                        # cannot use the .get('text') from the emphasized_text, it's is eg stripped
+                        # .xpath("string()") also seems chew up other elements, like list items
+                        tag_elem.text + ''.join([ft.text for ft in found_tag_elements]),
                         "div",
                         (),
                         depth=0,
@@ -369,25 +388,34 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     )
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, str]]:
+def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> Tuple[List[Dict[str, str]], List[str]]:
     """Emphasized text within and below `tag_element`.
 
     Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
     """
     emphasized_texts: List[Dict[str, str]] = []
-    tags_to_track = ["strong", "em", "span", "b", "i"]
+    tags_to_track = ["strong", "em", "span", "b", "i", TAIL_AS_ELEMENT_TAG]
 
     if tag_elem.tag in tags_to_track:
         text = _construct_text(tag_elem, False)
         if text:
             emphasized_texts.append({"text": text, "tag": tag_elem.tag})
 
-    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
-        text = _construct_text(descendant_tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+    found_tag_elements: List[str] = []
+    for descendant_tag_elem in tag_elem.iterdescendants():
+        if descendant_tag_elem.tag in tags_to_track:
+            text = _construct_text(descendant_tag_elem, False)
+            if text:
+                emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+                found_tag_elements.append(descendant_tag_elem)
+        else:
+            # for now, with EMPHASIZE_ALL_DESCENDANTS you will not loose any text, but the order might be wrong
+            if not EMPHASIZE_ALL_DESCENDANTS:
+                # stop as soon as there is another tag
+                #    TODO: keep track of the not yet processed descendants
+                break
 
-    return emphasized_texts
+    return emphasized_texts, found_tag_elements
 
 
 def _parse_tag(
@@ -401,7 +429,7 @@ def _parse_tag(
     """
     ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
     links = _get_links_from_tag(tag_elem)
-    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+    emphasized_texts, _ = _get_emphasized_texts_from_tag(tag_elem)
 
     depth = (
         # TODO(newel): Check the surrounding divs to see if should be root level
@@ -604,7 +632,7 @@ def _process_list_item(
     if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
         text = _construct_text(tag_elem)
         links = _get_links_from_tag(tag_elem)
-        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        emphasized_texts, _ = _get_emphasized_texts_from_tag(tag_elem)
         depth = len(
             [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
         )
