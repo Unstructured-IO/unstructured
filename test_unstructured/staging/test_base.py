@@ -82,7 +82,7 @@ def test_elements_from_dicts():
     ]
 
 
-def test_read_and_combine_json(tmp_path: str):
+def test_read_and_combine_json(tmp_path):
     sample_data_1 = [
         {"text": "Element 1 from File 1", "type": "NarrativeText"},
         {"text": "Element 2 from File 1", "type": "Title"},
@@ -94,6 +94,9 @@ def test_read_and_combine_json(tmp_path: str):
 
     file_path_1 = tmp_path / "sample_1.json"
     file_path_2 = tmp_path / "sample_2.json"
+
+    # Ensure the directory exists
+    pathlib.Path(tmp_path).mkdir(parents=True, exist_ok=True)
 
     with open(file_path_1, "w", encoding="utf-8") as f:
         json.dump(sample_data_1, f)
@@ -110,9 +113,11 @@ def test_read_and_combine_json(tmp_path: str):
         "Element 2 from File 2",
     ]
 
-    for element, expected_text in zip(combined_elements, expected_texts):
-        err_msg = f"Expected text '{expected_text}' in combined elements"
-        assert element.text == expected_text, err_msg
+    combined_texts = [element["text"] for element in combined_elements]
+    for expected_text in expected_texts:
+        assert (
+            expected_text in combined_texts
+        ), f"Expected text '{expected_text}' in combined elements"
 
 
 def test_convert_to_csv(tmp_path: str):

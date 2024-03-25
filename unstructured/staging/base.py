@@ -95,12 +95,12 @@ def elements_from_json(
     return elements_from_dicts(element_dicts)
 
 
-def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> list[Element]:
+def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> Iterable[dict[str, Any]]:
     """
     Reads all JSON files in a given directory, deserializes their content into Element objects,
-    and combines them into a single list.
+    and combines them into an iterable of dictionaries, including each element's ID.
     """
-    combined_elements: list[Element] = []
+    combined_elements: list[dict[str, Any]] = []
 
     for filename in os.listdir(directory_path):
         if filename.endswith(".json"):
@@ -108,8 +108,7 @@ def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> list[
             try:
                 with open(full_path, "r", encoding=encoding) as file:
                     element_dicts = json.load(file)
-                    elements = elements_from_dicts(element_dicts)
-                    combined_elements.extend(elements)
+                    combined_elements.extend(element_dicts)
             except Exception as e:
                 print(f"Error reading or parsing file {full_path}: {e}")
     return combined_elements
