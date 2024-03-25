@@ -107,7 +107,7 @@ For more information about the ``dict_to_elements`` function, you can check the 
 ``read_and_combine_json``
 --------------------------
 
-Reads, deserializes, and combines JSON data from a directory into a list of Element objects.
+Reads, deserializes, and combines JSON data from a directory into a list of Iterable objects.
 
 Examples:
 
@@ -117,6 +117,9 @@ Examples:
 
   directory_path = "path/to/json/files"
   combined_json_data = read_and_combine_json(directory_path)
+  elements = dict_to_elements(combined_json_data)
+  chunks = chunk_by_title(elements)
+
 
 The directory path will contain JSON files with the following format:
 
