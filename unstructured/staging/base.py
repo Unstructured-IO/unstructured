@@ -3,8 +3,8 @@ from __future__ import annotations
 import base64
 import csv
 import io
-import os
 import json
+import os
 import zlib
 from copy import deepcopy
 from datetime import datetime
@@ -106,7 +106,7 @@ def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> Itera
         if filename.endswith(".json"):
             full_path = os.path.join(directory_path, filename)
             try:
-                with open(full_path, "r", encoding=encoding) as file:
+                with open(full_path, encoding=encoding) as file:
                     element_dicts = json.load(file)
                     combined_elements.extend(element_dicts)
             except Exception as e:
