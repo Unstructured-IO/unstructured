@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import csv
 import io
+import os
 import json
 import zlib
 from copy import deepcopy
@@ -92,6 +93,27 @@ def elements_from_json(
         element_dicts = json.loads(text)
 
     return elements_from_dicts(element_dicts)
+
+
+def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> list[Element]:
+    """
+    Reads all JSON files in a given directory, deserializes their content into Element objects,
+    and combines them into a single list.
+    """
+    combined_elements: list[Element] = []
+
+    for filename in os.listdir(directory_path):
+        if filename.endswith('.json'):
+            full_path = os.path.join(directory_path, filename)
+            try:
+                with open(full_path, 'r', encoding=encoding) as file:
+                    element_dicts = json.load(file)
+                    elements = elements_from_dicts(element_dicts)
+                    combined_elements.extend(elements)
+            except Exception as e:
+                print(f"Error reading or parsing file {full_path}: {e}")
+                
+    return combined_elements
 
 
 # == SERIALIZERS =================================

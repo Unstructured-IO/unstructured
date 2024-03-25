@@ -82,6 +82,45 @@ def test_elements_from_dicts():
     ]
 
 
+def test_read_and_combine_json(tmp_path: str):
+    # Create sample JSON files with serialized elements
+    sample_data_1 = [
+        {"text": "Element 1 from File 1", "type": "NarrativeText"},
+        {"text": "Element 2 from File 1", "type": "Title"}
+    ]
+    sample_data_2 = [
+        {"text": "Element 1 from File 2", "type": "NarrativeText"},
+        {"text": "Element 2 from File 2", "type": "ListItem"}
+    ]
+    
+    # Write sample data to temporary JSON files
+    file_path_1 = tmp_path / "sample_1.json"
+    file_path_2 = tmp_path / "sample_2.json"
+    
+    with open(file_path_1, "w", encoding="utf-8") as f:
+        json.dump(sample_data_1, f)
+    
+    with open(file_path_2, "w", encoding="utf-8") as f:
+        json.dump(sample_data_2, f)
+    
+    # Call the function with the path to the temporary directory
+    combined_elements = base.read_and_combine_json(str(tmp_path))
+    
+    # Verify the combined_elements contains the correct number of elements
+    assert len(combined_elements) == 4, "Expected 4 combined elements"
+    
+    # Verify the types and contents of the combined elements
+    # This part of the test assumes you have a way to check the type and text of your Element objects
+    expected_texts = [
+        "Element 1 from File 1",
+        "Element 2 from File 1",
+        "Element 1 from File 2",
+        "Element 2 from File 2"
+    ]
+    for element, expected_text in zip(combined_elements, expected_texts):
+        assert element.text == expected_text, f"Expected text '{expected_text}' in combined elements"
+
+
 def test_convert_to_csv(tmp_path: str):
     output_csv_path = os.path.join(tmp_path, "isd_data.csv")
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
