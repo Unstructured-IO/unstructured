@@ -25,7 +25,7 @@ We can take this data and directly upload it into LabelStudio to quickly get sta
 
 
 ``convert_to_csv``
-----------------------
+--------------------
 
 Converts outputs to the initial structured data (ISD) format as a CSV string.
 
@@ -102,6 +102,37 @@ Examples:
   elements = dict_to_elements(isd)
 
 For more information about the ``dict_to_elements`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
+
+
+``read_and_combine_json``
+--------------------------
+
+Reads, deserializes, and combines JSON data from a directory into a list of Element objects.
+
+Examples:
+
+.. code:: python
+
+  from unstructured.staging.base import read_and_combine_json
+
+  directory_path = "path/to/json/files"
+  combined_json_data = read_and_combine_json(directory_path)
+
+The directory path will contain JSON files with the following format:
+
+.. code::
+
+    sample_data_1 = [
+        {"text": "Element 1 from File 1", "type": "NarrativeText"},
+        {"text": "Element 2 from File 1", "type": "Title"},
+    ]
+
+    sample_data_2 = [
+        {"text": "Element 1 from File 2", "type": "NarrativeText"},
+        {"text": "Element 2 from File 2", "type": "ListItem"},
+    ]
+
+For more information about the ``read_and_combine_json`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/staging/base.py>`__.
 
 
 ``stage_csv_for_prodigy``
