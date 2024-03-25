@@ -103,16 +103,15 @@ def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> list[
     combined_elements: list[Element] = []
 
     for filename in os.listdir(directory_path):
-        if filename.endswith('.json'):
+        if filename.endswith(".json"):
             full_path = os.path.join(directory_path, filename)
             try:
-                with open(full_path, 'r', encoding=encoding) as file:
+                with open(full_path, "r", encoding=encoding) as file:
                     element_dicts = json.load(file)
                     elements = elements_from_dicts(element_dicts)
                     combined_elements.extend(elements)
             except Exception as e:
                 print(f"Error reading or parsing file {full_path}: {e}")
-                
     return combined_elements
 
 

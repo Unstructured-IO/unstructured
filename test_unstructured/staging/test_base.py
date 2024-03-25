@@ -85,34 +85,34 @@ def test_elements_from_dicts():
 def test_read_and_combine_json(tmp_path: str):
     sample_data_1 = [
         {"text": "Element 1 from File 1", "type": "NarrativeText"},
-        {"text": "Element 2 from File 1", "type": "Title"}
+        {"text": "Element 2 from File 1", "type": "Title"},
     ]
     sample_data_2 = [
         {"text": "Element 1 from File 2", "type": "NarrativeText"},
-        {"text": "Element 2 from File 2", "type": "ListItem"}
+        {"text": "Element 2 from File 2", "type": "ListItem"},
     ]
-    
+
     file_path_1 = tmp_path / "sample_1.json"
     file_path_2 = tmp_path / "sample_2.json"
-    
+
     with open(file_path_1, "w", encoding="utf-8") as f:
         json.dump(sample_data_1, f)
-    
     with open(file_path_2, "w", encoding="utf-8") as f:
         json.dump(sample_data_2, f)
-    
+
     combined_elements = base.read_and_combine_json(str(tmp_path))
-    
     assert len(combined_elements) == 4, "Expected 4 combined elements"
-    
+
     expected_texts = [
         "Element 1 from File 1",
         "Element 2 from File 1",
         "Element 1 from File 2",
-        "Element 2 from File 2"
+        "Element 2 from File 2",
     ]
+
     for element, expected_text in zip(combined_elements, expected_texts):
-        assert element.text == expected_text, f"Expected text '{expected_text}' in combined elements"
+        err_msg = f"Expected text '{expected_text}' in combined elements"
+        assert element.text == expected_text, err_msg
 
 
 def test_convert_to_csv(tmp_path: str):
