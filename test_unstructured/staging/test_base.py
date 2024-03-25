@@ -82,7 +82,7 @@ def test_elements_from_dicts():
     ]
 
 
-def test_read_and_combine_json(tmp_path):
+def test_read_and_combine_json(tmp_path: str):
     sample_data_1 = [
         {"text": "Element 1 from File 1", "type": "NarrativeText"},
         {"text": "Element 2 from File 1", "type": "Title"},
