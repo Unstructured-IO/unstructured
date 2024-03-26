@@ -805,11 +805,22 @@ class Text(Element):
     def calculate_hash(
         self, metadata: Optional[ElementMetadata] = None, other: Any = None
     ) -> HashValue:
-        # hasher = hashlib.sha256()
+        """Calculate the hash depending on what element data is available.
+
+        Args:
+            metadata - if provided, it will be included in the hash calculation.
+            other - any other data that should be included in the hash calculation.
+                Must implement __str__.
+
+        Returns:
+            HashValue - 128-bit hash value of the element.
+        """
         if metadata is not None:
+            # Metadata supported by PDF and HTML files
             data = f"{self.text}{metadata.page_number}{metadata.index_on_page}{other}"
         else:
             data = f"{self.text}{other}"
+
         return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     @property
