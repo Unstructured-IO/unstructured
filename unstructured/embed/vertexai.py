@@ -64,7 +64,7 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
         ["langchain", "langchain_google_vertexai"],
-        extras="vertexai",
+        extras="embed-vertexai",
     )
     def create_client(self) -> "VertexAIEmbeddings":
         """Creates a langchain VertexAI python client to embed elements."""
