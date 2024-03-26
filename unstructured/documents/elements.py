@@ -786,7 +786,7 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            self._id = self.calculate_id(metadata)
+            self._id = self.calculate_hash(metadata)
         elif isinstance(element_id, UUID):
             self._id = uuid.uuid4()
         elif isinstance(element_id, str):
@@ -802,17 +802,21 @@ class Text(Element):
             detection_origin=detection_origin,
         )
 
-    def calculate_id(self, metadata: Optional[ElementMetadata] = None) -> HashValue:
+    def calculate_hash(
+        self, metadata: Optional[ElementMetadata] = None, other: Any = None
+    ) -> HashValue:
+        # hasher = hashlib.sha256()
         if metadata is not None:
-            data = f"{self.text}{metadata.page_number}{metadata.index_on_page}"
+            data = f"{self.text}{metadata.page_number}{metadata.index_on_page}{other}"
         else:
-            data = self.text
+            data = f"{self.text}{other}"
         return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     @property
     def id(self) -> str:
         if isinstance(self._id, (NoID, HashValue)):
-            self._id = self.calculate_id(self.metadata)
+            # Ensure that hash is always up-to-date
+            self._id = self.calculate_hash(self.metadata)
         return str(self._id)
 
     @id.setter
@@ -822,7 +826,7 @@ class Text(Element):
         elif isinstance(value, UUID):
             self._id = uuid.uuid4()
         elif isinstance(value, NoID):
-            self._id = self.calculate_id(self.metadata)
+            self._id = self.calculate_hash(self.metadata)
         else:
             raise ValueError("ID must be a string, UUID, or NoID")
 
