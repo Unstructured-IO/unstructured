@@ -14,14 +14,12 @@ asgiref==3.7.2
 backoff==2.2.1
     # via
     #   -c ingest/../base.txt
-    #   opentelemetry-exporter-otlp-proto-common
-    #   opentelemetry-exporter-otlp-proto-grpc
     #   posthog
 bcrypt==4.1.2
     # via chromadb
-build==1.0.3
+build==1.1.1
     # via chromadb
-cachetools==5.3.2
+cachetools==5.3.3
     # via google-auth
 certifi==2024.2.2
     # via
@@ -36,7 +34,7 @@ charset-normalizer==3.3.2
     #   requests
 chroma-hnswlib==0.7.3
     # via chromadb
-chromadb==0.4.22
+chromadb==0.4.24
     # via -r ingest/chroma.in
 click==8.1.7
     # via
@@ -51,19 +49,19 @@ deprecated==1.2.14
     #   opentelemetry-exporter-otlp-proto-grpc
 exceptiongroup==1.2.0
     # via anyio
-fastapi==0.109.2
+fastapi==0.110.0
     # via chromadb
 filelock==3.13.1
     # via huggingface-hub
-flatbuffers==23.5.26
+flatbuffers==24.3.7
     # via onnxruntime
 fsspec==2024.2.0
     # via huggingface-hub
-google-auth==2.28.0
+google-auth==2.28.2
     # via kubernetes
-googleapis-common-protos==1.62.0
+googleapis-common-protos==1.63.0
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.60.1
+grpcio==1.62.1
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -71,7 +69,7 @@ h11==0.14.0
     # via uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.20.3
+huggingface-hub==0.21.4
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -84,7 +82,7 @@ importlib-metadata==6.11.0
     # via
     #   build
     #   opentelemetry-api
-importlib-resources==6.1.1
+importlib-resources==6.3.0
     # via chromadb
 kubernetes==29.0.0
     # via chromadb
@@ -108,7 +106,7 @@ onnxruntime==1.15.1
     # via
     #   -c ingest/../constraints.in
     #   chromadb
-opentelemetry-api==1.22.0
+opentelemetry-api==1.23.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -116,44 +114,47 @@ opentelemetry-api==1.22.0
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-sdk
-opentelemetry-exporter-otlp-proto-common==1.22.0
+opentelemetry-exporter-otlp-proto-common==1.23.0
     # via opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-exporter-otlp-proto-grpc==1.22.0
+opentelemetry-exporter-otlp-proto-grpc==1.23.0
     # via chromadb
-opentelemetry-instrumentation==0.43b0
+opentelemetry-instrumentation==0.44b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-asgi==0.43b0
+opentelemetry-instrumentation-asgi==0.44b0
     # via opentelemetry-instrumentation-fastapi
-opentelemetry-instrumentation-fastapi==0.43b0
+opentelemetry-instrumentation-fastapi==0.44b0
     # via chromadb
-opentelemetry-proto==1.22.0
+opentelemetry-proto==1.23.0
     # via
     #   opentelemetry-exporter-otlp-proto-common
     #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-sdk==1.22.0
+opentelemetry-sdk==1.23.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
-opentelemetry-semantic-conventions==0.43b0
+opentelemetry-semantic-conventions==0.44b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
     #   opentelemetry-sdk
-opentelemetry-util-http==0.43b0
+opentelemetry-util-http==0.44b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
+orjson==3.9.15
+    # via chromadb
 overrides==7.7.0
     # via chromadb
 packaging==23.2
     # via
     #   -c ingest/../base.txt
+    #   -c ingest/../constraints.in
     #   build
     #   huggingface-hub
     #   onnxruntime
-posthog==3.4.1
+posthog==3.5.0
     # via chromadb
 protobuf==4.23.4
     # via
@@ -178,7 +179,7 @@ pypika==0.48.9
     # via chromadb
 pyproject-hooks==1.0.0
     # via build
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ingest/../base.txt
     #   kubernetes
@@ -199,7 +200,7 @@ requests==2.31.0
     #   kubernetes
     #   posthog
     #   requests-oauthlib
-requests-oauthlib==1.3.1
+requests-oauthlib==1.4.0
     # via kubernetes
 rsa==4.9
     # via google-auth
@@ -209,7 +210,7 @@ six==1.16.0
     #   kubernetes
     #   posthog
     #   python-dateutil
-sniffio==1.3.0
+sniffio==1.3.1
     # via anyio
 starlette==0.36.3
     # via fastapi
@@ -230,7 +231,7 @@ tqdm==4.66.2
     #   huggingface-hub
 typer==0.9.0
     # via chromadb
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -c ingest/../base.txt
     #   asgiref
@@ -248,10 +249,8 @@ urllib3==1.26.18
     #   -c ingest/../constraints.in
     #   kubernetes
     #   requests
-uvicorn[standard]==0.27.1
-    # via
-    #   chromadb
-    #   uvicorn
+uvicorn[standard]==0.28.0
+    # via chromadb
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
@@ -265,7 +264,7 @@ wrapt==1.16.0
     #   -c ingest/../base.txt
     #   deprecated
     #   opentelemetry-instrumentation
-zipp==3.17.0
+zipp==3.18.1
     # via
     #   importlib-metadata
     #   importlib-resources

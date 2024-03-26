@@ -26,7 +26,7 @@ fsspec==2024.2.0
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.20.3
+huggingface-hub==0.21.4
     # via
     #   tokenizers
     #   transformers
@@ -57,6 +57,7 @@ numpy==1.26.4
 packaging==23.2
     # via
     #   -c base.txt
+    #   -c constraints.in
     #   huggingface-hub
     #   transformers
 pyyaml==6.0.1
@@ -79,7 +80,7 @@ safetensors==0.3.2
     # via
     #   -c constraints.in
     #   transformers
-sentencepiece==0.1.99
+sentencepiece==0.2.0
     # via -r huggingface.in
 six==1.16.0
     # via
@@ -89,7 +90,7 @@ sympy==1.12
     # via torch
 tokenizers==0.15.2
     # via transformers
-torch==2.2.0
+torch==2.2.1
     # via
     #   -c constraints.in
     #   -r huggingface.in
@@ -101,7 +102,7 @@ tqdm==4.66.2
     #   transformers
 transformers==4.37.1
     # via -r huggingface.in
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -c base.txt
     #   huggingface-hub

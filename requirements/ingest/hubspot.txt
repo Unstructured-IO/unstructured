@@ -9,9 +9,9 @@ certifi==2024.2.2
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   hubspot-api-client
-hubspot-api-client==8.2.1
+hubspot-api-client==9.0.0
     # via -r ingest/hubspot.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via
     #   -c ingest/../base.txt
     #   hubspot-api-client
