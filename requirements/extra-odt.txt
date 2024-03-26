@@ -8,11 +8,11 @@ lxml==5.1.0
     # via
     #   -c base.txt
     #   python-docx
-pypandoc==1.13
+pypandoc==1.12
     # via -r extra-odt.in
 python-docx==1.1.0
     # via -r extra-odt.in
-typing-extensions==4.10.0
+typing-extensions==4.9.0
     # via
     #   -c base.txt
     #   python-docx

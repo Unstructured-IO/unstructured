@@ -6,7 +6,7 @@
 #
 azure-common==1.1.28
     # via azure-search-documents
-azure-core==1.30.1
+azure-core==1.30.0
     # via azure-search-documents
 azure-search-documents==11.4.0
     # via -r ingest/azure-cognitive-search.in
@@ -34,7 +34,7 @@ six==1.16.0
     #   -c ingest/../base.txt
     #   azure-core
     #   isodate
-typing-extensions==4.10.0
+typing-extensions==4.9.0
     # via
     #   -c ingest/../base.txt
     #   azure-core

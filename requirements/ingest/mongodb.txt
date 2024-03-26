@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=ingest/mongodb.txt ingest/mongodb.in
 #
-dnspython==2.6.1
+dnspython==2.5.0
     # via pymongo
-pymongo==4.6.2
+pymongo==4.6.1
     # via -r ingest/mongodb.in

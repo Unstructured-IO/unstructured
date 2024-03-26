@@ -4,5 +4,5 @@
 #
 #    pip-compile --output-file=extra-epub.txt extra-epub.in
 #
-pypandoc==1.13
+pypandoc==1.12
     # via -r extra-epub.in

@@ -4,7 +4,7 @@
 #
 #    pip-compile --output-file=build.txt build.in
 #
-alabaster==0.7.16
+alabaster==0.7.13
     # via sphinx
 babel==2.14.0
     # via sphinx
@@ -36,7 +36,7 @@ idna==3.6
     #   requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==7.0.2
+importlib-metadata==7.0.1
     # via sphinx
 jinja2==3.1.3
     # via
@@ -57,7 +57,6 @@ myst-parser==2.0.0
 packaging==23.2
     # via
     #   -c base.txt
-    #   -c constraints.in
     #   sphinx
 pygments==2.17.2
     # via
@@ -120,5 +119,5 @@ urllib3==1.26.18
     #   -c base.txt
     #   -c constraints.in
     #   requests
-zipp==3.18.1
+zipp==3.17.0
     # via importlib-metadata

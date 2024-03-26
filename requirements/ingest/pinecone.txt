@@ -13,7 +13,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ingest/../base.txt
     #   requests
-dnspython==2.6.1
+dnspython==2.5.0
     # via pinecone-client
 idna==3.6
     # via
@@ -27,7 +27,7 @@ numpy==1.26.4
     #   pinecone-client
 pinecone-client==2.2.4
     # via -r ingest/pinecone.in
-python-dateutil==2.9.0.post0
+python-dateutil==2.8.2
     # via
     #   -c ingest/../base.txt
     #   pinecone-client
@@ -45,7 +45,7 @@ tqdm==4.66.2
     # via
     #   -c ingest/../base.txt
     #   pinecone-client
-typing-extensions==4.10.0
+typing-extensions==4.9.0
     # via
     #   -c ingest/../base.txt
     #   pinecone-client
