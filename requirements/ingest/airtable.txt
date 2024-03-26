@@ -19,7 +19,7 @@ idna==3.6
     #   requests
 inflection==0.5.1
     # via pyairtable
-pyairtable==2.3.1
+pyairtable==2.3.3
     # via -r ingest/airtable.in
 pydantic==1.10.14
     # via

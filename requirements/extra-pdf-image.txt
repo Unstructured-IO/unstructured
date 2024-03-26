@@ -30,20 +30,20 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via layoutparser
-filelock==3.13.1
+filelock==3.13.3
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-flatbuffers==24.3.7
+flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.49.0
+fonttools==4.50.0
     # via matplotlib
-fsspec==2024.2.0
+fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.21.4
+huggingface-hub==0.22.1
     # via
     #   timm
     #   tokenizers
@@ -55,7 +55,7 @@ idna==3.6
     # via
     #   -c base.txt
     #   requests
-importlib-resources==6.3.0
+importlib-resources==6.4.0
     # via matplotlib
 iopath==0.1.10
     # via layoutparser
@@ -95,7 +95,7 @@ numpy==1.26.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnx==1.15.0
+onnx==1.16.0
     # via
     #   -r extra-pdf-image.in
     #   unstructured-inference
@@ -187,7 +187,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
     # via
     #   -c base.txt
     #   unstructured-inference
@@ -259,6 +259,7 @@ unstructured-pytesseract==0.3.12
 urllib3==1.26.18
     # via
     #   -c base.txt
+    #   -c constraints.in
     #   requests
 wrapt==1.16.0
     # via

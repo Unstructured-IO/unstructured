@@ -34,7 +34,7 @@ urllib3==1.26.18
     #   -c ingest/../base.txt
     #   -c ingest/../constraints.in
     #   requests
-validators==0.22.0
+validators==0.24.0
     # via weaviate-client
 weaviate-client==3.26.2
     # via

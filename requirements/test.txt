@@ -8,7 +8,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.3.1
     # via -r test.in
-black==24.2.0
+black==24.3.0
     # via -r test.in
 certifi==2024.2.2
     # via
@@ -98,9 +98,9 @@ pytest==8.1.1
     # via
     #   pytest-cov
     #   pytest-mock
-pytest-cov==4.1.0
+pytest-cov==5.0.0
     # via -r test.in
-pytest-mock==3.12.0
+pytest-mock==3.14.0
     # via -r test.in
 python-dateutil==2.9.0.post0
     # via
@@ -112,7 +112,7 @@ requests==2.31.0
     # via
     #   -c base.txt
     #   label-studio-sdk
-ruff==0.3.2
+ruff==0.3.4
     # via -r test.in
 six==1.16.0
     # via
@@ -127,7 +127,7 @@ tomli==2.0.1
     #   pytest
 types-click==7.1.8
     # via -r test.in
-types-markdown==3.5.0.20240311
+types-markdown==3.6.0.20240316
     # via -r test.in
 types-requests==2.31.0.6
     # via -r test.in

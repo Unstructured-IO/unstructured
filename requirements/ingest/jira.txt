@@ -36,7 +36,7 @@ requests==2.31.0
     #   -c ingest/../base.txt
     #   atlassian-python-api
     #   requests-oauthlib
-requests-oauthlib==1.4.0
+requests-oauthlib==2.0.0
     # via atlassian-python-api
 six==1.16.0
     # via

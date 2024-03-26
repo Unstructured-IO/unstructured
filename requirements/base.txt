@@ -27,7 +27,7 @@ dataclasses-json==0.6.4
     #   unstructured-client
 deepdiff==6.7.1
     # via unstructured-client
-emoji==2.10.1
+emoji==2.11.0
     # via -r base.in
 filetype==1.2.0
     # via -r base.in
@@ -70,7 +70,7 @@ python-iso639==2024.2.7
     # via -r base.in
 python-magic==0.4.27
     # via -r base.in
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
     # via -r base.in
 regex==2023.12.25
     # via nltk
@@ -99,7 +99,7 @@ typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.22.0
+unstructured-client==0.21.1
     # via
     #   -c constraints.in
     #   -r base.in

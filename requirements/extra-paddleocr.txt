@@ -45,7 +45,7 @@ flask==3.0.2
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.49.0
+fonttools==4.50.0
     # via matplotlib
 future==1.0.0
     # via bce-python-sdk
@@ -59,9 +59,9 @@ imageio==2.34.0
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-metadata==7.0.2
+importlib-metadata==7.1.0
     # via flask
-importlib-resources==6.3.0
+importlib-resources==6.4.0
     # via matplotlib
 itsdangerous==2.1.2
     # via flask
@@ -166,7 +166,7 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
     # via
     #   -c base.txt
     #   unstructured-paddleocr

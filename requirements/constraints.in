@@ -47,4 +47,7 @@ platformdirs==3.10.0
 packaging<24.0
 packaging>=23.2
 # NOTE(robinson): pinning temporarily due to failing tests
-unstructured-client==0.22.0
+unstructured-client<0.22.0
+# NOTE(robinson): requirement for aibotocore
+urllib3<1.27
+urllib3>=1.25.4

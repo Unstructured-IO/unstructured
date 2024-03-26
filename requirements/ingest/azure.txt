@@ -48,7 +48,7 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.2.0
+fsspec==2024.3.1
     # via
     #   -r ingest/azure.in
     #   adlfs
@@ -59,7 +59,7 @@ idna==3.6
     #   yarl
 isodate==0.6.1
     # via azure-storage-blob
-msal==1.27.0
+msal==1.28.0
     # via
     #   azure-datalake-store
     #   azure-identity

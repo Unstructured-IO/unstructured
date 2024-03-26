@@ -27,7 +27,7 @@ idna==3.6
     #   requests
 pycparser==2.21
     # via cffi
-pygithub==2.2.0
+pygithub==2.3.0
     # via -r ingest/github.in
 pyjwt[crypto]==2.8.0
     # via pygithub

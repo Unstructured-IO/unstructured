@@ -10,7 +10,7 @@ anyio==3.7.1
     #   httpx
 astrapy==0.7.7
     # via -r ingest/astra.in
-cassandra-driver==3.29.0
+cassandra-driver==3.29.1
     # via cassio
 cassio==0.1.5
     # via astrapy

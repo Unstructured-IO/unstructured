@@ -17,16 +17,16 @@ click==8.1.7
     # via
     #   -c base.txt
     #   sacremoses
-filelock==3.13.1
+filelock==3.13.3
     # via
     #   huggingface-hub
     #   torch
     #   transformers
-fsspec==2024.2.0
+fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
-huggingface-hub==0.21.4
+huggingface-hub==0.22.1
     # via
     #   tokenizers
     #   transformers
