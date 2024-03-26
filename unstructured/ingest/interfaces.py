@@ -235,9 +235,7 @@ class ChunkingConfig(BaseConfig):
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title"
-            if self.chunk_elements is True
-            else None
+            else "by_title" if self.chunk_elements is True else None
         )
         return (
             chunk_by_title(
