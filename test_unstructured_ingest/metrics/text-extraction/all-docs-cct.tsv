@@ -13,6 +13,6 @@ handbook-1p.docx	docx	local-single-file-basic-chunking	0.858	0.029
 fake-html-cp1252.html	html	local-single-file-with-encoding	0.659	0.0
 layout-parser-paper-with-table.jpg	jpg	local-single-file-with-pdf-infer-table-structure	0.716	0.032
 layout-parser-paper.pdf	pdf	local-single-file-with-pdf-infer-table-structure	0.95	0.029
-2023-Jan-economic-outlook.pdf	pdf	s3	0.834	0.054
+2023-Jan-economic-outlook.pdf	pdf	s3	0.84	0.044
 page-with-formula.pdf	pdf	s3	0.971	0.021
-recalibrating-risk-report.pdf	pdf	s3	0.966	0.009
+recalibrating-risk-report.pdf	pdf	s3	0.968	0.008
