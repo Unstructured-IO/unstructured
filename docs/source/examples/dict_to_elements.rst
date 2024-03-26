@@ -90,6 +90,8 @@ Combine JSON files into a single dataset for further processing.
 
 .. code-block:: python
 
+   from unstructured.staging.base import read_and_combine_json
+
    combined_json_data = read_and_combine_json("Connector-Output/world-development-bank-2023")
 
 
