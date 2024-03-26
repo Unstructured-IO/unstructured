@@ -1,5 +1,5 @@
 from unstructured.documents.elements import Text
-from unstructured.embed.vertexai import VertexAIEmbeddingConfig, VertextAIEmbeddingEncoder
+from unstructured.embed.vertexai import VertexAIEmbeddingConfig, VertexAIEmbeddingEncoder
 
 
 def test_embed_documents_does_not_break_element_to_dict(mocker):
@@ -8,9 +8,9 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     mock_client.embed_documents.return_value = [1, 2]
 
     # Mock create_client to return our mock_client
-    mocker.patch.object(VertextAIEmbeddingEncoder, "create_client", return_value=mock_client)
+    mocker.patch.object(VertexAIEmbeddingEncoder, "create_client", return_value=mock_client)
 
-    encoder = VertextAIEmbeddingEncoder(config=VertexAIEmbeddingConfig())
+    encoder = VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig())
     elements = encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
     )
