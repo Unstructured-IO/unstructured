@@ -1,10 +1,11 @@
 #! /usr/bin/env python3
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import click
 
 from unstructured.metrics.evaluate import (
+    filter_metrics,
     get_mean_grouping,
     measure_element_type_accuracy,
     measure_table_structure_accuracy,
@@ -41,7 +42,7 @@ def main():
     help="Directory to save the output evaluation metrics to. Default to \
         your/working/dir/metrics/",
 )
-@click.option("--grouping", type=str, help="Input field for aggregration, or leave blank if none.")
+@click.option("--group_by", type=str, help="Input field for aggregration, or leave blank if none.")
 @click.option(
     "--weights",
     type=(int, int, int),
@@ -73,7 +74,7 @@ def measure_text_extraction_accuracy_command(
     output_type: str,
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
-    grouping: Optional[str] = None,
+    group_by: Optional[str] = None,
 ):
     return measure_text_extraction_accuracy(
         output_dir,
@@ -81,7 +82,7 @@ def measure_text_extraction_accuracy_command(
         output_list,
         source_list,
         export_dir,
-        grouping,
+        group_by,
         weights,
         visualize,
         output_type,
@@ -134,7 +135,7 @@ def measure_element_type_accuracy_command(
 
 @main.command()
 @click.option(
-    "--grouping",
+    "--group_by",
     type=str,
     required=True,
     help="The category to group by; valid values are 'doctype' and 'connector'.",
@@ -157,8 +158,31 @@ def measure_element_type_accuracy_command(
     type=str,
     help="Evaluated metric. Expecting one of 'text_extraction' or 'element_type'",
 )
-def get_mean_grouping_command(grouping: str, data_input: str, export_dir: str, eval_name: str):
-    return get_mean_grouping(grouping, data_input, export_dir, eval_name)
+@click.option(
+    "--agg_name",
+    type=str,
+    help="String to use with export filename. Default is `cct` for `text_extraction` \
+        and `element-type` for `element_type`",
+)
+@click.option(
+    "--export_filename", type=str, help="Optional. Define your file name for the output here."
+)
+def get_mean_grouping_command(
+    group_by: str,
+    data_input: str,
+    export_dir: str,
+    eval_name: str,
+    agg_name: Optional[str] = None,
+    export_filename: Optional[str] = None,
+):
+    return get_mean_grouping(
+        group_by=group_by,
+        data_input=data_input,
+        export_dir=export_dir,
+        eval_name=eval_name,
+        agg_name=agg_name,
+        export_filename=export_filename,
+    )
 
 
 @main.command()
@@ -211,6 +235,40 @@ def measure_table_structure_accuracy_command(
 ):
     return measure_table_structure_accuracy(
         output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
+    )
+
+
+@main.command()
+@click.option(
+    "--data_input", type=str, required=True, help="Takes in path to data file as .tsv .csv .txt"
+)
+@click.option(
+    "--filter_list",
+    type=str,
+    required=True,
+    help="Takes in list of string to filter the data_input.",
+)
+@click.option(
+    "--filter_by",
+    type=str,
+    required=True,
+    help="Field from data_input to match with filter_list. Default is `filename`.",
+)
+@click.option(
+    "--export_filename", type=str, help="Export filename. Required when return_type is `file`"
+)
+@click.option("--export_dir", type=str, help="Export directory.")
+@click.option("--return_type", type=str, help="`dataframe` or `file`. Default is `file`.")
+def filter_metrics_command(
+    data_input: str,
+    filter_list: Union[str, List[str]],
+    filter_by: str = "filename",
+    export_filename: Optional[str] = None,
+    export_dir: str = "metrics",
+    return_type: str = "file",
+):
+    return filter_metrics(
+        data_input, filter_list, filter_by, export_filename, export_dir, return_type
     )
 
 

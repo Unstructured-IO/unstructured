@@ -158,9 +158,9 @@ class ElementMetadata:
     # - Add the field declaration with type here at the top. This makes it a "known" field and
     #   enables type-checking and completion.
     # - Add a parameter with default for field in __init__() and assign it in __init__() body.
-    # - Add a consolidation strategy for the field below in `ConsolidationStrategy`
-    #   `.field_consolidation_strategies()` to be used when consolidating metadata fields of a
-    #   section's elements during chunking.
+    # - Add a consolidation strategy for the new field in
+    #   `ConsolidationStrategy.field_consolidation_strategies()` below. This strategy will be used
+    #   to consolidate this new metadata field from each pre-chunk element during chunking.
     # - Add field-name to DEBUG_FIELD_NAMES if it shouldn't appear in dict/JSON or participate in
     #   equality comparison.
 
@@ -189,6 +189,8 @@ class ElementMetadata:
     link_texts: Optional[list[str]]
     link_urls: Optional[list[str]]
     links: Optional[list[Link]]
+    # -- used in chunks only, allowing access to element(s) chunk was formed from when enabled --
+    orig_elements: Optional[list[Element]]
     # -- the worksheet name in XLXS documents --
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
@@ -234,6 +236,7 @@ class ElementMetadata:
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
         links: Optional[list[Link]] = None,
+        orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
         parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
@@ -272,6 +275,7 @@ class ElementMetadata:
         self.link_texts = link_texts
         self.link_urls = link_urls
         self.links = links
+        self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
         self.parent_id = parent_id
@@ -317,6 +321,8 @@ class ElementMetadata:
         This would generally be a dict formed using the `.to_dict()` method and stored as JSON
         before "rehydrating" it using this method.
         """
+        from unstructured.staging.base import elements_from_base64_gzipped_json
+
         # -- avoid unexpected mutation by working on a copy of provided dict --
         meta_dict = copy.deepcopy(meta_dict)
         self = ElementMetadata()
@@ -325,6 +331,8 @@ class ElementMetadata:
                 self.coordinates = CoordinatesMetadata.from_dict(field_value)
             elif field_name == "data_source":
                 self.data_source = DataSourceMetadata.from_dict(field_value)
+            elif field_name == "orig_elements":
+                self.orig_elements = elements_from_base64_gzipped_json(field_value)
             else:
                 setattr(self, field_name, field_value)
 
@@ -368,6 +376,8 @@ class ElementMetadata:
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
+        from unstructured.staging.base import elements_to_base64_gzipped_json
+
         meta_dict = copy.deepcopy(dict(self.fields))
 
         # -- remove fields that should not be serialized --
@@ -386,6 +396,8 @@ class ElementMetadata:
             meta_dict["coordinates"] = self.coordinates.to_dict()
         if self.data_source is not None:
             meta_dict["data_source"] = self.data_source.to_dict()
+        if self.orig_elements is not None:
+            meta_dict["orig_elements"] = elements_to_base64_gzipped_json(self.orig_elements)
 
         return meta_dict
 
@@ -475,6 +487,7 @@ class ConsolidationStrategy(enum.Enum):
             "link_urls": cls.LIST_CONCATENATE,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
+            "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,

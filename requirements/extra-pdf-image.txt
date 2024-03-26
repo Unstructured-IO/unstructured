@@ -250,7 +250,7 @@ typing-extensions==4.10.0
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.23
+unstructured-inference==0.7.25
     # via -r extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
@@ -259,7 +259,6 @@ unstructured-pytesseract==0.3.12
 urllib3==1.26.18
     # via
     #   -c base.txt
-    #   -c constraints.in
     #   requests
 wrapt==1.16.0
     # via

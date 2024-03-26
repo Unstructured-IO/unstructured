@@ -55,6 +55,7 @@ all_tests=(
   'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
+  'local-embed-bedrock.sh'
   'sftp.sh'
   'mongodb.sh'
   'opensearch.sh'

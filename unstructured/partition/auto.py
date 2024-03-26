@@ -139,12 +139,12 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] = None,
     headers: Dict[str, str] = {},
-    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
+    skip_infer_table_types: List[str] = [],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[List[str]] = None,
     detect_language_per_element: bool = False,
-    pdf_infer_table_structure: bool = False,
+    pdf_infer_table_structure: bool = True,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
@@ -155,6 +155,7 @@ def partition(
     request_timeout: Optional[int] = None,
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
+    date_from_file_object: bool = False,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -199,6 +200,8 @@ def partition(
             detect_language_per_element
                 Detect language per element instead of at the document level.
     pdf_infer_table_structure
+        Deprecated! Use `skip_infer_table_types` to opt out of table extraction for any document
+        type.
         If True and strategy=hi_res, any Table Elements extracted from a PDF will include an
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
@@ -236,6 +239,10 @@ def partition(
     model_name
         The layout detection model used when partitioning strategy is set to `hi_res`. To be
         deprecated in favor of `hi_res_model_name`.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True and inference
+        from message header failed, attempt to infer last_modified metadata from bytes,
+        otherwise set it to None.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -252,6 +259,13 @@ def partition(
             "Please use metadata_filename instead.",
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
+    kwargs.setdefault("date_from_file_object", date_from_file_object)
+
+    if not pdf_infer_table_structure:
+        logger.warning(
+            "The pdf_infer_table_structure kwarg is deprecated. Please use skip_infer_table_types "
+            "instead."
+        )
 
     languages = check_language_args(languages or [], ocr_languages)
 
@@ -554,12 +568,10 @@ def decide_table_extraction(
     doc_type = filetype.name.lower() if filetype else None
 
     if doc_type == "pdf":
-        if doc_type in skip_infer_table_types and pdf_infer_table_structure:
-            logger.warning(
-                f"Conflict between variables skip_infer_table_types: {skip_infer_table_types} "
-                f"and pdf_infer_table_structure: {pdf_infer_table_structure}, "
-                "please reset skip_infer_table_types to turn on table extraction for PDFs.",
-            )
-        return doc_type not in skip_infer_table_types or pdf_infer_table_structure
+        # For backwards compatibility. Ultimately we want to remove pdf_infer_table_structure
+        # completely and rely exclusively on `skip_infer_table_types` for all file types.
+        # Until then for pdf files we first check pdf_infer_table_structure and then update
+        # based on skip_infer_tables.
+        return pdf_infer_table_structure and doc_type not in skip_infer_table_types
 
     return doc_type not in skip_infer_table_types

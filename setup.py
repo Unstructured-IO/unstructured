@@ -104,7 +104,7 @@ setup(
     packages=find_packages(),
     version=__version__,
     entry_points={
-        "console_scripts": ["unstructured-ingest=unstructured.txtgest.main:main"],
+        "console_scripts": ["unstructured-ingest=unstructured.ingest.main:main"],
     },
     install_requires=load_requirements(),
     extras_require={
@@ -136,6 +136,7 @@ setup(
         "biomed": load_requirements("requirements/ingest/biomed.txt"),
         "box": load_requirements("requirements/ingest/box.txt"),
         "chroma": load_requirements("requirements/ingest/chroma.txt"),
+        "clarifai": load_requirements("requirements/ingest/clarifai.txt"),
         "confluence": load_requirements("requirements/ingest/confluence.txt"),
         "delta-table": load_requirements("requirements/ingest/delta-table.txt"),
         "discord": load_requirements("requirements/ingest/discord.txt"),

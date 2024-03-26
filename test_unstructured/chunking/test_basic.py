@@ -6,6 +6,11 @@ shared by all chunking strategies and no extra rules like perserve section or pa
 
 from __future__ import annotations
 
+from typing import Any
+
+import pytest
+
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import CompositeElement, Text, Title
 from unstructured.partition.docx import partition_docx
@@ -106,3 +111,58 @@ def test_it_chunks_elements_when_the_user_already_has_them():
         CompositeElement("Lorem ipsum dolor sit amet consectetur adipiscing elit. In"),
         CompositeElement("rhoncus ipsum sed lectus porta volutpat."),
     ]
+
+
+def test_it_includes_original_elements_as_metadata_when_requested():
+    element = Title("Introduction")
+    element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
+    element_3 = Text("In rhoncus ipsum sed lectus porta volutpat.")
+
+    chunks = chunk_elements(
+        [element, element_2, element_3], max_characters=70, include_orig_elements=True
+    )
+
+    assert len(chunks) == 2
+    chunk = chunks[0]
+    assert chunk == CompositeElement(
+        "Introduction\n\nLorem ipsum dolor sit amet consectetur adipiscing elit."
+    )
+    assert chunk.metadata.orig_elements == [element, element_2]
+    # --
+    chunk = chunks[1]
+    assert chunk == CompositeElement("In rhoncus ipsum sed lectus porta volutpat.")
+    assert chunk.metadata.orig_elements == [element_3]
+
+
+# ------------------------------------------------------------------------------------------------
+# UNIT TESTS
+# ------------------------------------------------------------------------------------------------
+
+
+class Describe_chunk_elements:
+    """Unit-test suite for `unstructured.chunking.basic.chunk_elements()` function."""
+
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"include_orig_elements": True}, True),
+            ({"include_orig_elements": False}, False),
+            ({"include_orig_elements": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_supports_the_include_orig_elements_option(
+        self, kwargs: dict[str, Any], expected_value: bool, _chunk_elements_: Mock
+    ):
+        # -- this line would raise if "include_orig_elements" was not an available parameter on
+        # -- `chunk_elements()`.
+        chunk_elements([], **kwargs)
+
+        _, opts = _chunk_elements_.call_args.args
+        assert opts.include_orig_elements is expected_value
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def _chunk_elements_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.chunking.basic._chunk_elements")

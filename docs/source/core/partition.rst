@@ -872,7 +872,7 @@ settings supported by the API.
   filename = "example-docs/DA-1p.pdf"
 
   elements = partition_via_api(
-    filename=filename, api_key=api_key, strategy="auto", pdf_infer_table_structure="true"
+    filename=filename, api_key=api_key, strategy="auto"
   )
 
 If you are using the `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at your Unstructured SaaS API URL.

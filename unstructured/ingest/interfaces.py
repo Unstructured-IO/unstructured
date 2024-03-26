@@ -22,7 +22,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, e
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.staging.base import convert_to_dict, flatten_dict
+from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 A = t.TypeVar("A", bound="DataClassJsonMixin")
 
@@ -81,7 +81,7 @@ class RetryStrategyConfig(BaseConfig):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = False
+    pdf_infer_table_structure: bool = True
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
@@ -186,6 +186,9 @@ class EmbeddingConfig(BaseConfig):
     provider: str
     api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: t.Optional[str] = None
+    aws_access_key_id: t.Optional[str] = None
+    aws_secret_access_key: t.Optional[str] = None
+    aws_region: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
         kwargs = {}
@@ -209,6 +212,16 @@ class EmbeddingConfig(BaseConfig):
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-aws-bedrock":
+            from unstructured.embed.bedrock import BedrockEmbeddingConfig, BedrockEmbeddingEncoder
+
+            return BedrockEmbeddingEncoder(
+                config=BedrockEmbeddingConfig(
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                )
+            )
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
@@ -586,12 +599,11 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems_raw = self.partition_file(partition_config=partition_config, **partition_kwargs)
-        isd_elems = convert_to_dict(isd_elems_raw)
+        elements = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        element_dicts = elements_to_dicts(elements)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
-        for elem in isd_elems:
-            # type: ignore
+        for elem in element_dicts:
             if partition_config.metadata_exclude and partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "

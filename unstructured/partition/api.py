@@ -13,7 +13,7 @@ from unstructured_client.models import shared
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
-from unstructured.staging.base import dict_to_elements, elements_from_json
+from unstructured.staging.base import elements_from_dicts, elements_from_json
 
 
 def partition_via_api(
@@ -214,7 +214,7 @@ def partition_multiple_via_api(
             response_list = [response_list]
 
         for document in response_list:
-            documents.append(dict_to_elements(document))
+            documents.append(elements_from_dicts(document))
         return documents
     else:
         raise ValueError(
