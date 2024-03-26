@@ -102,7 +102,7 @@ class ENVConfig:
         When the intersection region area divided by self area is larger than this threshold self is
         considered a subregion of the other
         """
-        return self._get_float("OCR_LAYOUT_SUBREGION_THRESHOLD", 1.0)
+        return self._get_float("OCR_LAYOUT_SUBREGION_THRESHOLD", 0.99)
 
 
 env_config = ENVConfig()
