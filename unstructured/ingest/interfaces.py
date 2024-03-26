@@ -209,6 +209,13 @@ class EmbeddingConfig(BaseConfig):
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-vertexai":
+            from unstructured.embed.vertexai import (
+                VertexAIEmbeddingConfig,
+                VertexAIEmbeddingEncoder,
+            )
+
+            return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
@@ -228,7 +235,9 @@ class ChunkingConfig(BaseConfig):
         chunking_strategy = (
             self.chunking_strategy
             if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
+            else "by_title"
+            if self.chunk_elements is True
+            else None
         )
         return (
             chunk_by_title(

@@ -68,7 +68,7 @@ response_code=$(curl \
   --data '
 {
   "name": "'"$PINECONE_INDEX"'",
-  "dimension": 384,
+  "dimension": 768,
   "metric": "cosine",
   "pods": 1,
   "pod_type": "p1.x1"
@@ -93,7 +93,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --chunk-elements \
   --chunk-combine-text-under-n-chars 200 --chunk-new-after-n-chars 2500 --chunk-max-characters 38000 --chunk-multipage-sections \
-  --embedding-provider "langchain-huggingface" \
+  --embedding-provider "langchain-vertexai" \
   pinecone \
   --api-key "$PINECONE_API_KEY" \
   --index-name "$PINECONE_INDEX" \
