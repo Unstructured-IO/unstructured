@@ -519,7 +519,7 @@ def _partition_pdf_or_image_local(
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
     for page in final_document_layout.pages:
-        for page_el_index, el in enumerate(page.elements):
+        for el in page.elements:
             el.text = el.text or ""
 
     elements = document_to_element_list(
