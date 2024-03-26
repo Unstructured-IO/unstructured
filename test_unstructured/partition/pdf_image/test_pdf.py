@@ -3,12 +3,14 @@ import logging
 import math
 import os
 import tempfile
+from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
+from pypdf import PdfReader, PdfWriter
 from unstructured_inference.inference import layout
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
@@ -31,6 +33,9 @@ from unstructured.partition.pdf_image import ocr, pdfminer_processing
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
+)
+from unstructured.staging.base import (
+    convert_to_dataframe,
 )
 
 
@@ -1230,3 +1235,150 @@ def test_partition_pdf_always_keep_all_image_elements(
     )
     image_elements = [el for el in elements if el.category == ElementType.IMAGE]
     assert len(image_elements) == 3
+
+
+@pytest.fixture
+def mock_pdfwriter_with_duplicate_pages():
+    test_file = Path("example-docs") / "DA-1p.pdf"
+    original_pdf = PdfReader(test_file)
+
+    writer = PdfWriter()
+    first_page = original_pdf.pages[0]
+
+    # Duplicate the first page
+    writer.add_page(first_page)
+    writer.add_page(first_page)
+    return writer
+
+
+@pytest.fixture
+def expected_element_ids_for_fast_strategy():
+    return [
+        "bcb52980d2fa3de4b5c2ae7cc059e587",
+        "54f37f5855a683c59c7e5e462e8bf835",
+        "80e72e579e82c5e8374f4bae04afbee0",
+        "f64e1c2f5188d3484d07b8ee56c810b5",
+        "219a7245a961b2f31014c2e003325679",
+        "443b33e809f7a87878a531ac67d9fab4",
+        "beae05a2dea26cb4566cbb1b0ccc5283",
+        "7f3e7aeb75daa69802da98b2c87d4ef8",
+        "4465cf24225d06d0def7def21dc8f223",
+        "f1cd29d4f771feb9b3927d86f7604b4c",
+        "b1d948cd5f08332e48f8175e58d15341",
+        "47f7c90be21c7e072ade41aa0463d48e",
+        "5f3b10d86b63dd2d0c9219a1f86cc3fb",
+        "dabf78977a2f19d7511f9febf87634bb",
+        "8c4e7756efdf3ee18b7b2a8ed9554f72",
+        "f373da11f92112fd0980ceb225cba85a",
+        "16baf3ece0b01d18adcaf6cb09ef9054",
+        "3546b0401eacd629177b9dd53a30a8a7",
+        "0b60e2e272de96c80524bb24d19272c5",
+        "9300ec3b150913be07c6d2773aa317ea",
+        "e0f0640fdc9ea6e0f16a8c5932dc53ab",
+        "e50df5fd6aec3d1c3d8ad43dc780f0ba",
+        "72b4cfbee0cfe3ca1e2026ab0ef895f7",
+        "ef4b5abfcc9837004e238c2095318191",
+        "7b785f7841ba51dbabc14a0f15e75e9f",
+        "d9d7e2cfe23c90d2bd4c0041ce227199",
+        "774c5160e8a6fcf41c7e3777c32f26de",
+        "725b3a36665e5dcad3e83668d120e711",
+    ]
+
+
+@pytest.fixture
+def expected_element_ids_for_hi_res_strategy():
+    return [
+        "d2168dfb5101ed87783a1c498499240b",
+        "a97d8cfd2077e256e0afb3ddec350d0c",
+        "9bdbcdf919bb3e24f09b600138fd6a87",
+        "41d61209e7d8fc4f8b0b8e079b92dc02",
+        "c1c36d770736b12ebc9736051fee9406",
+        "34d45558e7858e85a2022a7249e0a644",
+        "9de30506d148c4c197a59424c0867651",
+        "d37bfdea7b6b343add8d9c05f79da8e5",
+        "460efe5a8373cc94ba55b5307b8f77ed",
+        "1b96e2e0574708389acb7845185e9bc7",
+        "cd6c228f41b85b46f108606d409bf6c1",
+        "4fe254276aa49edbb2a7f55308079a94",
+        "206aff2421a3ed7182caa1a8bfdaadba",
+        "c9f814999431b8e3334aec004ee87c5f",
+        "e5925dab23eca6183271c1332bd0ee9b",
+        "cf09e049df542adfcbd00715bb80dc29",
+        "c0acb783decbb19e970c4b883baa7f78",
+        "099388b6f77882a27599684b9ed8d3e5",
+        "beecf51bf88541e82a300818ae7044d2",
+        "f42e0b40d0dce09e5f9869baeaa80eb1",
+        "770479f626902e3ab28285b23b1a2d9e",
+        "4012272115da7453568606c2c0e2a0f5",
+        "cd6da2d1f5bb8a92865b7c6b9ee91fc9",
+        "31694515c44340f70f5ad182cc30fcf8",
+        "368b23047d1a5118f7ee3aba09e898af",
+        "667cf233836b96608bba0963525fa93e",
+        "009c68131212cebb6f320222c703c36e",
+        "f55c0b2fbe7947b502e83774d9605e77",
+    ]
+
+
+@pytest.fixture
+def expected_element_ids_for_ocr_strategy():
+    return [
+        "bcb52980d2fa3de4b5c2ae7cc059e587",
+        "54f37f5855a683c59c7e5e462e8bf835",
+        "80e72e579e82c5e8374f4bae04afbee0",
+        "f64e1c2f5188d3484d07b8ee56c810b5",
+        "219a7245a961b2f31014c2e003325679",
+        "443b33e809f7a87878a531ac67d9fab4",
+        "beae05a2dea26cb4566cbb1b0ccc5283",
+        "7f3e7aeb75daa69802da98b2c87d4ef8",
+        "4465cf24225d06d0def7def21dc8f223",
+        "f1cd29d4f771feb9b3927d86f7604b4c",
+        "b1d948cd5f08332e48f8175e58d15341",
+        "47f7c90be21c7e072ade41aa0463d48e",
+        "5f3b10d86b63dd2d0c9219a1f86cc3fb",
+        "8c4e7756efdf3ee18b7b2a8ed9554f72",
+        "f373da11f92112fd0980ceb225cba85a",
+        "16baf3ece0b01d18adcaf6cb09ef9054",
+        "3546b0401eacd629177b9dd53a30a8a7",
+        "0b60e2e272de96c80524bb24d19272c5",
+        "9300ec3b150913be07c6d2773aa317ea",
+        "e0f0640fdc9ea6e0f16a8c5932dc53ab",
+        "e50df5fd6aec3d1c3d8ad43dc780f0ba",
+        "72b4cfbee0cfe3ca1e2026ab0ef895f7",
+        "ef4b5abfcc9837004e238c2095318191",
+        "7b785f7841ba51dbabc14a0f15e75e9f",
+        "d9d7e2cfe23c90d2bd4c0041ce227199",
+        "774c5160e8a6fcf41c7e3777c32f26de",
+    ]
+
+
+@pytest.fixture
+def expected_ids(request):
+    return request.getfixturevalue(request.param)
+
+
+@pytest.mark.parametrize(
+    ("strategy", "expected_ids"),
+    [
+        (PartitionStrategy.FAST, "expected_element_ids_for_fast_strategy"),
+        (PartitionStrategy.HI_RES, "expected_element_ids_for_hi_res_strategy"),
+        (PartitionStrategy.OCR_ONLY, "expected_element_ids_for_ocr_strategy"),
+    ],
+    indirect=["expected_ids"],
+)
+def test_unique_and_deterministic_element_ids(
+    strategy, expected_ids, mock_pdfwriter_with_duplicate_pages, tmpdir
+):
+    pdf_path = Path(tmpdir) / "mock.pdf"
+    mock_pdfwriter_with_duplicate_pages.write(pdf_path)
+
+    elements = pdf.partition_pdf(pdf_path, strategy=strategy)
+    elements_df = convert_to_dataframe(elements)
+
+    duplicated_text_example = "MAIN GAME"
+    element_repetitions = elements_df["text"].str.count(duplicated_text_example).sum()
+    assert element_repetitions == 2, f"Element {duplicated_text_example} needs to be repeated twice"
+    assert {element.metadata.page_number for element in elements} == {1, 2}
+    assert elements_df["element_id"].is_unique, "Element IDs are not unique"
+    assert all(
+        element.id == expected_id for element, expected_id in zip(elements, expected_ids)
+    ), "Element IDs do not match expected IDs"
