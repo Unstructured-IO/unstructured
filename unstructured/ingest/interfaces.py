@@ -81,7 +81,7 @@ class RetryStrategyConfig(BaseConfig):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = False
+    pdf_infer_table_structure: bool = True
     strategy: str = "auto"
     ocr_languages: t.Optional[t.List[str]] = None
     encoding: t.Optional[str] = None
@@ -186,6 +186,9 @@ class EmbeddingConfig(BaseConfig):
     provider: str
     api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: t.Optional[str] = None
+    aws_access_key_id: t.Optional[str] = None
+    aws_secret_access_key: t.Optional[str] = None
+    aws_region: t.Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
         kwargs = {}
@@ -209,6 +212,16 @@ class EmbeddingConfig(BaseConfig):
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-aws-bedrock":
+            from unstructured.embed.bedrock import BedrockEmbeddingConfig, BedrockEmbeddingEncoder
+
+            return BedrockEmbeddingEncoder(
+                config=BedrockEmbeddingConfig(
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                )
+            )
         elif self.provider == "langchain-vertexai":
             from unstructured.embed.vertexai import (
                 VertexAIEmbeddingConfig,

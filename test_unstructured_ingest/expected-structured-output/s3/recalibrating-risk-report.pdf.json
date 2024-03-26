@@ -378,6 +378,27 @@
     "type": "NarrativeText"
   },
   {
+    "element_id": "d977fff4c69c437aa4a44a5c5f4bf02e",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4
+    },
+    "text": "Rank Order Laypersons",
+    "type": "Title"
+  },
+  {
     "element_id": "92a15f52537ead259f4d9c2da1b22454",
     "metadata": {
       "data_source": {

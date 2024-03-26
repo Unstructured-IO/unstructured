@@ -31,6 +31,28 @@ from unstructured.partition.text import partition_text
 from unstructured.staging import base
 
 
+def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_from_a_JSON_string():
+    base64_elements_str = (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+    )
+
+    elements = base.elements_from_base64_gzipped_json(base64_elements_str)
+
+    assert elements == [Title("Lorem"), Text("Lorem Ipsum")]
+
+
+def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
+    elements = [Title("Lorem"), Text("Lorem Ipsum")]
+
+    assert base.elements_to_base64_gzipped_json(elements) == (
+        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
+        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
+        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+    )
+
+
 def test_elements_to_dicts():
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]
     isd = base.elements_to_dicts(elements)
