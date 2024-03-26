@@ -13,6 +13,9 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import EmailAddress, ListItem, NarrativeText, Table, Title
 from unstructured.documents.html import HTMLTitle
 from unstructured.partition.html import partition_html
+from unstructured.staging.base import (
+    convert_to_dataframe,
+)
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
@@ -723,3 +726,43 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
     )
     partitions = partition_html(text=table_html)
     assert partitions[0].metadata.text_as_html == expected
+
+
+@pytest.fixture
+def partitioned_html_with_duplicate_elements():
+    filename = "example-docs/fake-html-duplicates.html"
+    with open(filename) as f:
+        elements = partition_html(file=f)
+    return elements
+
+
+def test_each_element_has_page_number_and_index_metadata(partitioned_html_with_duplicate_elements):
+    for element in partitioned_html_with_duplicate_elements:
+        assert element.metadata.page_number is not None
+        assert element.metadata.index_on_page is not None
+
+
+def test_all_element_ids_are_unique(partitioned_html_with_duplicate_elements):
+    assert convert_to_dataframe(partitioned_html_with_duplicate_elements).element_id.is_unique
+
+
+@pytest.mark.parametrize(
+    "expected_ids",
+    [
+        [
+            "e5fd0a829b734744f52ae195859f7741",
+            "a68c75c49dde8b76d6d7208ad6ec9b6a",
+            "98a69145a0223bc7f82a75a11293ba3d",
+            "f36ded43d030fb5c6146d5961f767a85",
+            "d6ca7824f33202a7a86c02c979b42c91",
+            "a677501bee476d34f96af566d648531e",
+            "7583e5d08909a23e8214f3d1ee87e50b",
+            "490190ffe8519e8cd8b6d750d334397e",
+            "dbf7bcdc973922a41c8c51505b873340",
+            "346cc2595ed5c0b34c7d818b9cc0c891",
+        ],
+    ],
+)
+def test_element_ids_are_deterministic(partitioned_html_with_duplicate_elements, expected_ids):
+    """Test that element IDs are deterministic and match the expected IDs."""
+    assert [element.id for element in partitioned_html_with_duplicate_elements] == expected_ids
