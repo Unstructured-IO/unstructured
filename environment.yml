@@ -12,6 +12,7 @@ dependencies:
   - pywin32
   - poppler
   - torchvision
+  - pip
   - pip:
     - huggingface-hub
     - layoutparser
