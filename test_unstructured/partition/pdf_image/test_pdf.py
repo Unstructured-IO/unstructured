@@ -1368,17 +1368,31 @@ def expected_ids(request):
 def test_unique_and_deterministic_element_ids(
     strategy, expected_ids, mock_pdfwriter_with_duplicate_pages, tmpdir
 ):
+    # GIVEN
     pdf_path = Path(tmpdir) / "mock.pdf"
     mock_pdfwriter_with_duplicate_pages.write(pdf_path)
 
+    # WHEN
     elements = pdf.partition_pdf(pdf_path, strategy=strategy)
     elements_df = convert_to_dataframe(elements)
 
+    # THEN
     duplicated_text_example = "MAIN GAME"
     element_repetitions = elements_df["text"].str.count(duplicated_text_example).sum()
-    assert element_repetitions == 2, f"Element {duplicated_text_example} needs to be repeated twice"
-    assert {element.metadata.page_number for element in elements} == {1, 2}
+
+    # Ensure fixture is working as expected
+    assert (
+        element_repetitions == 2
+    ), f"Element {duplicated_text_example} is supposed to be duplicated"
+    assert {element.metadata.page_number for element in elements} == {
+        1,
+        2,
+    }, "Page numbers are incorrect"
+
+    # Expect uniqueness
     assert elements_df["element_id"].is_unique, "Element IDs are not unique"
+
+    # Expect determinism
     assert all(
         element.id == expected_id for element, expected_id in zip(elements, expected_ids)
     ), "Element IDs do not match expected IDs"
