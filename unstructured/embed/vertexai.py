@@ -77,7 +77,7 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
         extras="embed-vertexai",
     )
     def create_client(self) -> "VertexAIEmbeddings":
-        """Creates a langchain VertexAI python client to embed elements."""
+        """Creates a Langchain VertexAI python client to embed elements."""
         from langchain_google_vertexai import VertexAIEmbeddings
 
         self.register_application_credentials()
