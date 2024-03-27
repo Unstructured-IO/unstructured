@@ -6,6 +6,7 @@
 * **Add `compound_structure_acc` metric to table eval.** Add a new property to `unstructured.metrics.table_eval.TableEvaluation`: `composite_structure_acc`, which is computed from the element level row and column index and content accuracy scores
 * **Add `.metadata.orig_elements` to chunks.** `.metadata.orig_elements: list[Element]` is added to chunks during the chunking process (when requested) to allow access to information from the elements each chunk was formed from. This is useful for example to recover metadata fields that cannot be consolidated to a single value for a chunk, like `page_number`, `coordinates`, and `image_base64`.
 * **Add `read_and_combine_json` function**. This function reads, deserializes, and combines JSON data from multiple files in a directory into a single list of Iterable objects.
+* **Add `--include_orig_elements` option to Ingest CLI.** By default, when chunking, the original elements used to form each chunk are added to `chunk.metadata.orig_elements` for each chunk. * The `include_orig_elements` parameter allows the user to turn off this behavior to produce a smaller payload when they don't need this metadata.
 
 ### Features
 
