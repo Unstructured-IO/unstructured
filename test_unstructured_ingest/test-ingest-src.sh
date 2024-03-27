@@ -56,6 +56,8 @@ all_tests=(
   'hubspot.sh'
   'local-embed.sh'
   'local-embed-bedrock.sh'
+  'local-embed-octoai.sh'
+  'local-embed-vertexai.sh'
   'sftp.sh'
   'mongodb.sh'
   'opensearch.sh'
