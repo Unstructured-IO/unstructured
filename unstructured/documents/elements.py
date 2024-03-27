@@ -662,7 +662,7 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self._id: str | uuid.UUID | NoID | UUID = element_id
+        self.id: str | NoID | UUID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -673,12 +673,8 @@ class Element(abc.ABC):
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
 
-    @property
-    def id(self) -> str | uuid.UUID | NoID | UUID:
-        return self._id
-
     def id_to_uuid(self):
-        self._id = str(uuid.uuid4())
+        self.id = str(uuid.uuid4())
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -782,16 +778,16 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            self._id = self.calculate_hash(metadata)
+            self.id = self._id_to_hash()
         elif isinstance(element_id, UUID):
-            self._id = uuid.uuid4()
+            self.id = uuid.uuid4()
         elif isinstance(element_id, str):
-            self._id = element_id
+            self.id = element_id
         else:
             raise ValueError("ID must be a string, UUID, or NoID")
 
         super().__init__(
-            element_id=self._id,
+            element_id=self.id,
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
@@ -818,24 +814,6 @@ class Text(Element):
             data = f"{self.text}{other}"
 
         return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
-
-    @property
-    def id(self) -> str:
-        if isinstance(self._id, (NoID, HashValue)):
-            # Ensure that hash is always up-to-date
-            self._id = self.calculate_hash(self.metadata)
-        return str(self._id)
-
-    @id.setter
-    def id(self, value: str | uuid.UUID | NoID | UUID):
-        if isinstance(value, (str, uuid.UUID)):
-            self._id = value
-        elif isinstance(value, UUID):
-            self._id = uuid.uuid4()
-        elif isinstance(value, NoID):
-            self._id = self.calculate_hash(self.metadata)
-        else:
-            raise ValueError("ID must be a string, UUID, or NoID")
 
     def __eq__(self, other: object):
         if not isinstance(other, Text):
