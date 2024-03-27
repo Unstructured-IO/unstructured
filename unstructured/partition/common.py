@@ -19,7 +19,9 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     ElementType,
+    HashValue,
     ListItem,
+    NoID,
     PageBreak,
     Text,
     Title,
@@ -219,6 +221,16 @@ def layout_list_to_list_items(
             list_items.append(item)
 
     return list_items
+
+
+def recalculate_ids(elements: List[Element]) -> List[Element]:
+    """Updates the id of each element in the list of elements
+    based on the element's attributes and its index in sequence
+    """
+    for idx_in_seq, element in enumerate(elements):
+        if isinstance(element.id, (NoID, HashValue)):
+            element.id = str(element._id_to_hash(idx_in_seq))
+    return elements
 
 
 def set_element_hierarchy(
