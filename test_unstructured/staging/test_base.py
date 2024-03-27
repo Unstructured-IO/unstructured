@@ -82,6 +82,44 @@ def test_elements_from_dicts():
     ]
 
 
+def test_read_and_combine_json(tmp_path: str):
+    sample_data_1 = [
+        {"text": "Element 1 from File 1", "type": "NarrativeText"},
+        {"text": "Element 2 from File 1", "type": "Title"},
+    ]
+    sample_data_2 = [
+        {"text": "Element 1 from File 2", "type": "NarrativeText"},
+        {"text": "Element 2 from File 2", "type": "ListItem"},
+    ]
+
+    file_path_1 = tmp_path / "sample_1.json"
+    file_path_2 = tmp_path / "sample_2.json"
+
+    # Ensure the directory exists
+    pathlib.Path(tmp_path).mkdir(parents=True, exist_ok=True)
+
+    with open(file_path_1, "w", encoding="utf-8") as f:
+        json.dump(sample_data_1, f)
+    with open(file_path_2, "w", encoding="utf-8") as f:
+        json.dump(sample_data_2, f)
+
+    combined_elements = base.read_and_combine_json(str(tmp_path))
+    assert len(combined_elements) == 4, "Expected 4 combined elements"
+
+    expected_texts = [
+        "Element 1 from File 1",
+        "Element 2 from File 1",
+        "Element 1 from File 2",
+        "Element 2 from File 2",
+    ]
+
+    combined_texts = [element["text"] for element in combined_elements]
+    for expected_text in expected_texts:
+        assert (
+            expected_text in combined_texts
+        ), f"Expected text '{expected_text}' in combined elements"
+
+
 def test_convert_to_csv(tmp_path: str):
     output_csv_path = os.path.join(tmp_path, "isd_data.csv")
     elements = [Title(text="Title 1"), NarrativeText(text="Narrative 1")]

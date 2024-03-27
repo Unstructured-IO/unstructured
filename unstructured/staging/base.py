@@ -4,6 +4,7 @@ import base64
 import csv
 import io
 import json
+import os
 import zlib
 from copy import deepcopy
 from datetime import datetime
@@ -92,6 +93,25 @@ def elements_from_json(
         element_dicts = json.loads(text)
 
     return elements_from_dicts(element_dicts)
+
+
+def read_and_combine_json(directory_path: str, encoding: str = "utf-8") -> Iterable[dict[str, Any]]:
+    """
+    Reads all JSON files in a given directory, deserializes their content into Element objects,
+    and combines them into an iterable of dictionaries, including each element's ID.
+    """
+    combined_elements: list[dict[str, Any]] = []
+
+    for filename in os.listdir(directory_path):
+        if filename.endswith(".json"):
+            full_path = os.path.join(directory_path, filename)
+            try:
+                with open(full_path, encoding=encoding) as file:
+                    element_dicts = json.load(file)
+                    combined_elements.extend(element_dicts)
+            except Exception as e:
+                print(f"Error reading or parsing file {full_path}: {e}")
+    return combined_elements
 
 
 # == SERIALIZERS =================================
