@@ -778,7 +778,7 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            self.id = self._id_to_hash()
+            self.id = self._calculate_hash()
         elif isinstance(element_id, UUID):
             self.id = uuid.uuid4()
         elif isinstance(element_id, str):
@@ -794,25 +794,16 @@ class Text(Element):
             detection_origin=detection_origin,
         )
 
-    def calculate_hash(
-        self, metadata: Optional[ElementMetadata] = None, other: Any = None
-    ) -> HashValue:
-        """Calculate the hash depending on what element data is available.
+    def _calculate_hash(self, index_in_sequence: int = 0) -> HashValue:
+        """Calculate the hash depending on element's text and index in sequence.
 
         Args:
-            metadata - if provided, it will be included in the hash calculation.
-            other - any other data that should be included in the hash calculation.
-                Must implement __str__.
+            index_in_sequence: Index of the element in the sequence of all elements.
 
         Returns:
             HashValue - 128-bit hash value of the element.
         """
-        if metadata is not None:
-            # Metadata supported by PDF and HTML files
-            data = f"{self.text}{metadata.page_number}{metadata.index_on_page}{other}"
-        else:
-            data = f"{self.text}{other}"
-
+        data = f"{self.text}{index_in_sequence}"
         return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     def __eq__(self, other: object):
