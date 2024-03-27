@@ -2,6 +2,7 @@
 
 import pathlib
 import re
+import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import Dict, List
 
@@ -864,3 +865,24 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
     filename = str(tmp_path / "mock_document.docx")
     mock_document.save(filename)
     return filename
+
+
+def test_ids_are_unique_and_deterministic(tmpdir):
+    with tempfile.NamedTemporaryFile(suffix=".docx") as temp_file:
+        document = docx.Document()
+        document.add_heading("Heading 1")
+        document.add_paragraph("Lorem ipsum dolor sit amet.")
+        document.add_paragraph("Lorem ipsum dolor sit amet.")
+        document.add_paragraph("Lorem ipsum dolor sit amet.")
+        document.save(temp_file.name)
+        elements = partition_docx(temp_file.name)
+
+        ids = [e.id for e in elements]
+        assert len(ids) == len(set(ids)), "IDs are not unique"
+
+        assert ids == [
+            "30aa359bfaefba8ee42df546233c733a",
+            "6a01fcab35fa863524f31b60dc738bd5",
+            "3d08519c48748f3be527f077539308fe",
+            "6a63fbe592ea8a13aadf69fcf8546d9d",
+        ], "IDs are not deterministic"
