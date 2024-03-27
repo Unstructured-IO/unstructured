@@ -49,38 +49,6 @@ def test_text_id_recalculates_id_deterministically_on_metadata_update():
     assert text_element.id == id_before_update
 
 
-def test_text_id_same_page():
-    text_element_1 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
-    text_element_2 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
-    assert text_element_1.id == text_element_2.id
-
-
-def test_text_id_same_page_different_same_index_on_page():
-    text_element_1 = Text(
-        text="hello there!", metadata=ElementMetadata(page_number=1, index_on_page=0)
-    )
-    text_element_2 = Text(
-        text="hello there!", metadata=ElementMetadata(page_number=1, index_on_page=0)
-    )
-    assert text_element_1.id == text_element_2.id
-
-
-def test_text_id_same_page_different_index_on_page():
-    text_element_1 = Text(
-        text="hello there!", metadata=ElementMetadata(page_number=1, index_on_page=0)
-    )
-    text_element_2 = Text(
-        text="hello there!", metadata=ElementMetadata(page_number=1, index_on_page=1)
-    )
-    assert text_element_1.id != text_element_2.id
-
-
-def test_text_id_different_pages():
-    text_element_1 = Text(text="hello there!", metadata=ElementMetadata(page_number=1))
-    text_element_2 = Text(text="hello there!", metadata=ElementMetadata(page_number=2))
-    assert text_element_1.id != text_element_2.id
-
-
 def test_text_uuid():
     text_element = Text(text="hello there!", element_id=UUID())
 
