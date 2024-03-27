@@ -201,6 +201,11 @@ etc…) or you'll need to store the path to a service account JSON file as the
 GOOGLE_APPLICATION_CREDENTIALS environment variable to be able to run this example.
 For more information: https://python.langchain.com/docs/integrations/text_embedding/google_vertex_ai_palm
 
+# Or, you can pass the json content of your API key to the VertexAIEmbeddingConfig
+# like this: VertexAIEmbeddingConfig(api_key_json=GOOGLE_APPLICATION_CREDENTIALS_JSON_CONTENT)
+# this will create a file in the working directory with the content of the json, and set the
+# GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of the file.
+
 .. code:: python
 
     import os
