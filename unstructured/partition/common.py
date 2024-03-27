@@ -229,7 +229,7 @@ def recalculate_ids(elements: List[Element]) -> List[Element]:
     """
     for idx_in_seq, element in enumerate(elements):
         if isinstance(element.id, (NoID, HashValue)):
-            element.id = str(element._id_to_hash(idx_in_seq))
+            element.id = str(element._calculate_hash(idx_in_seq))
     return elements
 
 
