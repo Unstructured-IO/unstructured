@@ -10,6 +10,7 @@ OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+GCP_INGEST_SERVICE_KEY=${GCP_INGEST_SERVICE_KEY:-$GCP_INGEST_SERVICE_KEY}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -29,7 +30,9 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --embedding-provider "langchain-vertexai"
+  --embedding-provider "langchain-vertexai" \
+  --embedding-api-key "$GCP_INGEST_SERVICE_KEY" \
+  --embedding-model-name "textembedding-gecko@001"
 
 set +e
 

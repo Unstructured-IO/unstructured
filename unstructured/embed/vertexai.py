@@ -1,3 +1,5 @@
+import json
+import os
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, List, Optional
 
@@ -14,7 +16,9 @@ if TYPE_CHECKING:
     from langchain_google_vertexai import VertexAIEmbeddings
 
 
+@dataclass
 class VertexAIEmbeddingConfig(EmbeddingConfig):
+    api_key: str
     model_name: Optional[str] = "textembedding-gecko@001"
 
 
@@ -61,6 +65,12 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
             elements_w_embedding.append(element)
         return elements
 
+    def register_application_credentials(self):
+        CREDENTIALS_FILEPATH = os.path.join(os.getcwd(), "google-vertex-app-credentials.json")
+        with open(CREDENTIALS_FILEPATH, "w") as f:
+            f.write(json.dumps(json.loads(self.config.api_key)))
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = CREDENTIALS_FILEPATH
+
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
         ["langchain", "langchain_google_vertexai"],
@@ -70,5 +80,6 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
         """Creates a langchain VertexAI python client to embed elements."""
         from langchain_google_vertexai import VertexAIEmbeddings
 
+        self.register_application_credentials()
         vertexai_client = VertexAIEmbeddings(model_name=self.config.model_name)
         return vertexai_client
