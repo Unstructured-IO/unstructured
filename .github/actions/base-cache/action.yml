@@ -11,15 +11,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Check for/restore base cache
-      uses: actions/cache/restore@v3
-      id: virtualenv-cache-restore
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
-        lookup-only: ${{ inputs.check-only }}
     - name: Set up Python ${{ inputs.python-version }}
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       uses: actions/setup-python@v4
@@ -33,13 +24,3 @@ runs:
         source .venv/bin/activate
         [ ! -d "$NLTK_DATA" ] && mkdir "$NLTK_DATA"
         make install-ci
-    - name: Save Cache
-      if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
-      id: virtualenv-cache-save
-      uses: actions/cache/save@v3
-      with:
-        path: |
-          .venv
-          nltk_data
-        key: unstructured-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements/*.txt') }}
-
