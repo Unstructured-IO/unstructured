@@ -17,7 +17,7 @@ class MongoDBRunner(Runner):
 
     def update_read_config(self):
         hashed_dir_name = hashlib.sha256(
-            str(self.connector_config.uri).encode("utf-8"),
+            str(self.connector_config.access_config.uri).encode("utf-8"),
         )
         self.read_config.download_dir = update_download_dir_hash(
             connector_name="mongodb",

@@ -3,12 +3,12 @@ import typing as t
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from dataclasses_json.core import Json
-
 from unstructured.__version__ import __version__ as unstructured_version
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, WriteError
 from unstructured.ingest.interfaces import (
+    AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
     BaseIngestDocBatch,
@@ -34,62 +34,19 @@ def parse_userinfo(userinfo: str) -> t.Tuple[str, str]:
     return user, passwd
 
 
-def redact(uri: str, redacted_text="***REDACTED***") -> str:
-    """
-    Cherry pick code from pymongo.uri_parser.parse_uri to only extract password and
-    redact without needing to import pymongo library
-    """
-
-    SCHEME = "mongodb://"
-    SRV_SCHEME = "mongodb+srv://"
-    if uri.startswith(SCHEME):
-        scheme_free = uri[len(SCHEME) :]  # noqa: E203
-    elif uri.startswith(SRV_SCHEME):
-        scheme_free = uri[len(SRV_SCHEME) :]  # noqa: E203
-    else:
-        raise ValueError(f"Invalid URI scheme: URI must begin with '{SCHEME}' or '{SRV_SCHEME}'")
-
-    passwd = None
-
-    host_part, _, path_part = scheme_free.partition("/")
-    if not host_part:
-        host_part = path_part
-        path_part = ""
-
-    if not path_part:
-        # There was no slash in scheme_free, check for a sole "?".
-        host_part, _, _ = host_part.partition("?")
-
-    if "@" in host_part:
-        userinfo, _, hosts = host_part.rpartition("@")
-        _, passwd = parse_userinfo(userinfo)
-
-    if passwd:
-        uri = uri.replace(passwd, redacted_text)
-    return uri
+@dataclass
+class MongoDBAccessConfig(AccessConfig):
+    uri: t.Optional[str] = enhanced_field(sensitive=True, default=None)
 
 
 @dataclass
 class SimpleMongoDBConfig(BaseConnectorConfig):
-    uri: t.Optional[str] = None
+    access_config: MongoDBAccessConfig
     host: t.Optional[str] = None
     database: t.Optional[str] = None
     collection: t.Optional[str] = None
     port: int = 27017
     batch_size: int = 100
-
-    def to_dict(
-        self, redact_sensitive=False, redacted_text="***REDACTED***", **kwargs
-    ) -> t.Dict[str, Json]:
-        d = super().to_dict(
-            redact_sensitive=redact_sensitive, redacted_text=redacted_text, **kwargs
-        )
-        if redact_sensitive:
-            if self.host:
-                d["host"] = redact(uri=self.host, redacted_text=redacted_text)
-            if self.uri:
-                d["uri"] = redact(uri=self.uri, redacted_text=redacted_text)
-        return d
 
     @requires_dependencies(["pymongo"], extras="mongodb")
     def generate_client(self) -> "MongoClient":
@@ -97,9 +54,9 @@ class SimpleMongoDBConfig(BaseConnectorConfig):
         from pymongo.driver_info import DriverInfo
         from pymongo.server_api import ServerApi
 
-        if self.uri:
+        if self.access_config.uri:
             return MongoClient(
-                self.uri,
+                self.access_config.uri,
                 server_api=ServerApi(version=SERVER_API_VERSION),
                 driver=DriverInfo(name="unstructured", version=unstructured_version),
             )
