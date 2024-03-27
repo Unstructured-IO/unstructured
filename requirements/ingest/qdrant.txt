@@ -16,11 +16,11 @@ certifi==2024.2.2
     #   httpx
 exceptiongroup==1.2.0
     # via anyio
-grpcio==1.60.1
+grpcio==1.62.1
     # via
     #   grpcio-tools
     #   qdrant-client
-grpcio-tools==1.60.1
+grpcio-tools==1.62.1
     # via qdrant-client
 h11==0.14.0
     # via httpcore
@@ -28,12 +28,10 @@ h2==4.1.0
     # via httpx
 hpack==4.0.0
     # via h2
-httpcore==1.0.3
+httpcore==1.0.4
     # via httpx
-httpx[http2]==0.26.0
-    # via
-    #   httpx
-    #   qdrant-client
+httpx[http2]==0.27.0
+    # via qdrant-client
 hyperframe==6.0.1
     # via h2
 idna==3.6
@@ -55,13 +53,13 @@ pydantic==1.10.14
     # via
     #   -c ingest/../constraints.in
     #   qdrant-client
-qdrant-client==1.7.3
+qdrant-client==1.8.0
     # via -r ingest/qdrant.in
-sniffio==1.3.0
+sniffio==1.3.1
     # via
     #   anyio
     #   httpx
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -c ingest/../base.txt
     #   pydantic
