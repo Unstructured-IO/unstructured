@@ -51,8 +51,8 @@ Set up the API key and S3 URL for accessing the data.
 .. code-block:: python
 
    UNSTRUCTURED_API_KEY = os.getenv('UNSTRUCTURED_API_KEY')
-   S3_URL = "s3://rh-financial-reports/world-development-bank-2023/"
 
+   S3_URL = "s3://rh-financial-reports/world-development-bank-2023/"
 
 Step 4: Python Runner
 ---------------------
@@ -94,7 +94,6 @@ Combine JSON files into a single dataset for further processing.
 
    combined_json_data = read_and_combine_json("Connector-Output/world-development-bank-2023")
 
-
 Step 6: Convert into Unstructured Elements for Chunking
 -------------------------------------------------------
 
@@ -104,7 +103,6 @@ Convert the combined JSON data into Unstructured Elements and apply chunking by 
 
    elements = dict_to_elements(combined_json_data)
    chunks = chunk_by_title(elements)
-
 
 Conclusion
 **********
