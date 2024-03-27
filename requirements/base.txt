@@ -13,10 +13,9 @@ certifi==2024.2.2
     #   -c constraints.in
     #   requests
     #   unstructured-client
-chardet==5.2.0
-    # via -r base.in
 charset-normalizer==3.3.2
     # via
+    #   -r base.in
     #   requests
     #   unstructured-client
 click==8.1.7

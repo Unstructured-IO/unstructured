@@ -1,6 +1,6 @@
 from typing import IO, Optional, Tuple, Union
 
-import chardet
+import charset_normalizer
 
 from unstructured.partition.common import convert_to_bytes
 
@@ -70,7 +70,7 @@ def detect_file_encoding(
     else:
         raise FileNotFoundError("No filename nor file were specified")
 
-    result = chardet.detect(byte_data)
+    result = charset_normalizer.detect(byte_data)
     encoding = result["encoding"]
     confidence = result["confidence"]
 
