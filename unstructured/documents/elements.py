@@ -201,7 +201,6 @@ class ElementMetadata:
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
-    index_on_page: Optional[int]
     parent_id: Optional[str | uuid.UUID | NoID | UUID]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
@@ -246,7 +245,6 @@ class ElementMetadata:
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
-        index_on_page: Optional[int] = None,
         parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
         section: Optional[str] = None,
@@ -286,7 +284,6 @@ class ElementMetadata:
         self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
-        self.index_on_page = index_on_page
         self.parent_id = parent_id
         self.regex_metadata = regex_metadata
         self.section = section
@@ -499,7 +496,6 @@ class ConsolidationStrategy(enum.Enum):
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
             "page_name": cls.FIRST,
             "page_number": cls.FIRST,
-            "index_on_page": cls.FIRST,
             "parent_id": cls.DROP,
             "regex_metadata": cls.REGEX,
             "section": cls.FIRST,
