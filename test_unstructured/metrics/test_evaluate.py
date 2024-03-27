@@ -324,7 +324,7 @@ def test_get_mean_grouping_all_file():
         data_input=filtered_df,
         export_dir=export_dir,
         eval_name="text_extraction",
-        export_name="two-filename-agg-cct.tsv",
+        export_filename="two-filename-agg-cct.tsv",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
 
@@ -356,7 +356,7 @@ def test_get_mean_grouping_all_file_txt():
         data_input=filtered_df,
         export_dir=export_dir,
         eval_name="text_extraction",
-        export_name="two-filename-agg-cct.tsv",
+        export_filename="two-filename-agg-cct.tsv",
     )
     grouped_df = pd.read_csv(os.path.join(export_dir, "two-filename-agg-cct.tsv"), sep="\t")
 
