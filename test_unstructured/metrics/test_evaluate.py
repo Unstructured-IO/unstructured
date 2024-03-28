@@ -64,7 +64,7 @@ def _cleanup_after_test():
         """Remove directories created from running tests."""
 
         # Directories to be removed:
-        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt"]
+        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt", "test_evaluate_results_element_type", "test_evaluate_table_structure"]
         subdirs = (d for d in os.scandir(TESTING_FILE_DIR) if d.is_dir())
         for d in subdirs:
             if d.name in target_dir_names:
