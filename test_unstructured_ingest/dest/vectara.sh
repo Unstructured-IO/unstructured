@@ -90,6 +90,7 @@ echo $corpus_size
 if [ "$corpus_size" == "$EXPECTED_CORPUS_SIZE" ]; then
   echo "Corpus size is as expected: $corpus_size"
 else
-  echo "Corpus size is not as expected: $corpus_size vs $EXPECTED_CORPUS_SIZE"
+  echo "Corpus size is not as expected: $corpus_size"
+  echo "vs $EXPECTED_CORPUS_SIZE"
   exit 1
 fi
