@@ -12,7 +12,7 @@ runs:
   using: "composite"
   steps:
     - name: Check for/restore base cache
-      uses: actions/checkout@v4
+      uses: actions/cache/restore@v3
       id: virtualenv-cache-restore
       with:
         path: |

@@ -12,7 +12,7 @@ runs:
   using: "composite"
   steps:
     - name: Check for/restore ingest cache
-      uses: actions/checkout@v4
+      uses: actions/cache/restore@v3
       id: ingest-virtualenv-cache-restore
       with:
         path: |
