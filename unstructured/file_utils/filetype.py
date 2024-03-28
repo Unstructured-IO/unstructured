@@ -17,7 +17,6 @@ from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
     add_element_metadata,
     exactly_one,
-    recalculate_ids,
     remove_element_metadata,
     set_element_hierarchy,
 )
@@ -594,10 +593,6 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
             metadata_kwargs = {
                 kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
             }
-
-            # NOTE(mike) must recalculate before calling `set_element_hierarchy`
-            # otherwise `parent_id` won't be assigned correctly
-            elements = recalculate_ids(elements)
 
             # NOTE (yao): do not use cast here as cast(None) still is None
             if not str(kwargs.get("model_name", "")).startswith("chipper"):

@@ -223,16 +223,6 @@ def layout_list_to_list_items(
     return list_items
 
 
-def recalculate_ids(elements: List[Element]) -> List[Element]:
-    """Updates the id of each element in the list of elements
-    based on the element's attributes and its index in sequence
-    """
-    for idx_in_seq, element in enumerate(elements):
-        if isinstance(element.id, (NoID, HashValue)):
-            element.id = str(element._calculate_hash(idx_in_seq))
-    return elements
-
-
 def set_element_hierarchy(
     elements: List[Element], ruleset: dict[str, list[str]] = HIERARCHY_RULE_SET
 ) -> list[Element]:

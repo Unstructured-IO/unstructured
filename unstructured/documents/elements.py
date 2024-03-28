@@ -510,6 +510,44 @@ class ConsolidationStrategy(enum.Enum):
 
 _P = ParamSpec("_P")
 
+from typing import List
+
+
+def calculate_hash(text: str, page_number: int, index_in_sequence: int) -> str:
+    """
+    Calculate a deterministic hash for a given text, page number, and index in sequence.
+
+    Args:
+        text: The text of the element.
+        page_number: The page number where the element is found.
+        index_in_sequence: The index of the element in the sequence of elements.
+
+    Returns:
+        The first 32 characters of the SHA256 hash of the concatenated input parameters.
+    """
+    data = f"{text}{page_number}{index_in_sequence}"
+    return hashlib.sha256(data.encode()).hexdigest()[:32]
+
+
+def recalculate_ids(elements: List[Element]) -> List[Element]:
+    """Updates the `id` (and `parent_id`) attributes of each element
+    in the list of elements based on the element's attributes and its index in sequence
+
+    Args:
+        elements: The list of elements whose IDs are to be recalculated.
+
+    Returns:
+        The list of elements with updated IDs.
+    """
+    old_to_new_id_mapping = {
+        e.id: calculate_hash(e.text, e.metadata.page_number, idx_in_seq)
+        for idx_in_seq, e in enumerate(elements)
+    }
+    for element in elements:
+        element.id = old_to_new_id_mapping[element.id]
+        element.metadata.parent_id = old_to_new_id_mapping.get(element.metadata.parent_id)
+    return elements
+
 
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for this document.
@@ -559,6 +597,8 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             if unique_element_ids:
                 for element in elements:
                     element.id_to_uuid()
+            else:
+                elements = recalculate_ids(elements)
 
             return elements
 
@@ -803,7 +843,7 @@ class Text(Element):
         Returns:
             HashValue - 128-bit hash value of the element.
         """
-        data = f"{self.text}{index_in_sequence}"
+        data = f"{self.text}"
         return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     def __eq__(self, other: object):
