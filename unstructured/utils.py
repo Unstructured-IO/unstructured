@@ -7,6 +7,7 @@ import json
 import os
 import platform
 import subprocess
+import threading
 from datetime import datetime
 from functools import wraps
 from itertools import combinations
@@ -773,3 +774,25 @@ def catch_overlapping_and_nested_bboxes(
                 document_with_overlapping_flag = True
 
     return document_with_overlapping_flag, overlapping_cases
+
+
+class FileHandler:
+    def __init__(self, file_path: str):
+        self.file_path = file_path
+        self.lock = threading.Lock()
+
+    def read_file(self):
+        with self.lock:
+            with open(self.file_path) as file:
+                data = file.read()
+            return data
+
+    def write_file(self, data: str) -> None:
+        with self.lock:
+            with open(self.file_path, "w") as file:
+                file.write(data)
+
+    def cleanup_file(self):
+        with self.lock:
+            if os.path.exists(self.file_path):
+                os.remove(self.file_path)
