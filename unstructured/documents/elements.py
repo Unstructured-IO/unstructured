@@ -600,11 +600,13 @@ class ElementType:
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
+    PARAGRAPH_IN_FORM = "ParagraphInForm"
     FIELD_NAME = "Field-Name"
     VALUE = "Value"
     LINK = "Link"
     COMPOSITE_ELEMENT = "CompositeElement"
     IMAGE = "Image"
+    PARAGRAPH_IN_IMAGE = "ParagraphInImage"
     PICTURE = "Picture"
     FIGURE_CAPTION = "FigureCaption"
     FIGURE = "Figure"
@@ -621,6 +623,7 @@ class ElementType:
     PAGE_BREAK = "PageBreak"
     FORMULA = "Formula"
     TABLE = "Table"
+    PARAGRAPH_IN_TABLE = "ParagraphInTable"
     HEADER = "Header"
     HEADLINE = "Headline"
     SUB_HEADLINE = "Subheadline"
@@ -629,6 +632,8 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    PAGE_NUMBER = "PageNumber"
+    CODE_SNIPPET = "CodeSnippet"
     OTHER = "Other"
 
     @classmethod
@@ -944,6 +949,36 @@ class Footer(Text):
     category = "Footer"
 
 
+class ParagraphInImage(Text):
+    """An element for capturing paragraphs within images."""
+
+    category = "ParagraphInImage"
+
+
+class ParagraphInTable(Text):
+    """An element for capturing text within tables."""
+
+    category = "ParagraphInTable"
+
+
+class ParagraphInForm(Text):
+    """An element for capturing text within forms."""
+
+    category = "ParagraphInForm"
+
+
+class CodeSnippet(Text):
+    """An element for capturing code snippets."""
+
+    category = "CodeSnippet"
+
+
+class PageNumber(Text):
+    """An element for capturing page numbers."""
+
+    category = "PageNumber"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -978,4 +1013,9 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.EMAIL_ADDRESS: EmailAddress,
     ElementType.FORMULA: Formula,
     ElementType.PAGE_BREAK: PageBreak,
+    ElementType.CODE_SNIPPET: CodeSnippet,
+    ElementType.PAGE_NUMBER: PageNumber,
+    ElementType.PARAGRAPH_IN_FORM: ParagraphInForm,
+    ElementType.PARAGRAPH_IN_IMAGE: ParagraphInImage,
+    ElementType.PARAGRAPH_IN_TABLE: ParagraphInTable,
 }
