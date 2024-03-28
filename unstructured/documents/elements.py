@@ -597,14 +597,17 @@ class ElementType:
     UNCATEGORIZED_TEXT = "UncategorizedText"
     NARRATIVE_TEXT = "NarrativeText"
     BULLETED_TEXT = "BulletedText"
+    PARAGRAPH = "Paragraph"
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
+    PARAGRAPH_IN_FORM = "ParagraphInForm"
     FIELD_NAME = "Field-Name"
     VALUE = "Value"
     LINK = "Link"
     COMPOSITE_ELEMENT = "CompositeElement"
     IMAGE = "Image"
+    PARAGRAPH_IN_IMAGE = "ParagraphInImage"
     PICTURE = "Picture"
     FIGURE_CAPTION = "FigureCaption"
     FIGURE = "Figure"
@@ -612,13 +615,16 @@ class ElementType:
     LIST = "List"
     LIST_ITEM = "ListItem"
     LIST_ITEM_OTHER = "List-item"
-    CHECKED = "Checked"
-    UNCHECKED = "Unchecked"
+    CHECK_BOX_CHECKED = "CheckBoxChecked"
+    CHECK_BOX_UNCHECKED = "CheckBoxUnchecked"
+    RADIO_BUTTON_CHECKED = "RadioButtonChecked"
+    RADIO_BUTTON_UNCHECKED = "RadioButtonUnchecked"
     ADDRESS = "Address"
     EMAIL_ADDRESS = "EmailAddress"
     PAGE_BREAK = "PageBreak"
     FORMULA = "Formula"
     TABLE = "Table"
+    PARAGRAPH_IN_TABLE = "ParagraphInTable"
     HEADER = "Header"
     HEADLINE = "Headline"
     SUB_HEADLINE = "Subheadline"
@@ -627,6 +633,9 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    PAGE_NUMBER = "PageNumber"
+    CODE_SNIPPET = "CodeSnippet"
+    OTHER = "Other"
 
     @classmethod
     def to_dict(cls):
@@ -708,8 +717,8 @@ class Element(abc.ABC):
         return new_coordinates
 
 
-class CheckBox(Element):
-    """A checkbox with an attribute indicating whether its checked or not.
+class Checkable(Element, abc.ABC):
+    """A base class for elements that can be checked or unchecked (e.g. checkboxes, radio buttons).
 
     Primarily used in documents that are forms.
     """
@@ -734,7 +743,7 @@ class CheckBox(Element):
         self.checked: bool = checked
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, CheckBox):
+        if not isinstance(other, self.__class__):
             return False
         return all(
             (
@@ -746,9 +755,38 @@ class CheckBox(Element):
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
-        out["type"] = "CheckBox"
         out["checked"] = self.checked
         out["element_id"] = self.id
+        return out
+
+
+class CheckBox(Checkable):
+    """A checkbox element in a document. Expected to be used in forms."""
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["type"] = "CheckBox"
+        return out
+
+
+class RadioButton(Checkable):
+    """A radio button element in a document. Expected to be used in forms."""
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["type"] = "RadioButton"
+        return out
+
+
+class Other(Element):
+    """An element that does not fit into any other category. Not expected to contain a text"""
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["type"] = "Other"
         return out
 
 
@@ -912,6 +950,36 @@ class Footer(Text):
     category = "Footer"
 
 
+class ParagraphInImage(Text):
+    """An element for capturing paragraphs within images."""
+
+    category = "ParagraphInImage"
+
+
+class ParagraphInTable(Text):
+    """An element for capturing text within tables."""
+
+    category = "ParagraphInTable"
+
+
+class ParagraphInForm(Text):
+    """An element for capturing text within forms."""
+
+    category = "ParagraphInForm"
+
+
+class CodeSnippet(Text):
+    """An element for capturing code snippets."""
+
+    category = "CodeSnippet"
+
+
+class PageNumber(Text):
+    """An element for capturing page numbers."""
+
+    category = "PageNumber"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -922,6 +990,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.COMPOSITE_ELEMENT: Text,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.PARAGRAPH: NarrativeText,
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
@@ -946,4 +1015,9 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.EMAIL_ADDRESS: EmailAddress,
     ElementType.FORMULA: Formula,
     ElementType.PAGE_BREAK: PageBreak,
+    ElementType.CODE_SNIPPET: CodeSnippet,
+    ElementType.PAGE_NUMBER: PageNumber,
+    ElementType.PARAGRAPH_IN_FORM: ParagraphInForm,
+    ElementType.PARAGRAPH_IN_IMAGE: ParagraphInImage,
+    ElementType.PARAGRAPH_IN_TABLE: ParagraphInTable,
 }
