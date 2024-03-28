@@ -629,6 +629,7 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    OTHER = "Other"
 
     @classmethod
     def to_dict(cls):
@@ -770,6 +771,16 @@ class RadioButton(Checkable):
         """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
         out["type"] = "RadioButton"
+        return out
+
+
+class Other(Element):
+    """An element that does not fit into any other category. Not expected to contain a text"""
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["type"] = "Other"
         return out
 
 
