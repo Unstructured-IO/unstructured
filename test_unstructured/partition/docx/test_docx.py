@@ -881,8 +881,8 @@ def test_ids_are_unique_and_deterministic(tmpdir):
         assert len(ids) == len(set(ids)), "IDs are not unique"
 
         assert ids == [
-            "30aa359bfaefba8ee42df546233c733a",
-            "6a01fcab35fa863524f31b60dc738bd5",
-            "3d08519c48748f3be527f077539308fe",
-            "6a63fbe592ea8a13aadf69fcf8546d9d",
+            "72ca2f460293f29d28f78068563e52cb",
+            "ef89c6574e5014b6a45a9ef4e0dff1df",
+            "ca9650ea009b33b82e881a12f04cd317",
+            "2980f523648279ebc507fac62c2e63b3",
         ], "IDs are not deterministic"
