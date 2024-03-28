@@ -196,15 +196,16 @@ The following code block shows an example of how to use ``VertexAIEmbeddingEncod
 see the updated elements list (with the ``embeddings`` attribute included for each element),
 the embedding vector for the query string, and some metadata properties about the embedding model.
 
-You will need to have the credentials configured for your environment (gcloud, workload identity,
-etc…) or you'll need to store the path to a service account JSON file as the
-GOOGLE_APPLICATION_CREDENTIALS environment variable to be able to run this example.
-For more information: https://python.langchain.com/docs/integrations/text_embedding/google_vertex_ai_palm
-
-# Or, you can pass the json content of your API key to the VertexAIEmbeddingConfig
-# like this: VertexAIEmbeddingConfig(api_key_json=GOOGLE_APPLICATION_CREDENTIALS_JSON_CONTENT)
-# this will create a file in the working directory with the content of the json, and set the
-# GOOGLE_APPLICATION_CREDENTIALS environment variable to the path of the file.
+To use Vertex AI PaLM tou will need to:
+- either, pass the full json content of your GCP VertexAI application credentials to the
+VertexAIEmbeddingConfig as the api_key parameter. (This will create a file in the ``/tmp``
+directory with the content of the json, and set the GOOGLE_APPLICATION_CREDENTIALS environment
+variable to the **path** of the created file.)
+- or, you'll need to store the path to a manually created service account JSON file as the
+GOOGLE_APPLICATION_CREDENTIALS environment variable. (For more information:
+https://python.langchain.com/docs/integrations/text_embedding/google_vertex_ai_palm)
+- or, you'll need to have the credentials configured for your environment (gcloud,
+workload identity, etc…)
 
 .. code:: python
 
@@ -214,7 +215,7 @@ For more information: https://python.langchain.com/docs/integrations/text_embedd
     from unstructured.embed.vertexai import VertexAIEmbeddingConfig, VertexAIEmbeddingEncoder
 
     embedding_encoder = VertexAIEmbeddingEncoder(
-        config=VertexAIEmbeddingConfig()
+        config=VertexAIEmbeddingConfig(api_key=os.environ["VERTEXAI_GCP_APP_CREDS_JSON_CONTENT"])
     )
     elements = embedding_encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
