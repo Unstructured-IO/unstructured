@@ -809,7 +809,8 @@ class Text(Element):
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
 
-        element_id = str(uuid.uuid4())
+        if isinstance(element_id, (NoID, UUID)):
+            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
