@@ -530,37 +530,38 @@ def test_partition_pptx_hierarchy_sample_document():
 
     test_cases = [
         # (expected category depth, parent id, child id)
-        (0, None, "8e924068ead7acb8b7217a9edbea21d4"),
-        (1, "8e924068ead7acb8b7217a9edbea21d4", "32dc828e353aa33bbdf112787389d5dd"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (0, None, "4485990848f79de686029af6e720eed0"),
-        (0, "4485990848f79de686029af6e720eed0", "b4e4ef35880d1f7e82272f7ae8194baa"),
-        (0, "4485990848f79de686029af6e720eed0", "44a398d215d79c2128055d2acfe8ab69"),
-        (1, "44a398d215d79c2128055d2acfe8ab69", "dbbf18a38f846b5790c75ba8ad649704"),
-        (1, "44a398d215d79c2128055d2acfe8ab69", "d75cf41cbf1c4421328729de8e467b02"),
-        (2, "d75cf41cbf1c4421328729de8e467b02", "27597b7305a7b8e066a6378413566d2e"),
-        (0, "4485990848f79de686029af6e720eed0", "1761b6f5d23781670b3c9b870804069f"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (0, None, "4a6dc2d15e7a98e9871a1eb60496059e"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "c4bac691bfd883bff86dce2d7a6b9943"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "61eda8e6c9b22845a1aa3d329cce15ef"),
-        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "ad54bee56405cf3878f91f5c97a2395b"),
-        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "4d85745729954cd77e0f49ceced49f32"),
-        (2, "4d85745729954cd77e0f49ceced49f32", "5cea03d706c6246b120034246b893101"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cdf71e4210241bd78b1032e2f44d104f"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ecb3d1d718b7fd75701a33e56fc131dd"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cc598a5e8c911a7c5cecedf4959652aa"),
-        (1, "cc598a5e8c911a7c5cecedf4959652aa", "305ae9618b7f8ba84925c9e7e49034c2"),
-        (1, "cc598a5e8c911a7c5cecedf4959652aa", "cce1c1d6646a92ffdc883c573c765da9"),
-        (2, "cce1c1d6646a92ffdc883c573c765da9", "af8beec1131e6df4758e081e878bf775"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ddf389d07353b7a3e03aa138f42dfd89"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (None, None, "2332cdaa45717e70444e2de313605e22"),
-        (0, None, "7ba0daa8739310f1b39736b3ffe3dea2"),
+        (0, None, "346a866c35f822799f029ce39df7ef0d"),
+        (1, "346a866c35f822799f029ce39df7ef0d", "d6197918f693e5191dbaec92bb611bf1"),
+        (None, None, "d4735e3a265e16eee03f59718b9b5d03"),
+        (0, None, "3d2e993b21e880321d1ca0fc208619e7"),
+        (0, "3d2e993b21e880321d1ca0fc208619e7", "7133f154d0bcb090e430dd8e74a0c47f"),
+        (0, "3d2e993b21e880321d1ca0fc208619e7", "c38deb3e850ef3e45b43a29bf53c59ac"),
+        (1, "c38deb3e850ef3e45b43a29bf53c59ac", "00cbd976f1d4058d163fef4bf059dd6a"),
+        (1, "c38deb3e850ef3e45b43a29bf53c59ac", "bd75b205ca747bb9eec257f5c5ae2746"),
+        (2, "bd75b205ca747bb9eec257f5c5ae2746", "8c6f99a53478de01d5b24939de906ecd"),
+        (0, "3d2e993b21e880321d1ca0fc208619e7", "abc31edec2ae0098f09002fbfa614d78"),
+        (None, None, "4a44dc15364204a80fe80e9039455cc1"),
+        (0, None, "6a020e46fa3edf53135cc195c9487131"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "89df3450af347ff506fab66a657f6bc3"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "cb4f8b87b7f00082450e41a69660a074"),
+        (1, "cb4f8b87b7f00082450e41a69660a074", "ca37064940a9915de9e7006f80f67962"),
+        (1, "cb4f8b87b7f00082450e41a69660a074", "a6df2a57431ce23c5d518e35227a09c8"),
+        (2, "a6df2a57431ce23c5d518e35227a09c8", "8817683bb6ac6205545c0fe5488af74d"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "5ab5dc58d5699598717c6f11595f7a33"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "2e4b408311c23319c2be80905c95bce5"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "49cc00c14f91641167c2955e41d62651"),
+        (1, "49cc00c14f91641167c2955e41d62651", "6cd1c4903b5f16af7eaa3b251d0b9a8e"),
+        (1, "49cc00c14f91641167c2955e41d62651", "d1a7c657de7097b3728b671e07889d18"),
+        (2, "d1a7c657de7097b3728b671e07889d18", "8a7246bb2d0a3eec05af374709d5cb61"),
+        (0, "6a020e46fa3edf53135cc195c9487131", "506e3428d541c139a0d2cb5a7c59a228"),
+        (None, None, "c2356069e9d1e79ca924378153cfbbfb"),
+        (None, None, "c48ce58a0b2e915c79f6250d1fe24f8c"),
+        (0, None, "3d1781b2d864677b5be32683cb8827af"),
     ]
 
     # Zip the test cases with the elements
     for element, test_case in zip(elements, test_cases):
-        assert element.metadata.category_depth == test_case[0]
-        assert element.metadata.parent_id == test_case[1]
-        assert element.id == test_case[2]
+        expected_depth, expected_parent_id, expected_id = test_case
+        assert element.metadata.category_depth == expected_depth
+        assert element.metadata.parent_id == expected_parent_id
+        assert element.id == expected_id

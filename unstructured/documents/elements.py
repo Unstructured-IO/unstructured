@@ -12,7 +12,7 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, List, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -505,6 +505,43 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
+def calculate_hash(text: str, page_number: int, index_in_sequence: int) -> str:
+    """
+    Calculate a deterministic hash for a given text, page number, and index in sequence.
+
+    Args:
+        text: The text of the element.
+        page_number: The page number where the element is found.
+        index_in_sequence: The index of the element in the sequence of elements.
+
+    Returns:
+        The first 32 characters of the SHA256 hash of the concatenated input parameters.
+    """
+    data = f"{text}{page_number}{index_in_sequence}"
+    return hashlib.sha256(data.encode()).hexdigest()[:32]
+
+
+def recalculate_ids(elements: List[Element]) -> List[Element]:
+    """Updates the `id` (and `parent_id`) attributes of each element
+    in the list of elements based on the element's attributes and its index in sequence
+
+    Args:
+        elements: The list of elements whose IDs are to be recalculated.
+
+    Returns:
+        The list of elements with updated IDs.
+    """
+    elements = copy.deepcopy(elements)
+    old_to_new_id_mapping = {
+        e.id: calculate_hash(e.text, e.metadata.page_number, idx_in_seq)
+        for idx_in_seq, e in enumerate(elements)
+    }
+    for element in elements:
+        element.id = old_to_new_id_mapping[element.id]
+        element.metadata.parent_id = old_to_new_id_mapping.get(element.metadata.parent_id)
+    return elements
+
+
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for this document.
 
@@ -553,6 +590,8 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             if unique_element_ids:
                 for element in elements:
                     element.id_to_uuid()
+            else:
+                elements = recalculate_ids(elements)
 
             return elements
 
@@ -650,13 +689,13 @@ class Element(abc.ABC):
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID | UUID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: str | uuid.UUID | NoID | UUID = element_id
+        self.id: str | NoID | UUID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -771,11 +810,7 @@ class Text(Element):
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
 
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
+        if isinstance(element_id, (NoID, UUID)):
             element_id = str(uuid.uuid4())
 
         super().__init__(

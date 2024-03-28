@@ -28,12 +28,27 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Text,
     Title,
+    calculate_hash,
+    recalculate_ids,
 )
 
 
 def test_text_id():
     text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert text_element.id == "038d47b4730901555da92f924541b5ce"
+
+
+def test_text_id_recalculates_id_deterministically_on_metadata_update():
+    original_page = 1
+    text_element = Text(text="hello there!", metadata=ElementMetadata(page_number=original_page))
+    assert text_element.id == "6203bf4b51bd9139cbb1e9ab45636d5c"
+    id_before_update = text_element.id
+
+    text_element.metadata.page_number = 2
+    assert text_element.id == "6759346774e1cc088bc663d3be7b738f"
+
+    text_element.metadata.page_number = original_page
+    assert text_element.id == id_before_update
 
 
 def test_text_uuid():
@@ -649,3 +664,87 @@ class DescribeElementMetadata:
                 f"ElementMetadata field `.{field_name}` does not have a consolidation strategy."
                 f" Add one in `ConsolidationStrategy.field_consolidation_strategies()."
             )
+
+
+def test_recalculated_ids_are_unique_for_duplicate_elements():
+    # GIVEN
+    parent = Text(
+        text="Parent",
+        metadata=ElementMetadata(page_number=1),
+    )
+    elements = [
+        parent,
+        Text(
+            text="Element",
+            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
+        ),
+        Text(
+            text="Element",
+            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
+        ),
+    ]
+
+    # WHEN
+    recalculated_elements = recalculate_ids(elements)
+    ids = [element.id for element in recalculated_elements]
+
+    # THEN
+    assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
+    assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
+
+    for idx, updated_element in enumerate(recalculated_elements):
+        assert updated_element.id != elements[idx].id, "IDs haven't changed after recalculation"
+        if updated_element.metadata.parent_id is not None:
+            assert updated_element.metadata.parent_id in ids, "Parent ID not in the list of IDs"
+            assert (
+                updated_element.metadata.parent_id != elements[idx].metadata.parent_id
+            ), "Parent ID hasn't changed after recalculation"
+
+
+def test_recalculated_ids_are_deterministic():
+    # GIVEN
+    parent = Text(
+        text="Parent",
+        metadata=ElementMetadata(page_number=1),
+    )
+    elements = [
+        parent,
+        Text(
+            text="Element",
+            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
+        ),
+        Text(
+            text="Element",
+            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
+        ),
+    ]
+
+    # WHEN
+    recalculated_elements = recalculate_ids(elements)
+    ids = [element.id for element in recalculated_elements]
+    parent_ids = [element.metadata.parent_id for element in recalculated_elements]
+
+    # THEN
+    assert ids == [
+        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
+        "826c4fd142b72358c12910e40ed4bbe1",
+        "a77bdb894aaaba33ec49922cd9b57c3a",
+    ]
+    assert parent_ids == [
+        None,
+        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
+        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "page_number", "index_in_sequence", "expected_hash"),
+    [
+        ("foo", 1, 1, "f26a146bad83a86fb0ae1ced1962fc4a"),
+        ("foo", 1, 2, "3892929a11b660233e86e9d0a68bec0c"),
+        ("some text", 1, 0, "6b7b86cf188d615a38c01f9647353900"),
+        ("some text", 1, 1, "3a687e63c42212f3f83f89069ffb275f"),
+    ],
+)
+def test_calculate_hash(text, page_number, index_in_sequence, expected_hash):
+    assert calculate_hash(text, page_number, index_in_sequence) == expected_hash

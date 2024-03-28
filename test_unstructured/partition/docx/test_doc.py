@@ -17,6 +17,40 @@ from unstructured.documents.elements import (
 from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
+from unstructured.staging.base import convert_to_dataframe
+
+
+@pytest.fixture()
+def mock_document_with_duplicates():
+    document = docx.Document()
+    document.add_paragraph("This document contains duplicates", style="Heading 1")
+    document.add_paragraph("some text", style="Normal")
+    document.add_paragraph("some text", style="Normal")
+    document.add_paragraph("some text", style="Normal")
+    document.add_page_break()
+    document.add_paragraph("some text", style="Normal")
+    document.add_paragraph("some text", style="Normal")
+    document.add_paragraph("some text", style="Normal")
+    return document
+
+
+def test_partition_doc_for_deterministic_and_unique_ids(mock_document_with_duplicates, tmpdir):
+    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
+    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
+    mock_document_with_duplicates.save(docx_filename)
+    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+    ids = [element.id for element in partition_doc(filename=doc_filename)]
+    assert len(ids) == len(set(ids)), "IDs are not unique"
+
+    assert ids == [
+        "c904eb7ab8be023c0628ee48088aa12f",
+        "48b7e93a5ca126555fe5770627f44c0d",
+        "389aef9b43174d9a51f669312fe649f3",
+        "bbf352a4284087546e8bc1f19d459916",
+        "0523e6fcd71c35c9cb1e9cf9591b78c9",
+        "6b71251537279ed472bc673126f84555",
+        "283be4ff64c9cf8b510d3c0ffe72c6a7",
+    ]
 
 
 @pytest.fixture()
