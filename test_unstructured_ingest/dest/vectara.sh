@@ -84,8 +84,6 @@ get_corpus_size=$(curl -L -X POST 'https://api.vectara.io/v1/compute-corpus-size
   \"corpusId\": $corpus_id
 }")
 corpus_size=$(echo "$get_corpus_size" | jq -r '.size.size')
-echo "corpus size:"
-echo $corpus_size
 
 if [ "$corpus_size" == "$EXPECTED_CORPUS_SIZE" ]; then
   echo "Corpus size is as expected: $corpus_size"
