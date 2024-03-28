@@ -15,6 +15,7 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
 from unstructured.partition.pdf_image.ocr import pad_element_bboxes
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
 )
@@ -267,7 +268,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
         for ocr_element in ocr_elements:
             if ocr_element.bbox.is_almost_subregion_of(
                 element.bbox,
-                ocr.SUBREGION_THRESHOLD_FOR_OCR,
+                env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
             ):
                 assert ocr_element not in final_layout
 

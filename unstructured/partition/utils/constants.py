@@ -36,7 +36,6 @@ OCR_AGENT_MODULES_WHITELIST = os.getenv(
     "unstructured.partition.utils.ocr_models.paddle_ocr",
 ).split(",")
 
-SUBREGION_THRESHOLD_FOR_OCR = 0.5
 UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
 
 # Note(yuming): Default language for paddle OCR
