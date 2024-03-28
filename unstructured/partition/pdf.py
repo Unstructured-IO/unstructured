@@ -321,7 +321,7 @@ def partition_pdf_or_image(
             out_elements = _process_uncategorized_text_elements(elements)
 
     elif strategy == PartitionStrategy.FAST:
-        out_elements = extracted_elements
+        return extracted_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
