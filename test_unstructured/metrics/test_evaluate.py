@@ -172,6 +172,7 @@ def test_text_extraction_with_grouping():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_wrong_type():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
@@ -237,6 +238,7 @@ def test_get_mean_grouping_invalid_group():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_text_extraction_grouping_empty_df():
     empty_df = pd.DataFrame()
     with pytest.raises(SystemExit):
@@ -244,6 +246,7 @@ def test_text_extraction_grouping_empty_df():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_get_mean_grouping_missing_grouping_column():
     df_with_no_grouping = pd.DataFrame({"some_column": [1, 2, 3]})
     with pytest.raises(SystemExit):
@@ -251,6 +254,7 @@ def test_get_mean_grouping_missing_grouping_column():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_get_mean_grouping_all_null_grouping_column():
     df_with_null_grouping = pd.DataFrame({"doctype": [None, None, None]})
     with pytest.raises(SystemExit):
@@ -258,6 +262,7 @@ def test_get_mean_grouping_all_null_grouping_column():
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+@pytest.mark.usefixtures("_cleanup_after_test")
 def test_get_mean_grouping_invalid_eval_name():
     with pytest.raises(ValueError):
         get_mean_grouping("doctype", DUMMY_DF_ELEMENT_TYPE, "some_dir", eval_name="invalid")
