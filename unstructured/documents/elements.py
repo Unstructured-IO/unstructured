@@ -12,7 +12,7 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, List, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -30,12 +30,6 @@ Points: TypeAlias = "tuple[Point, ...]"
 
 class NoID(abc.ABC):
     """Class to indicate that an element do not have an ID."""
-
-
-class HashValue(str):
-    """Class to indicate that an element has a hash value assigned to its ID."""
-
-    pass
 
 
 class UUID(abc.ABC):
@@ -510,8 +504,6 @@ class ConsolidationStrategy(enum.Enum):
 
 _P = ParamSpec("_P")
 
-from typing import List
-
 
 def calculate_hash(text: str, page_number: int, index_in_sequence: int) -> str:
     """
@@ -817,34 +809,15 @@ class Text(Element):
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
 
-        if isinstance(element_id, NoID):
-            self.id = self._calculate_hash()
-        elif isinstance(element_id, UUID):
-            self.id = uuid.uuid4()
-        elif isinstance(element_id, str):
-            self.id = element_id
-        else:
-            raise ValueError("ID must be a string, UUID, or NoID")
+        element_id = str(uuid.uuid4())
 
         super().__init__(
-            element_id=self.id,
+            element_id=element_id,
             metadata=metadata,
             coordinates=coordinates,
             coordinate_system=coordinate_system,
             detection_origin=detection_origin,
         )
-
-    def _calculate_hash(self, index_in_sequence: int = 0) -> HashValue:
-        """Calculate the hash depending on element's text and index in sequence.
-
-        Args:
-            index_in_sequence: Index of the element in the sequence of all elements.
-
-        Returns:
-            HashValue - 128-bit hash value of the element.
-        """
-        data = f"{self.text}"
-        return HashValue(hashlib.sha256(data.encode()).hexdigest()[:32])
 
     def __eq__(self, other: object):
         if not isinstance(other, Text):
