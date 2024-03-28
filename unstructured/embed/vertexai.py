@@ -1,3 +1,4 @@
+# type: ignore
 import json
 import os
 from dataclasses import dataclass, field
@@ -51,13 +52,11 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     def embed_query(self, query):
         result = self.client.embed_query(str(query))
-        self.cleanup_application_credentials()
         return result
 
     def embed_documents(self, elements: List[Element]) -> List[Element]:
         embeddings = self.client.embed_documents([str(e) for e in elements])
         elements_with_embeddings = self._add_embeddings_to_elements(elements, embeddings)
-        self.cleanup_application_credentials()
         return elements_with_embeddings
 
     def _add_embeddings_to_elements(self, elements, embeddings) -> List[Element]:
@@ -70,16 +69,12 @@ class VertexAIEmbeddingEncoder(BaseEmbeddingEncoder):
 
     @property
     def application_credentials_path(self):
-        return os.path.join(os.getcwd(), "google-vertex-app-credentials.json")
+        return os.path.join("/tmp", "google-vertex-app-credentials.json")
 
     def register_application_credentials(self):
         credentials_file = FileHandler(self.application_credentials_path)
         credentials_file.write_file(json.dumps(json.loads(self.config.api_key)))
         os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = self.application_credentials_path
-
-    def cleanup_application_credentials(self):
-        credentials_file = FileHandler(self.application_credentials_path)
-        credentials_file.cleanup_file()
 
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
