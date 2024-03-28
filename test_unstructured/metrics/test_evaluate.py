@@ -64,7 +64,7 @@ def _cleanup_after_test():
         """Remove directories created from running tests."""
 
         # Directories to be removed:
-        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt", "test_evaluate_results_element_type", "test_evaluate_table_structure"]
+        target_dir_names = ["test_evaluate_results_cct", "test_evaluate_results_cct_txt", "test_evaluate_results_element_type", "test_evaluate_result_table_structure"]
         subdirs = (d for d in os.scandir(TESTING_FILE_DIR) if d.is_dir())
         for d in subdirs:
             if d.name in target_dir_names:
@@ -127,7 +127,7 @@ def test_element_type_evaluation():
 def test_table_structure_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_TABLE_STRUCTURE_DIRNAME)
-    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_table_structure")
+    export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_result_table_structure")
     measure_table_structure_accuracy(
         output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
     )
