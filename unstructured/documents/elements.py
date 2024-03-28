@@ -597,6 +597,7 @@ class ElementType:
     UNCATEGORIZED_TEXT = "UncategorizedText"
     NARRATIVE_TEXT = "NarrativeText"
     BULLETED_TEXT = "BulletedText"
+    PARAGRAPH = "Paragraph"
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
@@ -989,6 +990,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.COMPOSITE_ELEMENT: Text,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.PARAGRAPH: NarrativeText,
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
