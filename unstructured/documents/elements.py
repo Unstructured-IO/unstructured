@@ -531,6 +531,7 @@ def recalculate_ids(elements: List[Element]) -> List[Element]:
     Returns:
         The list of elements with updated IDs.
     """
+    elements = copy.deepcopy(elements)
     old_to_new_id_mapping = {
         e.id: calculate_hash(e.text, e.metadata.page_number, idx_in_seq)
         for idx_in_seq, e in enumerate(elements)
