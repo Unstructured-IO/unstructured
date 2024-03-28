@@ -46,6 +46,7 @@ all_tests=(
   # 'airtable-large.sh'
   'local-single-file.sh'
   'local-single-file-basic-chunking.sh'
+  'local-single-file-chunk-no-orig-elements.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
   'notion.sh'
