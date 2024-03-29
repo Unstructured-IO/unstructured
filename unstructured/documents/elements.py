@@ -796,7 +796,11 @@ class Text(Element):
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
 
-        if isinstance(element_id, (NoID, UUID)):
+        if isinstance(element_id, NoID):
+            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
+            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
+
+        elif isinstance(element_id, UUID):
             element_id = str(uuid.uuid4())
 
         super().__init__(
