@@ -726,7 +726,7 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
 
 
 def test_all_element_ids_are_unique():
-    ids = [e.id for e in partition_html("example-docs/fake-html-duplicates.html")]
+    ids = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
     assert len(ids) == len(set(ids))
 
 
