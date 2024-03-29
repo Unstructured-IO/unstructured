@@ -560,7 +560,7 @@ def document_to_element_list(
         image_height = page_image_metadata.get("height")
 
         translation_mapping: list[tuple["LayoutElement", Element]] = []
-        for index_on_page, layout_element in enumerate(page.elements):
+        for layout_element in page.elements:
             if image_width and image_height and hasattr(layout_element.bbox, "coordinates"):
                 coordinate_system = PixelSpace(width=image_width, height=image_height)
             else:
