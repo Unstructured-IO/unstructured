@@ -517,13 +517,24 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
     """
 
     old_to_new_id_mapping = {}
+    updated_parent_ids = set()
+
     for idx_in_seq, element in enumerate(elements):
         old_id = element.id
         new_id = element.id_to_hash(idx_in_seq)
         old_to_new_id_mapping[old_id] = new_id
 
-        if element.metadata.parent_id is not None:
-            element.metadata.parent_id = old_to_new_id_mapping[element.metadata.parent_id]
+        if parent_id := element.metadata.parent_id:
+            try:
+                new_parent_id = old_to_new_id_mapping[parent_id]
+                element.metadata.parent_id = new_parent_id
+                updated_parent_ids.add(new_parent_id)
+            except KeyError:
+                if parent_id not in updated_parent_ids:
+                    raise
+                # NOTE(mike): otherwise, the parent_id has already been updated
+                # For XLSX documents, some element.metadata can have identical memory address
+                # and thus the parent_id is updated in the first iteration
 
     return elements
 
