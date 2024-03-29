@@ -522,7 +522,7 @@ def calculate_hash(text: str, page_number: int, index_in_sequence: int) -> str:
 
 
 def recalculate_ids(elements: List[Element]) -> List[Element]:
-    """Updates the `id` (and `parent_id`) attributes of each element
+    """Updates the `id` and `parent_id` attributes of each element
     in the list of elements based on the element's attributes and its index in sequence
 
     Args:
@@ -531,14 +531,16 @@ def recalculate_ids(elements: List[Element]) -> List[Element]:
     Returns:
         The list of elements with updated IDs.
     """
-    elements = copy.deepcopy(elements)
-    old_to_new_id_mapping = {
-        e.id: calculate_hash(e.text, e.metadata.page_number, idx_in_seq)
-        for idx_in_seq, e in enumerate(elements)
-    }
-    for element in elements:
-        element.id = old_to_new_id_mapping[element.id]
-        element.metadata.parent_id = old_to_new_id_mapping.get(element.metadata.parent_id)
+
+    old_to_new_id_mapping = {}
+    for idx_in_seq, element in enumerate(elements):
+        old_id = element.id
+        new_id = element.id_to_hash(idx_in_seq)
+        old_to_new_id_mapping[old_id] = new_id
+
+        if element.metadata.parent_id is not None:
+            element.metadata.parent_id = old_to_new_id_mapping[element.metadata.parent_id]
+
     return elements
 
 
