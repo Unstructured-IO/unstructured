@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import pathlib
 from functools import partial
@@ -671,7 +672,7 @@ def test_hash_ids_are_unique_for_duplicate_elements():
     ]
 
     # WHEN
-    updated_elements = assign_hash_ids(elements)
+    updated_elements = assign_hash_ids(copy.deepcopy(elements))
     ids = [element.id for element in updated_elements]
 
     # THEN
