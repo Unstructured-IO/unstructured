@@ -4,10 +4,10 @@
 <head><meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="S3" href="s3.html" /><link rel="prev" title="OpenSearch" href="opensearch.html" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Databricks Volumes" href="databricks_volumes.html" /><link rel="prev" title="Chroma" href="chroma.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Qdrant - Unstructured 0.13.0 documentation</title>
+  <title>Clarifai - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -410,7 +410,7 @@
 <li class="toctree-l3"><a class="reference internal" href="azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="chroma.html">Chroma</a></li>
-<li class="toctree-l3"><a class="reference internal" href="clarifai.html">Clarifai</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="dropbox.html">Dropbox</a></li>
@@ -419,7 +419,7 @@
 <li class="toctree-l3"><a class="reference internal" href="mongodb.html">MongoDB</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pinecone.html">Pinecone</a></li>
 <li class="toctree-l3"><a class="reference internal" href="opensearch.html">OpenSearch</a></li>
-<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Qdrant</a></li>
+<li class="toctree-l3"><a class="reference internal" href="qdrant.html">Qdrant</a></li>
 <li class="toctree-l3"><a class="reference internal" href="s3.html">S3</a></li>
 <li class="toctree-l3"><a class="reference internal" href="sql.html">SQL</a></li>
 <li class="toctree-l3"><a class="reference internal" href="vectara.html">Vectara</a></li>
@@ -508,62 +508,45 @@
             <div class="github-stars github-stars--top-page"></div>
             <!-- Calendly badge widget begin -->
           </div>
-          <section id="qdrant">
-<h1>Qdrant<a class="headerlink" href="#qdrant" title="Permalink to this heading"></a></h1>
-<p>Batch process all your records using <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> to store structured outputs and embeddings locally on your filesystem and upload those to a Qdrant collection.</p>
-<p>First you’ll need to install the Qdrant dependencies as shown here.</p>
-<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[qdrant]&quot;</span>
+          <section id="clarifai">
+<h1>Clarifai<a class="headerlink" href="#clarifai" title="Permalink to this heading"></a></h1>
+<p>Batch process all your records using <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span></code> to store unstructured outputs locally on your filesystem and upload those to Clarifai apps.</p>
+<p>First start with the installation of clarifai dependencies as shown here.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;unstructured[clarifai]&quot;</span>
 </pre></div>
 </div>
-<p>Create a Qdrant collection with the appropriate configurations. Find more information in the <a class="reference external" href="https://qdrant.tech/documentation/concepts/collections/">Qdrant collections guide</a>.</p>
+<p>Create a clarifai app with base workflow. Find more information in the <a class="reference external" href="https://docs.clarifai.com/clarifai-basics/applications/create-an-application/">create clarifai app</a>.</p>
 <section id="run-locally">
 <h2>Run Locally<a class="headerlink" href="#run-locally" title="Permalink to this heading"></a></h2>
-<p>The upstream connector can be any of the ones supported, but for convenience here, showing a sample command using the
-upstream local connector.</p>
+<p>The upstream connector can be any of the ones supported, but for the convenience here, showing a sample command using the upstream local connector.</p>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/env bash</span>
-
-<span class="nv">EMBEDDING_PROVIDER</span><span class="o">=</span><span class="si">${</span><span class="nv">EMBEDDING_PROVIDER</span><span class="k">:-</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="si">}</span>
-
-unstructured-ingest<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span><span class="nb">local</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--input-path<span class="w"> </span>example-docs/book-war-and-peace-1225p.txt<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-dir<span class="w"> </span>local-output-to-qdrant<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--strategy<span class="w"> </span>fast<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--chunk-elements<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--embedding-provider<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$EMBEDDING_PROVIDER</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--num-processes<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--verbose<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>qdrant<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--collection-name<span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--location<span class="w"> </span><span class="s2">&quot;http://localhost:6333&quot;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--batch-size<span class="w"> </span><span class="m">80</span>
-</pre></div>
-</div>
-</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.connector.local</span> <span class="kn">import</span> <span class="n">SimpleLocalConfig</span>
-<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.qdrant</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">QdrantWriteConfig</span><span class="p">,</span>
-    <span class="n">SimpleQdrantConfig</span><span class="p">,</span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Shell</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">Python</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"></div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.ingest.connector.clarifai</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ClarifaiAccessConfig</span><span class="p">,</span>
+    <span class="n">ClarifaiWriteConfig</span><span class="p">,</span>
+    <span class="n">SimpleClarifaiConfig</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.connector.local</span> <span class="kn">import</span> <span class="n">SimpleLocalConfig</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.interfaces</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">ChunkingConfig</span><span class="p">,</span>
-    <span class="n">EmbeddingConfig</span><span class="p">,</span>
     <span class="n">PartitionConfig</span><span class="p">,</span>
     <span class="n">ProcessorConfig</span><span class="p">,</span>
     <span class="n">ReadConfig</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner</span> <span class="kn">import</span> <span class="n">LocalRunner</span>
 <span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.base_writer</span> <span class="kn">import</span> <span class="n">Writer</span>
-<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.qdrant</span> <span class="kn">import</span> <span class="n">QdrantWriter</span>
+<span class="kn">from</span> <span class="nn">unstructured.ingest.runner.writers.clarifai</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ClarifaiWriter</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">get_writer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Writer</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">QdrantWriter</span><span class="p">(</span>
-        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleQdrantConfig</span><span class="p">(</span>
-            <span class="n">location</span><span class="o">=</span><span class="s2">&quot;http://localhost:6333&quot;</span><span class="p">,</span>
-            <span class="n">collection_name</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">ClarifaiWriter</span><span class="p">(</span>
+        <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleClarifaiConfig</span><span class="p">(</span>
+            <span class="n">access_config</span><span class="o">=</span><span class="n">ClarifaiAccessConfig</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;CLARIFAI_PAT&quot;</span><span class="p">),</span>
+            <span class="n">app_id</span><span class="o">=</span><span class="s2">&quot;CLARIFAI_APP&quot;</span><span class="p">,</span>
+            <span class="n">user_id</span><span class="o">=</span><span class="s2">&quot;CLARIFAI_USER_ID&quot;</span><span class="p">,</span>
         <span class="p">),</span>
-        <span class="n">write_config</span><span class="o">=</span><span class="n">QdrantWriteConfig</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">80</span><span class="p">),</span>
+        <span class="n">write_config</span><span class="o">=</span><span class="n">ClarifaiWriteConfig</span><span class="p">(),</span>
     <span class="p">)</span>
 
 
@@ -572,7 +555,7 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
     <span class="n">runner</span> <span class="o">=</span> <span class="n">LocalRunner</span><span class="p">(</span>
         <span class="n">processor_config</span><span class="o">=</span><span class="n">ProcessorConfig</span><span class="p">(</span>
             <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-qdrant&quot;</span><span class="p">,</span>
+            <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;local-output-to-clarifai-app&quot;</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
         <span class="p">),</span>
         <span class="n">connector_config</span><span class="o">=</span><span class="n">SimpleLocalConfig</span><span class="p">(</span>
@@ -581,7 +564,6 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
         <span class="n">read_config</span><span class="o">=</span><span class="n">ReadConfig</span><span class="p">(),</span>
         <span class="n">partition_config</span><span class="o">=</span><span class="n">PartitionConfig</span><span class="p">(),</span>
         <span class="n">chunking_config</span><span class="o">=</span><span class="n">ChunkingConfig</span><span class="p">(</span><span class="n">chunk_elements</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-        <span class="n">embedding_config</span><span class="o">=</span><span class="n">EmbeddingConfig</span><span class="p">(</span><span class="n">provider</span><span class="o">=</span><span class="s2">&quot;langchain-huggingface&quot;</span><span class="p">),</span>
         <span class="n">writer</span><span class="o">=</span><span class="n">writer</span><span class="p">,</span>
         <span class="n">writer_kwargs</span><span class="o">=</span><span class="p">{},</span>
     <span class="p">)</span>
@@ -589,7 +571,7 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
 </pre></div>
 </div>
 </div></div>
-<p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">&lt;upstream</span> <span class="pre">connector&gt;</span> <span class="pre">qdrant</span> <span class="pre">--help</span></code>.</p>
+<p>For a full list of the options the CLI accepts check <code class="docutils literal notranslate"><span class="pre">unstructured-ingest</span> <span class="pre">&lt;upstream</span> <span class="pre">connector&gt;</span> <span class="pre">clarifai</span> <span class="pre">--help</span></code>.</p>
 <p>NOTE: Keep in mind that you will need to have all the appropriate extras and dependencies for the file types of the documents contained in your data storage platform if you’re running this locally. You can find more information about this in the <a class="reference external" href="https://unstructured-io.github.io/unstructured/installing.html">installation guide</a>.</p>
 </section>
 </section>
@@ -599,21 +581,21 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="s3.html">
+          <a class="next-page" href="databricks_volumes.html">
             <div class="page-info">
               <div class="context">
                 <span>Next</span>
               </div>
-              <div class="title">S3</div>
+              <div class="title">Databricks Volumes</div>
             </div>
           </a>
-          <a class="prev-page" href="opensearch.html">
+          <a class="prev-page" href="chroma.html">
             <div class="page-info">
               <div class="context">
                 <span>Previous</span>
               </div>
               
-              <div class="title">OpenSearch</div>
+              <div class="title">Chroma</div>
               
             </div>
           </a>
@@ -649,7 +631,7 @@ unstructured-ingest<span class="w"> </span><span class="se">\</span>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Qdrant</a><ul>
+<li><a class="reference internal" href="#">Clarifai</a><ul>
 <li><a class="reference internal" href="#run-locally">Run Locally</a></li>
 </ul>
 </li>

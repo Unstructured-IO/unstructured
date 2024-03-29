@@ -7,9 +7,9 @@ Metadata
 ========
 
 The ``unstructured`` package tracks a variety of metadata about Elements extracted from documents.
-Tracking metadata enables users to filter document elements downstream based on element metadata of interest.
-For example, a user may be interested in selected document elements from a given page number
-or an e-mail with a given subject line.
+Element metadata has a variety of uses including:
+* filtering document elements based on an element metadata value, for example, elements from a given page number or an e-mail with a subject matching a regular expression.
+* mapping an element to the document page where it occurred so that original page can be retrieved when that element matches search criteria.
 
 Metadata is tracked at the element level. You can extract the metadata for a given document element
 with ``element.metadata``. For a dictionary representation, use ``element.metadata.to_dict()``.
@@ -136,34 +136,34 @@ returned. If the ``in_place`` flag is ``False``, only the altered coordinates ar
 Additional Metadata Fields by Document Type
 ###########################################
 
-+-------------------------+---------------------+--------------------------------------------------------+
-| Field Name              | Applicable Doc Types| Short Description                                      |
-+=========================+=====================+========================================================+
-| page_number             | DOCX,PDF, PPT,XLSX  | Page Number                                            |
-+-------------------------+---------------------+--------------------------------------------------------+
-| page_name               | XLSX                | Sheet Name in Excel document                           |
-+-------------------------+---------------------+--------------------------------------------------------+
-| sent_from               | EML                 | Email Sender                                           |
-+-------------------------+---------------------+--------------------------------------------------------+
-| sent_to                 | EML                 | Email Recipient                                        |
-+-------------------------+---------------------+--------------------------------------------------------+
-| subject                 | EML                 | Email Subject                                          |
-+-------------------------+---------------------+--------------------------------------------------------+
-| attached_to_filename    | MSG                 | filename that attachment file is attached to           |
-+-------------------------+---------------------+--------------------------------------------------------+
-| header_footer_type      | Word Doc            | Pages a header or footer applies to: "primary",        |
-|                         |                     | "even_only", and "first_page"                          |
-+-------------------------+---------------------+--------------------------------------------------------+
-| link_urls               | HTML                | The url associated with a link in a document.          |
-+-------------------------+---------------------+--------------------------------------------------------+
-| link_texts              | HTML                | The text associated with a link in a document.         |
-+-------------------------+---------------------+--------------------------------------------------------+
-| links                   | HTML                | List of {”text”: “<the text>, “url”: <the url>} items. |
-|                         |                     | Note: this element will be removed in the near future  |
-|                         |                     | in favor of the above link_urls and link_texts.        |
-+-------------------------+---------------------+--------------------------------------------------------+
-| section                 | EPUB                | Book section title corresponding to table of contents  |
-+-------------------------+---------------------+--------------------------------------------------------+
++-------------------------+-----------------------+--------------------------------------------------------+
+| Field Name              | Applicable Doc Types  | Short Description                                      |
++=========================+=======================+========================================================+
+| page_number             | DOCX, PDF, PPT, XLSX  | Page Number                                            |
++-------------------------+-----------------------+--------------------------------------------------------+
+| page_name               | XLSX                  | Sheet Name in Excel document                           |
++-------------------------+-----------------------+--------------------------------------------------------+
+| sent_from               | EML                   | Email Sender                                           |
++-------------------------+-----------------------+--------------------------------------------------------+
+| sent_to                 | EML                   | Email Recipient                                        |
++-------------------------+-----------------------+--------------------------------------------------------+
+| subject                 | EML                   | Email Subject                                          |
++-------------------------+-----------------------+--------------------------------------------------------+
+| attached_to_filename    | MSG                   | filename that attachment file is attached to           |
++-------------------------+-----------------------+--------------------------------------------------------+
+| header_footer_type      | Word Doc              | Pages a header or footer applies to: "primary",        |
+|                         |                       | "even_only", and "first_page"                          |
++-------------------------+-----------------------+--------------------------------------------------------+
+| link_urls               | HTML                  | The url associated with a link in a document.          |
++-------------------------+-----------------------+--------------------------------------------------------+
+| link_texts              | HTML                  | The text associated with a link in a document.         |
++-------------------------+-----------------------+--------------------------------------------------------+
+| links                   | HTML                  | List of {”text”: “<the text>, “url”: <the url>} items. |
+|                         |                       | Note: this element will be removed in the near future  |
+|                         |                       | in favor of the above link_urls and link_texts.        |
++-------------------------+-----------------------+--------------------------------------------------------+
+| section                 | EPUB                  | Book section title corresponding to table of contents  |
++-------------------------+-----------------------+--------------------------------------------------------+
 
 :raw-html:`<br />`
 Notes on additional metadata by document type:

@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Examples" href="examples.html" /><link rel="prev" title="Fsspec Configuration" href="ingest/configs/fsspec_config.html" />
 
   <link rel="shortcut icon" href="_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Metadata - Unstructured 0.12.6 documentation</title>
+  <title>Metadata - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -509,9 +510,9 @@
           <section id="metadata">
 <span id="metadata-label"></span><h1>Metadata<a class="headerlink" href="#metadata" title="Permalink to this heading"></a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">unstructured</span></code> package tracks a variety of metadata about Elements extracted from documents.
-Tracking metadata enables users to filter document elements downstream based on element metadata of interest.
-For example, a user may be interested in selected document elements from a given page number
-or an e-mail with a given subject line.</p>
+Element metadata has a variety of uses including:
+* filtering document elements based on an element metadata value, for example, elements from a given page number or an e-mail with a subject matching a regular expression.
+* mapping an element to the document page where it occurred so that original page can be retrieved when that element matches search criteria.</p>
 <p>Metadata is tracked at the element level. You can extract the metadata for a given document element
 with <code class="docutils literal notranslate"><span class="pre">element.metadata</span></code>. For a dictionary representation, use <code class="docutils literal notranslate"><span class="pre">element.metadata.to_dict()</span></code>.</p>
 <section id="common-metadata-fields">
@@ -667,7 +668,7 @@ returned. If the <code class="docutils literal notranslate"><span class="pre">in
 </thead>
 <tbody>
 <tr class="row-even"><td><p>page_number</p></td>
-<td><p>DOCX,PDF, PPT,XLSX</p></td>
+<td><p>DOCX, PDF, PPT, XLSX</p></td>
 <td><p>Page Number</p></td>
 </tr>
 <tr class="row-odd"><td><p>page_name</p></td>

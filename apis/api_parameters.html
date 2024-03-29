@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Validation Errors" href="validation_errors.html" /><link rel="prev" title="Accessing Unstructured API" href="usage_methods.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>API Parameters - Unstructured 0.12.6 documentation</title>
+  <title>API Parameters - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -557,6 +558,14 @@
 <li><p><strong>Example</strong>: utf-8</p></li>
 </ul>
 </section>
+<section id="extract-image-block-types">
+<h2>extract_image_block_types<a class="headerlink" href="#extract-image-block-types" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: array</p></li>
+<li><p><strong>Description</strong>: The types of image blocks to extract from the document. Supports various Element types.</p></li>
+<li><p><strong>Example</strong>: [‘Image’, ‘Table’]</p></li>
+</ul>
+</section>
 <section id="hi-res-model-name">
 <h2>hi_res_model_name<a class="headerlink" href="#hi-res-model-name" title="Permalink to this heading"></a></h2>
 <ul class="simple">
@@ -569,7 +578,8 @@
 <h2>include_page_breaks<a class="headerlink" href="#include-page-breaks" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If True, the output will include page breaks if the filetype supports it. Default: false.</p></li>
+<li><p><strong>Description</strong>: When true, the output will include page break elements when the filetype supports
+it. Default: false.</p></li>
 </ul>
 </section>
 <section id="languages">
@@ -585,7 +595,7 @@
 <h2>pdf_infer_table_structure<a class="headerlink" href="#pdf-infer-table-structure" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If True and strategy=hi_res, any Table Elements extracted from a PDF will include an additional metadata field, ‘text_as_html’.</p></li>
+<li><p><strong>Description</strong>: Deprecated! Use skip_infer_table_types to opt out of table extraction for any file type. If False and strategy=hi_res, no Table Elements will be extracted from pdf files regardless of skip_infer_table_types contents.</p></li>
 </ul>
 </section>
 <section id="skip-infer-table-types">
@@ -602,51 +612,78 @@
 <li><p><strong>Description</strong>: If True, will retain the XML tags in the output. Otherwise it will simply extract the text from within the tags. Only applies to partition_xml.</p></li>
 </ul>
 </section>
+<section id="chunking-parameters">
+<h2>Chunking Parameters<a class="headerlink" href="#chunking-parameters" title="Permalink to this heading"></a></h2>
+<p>The following parameters control chunking behavior. Chunking is automatically performed after
+partitioning when a value is provided for the <code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code> argument. The remaining chunking
+parameters are only operative when a chunking strategy is specified. Note that not all chunking
+parameters apply to all chunking strategies. Any chunking arguments not supported by the selected
+chunker are ignored.</p>
+</section>
 <section id="chunking-strategy">
 <h2>chunking_strategy<a class="headerlink" href="#chunking-strategy" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: string</p></li>
-<li><p><strong>Description</strong>: Use one of the supported strategies to chunk the returned elements. Currently supports: by_title.</p></li>
-<li><p><strong>Example</strong>: by_title</p></li>
-</ul>
-</section>
-<section id="multipage-sections">
-<h2>multipage_sections<a class="headerlink" href="#multipage-sections" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p><strong>Type</strong>: boolean</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, determines if sections can span multiple sections. Default: true.</p></li>
+<li><p><strong>Description</strong>: Use one of the supported strategies to chunk the returned elements. When omitted,
+no chunking is performed and any other chunking parameters provided are ignored.</p></li>
+<li><p><strong>Valid values</strong>: <code class="docutils literal notranslate"><span class="pre">&quot;basic&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;by_title&quot;</span></code></p></li>
 </ul>
 </section>
 <section id="combine-under-n-chars">
 <h2>combine_under_n_chars<a class="headerlink" href="#combine-under-n-chars" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, combine elements until a section reaches a length of n chars. Default: 500.</p></li>
+<li><p><strong>Applicable Chunkers</strong>: “by_title” only</p></li>
+<li><p><strong>Description</strong>: When chunking strategy is set to “by_title”, combine small chunks until the
+combined chunk reaches a length of n chars. This can mitigate the appearance of small chunks
+created by short paragraphs, not intended as section headings, being identified as <code class="docutils literal notranslate"><span class="pre">Title</span></code>
+elements in certain documents.</p></li>
+<li><p><strong>Default</strong>: the same value as <code class="docutils literal notranslate"><span class="pre">max_characters</span></code></p></li>
 <li><p><strong>Example</strong>: 500</p></li>
 </ul>
 </section>
-<section id="new-after-n-chars">
-<h2>new_after_n_chars<a class="headerlink" href="#new-after-n-chars" title="Permalink to this heading"></a></h2>
+<section id="include-orig-elements">
+<h2>include_orig_elements<a class="headerlink" href="#include-orig-elements" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, cut off new sections after reaching a length of n chars (soft max). Default: 1500.</p></li>
-<li><p><strong>Example</strong>: 1500</p></li>
+<li><p><strong>Type</strong>: boolean</p></li>
+<li><p><strong>Applicable Chunkers</strong>: All</p></li>
+<li><p><strong>Description</strong>: Add the elements used to form each chunk to <code class="docutils literal notranslate"><span class="pre">.metadata.orig_elements</span></code> for that
+chunk. These can be used to recover the original text and metadata for individual elements when
+that is required, for example to identify the page-numbers or coordinates spanned by a chunk.
+When an element larger than <code class="docutils literal notranslate"><span class="pre">max_characters</span></code> is divided into two or more chunks via
+text-splitting, each of those chunks will contain the entire original chunk as the only item in
+its <code class="docutils literal notranslate"><span class="pre">.metadata.orig_elements</span></code> list.</p></li>
+<li><p><strong>Default</strong>: true</p></li>
 </ul>
 </section>
 <section id="max-characters">
 <h2>max_characters<a class="headerlink" href="#max-characters" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><strong>Type</strong>: integer</p></li>
-<li><p><strong>Description</strong>: If chunking strategy is set, cut off new sections after reaching a length of n chars (hard max). Default: 1500.</p></li>
-<li><p><strong>Example</strong>: 1500</p></li>
+<li><p><strong>Applicable Chunkers</strong>: All</p></li>
+<li><p><strong>Description</strong>: When chunking strategy is set, cut off new chunks after reaching a length of n
+chars (hard max).</p></li>
+<li><p><strong>Default</strong>: 500</p></li>
 </ul>
 </section>
-<section id="extract-image-block-types">
-<h2>extract_image_block_types<a class="headerlink" href="#extract-image-block-types" title="Permalink to this heading"></a></h2>
+<section id="multipage-sections">
+<h2>multipage_sections<a class="headerlink" href="#multipage-sections" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><strong>Type</strong>: array</p></li>
-<li><p><strong>Description</strong>: The types of image blocks to extract from the document. Supports various Element types.</p></li>
-<li><p><strong>Example</strong>: [‘Image’, ‘Table’]</p></li>
+<li><p><strong>Type</strong>: boolean</p></li>
+<li><p><strong>Applicable Chunkers</strong>: “by_title” only</p></li>
+<li><p><strong>Description</strong>: When true and chunking strategy is set to “by_title”, allows a chunk to include
+elements from more than one page. Otherwise chunks are broken on page boundaries.</p></li>
+<li><p><strong>Default</strong>: true</p></li>
+</ul>
+</section>
+<section id="new-after-n-chars">
+<h2>new_after_n_chars<a class="headerlink" href="#new-after-n-chars" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Type</strong>: integer</p></li>
+<li><p><strong>Applicable Chunkers</strong>: “basic”, “by_title”</p></li>
+<li><p><strong>Description</strong>: When chunking strategy is set, cut off new chunk after reaching a length of n
+chars (soft max).</p></li>
+<li><p><strong>Default</strong>: 1500</p></li>
 </ul>
 </section>
 </section>
@@ -713,18 +750,20 @@
 <li><a class="reference internal" href="#output-format">output_format</a></li>
 <li><a class="reference internal" href="#coordinates">coordinates</a></li>
 <li><a class="reference internal" href="#encoding">encoding</a></li>
+<li><a class="reference internal" href="#extract-image-block-types">extract_image_block_types</a></li>
 <li><a class="reference internal" href="#hi-res-model-name">hi_res_model_name</a></li>
 <li><a class="reference internal" href="#include-page-breaks">include_page_breaks</a></li>
 <li><a class="reference internal" href="#languages">languages</a></li>
 <li><a class="reference internal" href="#pdf-infer-table-structure">pdf_infer_table_structure</a></li>
 <li><a class="reference internal" href="#skip-infer-table-types">skip_infer_table_types</a></li>
 <li><a class="reference internal" href="#xml-keep-tags">xml_keep_tags</a></li>
+<li><a class="reference internal" href="#chunking-parameters">Chunking Parameters</a></li>
 <li><a class="reference internal" href="#chunking-strategy">chunking_strategy</a></li>
-<li><a class="reference internal" href="#multipage-sections">multipage_sections</a></li>
 <li><a class="reference internal" href="#combine-under-n-chars">combine_under_n_chars</a></li>
-<li><a class="reference internal" href="#new-after-n-chars">new_after_n_chars</a></li>
+<li><a class="reference internal" href="#include-orig-elements">include_orig_elements</a></li>
 <li><a class="reference internal" href="#max-characters">max_characters</a></li>
-<li><a class="reference internal" href="#extract-image-block-types">extract_image_block_types</a></li>
+<li><a class="reference internal" href="#multipage-sections">multipage_sections</a></li>
+<li><a class="reference internal" href="#new-after-n-chars">new_after_n_chars</a></li>
 </ul>
 </li>
 </ul>

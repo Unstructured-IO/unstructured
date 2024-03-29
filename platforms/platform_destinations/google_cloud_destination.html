@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="MongoDB" href="mongodb.html" /><link rel="prev" title="Elasticsearch" href="elasticsearch_destination.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Google Cloud Storage - Unstructured 0.12.6 documentation</title>
+  <title>Google Cloud Storage - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -529,7 +530,11 @@
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Name</span></code> (<em>required</em>): Assign a descriptive name to the new destination connector.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">Remote</span> <span class="pre">URL</span></code> (<em>required</em>): Enter the Google Cloud Storage bucket URL where the data will be stored.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">Service</span> <span class="pre">Account</span> <span class="pre">Key</span></code> (<em>required</em>): Provide the Service Account Key that has been granted access to the specified Google Cloud Storage bucket.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Service</span> <span class="pre">Account</span> <span class="pre">Key</span></code> (<em>required</em>): Provide the Service Account Key that has been granted access to the specified Google Cloud Storage bucket.</p>
+<ul>
+<li><p>Note: the <code class="docutils literal notranslate"><span class="pre">Service</span> <span class="pre">Account</span> <span class="pre">Key</span></code> must have the <strong>Storage Object Creator</strong> role at minimum to ensure proper access permissions. Please refer to <a class="reference external" href="https://cloud.google.com/storage/docs/access-control/iam">GCS IAM documentation</a>.</p></li>
+</ul>
+</li>
 </ul>
 </div></blockquote>
 <ol class="arabic simple" start="4">

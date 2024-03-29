@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Embedding Configuration" href="embedding_config.html" /><link rel="prev" title="Retry Strategy Configuration" href="retry_strategy_config.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Chunking Configuration - Unstructured 0.12.6 documentation</title>
+  <title>Chunking Configuration - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
@@ -520,7 +521,7 @@ in vector databases, enhancing the quality and relevance of the results.</p>
 <section id="configs">
 <h2>Configs<a class="headerlink" href="#configs" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">chunk_elements</span> <span class="pre">(default</span> <span class="pre">False)</span></code>: (Deprecated) Boolean flag whether to run chunking as part of
+<li><p><code class="docutils literal notranslate"><span class="pre">chunk_elements</span> <span class="pre">(Default:</span> <span class="pre">False)</span></code>: (Deprecated) Boolean flag whether to run chunking as part of
 the ingest process. This option is deprecated in favor of the <code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code> option. This
 option being set True has the same effect as <code class="docutils literal notranslate"><span class="pre">chunking_strategy=by_title</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">chunking_strategy</span></code>: One of “basic” or “by_title”. When omitted, no chunking is performed. The
@@ -531,11 +532,22 @@ combined with any other element and appears as a chunk of its own or as a sequen
 <code class="docutils literal notranslate"><span class="pre">TableChunk</span></code> elements splitting is required. The “by_title” behaviors are the same except that
 section and optionally page boundaries are respected such that two consecutive elements from
 different sections appear in separate chunks.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">multipage_sections</span> <span class="pre">(default</span> <span class="pre">True)</span></code>: When False, in addition to section boundaries, page
+<li><p><code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars</span> <span class="pre">(Default:</span> <span class="pre">max_characters)</span></code>: Combines small elements (for example a
+series of <code class="docutils literal notranslate"><span class="pre">Title</span></code> elements) until a section reaches a length of n characters. Only operative for
+the <code class="docutils literal notranslate"><span class="pre">&quot;by_title&quot;</span></code> chunking strategy. Defaults to <cite>max_characters</cite> which combines chunks whenever
+space allows. Specifying 0 for this argument suppresses combining of small chunks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">include_orig_elements</span> <span class="pre">(default:</span> <span class="pre">True)</span></code>: Adds the document elements consolidated to form each
+chunk to the <code class="docutils literal notranslate"><span class="pre">chunk.metadata.orig_elements:</span> <span class="pre">list[Element]</span></code> metadata field. Setting this to false
+allows for somewhat smaller payloads when you don’t need that metadata.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_characters</span> <span class="pre">(Default:</span> <span class="pre">500)</span></code>: Combine elements into chunks no larger than n characters (hard
+max). No chunk with text longer than this value will appear in the output stream.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">multipage_sections</span> <span class="pre">(Default:</span> <span class="pre">True)</span></code>: When False, in addition to section boundaries, page
 boundaries are also respected. Only operative for the “by_title” strategy.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">combine_text_under_n_chars</span> <span class="pre">(default</span> <span class="pre">500)</span></code>: Combines elements (for example a series of titles) until a section reaches a length of n characters. Defaults to <cite>max_characters</cite> which combines chunks whenever space allows. Specifying 0 for this argument suppresses combining of small chunks. Note this value is “capped” at the <cite>new_after_n_chars</cite> value since a value higher than that would not change this parameter’s effect.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span> <span class="pre">(default</span> <span class="pre">1500)</span></code>: Cuts off new sections once they reach a length of n characters (soft max). Defaults to <cite>max_characters</cite> when not specified, which effectively disables any soft window. Specifying 0 for this argument causes each element to appear in a chunk by itself (although an element with text longer than <cite>max_characters</cite> will be still be split into two or more chunks).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">max_characters</span> <span class="pre">(default</span> <span class="pre">1500)</span></code>: Chunks elements text and text_as_html (if present) into chunks of length n characters (hard max)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_after_n_chars</span> <span class="pre">(Default:</span> <span class="pre">max_characters</span> <span class="pre">(off))</span></code>: Cuts off new chunks once they reach a
+length of n characters (soft max). Defaults to <cite>max_characters</cite> when not specified, which
+effectively disables any soft window. Specifying 0 for this argument causes each element to appear
+in a chunk by itself (although an element with text longer than <cite>max_characters</cite> will be still be
+divided into two or more chunks using text-splitting).</p></li>
 </ul>
 </section>
 </section>

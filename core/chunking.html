@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Embedding" href="embedding.html" /><link rel="prev" title="Staging" href="staging.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Chunking - Unstructured 0.12.6 documentation</title>
+  <title>Chunking - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -560,8 +561,8 @@ elements that each have a clean semantic boundary, this option may “pollute”
 need to decide based on your use-case whether this option is right for you.</p></li>
 </ul>
 </section>
-<section id="chunking-elements">
-<h2>Chunking elements<a class="headerlink" href="#chunking-elements" title="Permalink to this heading"></a></h2>
+<section id="id1">
+<h2>Chunking<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
 <p>Chunking can be performed as part of partitioning or as a separate step after
 partitioning:</p>
 <section id="specifying-a-chunking-strategy-while-partitioning">
@@ -652,6 +653,45 @@ this to <code class="docutils literal notranslate"><span class="pre">0</span></c
 </ul>
 </section>
 </section>
+<section id="recovering-chunk-elements">
+<h2>Recovering Chunk Elements<a class="headerlink" href="#recovering-chunk-elements" title="Permalink to this heading"></a></h2>
+<p>In general, a chunk consolidates multiple document elements to maximally fill a chunk of the desired
+size. Information is naturally lost in this consolidation, for example which element a portion of
+the text came from and certain metadata like page-number and coordinates which cannot always be
+resolved to a single value.</p>
+<p>The original elements combined to make a chunk can be accessed using the <cite>.metadata.orig_elements</cite>
+field on the chunk:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elements</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;Lorem Ipsum&quot;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">NarrativeText</span><span class="p">(</span><span class="s2">&quot;Lorem ipsum dolor sit.&quot;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunk</span> <span class="o">=</span> <span class="n">chunk_elements</span><span class="p">(</span><span class="n">elements</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="go">&#39;Lorem Ipsum\n\nLorem ipsum dolor sit.&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">orig_elements</span><span class="p">)</span>
+<span class="go">[Title(&quot;Lorem Ipsum&quot;), NarrativeText(&quot;Lorem ipsum dolor sit.&quot;)]</span>
+</pre></div>
+</div>
+<p>These elements will contain all their original metadata so can be used to access metadata that
+cannot reliably be consolidated, for example:</p>
+<p>–code:: python</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">page_number</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">orig_elements</span><span class="p">}</span>
+<span class="go">{2, 3}</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">coordinates</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">orig_elements</span><span class="p">]</span>
+<span class="go">[&lt;CoordinatesMetadata ...&gt;, &lt;CoordinatesMetadata ...&gt;, ...]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span>
+<span class="go">    e.metadata.image_path</span>
+<span class="go">    for e in chunk.metadata.orig_elements</span>
+<span class="go">    if e.metadata.image_path is not None</span>
+<span class="go">]</span>
+<span class="go">[&#39;/tmp/lorem.jpg&#39;, &#39;/tmp/ipsum.png&#39;]</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -712,7 +752,7 @@ this to <code class="docutils literal notranslate"><span class="pre">0</span></c
 <li><a class="reference internal" href="#">Chunking</a><ul>
 <li><a class="reference internal" href="#chunking-basics">Chunking Basics</a></li>
 <li><a class="reference internal" href="#chunking-options">Chunking Options</a></li>
-<li><a class="reference internal" href="#chunking-elements">Chunking elements</a><ul>
+<li><a class="reference internal" href="#id1">Chunking</a><ul>
 <li><a class="reference internal" href="#specifying-a-chunking-strategy-while-partitioning">Specifying a chunking strategy while partitioning</a></li>
 <li><a class="reference internal" href="#calling-a-chunking-function">Calling a chunking function</a></li>
 </ul>
@@ -722,6 +762,7 @@ this to <code class="docutils literal notranslate"><span class="pre">0</span></c
 <li><a class="reference internal" href="#by-title-chunking-strategy">“by_title” chunking strategy</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#recovering-chunk-elements">Recovering Chunk Elements</a></li>
 </ul>
 </li>
 </ul>

@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="Permissions Configuration" href="permissions_config.html" /><link rel="prev" title="Read Configuration" href="read_config.html" />
 
   <link rel="shortcut icon" href="../../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Partition Configuration - Unstructured 0.12.6 documentation</title>
+  <title>Partition Configuration - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../destination_connectors/dropbox.html">Dropbox</a></li>
@@ -515,7 +516,7 @@ responsible for coordinating data after processing, including the dynamic metada
 <section id="configs-for-partitioning">
 <h2>Configs for Partitioning<a class="headerlink" href="#configs-for-partitioning" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">pdf_infer_table_structure</span></code>: If True and strategy=hi_res, any Table Elements extracted from a PDF will include an additional metadata field, “text_as_html,” where the value (string) is a just a transformation of the data into an HTML &lt;table&gt;. The “text” field for a partitioned Table Element is always present, whether True or False.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pdf_infer_table_structure</span></code>: Deprecated! Use skip_infer_table_types to opt out of table extraction for any file type. If False and strategy=hi_res, no Table Elements will be extracted from pdf files regardless of skip_infer_table_types contents.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">skip_infer_table_types</span></code>: List of document types that you want to skip table extraction with.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">strategy</span> <span class="pre">(default</span> <span class="pre">auto)</span></code>: The strategy to use for partitioning PDF/image. Uses a layout detection model if set to ‘hi_res’, otherwise partition simply extracts the text from the document and processes it.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">ocr_languages</span></code>: The languages present in the document, for use in partitioning and/or OCR. For partitioning image or pdf documents with Tesseract, you’ll first need to install the appropriate Tesseract language pack if running via local unstructured library. For other partitions, language is detected using naive Bayesian filter via <cite>langdetect</cite>. Multiple languages indicates text could be in either language.</p></li>

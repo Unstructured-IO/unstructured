@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Accessing Unstructured API" href="usage_methods.html" /><link rel="prev" title="AWS Marketplace Deployment Guide" href="aws_marketplace.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Python and JavaScript SDK - Unstructured 0.12.6 documentation</title>
+  <title>Python and JavaScript SDK - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -580,12 +581,12 @@
 <span class="n">const</span> <span class="n">data</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">readFileSync</span><span class="p">(</span><span class="n">filename</span><span class="p">);</span>
 
 <span class="n">client</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">partition</span><span class="p">({</span>
-    <span class="c1"># Note that this currently only supports a single file</span>
+    <span class="o">//</span> <span class="n">Note</span> <span class="n">that</span> <span class="n">this</span> <span class="n">currently</span> <span class="n">only</span> <span class="n">supports</span> <span class="n">a</span> <span class="n">single</span> <span class="n">file</span>
     <span class="n">files</span><span class="p">:</span> <span class="p">{</span>
         <span class="n">content</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span>
         <span class="n">fileName</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="c1"># Other partition params</span>
+    <span class="o">//</span> <span class="n">Other</span> <span class="n">partition</span> <span class="n">params</span>
     <span class="n">strategy</span><span class="p">:</span> <span class="s2">&quot;fast&quot;</span><span class="p">,</span>
 <span class="p">})</span><span class="o">.</span><span class="n">then</span><span class="p">((</span><span class="n">res</span><span class="p">:</span> <span class="n">PartitionResponse</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">statusCode</span> <span class="o">==</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>

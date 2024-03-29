@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Ingest" href="../ingest/index.html" /><link rel="prev" title="Chunking" href="chunking.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Embedding - Unstructured 0.12.6 documentation</title>
+  <title>Embedding - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -646,6 +647,51 @@ To obtain an api key, visit: <a class="reference external" href="https://octo.ai
 </pre></div>
 </div>
 </section>
+<section id="vertexaiembeddingencoder">
+<h2><code class="docutils literal notranslate"><span class="pre">VertexAIEmbeddingEncoder</span></code><a class="headerlink" href="#vertexaiembeddingencoder" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">VertexAIEmbeddingEncoder</span></code> class connects to the GCP VertexAI to obtain embeddings for pieces of text.</p>
+<p><code class="docutils literal notranslate"><span class="pre">embed_documents</span></code> will receive a list of Elements, and return an updated list which
+includes the <code class="docutils literal notranslate"><span class="pre">embeddings</span></code> attribute for each Element.</p>
+<p><code class="docutils literal notranslate"><span class="pre">embed_query</span></code> will receive a query as a string, and return a list of floats which is the
+embedding vector for the given query string.</p>
+<p><code class="docutils literal notranslate"><span class="pre">num_of_dimensions</span></code> is a metadata property that denotes the number of dimensions in any
+embedding vector obtained via this class.</p>
+<p><code class="docutils literal notranslate"><span class="pre">is_unit_vector</span></code> is a metadata property that denotes if embedding vectors obtained via
+this class are unit vectors.</p>
+<p>The following code block shows an example of how to use <code class="docutils literal notranslate"><span class="pre">VertexAIEmbeddingEncoder</span></code>. You will
+see the updated elements list (with the <code class="docutils literal notranslate"><span class="pre">embeddings</span></code> attribute included for each element),
+the embedding vector for the query string, and some metadata properties about the embedding model.</p>
+<p>To use Vertex AI PaLM tou will need to:
+- either, pass the full json content of your GCP VertexAI application credentials to the
+VertexAIEmbeddingConfig as the api_key parameter. (This will create a file in the <code class="docutils literal notranslate"><span class="pre">/tmp</span></code>
+directory with the content of the json, and set the GOOGLE_APPLICATION_CREDENTIALS environment
+variable to the <strong>path</strong> of the created file.)
+- or, you’ll need to store the path to a manually created service account JSON file as the
+GOOGLE_APPLICATION_CREDENTIALS environment variable. (For more information:
+<a class="reference external" href="https://python.langchain.com/docs/integrations/text_embedding/google_vertex_ai_palm">https://python.langchain.com/docs/integrations/text_embedding/google_vertex_ai_palm</a>)
+- or, you’ll need to have the credentials configured for your environment (gcloud,
+workload identity, etc…)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">unstructured.documents.elements</span> <span class="kn">import</span> <span class="n">Text</span>
+<span class="kn">from</span> <span class="nn">unstructured.embed.vertexai</span> <span class="kn">import</span> <span class="n">VertexAIEmbeddingConfig</span><span class="p">,</span> <span class="n">VertexAIEmbeddingEncoder</span>
+
+<span class="n">embedding_encoder</span> <span class="o">=</span> <span class="n">VertexAIEmbeddingEncoder</span><span class="p">(</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">VertexAIEmbeddingConfig</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;VERTEXAI_GCP_APP_CREDS_JSON_CONTENT&quot;</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="n">elements</span> <span class="o">=</span> <span class="n">embedding_encoder</span><span class="o">.</span><span class="n">embed_documents</span><span class="p">(</span>
+    <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">Text</span><span class="p">(</span><span class="s2">&quot;This is sentence 1&quot;</span><span class="p">),</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;This is sentence 2&quot;</span><span class="p">)],</span>
+<span class="p">)</span>
+
+<span class="n">query</span> <span class="o">=</span> <span class="s2">&quot;This is the query&quot;</span>
+<span class="n">query_embedding</span> <span class="o">=</span> <span class="n">embedding_encoder</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+<span class="p">[</span><span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">embedding_encoder</span><span class="o">.</span><span class="n">is_unit_vector</span><span class="p">(),</span> <span class="n">embedding_encoder</span><span class="o">.</span><span class="n">num_of_dimensions</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -709,6 +755,7 @@ To obtain an api key, visit: <a class="reference external" href="https://octo.ai
 <li><a class="reference internal" href="#huggingfaceembeddingencoder"><code class="docutils literal notranslate"><span class="pre">HuggingFaceEmbeddingEncoder</span></code></a></li>
 <li><a class="reference internal" href="#bedrockembeddingencoder"><code class="docutils literal notranslate"><span class="pre">BedrockEmbeddingEncoder</span></code></a></li>
 <li><a class="reference internal" href="#octoaiembeddingencoder"><code class="docutils literal notranslate"><span class="pre">OctoAIEmbeddingEncoder</span></code></a></li>
+<li><a class="reference internal" href="#vertexaiembeddingencoder"><code class="docutils literal notranslate"><span class="pre">VertexAIEmbeddingEncoder</span></code></a></li>
 </ul>
 </li>
 </ul>

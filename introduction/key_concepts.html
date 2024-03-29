@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Installation" href="../installing.html" /><link rel="prev" title="Document Elements" href="overview.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Key Concepts - Unstructured 0.12.6 documentation</title>
+  <title>Key Concepts - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -555,7 +556,7 @@ Such errors can be highly detrimental, mainly when these models serve critical r
 <li><p><strong>Data preprocessing and cleaning</strong>: Once you’ve identified and collected your data sources, removing any unnecessary artifacts within the dataset is a good practice. At Unstructured, we have various tools for data processing in our <a class="reference external" href="https://unstructured-io.github.io/unstructured/core.html">core functionalities</a>.</p></li>
 <li><p><strong>Chunking</strong>: The next step is to break your text into digestible pieces for your LLM to consume. We provide the basic and context-aware chunking strategies. Please refer to the documentation <a class="reference external" href="https://unstructured-io.github.io/unstructured/core/chunking.html">here</a>.</p></li>
 <li><p><strong>Embedding</strong>: After chunking, you must convert the text into a numerical representation (vector embedding) that an LLM can understand. To use the various embedding models using Unstructured tools, please refer to <a class="reference external" href="https://unstructured-io.github.io/unstructured/core/embedding.html">this page</a>.</p></li>
-<li><p><strong>Vector Database</strong>: The next step is to choose a location for storing your chunked embeddings. There are many options for your vector database (ChromaDB, Milvus, Pinecone, Qdrant, Weaviate, and more). For complete list of Unstructured <code class="docutils literal notranslate"><span class="pre">Destination</span> <span class="pre">Connectors</span></code>, please visit <a class="reference external" href="https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html">this page</a>.</p></li>
+<li><p><strong>Vector Database</strong>: The next step is to choose a location for storing your chunked embeddings. There are many options for your vector database (AstraDB, ChromaDB, Clarifai, Milvus, Pinecone, Qdrant, Weaviate, and more). For complete list of Unstructured <code class="docutils literal notranslate"><span class="pre">Destination</span> <span class="pre">Connectors</span></code>, please visit <a class="reference external" href="https://unstructured-io.github.io/unstructured/ingest/destination_connectors.html">this page</a>.</p></li>
 <li><p><strong>User Prompt</strong>: Take the user prompt and grab the most relevant chunks of information in the vector database via similarity search.</p></li>
 <li><p><strong>LLM Generation</strong>: Once you’ve retrieved your relevant chunks, you pass the prompt + the context to the LLM for the LLM to generate a more accurate response.</p></li>
 </ol>

@@ -7,7 +7,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Models" href="models.html" />
 
   <link rel="shortcut icon" href="../_static/unstructured_small.png" /><meta name="generator" content="sphinx-6.2.1, furo 2023.07.26" />
-  <title>Table Extraction from PDF - Unstructured 0.12.6 documentation</title>
+  <title>Table Extraction from PDF - Unstructured 0.13.0 documentation</title>
   <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
   <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=369552022d0b975c8e74270ce6eabe0fb7978f24" />
   <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
@@ -409,6 +409,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/azure_cognitive_search.html">Azure Cognitive Search</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/box.html">Box</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/chroma.html">Chroma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/clarifai.html">Clarifai</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/databricks_volumes.html">Databricks Volumes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/delta_table.html">Delta Table</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../ingest/destination_connectors/dropbox.html">Dropbox</a></li>
@@ -535,7 +536,7 @@
 </section>
 <section id="method-2-using-auto-partition-or-unstructured-api">
 <h2>Method 2: Using Auto Partition or Unstructured API<a class="headerlink" href="#method-2-using-auto-partition-or-unstructured-api" title="Permalink to this heading"></a></h2>
-<p>By default, table extraction from <code class="docutils literal notranslate"><span class="pre">pdf</span></code>, <code class="docutils literal notranslate"><span class="pre">jpg</span></code>, <code class="docutils literal notranslate"><span class="pre">png</span></code>, <code class="docutils literal notranslate"><span class="pre">xls</span></code>, and <code class="docutils literal notranslate"><span class="pre">xlsx</span></code> file types is disabled. To enable table extraction from PDFs and other file types using <a class="reference external" href="https://unstructured-io.github.io/unstructured/core/partition.html#partition">Auto Partition</a> or <a class="reference external" href="https://unstructured-io.github.io/unstructured/apis/api_parameters.html">Unstructured API parameters</a> , you can set the <code class="docutils literal notranslate"><span class="pre">skip_infer_table_types</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">'[]'</span></code> and <code class="docutils literal notranslate"><span class="pre">strategy</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">hi_res</span></code>.</p>
+<p>By default, table extraction from all file types is enabled. To extract tables from PDFs and images using <a class="reference external" href="https://unstructured-io.github.io/unstructured/core/partition.html#partition">Auto Partition</a> or <a class="reference external" href="https://unstructured-io.github.io/unstructured/apis/api_parameters.html">Unstructured API parameters</a> simply set <code class="docutils literal notranslate"><span class="pre">strategy</span></code> parameter to <code class="docutils literal notranslate"><span class="pre">hi_res</span></code>.</p>
 <p><strong>Usage: Auto Partition</strong></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">unstructured.partition.auto</span> <span class="kn">import</span> <span class="n">partition</span>
 
@@ -543,7 +544,6 @@
 
 <span class="n">elements</span> <span class="o">=</span> <span class="n">partition</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
                      <span class="n">strategy</span><span class="o">=</span><span class="s1">&#39;hi_res&#39;</span><span class="p">,</span>
-                     <span class="n">skip_infer_table_types</span><span class="o">=</span><span class="s1">&#39;[]&#39;</span><span class="p">,</span> <span class="c1"># don&#39;t forget to include apostrophe around the square bracket</span>
            <span class="p">)</span>
 
 <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span> <span class="k">if</span> <span class="n">el</span><span class="o">.</span><span class="n">category</span> <span class="o">==</span> <span class="s2">&quot;Table&quot;</span><span class="p">]</span>
@@ -559,13 +559,8 @@
 <span class="w">    </span>-H<span class="w"> </span><span class="s1">&#39;Content-Type: multipart/form-data&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-F<span class="w"> </span><span class="s1">&#39;files=@sample-docs/layout-parser-paper-with-table.jpg&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>-F<span class="w"> </span><span class="s1">&#39;strategy=hi_res&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>-F<span class="w"> </span><span class="s1">&#39;skip_infer_table_types=[]&#39;</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-C<span class="w"> </span>.<span class="w"> </span><span class="p">|</span><span class="w"> </span>less<span class="w"> </span>-R
 </pre></div>
-</div>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>You may get a warning when the <code class="docutils literal notranslate"><span class="pre">pdf_infer_table_structure</span></code> parameter is set to <strong>True</strong> AND <strong>pdf</strong> is included in the list of <code class="docutils literal notranslate"><span class="pre">skip_infer_table_types</span></code> parameter. However, this function will still extract the tables from PDF despite the conflict.</p>
 </div>
 </section>
 </section>
