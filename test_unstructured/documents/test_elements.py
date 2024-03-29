@@ -34,7 +34,7 @@ from unstructured.documents.elements import (
 
 def test_text_id():
     text_element = Text(text="hello there!")
-    assert text_element.id == "038d47b4730901555da92f924541b5ce"
+    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
 
 
 def test_text_uuid():
