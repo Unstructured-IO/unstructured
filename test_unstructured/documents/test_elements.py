@@ -29,7 +29,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
     assign_hash_ids,
-    calculate_hash,
 )
 
 
@@ -733,5 +732,10 @@ def test_hash_ids_are_deterministic():
         ("some text", 1, 1, "3a687e63c42212f3f83f89069ffb275f"),
     ],
 )
-def test_calculate_hash(text, page_number, index_in_sequence, expected_hash):
-    assert calculate_hash(text, page_number, index_in_sequence) == expected_hash
+def test_id_to_hash(text, page_number, index_in_sequence, expected_hash):
+    element = Text(
+        text=text,
+        metadata=ElementMetadata(page_number=page_number),
+    )
+    assert element.id_to_hash(index_in_sequence) == expected_hash, "Returned ID does not match"
+    assert element.id == expected_hash, "ID should be set"
