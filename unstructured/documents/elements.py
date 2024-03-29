@@ -505,22 +505,6 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def calculate_hash(text: str, page_number: int, index_in_sequence: int) -> str:
-    """
-    Calculate a deterministic hash for a given text, page number, and index in sequence.
-
-    Args:
-        text: The text of the element.
-        page_number: The page number where the element is found.
-        index_in_sequence: The index of the element in the sequence of elements.
-
-    Returns:
-        The first 32 characters of the SHA256 hash of the concatenated input parameters.
-    """
-    data = f"{text}{page_number}{index_in_sequence}"
-    return hashlib.sha256(data.encode()).hexdigest()[:32]
-
-
 def recalculate_ids(elements: List[Element]) -> List[Element]:
     """Updates the `id` and `parent_id` attributes of each element
     in the list of elements based on the element's attributes and its index in sequence
@@ -822,6 +806,21 @@ class Text(Element):
             coordinate_system=coordinate_system,
             detection_origin=detection_origin,
         )
+
+    def id_to_hash(self, index_in_sequence: int) -> str:
+        """
+        Calculates ans assigns a deterministic hash as an ID
+        based on element's text, page number, and index in sequence.
+
+        Args:
+            index_in_sequence: The index of the element in the sequence of elements.
+
+        Returns:
+            The first 32 characters of the SHA256 hash of the concatenated input parameters.
+        """
+        data = f"{self.text}{self.metadata.page_number}{index_in_sequence}"
+        self.id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
 
     def __eq__(self, other: object):
         if not isinstance(other, Text):
