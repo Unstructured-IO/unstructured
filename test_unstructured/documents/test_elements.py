@@ -28,8 +28,8 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Text,
     Title,
+    assign_hash_ids,
     calculate_hash,
-    recalculate_ids,
 )
 
 
@@ -666,7 +666,7 @@ class DescribeElementMetadata:
             )
 
 
-def test_recalculated_ids_are_unique_for_duplicate_elements():
+def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
     parent = Text(
         text="Parent",
@@ -685,14 +685,14 @@ def test_recalculated_ids_are_unique_for_duplicate_elements():
     ]
 
     # WHEN
-    recalculated_elements = recalculate_ids(elements)
-    ids = [element.id for element in recalculated_elements]
+    updated_elements = assign_hash_ids(elements)
+    ids = [element.id for element in updated_elements]
 
     # THEN
     assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
     assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
 
-    for idx, updated_element in enumerate(recalculated_elements):
+    for idx, updated_element in enumerate(updated_elements):
         assert updated_element.id != elements[idx].id, "IDs haven't changed after recalculation"
         if updated_element.metadata.parent_id is not None:
             assert updated_element.metadata.parent_id in ids, "Parent ID not in the list of IDs"
@@ -701,7 +701,7 @@ def test_recalculated_ids_are_unique_for_duplicate_elements():
             ), "Parent ID hasn't changed after recalculation"
 
 
-def test_recalculated_ids_are_deterministic():
+def test_hash_ids_are_deterministic():
     # GIVEN
     parent = Text(
         text="Parent",
@@ -720,9 +720,9 @@ def test_recalculated_ids_are_deterministic():
     ]
 
     # WHEN
-    recalculated_elements = recalculate_ids(elements)
-    ids = [element.id for element in recalculated_elements]
-    parent_ids = [element.metadata.parent_id for element in recalculated_elements]
+    updated_elements = assign_hash_ids(elements)
+    ids = [element.id for element in updated_elements]
+    parent_ids = [element.metadata.parent_id for element in updated_elements]
 
     # THEN
     assert ids == [

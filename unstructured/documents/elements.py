@@ -505,12 +505,12 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def recalculate_ids(elements: List[Element]) -> List[Element]:
+def assign_hash_ids(elements: List[Element]) -> List[Element]:
     """Updates the `id` and `parent_id` attributes of each element
     in the list of elements based on the element's attributes and its index in sequence
 
     Args:
-        elements: The list of elements whose IDs are to be recalculated.
+        elements: The list of elements whose IDs are to be updated.
 
     Returns:
         The list of elements with updated IDs.
@@ -577,7 +577,7 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
                 for element in elements:
                     element.id_to_uuid()
             else:
-                elements = recalculate_ids(elements)
+                elements = assign_hash_ids(elements)
 
             return elements
 
