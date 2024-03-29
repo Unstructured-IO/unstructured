@@ -25,6 +25,7 @@ from unstructured.documents.elements import (
     Table,
     Text,
     Title,
+    Image,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -102,6 +103,10 @@ class HTMLListItem(TagsMixin, ListItem):
 
 class HTMLTable(TagsMixin, Table):
     """NarrativeText with tag information"""
+
+
+class HTMLImage(TagsMixin, Image):
+    """Image with tag information"""
 
 
 def has_table_ancestor(element: TagsMixin) -> bool:
