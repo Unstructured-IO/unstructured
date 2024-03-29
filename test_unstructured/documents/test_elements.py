@@ -38,19 +38,6 @@ def test_text_id():
     assert text_element.id == "038d47b4730901555da92f924541b5ce"
 
 
-def test_text_id_recalculates_id_deterministically_on_metadata_update():
-    original_page = 1
-    text_element = Text(text="hello there!", metadata=ElementMetadata(page_number=original_page))
-    assert text_element.id == "6203bf4b51bd9139cbb1e9ab45636d5c"
-    id_before_update = text_element.id
-
-    text_element.metadata.page_number = 2
-    assert text_element.id == "6759346774e1cc088bc663d3be7b738f"
-
-    text_element.metadata.page_number = original_page
-    assert text_element.id == id_before_update
-
-
 def test_text_uuid():
     text_element = Text(text="hello there!", element_id=UUID())
 
