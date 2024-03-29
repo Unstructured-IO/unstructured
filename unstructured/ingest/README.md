@@ -58,7 +58,7 @@ The `main.py` flags of --re-download/--no-re-download , --download-dir, --preser
 
 ## Adding Destination Data Connectors
 
-To add a destination connector, refer to [unstructured/ingest/connector/delta-table.py](unstructured/ingest/connector/delta-table.py) as an example, which extends the `BaseDestinationConnector`, and the `WriteConfig`. It also shows how an existing data provider can be used for both a source and destination connector.
+To add a destination connector, refer to [unstructured/ingest/connector/delta_table.py](unstructured/ingest/connector/delta_table.py) as an example, which extends the `BaseDestinationConnector`, and the `WriteConfig`. It also shows how an existing data provider can be used for both a source and destination connector.
 
 Similar to the runner used to connect source connectors with the CLI, destination connectors require an entry in the writer map defined in [unstructured/ingest/runner/writers.py](unstructured/ingest/runner/writers.py). This allows any source connector to use any destination connector.
 
