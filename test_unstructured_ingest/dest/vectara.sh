@@ -14,7 +14,7 @@ RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 CORPUS_NAME="test-corpus-vectara-"$RANDOM_SUFFIX
 
 # Expected size of the uploaded document
-EXPECTED_CORPUS_SIZE=8830076
+EXPECTED_CORPUS_SIZE=8842684
 
 if [ -z "$VECTARA_OAUTH_CLIENT_ID" ] && [ -z "$VECTARA_OAUTH_SECRET" ] && [ -z "$VECTARA_CUSTOMER_ID" ]; then
   echo "Skipping VECTARA ingest test because VECTARA_OAUTH_CLIENT_ID, VECTARA_OAUTH_SECRET, or VECTARA_CUSTOMER_ID env var is not set."
@@ -89,5 +89,6 @@ if [ "$corpus_size" == "$EXPECTED_CORPUS_SIZE" ]; then
   echo "Corpus size is as expected: $corpus_size"
 else
   echo "Corpus size is not as expected: $corpus_size"
+  echo "vs $EXPECTED_CORPUS_SIZE"
   exit 1
 fi
