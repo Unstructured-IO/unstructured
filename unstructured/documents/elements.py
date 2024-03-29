@@ -515,9 +515,7 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
     Returns:
         The list of elements with updated IDs.
     """
-
     old_to_new_id_mapping = {}
-    updated_parent_ids = set()
 
     for idx_in_seq, element in enumerate(elements):
         old_id = element.id
@@ -525,16 +523,7 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
         old_to_new_id_mapping[old_id] = new_id
 
         if parent_id := element.metadata.parent_id:
-            try:
-                new_parent_id = old_to_new_id_mapping[parent_id]
-                element.metadata.parent_id = new_parent_id
-                updated_parent_ids.add(new_parent_id)
-            except KeyError:
-                if parent_id not in updated_parent_ids:
-                    raise
-                # NOTE(mike): otherwise, the parent_id has already been updated
-                # For XLSX documents, some element.metadata can have identical memory address
-                # and thus the parent_id is updated in the first iteration
+            element.metadata.parent_id = old_to_new_id_mapping[parent_id]
 
     return elements
 
@@ -686,13 +675,13 @@ class Element(abc.ABC):
 
     def __init__(
         self,
-        element_id: str | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: str | NoID | UUID = element_id
+        self.id: str | NoID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -796,7 +785,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -808,10 +797,6 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
             element_id = str(uuid.uuid4())
 
         super().__init__(
