@@ -1,6 +1,9 @@
-## 0.13.1-dev0
+## 0.13.1-dev1
 
 ### Enhancements
+
+* **Use `partial_token_ratio` as default table content metric**
+
 ### Features
 ### Fixes
 

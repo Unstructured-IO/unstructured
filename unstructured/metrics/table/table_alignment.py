@@ -63,6 +63,7 @@ class TableAlignment:
         ground_truth_table_data: List[List[Dict[str, Any]]],
         matched_indices: List[int],
         cutoff: float = 0.8,
+        metric_type: str = "partial_token_ratio",
     ) -> Dict[str, float]:
         """Aligns elements of the predicted tables with the ground truth tables at the cell level.
 
@@ -71,6 +72,8 @@ class TableAlignment:
           ground_truth_table_data: A list of ground truth tables.
           matched_indices: Indices of the best matching ground truth table for each predicted table.
           cutoff: The cutoff value for the close matches.
+          metric_type: the type of rapidfuzz metric to use; must be one of ["token_ratio", "ratio",
+            "partial_token_ratio", "partial_ratio"]
 
         Returns:
           A dictionary with column and row alignment accuracies.
@@ -92,11 +95,10 @@ class TableAlignment:
             ground_truth_table_df = TableAlignment._zip_to_dataframe(ground_truth_td)
 
             table_content_diff = compare_contents_as_df(
-                ground_truth_table_df.fillna(""),
-                predict_table_df.fillna(""),
+                ground_truth_table_df.fillna(""), predict_table_df.fillna(""), eval_func=metric_type
             )
-            content_diff_cols.append(table_content_diff["by_col_token_ratio"])
-            content_diff_rows.append(table_content_diff["by_row_token_ratio"])
+            content_diff_cols.append(table_content_diff[f"by_col_{metric_type}"])
+            content_diff_rows.append(table_content_diff[f"by_row_{metric_type}"])
 
             # Get row and col index accuracy
             ground_truth_td_contents_list = [gtd["content"].lower() for gtd in ground_truth_td]
