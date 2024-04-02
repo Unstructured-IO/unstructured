@@ -688,6 +688,9 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
+        if not isinstance(element_id, (str, NoID)):
+            raise ValueError("element_id must be of type str or NoID.")
+
         self.id: str | NoID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:

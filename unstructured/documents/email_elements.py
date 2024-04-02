@@ -25,17 +25,17 @@ class Name(EmailElement):
         name: str,
         text: str,
         datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
-        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
+        element_id: Union[str, NoID] = NoID(),
     ):
         self.name: str = name
         self.text: str = text
 
+        if not isinstance(element_id, (str, NoID)):
+            raise ValueError("element_id must be of type str or NoID")
+
         if isinstance(element_id, NoID):
             # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
-            element_id = uuid.uuid4()
+            element_id = str(uuid.uuid4())
 
         super().__init__(element_id=element_id)
 
