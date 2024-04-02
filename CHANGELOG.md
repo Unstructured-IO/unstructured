@@ -1,3 +1,8 @@
+## 0.13.1-dev1
+
+### Enhancements
+* **Better element IDs** Now, the elements returned by any partitioning function are deterministic and unique at the document level by default.
+
 ## 0.13.0
 
 ### Enhancements
