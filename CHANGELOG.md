@@ -5,7 +5,8 @@
 ### Features
 
 ### Fixes
-* **Fix partition_html() swallowing some paragraphs**.
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
 
 ## 0.13.0
 
