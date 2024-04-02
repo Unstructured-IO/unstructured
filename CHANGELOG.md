@@ -11,7 +11,7 @@
 
 * **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
 * **Add Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
-* **Add a set of new `ElementType`s to extend future element type recognition in future**
+* **Add a set of new `ElementType`s to extend future element types**
 
 ### Fixes
 
