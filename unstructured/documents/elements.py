@@ -21,6 +21,7 @@ from unstructured.documents.coordinates import (
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
+from unstructured.logger import logger
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import lazyproperty
 
@@ -515,15 +516,21 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
     Returns:
         The list of elements with updated IDs.
     """
-    old_to_new_id_mapping = {}
 
+    old_to_new_id_mapping = {}
     for idx_in_seq, element in enumerate(elements):
         old_id = element.id
         new_id = element.id_to_hash(idx_in_seq)
         old_to_new_id_mapping[old_id] = new_id
 
+    for element in elements:
         if parent_id := element.metadata.parent_id:
-            element.metadata.parent_id = old_to_new_id_mapping[parent_id]
+            try:
+                element.metadata.parent_id = old_to_new_id_mapping[parent_id]
+            except KeyError:
+                # NOTE(mike): if chunking is enabled, .parent_id might have been
+                # already assigned properly
+                logger.warning(f"Parent ID not found in mapping: {parent_id}, skipping...")
 
     return elements
 
