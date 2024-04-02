@@ -20,9 +20,11 @@ def test_text_id_is_always_a_string():
     assert isinstance(name_element.id, str)
 
 
-def test_element_defaults_to_blank_id():
-    element = EmailElement()
-    assert isinstance(element.id, NoID)
+def test_element_id_defaults_to_UUID():
+    element = EmailElement(text="")
+    assert element.id
+    # TODO test if UUID
+    assert isinstance(element.id, str)
 
 
 def test_text_element_apply_cleaners():
