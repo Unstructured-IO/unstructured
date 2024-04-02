@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import hashlib
-import uuid
 from abc import ABC
 from datetime import datetime
-from typing import Callable, List, Union
+from typing import Callable, List
 
 from unstructured.documents.elements import Element, NoID, Text
 
@@ -11,7 +12,7 @@ class NoDatestamp(ABC):
     """Class to indicate that an element do not have a datetime stamp."""
 
 
-class EmailElement(Element):
+class EmailElement(Text):
     """An email element is a section of the email."""
 
 
@@ -24,38 +25,16 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
-        datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
-        element_id: Union[str, NoID] = NoID(),
+        datestamp: datetime | NoDatestamp = NoDatestamp(),
+        element_id: str | NoID = NoID(),
     ):
         self.name: str = name
         self.text: str = text
 
-        if not isinstance(element_id, (str, NoID)):
-            raise ValueError("element_id must be of type str or NoID")
-
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = str(uuid.uuid4())
-
-        super().__init__(element_id=element_id)
+        super().__init__(text=text, element_id=element_id)
 
         if isinstance(datestamp, datetime):
             self.datestamp: datetime = datestamp
-
-    def id_to_hash(self, index_in_sequence: int) -> str:
-        """
-        Calculates ans assigns a deterministic hash as an ID
-        based on element's text, page number, and index in sequence.
-
-        Args:
-            index_in_sequence: The index of the element in the sequence of elements.
-
-        Returns:
-            The first 32 characters of the SHA256 hash of the concatenated input parameters.
-        """
-        data = f"{self.text}{self.metadata.page_number}{index_in_sequence}"
-        self.id = hashlib.sha256(data.encode()).hexdigest()[:32]
-        return self.id
 
     def has_datestamp(self):
         return "self.datestamp" in globals()
@@ -108,7 +87,7 @@ class Sender(Name):
     category = "Sender"
 
 
-class Subject(Text, EmailElement):
+class Subject(EmailElement):
     """A text element for capturing the subject information of an email"""
 
     category = "Subject"
