@@ -498,7 +498,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
+            "text_as_html": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
         }
 
@@ -509,6 +509,7 @@ _P = ParamSpec("_P")
 def assign_hash_ids(elements: List[Element]) -> List[Element]:
     """Updates the `id` and `parent_id` attributes of each element
     in the list of elements based on the element's attributes and its index in sequence
+
 
     Args:
         elements: The list of elements whose IDs are to be updated.
