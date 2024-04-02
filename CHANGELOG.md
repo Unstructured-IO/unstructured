@@ -1,3 +1,13 @@
+## 0.13.1-dev0
+
+### Enhancements
+
+### Features
+
+* **Add a set of new `ElementType`s to extend future element types**
+
+### Fixes
+
 ## 0.13.0
 
 ### Enhancements
