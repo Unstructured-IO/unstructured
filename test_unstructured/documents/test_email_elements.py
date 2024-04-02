@@ -10,12 +10,15 @@ from unstructured.documents.email_elements import UUID, EmailElement, Name, NoID
 
 def test_text_id():
     name_element = Name(name="Example", text="hello there!")
-    assert name_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert name_element.id_to_hash(index_in_sequence=0) == "4a99bcb0c10d60c920553c8fffea7a69"
 
 
-def test_text_uuid():
-    name_element = Name(name="Example", text="hello there!", element_id=UUID())
-    assert isinstance(name_element.id, uuid.UUID)
+def test_text_id_is_always_a_string():
+    name_element = Name(name="Example", text="hello there!")
+    assert isinstance(name_element.id, str)
+
+    name_element = Name(name="Example", text="hello there!", element_id=NoID())
+    assert isinstance(name_element.id, str)
 
 
 def test_element_defaults_to_blank_id():

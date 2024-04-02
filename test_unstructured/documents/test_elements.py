@@ -35,11 +35,11 @@ from unstructured.documents.elements import (
 
 def test_text_id():
     text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert text_element.id_to_hash(0) == "4a99bcb0c10d60c920553c8fffea7a69"
 
 
 def test_text_uuid():
-    text_element = Text(text="hello there!", element_id=UUID())
+    text_element = Text(text="hello there!", element_id=NoID())
 
     id = text_element.id
 
@@ -385,17 +385,20 @@ class DescribeElementMetadata:
         }
 
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
+        title = Title("Lorem", element_id="e468d60b-6658-4b97-901b-ab1197418c49")
+        text = Text("Lorem Ipsum", element_id="5fe29e8a-2fdc-4245-9a27-11f3b1b089c3")
         meta = ElementMetadata(
             category_depth=1,
-            orig_elements=[Title("Lorem"), Text("Lorem Ipsum")],
+            orig_elements=[title, text],
             page_number=2,
         )
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (
-                "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWt"
-                "JVm5WDoqNUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQp"
-                "ZRxYZcCA/1spDtP98dU6DTEw3sa5fWOqs10vH0cLQn0="
+                "eJyFjcsKwjAQRX+lZO1Ak6Zpxj8QXNaViOQxlUJf1BHU0n+3Wer"
+                "G5b2cwzkvgjrqaeBrG8U+E6SNjSb3YExpQXusAHPpwXkpsdLSBo"
+                "1il4me2EXHbnOWddtMT07+cZypTwC/JkpH3XJHYkN+S2VDCsk6U"
+                "E0MoJUuAZ2qQMqm8NLnFkPxt5Qdpvvjq3cagmO6jXP7plgndr18ANb8RFE="
             ),
             "page_number": 2,
         }
