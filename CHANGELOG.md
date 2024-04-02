@@ -1,8 +1,11 @@
-## 0.13.1-dev0
+## 0.13.1-dev1
 
 ### Enhancements
+
 ### Features
+
 ### Fixes
+* **Fix partition_html() swallowing some paragraphs**.
 
 ## 0.13.0
 
