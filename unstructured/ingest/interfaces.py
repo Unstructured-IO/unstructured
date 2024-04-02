@@ -222,6 +222,13 @@ class EmbeddingConfig(BaseConfig):
                     region_name=self.aws_region,
                 )
             )
+        elif self.provider == "langchain-vertexai":
+            from unstructured.embed.vertexai import (
+                VertexAIEmbeddingConfig,
+                VertexAIEmbeddingEncoder,
+            )
+
+            return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
