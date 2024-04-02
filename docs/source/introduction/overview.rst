@@ -141,10 +141,10 @@ a list of elements from JSON, as seen in the snippet below
 Unique Element IDs
 ******************
 
-By default, the element ID is a SHA-256 hash of the element text. This is to ensure that
-the ID is deterministic. One downside is that the ID is not guaranteed to be unique.
-Different elements with the same text will have the same ID, and there could also
-be hash collisions. To use UUIDs in the output instead, you can pass
+By default, the element ID is a SHA-256 hash of the element text, its position within the sequence
+of all returned elements and the page number (if supported by the file type).
+This is to ensure that the ID is deterministic and unique at the document level.
+To obtain globally unique IDs in the output (UUIDs), you can pass
 ``unique_element_ids=True`` into any of the partition functions. This can be helpful
 if you'd like to use the IDs as a primary key in a database, for example.
 
