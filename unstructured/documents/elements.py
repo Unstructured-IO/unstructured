@@ -789,6 +789,13 @@ class Other(Element):
         out["type"] = "Other"
         return out
 
+    def __eq__(self, other: object):
+        if not isinstance(other, Other):
+            return False
+        return all(
+            (self.metadata.coordinates == other.metadata.coordinates,),
+        )
+
 
 class Text(Element):
     """Base element for capturing free text from within document."""
