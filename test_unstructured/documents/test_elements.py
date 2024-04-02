@@ -18,7 +18,6 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.documents.elements import (
-    UUID,
     ConsolidationStrategy,
     CoordinatesMetadata,
     DataSourceMetadata,

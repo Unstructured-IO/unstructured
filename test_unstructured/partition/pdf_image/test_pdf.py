@@ -1234,7 +1234,7 @@ def test_partition_pdf_always_keep_all_image_elements(
     assert len(image_elements) == 3
 
 
-@pytest.fixture
+@pytest.fixture()
 def mock_pdfwriter_with_duplicate_pages():
     test_file = Path("example-docs") / "DA-1p.pdf"
     original_pdf = PdfReader(test_file)
@@ -1248,7 +1248,7 @@ def mock_pdfwriter_with_duplicate_pages():
     return writer
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_element_ids_for_fast_strategy():
     return [
         "a2744e3d8b632d388a1f24c8806f1a6e",
@@ -1282,7 +1282,7 @@ def expected_element_ids_for_fast_strategy():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_element_ids_for_hi_res_strategy():
     return [
         "a2744e3d8b632d388a1f24c8806f1a6e",
@@ -1316,7 +1316,7 @@ def expected_element_ids_for_hi_res_strategy():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_element_ids_for_ocr_strategy():
     return [
         "a2744e3d8b632d388a1f24c8806f1a6e",
@@ -1348,7 +1348,7 @@ def expected_element_ids_for_ocr_strategy():
     ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def expected_ids(request):
     return request.getfixturevalue(request.param)
 

@@ -17,7 +17,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
-from unstructured.staging.base import convert_to_dataframe
 
 
 @pytest.fixture()
