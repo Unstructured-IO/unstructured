@@ -42,6 +42,21 @@ class Name(EmailElement):
         if isinstance(datestamp, datetime):
             self.datestamp: datetime = datestamp
 
+    def id_to_hash(self, index_in_sequence: int) -> str:
+        """
+        Calculates ans assigns a deterministic hash as an ID
+        based on element's text, page number, and index in sequence.
+
+        Args:
+            index_in_sequence: The index of the element in the sequence of elements.
+
+        Returns:
+            The first 32 characters of the SHA256 hash of the concatenated input parameters.
+        """
+        data = f"{self.text}{self.metadata.page_number}{index_in_sequence}"
+        self.id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
+
     def has_datestamp(self):
         return "self.datestamp" in globals()
 
