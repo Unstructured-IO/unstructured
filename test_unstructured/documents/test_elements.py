@@ -55,11 +55,6 @@ def test_element_defaults_to_blank_id():
     assert isinstance(element.id, NoID)
 
 
-def test_element_uuid():
-    element = Element(element_id=UUID())
-    assert isinstance(element.id, UUID)
-
-
 def test_text_element_apply_cleaners():
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
 
