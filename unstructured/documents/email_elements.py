@@ -1,10 +1,8 @@
-import hashlib
-import uuid
 from abc import ABC
 from datetime import datetime
-from typing import Callable, List, Union
+from typing import Callable, List
 
-from unstructured.documents.elements import UUID, NoID, Text
+from unstructured.documents.elements import NoID, Text
 
 
 class NoDatestamp(ABC):
