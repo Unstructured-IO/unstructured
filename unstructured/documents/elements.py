@@ -705,7 +705,6 @@ class Element(abc.ABC):
         else:
             raise ValueError("element_id must be of type str or NoID.")
 
-        self.id: str | NoID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
