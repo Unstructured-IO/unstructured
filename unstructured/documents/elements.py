@@ -522,9 +522,9 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
     old_to_new_id_mapping = {}
     already_updated_parent_ids = set()
 
-    for idx_in_seq, element in enumerate(elements):
+    for element in elements:
         old_id = element.id
-        new_id = element.id_to_hash(idx_in_seq)
+        new_id = element.id_to_hash()
         old_to_new_id_mapping[old_id] = new_id
 
     for element in elements:
