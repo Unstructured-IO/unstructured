@@ -19,8 +19,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     ListItem,
-    Other,
-    RadioButton,
     RegexMetadata,
     Table,
     Text,
@@ -60,10 +58,8 @@ def test_it_splits_elements_by_title_and_table():
         Text("Today is a great day."),
         Text("It is sunny outside."),
         Table("Heading\nCell text"),
-        Other(),
         Title("An Okay Day"),
         Text("Today is an okay day."),
-        RadioButton(),
         Text("It is rainy outside."),
         Title("A Bad Day"),
         Text("Today is a bad day."),
@@ -92,7 +88,6 @@ def test_it_splits_elements_by_title_and_table():
     assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
-        RadioButton(),
         Text("It is rainy outside."),
     ]
     # --
@@ -113,10 +108,8 @@ def test_chunk_by_title():
         Text("It is sunny outside."),
         Table("Heading\nCell text"),
         Title("An Okay Day"),
-        Other(),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
-        RadioButton(),
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
@@ -153,10 +146,8 @@ def test_chunk_by_title_respects_section_change():
         Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
         Table("Heading\nCell text"),
         Title("An Okay Day"),
-        Other(),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
-        RadioButton(),
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
@@ -192,10 +183,8 @@ def test_chunk_by_title_separates_by_page_number():
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
         Table("Heading\nCell text"),
         Title("An Okay Day"),
-        Other(),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
-        RadioButton(),
         Title("A Bad Day"),
         Text(
             "Today is a bad day.",
@@ -236,7 +225,6 @@ def test_chunk_by_title_does_not_break_on_regex_metadata_change():
                 regex_metadata={"ipsum": [RegexMetadata(text="Ipsum", start=6, end=11)]},
             ),
         ),
-        Other(),
         Text(
             "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
             metadata=ElementMetadata(
@@ -249,8 +237,6 @@ def test_chunk_by_title_does_not_break_on_regex_metadata_change():
                 regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
             ),
         ),
-        RadioButton(),
-        CheckBox(),
     ]
 
     chunks = chunk_by_title(elements)
@@ -285,14 +271,12 @@ def test_chunk_by_title_consolidates_and_adjusts_offsets_of_regex_metadata():
                 },
             ),
         ),
-        Other(),
         Text(
             "In rhoncus ipsum sed lectus porta volutpat.",
             metadata=ElementMetadata(
                 regex_metadata={"ipsum": [RegexMetadata(text="ipsum", start=11, end=16)]},
             ),
         ),
-        RadioButton(),
     ]
     chunks = chunk_by_title(elements)
 
@@ -318,13 +302,10 @@ def test_chunk_by_title_groups_across_pages():
         Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
         Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
         Table("Heading\nCell text"),
-        RadioButton(),
         Title("An Okay Day"),
         Text("Today is an okay day."),
-        CheckBox(),
         Text("It is rainy outside."),
         Title("A Bad Day"),
-        Other(),
         Text(
             "Today is a bad day.",
             metadata=ElementMetadata(
