@@ -9,7 +9,7 @@ from unstructured.documents.email_elements import EmailElement, Name, NoID
 
 def test_text_id():
     name_element = Name(name="Example", text="hello there!")
-    assert name_element.id_to_hash(index_in_sequence=0) == "4a99bcb0c10d60c920553c8fffea7a69"
+    assert name_element.id_to_hash(index_in_sequence=0) == "eae4fcad50d11af5cec20276d7d5dc65"
 
 
 def test_text_id_is_always_a_string():

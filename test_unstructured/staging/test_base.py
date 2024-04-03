@@ -45,11 +45,13 @@ def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_fro
 
 def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
     elements = [Title("Lorem"), Text("Lorem Ipsum")]
-
+    for idx, element in enumerate(elements):
+        element.id_to_hash(idx)
     assert base.elements_to_base64_gzipped_json(elements) == (
-        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
-        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
-        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+        "eJyFzU0KwjAQhuGrlKxdNE2bJt5AcFlXIjKTmUqhf9QR1NK7myx"
+        "143KG5+M9r4p7HniUa0dqnyldM1TaAXpvkQmDrnJXIIIho8l5tc"
+        "vUwAIEAtGvW7yFn5K2x2nhIQF5zZweTSc9q0h+K7YIWufoLZFha"
+        "h3VbQkUWrSlMxTqv5XsMN8fX63TGED4Ni3dm6lJdrt8AEnKRLw="
     )
 
 

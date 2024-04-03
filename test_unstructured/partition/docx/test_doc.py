@@ -42,13 +42,13 @@ def test_partition_doc_for_deterministic_and_unique_ids(mock_document_with_dupli
     assert len(ids) == len(set(ids)), "IDs are not unique"
 
     assert ids == [
-        "c904eb7ab8be023c0628ee48088aa12f",
-        "48b7e93a5ca126555fe5770627f44c0d",
-        "389aef9b43174d9a51f669312fe649f3",
-        "bbf352a4284087546e8bc1f19d459916",
-        "0523e6fcd71c35c9cb1e9cf9591b78c9",
-        "6b71251537279ed472bc673126f84555",
-        "283be4ff64c9cf8b510d3c0ffe72c6a7",
+        "79b0831d2868376998cad5a5711f40d4",
+        "3f6c09eb80423bb4cba97555cb334919",
+        "19b7974f4e3cb865afd71a253155f552",
+        "978638628adad03afc46506592fbfada",
+        "c4e8758fb8324dc1974f2dd9cedcf839",
+        "68f94f2fd44ca60e34d53e3d89b24178",
+        "c203336f3c645bc5440a7197048483b1",
     ]
 
 

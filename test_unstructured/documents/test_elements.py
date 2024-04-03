@@ -34,7 +34,7 @@ from unstructured.documents.elements import (
 
 def test_text_id():
     text_element = Text(text="hello there!")
-    assert text_element.id_to_hash(0) == "4a99bcb0c10d60c920553c8fffea7a69"
+    assert text_element.id_to_hash(0) == "eae4fcad50d11af5cec20276d7d5dc65"
 
 
 def test_text_uuid():
@@ -710,30 +710,30 @@ def test_hash_ids_are_deterministic():
 
     # THEN
     assert ids == [
-        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
-        "826c4fd142b72358c12910e40ed4bbe1",
-        "a77bdb894aaaba33ec49922cd9b57c3a",
+        "4b7193f7741dc9ed2674599e73df10d8",
+        "6e85abbe7cd1e40bc7ed789f911ea18b",
+        "52732bb9750fe76418e2a9ce9046ff66",
     ]
     assert parent_ids == [
         None,
-        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
-        "ff30a6ac3ed9cd3d86ac909999a3ab8f",
+        "4b7193f7741dc9ed2674599e73df10d8",
+        "4b7193f7741dc9ed2674599e73df10d8",
     ]
 
 
 @pytest.mark.parametrize(
-    ("text", "page_number", "index_in_sequence", "expected_hash"),
+    ("text", "index_in_sequence", "expected_hash"),
     [
-        ("foo", 1, 1, "f26a146bad83a86fb0ae1ced1962fc4a"),
-        ("foo", 1, 2, "3892929a11b660233e86e9d0a68bec0c"),
-        ("some text", 1, 0, "6b7b86cf188d615a38c01f9647353900"),
-        ("some text", 1, 1, "3a687e63c42212f3f83f89069ffb275f"),
+        ("foo", 1, "bb4eca334f61af3b67b5d528907d3028"),
+        ("foo", 2, "4963bd713a7eb1bce458868b0c8472bd"),
+        ("some text", 0, "483459f0809b83b5c4209bd08a7d2fc1"),
+        ("some text", 1, "3f6c09eb80423bb4cba97555cb334919"),
     ],
 )
-def test_id_to_hash(text, page_number, index_in_sequence, expected_hash):
+def test_id_to_hash(text, index_in_sequence, expected_hash):
     element = Text(
         text=text,
-        metadata=ElementMetadata(page_number=page_number),
+        metadata=ElementMetadata(),
     )
     assert element.id_to_hash(index_in_sequence) == expected_hash, "Returned ID does not match"
     assert element.id == expected_hash, "ID should be set"
