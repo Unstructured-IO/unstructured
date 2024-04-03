@@ -507,15 +507,17 @@ _P = ParamSpec("_P")
 
 
 def assign_hash_ids(elements: List[Element]) -> List[Element]:
-    """Updates the `id` and `parent_id` attributes of each element
-    in the list of elements based on the element's attributes and its index in sequence
+    """Converts `id` and `parent_id` of elements from UUIDs to hashes.
 
+    This function ensures deterministic IDs by:
+    1. Converting each element's UUID into a hash.
+    2. Updating the `parent_id` to match the new hash ID of parent elements.
 
     Args:
-        elements: The list of elements whose IDs are to be updated.
+        elements: A list of Element objects to update.
 
     Returns:
-        The list of elements with updated IDs.
+        List of updated Element objects with hashes for `id` and `parent_id`.
     """
 
     old_to_new_id_mapping = {}
