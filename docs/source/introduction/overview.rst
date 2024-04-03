@@ -141,8 +141,7 @@ a list of elements from JSON, as seen in the snippet below
 Unique Element IDs
 ******************
 
-By default, the element ID is a SHA-256 hash of the element text, its position within the sequence
-of all returned elements and the page number (if supported by the file type).
+By default, the element ID is a SHA-256 hash of the element text and its position within the sequence of all elements.
 This is to ensure that the ID is deterministic and unique at the document level.
 To obtain globally unique IDs in the output (UUIDs), you can pass
 ``unique_element_ids=True`` into any of the partition functions. This can be helpful
@@ -155,6 +154,15 @@ if you'd like to use the IDs as a primary key in a database, for example.
     elements = partition_text(text="Here is some example text.", unique_element_ids=True)
     elements[0].id
 
+Element ID Design Principles
+""""""""""""""""""""""""""""""""""""
+
+#. A partitioning function can assign only one of two available ID types to a returned element: a hash or UUID.
+#. All elements that are returned come with an ID, which is never None.
+#. No matter which type of ID is used, it will always be in string format.
+#. By default, IDs are hashes, ensuring they are both deterministic and unique within a document.
+
+For creating elements independently of partitioning functions, refer to the `Element` class documentation in the source code (`unstructured/documents/elements.py`).
 
 Wrapping it all up
 ******************
