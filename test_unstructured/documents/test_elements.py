@@ -25,7 +25,6 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     NoID,
-    Other,
     Points,
     RadioButton,
     RegexMetadata,
@@ -75,7 +74,7 @@ def test_text_element_apply_multiple_cleaners():
     assert str(text_element) == "A Textbook on Crocodile Habitats"
 
 
-@pytest.mark.parametrize("non_text_element_class", [Other, CheckBox, RadioButton])
+@pytest.mark.parametrize("non_text_element_class", [CheckBox, RadioButton])
 def test_non_text_elements_are_serializable_to_text(non_text_element_class: type[Element]):
     element = non_text_element_class()
     assert hasattr(element, "text")

@@ -20,7 +20,6 @@ from unstructured.documents.elements import (
     ElementMetadata,
     ElementType,
     ListItem,
-    Other,
     PageBreak,
     RadioButton,
     Text,
@@ -175,8 +174,6 @@ def normalize_layout_element(
             checked=checked,
             **common_kwargs,
         )
-    elif element_type == ElementType.OTHER:
-        return Other(**common_kwargs)
     else:
         return Text(
             text=text,

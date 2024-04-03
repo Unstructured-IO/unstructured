@@ -601,13 +601,11 @@ class ElementType:
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
-    PARAGRAPH_IN_FORM = "ParagraphInForm"
     FIELD_NAME = "Field-Name"
     VALUE = "Value"
     LINK = "Link"
     COMPOSITE_ELEMENT = "CompositeElement"
     IMAGE = "Image"
-    PARAGRAPH_IN_IMAGE = "ParagraphInImage"
     PICTURE = "Picture"
     FIGURE_CAPTION = "FigureCaption"
     FIGURE = "Figure"
@@ -624,7 +622,6 @@ class ElementType:
     PAGE_BREAK = "PageBreak"
     FORMULA = "Formula"
     TABLE = "Table"
-    PARAGRAPH_IN_TABLE = "ParagraphInTable"
     HEADER = "Header"
     HEADLINE = "Headline"
     SUB_HEADLINE = "Subheadline"
@@ -635,7 +632,6 @@ class ElementType:
     PAGE_FOOTER = "Page-footer"
     PAGE_NUMBER = "PageNumber"
     CODE_SNIPPET = "CodeSnippet"
-    OTHER = "Other"
 
     @classmethod
     def to_dict(cls):
@@ -781,23 +777,6 @@ class RadioButton(Checkable):
         out = super().to_dict()
         out["type"] = "RadioButton"
         return out
-
-
-class Other(Element):
-    """An element that does not fit into any other category. Not expected to contain a text"""
-
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["type"] = "Other"
-        return out
-
-    def __eq__(self, other: object):
-        if not isinstance(other, Other):
-            return False
-        return all(
-            (self.metadata.coordinates == other.metadata.coordinates,),
-        )
 
 
 class Text(Element):
@@ -957,24 +936,6 @@ class Footer(Text):
     category = "Footer"
 
 
-class ParagraphInImage(Text):
-    """An element for capturing paragraphs within images."""
-
-    category = "ParagraphInImage"
-
-
-class ParagraphInTable(Text):
-    """An element for capturing text within tables."""
-
-    category = "ParagraphInTable"
-
-
-class ParagraphInForm(Text):
-    """An element for capturing text within forms."""
-
-    category = "ParagraphInForm"
-
-
 class CodeSnippet(Text):
     """An element for capturing code snippets."""
 
@@ -1024,7 +985,4 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.PAGE_BREAK: PageBreak,
     ElementType.CODE_SNIPPET: CodeSnippet,
     ElementType.PAGE_NUMBER: PageNumber,
-    ElementType.PARAGRAPH_IN_FORM: ParagraphInForm,
-    ElementType.PARAGRAPH_IN_IMAGE: ParagraphInImage,
-    ElementType.PARAGRAPH_IN_TABLE: ParagraphInTable,
 }

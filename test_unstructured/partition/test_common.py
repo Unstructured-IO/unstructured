@@ -24,7 +24,6 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
-    Other,
     RadioButton,
     Text,
     Title,
@@ -234,25 +233,6 @@ def test_normalize_layout_element_layout_element_maps_to_appropriate_text_elemen
     )
     assert element == expected_element_class(
         text="Some lovely text",
-        coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
-        coordinate_system=coordinate_system,
-    )
-
-
-def test_normalize_layout_element_layout_element_other():
-    layout_element = LayoutElement.from_coords(
-        type=ElementType.OTHER,
-        x1=1,
-        y1=2,
-        x2=3,
-        y2=4,
-    )
-    coordinate_system = PixelSpace(width=10, height=20)
-    element = common.normalize_layout_element(
-        layout_element,
-        coordinate_system=coordinate_system,
-    )
-    assert element == Other(
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
