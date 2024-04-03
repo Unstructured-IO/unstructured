@@ -259,14 +259,8 @@ def test_partition_pptx_grabs_tables():
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
-@pytest.mark.parametrize(
-    "infer_table_structure",
-    [
-        True,
-        False,
-    ],
-)
-def test_partition_pptx_infer_table_structure(infer_table_structure):
+@pytest.mark.parametrize("infer_table_structure", [True, False])
+def test_partition_pptx_infer_table_structure(infer_table_structure: bool):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
     elements = partition_pptx(filename=filename, infer_table_structure=infer_table_structure)
     table_element_has_text_as_html_field = (
@@ -444,6 +438,7 @@ def test_partition_pptx_title_shape_detection(tmp_path: pathlib.Path):
     prs = pptx.Presentation()
     slide = prs.slides.add_slide(prs.slide_layouts[0])
     title_shape = slide.shapes.title
+    assert title_shape is not None
     title_shape.text = (
         "This is a title, it's a bit long so we can make sure it's not narrative text"
     )
@@ -479,10 +474,11 @@ def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
     slide = prs.slides.add_slide(blank_slide_layout)
     shapes = slide.shapes
     title_shape = shapes.title
-    body_shape = shapes.placeholders[1]
+    assert title_shape is not None
     title_shape.text = (
         "This is a title, it's a bit long so we can make sure it's not narrative text"
     )
+    body_shape = shapes.placeholders[1]
 
     tf = body_shape.text_frame
     tf.text = "this is the root level bullet"
@@ -517,7 +513,7 @@ def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
         assert isinstance(
             element,
             test_case[1],
-        ), f"expected {test_case[1]}, got {element.category} for {element.text}"
+        ), f"expected {test_case[1]}, got {type(element).__name__} for {element.text}"
         assert (
             element.metadata.category_depth == test_case[0]
         ), f"expected {test_case[0]}, got {element.metadata.category_depth} for {element.text}"

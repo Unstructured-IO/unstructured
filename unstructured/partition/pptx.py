@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, List, Optional, Sequence, Tuple, Union
+from typing import IO, Any, Iterator, Optional, Sequence
 
 import pptx
 from pptx.presentation import Presentation
@@ -58,11 +58,11 @@ def partition_pptx(
     include_slide_notes: bool = False,
     infer_table_structure: bool = True,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
 
     Parameters
@@ -128,12 +128,12 @@ def partition_pptx(
     return list(elements)
 
 
-class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
+class _PptxPartitioner:
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
 
     def __init__(
         self,
-        file: Union[str, IO[bytes]],
+        file: str | IO[bytes],
         # -- having default values for these arguments is not necessary for production uses because
         # -- this object is always created by the classmethod. However it simplifies constructing
         # -- this object in tests and makes them less sensitive to signature changes.
@@ -156,7 +156,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
     @classmethod
     def iter_presentation_elements(
         cls,
-        file: Union[str, IO[bytes]],
+        file: str | IO[bytes],
         include_page_breaks: bool,
         include_slide_notes: bool,
         infer_table_structure: bool,
@@ -368,7 +368,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
             return get_last_modified_date_from_file(file)
         return None
 
-    def _order_shapes(self, slide: Slide) -> Tuple[Optional[Shape], Sequence[BaseShape]]:
+    def _order_shapes(self, slide: Slide) -> tuple[Optional[Shape], Sequence[BaseShape]]:
         """Orders the shapes on `slide` from top to bottom and left to right.
 
         Returns the title shape if it exists and the ordered shapes."""
@@ -380,7 +380,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
                 else:
                     yield shape
 
-        def sort_key(shape: BaseShape) -> Tuple[int, int]:
+        def sort_key(shape: BaseShape) -> tuple[int, int]:
             return shape.top or 0, shape.left or 0
 
         return slide.shapes.title, sorted(iter_shapes(slide.shapes), key=sort_key)
@@ -395,7 +395,7 @@ class _PptxPartitioner:  # pyright: ignore[reportUnusedClass]
         """The python-pptx `Presentation` object loaded from the provided source file."""
         return pptx.Presentation(self._file)
 
-    def _table_metadata(self, text_as_html: str):
+    def _table_metadata(self, text_as_html: str | None):
         """ElementMetadata instance suitable for use with Table element."""
         element_metadata = ElementMetadata(
             filename=self._filename,
