@@ -26,6 +26,9 @@ def test_stage_for_baseplate():
         ),
     ]
 
+    for element in elements:
+        element.id_to_hash()
+
     rows = stage_for_baseplate(elements)
     assert rows == {
         "rows": [
