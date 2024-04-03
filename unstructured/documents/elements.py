@@ -716,6 +716,9 @@ class Element(abc.ABC):
 
         return new_coordinates
 
+    def __str__(self):
+        return self.text
+
 
 class Checkable(Element, abc.ABC):
     """A base class for elements that can be checked or unchecked (e.g. checkboxes, radio buttons).
@@ -842,9 +845,6 @@ class Text(Element):
                 self.embeddings == other.embeddings,
             ),
         )
-
-    def __str__(self):
-        return self.text
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
