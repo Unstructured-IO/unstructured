@@ -1,4 +1,4 @@
-## 0.13.1-dev1
+## 0.13.1-dev2
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
+* **Fix SFTP** Adds more options to prevent looking for ssh files if only using username password.
 
 ## 0.13.0
 
