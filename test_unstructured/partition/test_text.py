@@ -508,7 +508,7 @@ def test_partition_text_from_file_without_metadata_date():
 
 def test_partition_text_with_unique_ids():
     elements = partition_text(text="hello there!")
-    assert elements[0].id == "4a99bcb0c10d60c920553c8fffea7a69"
+    assert elements[0].id == "eae4fcad50d11af5cec20276d7d5dc65"
     # Test that the element is JSON serializable. This should run without an error
     json.dumps(elements[0].to_dict())
 

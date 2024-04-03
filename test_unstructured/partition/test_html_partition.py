@@ -735,10 +735,10 @@ def test_element_ids_are_deterministic():
         element.id
         for element in partition_html("example-docs/fake-html-with-duplicate-elements.html")
     ] == [
-        "7d2c1d1c641d597fc038fb0406fbab19",
-        "e57e859814c3d4289be2b01658ef5bfa",
-        "450a726c3e8889b83b56903da28fa6d7",
-        "95a7444ad61adc707c870cf910695089",
-        "2de30c963f0c005f7191b513704e21f2",
-        "4b9d97a1c3f0b09a18f38456dec385ff",
+        "0fc2e31af681c2a6ea2b8d9e04f96909",
+        "42e260878074aba786e018d983a5b93a",
+        "ee80dc053bbb16ef1c18580c7ac4360f",
+        "b5239f63a50f29c38360c6d07a61c291",
+        "a1080faf94a25a65a9e44fd90a5c3b0e",
+        "087b3e121db40f2e5e64bb95fd3a2420",
     ]
