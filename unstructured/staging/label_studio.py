@@ -128,7 +128,7 @@ def stage_for_label_studio(
         data: Dict[str, str] = {}
         data[text_field] = element.text
         if isinstance(element.id, str):
-            data[id_field] = element.id_to_hash(i)
+            data[id_field] = element.id
 
         labeling_example: Dict[str, Any] = {}
         labeling_example["data"] = data

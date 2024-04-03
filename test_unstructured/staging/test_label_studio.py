@@ -5,7 +5,7 @@ import pytest
 import vcr
 from label_studio_sdk.client import Client
 
-from unstructured.documents.elements import NarrativeText, Title
+from unstructured.documents.elements import NarrativeText, Title, assign_hash_ids
 from unstructured.staging import label_studio
 
 
@@ -174,10 +174,11 @@ def test_stage_with_annotation():
             ],
         ),
     ]
-    label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
+    elements = assign_hash_ids([element])
+    label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
             "annotations": [
                 {
                     "result": [
@@ -213,10 +214,11 @@ def test_stage_with_prediction():
             score=0.98,
         ),
     ]
-    label_studio_data = label_studio.stage_for_label_studio([element], predictions=[prediction])
+    elements = assign_hash_ids([element])
+    label_studio_data = label_studio.stage_for_label_studio(elements, predictions=[prediction])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
             "predictions": [
                 {
                     "result": [
@@ -252,10 +254,11 @@ def test_stage_with_annotation_for_ner():
             ],
         ),
     ]
-    label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
+    elements = assign_hash_ids([element])
+    label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
             "annotations": [
                 {
                     "result": [
@@ -338,10 +341,11 @@ def test_stage_with_reviewed_annotation():
             reviews=[label_studio.LabelStudioReview(created_by={"user_id": 1}, accepted=True)],
         ),
     ]
-    label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
+    elements = assign_hash_ids([element])
+    label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
+            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
             "annotations": [
                 {
                     "result": [
