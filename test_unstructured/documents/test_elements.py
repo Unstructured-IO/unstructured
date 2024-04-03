@@ -31,31 +31,23 @@ from unstructured.documents.elements import (
 )
 
 
-def test_text_id():
+def test_text_hash_id():
     text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert text_element.id_to_hash() == "c69509590d81db2f37f9d75480c8efed"
 
 
-def test_text_uuid():
-    text_element = Text(text="hello there!", element_id=UUID())
-
-    id = text_element.id
-
-    assert isinstance(id, str)
-    assert len(id) == 36
-    assert id.count("-") == 4
-    # -- Test that the element is JSON serializable. This shold run without an error --
-    json.dumps(text_element.to_dict())
-
-
-def test_element_defaults_to_blank_id():
-    element = Element()
-    assert isinstance(element.id, NoID)
-
-
-def test_element_uuid():
-    element = Element(element_id=UUID())
-    assert isinstance(element.id, UUID)
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),  # should default to UUID
+        Text(text="hello there!"),  # should default to UUID
+        Text(text="hello there!", element_id=NoID()),
+    ],
+)
+def test_text_uuid(element: Element):
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():
@@ -383,9 +375,12 @@ class DescribeElementMetadata:
         }
 
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
+        elements = [Title("Lorem"), Text("Lorem Ipsum")]
+        for element in elements:
+            element.id_to_hash()
         meta = ElementMetadata(
             category_depth=1,
-            orig_elements=[Title("Lorem"), Text("Lorem Ipsum")],
+            orig_elements=elements,
             page_number=2,
         )
         assert meta.to_dict() == {
