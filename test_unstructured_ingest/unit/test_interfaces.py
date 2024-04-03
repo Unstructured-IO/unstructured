@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 from dataclasses import dataclass
@@ -5,10 +7,11 @@ from typing import Any, Dict
 
 import pytest
 
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.documents.elements import DataSourceMetadata, Element, Text, Title
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
+    ChunkingConfig,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
@@ -255,3 +258,37 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
     expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
+
+
+class DescribeChunkingConfig:
+    """Unit tests for unstructured.ingest.interfaces.ChunkingConfig"""
+
+    @pytest.fixture()
+    def _sample_elements(self) -> list[Element]:
+        return [Title("Lorem ipsum dolor sit amet"), Text("Lorem ipsum dolor sit amet")]
+
+    def it_uses_specified_chunker(self, _sample_elements: list[Element]):
+        config = ChunkingConfig(chunking_strategy="basic")
+        config.chunk(_sample_elements)
+        assert config.chunking_strategy == "basic"
+
+    def it_raises_ValueError_on_unrecognized_chunker(self, _sample_elements: list[Element]):
+        config = ChunkingConfig(chunking_strategy="foo")
+        with pytest.raises(ValueError):
+            config.chunk(_sample_elements)
+
+    def it_defaults_to_chunking_strategy_over_chunk_elements(
+        self, _sample_elements: list[Element], caplog: pytest.LogCaptureFixture
+    ):
+        config = ChunkingConfig(chunk_elements=True, chunking_strategy="basic")
+        config.chunk(_sample_elements)
+        assert config.chunking_strategy == "basic"
+        assert "Both chunk_elements and chunking_strategy were defined." in caplog.text
+
+    def but_it_defaults_to_chunk_by_title_if_only_chunk_elements_is_True(
+        self, _sample_elements: list[Element], caplog: pytest.LogCaptureFixture
+    ):
+        config = ChunkingConfig(chunk_elements=True)
+        config.chunk(_sample_elements)
+        assert config.chunking_strategy == "by_title"
+        assert "Defaulting to chunking_strategy='by_title'" in caplog.text

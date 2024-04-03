@@ -1,6 +1,8 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+from __future__ import annotations
+
 import functools
 import json
 import os
@@ -14,8 +16,7 @@ from pathlib import Path
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.chunking.basic import chunk_elements
-from unstructured.chunking.title import chunk_by_title
+from unstructured.chunking import dispatch
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
@@ -235,6 +236,10 @@ class EmbeddingConfig(BaseConfig):
 
 @dataclass
 class ChunkingConfig(BaseConfig):
+    """Data associated with running an optional chunker over the partitioned data.
+
+    The class is used to create instances and as a parent class for CliChunkingConfig"""
+
     chunk_elements: bool = False
     chunking_strategy: t.Optional[str] = None
     combine_text_under_n_chars: t.Optional[int] = None
@@ -246,35 +251,38 @@ class ChunkingConfig(BaseConfig):
     overlap_all: t.Optional[bool] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        chunking_strategy = (
-            self.chunking_strategy
-            if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
+        # -- chunk_elements is a legacy cli argument used for "by_title" chunking that we need to
+        # -- keep supporting.
+        if self.chunk_elements is True:
+            if self.chunking_strategy is not None:
+                logger.warning(
+                    "Both chunk_elements and chunking_strategy were defined."
+                    "chunk_elements is deprecated in favor of chunking_strategy."
+                    f"Defaulting to chunking_strategy: {self.chunking_strategy}."
+                )
+            else:
+                self.chunking_strategy = "by_title"
+                logger.warning(
+                    "chunk_elements is deprecated in favor of chunking_strategy."
+                    "Defaulting to chunking_strategy='by_title'"
+                )
+
+        # -- no chunking-strategy means no chunking --
+        if self.chunking_strategy is None:
+            return elements
+
+        # -- otherwise, chunk away --
+        return dispatch.chunk(
+            elements,
+            self.chunking_strategy,
+            combine_text_under_n_chars=self.combine_text_under_n_chars,
+            include_orig_elements=self.include_orig_elements,
+            max_characters=self.max_characters,
+            multipage_sections=self.multipage_sections,
+            new_after_n_chars=self.new_after_n_chars,
+            overlap=self.overlap,
+            overlap_all=self.overlap_all,
         )
-
-        if chunking_strategy == "by_title":
-            return chunk_by_title(
-                elements=elements,
-                combine_text_under_n_chars=self.combine_text_under_n_chars,
-                include_orig_elements=self.include_orig_elements,
-                max_characters=self.max_characters,
-                multipage_sections=self.multipage_sections,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
-            )
-
-        if chunking_strategy == "basic":
-            return chunk_elements(
-                elements=elements,
-                include_orig_elements=self.include_orig_elements,
-                max_characters=self.max_characters,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
-            )
-
-        return elements
 
 
 @dataclass
