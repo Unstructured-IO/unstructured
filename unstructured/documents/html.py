@@ -5,6 +5,8 @@ from __future__ import annotations
 import sys
 from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Tuple, cast
 
+from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
+
 if sys.version_info < (3, 8):
     from typing_extensions import Final
 else:
@@ -568,7 +570,10 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> List[etree._Element]:
     return unfurled
 
 
-def _is_text_tag(tag_elem: etree._Element, max_predecessor_len: int = 5) -> bool:
+def _is_text_tag(
+    tag_elem: etree._Element,
+    max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
+) -> bool:
     """True when `tag_element` potentially contains narrative text."""
     # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
     # it could be the text representation of a giant div
@@ -594,7 +599,7 @@ def _is_text_tag(tag_elem: etree._Element, max_predecessor_len: int = 5) -> bool
 
 def _process_list_item(
     tag_elem: etree._Element,
-    max_predecessor_len: int = 5,
+    max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
 ) -> Tuple[Optional[Element], Optional[etree._Element]]:
     """Produces an `HTMLListItem` document element from `tag_elem`.
 

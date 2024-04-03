@@ -1,4 +1,4 @@
-## 0.13.1-dev0
+## 0.13.1-dev2
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 * **Add a set of new `ElementType`s to extend future element types**
 
 ### Fixes
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
 
 ## 0.13.0
 
