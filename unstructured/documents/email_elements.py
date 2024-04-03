@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-import hashlib
 from abc import ABC
 from datetime import datetime
 from typing import Callable, List
 
-from unstructured.documents.elements import Element, NoID, Text
+from unstructured.documents.elements import NoID, Text
 
 
 class NoDatestamp(ABC):

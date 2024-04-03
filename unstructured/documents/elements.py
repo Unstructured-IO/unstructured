@@ -21,7 +21,6 @@ from unstructured.documents.coordinates import (
     CoordinateSystem,
     RelativeCoordinateSystem,
 )
-from unstructured.logger import logger
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 from unstructured.utils import lazyproperty
 
