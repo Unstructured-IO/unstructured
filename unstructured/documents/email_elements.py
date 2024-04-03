@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import ABC
 from datetime import datetime
 from typing import Callable, List
