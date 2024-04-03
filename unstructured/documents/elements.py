@@ -700,14 +700,6 @@ class Element(abc.ABC):
     def id_to_uuid(self):
         self.id = str(uuid.uuid4())
 
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "type": None,
-            "element_id": self.id,
-            "text": self.text,
-            "metadata": self.metadata.to_dict(),
-        }
-
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
     ) -> Optional[Points]:
@@ -736,6 +728,14 @@ class Element(abc.ABC):
             self.metadata.coordinates.system = new_system
 
         return new_coordinates
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "type": None,
+            "element_id": self.id,
+            "text": self.text,
+            "metadata": self.metadata.to_dict(),
+        }
 
     def id_to_hash(self, index_in_sequence: int) -> str:
         """Calculates and assigns a deterministic hash as an ID.
@@ -842,16 +842,6 @@ class Text(Element):
     def __str__(self):
         return self.text
 
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["element_id"] = self.id
-        out["type"] = self.category
-        out["text"] = self.text
-        if self.embeddings:
-            out["embeddings"] = self.embeddings
-        return out
-
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.
 
@@ -866,6 +856,16 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["element_id"] = self.id
+        out["type"] = self.category
+        out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
+        return out
 
 
 class Formula(Text):
