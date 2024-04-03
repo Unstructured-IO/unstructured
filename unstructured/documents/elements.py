@@ -528,12 +528,7 @@ def assign_hash_ids(elements: List[Element]) -> List[Element]:
 
     for element in elements:
         if parent_id := element.metadata.parent_id:
-            try:
-                element.metadata.parent_id = old_to_new_id_mapping[parent_id]
-            except KeyError:
-                # NOTE(mike): if chunking is enabled, .parent_id might have been
-                # already assigned properly
-                logger.warning(f"Parent ID not found in mapping: {parent_id}, skipping...")
+            element.metadata.parent_id = old_to_new_id_mapping[parent_id]
 
     return elements
 
