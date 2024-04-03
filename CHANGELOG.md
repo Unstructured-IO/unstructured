@@ -1,9 +1,13 @@
-## 0.13.1-dev0
+## 0.13.1-dev1
 
 ### Enhancements
 * **Better element IDs** Now, the elements returned by any partitioning function are deterministic and unique at the document level by default.
+
 ### Features
+
 ### Fixes
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
 
 ## 0.13.0
 
