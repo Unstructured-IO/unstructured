@@ -129,7 +129,7 @@ langchain-community==0.0.31
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
-langchain-core==0.1.39
+langchain-core==0.1.40
     # via
     #   langchain
     #   langchain-community
@@ -146,8 +146,11 @@ langsmith==0.1.39
     #   langchain
     #   langchain-community
     #   langchain-core
-lxml==5.2.1
-    # via -r ./ingest/../base.in
+lxml==4.9.4
+    # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/../base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json

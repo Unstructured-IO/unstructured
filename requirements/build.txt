@@ -64,8 +64,10 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.2.1
-    # via -r ./base.in
+lxml==4.9.4
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in
 markdown-it-py==3.0.0
     # via
     #   mdit-py-plugins

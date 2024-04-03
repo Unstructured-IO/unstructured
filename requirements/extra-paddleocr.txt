@@ -99,8 +99,9 @@ lazy-loader==0.3
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
-lxml==5.2.1
+lxml==4.9.4
     # via
+    #   -c ././deps/constraints.txt
     #   -r ./base.in
     #   premailer
     #   unstructured-paddleocr
@@ -211,7 +212,7 @@ rapidfuzz==3.7.0
     # via
     #   -r ./base.in
     #   unstructured-paddleocr
-rarfile==4.1
+rarfile==4.2
     # via visualdl
 regex==2023.12.25
     # via nltk

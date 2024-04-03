@@ -82,7 +82,7 @@ jsonpointer==2.4
     # via jsonpatch
 langchain-community==0.0.31
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.1.39
+langchain-core==0.1.40
     # via langchain-community
 langdetect==1.0.9
     # via -r ./ingest/../base.in
@@ -90,8 +90,11 @@ langsmith==0.1.39
     # via
     #   langchain-community
     #   langchain-core
-lxml==5.2.1
-    # via -r ./ingest/../base.in
+lxml==4.9.4
+    # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/../base.in
 markupsafe==2.1.5
     # via jinja2
 marshmallow==3.21.1

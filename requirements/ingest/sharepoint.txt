@@ -48,8 +48,11 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./ingest/../base.in
-lxml==5.2.1
-    # via -r ./ingest/../base.in
+lxml==4.9.4
+    # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/../base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json

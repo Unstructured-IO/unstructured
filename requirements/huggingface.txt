@@ -62,8 +62,10 @@ langdetect==1.0.9
     # via
     #   -r ./base.in
     #   -r ./huggingface.in
-lxml==5.2.1
-    # via -r ./base.in
+lxml==4.9.4
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in
 markupsafe==2.1.5
     # via jinja2
 marshmallow==3.21.1

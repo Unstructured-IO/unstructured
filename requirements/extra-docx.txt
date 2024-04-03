@@ -41,8 +41,9 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.2.1
+lxml==4.9.4
     # via
+    #   -c ././deps/constraints.txt
     #   -r ./base.in
     #   python-docx
 marshmallow==3.21.1

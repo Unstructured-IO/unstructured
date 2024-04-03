@@ -237,8 +237,9 @@ label-studio-tools==0.0.3
     # via label-studio-sdk
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.2.1
+lxml==4.9.4
     # via
+    #   -c ././deps/constraints.txt
     #   -r ./base.in
     #   label-studio-sdk
     #   label-studio-tools
