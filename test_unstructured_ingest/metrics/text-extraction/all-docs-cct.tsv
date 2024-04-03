@@ -1,7 +1,6 @@
 filename	doctype	connector	cct-accuracy	cct-%missing
 fake-text.txt	txt	Sharepoint	1.0	0.0
 ideas-page.html	html	Sharepoint	0.93	0.033
-stanley-cups.xlsx	xlsx	Sharepoint	0.778	0.0
 Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf	pdf	azure	0.981	0.005
 IRS-form-1987.pdf	pdf	azure	0.794	0.135
 spring-weather.html	html	azure	0.0	0.018
