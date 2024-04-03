@@ -1,0 +1,102 @@
+[
+  {
+    "element_id": "06f88bc59cbc04e63f3dd9234e7c6a62",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups",
+      "page_number": 1,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "Stanley Cups",
+    "type": "Title"
+  },
+  {
+    "element_id": "8d09a58dcf6d502f95f3ca80566d2e28",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups",
+      "page_number": 1,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n",
+    "type": "Table"
+  },
+  {
+    "element_id": "f08c805d6ad95cdf2c8426f6db853a17",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups Since 67",
+      "page_number": 2,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>0</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "Stanley Cups Since 67",
+    "type": "Title"
+  },
+  {
+    "element_id": "9584cfef28e379dc58536a6f8586898b",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-06-16T05:05:05+00:00",
+        "date_modified": "2023-06-16T05:05:05+00:00",
+        "record_locator": {
+          "server_path": "/Shared Documents/stanley-cups.xlsx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/Shared Documents/stanley-cups.xlsx?d=wb9956a338079432191ea609def07394d",
+        "version": "1"
+      },
+      "filename": "stanley-cups.xlsx",
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "languages": [
+        "eng"
+      ],
+      "page_name": "Stanley Cups Since 67",
+      "page_number": 2,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>0</td>\n    </tr>\n  </tbody>\n</table>"
+    },
+    "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n",
+    "type": "Table"
+  }
+]
