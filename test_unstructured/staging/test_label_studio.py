@@ -178,7 +178,7 @@ def test_stage_with_annotation():
     for element in elements:
         element.id_to_hash()
 
-    label_studio_data = label_studio.stage_for_label_studio([element], [annotations])
+    label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
             "data": {"text": "A big brown bear", "ref_id": "8f458d5d0635df3975ceb9109cef9e12"},
