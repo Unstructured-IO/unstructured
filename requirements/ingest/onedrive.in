@@ -1,5 +1,5 @@
 -c ../deps/constraints.txt
--r ../deps/base.in
+-r ../base.in
 msal
 Office365-REST-Python-Client
 bs4

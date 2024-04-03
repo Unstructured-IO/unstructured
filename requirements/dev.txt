@@ -39,10 +39,10 @@ babel==2.14.0
 backcall==0.2.0
     # via ipython
 backoff==2.2.1
-    # via -r ./deps/base.in
+    # via -r base.in
 beautifulsoup4==4.12.3
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   nbconvert
 black==24.3.0
     # via -r test.in
@@ -63,7 +63,7 @@ cffi==1.16.0
 cfgv==3.4.0
     # via pre-commit
 chardet==5.2.0
-    # via -r ./deps/base.in
+    # via -r base.in
 charset-normalizer==3.3.2
     # via
     #   requests
@@ -83,7 +83,7 @@ coverage[toml]==7.4.4
     #   pytest-cov
 dataclasses-json==0.6.4
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   unstructured-client
 debugpy==1.8.1
     # via ipykernel
@@ -96,7 +96,7 @@ defusedxml==0.7.1
 distlib==0.3.8
     # via virtualenv
 emoji==2.11.0
-    # via -r ./deps/base.in
+    # via -r base.in
 exceptiongroup==1.2.0
     # via
     #   anyio
@@ -108,7 +108,7 @@ fastjsonschema==2.19.1
 filelock==3.13.3
     # via virtualenv
 filetype==1.2.0
-    # via -r ./deps/base.in
+    # via -r base.in
 flake8==7.0.0
     # via
     #   -r test.in
@@ -240,10 +240,10 @@ label-studio-sdk==0.0.32
 label-studio-tools==0.0.3
     # via label-studio-sdk
 langdetect==1.0.9
-    # via -r ./deps/base.in
+    # via -r base.in
 lxml==5.2.1
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   label-studio-sdk
     #   label-studio-tools
 markupsafe==2.1.5
@@ -286,7 +286,7 @@ nbformat==5.10.3
 nest-asyncio==1.6.0
     # via ipykernel
 nltk==3.8.1
-    # via -r ./deps/base.in
+    # via -r base.in
 nodeenv==1.8.0
     # via pre-commit
 notebook==7.1.2
@@ -296,7 +296,7 @@ notebook-shim==0.2.4
     #   jupyterlab
     #   notebook
 numpy==1.26.4
-    # via -r ./deps/base.in
+    # via -r base.in
 ordered-set==4.1.0
     # via deepdiff
 overrides==7.7.0
@@ -395,11 +395,11 @@ python-dateutil==2.9.0.post0
     #   jupyter-client
     #   unstructured-client
 python-iso639==2024.2.7
-    # via -r ./deps/base.in
+    # via -r base.in
 python-json-logger==2.0.7
     # via jupyter-events
 python-magic==0.4.27
-    # via -r ./deps/base.in
+    # via -r base.in
 pyyaml==6.0.1
     # via
     #   jupyter-events
@@ -417,7 +417,7 @@ qtconsole==5.5.1
 qtpy==2.4.1
     # via qtconsole
 rapidfuzz==3.7.0
-    # via -r ./deps/base.in
+    # via -r base.in
 referencing==0.34.0
     # via
     #   jsonschema
@@ -427,7 +427,7 @@ regex==2023.12.25
     # via nltk
 requests==2.31.0
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   jupyterlab-server
     #   label-studio-sdk
     #   unstructured-client
@@ -465,7 +465,7 @@ soupsieve==2.5
 stack-data==0.6.3
     # via ipython
 tabulate==0.9.0
-    # via -r ./deps/base.in
+    # via -r base.in
 terminado==0.18.1
     # via
     #   jupyter-server
@@ -522,7 +522,7 @@ types-tabulate==0.9.0.20240106
     # via -r test.in
 typing-extensions==4.10.0
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   async-lru
     #   black
     #   ipython
@@ -537,7 +537,7 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.22.0
-    # via -r ./deps/base.in
+    # via -r base.in
 uri-template==1.3.0
     # via jsonschema
 urllib3==2.2.1
@@ -568,7 +568,7 @@ widgetsnbextension==4.0.10
     # via ipywidgets
 wrapt==1.16.0
     # via
-    #   -r ./deps/base.in
+    #   -r base.in
     #   vcrpy
 yarl==1.9.4
     # via vcrpy
