@@ -699,10 +699,13 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if not isinstance(element_id, (str, NoID)):
+        if isinstance(element_id, NoID):
+            self.id = str(uuid.uuid4())
+        elif isinstance(element_id, str):
+            self.id = element_id
+        else:
             raise ValueError("element_id must be of type str or NoID.")
 
-        self.id: str | NoID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -824,9 +827,6 @@ class Text(Element):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
-
-        if isinstance(element_id, NoID):
-            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
