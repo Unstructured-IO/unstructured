@@ -21,8 +21,8 @@ excludefiles=("requirements//build.txt")
 # Build an array of requirements files.
 shopt -s nullglob
 reqfiles=()
-while IFS=  read -r -d $'\0'; do
-    reqfiles+=("$REPLY")
+while IFS= read -r -d $'\0'; do
+  reqfiles+=("$REPLY")
 done < <(find requirements/ -type f -name '*.txt' -print0)
 
 # Remove the excluded files from the array of requirements files.
