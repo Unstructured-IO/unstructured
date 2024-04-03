@@ -578,10 +578,7 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
             unique_element_ids: bool = params.get("unique_element_ids", False)
-            if unique_element_ids:
-                for element in elements:
-                    element.id_to_uuid()
-            else:
+            if unique_element_ids is False:
                 elements = assign_hash_ids(elements)
 
             return elements
