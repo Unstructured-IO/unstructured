@@ -21,7 +21,6 @@ from unstructured.documents.elements import (
     ElementType,
     ListItem,
     PageBreak,
-    RadioButton,
     Text,
     Title,
 )
@@ -162,15 +161,20 @@ def normalize_layout_element(
         elif element_type == ElementType.SUB_HEADLINE:
             _element_class.metadata.category_depth = 2
         return _element_class
-    elif element_type in [ElementType.CHECK_BOX_CHECKED, ElementType.CHECK_BOX_UNCHECKED]:
-        checked = element_type == ElementType.CHECK_BOX_CHECKED
+    elif element_type in [
+        ElementType.CHECK_BOX_CHECKED,
+        ElementType.CHECK_BOX_UNCHECKED,
+        ElementType.RADIO_BUTTON_CHECKED,
+        ElementType.RADIO_BUTTON_UNCHECKED,
+        ElementType.CHECKED,
+        ElementType.UNCHECKED,
+    ]:
+        checked = element_type in [
+            ElementType.CHECK_BOX_CHECKED,
+            ElementType.RADIO_BUTTON_CHECKED,
+            ElementType.CHECKED,
+        ]
         return CheckBox(
-            checked=checked,
-            **common_kwargs,
-        )
-    elif element_type in [ElementType.RADIO_BUTTON_CHECKED, ElementType.RADIO_BUTTON_UNCHECKED]:
-        checked = element_type == ElementType.RADIO_BUTTON_CHECKED
-        return RadioButton(
             checked=checked,
             **common_kwargs,
         )

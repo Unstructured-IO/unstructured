@@ -613,6 +613,8 @@ class ElementType:
     LIST = "List"
     LIST_ITEM = "ListItem"
     LIST_ITEM_OTHER = "List-item"
+    CHECKED = "Checked"
+    UNCHECKED = "Unchecked"
     CHECK_BOX_CHECKED = "CheckBoxChecked"
     CHECK_BOX_UNCHECKED = "CheckBoxUnchecked"
     RADIO_BUTTON_CHECKED = "RadioButtonChecked"
@@ -716,8 +718,8 @@ class Element(abc.ABC):
         return self.text
 
 
-class Checkable(Element, abc.ABC):
-    """A base class for elements that can be checked or unchecked (e.g. checkboxes, radio buttons).
+class CheckBox(Element):
+    """A checkbox with an attribute indicating whether its checked or not.
 
     Primarily used in documents that are forms.
     """
@@ -742,7 +744,7 @@ class Checkable(Element, abc.ABC):
         self.checked: bool = checked
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, self.__class__):
+        if not isinstance(other, CheckBox):
             return False
         return all(
             (
@@ -754,28 +756,9 @@ class Checkable(Element, abc.ABC):
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
         out = super().to_dict()
+        out["type"] = "CheckBox"
         out["checked"] = self.checked
         out["element_id"] = self.id
-        return out
-
-
-class CheckBox(Checkable):
-    """A checkbox element in a document. Expected to be used in forms."""
-
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["type"] = "CheckBox"
-        return out
-
-
-class RadioButton(Checkable):
-    """A radio button element in a document. Expected to be used in forms."""
-
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["type"] = "RadioButton"
         return out
 
 

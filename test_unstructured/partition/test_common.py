@@ -15,7 +15,6 @@ from unstructured_inference.inference.layoutelement import LayoutElement
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
-    Checkable,
     CheckBox,
     CoordinatesMetadata,
     ElementMetadata,
@@ -24,7 +23,6 @@ from unstructured.documents.elements import (
     Header,
     ListItem,
     NarrativeText,
-    RadioButton,
     Text,
     Title,
 )
@@ -239,17 +237,17 @@ def test_normalize_layout_element_layout_element_maps_to_appropriate_text_elemen
 
 
 @pytest.mark.parametrize(
-    ("element_type", "expected_checked", "expected_class"),
+    ("element_type", "expected_checked"),
     [
-        (ElementType.CHECK_BOX_UNCHECKED, False, CheckBox),
-        (ElementType.CHECK_BOX_CHECKED, True, CheckBox),
-        (ElementType.RADIO_BUTTON_UNCHECKED, False, RadioButton),
-        (ElementType.RADIO_BUTTON_CHECKED, True, RadioButton),
+        (ElementType.CHECK_BOX_UNCHECKED, False),
+        (ElementType.CHECK_BOX_CHECKED, True),
+        (ElementType.RADIO_BUTTON_UNCHECKED, False),
+        (ElementType.RADIO_BUTTON_CHECKED, True),
+        (ElementType.CHECKED, True),
+        (ElementType.UNCHECKED, False),
     ],
 )
-def test_normalize_layout_element_checkable(
-    element_type: str, expected_checked: bool, expected_class: type[Checkable]
-):
+def test_normalize_layout_element_checkable(element_type: str, expected_checked: bool):
     layout_element = LayoutElement.from_coords(
         type=element_type,
         x1=1,
@@ -263,8 +261,8 @@ def test_normalize_layout_element_checkable(
         layout_element,
         coordinate_system=coordinate_system,
     )
-    assert isinstance(element, expected_class)
-    assert element == expected_class(
+    assert isinstance(element, CheckBox)
+    assert element == CheckBox(
         checked=expected_checked,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
