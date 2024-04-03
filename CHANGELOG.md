@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Drop constraint on pydantic, supporting later versions** All dependencies has pydantic pinned at an old version. This explicit pin was removed, allowing the latest version to be pulled in when requirements are compiled.
+
 ### Features
 
 * **Add a set of new `ElementType`s to extend future element types**

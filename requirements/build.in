@@ -1,8 +1,8 @@
 # TODO(crag): This requirements should instead live in docs/ and be co-mingled with
 # unstructured-the-library requirements
 
--c base.txt
--c constraints.in
+-r ./deps/base.in
+-c ./deps/constraints.txt
 
 # NOTE(crag): pinning for consistency with CI, compat with below pins
 sphinx==6.2.1

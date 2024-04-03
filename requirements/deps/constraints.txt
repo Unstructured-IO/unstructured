@@ -22,9 +22,6 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
 # unstructured-inference
-# NOTE(klaijan) - Moved pin from test.in
-# pinning to avoid error in argilla library
-pydantic<2
 # unable to build wheel for arm on 0.3.3+
 safetensors<=0.3.2
 # use the known compatible version of weaviate and unstructured.pytesseract

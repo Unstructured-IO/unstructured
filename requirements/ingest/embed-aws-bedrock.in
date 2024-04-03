@@ -1,4 +1,4 @@
--c ../constraints.in
--c ../base.txt
+-c ../deps/constraints.txt
+-r ../deps/base.in
 boto3
 langchain-community

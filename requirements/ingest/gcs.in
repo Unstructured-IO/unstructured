@@ -1,5 +1,5 @@
--c ../constraints.in
--c ../base.txt
+-c ../deps/constraints.txt
+-r ../deps/base.in
 gcsfs
 fsspec
 bs4

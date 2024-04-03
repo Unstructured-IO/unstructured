@@ -1,11 +1,7 @@
--c constraints.in
--c base.txt
+-c ./deps/constraints.txt
+-r ./deps/base.in
 black>=22.3.0
 coverage
-# NOTE(mrobinson) - Pinning click due to a unicode issue in black
-# can remove after black drops support for Python 3.6
-# ref: https://github.com/psf/black/issues/2964
-click>=8.1
 types-click
 flake8
 flake8-print

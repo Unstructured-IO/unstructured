@@ -1,4 +1,4 @@
--c ../constraints.in
--c ../base.txt
+-c ../deps/constraints.txt
+-r ../deps/base.in
 # NOTE - pygithub==1.58.0 fails due to https://github.com/PyGithub/PyGithub/issues/2436
 pygithub>1.58.0
