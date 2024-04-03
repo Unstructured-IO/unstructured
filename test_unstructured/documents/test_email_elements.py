@@ -5,22 +5,26 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import UUID, EmailElement, Name, NoID
+from unstructured.documents.email_elements import EmailElement, Name, NoID
 
 
-def test_text_id():
+def test_text_hash_id():
     name_element = Name(name="Example", text="hello there!")
-    assert name_element.id == "c69509590d81db2f37f9d75480c8efed"
+    assert name_element.id_to_hash() == "c69509590d81db2f37f9d75480c8efed"
 
 
-def test_text_uuid():
-    name_element = Name(name="Example", text="hello there!", element_id=UUID())
-    assert isinstance(name_element.id, uuid.UUID)
-
-
-def test_element_defaults_to_blank_id():
-    element = EmailElement()
-    assert isinstance(element.id, NoID)
+@pytest.mark.parametrize(
+    "element",
+    [
+        EmailElement(text=""),  # should default to UUID
+        Name(name="Example", text="hello there!"),  # should default to UUID
+        Name(name="Example", text="hello there!", element_id=NoID()),
+    ],
+)
+def test_text_uuid(element: EmailElement):
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():
