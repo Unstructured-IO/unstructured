@@ -18,13 +18,16 @@ from unstructured.documents.coordinates import (
 )
 from unstructured.documents.elements import (
     UUID,
+    CheckBox,
     ConsolidationStrategy,
     CoordinatesMetadata,
     DataSourceMetadata,
     Element,
     ElementMetadata,
     NoID,
+    Other,
     Points,
+    RadioButton,
     RegexMetadata,
     Text,
     Title,
@@ -70,6 +73,15 @@ def test_text_element_apply_multiple_cleaners():
     text_element = Text(text="[1] \u2022 A Textbook on Crocodile Habitats")
     text_element.apply(*cleaners)
     assert str(text_element) == "A Textbook on Crocodile Habitats"
+
+
+@pytest.mark.parametrize("non_text_element_class", [Other, CheckBox, RadioButton])
+def test_non_text_elements_are_serializable_to_text(non_text_element_class: type[Element]):
+    element = non_text_element_class()
+    assert hasattr(element, "text")
+    assert element.text is not None
+    assert element.text == ""
+    assert str(element) == ""
 
 
 def test_apply_raises_if_func_does_not_produce_string():
