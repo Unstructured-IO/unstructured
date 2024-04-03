@@ -497,7 +497,7 @@ class ConsolidationStrategy(enum.Enum):
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
+            "text_as_html": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
         }
 
