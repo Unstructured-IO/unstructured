@@ -697,9 +697,6 @@ class Element(abc.ABC):
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
 
-    def id_to_uuid(self):
-        self.id = str(uuid.uuid4())
-
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
     ) -> Optional[Points]:
