@@ -5,17 +5,16 @@
 #    pip-compile ./huggingface.in
 #
 backoff==2.2.1
-    # via -r ././deps/base.in
+    # via -r ./base.in
 beautifulsoup4==4.12.3
-    # via -r ././deps/base.in
+    # via -r ./base.in
 certifi==2024.2.2
     # via
-    #   -c ././deps/./constraints.txt
     #   -c ././deps/constraints.txt
     #   requests
     #   unstructured-client
 chardet==5.2.0
-    # via -r ././deps/base.in
+    # via -r ./base.in
 charset-normalizer==3.3.2
     # via
     #   requests
@@ -26,19 +25,19 @@ click==8.1.7
     #   sacremoses
 dataclasses-json==0.6.4
     # via
-    #   -r ././deps/base.in
+    #   -r ./base.in
     #   unstructured-client
 deepdiff==6.7.1
     # via unstructured-client
 emoji==2.11.0
-    # via -r ././deps/base.in
+    # via -r ./base.in
 filelock==3.13.3
     # via
     #   huggingface-hub
     #   torch
     #   transformers
 filetype==1.2.0
-    # via -r ././deps/base.in
+    # via -r ./base.in
 fsspec==2024.3.1
     # via
     #   huggingface-hub
@@ -61,10 +60,10 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via
-    #   -r ././deps/base.in
+    #   -r ./base.in
     #   -r ./huggingface.in
 lxml==5.2.1
-    # via -r ././deps/base.in
+    # via -r ./base.in
 markupsafe==2.1.5
     # via jinja2
 marshmallow==3.21.1
@@ -80,15 +79,16 @@ mypy-extensions==1.0.0
 networkx==3.2.1
     # via torch
 nltk==3.8.1
-    # via -r ././deps/base.in
+    # via -r ./base.in
 numpy==1.26.4
     # via
-    #   -r ././deps/base.in
+    #   -r ./base.in
     #   transformers
 ordered-set==4.1.0
     # via deepdiff
-packaging==24.0
+packaging==23.2
     # via
+    #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   marshmallow
     #   transformers
@@ -98,15 +98,15 @@ pypdf==4.1.0
 python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.2.7
-    # via -r ././deps/base.in
+    # via -r ./base.in
 python-magic==0.4.27
-    # via -r ././deps/base.in
+    # via -r ./base.in
 pyyaml==6.0.1
     # via
     #   huggingface-hub
     #   transformers
 rapidfuzz==3.7.0
-    # via -r ././deps/base.in
+    # via -r ./base.in
 regex==2023.12.25
     # via
     #   nltk
@@ -114,7 +114,7 @@ regex==2023.12.25
     #   transformers
 requests==2.31.0
     # via
-    #   -r ././deps/base.in
+    #   -r ./base.in
     #   huggingface-hub
     #   transformers
     #   unstructured-client
@@ -122,7 +122,6 @@ sacremoses==0.1.1
     # via -r ./huggingface.in
 safetensors==0.3.2
     # via
-    #   -c ././deps/./constraints.txt
     #   -c ././deps/constraints.txt
     #   transformers
 sentencepiece==0.2.0
@@ -137,12 +136,11 @@ soupsieve==2.5
 sympy==1.12
     # via torch
 tabulate==0.9.0
-    # via -r ././deps/base.in
+    # via -r ./base.in
 tokenizers==0.15.2
     # via transformers
 torch==2.2.2
     # via
-    #   -c ././deps/./constraints.txt
     #   -c ././deps/constraints.txt
     #   -r ./huggingface.in
 tqdm==4.66.2
@@ -155,7 +153,7 @@ transformers==4.37.1
     # via -r ./huggingface.in
 typing-extensions==4.10.0
     # via
-    #   -r ././deps/base.in
+    #   -r ./base.in
     #   huggingface-hub
     #   pypdf
     #   torch
@@ -166,10 +164,11 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.22.0
-    # via -r ././deps/base.in
-urllib3==2.2.1
+    # via -r ./base.in
+urllib3==1.26.18
     # via
+    #   -c ././deps/constraints.txt
     #   requests
     #   unstructured-client
 wrapt==1.16.0
-    # via -r ././deps/base.in
+    # via -r ./base.in

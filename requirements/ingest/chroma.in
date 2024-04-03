@@ -1,3 +1,4 @@
 -c ../deps/constraints.txt
 -r ../base.in
 chromadb
+importlib-metadata>=7.1.0

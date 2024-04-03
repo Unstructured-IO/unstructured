@@ -5,17 +5,17 @@
 #    pip-compile ./ingest/dropbox.in
 #
 backoff==2.2.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 beautifulsoup4==4.12.3
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 certifi==2024.2.2
     # via
-    #   -c ./ingest/../deps/./constraints.txt
+    #   -c ./ingest/.././deps/constraints.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
     #   unstructured-client
 chardet==5.2.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 charset-normalizer==3.3.2
     # via
     #   requests
@@ -24,7 +24,7 @@ click==8.1.7
     # via nltk
 dataclasses-json==0.6.4
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   unstructured-client
 deepdiff==6.7.1
     # via unstructured-client
@@ -33,9 +33,9 @@ dropbox==11.36.2
 dropboxdrivefs==1.3.1
     # via -r ./ingest/dropbox.in
 emoji==2.11.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 filetype==1.2.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 fsspec==2024.3.1
     # via
     #   -r ./ingest/dropbox.in
@@ -49,9 +49,9 @@ joblib==1.3.2
 jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 lxml==5.2.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json
@@ -61,13 +61,15 @@ mypy-extensions==1.0.0
     #   typing-inspect
     #   unstructured-client
 nltk==3.8.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 numpy==1.26.4
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 ordered-set==4.1.0
     # via deepdiff
-packaging==24.0
+packaging==23.2
     # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   marshmallow
     #   unstructured-client
 ply==3.11
@@ -77,16 +79,16 @@ pypdf==4.1.0
 python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.2.7
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 python-magic==0.4.27
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 rapidfuzz==3.7.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 regex==2023.12.25
     # via nltk
 requests==2.31.0
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   dropbox
     #   dropboxdrivefs
     #   unstructured-client
@@ -102,12 +104,12 @@ soupsieve==2.5
 stone==3.3.3
     # via dropbox
 tabulate==0.9.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 tqdm==4.66.2
     # via nltk
 typing-extensions==4.10.0
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   pypdf
     #   typing-inspect
     #   unstructured-client
@@ -116,10 +118,12 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.22.0
-    # via -r ./ingest/../deps/base.in
-urllib3==2.2.1
+    # via -r ./ingest/../base.in
+urllib3==1.26.18
     # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   requests
     #   unstructured-client
 wrapt==1.16.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in

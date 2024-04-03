@@ -12,7 +12,7 @@ annotated-types==0.6.0
     # via pydantic
 anyio==3.7.1
     # via
-    #   -c ./ingest/../deps/./constraints.txt
+    #   -c ./ingest/.././deps/constraints.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
     #   openai
@@ -21,19 +21,19 @@ async-timeout==4.0.3
 attrs==23.2.0
     # via aiohttp
 backoff==2.2.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 beautifulsoup4==4.12.3
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 certifi==2024.2.2
     # via
-    #   -c ./ingest/../deps/./constraints.txt
+    #   -c ./ingest/.././deps/constraints.txt
     #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
     #   requests
     #   unstructured-client
 chardet==5.2.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 charset-normalizer==3.3.2
     # via
     #   requests
@@ -42,7 +42,7 @@ click==8.1.7
     # via nltk
 dataclasses-json==0.6.4
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   langchain-community
     #   unstructured-client
 deepdiff==6.7.1
@@ -50,11 +50,11 @@ deepdiff==6.7.1
 distro==1.9.0
     # via openai
 emoji==2.11.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 exceptiongroup==1.2.0
     # via anyio
 filetype==1.2.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 frozenlist==1.4.1
     # via
     #   aiohttp
@@ -85,13 +85,13 @@ langchain-community==0.0.31
 langchain-core==0.1.39
     # via langchain-community
 langdetect==1.0.9
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 langsmith==0.1.39
     # via
     #   langchain-community
     #   langchain-core
 lxml==5.2.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json
@@ -105,10 +105,10 @@ mypy-extensions==1.0.0
     #   typing-inspect
     #   unstructured-client
 nltk==3.8.1
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 numpy==1.26.4
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   langchain-community
 openai==1.16.1
     # via -r ./ingest/embed-openai.in
@@ -118,6 +118,8 @@ orjson==3.10.0
     # via langsmith
 packaging==23.2
     # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
     #   unstructured-client
@@ -133,22 +135,22 @@ pypdf==4.1.0
 python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.2.7
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 python-magic==0.4.27
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 pyyaml==6.0.1
     # via
     #   langchain-community
     #   langchain-core
 rapidfuzz==3.7.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 regex==2023.12.25
     # via
     #   nltk
     #   tiktoken
 requests==2.31.0
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   langchain-community
     #   langsmith
     #   tiktoken
@@ -168,7 +170,7 @@ soupsieve==2.5
 sqlalchemy==2.0.29
     # via langchain-community
 tabulate==0.9.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 tenacity==8.2.3
     # via
     #   langchain-community
@@ -181,7 +183,7 @@ tqdm==4.66.2
     #   openai
 typing-extensions==4.10.0
     # via
-    #   -r ./ingest/../deps/base.in
+    #   -r ./ingest/../base.in
     #   openai
     #   pydantic
     #   pydantic-core
@@ -194,12 +196,14 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   unstructured-client
 unstructured-client==0.22.0
-    # via -r ./ingest/../deps/base.in
-urllib3==2.2.1
+    # via -r ./ingest/../base.in
+urllib3==1.26.18
     # via
+    #   -c ./ingest/.././deps/constraints.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   requests
     #   unstructured-client
 wrapt==1.16.0
-    # via -r ./ingest/../deps/base.in
+    # via -r ./ingest/../base.in
 yarl==1.9.4
     # via aiohttp
