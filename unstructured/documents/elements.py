@@ -12,7 +12,7 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, List, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -505,6 +505,39 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
+def assign_hash_ids(elements: List[Element]) -> List[Element]:
+    """Converts `id` and `parent_id` of elements from UUIDs to hashes.
+
+    This function ensures deterministic IDs by:
+    1. Converting each element's UUID into a hash.
+    2. Updating the `parent_id` to match the new hash ID of parent elements.
+
+    Args:
+        elements: A list of Element objects to update.
+
+    Returns:
+        List of updated Element objects with hashes for `id` and `parent_id`.
+    """
+
+    old_to_new_id_mapping = {}
+    already_updated_parent_ids = set()
+
+    for idx_in_seq, element in enumerate(elements):
+        old_id = element.id
+        new_id = element.id_to_hash(idx_in_seq)
+        old_to_new_id_mapping[old_id] = new_id
+
+    for element in elements:
+        parent_id = element.metadata.parent_id
+
+        if parent_id and parent_id not in already_updated_parent_ids:
+            new_parent_id = old_to_new_id_mapping[parent_id]
+            element.metadata.parent_id = new_parent_id
+            already_updated_parent_ids.add(new_parent_id)
+
+    return elements
+
+
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for this document.
 
@@ -549,10 +582,10 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
+
             unique_element_ids: bool = params.get("unique_element_ids", False)
-            if unique_element_ids:
-                for element in elements:
-                    element.id_to_uuid()
+            if unique_element_ids is False:
+                elements = assign_hash_ids(elements)
 
             return elements
 
@@ -644,19 +677,32 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document."""
+    """An element is a section of a page in the document.
+
+    There are a few design principles that are followed when creating an element:
+    1. It will always have an ID, which by default is a random UUID.
+    2. Asking for an ID should always return a string, it can never be None.
+    3. When deterministic behavior is needed, the ID can be converted.
+        to a hash based on its text `element.id_to_hash()`
+    4. Even if text attribute is not defined in a subclass, it will default to a blank string.
+    5. Assigning a string ID manually is possible, but is meant to be used
+        only for deserialization purposes.
+    """
 
     text: str
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: str | uuid.UUID | NoID | UUID = element_id
+        if not isinstance(element_id, (str, NoID)):
+            raise ValueError("element_id must be of type str or NoID.")
+
+        self.id: str | NoID = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -666,17 +712,6 @@ class Element(abc.ABC):
         # -- all `Element` instances get a `text` attribute, defaults to the empty string if not
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
-
-    def id_to_uuid(self):
-        self.id = str(uuid.uuid4())
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "type": None,
-            "element_id": self.id,
-            "text": self.text,
-            "metadata": self.metadata.to_dict(),
-        }
 
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
@@ -706,6 +741,25 @@ class Element(abc.ABC):
             self.metadata.coordinates.system = new_system
 
         return new_coordinates
+
+    def id_to_hash(self) -> str:
+        """Calculates and assigns a deterministic hash as an ID.
+
+        The hash ID is based on element's text.
+
+        Returns:
+            The first 32 characters of the SHA256 hash of the concatenated input parameters.
+        """
+        self.id = hashlib.sha256(self.text.encode()).hexdigest()[:32]
+        return self.id
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "type": None,
+            "element_id": self.id,
+            "text": self.text,
+            "metadata": self.metadata.to_dict(),
+        }
 
 
 class CheckBox(Element):
@@ -760,7 +814,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -772,10 +826,6 @@ class Text(Element):
         self.embeddings: Optional[list[float]] = embeddings
 
         if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
             element_id = str(uuid.uuid4())
 
         super().__init__(
@@ -801,16 +851,6 @@ class Text(Element):
     def __str__(self):
         return self.text
 
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["element_id"] = self.id
-        out["type"] = self.category
-        out["text"] = self.text
-        if self.embeddings:
-            out["embeddings"] = self.embeddings
-        return out
-
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.
 
@@ -825,6 +865,16 @@ class Text(Element):
             raise ValueError("Cleaner produced a non-string output.")
 
         self.text = cleaned_text
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["element_id"] = self.id
+        out["type"] = self.category
+        out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
+        return out
 
 
 class Formula(Text):

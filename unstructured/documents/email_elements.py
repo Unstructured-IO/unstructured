@@ -4,14 +4,14 @@ from abc import ABC
 from datetime import datetime
 from typing import Callable, List, Union
 
-from unstructured.documents.elements import UUID, Element, NoID, Text
+from unstructured.documents.elements import UUID, NoID, Text
 
 
 class NoDatestamp(ABC):
     """Class to indicate that an element do not have a datetime stamp."""
 
 
-class EmailElement(Element):
+class EmailElement(Text):
     """An email element is a section of the email."""
 
 
@@ -24,20 +24,13 @@ class Name(EmailElement):
         self,
         name: str,
         text: str,
-        datestamp: Union[datetime, NoDatestamp] = NoDatestamp(),
-        element_id: Union[str, uuid.UUID, NoID, UUID] = NoID(),
+        datestamp: datetime | NoDatestamp = NoDatestamp(),
+        element_id: str | NoID = NoID(),
     ):
         self.name: str = name
         self.text: str = text
 
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
-            element_id = uuid.uuid4()
-
-        super().__init__(element_id=element_id)
+        super().__init__(text=text, element_id=element_id)
 
         if isinstance(datestamp, datetime):
             self.datestamp: datetime = datestamp
@@ -93,7 +86,7 @@ class Sender(Name):
     category = "Sender"
 
 
-class Subject(Text, EmailElement):
+class Subject(EmailElement):
     """A text element for capturing the subject information of an email"""
 
     category = "Subject"
