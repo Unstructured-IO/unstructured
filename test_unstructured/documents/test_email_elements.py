@@ -12,12 +12,14 @@ def test_text_id():
     assert name_element.id_to_hash(index_in_sequence=0) == "eae4fcad50d11af5cec20276d7d5dc65"
 
 
-def test_text_id_is_always_a_string():
-    name_element = Name(name="Example", text="hello there!")
-    assert isinstance(name_element.id, str)
+def test_text_id_is_uuid_by_default():
+    def _assert_uuid_like(id_to_test: str) -> None:
+        assert isinstance(id_to_test, str)
+        assert len(id_to_test) == 36
+        assert id_to_test.count("-") == 4
 
-    name_element = Name(name="Example", text="hello there!", element_id=NoID())
-    assert isinstance(name_element.id, str)
+    _assert_uuid_like(Name(name="Example", text="hello there!").id)
+    _assert_uuid_like(Name(name="Example", text="hello there!", element_id=NoID()).id)
 
 
 def test_element_id_defaults_to_UUID():
