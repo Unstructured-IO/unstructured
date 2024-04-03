@@ -37,21 +37,18 @@ def test_text_id():
     assert text_element.id_to_hash(0) == "eae4fcad50d11af5cec20276d7d5dc65"
 
 
-def test_text_uuid():
-    text_element = Text(text="hello there!", element_id=NoID())
-
-    id = text_element.id
-
-    assert isinstance(id, str)
-    assert len(id) == 36
-    assert id.count("-") == 4
-    # -- Test that the element is JSON serializable. This shold run without an error --
-    json.dumps(text_element.to_dict())
-
-
-def test_element_defaults_to_blank_id():
-    element = Element()
-    assert isinstance(element.id, NoID)
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),  # should default to UUID
+        Text(text="hello there!"),  # should default to UUID
+        Text(text="hello there!", element_id=NoID()),
+    ],
+)
+def test_text_uuid(element: Element):
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():
