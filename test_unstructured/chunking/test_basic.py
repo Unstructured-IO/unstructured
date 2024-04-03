@@ -12,7 +12,7 @@ import pytest
 
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
 from unstructured.chunking.basic import chunk_elements
-from unstructured.documents.elements import CompositeElement, Text, Title
+from unstructured.documents.elements import CheckBox, CompositeElement, Text, Title
 from unstructured.partition.docx import partition_docx
 
 
@@ -116,10 +116,11 @@ def test_it_chunks_elements_when_the_user_already_has_them():
 def test_it_includes_original_elements_as_metadata_when_requested():
     element = Title("Introduction")
     element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
-    element_3 = Text("In rhoncus ipsum sed lectus porta volutpat.")
+    element_3 = CheckBox()
+    element_4 = Text("In rhoncus ipsum sed lectus porta volutpat.")
 
     chunks = chunk_elements(
-        [element, element_2, element_3], max_characters=70, include_orig_elements=True
+        [element, element_2, element_3, element_4], max_characters=70, include_orig_elements=True
     )
 
     assert len(chunks) == 2
@@ -131,7 +132,7 @@ def test_it_includes_original_elements_as_metadata_when_requested():
     # --
     chunk = chunks[1]
     assert chunk == CompositeElement("In rhoncus ipsum sed lectus porta volutpat.")
-    assert chunk.metadata.orig_elements == [element_3]
+    assert chunk.metadata.orig_elements == [element_3, element_4]
 
 
 # ------------------------------------------------------------------------------------------------
