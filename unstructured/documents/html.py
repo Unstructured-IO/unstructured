@@ -510,7 +510,9 @@ def _is_container_with_text(tag_elem: etree._Element) -> bool:
     if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
         return False
 
-    if tag_elem.text is None or tag_elem.text.strip() == "":
+    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
+    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+    if not tag_elem_text and not tag_elem_tail:
         return False
 
     return True
