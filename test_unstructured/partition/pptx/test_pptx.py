@@ -2,9 +2,10 @@
 
 """Test suite for `unstructured.partition.pptx` module."""
 
-import os
+from __future__ import annotations
+
 import pathlib
-from tempfile import SpooledTemporaryFile
+import tempfile
 
 import pptx
 import pytest
@@ -20,10 +21,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.pptx import _PptxPartitioner, partition_pptx
-
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
+from unstructured.partition.pptx import partition_pptx
 
 EXPECTED_PPTX_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
@@ -35,24 +33,18 @@ EXPECTED_PPTX_OUTPUT = [
 ]
 
 
-def get_test_file_path(filename: str) -> str:
-    return str(pathlib.Path(__file__).parent / "test_files" / filename)
-
-
-# == DescribePptxPartitionerSourceFileBehaviors ==================================================
+# == document file behaviors =====================================================================
 
 
 def test_partition_pptx_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("fake-power-point.pptx"))
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.pptx"
 
 
 def test_partition_pptx_from_filename_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    elements = partition_pptx(filename=filename, metadata_filename="test")
+    elements = partition_pptx(example_doc_path("fake-power-point.pptx"), metadata_filename="test")
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
         assert element.metadata.filename == "test"
@@ -63,11 +55,8 @@ def test_partition_pptx_with_spooled_file():
 
     Including one that does not have its read-pointer set to the start.
     """
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    from tempfile import SpooledTemporaryFile
-
-    with open(filename, "rb") as test_file:
-        spooled_temp_file = SpooledTemporaryFile()
+    with open(example_doc_path("fake-power-point.pptx"), "rb") as test_file:
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
         elements = partition_pptx(file=spooled_temp_file)
         assert elements == EXPECTED_PPTX_OUTPUT
@@ -76,8 +65,7 @@ def test_partition_pptx_with_spooled_file():
 
 
 def test_partition_pptx_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
         elements = partition_pptx(file=f)
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
@@ -85,8 +73,7 @@ def test_partition_pptx_from_file():
 
 
 def test_partition_pptx_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
         elements = partition_pptx(file=f, metadata_filename="test")
     assert elements == EXPECTED_PPTX_OUTPUT
     for element in elements:
@@ -94,9 +81,9 @@ def test_partition_pptx_from_file_with_metadata_filename():
 
 
 def test_partition_pptx_raises_with_both_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    with open(filename, "rb") as f, pytest.raises(ValueError):
-        partition_pptx(filename=filename, file=f)
+    file_path = example_doc_path("fake-power-point.pptx")
+    with open(file_path, "rb") as f, pytest.raises(ValueError):
+        partition_pptx(file_path, file=f)
 
 
 def test_partition_pptx_raises_with_neither():
@@ -104,18 +91,12 @@ def test_partition_pptx_raises_with_neither():
         partition_pptx()
 
 
-class DescribePptxPartitionerShapeOrderingBehaviors:
-    """Tests related to shape inclusion and ordering based on position."""
-
-    def it_recurses_into_group_shapes(self):
-        elements = _PptxPartitioner(
-            get_test_file_path("group-shapes-nested.pptx")
-        )._iter_presentation_elements()
-
-        assert [e.text for e in elements] == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+def test_partition_pptx_recurses_into_group_shapes():
+    elements = partition_pptx(example_doc_path("group-shapes-nested.pptx"))
+    assert [e.text for e in elements] == ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 
 
-# == DescribePptxPartitionerPageBreakBehaviors ===================================================
+# == page-break behaviors ========================================================================
 
 
 def test_partition_pptx_adds_page_breaks(tmp_path: pathlib.Path):
@@ -180,8 +161,7 @@ def test_partition_pptx_page_breaks_toggle_off(tmp_path: pathlib.Path):
 
 
 def test_partition_pptx_many_pages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-many-pages.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("fake-power-point-many-pages.pptx"))
 
     # The page_number of PageBreak is None
     assert set(filter(None, (elt.metadata.page_number for elt in elements))) == {1, 2}
@@ -189,7 +169,7 @@ def test_partition_pptx_many_pages():
         assert element.metadata.filename == "fake-power-point-many-pages.pptx"
 
 
-# == DescribePptxPartitionerMiscellaneousBehaviors ===============================================
+# == miscellaneous behaviors =====================================================================
 
 
 def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
@@ -237,32 +217,31 @@ def test_partition_pptx_orders_elements(tmp_path: pathlib.Path):
         assert element.metadata.filename == "test-ordering.pptx"
 
 
-EXPECTED_HTML_TABLE = """<table>
-<thead>
-<tr><th>Column 1  </th><th>Column 2  </th><th>Column 3  </th></tr>
-</thead>
-<tbody>
-<tr><td>Red       </td><td>Green     </td><td>Blue      </td></tr>
-<tr><td>Purple    </td><td>Orange    </td><td>Yellow    </td></tr>
-<tr><td>Tangerine </td><td>Pink      </td><td>Aqua      </td></tr>
-</tbody>
-</table>"""
-
-
 def test_partition_pptx_grabs_tables():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("fake-power-point-table.pptx"))
 
     assert elements[1].text.startswith("Column 1")
     assert elements[1].text.strip().endswith("Aqua")
-    assert elements[1].metadata.text_as_html == EXPECTED_HTML_TABLE
+    assert elements[1].metadata.text_as_html == (
+        "<table>\n"
+        "<thead>\n"
+        "<tr><th>Column 1  </th><th>Column 2  </th><th>Column 3  </th></tr>\n"
+        "</thead>\n"
+        "<tbody>\n"
+        "<tr><td>Red       </td><td>Green     </td><td>Blue      </td></tr>\n"
+        "<tr><td>Purple    </td><td>Orange    </td><td>Yellow    </td></tr>\n"
+        "<tr><td>Tangerine </td><td>Pink      </td><td>Aqua      </td></tr>\n"
+        "</tbody>\n"
+        "</table>"
+    )
     assert elements[1].metadata.filename == "fake-power-point-table.pptx"
 
 
 @pytest.mark.parametrize("infer_table_structure", [True, False])
 def test_partition_pptx_infer_table_structure(infer_table_structure: bool):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-table.pptx")
-    elements = partition_pptx(filename=filename, infer_table_structure=infer_table_structure)
+    elements = partition_pptx(
+        example_doc_path("fake-power-point-table.pptx"), infer_table_structure=infer_table_structure
+    )
     table_element_has_text_as_html_field = (
         hasattr(elements[1].metadata, "text_as_html")
         and elements[1].metadata.text_as_html is not None
@@ -271,8 +250,7 @@ def test_partition_pptx_infer_table_structure(infer_table_structure: bool):
 
 
 def test_partition_pptx_malformed():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("fake-power-point-malformed.pptx"))
 
     assert elements[0].text == "Problem Date Placeholder"
     assert elements[1].text == "Test Slide"
@@ -284,105 +262,79 @@ def test_partition_pptx_malformed():
 
 
 def test_partition_pptx_from_filename_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    elements = partition_pptx(filename=filename, include_metadata=False)
+    elements = partition_pptx(example_doc_path("fake-power-point.pptx"), include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
 
 
 def test_partition_pptx_from_file_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
         elements = partition_pptx(file=f, include_metadata=False)
     assert elements == EXPECTED_PPTX_OUTPUT
 
 
 def test_partition_pptx_metadata_date(mocker: MockFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
     mocker.patch(
-        "unstructured.partition.pptx.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.pptx.get_last_modified_date", return_value="2029-07-05T09:24:28"
     )
 
-    elements = partition_pptx(
-        filename=filename,
-    )
+    elements = partition_pptx(example_doc_path("fake-power-point-malformed.pptx"))
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
 
 def test_partition_pptx_with_custom_metadata_date(mocker: MockFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
     mocker.patch(
-        "unstructured.partition.pptx.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.pptx.get_last_modified_date", return_value="2022-11-22T11:22:33"
     )
 
     elements = partition_pptx(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
+        example_doc_path("fake-power-point-malformed.pptx"),
+        metadata_last_modified="2024-04-03T20:16:03",
     )
 
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert elements[0].metadata.last_modified == "2024-04-03T20:16:03"
 
 
 def test_partition_pptx_from_file_metadata_date(mocker: MockFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.pptx.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value="2029-07-05T09:24:28",
     )
 
-    with open(filename, "rb") as f:
-        elements = partition_pptx(
-            file=f,
-        )
+    with open(example_doc_path("fake-power-point-malformed.pptx"), "rb") as f:
+        elements = partition_pptx(file=f)
 
     assert elements[0].metadata.last_modified is None
 
 
 def test_partition_pptx_from_file_explicit_get_metadata_date(mocker: MockFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.pptx.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value="2029-07-05T09:24:28",
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point-malformed.pptx"), "rb") as f:
         elements = partition_pptx(file=f, date_from_file_object=True)
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
 
 def test_partition_pptx_from_file_with_custom_metadata_date(mocker: MockFixture):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.pptx.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value="2022-11-22T11:22:33",
     )
 
-    with open(filename, "rb") as f:
-        elements = partition_pptx(file=f, metadata_last_modified=expected_last_modification_date)
+    with open(example_doc_path("fake-power-point-malformed.pptx"), "rb") as f:
+        elements = partition_pptx(file=f, metadata_last_modified="2024-04-03T20:16:03")
 
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert elements[0].metadata.last_modified == "2024-04-03T20:16:03"
 
 
 def test_partition_pptx_from_file_without_metadata_date():
     """Test partition_pptx() with file that are not possible to get last modified date"""
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point-malformed.pptx")
-    with open(filename, "rb") as f:
-        sf = SpooledTemporaryFile()
+    with open(example_doc_path("fake-power-point-malformed.pptx"), "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
         elements = partition_pptx(file=sf, date_from_file_object=True)
@@ -391,14 +343,15 @@ def test_partition_pptx_from_file_without_metadata_date():
 
 
 def test_partition_pptx_element_metadata_has_languages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("fake-power-point.pptx"))
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_pptx_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.pptx"
-    elements = partition_pptx(filename=filename, detect_language_per_element=True)
+    elements = partition_pptx(
+        example_doc_path("language-docs/eng_spa_mult.pptx"), detect_language_per_element=True
+    )
+
     langs = [element.metadata.languages for element in elements]
     # languages other than English and Spanish are detected by this partitioner,
     # so this test is slightly different from the other partition tests
@@ -409,8 +362,7 @@ def test_partition_pptx_respects_detect_language_per_element():
 
 def test_partition_pptx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
-        filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.pptx")
-        partition_pptx(filename=filename, languages="eng")  # type: ignore
+        partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")  # type: ignore
 
 
 # == DescribePptxPartitionerDownstreamBehaviors ==================================================
@@ -422,10 +374,12 @@ def test_partition_pptx_with_json():
 
 
 def test_add_chunking_strategy_by_title_on_partition_pptx():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "science-exploration-1p.pptx")
+    filename = example_doc_path("science-exploration-1p.pptx")
+
     elements = partition_pptx(filename=filename)
     chunk_elements = partition_pptx(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
@@ -521,8 +475,7 @@ def test_partition_pptx_level_detection(tmp_path: pathlib.Path):
 
 def test_partition_pptx_hierarchy_sample_document():
     """This tests if the hierarchy of the sample document is correctly detected"""
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "sample-presentation.pptx")
-    elements = partition_pptx(filename=filename)
+    elements = partition_pptx(example_doc_path("sample-presentation.pptx"))
 
     test_cases = [
         # (expected category depth, parent id, child id)
