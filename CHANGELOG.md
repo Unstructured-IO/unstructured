@@ -1,9 +1,11 @@
-## 0.13.1-dev1
+## 0.13.1-dev2
 
 ### Enhancements
 * **Better element IDs** Now, the elements returned by any partitioning function are deterministic and unique at the document level by default.
 
 ### Features
+
+* **Add a set of new `ElementType`s to extend future element types**
 
 ### Fixes
 

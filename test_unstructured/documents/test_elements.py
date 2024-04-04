@@ -18,6 +18,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.documents.elements import (
+    CheckBox,
     ConsolidationStrategy,
     CoordinatesMetadata,
     DataSourceMetadata,
@@ -63,6 +64,14 @@ def test_text_element_apply_multiple_cleaners():
     text_element = Text(text="[1] \u2022 A Textbook on Crocodile Habitats")
     text_element.apply(*cleaners)
     assert str(text_element) == "A Textbook on Crocodile Habitats"
+
+
+def test_non_text_elements_are_serializable_to_text():
+    element = CheckBox()
+    assert hasattr(element, "text")
+    assert element.text is not None
+    assert element.text == ""
+    assert str(element) == ""
 
 
 def test_apply_raises_if_func_does_not_produce_string():
