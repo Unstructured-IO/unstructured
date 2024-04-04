@@ -88,39 +88,28 @@ def partition_xlsx(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     """
-    last_modification_date = None
-    header = 0 if include_header else None
-
-    sheets: dict[str, pd.DataFrame] = {}
-    if filename:
-        sheets = pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
-            filename, sheet_name=None, header=header
-        )
-        last_modification_date = get_last_modified_date(filename)
-
-    elif file:
-        if isinstance(file, SpooledTemporaryFile):
-            file.seek(0)
-            f = io.BytesIO(file.read())
-        else:
-            f = file
-        sheets = pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
-            f, sheet_name=None, header=header
-        )
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
-    else:
-        raise ValueError("Either 'filename' or 'file' argument must be specified")
+    opts = _XlsxPartitionerOptions(
+        date_from_file_object=date_from_file_object,
+        detect_language_per_element=detect_language_per_element,
+        file=file,
+        file_path=filename,
+        find_subtable=find_subtable,
+        include_header=include_header,
+        include_metadata=include_metadata,
+        infer_table_structure=infer_table_structure,
+        languages=languages,
+        metadata_file_path=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
+    )
 
     elements: list[Element] = []
-    for page_number, (sheet_name, sheet) in enumerate(sheets.items(), start=1):
-        if not find_subtable:
+    for page_number, (sheet_name, sheet) in enumerate(opts.sheets.items(), start=1):
+        if not opts.find_subtable:
             html_text = (
                 sheet.to_html(  # pyright: ignore[reportUnknownMemberType]
-                    index=False, header=include_header, na_rep=""
+                    index=False, header=opts.include_header, na_rep=""
                 )
-                if infer_table_structure
+                if opts.infer_table_structure
                 else None
             )
             # XXX: `html_text` can be `None`. What happens on this call in that case?
@@ -131,13 +120,13 @@ def partition_xlsx(
                 ).text_content(),
             )
 
-            if include_metadata:
+            if opts.include_metadata:
                 metadata = ElementMetadata(
                     text_as_html=html_text,
                     page_name=sheet_name,
                     page_number=page_number,
-                    filename=metadata_filename or filename,
-                    last_modified=metadata_last_modified or last_modification_date,
+                    filename=opts.metadata_file_path,
+                    last_modified=opts.last_modified,
                 )
                 metadata.detection_origin = DETECTION_ORIGIN
             else:
@@ -149,17 +138,11 @@ def partition_xlsx(
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
 
-                metadata = _get_metadata(
-                    include_metadata,
-                    sheet_name,
-                    page_number,
-                    metadata_filename or filename,
-                    metadata_last_modified or last_modification_date,
-                )
+                metadata = _get_metadata(sheet_name, page_number, opts)
 
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
                 for content in subtable_parser.iter_leading_single_cell_rows_texts():
-                    element = _check_content_element_type(str(content))
+                    element = _create_element(str(content))
                     element.metadata = metadata
                     elements.append(element)
 
@@ -167,7 +150,7 @@ def partition_xlsx(
                 core_table = subtable_parser.core_table
                 if core_table is not None:
                     html_text = core_table.to_html(  # pyright: ignore[reportUnknownMemberType]
-                        index=False, header=include_header, na_rep=""
+                        index=False, header=opts.include_header, na_rep=""
                     )
                     text = cast(
                         str,
@@ -177,25 +160,142 @@ def partition_xlsx(
                     )
                     element = Table(text=text)
                     element.metadata = metadata
-                    element.metadata.text_as_html = html_text if infer_table_structure else None
+                    element.metadata.text_as_html = (
+                        html_text if opts.infer_table_structure else None
+                    )
                     elements.append(element)
 
                 # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
 
                 # -- emit each trailing single-cell row as its own `Text`-subtype element --
                 for content in subtable_parser.iter_trailing_single_cell_rows_texts():
-                    element = _check_content_element_type(str(content))
+                    element = _create_element(str(content))
                     element.metadata = metadata
                     elements.append(element)
 
     elements = list(
         apply_lang_metadata(
             elements=elements,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
+            languages=opts.languages,
+            detect_language_per_element=opts.detect_language_per_element,
         ),
     )
     return elements
+
+
+class _XlsxPartitionerOptions:
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
+
+    def __init__(
+        self,
+        *,
+        date_from_file_object: bool,
+        detect_language_per_element: bool,
+        file: Optional[IO[bytes]],
+        file_path: Optional[str],
+        find_subtable: bool,
+        include_header: bool,
+        include_metadata: bool,
+        infer_table_structure: bool,
+        languages: Optional[list[str]],
+        metadata_file_path: Optional[str],
+        metadata_last_modified: Optional[str],
+    ):
+        self._date_from_file_object = date_from_file_object
+        self._detect_language_per_element = detect_language_per_element
+        self._file = file
+        self._file_path = file_path
+        self._find_subtable = find_subtable
+        self._include_header = include_header
+        self._include_metadata = include_metadata
+        self._infer_table_structure = infer_table_structure
+        self._languages = languages
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+
+    @lazyproperty
+    def detect_language_per_element(self) -> bool:
+        """When True, detect language on element-by-element basis instead of document level."""
+        return self._detect_language_per_element
+
+    @lazyproperty
+    def find_subtable(self) -> bool:
+        """True when partitioner should detect and emit separate `Table` elements for subtables.
+
+        A subtable is (roughly) a contiguous rectangle of populated cells bounded by empty rows.
+        """
+        return self._find_subtable
+
+    @lazyproperty
+    def header_row_idx(self) -> int | None:
+        """The index of the row Pandas should treat as column-headings. Either 0 or None."""
+        return 0 if self._include_header else None
+
+    @lazyproperty
+    def include_header(self) -> bool:
+        """True when column headers should be included in tables."""
+        return self._include_header
+
+    @lazyproperty
+    def include_metadata(self) -> bool:
+        """True when partitioner should apply metadata to emitted elements."""
+        return self._include_metadata
+
+    @lazyproperty
+    def infer_table_structure(self) -> bool:
+        """True when partitioner should compute and apply `text_as_html` metadata."""
+        return self._infer_table_structure
+
+    @lazyproperty
+    def languages(self) -> Optional[list[str]]:
+        """User-specified language(s) of this document.
+
+        When `None`, language is detected using naive Bayesian filter via `langdetect`. Multiple
+        language codes indicate text could be in any of those languages.
+        """
+        return self._languages
+
+    @lazyproperty
+    def last_modified(self) -> Optional[str]:
+        """The best last-modified date available, None if no sources are available."""
+        # -- value explicitly specified by caller takes precedence --
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return get_last_modified_date(self._file_path)
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @lazyproperty
+    def metadata_file_path(self) -> str | None:
+        """The best available file-path for this document or `None` if unavailable."""
+        return self._metadata_file_path or self._file_path
+
+    @lazyproperty
+    def sheets(self) -> dict[str, pd.DataFrame]:
+        """The spreadsheet worksheets, each as a data-frame mapped by sheet-name."""
+        if file_path := self._file_path:
+            return pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
+                file_path, sheet_name=None, header=self.header_row_idx
+            )
+
+        if f := self._file:
+            if isinstance(f, SpooledTemporaryFile):
+                f.seek(0)
+                f = io.BytesIO(f.read())
+            return pd.read_excel(  # pyright: ignore[reportUnknownMemberType]
+                f, sheet_name=None, header=self.header_row_idx
+            )
+
+        raise ValueError("Either 'filename' or 'file' argument must be specified.")
 
 
 class _ConnectedComponent:
@@ -423,7 +523,7 @@ class _SubtableParser:
         return tuple(reversed(list(iter_trailing_single_cell_row_indices())))
 
 
-def _check_content_element_type(text: str) -> Element:
+def _create_element(text: str) -> Element:
     """Create `Text`-subtype document element appropriate to `text`."""
     if is_bulleted_text(text):
         return ListItem(text=clean_bullets(text))
@@ -438,20 +538,16 @@ def _check_content_element_type(text: str) -> Element:
 
 
 def _get_metadata(
-    include_metadata: bool = True,
-    sheet_name: Optional[str] = None,
-    page_number: Optional[int] = -1,
-    filename: Optional[str] = None,
-    last_modification_date: Optional[str] = None,
+    sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
-    if include_metadata:
-        metadata = ElementMetadata(
+    return (
+        ElementMetadata(
             page_name=sheet_name,
             page_number=page_number,
-            filename=filename,
-            last_modified=last_modification_date,
+            filename=opts.metadata_file_path,
+            last_modified=opts.last_modified,
         )
-    else:
-        metadata = ElementMetadata()
-    return metadata
+        if opts.include_metadata
+        else ElementMetadata()
+    )
