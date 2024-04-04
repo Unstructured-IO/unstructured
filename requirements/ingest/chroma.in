@@ -2,3 +2,5 @@
 -c ../base.txt
 chromadb
 importlib-metadata>=7.1.0
+# Future releases adds in typer-cli which breaks the resolution of typer as a library
+typer<=0.9.0
