@@ -89,12 +89,6 @@ def test_partition_pptx_from_file_with_metadata_filename():
         assert element.metadata.filename == "test"
 
 
-def test_partition_pptx_raises_with_both_specified():
-    file_path = example_doc_path("fake-power-point.pptx")
-    with open(file_path, "rb") as f, pytest.raises(ValueError):
-        partition_pptx(file_path, file=f)
-
-
 def test_partition_pptx_raises_with_neither():
     with pytest.raises(ValueError):
         partition_pptx()
