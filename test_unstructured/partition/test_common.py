@@ -14,6 +14,7 @@ from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
     CoordinatesMetadata,
     ElementMetadata,
@@ -207,30 +208,48 @@ def test_normalize_layout_element_layout_element_narrative_text():
     )
 
 
-def test_normalize_layout_element_checked_box():
+@pytest.mark.parametrize(
+    ("element_type", "expected_element_class"),
+    TYPE_TO_TEXT_ELEMENT_MAP.items(),
+)
+def test_normalize_layout_element_layout_element_maps_to_appropriate_text_element(
+    element_type: str,
+    expected_element_class: type[Text],
+):
     layout_element = LayoutElement.from_coords(
-        type="Checked",
+        type=element_type,
         x1=1,
         y1=2,
         x2=3,
         y2=4,
-        text="",
+        text="Some lovely text",
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
         layout_element,
         coordinate_system=coordinate_system,
     )
-    assert element == CheckBox(
-        checked=True,
+    assert element == expected_element_class(
+        text="Some lovely text",
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
 
 
-def test_normalize_layout_element_unchecked_box():
+@pytest.mark.parametrize(
+    ("element_type", "expected_checked"),
+    [
+        (ElementType.CHECK_BOX_UNCHECKED, False),
+        (ElementType.CHECK_BOX_CHECKED, True),
+        (ElementType.RADIO_BUTTON_UNCHECKED, False),
+        (ElementType.RADIO_BUTTON_CHECKED, True),
+        (ElementType.CHECKED, True),
+        (ElementType.UNCHECKED, False),
+    ],
+)
+def test_normalize_layout_element_checkable(element_type: str, expected_checked: bool):
     layout_element = LayoutElement.from_coords(
-        type="Unchecked",
+        type=element_type,
         x1=1,
         y1=2,
         x2=3,
@@ -242,8 +261,9 @@ def test_normalize_layout_element_unchecked_box():
         layout_element,
         coordinate_system=coordinate_system,
     )
+    assert isinstance(element, CheckBox)
     assert element == CheckBox(
-        checked=False,
+        checked=expected_checked,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
