@@ -630,6 +630,7 @@ class ElementType:
     UNCATEGORIZED_TEXT = "UncategorizedText"
     NARRATIVE_TEXT = "NarrativeText"
     BULLETED_TEXT = "BulletedText"
+    PARAGRAPH = "Paragraph"
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
@@ -647,6 +648,10 @@ class ElementType:
     LIST_ITEM_OTHER = "List-item"
     CHECKED = "Checked"
     UNCHECKED = "Unchecked"
+    CHECK_BOX_CHECKED = "CheckBoxChecked"
+    CHECK_BOX_UNCHECKED = "CheckBoxUnchecked"
+    RADIO_BUTTON_CHECKED = "RadioButtonChecked"
+    RADIO_BUTTON_UNCHECKED = "RadioButtonUnchecked"
     ADDRESS = "Address"
     EMAIL_ADDRESS = "EmailAddress"
     PAGE_BREAK = "PageBreak"
@@ -660,6 +665,8 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    PAGE_NUMBER = "PageNumber"
+    CODE_SNIPPET = "CodeSnippet"
 
     @classmethod
     def to_dict(cls):
@@ -715,6 +722,9 @@ class Element(abc.ABC):
         # -- all `Element` instances get a `text` attribute, defaults to the empty string if not
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
+
+    def __str__(self):
+        return self.text
 
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
@@ -962,6 +972,18 @@ class Footer(Text):
     category = "Footer"
 
 
+class CodeSnippet(Text):
+    """An element for capturing code snippets."""
+
+    category = "CodeSnippet"
+
+
+class PageNumber(Text):
+    """An element for capturing page numbers."""
+
+    category = "PageNumber"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -972,6 +994,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.COMPOSITE_ELEMENT: Text,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.PARAGRAPH: NarrativeText,
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
@@ -996,4 +1019,6 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.EMAIL_ADDRESS: EmailAddress,
     ElementType.FORMULA: Formula,
     ElementType.PAGE_BREAK: PageBreak,
+    ElementType.CODE_SNIPPET: CodeSnippet,
+    ElementType.PAGE_NUMBER: PageNumber,
 }
