@@ -195,7 +195,7 @@ tqdm==4.66.2
     #   huggingface-hub
 typer==0.9.0
     # via
-    #   -r chroma.in
+    #   -r chroma.ingst
     #   chromadb
 typing-extensions==4.10.0
     # via
