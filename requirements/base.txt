@@ -22,9 +22,9 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via nltk
 dataclasses-json==0.6.4
-    # via
-    #   -r ./base.in
-    #   unstructured-client
+    # via -r ./base.in
+dataclasses-json-speakeasy==0.5.11
+    # via unstructured-client
 emoji==2.11.0
     # via -r ./base.in
 filetype==1.2.0
@@ -46,6 +46,7 @@ lxml==4.9.4
 marshmallow==3.21.1
     # via
     #   dataclasses-json
+    #   dataclasses-json-speakeasy
     #   unstructured-client
 mypy-extensions==1.0.0
     # via
@@ -93,8 +94,9 @@ typing-extensions==4.10.0
 typing-inspect==0.9.0
     # via
     #   dataclasses-json
+    #   dataclasses-json-speakeasy
     #   unstructured-client
-unstructured-client==0.15.1
+unstructured-client==0.18.0
     # via -r ./base.in
 urllib3==1.26.18
     # via
