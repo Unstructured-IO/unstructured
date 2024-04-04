@@ -723,3 +723,22 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
     )
     partitions = partition_html(text=table_html)
     assert partitions[0].metadata.text_as_html == expected
+
+
+def test_partition_html_tag_tail_parsing():
+    html_text = """
+        <html>
+        <body>
+        <div>
+            Head
+            <div><span>Nested</span></div>
+            Tail
+        </div>
+        </body>
+        </html>
+    """
+
+    elements = partition_html(text=html_text)
+    element_text = "|".join([str(el).strip() for el in elements])
+
+    assert element_text == "Head|Nested|Tail"
