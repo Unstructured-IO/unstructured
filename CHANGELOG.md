@@ -7,7 +7,7 @@
 ### Fixes
 
 * **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
-* **Fix SFTP** Adds more options to prevent looking for ssh files if only using username password.
+* **Fix SFTP** Adds flag options to SFTP connector on whether to use ssh keys / agent, with flag values defaulting to False. This is to prevent looking for ssh files when using username and password. Currently, username and password are required, making that always the case.
 
 ## 0.13.0
 
