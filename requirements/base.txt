@@ -25,8 +25,6 @@ dataclasses-json==0.6.4
     # via
     #   -r ./base.in
     #   unstructured-client
-deepdiff==6.7.1
-    # via unstructured-client
 emoji==2.11.0
     # via -r ./base.in
 filetype==1.2.0
@@ -57,15 +55,11 @@ nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
     # via -r ./base.in
-ordered-set==4.1.0
-    # via deepdiff
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt
     #   marshmallow
     #   unstructured-client
-pypdf==4.1.0
-    # via unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
 python-iso639==2024.2.7
@@ -94,14 +88,13 @@ tqdm==4.66.2
 typing-extensions==4.10.0
     # via
     #   -r ./base.in
-    #   pypdf
     #   typing-inspect
     #   unstructured-client
 typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   unstructured-client
-unstructured-client==0.22.0
+unstructured-client==0.15.1
     # via -r ./base.in
 urllib3==1.26.18
     # via

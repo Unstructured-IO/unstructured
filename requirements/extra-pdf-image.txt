@@ -165,9 +165,7 @@ pyparsing==3.0.9
     #   -c ././deps/constraints.txt
     #   matplotlib
 pypdf==4.1.0
-    # via
-    #   -c ./base.txt
-    #   -r ./extra-pdf-image.in
+    # via -r ./extra-pdf-image.in
 pypdfium2==4.28.0
     # via pdfplumber
 pytesseract==0.3.10

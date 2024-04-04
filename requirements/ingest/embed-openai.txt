@@ -83,7 +83,7 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-openai==1.16.1
+openai==1.16.2
     # via -r ./ingest/embed-openai.in
 orjson==3.10.0
     # via langsmith
