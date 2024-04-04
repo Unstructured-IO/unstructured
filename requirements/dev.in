@@ -1,6 +1,6 @@
 -c ./deps/constraints.txt
--r base.in
--r test.in
+-c base.txt
+-c test.txt
 jupyter
 ipython
 pip-tools

@@ -1,5 +1,5 @@
 -c ./deps/constraints.txt
--r base.in
+-c base.txt
 black>=22.3.0
 coverage
 types-click

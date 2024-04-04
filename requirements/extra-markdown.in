@@ -1,4 +1,4 @@
 -c ./deps/constraints.txt
--r base.in
+-c base.txt
 
 markdown
