@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 from tempfile import SpooledTemporaryFile
-from typing import IO, Any, Iterator, Optional, Sequence
+from typing import IO, Any, Iterator, Optional, Protocol, Sequence
 
 import pptx
 from pptx.presentation import Presentation
@@ -10,6 +10,7 @@ from pptx.shapes.autoshape import Shape
 from pptx.shapes.base import BaseShape
 from pptx.shapes.graphfrm import GraphicFrame
 from pptx.shapes.group import GroupShape
+from pptx.shapes.picture import Picture
 from pptx.shapes.shapetree import _BaseGroupShapes  # pyright: ignore [reportPrivateUsage]
 from pptx.slide import Slide
 from pptx.text.text import _Paragraph  # pyright: ignore [reportPrivateUsage]
@@ -43,6 +44,36 @@ from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import lazyproperty
 
 DETECTION_ORIGIN = "pptx"
+
+
+def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
+    """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
+    _PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
+
+
+# ================================================================================================
+# PPTX DOMAIN MODEL DEFINITIONS
+# ================================================================================================
+
+
+class AbstractPicturePartitioner(Protocol):
+    """Defines the interface for a pluggable sub-partitioner for PPTX Picture objects.
+
+    A PPTX Picture object generally contains an image (e.g. JPG, PNG) but can also contain other
+    media types like a video or sound file. The interface classmethod generates zero-or-more
+    elements from the specified Picture object. If the media in the picture object is not supported
+    then it will silently return without generating any elements.
+    """
+
+    @classmethod
+    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+        """Generate document elements derived from `picture`, a PPTX Picture shape."""
+        ...
+
+
+# ================================================================================================
+# PARTITIONER
+# ================================================================================================
 
 
 @process_metadata()
@@ -160,7 +191,10 @@ class _PptxPartitioner:
                         yield from self._iter_title_shape_element(shape)
                     else:
                         yield from self._iter_shape_elements(shape)
-                # -- otherwise ditch it, this would include pictures, charts, connectors (lines),
+                elif isinstance(shape, Picture):
+                    yield from self._iter_picture_elements(shape)
+
+                # -- otherwise ditch it, this would include charts, connectors (lines),
                 # -- and free-form shapes (squiggly lines). Lines don't have text.
 
     def _is_bulleted_paragraph(self, paragraph: _Paragraph) -> bool:
@@ -196,6 +230,12 @@ class _PptxPartitioner:
         yield NarrativeText(
             text=notes_text, metadata=self._opts.text_metadata(), detection_origin=DETECTION_ORIGIN
         )
+
+    def _iter_picture_elements(self, picture: Picture) -> Iterator[Element]:
+        """Generate elements derived from the image in `picture`."""
+        # -- delegate this job to the pluggable Picture partitioner --
+        PicturePartitionerCls = self._opts.picture_partitioner
+        yield from PicturePartitionerCls.iter_elements(picture, self._opts)
 
     def _iter_title_shape_element(self, shape: Shape) -> Iterator[Element]:
         """Generate Title element for each paragraph in title `shape`.
@@ -307,6 +347,16 @@ class _PptxPartitioner:
 class _PptxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
+    _PicturePartitionerCls = None
+    """Sub-partitioner used to partition PPTX Picture (Image) shapes.
+
+    This value has module lifetime and is updated by calling the `register_picture_partitioner()`
+    function defined in this module. The value sent to `register_picture_partitioner()` must be a
+    pluggable sub-partitioner implementing the `AbstractPicturePartitioner` interface. After
+    registration, all picture shapes in subsequent PPTX documents will be partitioned by the
+    specified picture sub-partitioner.
+    """
+
     def __init__(
         self,
         *,
@@ -331,6 +381,11 @@ class _PptxPartitionerOptions:
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = 0
+
+    @classmethod
+    def register_picture_partitioner(cls, picture_partitioner: AbstractPicturePartitioner):
+        """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
+        cls._PicturePartitionerCls = picture_partitioner
 
     @lazyproperty
     def include_page_breaks(self) -> bool:
@@ -398,6 +453,23 @@ class _PptxPartitionerOptions:
         return self._page_counter
 
     @lazyproperty
+    def picture_partitioner(self) -> AbstractPicturePartitioner:
+        """The sub-partitioner to use for PPTX Picture shapes."""
+        # -- Note this value has partitioning-run scope. An instance of this options class is
+        # -- instantiated once per partitioning run (each document can have different options).
+        # -- Because this is a lazyproperty, it is computed only on the first reference. All
+        # -- subsequent references during the same partitioning run will get the same value. This
+        # -- ensures Picture shapes are processed consistently within a single document. The
+        # -- intended use of `register_picture_partitioner()` is that it be called before processing
+        # -- any documents, however there's no reason not to make the mechanism robust against
+        # -- unintended use.
+        return (
+            _NullPicturePartitioner
+            if self._PicturePartitionerCls is None
+            else self._PicturePartitionerCls
+        )
+
+    @lazyproperty
     def pptx_file(self) -> str | IO[bytes]:
         """The PowerPoint document file to be partitioned.
 
@@ -455,3 +527,18 @@ class _PptxPartitionerOptions:
         )
         element_metadata.detection_origin = DETECTION_ORIGIN
         return element_metadata
+
+
+# ================================================================================================
+# SUB-PARTITIONERS
+# ================================================================================================
+
+
+class _NullPicturePartitioner:
+    """Does not parse the provided Picture element and generates zero elements."""
+
+    @classmethod
+    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+        """No-op picture partitioner."""
+        return
+        yield
