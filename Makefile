@@ -21,7 +21,7 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc install-tesseract-ci
 
 .PHONY: install-base-ci
 install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
@@ -274,6 +274,10 @@ install-pandoc:
 .PHONY: install-paddleocr
 install-paddleocr:
 	ARCH=${ARCH} ./scripts/install-paddleocr.sh
+
+.PHONY: install-tesseract-ci
+install-tesseract-ci:
+	./scripts/install-tesseract-ci.sh
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
