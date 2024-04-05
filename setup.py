@@ -176,5 +176,5 @@ setup(
         "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
     },
     package_dir={"unstructured": "unstructured"},
-    package_data={"unstructured": ["nlp/*.in"]},
+    package_data={"unstructured": ["nlp/*.txt"]},
 )
