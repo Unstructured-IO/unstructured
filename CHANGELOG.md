@@ -1,7 +1,7 @@
-## 0.13.2
+## 0.13.2-dev1
 
 ### Enhancements
-* **Better element IDs** Now, the elements returned by any partitioning function are deterministic and unique at the document level by default.
+* **Better element IDs** Now, the element IDs returned by any partitioning function are deterministic and unique at the document level by default. Before, hashes depended solely on text, but they now incorporate the element's sequence position within the document. Hashing remains the default option, but the `unique_element_ids=True` feature for random UUIDs is still an option.
 
 ### Features
 
