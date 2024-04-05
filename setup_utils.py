@@ -3,7 +3,7 @@ from typing import List, Union
 
 
 def load_requirements(file_list: Union[str, List[str]]) -> List[str]:
-    file_list = list(file_list)
+    file_list = file_list if isinstance(file_list, list) else [file_list]
     requirements: List[str] = []
     for file in file_list:
         path = Path(file)
@@ -12,13 +12,10 @@ def load_requirements(file_list: Union[str, List[str]]) -> List[str]:
             raw = f.read().splitlines()
             requirements.extend([r for r in raw if not r.startswith("#") and not r.startswith("-")])
             recursive_reqs = [r for r in raw if r.startswith("-r")]
-            if recursive_reqs:
-                filenames = []
-                for recursive_req in recursive_reqs:
-                    file_spec = recursive_req.split()[-1]
-                    file_path = Path(file_dir) / file_spec
-                    filenames.append(str(file_path.resolve()))
-                requirements.extend(load_requirements(file_list=filenames))
+        for recursive_req in recursive_reqs:
+            file_spec = recursive_req.split()[-1]
+            file_path = Path(file_dir) / file_spec
+            requirements.extend(load_requirements(file_list=str(file_path.resolve())))
     # Remove duplicates and any blank entries
     return list({r for r in requirements if r})
 
