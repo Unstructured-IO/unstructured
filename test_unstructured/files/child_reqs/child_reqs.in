@@ -1,0 +1,3 @@
+# This is a child dependency file in a sub directory
+pandas
+torch
