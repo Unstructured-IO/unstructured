@@ -1,6 +1,7 @@
 # This is a sample file for managing dependencies
 -c constraints.txt
 -r ./child_reqs/child_reqs.in
+-r ./other_reqs.in
 requests
 httpx
 pandas
