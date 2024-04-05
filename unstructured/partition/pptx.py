@@ -414,3 +414,140 @@ class _PptxPartitioner:
         )
         element_metadata.detection_origin = DETECTION_ORIGIN
         return element_metadata
+
+
+class _PptxPartitionerOptions:  # pyright: ignore[reportUnusedClass]
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
+
+    def __init__(
+        self,
+        *,
+        date_from_file_object: bool,
+        file: Optional[IO[bytes]],
+        file_path: Optional[str],
+        include_page_breaks: bool,
+        include_slide_notes: bool,
+        infer_table_structure: bool,
+        metadata_file_path: Optional[str],
+        metadata_last_modified: Optional[str],
+    ):
+        self._date_from_file_object = date_from_file_object
+        self._file = file
+        self._file_path = file_path
+        self._include_page_breaks = include_page_breaks
+        self._include_slide_notes = include_slide_notes
+        self._infer_table_structure = infer_table_structure
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+        self._page_counter = 0
+
+    @lazyproperty
+    def include_page_breaks(self) -> bool:
+        """When True, include `PageBreak` elements in element-stream.
+
+        Note that regardless of this setting, page-breaks are detected, and page-number is tracked
+        and included in element metadata. Only the presence of distinct `PageBreak` elements (which
+        contain no text) in the element stream is affected.
+        """
+        return self._include_page_breaks
+
+    @lazyproperty
+    def include_slide_notes(self) -> bool:
+        """When True, also partition any text found in slide notes as part of each slide."""
+        return self._include_slide_notes
+
+    def increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        # -- no page-break before first page --
+        if self._page_counter < 2:
+            return
+        # -- only emit page-breaks when enabled --
+        if self._include_page_breaks:
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
+
+    @lazyproperty
+    def infer_table_structure(self) -> bool:
+        """True when partitioner should compute and apply `text_as_html` metadata for tables."""
+        return self._infer_table_structure
+
+    @lazyproperty
+    def last_modified(self) -> Optional[str]:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format, and any last-modified date for the file
+        # -- would be just now.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return (
+                None
+                if self._file_path.startswith("/tmp")
+                else get_last_modified_date(self._file_path)
+            )
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @lazyproperty
+    def metadata_file_path(self) -> str | None:
+        """The best available file-path for this document or `None` if unavailable."""
+        return self._metadata_file_path or self._file_path
+
+    @property
+    def page_number(self) -> int:
+        """The current page (slide) number."""
+        return self._page_counter
+
+    @lazyproperty
+    def pptx_file(self) -> str | IO[bytes]:
+        """The PowerPoint document file to be partitioned.
+
+        This is either a str path or a file-like object. `python-pptx` accepts either for opening a
+        presentation file.
+        """
+        if self._file_path:
+            return self._file_path
+
+        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
+        # -- exception when Zipfile tries to open it. The pptx format is a zip archive so we need
+        # -- to work around that bug here.
+        if isinstance(self._file, SpooledTemporaryFile):
+            self._file.seek(0)
+            return io.BytesIO(self._file.read())
+
+        if self._file:
+            return self._file
+
+        raise ValueError(
+            "No PPTX document specified, either `filename` or `file` argument must be provided"
+        )
+
+    def table_metadata(self, text_as_html: str | None):
+        """ElementMetadata instance suitable for use with Table element."""
+        element_metadata = ElementMetadata(
+            filename=self.metadata_file_path,
+            last_modified=self.last_modified,
+            page_number=self.page_number,
+            text_as_html=text_as_html,
+        )
+        element_metadata.detection_origin = DETECTION_ORIGIN
+        return element_metadata
+
+    def text_metadata(self, category_depth: int = 0) -> ElementMetadata:
+        """ElementMetadata instance suitable for use with Text and subtypes."""
+        element_metadata = ElementMetadata(
+            filename=self.metadata_file_path,
+            last_modified=self.last_modified,
+            page_number=self.page_number,
+            category_depth=category_depth,
+        )
+        element_metadata.detection_origin = DETECTION_ORIGIN
+        return element_metadata

@@ -4,24 +4,33 @@
 
 from __future__ import annotations
 
+import io
 import pathlib
 import tempfile
+from typing import Any
 
 import pptx
 import pytest
 from pptx.util import Inches
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
+    ElementMetadata,
     ListItem,
     NarrativeText,
     PageBreak,
     Text,
     Title,
 )
-from unstructured.partition.pptx import partition_pptx
+from unstructured.partition.pptx import _PptxPartitionerOptions, partition_pptx
 
 EXPECTED_PPTX_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
@@ -502,3 +511,275 @@ def test_partition_pptx_hierarchy_sample_document():
         assert element.metadata.category_depth == test_case[0]
         assert element.metadata.parent_id == test_case[1]
         assert element.id == test_case[2]
+
+
+# ================================================================================================
+# ISOLATED UNIT TESTS
+# ================================================================================================
+# These test components used by `partition_pptx()` in isolation such that all edge cases can be
+# exercised.
+# ================================================================================================
+
+
+class Describe_PptxPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.xlsx._PptxPartitionerOptions` objects."""
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_emit_PageBreak_elements_as_part_of_the_output_element_stream(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["include_page_breaks"] = arg_value
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.include_page_breaks is arg_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_partition_content_found_in_slide_notes(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["include_slide_notes"] = arg_value
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.include_slide_notes is arg_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_include_text_as_html_in_Table_metadata(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["infer_table_structure"] = arg_value
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.infer_table_structure is arg_value
+
+    # -- .increment_page_number() ----------------
+
+    def it_generates_a_PageBreak_element_when_the_page_number_is_incremented(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = _PptxPartitionerOptions(**opts_args)
+        # -- move to the first slide --
+        list(opts.increment_page_number())
+
+        page_break_iter = opts.increment_page_number()
+
+        assert isinstance(next(page_break_iter, None), PageBreak)
+        assert opts.page_number == 2
+        with pytest.raises(StopIteration):
+            next(page_break_iter)
+
+    def but_it_does_not_generate_a_PageBreak_element_for_the_first_slide(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        page_break_iter = opts.increment_page_number()
+
+        with pytest.raises(StopIteration):
+            next(page_break_iter)
+        assert opts.page_number == 1
+
+    def and_it_does_not_generate_a_PageBreak_element_when_include_page_breaks_option_is_off(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["include_page_breaks"] = False
+        opts = _PptxPartitionerOptions(**opts_args)
+        # -- move to the first slide --
+        list(opts.increment_page_number())
+
+        page_break_iter = opts.increment_page_number()
+
+        with pytest.raises(StopIteration):
+            next(page_break_iter)
+        assert opts.page_number == 2
+
+    # -- .last_modified --------------------------
+
+    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.last_modified == "2024-03-05T17:02:53"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_: Mock
+    ):
+        opts_args["file_path"] = "a/b/spreadsheet.pptx"
+        get_last_modified_date_.return_value = "2024-04-02T20:32:35"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_.assert_called_once_with("a/b/spreadsheet.pptx")
+        assert last_modified == "2024-04-02T20:32:35"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = True
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_called_once_with(file)
+        assert last_modified == "2024-04-02T20:42:07"
+
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = False
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_not_called()
+        assert last_modified is None
+
+    # -- .metadata_file_path ---------------------
+
+    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = "x/y/z.pptx"
+        opts_args["metadata_file_path"] = "a/b/c.pptx"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == "a/b/c.pptx"
+
+    @pytest.mark.parametrize("file_path", ["u/v/w.pptx", None])
+    def and_it_falls_back_to_the_document_file_path_otherwise(
+        self, file_path: str | None, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = file_path
+        opts_args["metadata_file_path"] = None
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == file_path
+
+    # -- .page_number ----------------------------
+
+    def it_keeps_track_of_the_page_number(self, opts_args: dict[str, Any]):
+        """In PPTX, page-number is the slide number."""
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.page_number == 0
+        list(opts.increment_page_number())
+        assert opts.page_number == 1
+        list(opts.increment_page_number())
+        assert opts.page_number == 2
+
+    # -- .pptx_file ------------------------------
+
+    def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = "l/m/n.pptx"
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.pptx_file == "l/m/n.pptx"
+
+    def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
+        spooled_temp_file.write(b"abcdefg")
+        opts_args["file"] = spooled_temp_file
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        pptx_file = opts.pptx_file
+
+        assert pptx_file is not spooled_temp_file
+        assert isinstance(pptx_file, io.BytesIO)
+        assert pptx_file.getvalue() == b"abcdefg"
+
+    def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
+        self, opts_args: dict[str, Any]
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        pptx_file = opts.pptx_file
+
+        assert pptx_file is file
+        assert isinstance(pptx_file, io.BytesIO)
+        assert pptx_file.getvalue() == b"abcdefg"
+
+    def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        with pytest.raises(ValueError, match="No PPTX document specified, either `filename` or "):
+            opts.pptx_file
+
+    # -- .table_metadata -------------------------
+
+    def it_can_create_table_metadata(self, opts_args: dict[str, Any]):
+        opts_args["metadata_file_path"] = "d/e/f.pptx"
+        opts_args["metadata_last_modified"] = "2024-04-02T19:51:55"
+        opts = _PptxPartitionerOptions(**opts_args)
+        # -- move to the first slide --
+        list(opts.increment_page_number())
+
+        metadata = opts.table_metadata(text_as_html="<table><tr/></table>")
+
+        assert isinstance(metadata, ElementMetadata)
+        assert metadata.filename == "f.pptx"
+        assert metadata.last_modified == "2024-04-02T19:51:55"
+        assert metadata.page_number == 1
+        assert metadata.text_as_html == "<table><tr/></table>"
+
+    # -- .text_metadata -------------------------
+
+    def it_can_create_text_metadata(self, opts_args: dict[str, Any]):
+        opts_args["metadata_file_path"] = "d/e/f.pptx"
+        opts_args["metadata_last_modified"] = "2024-04-02T19:56:40"
+        opts = _PptxPartitionerOptions(**opts_args)
+        # -- move to the first slide --
+        list(opts.increment_page_number())
+
+        metadata = opts.text_metadata(category_depth=2)
+
+        assert isinstance(metadata, ElementMetadata)
+        assert metadata.filename == "f.pptx"
+        assert metadata.last_modified == "2024-04-02T19:56:40"
+        assert metadata.page_number == 1
+        assert metadata.category_depth == 2
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def get_last_modified_date_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.partition.pptx.get_last_modified_date")
+
+    @pytest.fixture()
+    def get_last_modified_date_from_file_(self, request: FixtureRequest):
+        return function_mock(
+            request, "unstructured.partition.pptx.get_last_modified_date_from_file"
+        )
+
+    @pytest.fixture()
+    def opts_args(self) -> dict[str, Any]:
+        """All default arguments for `_XlsxPartitionerOptions`.
+
+        Individual argument values can be changed to suit each test. Makes construction of opts more
+        compact for testing purposes.
+        """
+        return {
+            "date_from_file_object": False,
+            "file": None,
+            "file_path": None,
+            "include_page_breaks": True,
+            "include_slide_notes": False,
+            "infer_table_structure": True,
+            "metadata_file_path": None,
+            "metadata_last_modified": None,
+        }
