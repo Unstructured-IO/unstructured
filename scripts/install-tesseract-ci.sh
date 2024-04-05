@@ -11,6 +11,6 @@ tesseract --version
 installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
 
 if [ "$installed_tesseract_version" != "${TESSERACT_VERSION}" ]; then
-    echo "Tesseract version ${TESSERACT_VERSION} is required but found version $installed_tesseract_version"
-    exit 1
+  echo "Tesseract version ${TESSERACT_VERSION} is required but found version $installed_tesseract_version"
+  exit 1
 fi
