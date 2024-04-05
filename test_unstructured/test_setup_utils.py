@@ -28,16 +28,20 @@ def test_load_requirements_wrong_suffix():
 
 
 def test_load_base():
-    setup_utils.get_base_reqs()
+    reqs = setup_utils.get_base_reqs()
+    assert reqs
 
 
 def test_load_doc_reqs():
-    setup_utils.get_doc_reqs()
+    reqs = setup_utils.get_doc_reqs()
+    assert reqs
 
 
 def test_load_all_doc_reqs():
-    setup_utils.get_all_doc_reqs()
+    reqs = setup_utils.get_all_doc_reqs()
+    assert reqs
 
 
 def test_load_extra_reqs():
-    setup_utils.get_extras()
+    reqs = setup_utils.get_extras()
+    assert reqs
