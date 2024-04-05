@@ -36,6 +36,9 @@ USER ${NB_USER}
 COPY example-docs example-docs
 COPY unstructured unstructured
 
+# Allow unit tests run via docker to detect this file at the root
+COPY setup_utils.py setup_utils.py
+
 RUN python3.10 -c "from unstructured.partition.model_init import initialize; initialize()"
 
 CMD ["/bin/bash"]
