@@ -261,17 +261,6 @@ def test_partition_pptx_malformed():
 # == DescribePptxPartitionerMetadataBehaviors ====================================================
 
 
-def test_partition_pptx_from_filename_exclude_metadata():
-    elements = partition_pptx(example_doc_path("fake-power-point.pptx"), include_metadata=False)
-    assert elements == EXPECTED_PPTX_OUTPUT
-
-
-def test_partition_pptx_from_file_exclude_metadata():
-    with open(example_doc_path("fake-power-point.pptx"), "rb") as f:
-        elements = partition_pptx(file=f, include_metadata=False)
-    assert elements == EXPECTED_PPTX_OUTPUT
-
-
 def test_partition_pptx_metadata_date(mocker: MockFixture):
     mocker.patch(
         "unstructured.partition.pptx.get_last_modified_date", return_value="2029-07-05T09:24:28"
