@@ -6,7 +6,7 @@
 
 ### Fixes
 
-* **Brings back missing word list files** that caused partitions failures in 0.13.1.
+* **Brings back missing word list files** that caused `partition` failures in 0.13.1.
 
 ## 0.13.1
 
