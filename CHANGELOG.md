@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
+
 ## 0.13.2
 
 ### Enhancements
