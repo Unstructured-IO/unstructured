@@ -11,6 +11,8 @@ def load_requirements(file: Union[str, Path]) -> List[str]:
     requirements: List[str] = []
     if not path.is_file():
         raise FileNotFoundError(f"path does not point to a valid file: {path}")
+    if not path.suffix == ".in":
+        raise ValueError(f"file should have .in extension: {path}")
     file_dir = path.parent.resolve()
     with open(file, encoding="utf-8") as f:
         raw = f.read().splitlines()

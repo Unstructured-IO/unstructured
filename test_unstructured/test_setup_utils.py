@@ -1,10 +1,14 @@
+from pathlib import Path
+
 import pytest
 
 import setup_utils
 
+current_dir = Path(__file__).parent.absolute()
+
 
 def test_load_requirements():
-    file = "./files/example.in"
+    file = current_dir / "files" / "example.in"
     reqs = setup_utils.load_requirements(file=file)
     desired_deps = ["torch", "httpx", "requests", "sphinx<4.3.2", "pandas"]
     assert len(reqs) == len(desired_deps)
@@ -12,8 +16,14 @@ def test_load_requirements():
 
 
 def test_load_requirements_not_file():
-    file = "./files/nothing.in"
+    file = current_dir / "files" / "nothing.in"
     with pytest.raises(FileNotFoundError):
+        setup_utils.load_requirements(file=file)
+
+
+def test_load_requirements_wrong_suffix():
+    file = current_dir / "files" / "wrong_ext.txt"
+    with pytest.raises(ValueError):
         setup_utils.load_requirements(file=file)
 
 
