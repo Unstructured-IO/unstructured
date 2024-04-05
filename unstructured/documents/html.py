@@ -167,7 +167,7 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
+                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
                     page.elements.extend(_page_elements)
 
                 elif _is_container_with_text(tag_elem):
