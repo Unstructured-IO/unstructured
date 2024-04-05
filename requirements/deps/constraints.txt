@@ -53,3 +53,6 @@ botocore<1.34.52
 
 # TODO: constraint due to current release of pikepdf (v8.14.0), remove once next version releases since fix is on main
 lxml<5
+
+# NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
+unstructured-client<=0.18.0
