@@ -1,10 +1,12 @@
-## 0.13.2-dev0
+## 0.13.2
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Brings back missing word list files** that caused `partition` failures in 0.13.1.
 
 ## 0.13.1
 
