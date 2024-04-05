@@ -22,6 +22,8 @@ class SftpAccessConfig(AccessConfig):
     password: str = enhanced_field(sensitive=True)
     host: str = ""
     port: int = 22
+    look_for_keys: bool = False
+    allow_agent: bool = False
 
 
 @dataclass
