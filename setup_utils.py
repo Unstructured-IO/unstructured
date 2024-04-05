@@ -1,3 +1,4 @@
+import collections
 from pathlib import Path
 from typing import List, Union
 
@@ -108,15 +109,22 @@ def get_connector_reqs() -> dict[str, List[str]]:
 
 
 def get_extras() -> dict[str, List[str]]:
-    reqs = get_doc_reqs()
-    reqs.update(
-        {
-            "all-docs": get_all_doc_reqs(),
-            # Legacy extra requirements
-            "huggingface": load_requirements(requirements_dir / "huggingface.in"),
-            "local-inference": get_all_doc_reqs(),
-            "paddleocr": load_requirements(requirements_dir / "extra-paddleocr.in"),
-        }
-    )
-    reqs.update(get_connector_reqs())
+    reqs = {
+        "all-docs": get_all_doc_reqs(),
+        # Legacy extra requirements
+        "huggingface": load_requirements(requirements_dir / "huggingface.in"),
+        "local-inference": get_all_doc_reqs(),
+        "paddleocr": load_requirements(requirements_dir / "extra-paddleocr.in"),
+    }
+    # Check there aren't any duplicate keys
+    doc_reqs = get_doc_reqs()
+    connector_reqs = get_connector_reqs()
+    all_keys = list(reqs.keys()) + list(doc_reqs.keys()) + list(connector_reqs.keys())
+    duplicates = [key for key, count in collections.Counter(all_keys).items() if count > 1]
+    if duplicates:
+        raise ValueError(
+            "duplicate keys found amongst dictionaries: {}".format(", ".join(duplicates))
+        )
+    reqs.update(doc_reqs)
+    reqs.update(connector_reqs)
     return reqs
