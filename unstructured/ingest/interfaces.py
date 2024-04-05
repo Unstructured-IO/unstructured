@@ -608,10 +608,6 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         logger.info(f"Processing {self.filename}")
 
         elements = self.partition_file(partition_config=partition_config, **partition_kwargs)
-
-        for idx, element in enumerate(elements):
-            element.id_to_hash(idx)
-
         element_dicts = elements_to_dicts(elements)
 
         self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
