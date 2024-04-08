@@ -131,7 +131,7 @@ tqdm==4.66.2
     # via
     #   -c ./ingest/../base.txt
     #   openai
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   openai

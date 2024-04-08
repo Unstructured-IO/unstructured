@@ -5,6 +5,7 @@ from pptx.shapes import Subshape
 
 class TextFrame(Subshape):
     text: str
+    def add_paragraph(self) -> _Paragraph: ...
     @property
     def paragraphs(self) -> Sequence[_Paragraph]: ...
 
