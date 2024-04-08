@@ -750,3 +750,22 @@ def test_partition_html_b_tag_parsing():
         "Header 1|Text|Header 2|Param1 = Y|Param2 = 1|Param3 = 2|Param4 = A|"
         "Param5 = A,B,C,D,E|Param6 = 7|Param7 = Five"
     )
+
+
+def test_partition_html_tag_tail_parsing():
+    html_text = """
+        <html>
+        <body>
+        <div>
+            Head
+            <div><span>Nested</span></div>
+            Tail
+        </div>
+        </body>
+        </html>
+    """
+
+    elements = partition_html(text=html_text)
+    element_text = "|".join([str(el).strip() for el in elements])
+
+    assert element_text == "Head|Nested|Tail"
