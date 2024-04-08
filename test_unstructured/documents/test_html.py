@@ -11,7 +11,6 @@ from lxml import html as lxml_html
 from unstructured.documents import html
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
-    Address,
     ListItem,
     NarrativeText,
     Table,
@@ -24,9 +23,11 @@ from unstructured.documents.html import (
     SECTION_TAGS,
     TABLE_TAGS,
     TEXT_TAGS,
+    HTMLAddress,
     HTMLDocument,
     HTMLNarrativeText,
     HTMLTable,
+    HTMLText,
     HTMLTitle,
     TagsMixin,
     _parse_HTMLTable_from_table_elem,
@@ -350,6 +351,49 @@ def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[
     emphasized_texts = html._get_emphasized_texts_from_tag(el)
 
     assert emphasized_texts == expected
+
+
+@pytest.mark.parametrize(
+    ("doc", "root", "expected"),
+    [
+        (
+            "<a href='/loner'>A lone link!</a>",
+            "a",
+            [{"text": "A lone link!", "url": "/loner", "start_index": -1}],
+        ),
+        (
+            "<ul><li><a href='/wiki/Parrot'>Parrots</a></li><li>Dogs</li></ul>",
+            "ul",
+            [{"text": "Parrots", "url": "/wiki/Parrot", "start_index": 0}],
+        ),
+        (
+            "<ul><li><a href='/parrot'>Parrots</a></li><li><a href='/dog'>Dogs</a></li></ul>",
+            "ul",
+            [
+                {"text": "Parrots", "url": "/parrot", "start_index": 0},
+                {"text": "Dogs", "url": "/dog", "start_index": 7},
+            ],
+        ),
+        (
+            "<div>Here is <p>P tag</p> tail text. <a href='/link'>link!</a></div>",
+            "div",
+            [{"text": "link!", "url": "/link", "start_index": 25}],
+        ),
+        (
+            "<div>Here is <p>P tag</p><a href='/link'>link!</a></div>",
+            "div",
+            [{"text": "link!", "url": "/link", "start_index": 13}],
+        ),
+    ],
+)
+def test_get_links_from_tag(doc: str, root: str, expected: List[Dict[str, str]]):
+    document_tree = etree.fromstring(doc, etree.HTMLParser())
+    el = document_tree.find(f".//{root}")
+    assert el is not None
+
+    links = html._get_links_from_tag(el)
+
+    assert links == expected
 
 
 def test_parse_nothing():
@@ -715,13 +759,14 @@ def test_containers_with_text_are_processed():
     html_document = HTMLDocument.from_string(html_str)
 
     assert html_document.elements == [
-        Text(text="Hi All,"),
-        NarrativeText(text="Get excited for our first annual family day!"),
-        Title(text="Best."),
-        Title(text="Dino the Datasaur"),
-        Title(text="Unstructured Technologies"),
-        Title(text="Data Scientist"),
-        Address(text="Doylestown, PA 18901"),
+        HTMLText(text="Hi All,", tag="div"),
+        HTMLNarrativeText(text="Get excited for our first annual family day!", tag="div"),
+        HTMLTitle(text="Best.", tag="div"),
+        HTMLText(text="\n      -- ", tag="div"),
+        HTMLTitle(text="Dino the Datasaur", tag="div"),
+        HTMLTitle(text="Unstructured Technologies", tag="div"),
+        HTMLTitle(text="Data Scientist", tag="div"),
+        HTMLAddress(text="Doylestown, PA 18901", tag="div"),
     ]
 
 

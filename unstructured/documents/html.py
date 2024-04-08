@@ -14,7 +14,10 @@ else:
 
 from lxml import etree
 
-from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
+from unstructured.cleaners.core import (
+    clean_bullets,
+    replace_unicode_quotes,
+)
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     Address,
@@ -167,32 +170,33 @@ class HTMLDocument(XMLDocument):
                     continue
 
                 if _is_text_tag(tag_elem):
-                    if _has_break_tags(tag_elem):
-                        flattened_elems = _unfurl_break_tags(tag_elem)
-                        for _tag_elem in flattened_elems:
-                            element = _parse_tag(_tag_elem)
-                            if element is not None:
-                                page.elements.append(element)
-
-                    else:
-                        element = _parse_tag(tag_elem)
-                        if element is not None:
-                            page.elements.append(element)
-                    descendanttag_elems = tuple(tag_elem.iterdescendants())
+                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
+                    page.elements.extend(_page_elements)
 
                 elif _is_container_with_text(tag_elem):
-                    links = _get_links_from_tag(tag_elem)
-                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                    # -- having text is guaranteed by `_is_container_with_text()` --
-                    assert tag_elem.text is not None
-                    element = _text_to_element(
-                        tag_elem.text,
-                        "div",
-                        (),
-                        depth=0,
-                        links=links,
-                        emphasized_texts=emphasized_texts,
-                    )
+                    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+                    if tag_elem_tail:
+                        _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
+                        page.elements.extend(_page_elements)
+
+                        # NOTE(christine): generate a separate element using a tag tail
+                        element = _text_to_element(
+                            tag_elem.tail,
+                            tag_elem.tag,
+                            (),
+                            depth=0,
+                        )
+                    else:
+                        links = _get_links_from_tag(tag_elem)
+                        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                        element = _text_to_element(
+                            tag_elem.text,
+                            tag_elem.tag,
+                            (),
+                            depth=0,
+                            links=links,
+                            emphasized_texts=emphasized_texts,
+                        )
                     if element is not None:
                         page.elements.append(element)
 
@@ -295,14 +299,22 @@ class HTMLDocument(XMLDocument):
 def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     """Hyperlinks within and below `tag_elem`."""
     links: List[Link] = []
-    href = tag_elem.get("href")
-    # TODO(klaijan) - add html href start_index
-    if href:
-        links.append({"text": tag_elem.text, "url": href, "start_index": -1})
-    for tag in tag_elem.iterdescendants():
-        href = tag.get("href")
-        if href:
-            links.append({"text": tag.text, "url": href, "start_index": -1})
+    tag_elem_href = tag_elem.get("href")
+    if tag_elem_href:
+        tag_elem_text = _construct_text(tag_elem, False)
+        links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
+    else:
+        start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
+        for tag in tag_elem.iterdescendants():
+            href = tag.get("href")
+            if href:
+                links.append({"text": tag.text, "url": href, "start_index": start_index})
+
+            if tag.text and not (tag.text.isspace()):
+                start_index = start_index + len(tag.text)
+            if tag.tail and not (tag.tail.isspace()):
+                start_index = start_index + len(tag.tail)
+
     return links
 
 
@@ -394,6 +406,7 @@ def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, s
 
 def _parse_tag(
     tag_elem: etree._Element,
+    include_tail_text: bool = True,
 ) -> Optional[Element]:
     """Parses `tag_elem` to a Text element if it contains qualifying text.
 
@@ -419,7 +432,7 @@ def _parse_tag(
 
     if tag_elem.tag == "script":
         return None
-    text = _construct_text(tag_elem)
+    text = _construct_text(tag_elem, include_tail_text)
     if not text:
         return None
     return _text_to_element(
@@ -510,7 +523,9 @@ def _is_container_with_text(tag_elem: etree._Element) -> bool:
     if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
         return False
 
-    if tag_elem.text is None or tag_elem.text.strip() == "":
+    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
+    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+    if not tag_elem_text and not tag_elem_tail:
         return False
 
     return True
@@ -595,6 +610,29 @@ def _is_text_tag(
         return True
 
     return False
+
+
+def _process_text_tag(
+    tag_elem: etree._Element,
+    include_tail_text: bool = True,
+) -> tuple[list[Element], tuple[etree._Element]]:
+    """Produces a document element from `tag_elem`."""
+
+    page_elements = []
+    if _has_break_tags(tag_elem):
+        flattened_elems = _unfurl_break_tags(tag_elem)
+        for _tag_elem in flattened_elems:
+            element = _parse_tag(_tag_elem, include_tail_text)
+            if element is not None:
+                page_elements.append(element)
+
+    else:
+        element = _parse_tag(tag_elem, include_tail_text)
+        if element is not None:
+            page_elements.append(element)
+    descendant_tag_elems = tuple(tag_elem.iterdescendants())
+
+    return page_elements, descendant_tag_elems
 
 
 def _process_list_item(

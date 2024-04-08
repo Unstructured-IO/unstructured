@@ -377,11 +377,13 @@ def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppr
 
 
 def test_partition_docx_includes_page_break_elements_when_so_instructed():
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=True)
+    elements = partition_docx(
+        example_doc_path("handbook-1p.docx"), include_page_breaks=True, starting_page_number=3
+    )
 
     assert "PageBreak" in [type(e).__name__ for e in elements]
-    assert elements[1].metadata.page_number == 1
-    assert elements[-2].metadata.page_number == 2
+    assert elements[1].metadata.page_number == 3
+    assert elements[-2].metadata.page_number == 4
 
 
 # ------------------------------------------------------------------------------------------------
