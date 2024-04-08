@@ -5,7 +5,6 @@ from unstructured.documents.elements import (
     ElementMetadata,
     NarrativeText,
     Title,
-    assign_hash_ids,
 )
 from unstructured.staging.baseplate import stage_for_baseplate
 
