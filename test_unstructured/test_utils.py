@@ -1,13 +1,12 @@
 import json
 import os
 import re
-from typing import List
 
 import pytest
 
 from unstructured import utils
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import Element, ElementMetadata, NarrativeText, Title
+from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
 
 
 @pytest.fixture()
