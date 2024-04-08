@@ -2,7 +2,6 @@
 
 import pathlib
 import re
-import tempfile
 from tempfile import SpooledTemporaryFile
 from typing import Dict, List
 
