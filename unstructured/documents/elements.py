@@ -188,6 +188,7 @@ class ElementMetadata:
     last_modified: Optional[str]
     link_texts: Optional[list[str]]
     link_urls: Optional[list[str]]
+    link_start_indexes: Optional[list[int]]
     links: Optional[list[Link]]
     # -- used in chunks only, allowing access to element(s) chunk was formed from when enabled --
     orig_elements: Optional[list[Element]]
@@ -235,6 +236,7 @@ class ElementMetadata:
         last_modified: Optional[str] = None,
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
+        link_start_indexes: Optional[list[int]] = None,
         links: Optional[list[Link]] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
@@ -274,6 +276,7 @@ class ElementMetadata:
         self.last_modified = last_modified
         self.link_texts = link_texts
         self.link_urls = link_urls
+        self.link_start_indexes = link_start_indexes
         self.links = links
         self.orig_elements = orig_elements
         self.page_name = page_name
@@ -485,6 +488,7 @@ class ConsolidationStrategy(enum.Enum):
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,
             "link_urls": cls.LIST_CONCATENATE,
+            "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --

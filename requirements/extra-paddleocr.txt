@@ -45,7 +45,7 @@ flask==3.0.2
     #   visualdl
 flask-babel==4.0.0
     # via visualdl
-fonttools==4.50.0
+fonttools==4.51.0
     # via matplotlib
 future==1.0.0
     # via bce-python-sdk
@@ -73,7 +73,7 @@ kiwisolver==1.4.5
     # via matplotlib
 lanms-neo==1.0.2
     # via unstructured-paddleocr
-lazy-loader==0.3
+lazy-loader==0.4
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
@@ -125,6 +125,7 @@ packaging==23.2
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
+    #   lazy-loader
     #   matplotlib
     #   scikit-image
     #   visualdl

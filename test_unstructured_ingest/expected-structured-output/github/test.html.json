@@ -36,6 +36,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        27
+      ],
       "link_texts": [
         "Github Project Page"
       ],

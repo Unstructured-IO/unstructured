@@ -239,7 +239,7 @@ packaging==23.2
     #   qtpy
 pandocfilters==1.5.1
     # via nbconvert
-parso==0.8.3
+parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
@@ -387,7 +387,7 @@ traitlets==5.14.2
     #   qtconsole
 types-python-dateutil==2.9.0.20240316
     # via arrow
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./base.txt
     #   -c ./test.txt
