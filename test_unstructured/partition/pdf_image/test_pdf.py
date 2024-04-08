@@ -3,14 +3,12 @@ import logging
 import math
 import os
 import tempfile
-from pathlib import Path
 from tempfile import SpooledTemporaryFile
 from unittest import mock
 
 import pytest
 from pdf2image.exceptions import PDFPageCountError
 from PIL import Image
-from pypdf import PdfReader, PdfWriter
 from unstructured_inference.inference import layout
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
