@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from datetime import datetime
-from typing import Callable, List
+from typing import Callable
 
 from unstructured.documents.elements import NoID, Text
 
@@ -66,7 +66,7 @@ class Name(EmailElement):
         self.name = cleaned_name
 
 
-class BodyText(List[Text]):
+class BodyText(list[Text]):
     """BodyText is an element consisting of multiple, well-formulated sentences. This
     excludes elements such titles, headers, footers, and captions. It is the body of an email."""
 

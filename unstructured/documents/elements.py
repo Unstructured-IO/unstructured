@@ -676,7 +676,7 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document.
+    """An element is a portion of a document, generally a paragraph.
 
     There are a few design principles that are followed when creating an element:
     1. It will always have an ID, which by default is a random UUID.
