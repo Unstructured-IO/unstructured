@@ -18,7 +18,6 @@ from unstructured.partition.utils.constants import (
     OCR_AGENT_PADDLE_OLD,
     OCR_AGENT_TESSERACT,
     OCR_AGENT_TESSERACT_OLD,
-    SUBREGION_THRESHOLD_FOR_OCR,
     OCRMode,
 )
 from unstructured.partition.utils.ocr_models.ocr_interface import (
@@ -349,7 +348,6 @@ def merge_out_layout_with_ocr_layout(
         out_region.text = aggregate_ocr_text_by_block(
             ocr_layout,
             out_region,
-            SUBREGION_THRESHOLD_FOR_OCR,
         )
 
     final_layout = (
@@ -364,7 +362,7 @@ def merge_out_layout_with_ocr_layout(
 def aggregate_ocr_text_by_block(
     ocr_layout: List["TextRegion"],
     region: "TextRegion",
-    subregion_threshold: float,
+    subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> Optional[str]:
     """Extracts the text aggregated from the regions of the ocr layout that lie within the given
     block."""
@@ -374,7 +372,7 @@ def aggregate_ocr_text_by_block(
     for ocr_region in ocr_layout:
         ocr_region_is_subregion_of_given_region = ocr_region.bbox.is_almost_subregion_of(
             region.bbox,
-            subregion_threshold=subregion_threshold,
+            subregion_threshold,
         )
         if ocr_region_is_subregion_of_given_region and ocr_region.text:
             extracted_texts.append(ocr_region.text)
@@ -386,6 +384,7 @@ def aggregate_ocr_text_by_block(
 def supplement_layout_with_ocr_elements(
     layout: List["LayoutElement"],
     ocr_layout: List["TextRegion"],
+    subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> List["LayoutElement"]:
     """
     Supplement the existing layout with additional OCR-derived elements.
@@ -410,7 +409,7 @@ def supplement_layout_with_ocr_elements(
       is a subregion of an existing layout element.
     - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to
      layout elements.
-    - The `SUBREGION_THRESHOLD_FOR_OCR` constant is used to specify the subregion matching
+    - The env_config `OCR_LAYOUT_SUBREGION_THRESHOLD` is used to specify the subregion matching
      threshold.
     """
 
@@ -423,7 +422,7 @@ def supplement_layout_with_ocr_elements(
         for el in layout:
             ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(
                 el.bbox,
-                SUBREGION_THRESHOLD_FOR_OCR,
+                subregion_threshold,
             )
             if ocr_region_is_subregion_of_out_el:
                 ocr_regions_to_remove.append(ocr_region)

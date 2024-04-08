@@ -47,7 +47,6 @@ Extracting PDF Using Unstructured Python SDK
        ),
        # Other partition params
        strategy="hi_res",
-       pdf_infer_table_structure=True,
        chunking_strategy="by_title",
    )
 

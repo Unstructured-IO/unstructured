@@ -11,7 +11,6 @@ from lxml import html as lxml_html
 from unstructured.documents import html
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
-    Address,
     ListItem,
     NarrativeText,
     Table,
@@ -24,9 +23,11 @@ from unstructured.documents.html import (
     SECTION_TAGS,
     TABLE_TAGS,
     TEXT_TAGS,
+    HTMLAddress,
     HTMLDocument,
     HTMLNarrativeText,
     HTMLTable,
+    HTMLText,
     HTMLTitle,
     TagsMixin,
     _parse_HTMLTable_from_table_elem,
@@ -759,13 +760,14 @@ def test_containers_with_text_are_processed():
     html_document = HTMLDocument.from_string(html_str)
 
     assert html_document.elements == [
-        Text(text="Hi All,"),
-        NarrativeText(text="Get excited for our first annual family day!"),
-        Title(text="Best."),
-        Title(text="Dino the Datasaur"),
-        Title(text="Unstructured Technologies"),
-        Title(text="Data Scientist"),
-        Address(text="Doylestown, PA 18901"),
+        HTMLText(text="Hi All,", tag="div"),
+        HTMLNarrativeText(text="Get excited for our first annual family day!", tag="div"),
+        HTMLTitle(text="Best.", tag="div"),
+        HTMLText(text="\n      -- ", tag="div"),
+        HTMLTitle(text="Dino the Datasaur", tag="div"),
+        HTMLTitle(text="Unstructured Technologies", tag="div"),
+        HTMLTitle(text="Data Scientist", tag="div"),
+        HTMLAddress(text="Doylestown, PA 18901", tag="div"),
     ]
 
 

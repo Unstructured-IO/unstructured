@@ -46,11 +46,11 @@ install-test:
 	python3 -m pip install -r requirements/test.txt
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
-	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
-	python3 -m pip install argilla -c requirements/constraints.in
+	python3 -m pip install unstructured.pytesseract -c requirements/deps/constraints.txt
+	python3 -m pip install argilla -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client -c requirements/constraints.in
+	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
 	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
 	python3 -m pip install argilla
 
@@ -251,6 +251,10 @@ install-ingest-databricks-volumes:
 install-ingest-astra:
 	python3 -m pip install -r requirements/ingest/astra.txt
 
+.PHONY: install-ingest-clarifai
+install-ingest-clarifai:
+	python3 -m pip install -r requirements/ingest/clarifai.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
@@ -379,7 +383,7 @@ check-shfmt:
 
 .PHONY: check-black
 check-black:
-	black . --check
+	black . --check --line-length=100
 
 .PHONY: check-flake8
 check-flake8:
@@ -394,7 +398,7 @@ check-flake8-print:
 .PHONY: check-ruff
 check-ruff:
     # -- ruff options are determined by pyproject.toml --
-	ruff .
+	ruff check .
 
 .PHONY: check-autoflake
 check-autoflake:
@@ -425,7 +429,7 @@ tidy-shell:
 tidy-python:
 	ruff . --fix-only || true
 	autoflake --in-place .
-	black  .
+	black --line-length=100 .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync

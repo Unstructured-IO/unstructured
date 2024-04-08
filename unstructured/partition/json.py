@@ -24,7 +24,7 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.staging.base import dict_to_elements
+from unstructured.staging.base import elements_from_dicts
 
 
 @process_metadata()
@@ -86,8 +86,8 @@ def partition_json(
         )
 
     try:
-        dict = json.loads(file_text)
-        elements = dict_to_elements(dict)
+        element_dicts = json.loads(file_text)
+        elements = elements_from_dicts(element_dicts)
     except json.JSONDecodeError:
         raise ValueError("Not a valid json")
 

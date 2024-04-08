@@ -42,6 +42,15 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
 logger.setLevel(logging.DEBUG)
 
 agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
+table_eval_metrics = [
+    "total_tables",
+    "table_level_acc",
+    "composite_structure_acc",
+    "element_col_level_index_acc",
+    "element_row_level_index_acc",
+    "element_col_level_content_acc",
+    "element_row_level_content_acc",
+]
 
 
 def measure_text_extraction_accuracy(
@@ -193,7 +202,7 @@ def get_mean_grouping(
     export_dir: str,
     eval_name: str,
     agg_name: Optional[str] = None,
-    export_name: Optional[str] = None,
+    export_filename: Optional[str] = None,
 ) -> None:
     """Aggregates accuracy and missing metrics by column name 'doctype' or 'connector',
     or 'all' for all rows. Export to TSV.
@@ -265,10 +274,10 @@ def get_mean_grouping(
     if "grouping_key" in grouped_df.columns.get_level_values(0):
         grouped_df = grouped_df.drop("grouping_key", axis=1, level=0)
 
-    if export_name:
-        if not export_name.endswith(".tsv"):
-            export_name = export_name + ".tsv"
-        _write_to_file(export_dir, export_name, grouped_df)
+    if export_filename:
+        if not export_filename.endswith(".tsv"):
+            export_filename = export_filename + ".tsv"
+        _write_to_file(export_dir, export_filename, grouped_df)
     else:
         _write_to_file(export_dir, f"all-{group_by}-agg-{agg_name}.tsv", grouped_df)
 
@@ -290,6 +299,7 @@ def measure_table_structure_accuracy(
 
     Calculates:
         - table found accuracy
+        - table level accuracy
         - element in column index accuracy
         - element in row index accuracy
         - element's column content accuracy
@@ -306,7 +316,7 @@ def measure_table_structure_accuracy(
     for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
         doc_path = Path(doc)
         out_filename = doc_path.stem
-        doctype = Path(out_filename).suffix
+        doctype = Path(out_filename).suffix[1:]
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
@@ -332,50 +342,25 @@ def measure_table_structure_accuracy(
                     out_filename,
                     doctype,
                     connector,
-                    report.total_tables,
-                    report.table_level_acc,
-                    report.element_col_level_index_acc,
-                    report.element_row_level_index_acc,
-                    report.element_col_level_content_acc,
-                    report.element_row_level_content_acc,
                 ]
+                + [getattr(report, metric) for metric in table_eval_metrics]
             )
 
     headers = [
         "filename",
         "doctype",
         "connector",
-        "total_tables",
-        "table_level_acc",
-        "element_col_level_index_acc",
-        "element_row_level_index_acc",
-        "element_col_level_content_acc",
-        "element_row_level_content_acc",
-    ]
+    ] + table_eval_metrics
     df = pd.DataFrame(rows, columns=headers)
     has_tables_df = df[df["total_tables"] > 0]
 
     if has_tables_df.empty:
         agg_df = pd.DataFrame(
-            [
-                ["total_tables", None, None, None, 0],
-                ["table_level_acc", None, None, None, 0],
-                ["element_col_level_index_acc", None, None, None, 0],
-                ["element_row_level_index_acc", None, None, None, 0],
-                ["element_col_level_content_acc", None, None, None, 0],
-                ["element_row_level_content_acc", None, None, None, 0],
-            ]
+            [[metric, None, None, None, 0] for metric in table_eval_metrics]
         ).reset_index()
     else:
         element_metrics_results = {}
-        for metric in [
-            "total_tables",
-            "table_level_acc",
-            "element_col_level_index_acc",
-            "element_row_level_index_acc",
-            "element_col_level_content_acc",
-            "element_row_level_content_acc",
-        ]:
+        for metric in table_eval_metrics:
             metric_df = has_tables_df[has_tables_df[metric].notnull()]
             agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
             if agg_metric.empty:

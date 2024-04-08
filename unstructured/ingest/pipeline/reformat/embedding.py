@@ -10,7 +10,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.pipeline.interfaces import ReformatNode
-from unstructured.staging.base import convert_to_dict, elements_from_json
+from unstructured.staging.base import elements_from_json, elements_to_dicts
 
 
 @dataclass
@@ -50,10 +50,10 @@ class Embedder(ReformatNode):
             elements = elements_from_json(filename=elements_json)
             embedder = self.embedder_config.get_embedder()
             embedded_elements = embedder.embed_documents(elements=elements)
-            elements_dict = convert_to_dict(embedded_elements)
+            element_dicts = elements_to_dicts(embedded_elements)
             with open(json_path, "w", encoding="utf8") as output_f:
                 logger.info(f"writing embeddings content to {json_path}")
-                json.dump(elements_dict, output_f, ensure_ascii=False, indent=2)
+                json.dump(element_dicts, output_f, ensure_ascii=False, indent=2)
             return str(json_path)
         except Exception as e:
             if self.pipeline_context.raise_on_error:

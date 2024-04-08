@@ -1,19 +1,65 @@
-## 0.12.7-dev7
+## 0.13.3-dev3
 
 ### Enhancements
 
 * **Add support for `start_index` in `html` links extraction**
+
+### Features
+
+### Fixes
+
+* **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
+* **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+
+## 0.13.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Brings back missing word list files** that caused `partition` failures in 0.13.1.
+
+## 0.13.1
+
+### Enhancements
+
+* **Drop constraint on pydantic, supporting later versions** All dependencies has pydantic pinned at an old version. This explicit pin was removed, allowing the latest version to be pulled in when requirements are compiled.
+
+### Features
+
+* **Add a set of new `ElementType`s to extend future element types**
+
+### Fixes
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
+* **Fix SFTP** Adds flag options to SFTP connector on whether to use ssh keys / agent, with flag values defaulting to False. This is to prevent looking for ssh files when using username and password. Currently, username and password are required, making that always the case.
+
+## 0.13.0
+
+### Enhancements
+
 * **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
+* **Add `compound_structure_acc` metric to table eval.** Add a new property to `unstructured.metrics.table_eval.TableEvaluation`: `composite_structure_acc`, which is computed from the element level row and column index and content accuracy scores
+* **Add `.metadata.orig_elements` to chunks.** `.metadata.orig_elements: list[Element]` is added to chunks during the chunking process (when requested) to allow access to information from the elements each chunk was formed from. This is useful for example to recover metadata fields that cannot be consolidated to a single value for a chunk, like `page_number`, `coordinates`, and `image_base64`.
+* **Add `--include_orig_elements` option to Ingest CLI.** By default, when chunking, the original elements used to form each chunk are added to `chunk.metadata.orig_elements` for each chunk. * The `include_orig_elements` parameter allows the user to turn off this behavior to produce a smaller payload when they don't need this metadata.
+* **Add Google VertexAI embedder** Adds VertexAI embeddings to support embedding via Google Vertex AI.
 
 ### Features
 
 * **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
+* **Add Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
 
 ### Fixes
 
+* **Fix `clean_pdfminer_inner_elements()` to remove only pdfminer (embedded) elements merged with inferred elements**. Previously, some embedded elements were removed even if they were not merged with inferred elements. Now, only embedded elements that are already merged with inferred elements are removed.
 * **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
+* **Change table extraction defaults** Change table extraction defaults in favor of using `skip_infer_table_types` parameter and reflect these changes in documentation.
 * **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
 * **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
+* **Support AWS Bedrock Embeddings in ingest CLI** The configs required to instantiate the bedrock embedding class are now exposed in the api and the version of boto being used meets the minimum requirement to introduce the bedrock runtime required to hit the service.
+* **Change MongoDB redacting** Original redact secrets solution is causing issues in platform. This fix uses our standard logging redact solution.
 
 ## 0.12.6
 
@@ -62,6 +108,7 @@
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
 * **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
+
 
 ## 0.12.4
 

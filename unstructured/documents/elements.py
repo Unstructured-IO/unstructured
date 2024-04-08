@@ -324,6 +324,8 @@ class ElementMetadata:
         This would generally be a dict formed using the `.to_dict()` method and stored as JSON
         before "rehydrating" it using this method.
         """
+        from unstructured.staging.base import elements_from_base64_gzipped_json
+
         # -- avoid unexpected mutation by working on a copy of provided dict --
         meta_dict = copy.deepcopy(meta_dict)
         self = ElementMetadata()
@@ -332,6 +334,8 @@ class ElementMetadata:
                 self.coordinates = CoordinatesMetadata.from_dict(field_value)
             elif field_name == "data_source":
                 self.data_source = DataSourceMetadata.from_dict(field_value)
+            elif field_name == "orig_elements":
+                self.orig_elements = elements_from_base64_gzipped_json(field_value)
             else:
                 setattr(self, field_name, field_value)
 
@@ -375,14 +379,13 @@ class ElementMetadata:
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
+        from unstructured.staging.base import elements_to_base64_gzipped_json
+
         meta_dict = copy.deepcopy(dict(self.fields))
 
         # -- remove fields that should not be serialized --
         for field_name in self.DEBUG_FIELD_NAMES:
             meta_dict.pop(field_name, None)
-
-        # -- remove `.orig_elements` for now as that won't serialize --
-        meta_dict.pop("orig_elements", None)
 
         # -- don't serialize empty lists --
         meta_dict: dict[str, Any] = {
@@ -396,6 +399,8 @@ class ElementMetadata:
             meta_dict["coordinates"] = self.coordinates.to_dict()
         if self.data_source is not None:
             meta_dict["data_source"] = self.data_source.to_dict()
+        if self.orig_elements is not None:
+            meta_dict["orig_elements"] = elements_to_base64_gzipped_json(self.orig_elements)
 
         return meta_dict
 
@@ -596,6 +601,7 @@ class ElementType:
     UNCATEGORIZED_TEXT = "UncategorizedText"
     NARRATIVE_TEXT = "NarrativeText"
     BULLETED_TEXT = "BulletedText"
+    PARAGRAPH = "Paragraph"
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
@@ -613,6 +619,10 @@ class ElementType:
     LIST_ITEM_OTHER = "List-item"
     CHECKED = "Checked"
     UNCHECKED = "Unchecked"
+    CHECK_BOX_CHECKED = "CheckBoxChecked"
+    CHECK_BOX_UNCHECKED = "CheckBoxUnchecked"
+    RADIO_BUTTON_CHECKED = "RadioButtonChecked"
+    RADIO_BUTTON_UNCHECKED = "RadioButtonUnchecked"
     ADDRESS = "Address"
     EMAIL_ADDRESS = "EmailAddress"
     PAGE_BREAK = "PageBreak"
@@ -626,6 +636,8 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    PAGE_NUMBER = "PageNumber"
+    CODE_SNIPPET = "CodeSnippet"
 
     @classmethod
     def to_dict(cls):
@@ -705,6 +717,9 @@ class Element(abc.ABC):
             self.metadata.coordinates.system = new_system
 
         return new_coordinates
+
+    def __str__(self):
+        return self.text
 
 
 class CheckBox(Element):
@@ -796,9 +811,6 @@ class Text(Element):
                 self.embeddings == other.embeddings,
             ),
         )
-
-    def __str__(self):
-        return self.text
 
     def to_dict(self) -> dict[str, Any]:
         """Serialize to JSON-compatible (str keys) dict."""
@@ -911,6 +923,18 @@ class Footer(Text):
     category = "Footer"
 
 
+class CodeSnippet(Text):
+    """An element for capturing code snippets."""
+
+    category = "CodeSnippet"
+
+
+class PageNumber(Text):
+    """An element for capturing page numbers."""
+
+    category = "PageNumber"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -921,6 +945,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.COMPOSITE_ELEMENT: Text,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.PARAGRAPH: NarrativeText,
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
@@ -945,4 +970,6 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.EMAIL_ADDRESS: EmailAddress,
     ElementType.FORMULA: Formula,
     ElementType.PAGE_BREAK: PageBreak,
+    ElementType.CODE_SNIPPET: CodeSnippet,
+    ElementType.PAGE_NUMBER: PageNumber,
 }
