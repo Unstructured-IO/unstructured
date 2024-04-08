@@ -15,6 +15,5 @@ numpy
 rapidfuzz
 backoff
 typing-extensions
-# NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
-unstructured-client<=0.18.0
+unstructured-client
 wrapt

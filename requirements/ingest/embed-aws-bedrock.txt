@@ -114,7 +114,7 @@ tenacity==8.2.3
     # via
     #   langchain-community
     #   langchain-core
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
