@@ -1,10 +1,12 @@
-## 0.13.3-dev0
+## 0.13.3-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
 
 ## 0.13.2
 
