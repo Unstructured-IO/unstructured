@@ -5,7 +5,7 @@ import pytest
 import vcr
 from label_studio_sdk.client import Client
 
-from test_unstructured.test_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.staging import label_studio
 

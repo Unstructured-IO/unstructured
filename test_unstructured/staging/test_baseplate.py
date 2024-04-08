@@ -1,4 +1,4 @@
-from test_unstructured.test_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
