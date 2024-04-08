@@ -69,7 +69,7 @@ sniffio==1.3.1
     # via
     #   anyio
     #   httpx
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
@@ -81,7 +81,7 @@ urllib3==1.26.18
     #   requests
 validators==0.22.0
     # via weaviate-client
-weaviate-client==4.5.4
+weaviate-client==4.5.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in
