@@ -20,7 +20,7 @@ def test_text_hash_id():
         Name(name="Example", text="hello there!", element_id=NoID()),
     ],
 )
-def test_text_uuid(element: EmailElement):
+def test_EmailElement_self_assigns_itself_a_UUID_id(element: EmailElement):
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
