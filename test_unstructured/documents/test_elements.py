@@ -30,7 +30,7 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Text,
     Title,
-    assign_hash_ids,
+    assign_and_map_hash_ids,
 )
 
 
@@ -697,7 +697,7 @@ def test_hash_ids_are_unique_for_duplicate_elements():
     ]
 
     # WHEN
-    updated_elements = assign_hash_ids(copy.deepcopy(elements))
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
     ids = [element.id for element in updated_elements]
 
     # THEN
@@ -732,7 +732,7 @@ def test_hash_ids_are_deterministic():
     ]
 
     # WHEN
-    updated_elements = assign_hash_ids(elements)
+    updated_elements = assign_and_map_hash_ids(elements)
     ids = [element.id for element in updated_elements]
     parent_ids = [element.metadata.parent_id for element in updated_elements]
 
