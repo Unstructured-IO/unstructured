@@ -11,6 +11,7 @@ from functools import partial
 
 import pytest
 
+from test_unstructured.test_utils import assign_hash_ids
 from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
@@ -33,9 +34,30 @@ from unstructured.documents.elements import (
 )
 
 
-def test_text_id():
-    text_element = Text(text="hello there!")
-    assert text_element.id_to_hash(0) == "eae4fcad50d11af5cec20276d7d5dc65"
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),
+        Text(text=""),
+        CheckBox(),
+    ],
+)
+def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: Element,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
 
 
 @pytest.mark.parametrize(
@@ -46,7 +68,7 @@ def test_text_id():
         Text(text="hello there!", element_id=NoID()),
     ],
 )
-def test_text_uuid(element: Element):
+def test_Element_self_assigns_itself_a_UUID_id(element: Element):
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
@@ -385,13 +407,13 @@ class DescribeElementMetadata:
         }
 
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
-        title = Title("Lorem", element_id="e468d60b-6658-4b97-901b-ab1197418c49")
-        text = Text("Lorem Ipsum", element_id="5fe29e8a-2fdc-4245-9a27-11f3b1b089c3")
+        elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
         meta = ElementMetadata(
             category_depth=1,
-            orig_elements=[title, text],
+            orig_elements=elements,
             page_number=2,
         )
+
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (

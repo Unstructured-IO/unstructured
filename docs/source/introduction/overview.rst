@@ -160,9 +160,10 @@ Element ID Design Principles
 #. A partitioning function can assign only one of two available ID types to a returned element: a hash or UUID.
 #. All elements that are returned come with an ID, which is never None.
 #. No matter which type of ID is used, it will always be in string format.
-#. By default, IDs are hashes, ensuring they are both deterministic and unique within a document.
+#. Partitioning a document returns elements with hashes as their default IDs, ensuring they are both deterministic and unique within a document.
 
 For creating elements independently of partitioning functions, refer to the `Element` class documentation in the source code (`unstructured/documents/elements.py`).
+
 
 Wrapping it all up
 ******************

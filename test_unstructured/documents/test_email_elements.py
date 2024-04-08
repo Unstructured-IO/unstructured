@@ -7,20 +7,23 @@ from unstructured.cleaners.translate import translate_text
 from unstructured.documents.email_elements import EmailElement, Name, NoID
 
 
-def test_text_id():
+def test_text_hash_id():
     name_element = Name(name="Example", text="hello there!")
-    assert name_element.id_to_hash(index_in_sequence=0) == "eae4fcad50d11af5cec20276d7d5dc65"
+    assert name_element.id_to_hash(0) == "c69509590d81db2f37f9d75480c8efed"
 
 
-def test_text_id_is_a_string_uuid_by_default():
-    def _assert_uuid_like(id_to_test: str) -> None:
-        assert isinstance(id_to_test, str)
-        assert len(id_to_test) == 36
-        assert id_to_test.count("-") == 4
-
-    _assert_uuid_like(EmailElement(text="").id)
-    _assert_uuid_like(Name(name="Example", text="hello there!").id)
-    _assert_uuid_like(Name(name="Example", text="hello there!", element_id=NoID()).id)
+@pytest.mark.parametrize(
+    "element",
+    [
+        EmailElement(text=""),  # should default to UUID
+        Name(name="Example", text="hello there!"),  # should default to UUID
+        Name(name="Example", text="hello there!", element_id=NoID()),
+    ],
+)
+def test_text_uuid(element: EmailElement):
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():

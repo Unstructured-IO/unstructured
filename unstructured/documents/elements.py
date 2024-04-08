@@ -505,7 +505,7 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def assign_hash_ids(elements: List[Element]) -> List[Element]:
+def assign_and_map_hash_ids(elements: List[Element]) -> List[Element]:
     """Converts `id` and `parent_id` of elements from UUIDs to hashes.
 
     This function ensures deterministic IDs by:
@@ -582,9 +582,10 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
+
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids is False:
-                elements = assign_hash_ids(elements)
+                elements = assign_and_map_hash_ids(elements)
 
             return elements
 
@@ -786,7 +787,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
