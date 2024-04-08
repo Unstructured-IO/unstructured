@@ -1,4 +1,4 @@
-## 0.13.2
+## 0.13.2-dev0
 
 ### Enhancements
 * **Reworked element IDs** Raw `Element` objects are now assigned UUIDs as their default IDs during their creation. However, the way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
