@@ -384,6 +384,6 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
 
 
 def assign_hash_ids(elements: List[Element]) -> List[Element]:
-    for element in elements:
-        element.id_to_hash()
+    for idx, element in enumerate(elements):
+        element.id_to_hash(idx)
     return elements
