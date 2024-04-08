@@ -63,7 +63,7 @@ def assert_round_trips_through_JSON(elements: List[Element]) -> None:
 
 
 def assign_hash_ids(elements: list[Element]) -> list[Element]:
-    """Update the `id` attribute of each element to a hash."""
+    """Updates the `id` attribute of each element to a hash."""
     for idx, element in enumerate(elements):
         element.id_to_hash(idx)
     return elements
