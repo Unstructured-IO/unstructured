@@ -437,6 +437,19 @@ version-sync:
 	scripts/version-sync.sh \
 		-f "unstructured/__version__.py" semver
 
+## dev-changelog file creation and version updates for dev PRs:
+.PHONY: changelog-version
+changelog-version:
+	./scripts/changelogs/create_dev_changelog_from_branch_name.sh
+	python scripts/changelogs/version.py dev
+
+## changelog and version updates for release PRs:
+.PHONY: changelog-version-release
+changelog-version-release:
+	python scripts/changelogs/combine.py changelogs-dev CHANGELOG.md
+	./scripts/changelogs/cleanup.sh changelogs-dev
+	python scripts/changelogs/version.py release
+
 .PHONY: check-coverage
 check-coverage:
 	coverage report --fail-under=95

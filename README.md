@@ -256,6 +256,29 @@ information on how to report security vulnerabilities.
 
 Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstructured-IO/unstructured/issues/new/choose) and use our bug report template to describe the problem. To help us diagnose the issue, use the `python scripts/collect_env.py` command to gather your system's environment information and include it in your report. Your assistance helps us continuously improve our software - thank you!
 
+## :gear: Contributing
+
+### Versioning/Changelog Guidelines
+
+#### How to make a dev PR:
+- run `make changelog-version`
+- describe PR changes within the auto created dev changelog file (which is inside the `changelogs-dev` folder)
+- verify that:
+  - a new dev changelog (.md) file is created in `changelogs-dev` folder with your branch name
+  - the file should follow the standard template: `changelogs-dev/dev-changelog-template.md`
+  - `CHANGELOG.md` is untouched
+  - if the PR is the first dev PR after a release PR:
+    - version number inside `__version.py__` is incremented and a `-dev` suffix is added
+  - for any other dev PR:
+    `__version.py__` is untouched
+
+#### How to make a release PR:
+- run `make changelog-version-release`
+- verify that:
+ - contents inside `changelogs-dev` folder are combined into `CHANGELOG.md` without repetition or loss; modify manually if needed.
+ - `changelogs-dev` folder is cleaned / empty except for `dev-changelog-template.md`
+ - `-dev` suffix inside `__version.py__` is removed
+
 ## :books: Learn more
 
 | Section | Description |
