@@ -725,6 +725,33 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
     assert partitions[0].metadata.text_as_html == expected
 
 
+def test_partition_html_b_tag_parsing():
+    html_text = """
+        <!DOCTYPE html>
+        <html>
+        <body>
+        <div>
+            <h1>Header 1</h1>
+            <p>Text</p>
+            <h2>Header 2</h2>
+            <pre>
+                <b>Param1</b> = Y<br><b>Param2</b> = 1<br><b>Param3</b> = 2<br><b>Param4</b> = A
+                <br><b>Param5</b> = A,B,C,D,E<br><b>Param6</b> = 7<br><b>Param7</b> = Five<br>
+            </pre>
+        </div>
+        </body>
+        </html>
+    """
+
+    elements = partition_html(text=html_text)
+    element_text = "|".join(e.text for e in elements)
+
+    assert element_text == (
+        "Header 1|Text|Header 2|Param1 = Y|Param2 = 1|Param3 = 2|Param4 = A|"
+        "Param5 = A,B,C,D,E|Param6 = 7|Param7 = Five"
+    )
+
+
 def test_partition_html_tag_tail_parsing():
     html_text = """
         <html>

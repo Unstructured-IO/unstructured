@@ -39,7 +39,7 @@ from unstructured.partition.text_type import (
 )
 from unstructured.utils import htmlify_matrix_of_cell_texts
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "font"]
+TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "b", "font"]
 LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
 LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
