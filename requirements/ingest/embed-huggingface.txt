@@ -168,7 +168,7 @@ tqdm==4.66.2
     #   transformers
 transformers==4.37.1
     # via sentence-transformers
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub

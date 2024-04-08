@@ -1,4 +1,15 @@
-## 0.13.2-dev0
+## 0.13.3-dev2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
+* **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+
+## 0.13.2
 
 ### Enhancements
 * **Reworked element IDs** Raw `Element` objects are now assigned UUIDs as their default IDs during their creation. However, the way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
