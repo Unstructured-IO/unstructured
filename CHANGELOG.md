@@ -2,7 +2,7 @@
 
 ### Enhancements
 * **Reworked element IDs** Raw `Element` objects are now assigned UUIDs as their default IDs during their creation. However, the way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
-* **Better element IDs** Now, the element IDs returned by any partitioning function are deterministic and unique at the document level by default. Before, hashes depended solely on text, but they now incorporate the element's sequence position within the document. Hashing remains the default option, but the `unique_element_ids=True` feature for random UUIDs is still an option.
+* **Unique ID hashed at the document level** Now, the element IDs returned by any partitioning function are deterministic and unique at the document level by default. Before, hashes depended solely on text, but they now incorporate the element's sequence position within the document. Hashing remains the default option, but the `unique_element_ids=True` feature for random UUIDs is still an option.
 
 ### Features
 
