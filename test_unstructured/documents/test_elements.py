@@ -10,7 +10,7 @@ from functools import partial
 
 import pytest
 
-from test_unstructured.test_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,

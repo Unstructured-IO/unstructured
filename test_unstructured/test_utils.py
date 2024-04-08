@@ -382,9 +382,3 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
     percent, common_ngrams = utils.calculate_shared_ngram_percentage(str1, str2, n)
     assert percent == 0
     assert not bool(common_ngrams)
-
-
-def assign_hash_ids(elements: list[Element]) -> list[Element]:
-    for element in elements:
-        element.id_to_hash()
-    return elements
