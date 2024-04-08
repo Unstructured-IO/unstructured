@@ -28,7 +28,6 @@ class Name(EmailElement):
         element_id: str | NoID = NoID(),
     ):
         self.name: str = name
-        self.text: str = text
 
         super().__init__(text=text, element_id=element_id)
 
