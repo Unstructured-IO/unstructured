@@ -8,7 +8,6 @@
 
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
 
-
 ## 0.13.2
 
 ### Enhancements

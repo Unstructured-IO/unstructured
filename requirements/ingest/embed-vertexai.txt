@@ -222,7 +222,7 @@ types-requests==2.31.0.6
     # via langchain-google-vertexai
 types-urllib3==1.26.25.14
     # via types-requests
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
