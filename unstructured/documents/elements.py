@@ -522,7 +522,7 @@ def assign_and_map_hash_ids(elements: List[Element]) -> List[Element]:
     Returns:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
-    old_to_new_mapping = {e.id: e.id_to_hash(idx) for idx, e in enumerate(elements)}
+    old_to_new_mapping = {e.id: e.id_to_hash() for e in elements}
 
     for e in elements:
         parent_id = e.metadata.parent_id
