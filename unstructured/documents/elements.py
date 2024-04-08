@@ -783,7 +783,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: str | NoID = NoID(),
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
