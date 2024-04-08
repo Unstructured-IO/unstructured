@@ -417,10 +417,10 @@ class DescribeElementMetadata:
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (
-                "eJyFjcsKwjAQRX+lZO1Ak6Zpxj8QXNaViOQxlUJf1BHU0n+3Wer"
-                "G5b2cwzkvgjrqaeBrG8U+E6SNjSb3YExpQXusAHPpwXkpsdLSBo"
-                "1il4me2EXHbnOWddtMT07+cZypTwC/JkpH3XJHYkN+S2VDCsk6U"
-                "E0MoJUuAZ2qQMqm8NLnFkPxt5Qdpvvjq3cagmO6jXP7plgndr18ANb8RFE="
+                "eJyFzU0KwjAQhuGrlKxdNE2bJt5AcFlXIjKTmUqhf9QR1NK7myx"
+                "143KG5+M9r4p7HniUa0dqnyldM1TaAXpvkQmDrnJXIIIho8l5tc"
+                "vUwAIEAtGvW7yFn5K2x2nhIQF5zZweTSc9q0h+K7YIWufoLZFha"
+                "h3VbQkUWrSlMxTqv5XsMN8fX63TGED4Ni3dm6lJdrt8AEnKRLw="
             ),
             "page_number": 2,
         }
