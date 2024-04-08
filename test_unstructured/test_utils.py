@@ -1,12 +1,13 @@
 import json
 import os
 import re
+from typing import List
 
 import pytest
 
 from unstructured import utils
 from unstructured.documents.coordinates import PixelSpace
-from unstructured.documents.elements import ElementMetadata, NarrativeText, Title
+from unstructured.documents.elements import Element, ElementMetadata, NarrativeText, Title
 
 
 @pytest.fixture()
@@ -380,3 +381,9 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
     percent, common_ngrams = utils.calculate_shared_ngram_percentage(str1, str2, n)
     assert percent == 0
     assert not bool(common_ngrams)
+
+
+def assign_hash_ids(elements: List[Element]) -> List[Element]:
+    for element in elements:
+        element.id_to_hash()
+    return elements

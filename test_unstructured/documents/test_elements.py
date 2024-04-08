@@ -10,6 +10,7 @@ from functools import partial
 
 import pytest
 
+from test_unstructured.test_utils import assign_hash_ids
 from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
@@ -383,16 +384,13 @@ class DescribeElementMetadata:
         }
 
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
-        elements = [Title("Lorem"), Text("Lorem Ipsum")]
-
-        for element in elements:
-            element.id_to_hash()
-
+        elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
         meta = ElementMetadata(
             category_depth=1,
             orig_elements=elements,
             page_number=2,
         )
+
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (

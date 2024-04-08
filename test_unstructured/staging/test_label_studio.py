@@ -5,6 +5,7 @@ import pytest
 import vcr
 from label_studio_sdk.client import Client
 
+from test_unstructured.test_utils import assign_hash_ids
 from unstructured.documents.elements import NarrativeText, Title
 from unstructured.staging import label_studio
 
@@ -161,7 +162,7 @@ def test_init_prediction(score, raises, exception):
 
 
 def test_stage_with_annotation():
-    elements = [NarrativeText(text="A big brown bear")]
+    elements = assign_hash_ids([NarrativeText(text="A big brown bear")])
     annotations = [
         label_studio.LabelStudioAnnotation(
             result=[
@@ -174,10 +175,6 @@ def test_stage_with_annotation():
             ],
         ),
     ]
-
-    for element in elements:
-        element.id_to_hash()
-
     label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
@@ -203,10 +200,7 @@ def test_stage_with_annotation():
 
 
 def test_stage_with_prediction():
-    elements = [NarrativeText(text="A big brown bear")]
-
-    for element in elements:
-        element.id_to_hash()
+    elements = assign_hash_ids([NarrativeText(text="A big brown bear")])
 
     prediction = [
         label_studio.LabelStudioPrediction(
@@ -247,10 +241,7 @@ def test_stage_with_prediction():
 
 
 def test_stage_with_annotation_for_ner():
-    elements = [NarrativeText(text="A big brown bear")]
-
-    for element in elements:
-        element.id_to_hash()
+    elements = assign_hash_ids([NarrativeText(text="A big brown bear")])
 
     annotations = [
         label_studio.LabelStudioAnnotation(
@@ -336,11 +327,7 @@ def test_stage_with_annotation_raises_with_invalid_type():
 
 
 def test_stage_with_reviewed_annotation():
-    elements = [NarrativeText(text="A big brown bear")]
-
-    for element in elements:
-        element.id_to_hash()
-
+    elements = assign_hash_ids([NarrativeText(text="A big brown bear")])
     annotations = [
         label_studio.LabelStudioAnnotation(
             result=[
