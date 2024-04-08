@@ -4,12 +4,33 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, Name, NoID
+from unstructured.documents.email_elements import EmailElement, Name, NoID, Subject
 
 
-def test_text_hash_id():
-    name_element = Name(name="Example", text="hello there!")
-    assert name_element.id_to_hash(0) == "c69509590d81db2f37f9d75480c8efed"
+@pytest.mark.parametrize(
+    "element",
+    [
+        EmailElement(text=""),
+        Name(text="", name=""),
+        Subject(text=""),
+    ],
+)
+def test_EmailElement_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: EmailElement,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "5feceb66ffc86f38d952786c6d696c79"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
 
 
 @pytest.mark.parametrize(
