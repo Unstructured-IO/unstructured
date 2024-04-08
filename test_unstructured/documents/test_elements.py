@@ -50,13 +50,13 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     assert len(element.id) == 36
     assert element.id.count("-") == 4
 
-    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
+    expected_hash = "5feceb66ffc86f38d952786c6d696c79"
     # -- calling `.id_to_hash()` changes the element's id-type to hash --
-    assert element.id_to_hash() == expected_hash
+    assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
 
     # -- `.id_to_hash()` is idempotent --
-    assert element.id_to_hash() == expected_hash
+    assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
 
 
