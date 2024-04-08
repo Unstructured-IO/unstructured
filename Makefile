@@ -398,7 +398,7 @@ check-flake8-print:
 .PHONY: check-ruff
 check-ruff:
     # -- ruff options are determined by pyproject.toml --
-	ruff .
+	ruff check .
 
 .PHONY: check-autoflake
 check-autoflake:
