@@ -8,12 +8,7 @@ from unstructured.documents.email_elements import EmailElement, Name, NoID, Subj
 
 
 @pytest.mark.parametrize(
-    "element",
-    [
-        EmailElement(text=""),
-        Name(text="", name=""),
-        Subject(text=""),
-    ],
+    "element", [EmailElement(text=""), Name(text="", name=""), Subject(text="")]
 )
 def test_EmailElement_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
     element: EmailElement,

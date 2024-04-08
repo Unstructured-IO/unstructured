@@ -34,14 +34,7 @@ from unstructured.documents.elements import (
 )
 
 
-@pytest.mark.parametrize(
-    "element",
-    [
-        Element(),
-        Text(text=""),
-        CheckBox(),
-    ],
-)
+@pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
 def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
     element: Element,
 ):
