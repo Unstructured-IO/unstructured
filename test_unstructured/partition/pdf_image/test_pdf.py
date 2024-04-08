@@ -1235,116 +1235,48 @@ def test_partition_pdf_always_keep_all_image_elements(
 
 
 @pytest.fixture()
-def mock_pdfwriter_with_duplicate_pages():
-    test_file = Path("example-docs") / "DA-1p.pdf"
-    original_pdf = PdfReader(test_file)
-
-    writer = PdfWriter()
-    first_page = original_pdf.pages[0]
-
-    # Duplicate the first page
-    writer.add_page(first_page)
-    writer.add_page(first_page)
-    return writer
-
-
-@pytest.fixture()
 def expected_element_ids_for_fast_strategy():
     return [
-        "de4b76e14348a126d3d529ba6a96f409",
-        "42df296c6f59429c002d6ea9064e41f5",
-        "f4dbf9dbc781e850fb2dba6ff2e93731",
-        "07acaaa03b24ddc6abec21fd5afd8ef3",
-        "02ff7df3e5ebc440df9bfe01eeb8d38e",
-        "1da9c8b3670282e2c92b2cccc6dff74f",
-        "d68eaeb58811c656749525961a538596",
-        "c2145a97645a8b64f3327b62472df045",
-        "6e64b657c4162083c040ff5f7c57b258",
-        "ca6748ac40ad0d1426ece0327f7576aa",
-        "b78dca999077f1be6e21037a03fbcc54",
-        "923ac34b729bef95c9758bf7b574d945",
-        "f67aef3d6d14b53e72e769b27b42dff5",
-        "7595dae9cde82218336a5457ed9d55ec",
-        "c85a25ec53bfe22c0093a989a554524e",
-        "a6f22ce7d1c5723a4880dd4b5276f653",
-        "dce433be346c9978baf24844d5e60d2c",
-        "a56c6b7acf88e964192824cd5e4a5254",
-        "2745a8ccb9cd421fc41db7aad599edb8",
-        "0992f8799bc39e72c92a5e61630fc1e4",
-        "512afa2292002a49cae1d59cf2439066",
-        "331fdc187564160f1138c72a83999f98",
-        "790c9db7b68080c59ebbadd071f154b0",
-        "274f62d3669f67069c394561e0235971",
-        "a93e001585af54490efe5b6413ee92b1",
-        "2995d7a0f7fab8493202ecc6013baef7",
-        "502b857a730cf6400deedb3339980cba",
-        "9a35532c7499c19daeacafc961657409",
+        "3c4999c29bd794f0ad6dc6e973f2fd07",
+        "8bcab321669dfb6fb7f78e3144ea7700",
+        "7ae2d5edc0f2d1184c964a7e2fd489f6",
+        "4d1da3c84bbc35f62163ef0b753b5fa4",
+        "7bdcd694feed456fabcc92f51d153747",
+        "2d31af28819fca9abe7d0c35e808d118",
+        "c10445a5772084447ddf49178ecb8fba",
+        "ba5192754525a3b6e2a38da18a74ba05",
+        "be8986fed0d89aa064dbb77ffa6a4101",
+        "d664f6de494b3d588d0e398aec18d9a7",
     ]
 
 
 @pytest.fixture()
 def expected_element_ids_for_hi_res_strategy():
     return [
-        "de4b76e14348a126d3d529ba6a96f409",
-        "42df296c6f59429c002d6ea9064e41f5",
-        "f4dbf9dbc781e850fb2dba6ff2e93731",
-        "07acaaa03b24ddc6abec21fd5afd8ef3",
-        "02ff7df3e5ebc440df9bfe01eeb8d38e",
-        "1da9c8b3670282e2c92b2cccc6dff74f",
-        "d68eaeb58811c656749525961a538596",
-        "c2145a97645a8b64f3327b62472df045",
-        "6e64b657c4162083c040ff5f7c57b258",
-        "ca6748ac40ad0d1426ece0327f7576aa",
-        "b78dca999077f1be6e21037a03fbcc54",
-        "923ac34b729bef95c9758bf7b574d945",
-        "f67aef3d6d14b53e72e769b27b42dff5",
-        "7595dae9cde82218336a5457ed9d55ec",
-        "c85a25ec53bfe22c0093a989a554524e",
-        "a6f22ce7d1c5723a4880dd4b5276f653",
-        "dce433be346c9978baf24844d5e60d2c",
-        "a56c6b7acf88e964192824cd5e4a5254",
-        "2745a8ccb9cd421fc41db7aad599edb8",
-        "0992f8799bc39e72c92a5e61630fc1e4",
-        "512afa2292002a49cae1d59cf2439066",
-        "331fdc187564160f1138c72a83999f98",
-        "790c9db7b68080c59ebbadd071f154b0",
-        "274f62d3669f67069c394561e0235971",
-        "a93e001585af54490efe5b6413ee92b1",
-        "2995d7a0f7fab8493202ecc6013baef7",
-        "502b857a730cf6400deedb3339980cba",
-        "9a35532c7499c19daeacafc961657409",
+        "3c4999c29bd794f0ad6dc6e973f2fd07",
+        "8bcab321669dfb6fb7f78e3144ea7700",
+        "7ae2d5edc0f2d1184c964a7e2fd489f6",
+        "4d1da3c84bbc35f62163ef0b753b5fa4",
+        "7bdcd694feed456fabcc92f51d153747",
+        "2d31af28819fca9abe7d0c35e808d118",
+        "c10445a5772084447ddf49178ecb8fba",
+        "ba5192754525a3b6e2a38da18a74ba05",
+        "be8986fed0d89aa064dbb77ffa6a4101",
+        "d664f6de494b3d588d0e398aec18d9a7",
     ]
 
 
 @pytest.fixture()
 def expected_element_ids_for_ocr_strategy():
     return [
-        "de4b76e14348a126d3d529ba6a96f409",
-        "42df296c6f59429c002d6ea9064e41f5",
-        "f4dbf9dbc781e850fb2dba6ff2e93731",
-        "07acaaa03b24ddc6abec21fd5afd8ef3",
-        "02ff7df3e5ebc440df9bfe01eeb8d38e",
-        "1da9c8b3670282e2c92b2cccc6dff74f",
-        "d68eaeb58811c656749525961a538596",
-        "c2145a97645a8b64f3327b62472df045",
-        "6e64b657c4162083c040ff5f7c57b258",
-        "ca6748ac40ad0d1426ece0327f7576aa",
-        "b78dca999077f1be6e21037a03fbcc54",
-        "923ac34b729bef95c9758bf7b574d945",
-        "f67aef3d6d14b53e72e769b27b42dff5",
-        "bb9b1d7ebf63f0fbb385b9075a77c08d",
-        "47bc9bf2287418169d2ec4364c6bf4e7",
-        "d634d9048917e173882c3d1b6be70e01",
-        "a71167a2173b881233dcb7cea35d2d4c",
-        "a033987b07f9ee9842e624d578faeaa0",
-        "d14a09fd0e472aa85f9c1f677646b484",
-        "4b59e5c4d227f8ae4018c78b64ee933c",
-        "9d582c46efe35718c767b1f801955fc6",
-        "807b1298c997bd2250b842661a2ea734",
-        "87a3e8beadfb9b9e8f383a8c9bad9d88",
-        "fcae4ba63eaddb4f6bd20809b6259101",
-        "84143b3ab3b8bd63b45afebdb3a299fd",
-        "a84355ab93b532c29e2099a946256fd7",
+        "cceca6a7ad3befbcd216993bd2a6731e",
+        "b50ee028a4dc17833cb7743936cad1ab",
+        "679ba73e49f968f9438017bc2eafc052",
+        "a49eff928669604dc943fe35136e22cd",
+        "1292c08b9171479de5bf411209c5a3a5",
+        "8452a245713ad689d90bee3a2dec4aa8",
+        "33251b6ae5b384d913842e184de3c9d4",
+        "492512241b06ff330e9dd8e32f481640",
     ]
 
 
@@ -1362,17 +1294,11 @@ def expected_ids(request):
     ],
     indirect=["expected_ids"],
 )
-def test_unique_and_deterministic_element_ids(
-    strategy, expected_ids, mock_pdfwriter_with_duplicate_pages, tmpdir
-):
-    # GIVEN
-    pdf_path = Path(tmpdir) / "mock.pdf"
-    mock_pdfwriter_with_duplicate_pages.write(pdf_path)
-
-    # WHEN
-    elements = pdf.partition_pdf(pdf_path, strategy=strategy)
+def test_unique_and_deterministic_element_ids(strategy, expected_ids):
+    elements = pdf.partition_pdf(
+        "example-docs/fake-memo-with-duplicate-page.pdf", strategy=strategy
+    )
     ids = [element.id for element in elements]
 
-    # THEN
     assert len(ids) == len(set(ids)), "Element IDs are not unique"
     assert ids == expected_ids, "Element IDs do not match expected IDs"
