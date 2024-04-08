@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import json
 import os
 import re
-from typing import List
 
 import pytest
 
@@ -383,7 +384,7 @@ def test_calculate_shared_ngram_percentage_returns_null_vals_for_empty_str():
     assert not bool(common_ngrams)
 
 
-def assign_hash_ids(elements: List[Element]) -> List[Element]:
+def assign_hash_ids(elements: list[Element]) -> list[Element]:
     for element in elements:
         element.id_to_hash()
     return elements
