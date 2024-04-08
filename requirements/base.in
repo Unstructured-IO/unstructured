@@ -1,4 +1,4 @@
--c constraints.in
+-c ./deps/constraints.txt
 chardet
 filetype
 python-magic
@@ -16,5 +16,5 @@ rapidfuzz
 backoff
 typing-extensions
 # NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
-unstructured-client>=0.15.1
+unstructured-client<=0.18.0
 wrapt
