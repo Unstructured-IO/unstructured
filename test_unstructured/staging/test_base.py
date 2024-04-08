@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 import pandas as pd
 import pytest
 
-from test_unstructured.test_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.elements import (
     Address,
     CheckBox,
