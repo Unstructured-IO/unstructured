@@ -32,9 +32,30 @@ from unstructured.documents.elements import (
 )
 
 
-def test_text_hash_id():
-    text_element = Text(text="hello there!")
-    assert text_element.id_to_hash() == "c69509590d81db2f37f9d75480c8efed"
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),
+        Text(text=""),
+        CheckBox(),
+    ],
+)
+def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: Element,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
 
 
 @pytest.mark.parametrize(
