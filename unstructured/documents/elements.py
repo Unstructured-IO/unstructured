@@ -505,7 +505,7 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def assign_hash_ids(elements: List[Element]) -> List[Element]:
+def assign_and_map_hash_ids(elements: List[Element]) -> List[Element]:
     """Converts `id` and `parent_id` of elements from UUIDs to hashes.
 
     This function ensures deterministic IDs by:
@@ -585,7 +585,7 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
 
             unique_element_ids: bool = params.get("unique_element_ids", False)
             if unique_element_ids is False:
-                elements = assign_hash_ids(elements)
+                elements = assign_and_map_hash_ids(elements)
 
             return elements
 
