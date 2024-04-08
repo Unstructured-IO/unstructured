@@ -12,7 +12,7 @@ import pathlib
 import re
 import uuid
 from types import MappingProxyType
-from typing import Any, Callable, FrozenSet, List, Optional, Sequence, cast
+from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
 from typing_extensions import ParamSpec, TypeAlias, TypedDict
 
@@ -505,7 +505,7 @@ class ConsolidationStrategy(enum.Enum):
 _P = ParamSpec("_P")
 
 
-def assign_and_map_hash_ids(elements: List[Element]) -> List[Element]:
+def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     """Converts `id` and `parent_id` of elements from UUIDs to hashes.
 
     This function ensures deterministic IDs by:
