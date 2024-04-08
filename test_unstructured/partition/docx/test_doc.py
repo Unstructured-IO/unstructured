@@ -19,26 +19,10 @@ from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
 
-@pytest.fixture()
-def mock_document_with_duplicates():
-    document = docx.Document()
-    document.add_paragraph("This document contains duplicates", style="Heading 1")
-    document.add_paragraph("some text", style="Normal")
-    document.add_paragraph("some text", style="Normal")
-    document.add_paragraph("some text", style="Normal")
-    document.add_page_break()
-    document.add_paragraph("some text", style="Normal")
-    document.add_paragraph("some text", style="Normal")
-    document.add_paragraph("some text", style="Normal")
-    return document
-
-
-def test_partition_doc_for_deterministic_and_unique_ids(mock_document_with_duplicates, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document_with_duplicates.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    ids = [element.id for element in partition_doc(filename=doc_filename)]
+def test_partition_doc_for_deterministic_and_unique_ids():
+    ids = [
+        element.id for element in partition_doc(filename="example-docs/duplicate-paragraphs.doc")
+    ]
     assert len(ids) == len(set(ids)), "IDs are not unique"
 
     assert ids == [

@@ -868,21 +868,17 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
 
 
 def test_ids_are_unique_and_deterministic(tmpdir):
-    with tempfile.NamedTemporaryFile(suffix=".docx") as temp_file:
-        document = docx.Document()
-        document.add_heading("Heading 1")
-        document.add_paragraph("Lorem ipsum dolor sit amet.")
-        document.add_paragraph("Lorem ipsum dolor sit amet.")
-        document.add_paragraph("Lorem ipsum dolor sit amet.")
-        document.save(temp_file.name)
-        elements = partition_docx(temp_file.name)
+    elements = partition_docx("example-docs/duplicate-paragraphs.docx")
 
-        ids = [e.id for e in elements]
-        assert len(ids) == len(set(ids)), "IDs are not unique"
+    ids = [e.id for e in elements]
+    assert len(ids) == len(set(ids)), "IDs are not unique"
 
-        assert ids == [
-            "30aa359bfaefba8ee42df546233c733a",
-            "6a01fcab35fa863524f31b60dc738bd5",
-            "3d08519c48748f3be527f077539308fe",
-            "6a63fbe592ea8a13aadf69fcf8546d9d",
-        ], "IDs are not deterministic"
+    assert ids == [
+        "79b0831d2868376998cad5a5711f40d4",
+        "3f6c09eb80423bb4cba97555cb334919",
+        "19b7974f4e3cb865afd71a253155f552",
+        "978638628adad03afc46506592fbfada",
+        "c4e8758fb8324dc1974f2dd9cedcf839",
+        "68f94f2fd44ca60e34d53e3d89b24178",
+        "c203336f3c645bc5440a7197048483b1",
+    ], "IDs are not deterministic"
