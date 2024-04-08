@@ -58,6 +58,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --embedding-dimension "$EMBEDDING_DIMENSION"
 
 python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
-    --token "$ASTRA_DB_TOKEN" \
-    --api-endpoint "$ASTRA_DB_ENDPOINT" \
-    --collection-name "$COLLECTION_NAME" check
+  --token "$ASTRA_DB_TOKEN" \
+  --api-endpoint "$ASTRA_DB_ENDPOINT" \
+  --collection-name "$COLLECTION_NAME" check
