@@ -102,7 +102,7 @@ tqdm==4.66.2
     #   transformers
 transformers==4.37.1
     # via -r ./huggingface.in
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./base.txt
     #   huggingface-hub

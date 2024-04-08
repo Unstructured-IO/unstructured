@@ -92,7 +92,7 @@ six==1.16.0
     #   -c ./ingest/../base.txt
     #   azure-core
     #   isodate
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
