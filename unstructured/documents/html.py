@@ -314,6 +314,8 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
             if tag.tail and not (tag.tail.isspace()):
                 start_index = start_index + len(tag.tail)
 
+    return links
+
 
 def _is_bulleted_table(table_elem: etree._Element) -> bool:
     """True when all text in `table_elem` is bulleted text.
