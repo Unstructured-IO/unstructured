@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 from unstructured_inference.models.eval import compare_contents_as_df
 
+from unstructured.logger import logger
+
 
 class TableAlignment:
     def __init__(self, cutoff: float = 0.8):
@@ -84,6 +86,9 @@ class TableAlignment:
         total_element_count = 0
         content_diff_cols = []
         content_diff_rows = []
+        col_content_metric_name = f"by_col_{metric_type}"
+        row_content_metric_name = f"by_row_{metric_type}"
+        logger.info(f"using {metric_type} for table content eval")
 
         for idx, td in zip(matched_indices, predicted_table_data):
             if idx == -1:
@@ -97,8 +102,8 @@ class TableAlignment:
             table_content_diff = compare_contents_as_df(
                 ground_truth_table_df.fillna(""), predict_table_df.fillna(""), eval_func=metric_type
             )
-            content_diff_cols.append(table_content_diff[f"by_col_{metric_type}"])
-            content_diff_rows.append(table_content_diff[f"by_row_{metric_type}"])
+            content_diff_cols.append(table_content_diff[col_content_metric_name])
+            content_diff_rows.append(table_content_diff[row_content_metric_name])
 
             # Get row and col index accuracy
             ground_truth_td_contents_list = [gtd["content"].lower() for gtd in ground_truth_td]
