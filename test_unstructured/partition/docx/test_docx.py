@@ -866,7 +866,7 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
     return filename
 
 
-def test_ids_are_unique_and_deterministic(tmpdir):
+def test_ids_are_unique_and_deterministic():
     elements = partition_docx("example-docs/duplicate-paragraphs.docx")
 
     ids = [e.id for e in elements]
