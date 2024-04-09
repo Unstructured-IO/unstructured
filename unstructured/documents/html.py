@@ -301,7 +301,7 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     links: List[Link] = []
     tag_elem_href = tag_elem.get("href")
     if tag_elem_href:
-        tag_elem_text = _construct_text(tag_elem)
+        tag_elem_text = _construct_text(tag_elem, False)
         links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
     else:
         start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
