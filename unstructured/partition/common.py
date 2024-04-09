@@ -39,7 +39,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
-
 HIERARCHY_RULE_SET = {
     "Title": [
         "Text",
@@ -132,22 +131,22 @@ def normalize_layout_element(
         class_prob_metadata = ElementMetadata(detection_class_prob=float(prob))  # type: ignore
     else:
         class_prob_metadata = ElementMetadata()
+    common_kwargs = {
+        "coordinates": coordinates,
+        "coordinate_system": coordinate_system,
+        "metadata": class_prob_metadata,
+        "detection_origin": origin,
+    }
     if element_type == ElementType.LIST:
         if infer_list_items:
             return layout_list_to_list_items(
                 text,
-                coordinates=coordinates,
-                coordinate_system=coordinate_system,
-                metadata=class_prob_metadata,
-                detection_origin=origin,
+                **common_kwargs,
             )
         else:
             return ListItem(
                 text=text,
-                coordinates=coordinates,
-                coordinate_system=coordinate_system,
-                metadata=class_prob_metadata,
-                detection_origin=origin,
+                **common_kwargs,
             )
 
     elif element_type in TYPE_TO_TEXT_ELEMENT_MAP:
@@ -155,39 +154,34 @@ def normalize_layout_element(
         _element_class = TYPE_TO_TEXT_ELEMENT_MAP[element_type]
         _element_class = _element_class(
             text=text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-            metadata=class_prob_metadata,
-            detection_origin=origin,
+            **common_kwargs,
         )
         if element_type == ElementType.HEADLINE:
             _element_class.metadata.category_depth = 1
         elif element_type == ElementType.SUB_HEADLINE:
             _element_class.metadata.category_depth = 2
         return _element_class
-    elif element_type == ElementType.CHECKED:
+    elif element_type in [
+        ElementType.CHECK_BOX_CHECKED,
+        ElementType.CHECK_BOX_UNCHECKED,
+        ElementType.RADIO_BUTTON_CHECKED,
+        ElementType.RADIO_BUTTON_UNCHECKED,
+        ElementType.CHECKED,
+        ElementType.UNCHECKED,
+    ]:
+        checked = element_type in [
+            ElementType.CHECK_BOX_CHECKED,
+            ElementType.RADIO_BUTTON_CHECKED,
+            ElementType.CHECKED,
+        ]
         return CheckBox(
-            checked=True,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-            metadata=class_prob_metadata,
-            detection_origin=origin,
-        )
-    elif element_type == ElementType.UNCHECKED:
-        return CheckBox(
-            checked=False,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-            metadata=class_prob_metadata,
-            detection_origin=origin,
+            checked=checked,
+            **common_kwargs,
         )
     else:
         return Text(
             text=text,
-            coordinates=coordinates,
-            coordinate_system=coordinate_system,
-            metadata=class_prob_metadata,
-            detection_origin=origin,
+            **common_kwargs,
         )
 
 
@@ -484,15 +478,14 @@ def convert_ms_office_table_to_text(table: PptxTable, as_html: bool = True) -> s
     Returns:
         str: An table string representation of the input table.
     """
-    fmt = "html" if as_html else "plain"
     rows = list(table.rows)
-    if len(rows) > 0:
-        headers = [cell.text for cell in rows[0].cells]
-        data = [[cell.text for cell in row.cells] for row in rows[1:]]
-        table_text = tabulate(data, headers=headers, tablefmt=fmt)
-    else:
-        table_text = ""
-    return table_text
+
+    if not rows:
+        return ""
+
+    headers = [cell.text for cell in rows[0].cells]
+    data = [[cell.text for cell in row.cells] for row in rows[1:]]
+    return tabulate(data, headers=headers, tablefmt="html" if as_html else "plain")
 
 
 def contains_emoji(s: str) -> bool:

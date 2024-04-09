@@ -1,11 +1,40 @@
-## 0.13.1-dev1
+## 0.13.3-dev3
 
 ### Enhancements
 
+### Features
+
 * **Use `partial_token_ratio` as default table content metric**
 
-### Features
 ### Fixes
+
+* **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
+* **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+
+## 0.13.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Brings back missing word list files** that caused `partition` failures in 0.13.1.
+
+## 0.13.1
+
+### Enhancements
+
+* **Drop constraint on pydantic, supporting later versions** All dependencies has pydantic pinned at an old version. This explicit pin was removed, allowing the latest version to be pulled in when requirements are compiled.
+
+### Features
+
+* **Add a set of new `ElementType`s to extend future element types**
+
+### Fixes
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
+* **Fix SFTP** Adds flag options to SFTP connector on whether to use ssh keys / agent, with flag values defaulting to False. This is to prevent looking for ssh files when using username and password. Currently, username and password are required, making that always the case.
 
 ## 0.13.0
 
