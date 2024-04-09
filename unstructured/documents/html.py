@@ -307,8 +307,9 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
         start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
         for tag in tag_elem.iterdescendants():
             href = tag.get("href")
-            if href and tag.text:
+            if href:
                 links.append({"text": tag.text, "url": href, "start_index": start_index})
+
             if tag.text and not (tag.text.isspace()):
                 start_index = start_index + len(tag.text)
             if tag.tail and not (tag.tail.isspace()):
