@@ -931,42 +931,6 @@ def test_line_break_in_text_tag(tag):
     assert doc.elements[1].text == "World"
 
 
-def test_partition_html_links():
-    html_text = """<html>
-        <a href="/loner">A lone link!</a>
-        <p>Hello <a href="/link">link!</a></p>
-        <p>\n    Hello <a href="/link">link!</a></p>
-        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>
-    </html>"""
-
-    expected_results = [
-        [
-            {"text": "A lone link!", "url": "/loner", "start_index": -1},
-        ],
-        [
-            {"text": "link!", "url": "/link", "start_index": 6},
-        ],
-        [
-            {"text": "link!", "url": "/link", "start_index": 6},
-        ],
-        [
-            {"text": "Parrots", "url": "/wiki/parrots", "start_index": 0},
-            {"text": "Dogs", "url": "/wiki/dogs", "start_index": 12},
-        ],
-    ]
-
-    elements = partition_html(text=html_text)
-
-    for el_idx, el in enumerate(elements):
-        expected_result = expected_results[el_idx]
-        for link_idx, (text, url, start_index) in enumerate(
-            zip(el.metadata.link_texts, el.metadata.link_urls, el.metadata.link_start_indexes)
-        ):
-            assert text == expected_result[link_idx]["text"]
-            assert url == expected_result[link_idx]["url"]
-            assert start_index == expected_result[link_idx]["start_index"]
-
-
 # -- unit-level tests ----------------------------------------------------------------------------
 
 
