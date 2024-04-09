@@ -594,15 +594,6 @@
       "languages": [
         "eng"
       ],
-      "link_start_indexes": [
-        0
-      ],
-      "link_texts": [
-        null
-      ],
-      "link_urls": [
-        "mailto:team@email.com"
-      ],
       "page_number": 1
     },
     "text": "team@email.com",
