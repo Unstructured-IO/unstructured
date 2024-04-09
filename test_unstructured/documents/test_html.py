@@ -32,7 +32,6 @@ from unstructured.documents.html import (
     TagsMixin,
     _parse_HTMLTable_from_table_elem,
 )
-from unstructured.partition.html import partition_html
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
