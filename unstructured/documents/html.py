@@ -300,27 +300,19 @@ def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
     """Hyperlinks within and below `tag_elem`."""
     links: List[Link] = []
     tag_elem_href = tag_elem.get("href")
-    is_tag_elem_text_none = (not tag_elem.text)
-    tag_elem_text = ""
-    if tag_elem_href and not is_tag_elem_text_none:
-        links.append({"text": tag_elem.text, "url": tag_elem_href, "start_index": -1})
-
-    start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
-    for tag in tag_elem.iterdescendants():
-        href = tag.get("href")
-        if href and tag.text:
-            links.append({"text": tag.text.strip(), "url": href, "start_index": start_index})
-        if tag.text and not (tag.text.isspace()):
-            start_index = start_index + len(tag.text)
-            tag_elem_text = tag_elem_text + str(tag.text)
-        if tag.tail and not (tag.tail.isspace()):
-            start_index = start_index + len(tag.tail)
-            tag_elem_text = tag_elem_text + str(tag.tail)
-
-    if tag_elem_href and is_tag_elem_text_none:
+    if tag_elem_href:
+        tag_elem_text = _construct_text(tag_elem)
         links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
-
-    return links
+    else:
+        start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
+        for tag in tag_elem.iterdescendants():
+            href = tag.get("href")
+            if href and tag.text:
+                links.append({"text": tag.text, "url": href, "start_index": start_index})
+            if tag.text and not (tag.text.isspace()):
+                start_index = start_index + len(tag.text)
+            if tag.tail and not (tag.tail.isspace()):
+                start_index = start_index + len(tag.tail)
 
 
 def _is_bulleted_table(table_elem: etree._Element) -> bool:
