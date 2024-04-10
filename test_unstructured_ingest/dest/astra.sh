@@ -30,6 +30,11 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
+
+  python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+    --token "$ASTRA_DB_TOKEN" \
+    --api-endpoint "$ASTRA_DB_ENDPOINT" \
+    --collection-name "$COLLECTION_NAME" down
 }
 
 trap cleanup EXIT
@@ -52,4 +57,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --collection-name "$COLLECTION_NAME" \
   --embedding-dimension "$EMBEDDING_DIMENSION"
 
-python "$SCRIPT_DIR"/python/test-ingest-astra-output.py --token "$ASTRA_DB_TOKEN" --api-endpoint "$ASTRA_DB_ENDPOINT" --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+  --token "$ASTRA_DB_TOKEN" \
+  --api-endpoint "$ASTRA_DB_ENDPOINT" \
+  --collection-name "$COLLECTION_NAME" check
