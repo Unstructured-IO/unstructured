@@ -15,7 +15,9 @@ if __name__ == "__main__":
             output_dir="airtable-ingest-output",
             num_processes=2,
         ),
-        read_config=ReadConfig(),
+        read_config=ReadConfig(
+            download_dir="airtable-ingest-download",
+        ),
         partition_config=PartitionConfig(),
         connector_config=SimpleAirtableConfig(
             access_config=AirtableAccessConfig(
