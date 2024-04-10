@@ -36,13 +36,13 @@ def enhanced_field(
     *,
     default=MISSING,
     default_factory=MISSING,
-    init=True,
-    repr=True,
+    init: bool = True,
+    repr: bool = True,
     hash=None,
-    compare=True,
+    compare: bool = True,
     metadata=None,
     kw_only=MISSING,
-    sensitive=False,
+    sensitive: bool = False,
     overload_name: t.Optional[str] = None,
 ):
     if default is not MISSING and default_factory is not MISSING:

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import multiprocessing as mp
-import typing as t
 from contextlib import suppress
+from typing import Optional
 
 from unstructured.ingest.interfaces import (
     BaseDestinationConnector,
@@ -33,11 +35,11 @@ def process_documents(
     processor_config: ProcessorConfig,
     source_doc_connector: BaseSourceConnector,
     partition_config: PartitionConfig,
-    dest_doc_connector: t.Optional[BaseDestinationConnector] = None,
-    chunking_config: t.Optional[ChunkingConfig] = None,
-    embedder_config: t.Optional[EmbeddingConfig] = None,
-    permissions_config: t.Optional[PermissionsConfig] = None,
-    retry_strategy_config: t.Optional[RetryStrategyConfig] = None,
+    dest_doc_connector: Optional[BaseDestinationConnector] = None,
+    chunking_config: Optional[ChunkingConfig] = None,
+    embedder_config: Optional[EmbeddingConfig] = None,
+    permissions_config: Optional[PermissionsConfig] = None,
+    retry_strategy_config: Optional[RetryStrategyConfig] = None,
 ) -> None:
     pipeline_config = PipelineContext.from_dict(processor_config.to_dict())
     doc_factory = DocFactory(
@@ -50,7 +52,7 @@ def process_documents(
         read_config=source_doc_connector.read_config,
     )
     partitioner = Partitioner(pipeline_context=pipeline_config, partition_config=partition_config)
-    reformat_nodes: t.List[ReformatNode] = []
+    reformat_nodes: list[ReformatNode] = []
     if chunking_config:
         reformat_nodes.append(
             Chunker(

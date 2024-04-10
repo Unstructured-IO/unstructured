@@ -125,9 +125,22 @@ class DocFactoryNode(PipelineNode):
 
 @dataclass
 class SourceNode(PipelineNode):
-    """
-    Encapsulated logic to pull from a data source via base ingest docs
-    Output of logic expected to be the json outputs of the data itself
+    """A pipeline node representing logic to pull data from a source using base ingest documents.
+
+    This class encapsulates the logic for pulling data from a specified source using base ingest
+    documents. The output of this logic is expected to be in JSON format representing the data
+    itself.
+
+    Attributes:
+        read_config: A configuration object specifying how to read data from the source.
+        retry_strategy_config: Optional configuration specifying the strategy for network errors.
+
+    Properties:
+        retry_strategy: A retry handler configured based on the retry strategy configuration.
+
+    Methods:
+        initialize: Initializes the source node and logs the process.
+        run: Abstract method for downloading data associated with ingest documents.
     """
 
     read_config: ReadConfig
