@@ -24,6 +24,7 @@ from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
 from unstructured.staging.base import elements_to_dicts, flatten_dict
+from unstructured.utils import lazyproperty
 
 A = TypeVar("A", bound="DataClassJsonMixin")
 
@@ -236,9 +237,10 @@ class EmbeddingConfig(BaseConfig):
 
 @dataclass
 class ChunkingConfig(BaseConfig):
-    """Data associated with running an optional chunker over the partitioned data.
+    """Config data for running an optional chunker over partitioned data.
 
-    The class is used to create instances and as a parent class for CliChunkingConfig"""
+    This class functions both as an instance creator and as a parent class for CliChunkingConfig.
+    """
 
     chunk_elements: bool = False
     chunking_strategy: Optional[str] = None
@@ -251,6 +253,26 @@ class ChunkingConfig(BaseConfig):
     overlap_all: Optional[bool] = None
 
     def chunk(self, elements: list[Element]) -> list[Element]:
+        self.resolve_chunk_elements
+
+        # -- no chunking-strategy means no chunking --
+        if self.chunking_strategy is None:
+            return elements
+
+        return dispatch.chunk(
+            elements,
+            self.chunking_strategy,
+            combine_text_under_n_chars=self.combine_text_under_n_chars,
+            include_orig_elements=self.include_orig_elements,
+            max_characters=self.max_characters,
+            multipage_sections=self.multipage_sections,
+            new_after_n_chars=self.new_after_n_chars,
+            overlap=self.overlap,
+            overlap_all=self.overlap_all,
+        )
+
+    @lazyproperty
+    def resolve_chunk_elements(self):
         # -- chunk_elements is a legacy cli argument used for "by_title" chunking that we need to
         # -- keep supporting.
         if self.chunk_elements is True:
@@ -266,23 +288,6 @@ class ChunkingConfig(BaseConfig):
                     "chunk_elements is deprecated in favor of chunking_strategy."
                     "Defaulting to chunking_strategy='by_title'"
                 )
-
-        # -- no chunking-strategy means no chunking --
-        if self.chunking_strategy is None:
-            return elements
-
-        # -- otherwise, chunk away --
-        return dispatch.chunk(
-            elements,
-            self.chunking_strategy,
-            combine_text_under_n_chars=self.combine_text_under_n_chars,
-            include_orig_elements=self.include_orig_elements,
-            max_characters=self.max_characters,
-            multipage_sections=self.multipage_sections,
-            new_after_n_chars=self.new_after_n_chars,
-            overlap=self.overlap,
-            overlap_all=self.overlap_all,
-        )
 
 
 @dataclass
