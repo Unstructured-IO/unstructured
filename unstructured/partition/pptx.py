@@ -39,6 +39,7 @@ from unstructured.partition.text_type import (
     is_possible_narrative_text,
     is_possible_title,
 )
+from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import lazyproperty
 
 DETECTION_ORIGIN = "pptx"
@@ -49,15 +50,17 @@ DETECTION_ORIGIN = "pptx"
 @add_chunking_strategy
 def partition_pptx(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
+    date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
     include_page_breaks: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
     include_slide_notes: bool = False,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
+    strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -104,6 +107,7 @@ def partition_pptx(
         infer_table_structure=infer_table_structure,
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
+        strategy=strategy,
     )
 
     elements = _PptxPartitioner.iter_presentation_elements(opts)
@@ -314,6 +318,7 @@ class _PptxPartitionerOptions:
         infer_table_structure: bool,
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
+        strategy: str,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -323,6 +328,8 @@ class _PptxPartitionerOptions:
         self._infer_table_structure = infer_table_structure
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
+        self._strategy = strategy
+        # -- options object maintains page-number state --
         self._page_counter = 0
 
     @lazyproperty
@@ -413,6 +420,19 @@ class _PptxPartitionerOptions:
         raise ValueError(
             "No PPTX document specified, either `filename` or `file` argument must be provided"
         )
+
+    @lazyproperty
+    def strategy(self) -> str:
+        """The requested partitioning strategy.
+
+        This indicates whether the partitioner should undertake expensive operations like inference
+        and OCR to produce a more thorough and/or accurate partitioning of the document.
+
+        Can take several values but for PPTX purposes there is only "hi_res" and not "hi_res".
+        Depending on the picture-partitioner used, images may only be OCR'ed and added to the
+        element-stream when this partitioning strategy is "hi_res".
+        """
+        return self._strategy
 
     def table_metadata(self, text_as_html: str | None):
         """ElementMetadata instance suitable for use with Table element."""

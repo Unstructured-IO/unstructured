@@ -261,7 +261,7 @@ def test_partition_pptx_malformed():
         assert element.metadata.filename == "fake-power-point-malformed.pptx"
 
 
-# == DescribePptxPartitionerMetadataBehaviors ====================================================
+# == metadata behaviors ==========================================================================
 
 
 def test_partition_pptx_metadata_date(mocker: MockFixture):
@@ -357,7 +357,7 @@ def test_partition_pptx_raises_TypeError_for_invalid_languages():
         partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")  # type: ignore
 
 
-# == DescribePptxPartitionerDownstreamBehaviors ==================================================
+# == downstream behaviors ========================================================================
 
 
 def test_partition_pptx_with_json():
@@ -714,6 +714,17 @@ class Describe_PptxPartitionerOptions:
         with pytest.raises(ValueError, match="No PPTX document specified, either `filename` or "):
             opts.pptx_file
 
+    # -- .strategy -------------------------------
+
+    @pytest.mark.parametrize("arg_value", ["fast", "hi_res"])
+    def it_knows_which_partitioning_strategy_to_use(
+        self, arg_value: str, opts_args: dict[str, Any]
+    ):
+        opts_args["strategy"] = arg_value
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.strategy == arg_value
+
     # -- .table_metadata -------------------------
 
     def it_can_create_table_metadata(self, opts_args: dict[str, Any]):
@@ -776,4 +787,5 @@ class Describe_PptxPartitionerOptions:
             "infer_table_structure": True,
             "metadata_file_path": None,
             "metadata_last_modified": None,
+            "strategy": "fast",
         }
