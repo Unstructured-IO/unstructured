@@ -72,6 +72,10 @@ def _convert_table_from_deckerd(content: List[Dict[str, Any]]) -> List[Dict[str,
     return table_data
 
 
+def _sort_table_cells(table_data: List[List[Dict[str, Any]]]) -> List[List[Dict[str, Any]]]:
+    return sorted(table_data, key=lambda cell: (cell["row_index"], cell["col_index"]))
+
+
 def extract_and_convert_tables_from_ground_truth(
     file_elements: List[Dict[str, Any]],
 ) -> List[List[Dict[str, Any]]]:
@@ -91,7 +95,7 @@ def extract_and_convert_tables_from_ground_truth(
                 converted_data = _convert_table_from_deckerd(
                     element["text"],
                 )
-                ground_truth_table_data.append(converted_data)
+                ground_truth_table_data.append(_sort_table_cells(converted_data))
             except Exception as e:
                 print(f"Error converting ground truth data: {e}")
                 ground_truth_table_data.append({})
@@ -121,7 +125,7 @@ def extract_and_convert_tables_from_prediction(
                 continue
             try:
                 converted_data = _convert_table_from_html(val)
-                predicted_table_data.append(converted_data)
+                predicted_table_data.append(_sort_table_cells(converted_data))
             except Exception as e:
                 print(f"Error converting Unstructured table data: {e}")
                 predicted_table_data.append({})

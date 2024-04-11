@@ -14,7 +14,7 @@ repos:
       - id: mixed-line-ending
 
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 24.2.0
     hooks:
       - id: black
         args: ["--line-length=100"]
@@ -25,14 +25,10 @@ repos:
     hooks:
       - id: ruff
         args:
-          [
-            "--fix",
-            "--select=C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034",
-            "--ignore=PT011,PT012,SIM117,COM812",
-          ]
+          ["--fix"]
 
   - repo: https://github.com/pycqa/flake8
-    rev: 4.0.1
+    rev: 7.0.0
     hooks:
       - id: flake8
         language_version: python3

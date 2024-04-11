@@ -535,6 +535,26 @@ def test_partition_msg_raises_with_no_partitioner(
         partition_email(filename=filename, process_attachments=True)
 
 
+def test_partition_email_metadata_date_from_header(
+    mocker,
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    expected_last_modification_date = "2022-12-23T12:08:48-06:00"
+
+    mocker.patch(
+        "unstructured.partition.email.get_last_modified_date",
+        return_value=None,
+    )
+    mocker.patch(
+        "unstructured.partition.email.get_last_modified_date_from_file",
+        return_value=None,
+    )
+
+    elements = partition_email(filename=filename)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
 def test_partition_email_from_file_custom_metadata_date(
     filename="example-docs/eml/fake-email-attachment.eml",
 ):

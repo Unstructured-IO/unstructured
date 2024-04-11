@@ -11,7 +11,7 @@ DETECTION_ORIGIN: str = "epub"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EPUB)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_epub(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -22,6 +22,7 @@ def partition_epub(
     chunking_strategy: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions an EPUB document. The document is first converted to HTML and then
@@ -44,6 +45,9 @@ def partition_epub(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
     elements = convert_and_partition_html(
@@ -54,6 +58,7 @@ def partition_epub(
         metadata_last_modified=metadata_last_modified,
         source_format="epub",
         detection_origin=DETECTION_ORIGIN,
+        date_from_file_object=date_from_file_object,
     )
 
     elements = list(

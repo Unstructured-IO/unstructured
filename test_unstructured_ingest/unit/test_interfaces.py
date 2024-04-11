@@ -14,7 +14,7 @@ from unstructured.ingest.interfaces import (
     ReadConfig,
 )
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict
+from unstructured.staging.base import elements_to_dicts
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "../..", "example-docs")
@@ -108,7 +108,7 @@ def partition_test_results():
 @pytest.fixture()
 def partition_file_test_results(partition_test_results):
     # Reusable partition_file test results, calculated only once
-    return convert_to_dict(partition_test_results)
+    return elements_to_dicts(partition_test_results)
 
 
 def test_partition_file():
@@ -120,9 +120,9 @@ def test_partition_file():
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
     test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
-    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
-    isd_elems = convert_to_dict(isd_elems_raw)
-    assert len(isd_elems)
+    elements = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    element_dicts = elements_to_dicts(elements)
+    assert len(element_dicts)
     expected_keys = {
         "element_id",
         "text",
@@ -139,7 +139,7 @@ def test_partition_file():
         "languages",
         "last_modified",
     }
-    for elem in isd_elems:
+    for elem in element_dicts:
         # Parent IDs are non-deterministic - remove them from the test
         elem["metadata"].pop("parent_id", None)
 
@@ -166,11 +166,11 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
-    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
-    isd_elems = convert_to_dict(isd_elems_raw)
-    assert len(isd_elems)
+    elements = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    element_dicts = elements_to_dicts(elements)
+    assert len(element_dicts)
     assert mock_partition.call_count == 1
-    for elem in isd_elems:
+    for elem in element_dicts:
         # Parent IDs are non-deterministic - remove them from the test
         elem["metadata"].pop("parent_id", None)
 

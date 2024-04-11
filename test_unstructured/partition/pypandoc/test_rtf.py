@@ -1,5 +1,6 @@
 import os
 import pathlib
+from tempfile import SpooledTemporaryFile
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -116,6 +117,26 @@ def test_partition_rtf_from_file_metadata_date(
             file=f,
         )
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_rtf_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/fake-doc.rtf",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_rtf(
+            file=f,
+            date_from_file_object=True,
+        )
+
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -135,6 +156,20 @@ def test_partition_rtf_from_file_with_custom_metadata_date(
         elements = partition_rtf(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_rtf_from_file_without_metadata_date(
+    filename="example-docs/fake-doc.rtf",
+):
+    """Test partition_rtf() with file that are not possible to get last modified date"""
+
+    with open(filename, "rb") as f:
+        sf = SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_rtf(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_rtf_with_json():

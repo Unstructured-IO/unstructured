@@ -13,7 +13,7 @@ from unstructured.partition.utils.constants import PartitionStrategy
 
 @process_metadata()
 @add_metadata
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_image(
     filename: str = "",
     file: Optional[bytes] = None,
@@ -29,6 +29,7 @@ def partition_image(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -83,6 +84,9 @@ def partition_image(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -102,5 +106,6 @@ def partition_image(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        date_from_file_object=date_from_file_object,
         **kwargs,
     )

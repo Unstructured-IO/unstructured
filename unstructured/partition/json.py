@@ -24,12 +24,12 @@ from unstructured.partition.common import (
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.staging.base import dict_to_elements
+from unstructured.staging.base import elements_from_dicts
 
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.JSON)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_json(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -37,6 +37,7 @@ def partition_json(
     include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions serialized Unstructured output into its constituent elements.
@@ -51,6 +52,9 @@ def partition_json(
         The string representation of the .json document.
     metadata_last_modified
         The last modified date for the document.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -65,7 +69,9 @@ def partition_json(
             file_text = f.read()
 
     elif file is not None:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
         file_content = file.read()
         file_text = file_content if isinstance(file_content, str) else file_content.decode()
@@ -80,8 +86,8 @@ def partition_json(
         )
 
     try:
-        dict = json.loads(file_text)
-        elements = dict_to_elements(dict)
+        element_dicts = json.loads(file_text)
+        elements = elements_from_dicts(element_dicts)
     except json.JSONDecodeError:
         raise ValueError("Not a valid json")
 

@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import collections
 import copy
-from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, Sequence, cast
+from typing import Any, Callable, DefaultDict, Iterable, Iterator, Optional, cast
 
 import regex
-from typing_extensions import TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from unstructured.documents.elements import (
     CompositeElement,
@@ -96,22 +96,15 @@ class ChunkingOptions:
         whitespace character sequences are suitable.
     """
 
-    def __init__(
-        self,
-        *,
-        combine_text_under_n_chars: Optional[int] = None,
-        max_characters: Optional[int] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-        text_splitting_separators: Sequence[str] = ("\n", " "),
-    ):
-        self._combine_text_under_n_chars_arg = combine_text_under_n_chars
-        self._max_characters_arg = max_characters
-        self._new_after_n_chars_arg = new_after_n_chars
-        self._overlap_arg = overlap
-        self._overlap_all_arg = overlap_all
-        self._text_splitting_separators = text_splitting_separators
+    def __init__(self, **kwargs: Any):
+        self._kwargs = kwargs
+
+    @classmethod
+    def new(cls, **kwargs: Any) -> Self:
+        """Return instance or raises `ValueError` on invalid arguments like overlap > max_chars."""
+        self = cls(**kwargs)
+        self._validate()
+        return self
 
     @lazyproperty
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
@@ -128,7 +121,7 @@ class ChunkingOptions:
         Default applied here is `0` which essentially disables chunk combining. Must be overridden
         by subclass where combining behavior is supported.
         """
-        arg_value = self._combine_text_under_n_chars_arg
+        arg_value = self._kwargs.get("combine_text_under_n_chars")
         return arg_value if arg_value is not None else 0
 
     @lazyproperty
@@ -139,8 +132,17 @@ class ChunkingOptions:
         exceeds this size. Such a pre-chunk is subject to mid-text splitting later in the chunking
         process.
         """
-        arg_value = self._max_characters_arg
+        arg_value = self._kwargs.get("max_characters")
         return arg_value if arg_value is not None else CHUNK_MAX_CHARS_DEFAULT
+
+    @lazyproperty
+    def include_orig_elements(self) -> bool:
+        """When True, add original elements from pre-chunk to `.metadata.orig_elements` of chunk.
+
+        Default value is `True`.
+        """
+        arg_value = self._kwargs.get("include_orig_elements")
+        return True if arg_value is None else bool(arg_value)
 
     @lazyproperty
     def inter_chunk_overlap(self) -> int:
@@ -149,7 +151,8 @@ class ChunkingOptions:
         This applies only to boundaries between chunks formed from whole elements and not to
         text-splitting boundaries that arise from splitting an oversized element.
         """
-        return self.overlap if self._overlap_all_arg else 0
+        overlap_all_arg = self._kwargs.get("overlap_all")
+        return self.overlap if overlap_all_arg else 0
 
     @lazyproperty
     def overlap(self) -> int:
@@ -158,7 +161,8 @@ class ChunkingOptions:
         The actual overlap will not exceed this number of characters but may be less as required to
         respect splitting-character boundaries.
         """
-        return self._overlap_arg or 0
+        overlap_arg = self._kwargs.get("overlap")
+        return overlap_arg or 0
 
     @lazyproperty
     def soft_max(self) -> int:
@@ -168,14 +172,10 @@ class ChunkingOptions:
         each element into its own chunk.
         """
         hard_max = self.hard_max
-        new_after_n_chars_arg = self._new_after_n_chars_arg
+        new_after_n_chars_arg = self._kwargs.get("new_after_n_chars")
 
         # -- default value is == max_characters --
         if new_after_n_chars_arg is None:
-            return hard_max
-
-        # -- we silently fix an invalid value, maybe we shouldn't --
-        if new_after_n_chars_arg < 0:
             return hard_max
 
         # -- new_after_n_chars > max_characters behaves the same as ==max_characters --
@@ -207,7 +207,12 @@ class ChunkingOptions:
     @lazyproperty
     def text_splitting_separators(self) -> tuple[str, ...]:
         """Sequence of text-splitting target strings to be used in order of preference."""
-        return tuple(self._text_splitting_separators)
+        text_splitting_separators_arg = self._kwargs.get("text_splitting_separators")
+        return (
+            ("\n", " ")
+            if text_splitting_separators_arg is None
+            else tuple(text_splitting_separators_arg)
+        )
 
     def _validate(self) -> None:
         """Raise ValueError if requestion option-set is invalid."""
@@ -218,7 +223,7 @@ class ChunkingOptions:
 
         # -- a negative value for `new_after_n_chars` is assumed to be a mistake the caller will
         # -- want to know about
-        new_after_n_chars = self._new_after_n_chars_arg
+        new_after_n_chars = self._kwargs.get("new_after_n_chars")
         if new_after_n_chars is not None and new_after_n_chars < 0:
             raise ValueError(
                 f"'new_after_n_chars' argument must be >= 0," f" got {new_after_n_chars}"
@@ -442,10 +447,10 @@ class TablePreChunk:
         text_remainder = self._text
         html_remainder = self._table.metadata.text_as_html or ""
 
-        # -- only chunk a table when it's too big to swallow whole --
+        # -- only text-split a table when it's longer than the chunking window --
         if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
             # -- but the overlap-prefix must be added to its text --
-            yield Table(text=text_remainder, metadata=copy.deepcopy(self._table.metadata))
+            yield Table(text=text_remainder, metadata=self._metadata)
             return
 
         split = self._opts.split
@@ -454,19 +459,19 @@ class TablePreChunk:
         while text_remainder or html_remainder:
             # -- split off the next chunk-worth of characters into a TableChunk --
             chunk_text, text_remainder = split(text_remainder)
-            table_chunk = TableChunk(text=chunk_text, metadata=copy.deepcopy(self._table.metadata))
+            metadata = self._metadata
 
             # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
             # -- HTML elements that *correspond* to the TextChunk.text fragment.
             if html_remainder:
                 chunk_html, html_remainder = html_remainder[:maxlen], html_remainder[maxlen:]
-                table_chunk.metadata.text_as_html = chunk_html
+                metadata.text_as_html = chunk_html
 
             # -- mark second and later chunks as a continuation --
             if is_continuation:
-                table_chunk.metadata.is_continuation = True
+                metadata.is_continuation = True
 
-            yield table_chunk
+            yield TableChunk(text=chunk_text, metadata=metadata)
 
             is_continuation = True
 
@@ -480,6 +485,37 @@ class TablePreChunk:
         """
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
+
+    @property
+    def _metadata(self) -> ElementMetadata:
+        """The base `.metadata` value for chunks formed from this pre-chunk.
+
+        The term "base" here means that other metadata fields will be added, depending on the chunk.
+        In particular, `.metadata.text_as_html` will be different for each text-split chunk and
+        `.metadata.is_continuation` must be added for second-and-later text-split chunks.
+
+        Note this is a fresh copy of the metadata on each call since it will need to be mutated
+        differently for each chunk formed from from this pre-chunk.
+        """
+        metadata = copy.deepcopy(self._table.metadata)
+        if self._opts.include_orig_elements:
+            metadata.orig_elements = self._orig_elements
+        return metadata
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
+
+        Note this is not just the `Table` element, it must be adjusted to strip out any
+        `.metadata.orig_elements` value it may have when it is itself a chunk and not a direct
+        product of partitioning.
+        """
+        # -- make a copy because we're going to mutate the `Table` element and it doesn't belong to
+        # -- us (the user may have downstream purposes for it).
+        orig_table = copy.deepcopy(self._table)
+        # -- prevent recursive .orig_elements when `Table` element is a chunk --
+        orig_table.metadata.orig_elements = None
+        return [orig_table]
 
     @lazyproperty
     def _text(self) -> str:
@@ -536,14 +572,22 @@ class TextPreChunk:
 
     def iter_chunks(self) -> Iterator[CompositeElement]:
         """Split this pre-chunk into one or more `CompositeElement` objects maxlen or smaller."""
+        # -- a pre-chunk containing no text (maybe only a PageBreak element for example) does not
+        # -- generate any chunks.
+        if not self._text:
+            return
+
         split = self._opts.split
-        metadata = self._consolidated_metadata
 
-        remainder = self._text
+        # -- emit first chunk --
+        s, remainder = split(self._text)
+        yield CompositeElement(text=s, metadata=self._consolidated_metadata)
 
+        # -- an oversized pre-chunk will have a remainder, split that up into additional chunks.
+        # -- Note these get continuation_metadata which includes is_continuation=True.
         while remainder:
             s, remainder = split(remainder)
-            yield CompositeElement(text=s, metadata=metadata)
+            yield CompositeElement(text=s, metadata=self._continuation_metadata)
 
     @lazyproperty
     def overlap_tail(self) -> str:
@@ -602,7 +646,24 @@ class TextPreChunk:
         to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
         "consolidated".
         """
-        return ElementMetadata(**self._meta_kwargs)
+        consolidated_metadata = ElementMetadata(**self._meta_kwargs)
+        if self._opts.include_orig_elements:
+            consolidated_metadata.orig_elements = self._orig_elements
+        return consolidated_metadata
+
+    @lazyproperty
+    def _continuation_metadata(self) -> ElementMetadata:
+        """Metadata applicable to the second and later text-split chunks of the pre-chunk.
+
+        The same metadata as the first text-split chunk but includes `.is_continuation = True`.
+        Unused for non-oversized pre-chunks since those are not subject to text-splitting.
+        """
+        # -- we need to make a copy, otherwise adding a field would also change metadata value
+        # -- already assigned to another chunk (e.g. the first text-split chunk). Deep-copy is not
+        # -- required though since we're not changing any collection fields.
+        continuation_metadata = copy.copy(self._consolidated_metadata)
+        continuation_metadata.is_continuation = True
+        return continuation_metadata
 
     @lazyproperty
     def _consolidated_regex_meta(self) -> dict[str, list[RegexMetadata]]:
@@ -689,6 +750,25 @@ class TextPreChunk:
                     )
 
         return dict(iter_kwarg_pairs())
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
+
+        def iter_orig_elements():
+            for e in self._elements:
+                if e.metadata.orig_elements is None:
+                    yield e
+                    continue
+                # -- make copy of any element we're going to mutate because these elements don't
+                # -- belong to us (the user may have downstream purposes for them).
+                orig_element = copy.copy(e)
+                # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
+                # -- its own)
+                orig_element.metadata.orig_elements = None
+                yield orig_element
+
+        return list(iter_orig_elements())
 
     @lazyproperty
     def _text(self) -> str:

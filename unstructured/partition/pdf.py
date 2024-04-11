@@ -132,10 +132,10 @@ def default_hi_res_model() -> str:
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.PDF)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_pdf(
     filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
     include_page_breaks: bool = False,
     include_header_footer: bool = True,
     strategy: str = PartitionStrategy.AUTO,
@@ -152,7 +152,8 @@ def partition_pdf(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    **kwargs,
+    date_from_file_object: bool = False,
+    **kwargs: Any,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -207,6 +208,9 @@ def partition_pdf(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
     exactly_one(filename=filename, file=file)
@@ -227,6 +231,7 @@ def partition_pdf(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        date_from_file_object=date_from_file_object,
         **kwargs,
     )
 
@@ -247,6 +252,7 @@ def partition_pdf_or_image(
     extract_image_block_types: Optional[List[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
+    date_from_file_object: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -263,6 +269,7 @@ def partition_pdf_or_image(
     last_modification_date = get_the_last_modification_date_pdf_or_img(
         file=file,
         filename=filename,
+        date_from_file_object=date_from_file_object,
     )
 
     extracted_elements = []
@@ -369,12 +376,15 @@ def extractable_elements(
 def get_the_last_modification_date_pdf_or_img(
     file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
     filename: Optional[str] = "",
+    date_from_file_object: bool = False,
 ) -> Union[str, None]:
     last_modification_date = None
     if not file and filename:
         last_modification_date = get_last_modified_date(filename=filename)
     elif not filename and file:
-        last_modification_date = get_last_modified_date_from_file(file=file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     return last_modification_date
 
 
@@ -693,6 +703,7 @@ def _process_pdfminer_pages(
     languages: List[str],
     metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
+    annotation_threshold: Optional[float] = 0.9,
     **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
@@ -723,6 +734,7 @@ def _process_pdfminer_pages(
                     annotation_list,
                     bbox,
                     i + 1,
+                    annotation_threshold,
                 )
                 _, words = get_word_bounding_box_from_element(obj, height)
                 for annot in annotations_within_element:
@@ -1190,7 +1202,7 @@ def check_annotations_within_element(
     annotation_list: List[Dict[str, Any]],
     element_bbox: Tuple[float, float, float, float],
     page_number: int,
-    threshold: float = 0.9,
+    annotation_threshold: float,
 ) -> List[Dict[str, Any]]:
     """
     Filter annotations that are within or highly overlap with a specified element on a page.
@@ -1201,9 +1213,9 @@ def check_annotations_within_element(
         element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
         page_number (int): The page number to which the annotations and element belong.
-        threshold (float, optional): The threshold value (between 0.0 and 1.0) that determines
-            the minimum overlap required for an annotation to be considered within the element.
-            Default is 0.9.
+        annotation_threshold (float, optional): The threshold value (between 0.0 and 1.0)
+            that determines the minimum overlap required for an annotation to be considered
+            within the element. Default is 0.9.
 
     Returns:
         List[Dict[str,Any]]: A list of dictionaries containing information about annotations
@@ -1216,7 +1228,7 @@ def check_annotations_within_element(
             annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
             if annotation_bbox_size and (
                 calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
-                > threshold
+                > annotation_threshold
             ):
                 annotations_within_element.append(annotation)
     return annotations_within_element
