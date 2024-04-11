@@ -16,7 +16,9 @@ if __name__ == "__main__":
             output_dir="azure-ingest-output",
             num_processes=2,
         ),
-        read_config=ReadConfig(),
+        read_config=ReadConfig(
+            download_dir="azure-ingest-download",
+        ),
         partition_config=PartitionConfig(),
         connector_config=SimpleAzureBlobStorageConfig(
             access_config=AzureAccessConfig(
