@@ -1,6 +1,8 @@
-## 0.13.3-dev2
+## 0.13.3-dev3
 
 ### Enhancements
+
+* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 
 ### Features
 
