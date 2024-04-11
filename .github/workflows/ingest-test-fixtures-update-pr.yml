@@ -56,6 +56,10 @@ jobs:
         uses: KengoTODA/actions-setup-docker-compose@v1
         with:
           version: '2.22.0'
+      - name: Checkout specific branch
+        uses: actions/checkout@v3
+        with:
+          ref: fix/check-diff-expected-output-script
       - name: Update test fixtures
         env:
           AIRTABLE_PERSONAL_ACCESS_TOKEN: ${{ secrets.AIRTABLE_PERSONAL_ACCESS_TOKEN }}
