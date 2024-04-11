@@ -240,7 +240,7 @@ jobs:
   setup_ingest:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -254,7 +254,7 @@ jobs:
   test_ingest_unit:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
     needs: [ setup_ingest, lint ]
     steps:
@@ -280,7 +280,7 @@ jobs:
   test_ingest_src:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -364,7 +364,7 @@ jobs:
     environment: ci
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
