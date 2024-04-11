@@ -1,0 +1,25 @@
+[
+  {
+    "element_id": "8088fbcca4eb780b8a4b8efe4b018860",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-08T20:46:29-07:00",
+        "date_modified": "2023-07-08T20:46:29-07:00",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "utic-test-ingest-fixtures/nested-1/nested-2/ideas-page.html"
+        },
+        "url": "box://utic-test-ingest-fixtures/nested-1/nested-2/ideas-page.html",
+        "version": "335093909193111497704678674535730958705"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "text_as_html": "<table><tr><td></td><td></td><td>January 2023 ( Someone fed my essays into GPT to make something that could answer<br/>questions based on them, then asked it where good ideas come from.  The<br/>answer was ok, but not what I would have said. This is what I would have said.) The way to get new ideas is to notice anomalies: what seems strange,<br/>or missing, or broken? You can see anomalies in everyday life (much<br/>of standup comedy is based on this), but the best place to look for<br/>them is at the frontiers of knowledge. Knowledge grows fractally.<br/>From a distance its edges look smooth, but when you learn enough<br/>to get close to one, you&#x27;ll notice it&#x27;s full of gaps. These gaps<br/>will seem obvious; it will seem inexplicable that no one has tried<br/>x or wondered about y. In the best case, exploring such gaps yields<br/>whole new fractal buds.</td></tr></table>"
+    },
+    "text": "January 2023 ( Someone fed my essays into GPT to make something that could answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer was ok, but not what I would have said. This is what I would have said.) The way to get new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can see anomalies in everyday life (much\nof standup comedy is based on this), but the best place to look for\nthem is at the frontiers of knowledge. Knowledge grows fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will seem inexplicable that no one has tried\nx or wondered about y. In the best case, exploring such gaps yields\nwhole new fractal buds.",
+    "type": "Table"
+  }
+]
