@@ -8,7 +8,7 @@ import json
 import os
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional, Type, TypeVar
@@ -16,17 +16,20 @@ from typing import Any, Optional, Type, TypeVar
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.chunking.basic import chunk_elements
-from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import DataSourceMetadata, assign_and_map_hash_ids
+from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
+from unstructured.partition.api import partition_via_api
 from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 A = TypeVar("A", bound="DataClassJsonMixin")
+
+# -- Needed to resolve TypeError raised by using InitVar and __future__.annotations
+# -- See more here: https://stackoverflow.com/questions/70400639/
+InitVar.__call__ = lambda *args: None  # type: ignore
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -237,7 +240,7 @@ class EmbeddingConfig(BaseConfig):
 
 @dataclass
 class ChunkingConfig(BaseConfig):
-    chunk_elements: bool = False
+    chunk_elements: InitVar[bool] = False
     chunking_strategy: Optional[str] = None
     combine_text_under_n_chars: Optional[int] = None
     include_orig_elements: Optional[bool] = None
@@ -247,38 +250,14 @@ class ChunkingConfig(BaseConfig):
     overlap: Optional[int] = None
     overlap_all: Optional[bool] = None
 
-    def chunk(self, elements: list[Element]) -> list[Element]:
-        self.chunking_strategy = (
-            self.chunking_strategy
-            if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
-        )
+    def __post_init__(self, chunk_elements: bool) -> None:
+        """Resolve chunking_strategy if chunk_elements is True.
 
-        if self.chunking_strategy not in ("by_title", "basic"):
-            return elements
-
-        if self.chunking_strategy == "by_title":
-            chunks = chunk_by_title(
-                elements=elements,
-                combine_text_under_n_chars=self.combine_text_under_n_chars,
-                include_orig_elements=self.include_orig_elements,
-                max_characters=self.max_characters,
-                multipage_sections=self.multipage_sections,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
-            )
-        else:
-            chunks = chunk_elements(
-                elements=elements,
-                include_orig_elements=self.include_orig_elements,
-                max_characters=self.max_characters,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
-            )
-
-        return assign_and_map_hash_ids(chunks)
+        If chunk_elements is True and chunking_strategy is None, default to 'by_title'. Otherwise,
+        do nothing and keep the defined value of chunking_strategy."
+        """
+        if chunk_elements and self.chunking_strategy is None:
+            self.chunking_strategy = "by_title"
 
 
 @dataclass
@@ -566,7 +545,6 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         partition_config: PartitionConfig,
         **partition_kwargs,
     ) -> list[Element]:
-        from unstructured.partition.api import partition_via_api
         from unstructured.partition.auto import partition
 
         if not partition_config.partition_by_api:

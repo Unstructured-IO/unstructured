@@ -58,6 +58,7 @@ def process_documents(
             Chunker(
                 pipeline_context=pipeline_config,
                 chunking_config=chunking_config,
+                partition_config=partition_config,
             ),
         )
     if embedder_config:
