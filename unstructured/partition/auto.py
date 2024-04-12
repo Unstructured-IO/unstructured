@@ -493,6 +493,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            start_page=start_page,
             **kwargs,
         )
     elif filetype == FileType.JSON:

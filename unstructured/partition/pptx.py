@@ -92,6 +92,7 @@ def partition_pptx(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     strategy: str = PartitionStrategy.FAST,
+    start_page: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
@@ -128,6 +129,10 @@ def partition_pptx(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    start_page
+        Indicates what page number should be assigned for the first slide in the presentation.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     opts = _PptxPartitionerOptions(
         date_from_file_object=date_from_file_object,
@@ -139,6 +144,7 @@ def partition_pptx(
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         strategy=strategy,
+        start_page=start_page,
     )
 
     elements = _PptxPartitioner.iter_presentation_elements(opts)
@@ -369,6 +375,7 @@ class _PptxPartitionerOptions:
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
         strategy: str,
+        start_page: int = 1,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -380,7 +387,7 @@ class _PptxPartitionerOptions:
         self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
-        self._page_counter = 0
+        self._page_counter = start_page - 1
 
     @classmethod
     def register_picture_partitioner(cls, picture_partitioner: AbstractPicturePartitioner):
