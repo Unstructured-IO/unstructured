@@ -15,11 +15,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-databricks-sdk==0.24.0
+databricks-sdk==0.25.1
     # via -r ./ingest/databricks-volumes.in
 google-auth==2.29.0
     # via databricks-sdk
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests

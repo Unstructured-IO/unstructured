@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-huggingface.in
 #
-aiohttp==3.9.3
+aiohttp==3.9.4
     # via langchain-community
 aiosignal==1.3.1
     # via aiohttp
@@ -27,7 +27,7 @@ dataclasses-json==0.6.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.13.3
+filelock==3.13.4
     # via
     #   huggingface-hub
     #   torch
@@ -47,14 +47,14 @@ huggingface-hub==0.22.2
     #   sentence-transformers
     #   tokenizers
     #   transformers
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
     #   yarl
 jinja2==3.1.3
     # via torch
-joblib==1.3.2
+joblib==1.4.0
     # via
     #   -c ./ingest/../base.txt
     #   scikit-learn
@@ -62,11 +62,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.31
+langchain-community==0.0.32
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.1.40
+langchain-core==0.1.42
     # via langchain-community
-langsmith==0.1.40
+langsmith==0.1.46
     # via
     #   langchain-community
     #   langchain-core
@@ -108,11 +108,11 @@ packaging==23.2
     #   transformers
 pillow==10.3.0
     # via sentence-transformers
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -135,7 +135,7 @@ safetensors==0.3.2
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   transformers
-scikit-learn==1.4.1.post1
+scikit-learn==1.4.2
     # via sentence-transformers
 scipy==1.10.1
     # via

@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     #   requests
 deprecated==1.2.14
     # via atlassian-python-api
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests

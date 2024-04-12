@@ -39,7 +39,7 @@ cython==3.0.10
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==3.0.2
+flask==3.0.3
     # via
     #   flask-babel
     #   visualdl
@@ -49,7 +49,7 @@ fonttools==4.51.0
     # via matplotlib
 future==1.0.0
     # via bce-python-sdk
-idna==3.6
+idna==3.7
     # via
     #   -c ./base.txt
     #   requests
@@ -129,7 +129,7 @@ packaging==23.2
     #   matplotlib
     #   scikit-image
     #   visualdl
-pandas==2.2.1
+pandas==2.2.2
     # via visualdl
 pdf2image==1.17.0
     # via unstructured-paddleocr
@@ -168,7 +168,7 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.7.0
+rapidfuzz==3.8.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr

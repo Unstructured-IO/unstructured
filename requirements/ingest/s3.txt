@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/s3.in
 #
-aiobotocore==2.12.2
+aiobotocore==2.12.3
     # via s3fs
-aiohttp==3.9.3
+aiohttp==3.9.4
     # via
     #   aiobotocore
     #   s3fs
@@ -30,7 +30,7 @@ fsspec==2024.3.1
     # via
     #   -r ./ingest/s3.in
     #   s3fs
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   yarl

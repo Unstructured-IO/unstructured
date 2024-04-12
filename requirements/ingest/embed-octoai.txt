@@ -32,17 +32,17 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via openai
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
     #   httpx
     #   requests
-openai==1.16.2
+openai==1.17.0
     # via -r ./ingest/embed-octoai.in
-pydantic==2.6.4
+pydantic==2.7.0
     # via openai
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 regex==2023.12.25
     # via

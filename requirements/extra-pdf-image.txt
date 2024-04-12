@@ -30,7 +30,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via layoutparser
-filelock==3.13.3
+filelock==3.13.4
     # via
     #   huggingface-hub
     #   torch
@@ -51,7 +51,7 @@ huggingface-hub==0.22.2
     #   unstructured-inference
 humanfriendly==10.0
     # via coloredlogs
-idna==3.6
+idna==3.7
     # via
     #   -c ./base.txt
     #   requests
@@ -120,7 +120,7 @@ packaging==23.2
     #   pytesseract
     #   transformers
     #   unstructured-pytesseract
-pandas==2.2.1
+pandas==2.2.2
     # via layoutparser
 pdf2image==1.17.0
     # via
@@ -132,7 +132,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.0
     # via layoutparser
-pikepdf==8.14.0
+pikepdf==8.15.0
     # via -r ./extra-pdf-image.in
 pillow==10.3.0
     # via
@@ -164,9 +164,9 @@ pyparsing==3.0.9
     # via
     #   -c ././deps/constraints.txt
     #   matplotlib
-pypdf==4.1.0
+pypdf==4.2.0
     # via -r ./extra-pdf-image.in
-pypdfium2==4.28.0
+pypdfium2==4.29.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -186,7 +186,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.7.0
+rapidfuzz==3.8.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
