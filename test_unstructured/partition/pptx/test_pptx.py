@@ -4,13 +4,15 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import pathlib
 import tempfile
-from typing import Any
+from typing import Any, Iterator
 
 import pptx
 import pytest
+from pptx.shapes.picture import Picture
 from pptx.util import Inches
 from pytest_mock import MockFixture
 
@@ -23,14 +25,20 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
+    Element,
     ElementMetadata,
+    Image,
     ListItem,
     NarrativeText,
     PageBreak,
     Text,
     Title,
 )
-from unstructured.partition.pptx import _PptxPartitionerOptions, partition_pptx
+from unstructured.partition.pptx import (
+    _PptxPartitionerOptions,
+    partition_pptx,
+    register_picture_partitioner,
+)
 
 EXPECTED_PPTX_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
@@ -259,6 +267,32 @@ def test_partition_pptx_malformed():
     assert elements[1].text == "Test Slide"
     for element in elements:
         assert element.metadata.filename == "fake-power-point-malformed.pptx"
+
+
+# == image sub-partitioning behaviors ============================================================
+
+
+def test_partition_pptx_generates_no_Image_elements_by_default():
+    assert partition_pptx(example_doc_path("picture.pptx")) == []
+
+
+def test_partition_pptx_uses_registered_picture_partitioner():
+    class FakePicturePartitioner:
+        @classmethod
+        def iter_elements(
+            cls, picture: Picture, opts: _PptxPartitionerOptions
+        ) -> Iterator[Element]:
+            image_hash = hashlib.sha1(picture.image.blob).hexdigest()
+            yield Image(f"Image with hash {image_hash}, strategy: {opts.strategy}")
+
+    register_picture_partitioner(FakePicturePartitioner)
+
+    elements = partition_pptx(example_doc_path("picture.pptx"))
+
+    assert len(elements) == 1
+    image = elements[0]
+    assert type(image) is Image
+    assert image.text == "Image with hash b0a1e6cf904691e6fa42bd9e72acc2b05280dc86, strategy: fast"
 
 
 # == metadata behaviors ==========================================================================
