@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
 from pdfminer.utils import open_filename
 
+from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
     open_pdfminer_pages_generator,
@@ -134,3 +135,29 @@ def merge_inferred_with_extracted_layout(
         inferred_page.elements[:] = elements
 
     return inferred_document_layout
+
+
+def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
+    """Removes duplicate image elements extracted by PDFMiner from a document layout."""
+
+    from unstructured_inference.inference.elements import (
+        region_bounding_boxes_are_almost_the_same,
+    )
+
+    for page in document.pages:
+        image_elements = []
+        for i, element in enumerate(page.elements):
+            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
+                continue
+
+            # check if this element is a duplicate
+            if any(
+                e.text == element.text
+                and region_bounding_boxes_are_almost_the_same(e.bbox, element.bbox, 0.6)
+                for e in image_elements
+            ):
+                page.elements[i] = None
+            image_elements.append(element)
+        page.elements = [e for e in page.elements if e]
+
+    return document
