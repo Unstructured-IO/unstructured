@@ -181,6 +181,7 @@ def partition_docx(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
+    start_page: int = 1,
     **kwargs: Any,  # used by decorator
 ) -> List[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -212,6 +213,10 @@ def partition_docx(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    start_page
+        Indicates what page number should be assigned for the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
@@ -224,6 +229,7 @@ def partition_docx(
         infer_table_structure,
         metadata_last_modified,
         date_from_file_object,
+        start_page=start_page,
     )
     elements = apply_lang_metadata(
         elements=elements,
@@ -249,6 +255,7 @@ class _DocxPartitioner:
         infer_table_structure: bool = True,
         metadata_last_modified: Optional[str] = None,
         date_from_file_object: bool = False,
+        start_page: int = 1,
     ) -> None:
         self._filename = filename
         self._file = file
@@ -256,7 +263,7 @@ class _DocxPartitioner:
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
         self._metadata_last_modified = metadata_last_modified
-        self._page_counter: int = 1
+        self._page_counter = start_page
         self._date_from_file_object = date_from_file_object
 
     @classmethod
@@ -269,6 +276,7 @@ class _DocxPartitioner:
         infer_table_structure: bool = True,
         metadata_last_modified: Optional[str] = None,
         date_from_file_object: bool = False,
+        start_page: int = 1,
     ) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         self = cls(
@@ -279,6 +287,7 @@ class _DocxPartitioner:
             infer_table_structure=infer_table_structure,
             metadata_last_modified=metadata_last_modified,
             date_from_file_object=date_from_file_object,
+            start_page=start_page,
         )
         # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
         # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
