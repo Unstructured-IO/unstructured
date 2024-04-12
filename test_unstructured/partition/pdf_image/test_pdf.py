@@ -148,19 +148,21 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "expected", "origin"),
+    ("strategy", "start_page", "expected_page_numbers", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
-        (PartitionStrategy.FAST, {1, 4}, {"pdfminer"}),
-        (PartitionStrategy.HI_RES, {1, 3, 4}, {"yolox", "pdfminer"}),
-        (PartitionStrategy.OCR_ONLY, {1, 3, 4}, {"ocr_tesseract"}),
+        (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
+        (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
+        (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer"}),
+        (PartitionStrategy.OCR_ONLY, 1, {3, 5, 6}, {"ocr_tesseract"}),
     ],
 )
-def test_partition_pdf(
+def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
     file_mode,
     strategy,
-    expected,
+    start_page,
+    expected_page_numbers,
     origin,
     filename=example_doc_path("layout-parser-paper-with-empty-pages.pdf"),
 ):
@@ -169,23 +171,25 @@ def test_partition_pdf(
         # validate that the result is a non-empty list of dicts
         assert len(result) > 10
         # check that the pdf has multiple different page numbers
-        assert {element.metadata.page_number for element in result} == expected
+        assert {element.metadata.page_number for element in result} == expected_page_numbers
         if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
             assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
-        result = pdf.partition_pdf(filename=filename, strategy=strategy)
+        result = pdf.partition_pdf(filename=filename, strategy=strategy, start_page=start_page)
         _test(result)
     elif file_mode == "rb":
         with open(filename, "rb") as f:
-            result = pdf.partition_pdf(file=f, strategy=strategy)
+            result = pdf.partition_pdf(file=f, strategy=strategy, start_page=start_page)
             _test(result)
     else:
         with open(filename, "rb") as test_file:
             spooled_temp_file = SpooledTemporaryFile()
             spooled_temp_file.write(test_file.read())
             spooled_temp_file.seek(0)
-            result = pdf.partition_pdf(file=spooled_temp_file, strategy=strategy)
+            result = pdf.partition_pdf(
+                file=spooled_temp_file, strategy=strategy, start_page=start_page
+            )
             _test(result)
 
 
