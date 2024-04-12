@@ -8,6 +8,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
@@ -153,7 +154,9 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
             # check if this element is a duplicate
             if any(
                 e.text == element.text
-                and region_bounding_boxes_are_almost_the_same(e.bbox, element.bbox, 0.6)
+                and region_bounding_boxes_are_almost_the_same(
+                    e.bbox, element.bbox, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
+                )
                 for e in image_elements
             ):
                 page.elements[i] = None
