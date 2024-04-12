@@ -1,6 +1,10 @@
-## 0.13.3-dev2
+## 0.13.3-dev4
 
 ### Enhancements
+
+* **Add support for `start_index` in `html` links extraction**
+* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
+* **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
 
 ### Features
 
