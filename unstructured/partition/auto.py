@@ -244,8 +244,8 @@ def partition(
         Applies only when providing file via `file` parameter. If this option is True and inference
         from message header failed, attempt to infer last_modified metadata from bytes,
         otherwise set it to None.
-        Indicates what page number should be assigned for the first page in the document.
     starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """

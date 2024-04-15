@@ -60,8 +60,8 @@ def partition_ppt(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
-        Indicates what page number should be assigned for the first slide in the presentation.
     starting_page_number
+        Indicates what page number should be assigned to the first slide in the presentation.
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """

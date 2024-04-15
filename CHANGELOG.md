@@ -5,7 +5,7 @@
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 * **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
-* **Introduce `start_page` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
+* **Introduce `starting_page_number` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
 
 ### Features
 
