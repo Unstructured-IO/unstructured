@@ -882,6 +882,8 @@ def convert_pdf_to_images(
         info = pdf2image.pdfinfo_from_path(filename)
 
     total_pages = info["Pages"]
+    for start_page in range(1, total_pages + 1, chunk_size):
+        end_page = min(start_page + chunk_size - 1, total_pages)
         if f_bytes is not None:
             chunk_images = pdf2image.convert_from_bytes(
                 f_bytes,
