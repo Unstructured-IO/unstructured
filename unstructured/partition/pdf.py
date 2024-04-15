@@ -882,6 +882,8 @@ def convert_pdf_to_images(
         info = pdf2image.pdfinfo_from_path(filename)
 
     total_pages = info["Pages"]
+    for start_page in range(1, total_pages + 1, chunk_size):
+        end_page = min(start_page + chunk_size - 1, total_pages)
         if f_bytes is not None:
             chunk_images = pdf2image.convert_from_bytes(
                 f_bytes,
@@ -930,7 +932,7 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file), start=start_page
+            convert_pdf_to_images(filename, file), start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
