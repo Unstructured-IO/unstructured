@@ -28,14 +28,6 @@ Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
 
 
-class NoID(abc.ABC):
-    """Class to indicate that an element do not have an ID."""
-
-
-class UUID(abc.ABC):
-    """Class to indicate that an element should have a UUID."""
-
-
 @dc.dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
@@ -196,7 +188,7 @@ class ElementMetadata:
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
-    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
     # -- EPUB document section --
@@ -241,7 +233,7 @@ class ElementMetadata:
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
-        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
         section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
@@ -695,19 +687,16 @@ class Element(abc.ABC):
 
     def __init__(
         self,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if isinstance(element_id, NoID):
-            self.id = str(uuid.uuid4())
-        elif isinstance(element_id, str):
-            self.id = element_id
-        else:
-            raise ValueError("element_id must be of type str or NoID.")
+        if element_id is not None and not isinstance(element_id, str):
+            raise ValueError("element_id must be of type str or None.")
 
+        self._element_id = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -750,6 +739,12 @@ class Element(abc.ABC):
 
         return new_coordinates
 
+    @property
+    def id(self):
+        if self._element_id is None:
+            self._element_id = str(uuid.uuid4())
+        return self._element_id
+
     def id_to_hash(self) -> str:
         """Calculates and assigns a deterministic hash as an ID.
 
@@ -758,7 +753,7 @@ class Element(abc.ABC):
         Returns:
             The first 32 characters of the SHA256 hash of the concatenated input parameters.
         """
-        self.id = hashlib.sha256(self.text.encode()).hexdigest()[:32]
+        self._element_id = hashlib.sha256(self.text.encode()).hexdigest()[:32]
         return self.id
 
     def to_dict(self) -> dict[str, Any]:
@@ -778,7 +773,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -822,7 +817,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
