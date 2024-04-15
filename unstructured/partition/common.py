@@ -625,7 +625,6 @@ def document_to_element_list(
 
         if include_page_breaks and page_number < num_pages + starting_page_number:
             sorted_page_elements.append(PageBreak(text=""))
-        if include_page_breaks and page_number < starting_page_number + num_pages:
         elements.extend(sorted_page_elements)
 
     return elements
