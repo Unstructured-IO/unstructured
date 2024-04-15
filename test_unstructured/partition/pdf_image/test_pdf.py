@@ -155,7 +155,7 @@ def test_partition_pdf_local_raises_with_no_filename():
         (PartitionStrategy.FAST, 1, {1, 4}, {"pdfminer"}),
         (PartitionStrategy.FAST, 3, {3, 6}, {"pdfminer"}),
         (PartitionStrategy.HI_RES, 4, {4, 6, 7}, {"yolox", "pdfminer"}),
-        (PartitionStrategy.OCR_ONLY, 1, {3, 5, 6}, {"ocr_tesseract"}),
+        (PartitionStrategy.OCR_ONLY, 1, {1, 3, 4}, {"ocr_tesseract"}),
     ],
 )
 def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
