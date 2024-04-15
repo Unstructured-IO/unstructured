@@ -152,7 +152,7 @@ def partition_pdf(
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -229,7 +229,7 @@ def partition_pdf(
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
-        start_page=start_page,
+        starting_page_number=starting_page_number,
         **kwargs,
     )
 
@@ -250,7 +250,7 @@ def partition_pdf_or_image(
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -280,7 +280,7 @@ def partition_pdf_or_image(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
-                start_page=start_page,
+                starting_page_number=starting_page_number,
                 **kwargs,
             )
             pdf_text_extractable = any(
@@ -320,7 +320,7 @@ def partition_pdf_or_image(
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_image_block_to_payload=extract_image_block_to_payload,
-                start_page=start_page,
+                starting_page_number=starting_page_number,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -338,7 +338,7 @@ def partition_pdf_or_image(
                 languages=languages,
                 is_image=is_image,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
-                start_page=start_page,
+                starting_page_number=starting_page_number,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
@@ -352,7 +352,7 @@ def extractable_elements(
     include_page_breaks: bool = False,
     languages: Optional[List[str]] = None,
     metadata_last_modified: Optional[str] = None,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ):
     if isinstance(file, bytes):
@@ -363,7 +363,7 @@ def extractable_elements(
         include_page_breaks=include_page_breaks,
         languages=languages,
         metadata_last_modified=metadata_last_modified,
-        start_page=start_page,
+        starting_page_number=starting_page_number,
         **kwargs,
     )
 
@@ -403,7 +403,7 @@ def _partition_pdf_or_image_local(
     extract_image_block_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -541,7 +541,7 @@ def _partition_pdf_or_image_local(
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
         languages=languages,
-        start_page=start_page,
+        starting_page_number=starting_page_number,
         **kwargs,
     )
 
@@ -620,7 +620,7 @@ def _partition_pdf_with_pdfminer(
     include_page_breaks: bool,
     languages: List[str],
     metadata_last_modified: Optional[str],
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
@@ -644,7 +644,7 @@ def _partition_pdf_with_pdfminer(
                 include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified,
-                start_page=start_page,
+                starting_page_number=starting_page_number,
                 **kwargs,
             )
 
@@ -656,7 +656,7 @@ def _partition_pdf_with_pdfminer(
             include_page_breaks=include_page_breaks,
             languages=languages,
             metadata_last_modified=metadata_last_modified,
-            start_page=start_page,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
 
@@ -704,7 +704,7 @@ def _process_pdfminer_pages(
     metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
     annotation_threshold: Optional[float] = 0.9,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
@@ -712,7 +712,7 @@ def _process_pdfminer_pages(
     elements: List[Element] = []
 
     for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp), start=start_page
+        open_pdfminer_pages_generator(fp), start=starting_page_number
     ):
         width, height = page_layout.width, page_layout.height
 
@@ -882,8 +882,6 @@ def convert_pdf_to_images(
         info = pdf2image.pdfinfo_from_path(filename)
 
     total_pages = info["Pages"]
-    for start_page in range(1, total_pages + 1, chunk_size):
-        end_page = min(start_page + chunk_size - 1, total_pages)
         if f_bytes is not None:
             chunk_images = pdf2image.convert_from_bytes(
                 f_bytes,
@@ -908,7 +906,7 @@ def _partition_pdf_or_image_with_ocr(
     languages: Optional[List[str]] = ["eng"],
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
@@ -920,7 +918,7 @@ def _partition_pdf_or_image_with_ocr(
         image = PILImage.open(file) if file is not None else PILImage.open(filename)
         images.append(image)
 
-        for page_number, image in enumerate(images, start=start_page):
+        for page_number, image in enumerate(images, start=starting_page_number):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
                 languages=languages,

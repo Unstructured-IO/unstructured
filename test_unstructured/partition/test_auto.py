@@ -840,8 +840,8 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
-def test_auto_partition_respects_start_page_arugment_for_xlsx():
-    elements = partition("example-docs/stanley-cups.xlsx", start_page=3)
+def test_auto_partition_respects_starting_page_number_argument_for_xlsx():
+    elements = partition("example-docs/stanley-cups.xlsx", starting_page_number=3)
     assert elements[1].metadata.page_number == 3
 
 

@@ -540,14 +540,14 @@ def document_to_element_list(
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     languages: Optional[List[str]] = None,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
 
     num_pages = len(document.pages)
-    for page_number, page in enumerate(document.pages, start=start_page):
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
         page_elements: List[Element] = []
 
         page_image_metadata = _get_page_image_metadata(page)
@@ -623,8 +623,8 @@ def document_to_element_list(
         if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
-        if include_page_breaks and page_number < start_page + num_pages:
             sorted_page_elements.append(PageBreak(text=""))
+        if include_page_breaks and page_number < starting_page_number + num_pages:
         elements.extend(sorted_page_elements)
 
     return elements

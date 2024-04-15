@@ -29,7 +29,7 @@ def partition_ppt(
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
-    start_page: int = 1,
+    starting_page_number: int = 1,
     **kwargs,
 ) -> List[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
@@ -60,8 +60,8 @@ def partition_ppt(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
-    start_page
         Indicates what page number should be assigned for the first slide in the presentation.
+    starting_page_number
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """
@@ -105,7 +105,7 @@ def partition_ppt(
             metadata_last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
-            start_page=start_page,
+            starting_page_number=starting_page_number,
         )
 
     # remove tmp.name from filename if parsing file

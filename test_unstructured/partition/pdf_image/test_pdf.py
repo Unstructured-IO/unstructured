@@ -148,7 +148,7 @@ def test_partition_pdf_local_raises_with_no_filename():
 
 @pytest.mark.parametrize("file_mode", ["filename", "rb", "spool"])
 @pytest.mark.parametrize(
-    ("strategy", "start_page", "expected_page_numbers", "origin"),
+    ("strategy", "starting_page_number", "expected_page_numbers", "origin"),
     # fast: can't capture the "intentionally left blank page" page
     # others: will ignore the actual blank page
     [
@@ -161,7 +161,7 @@ def test_partition_pdf_local_raises_with_no_filename():
 def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
     file_mode,
     strategy,
-    start_page,
+    starting_page_number,
     expected_page_numbers,
     origin,
     filename=example_doc_path("layout-parser-paper-with-empty-pages.pdf"),
@@ -176,11 +176,15 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
             assert {element.metadata.detection_origin for element in result} == origin
 
     if file_mode == "filename":
-        result = pdf.partition_pdf(filename=filename, strategy=strategy, start_page=start_page)
+        result = pdf.partition_pdf(
+            filename=filename, strategy=strategy, starting_page_number=starting_page_number
+        )
         _test(result)
     elif file_mode == "rb":
         with open(filename, "rb") as f:
-            result = pdf.partition_pdf(file=f, strategy=strategy, start_page=start_page)
+            result = pdf.partition_pdf(
+                file=f, strategy=strategy, starting_page_number=starting_page_number
+            )
             _test(result)
     else:
         with open(filename, "rb") as test_file:
@@ -188,7 +192,7 @@ def test_partition_pdf_outputs_valid_amount_of_elements_and_metadata_values(
             spooled_temp_file.write(test_file.read())
             spooled_temp_file.seek(0)
             result = pdf.partition_pdf(
-                file=spooled_temp_file, strategy=strategy, start_page=start_page
+                file=spooled_temp_file, strategy=strategy, starting_page_number=starting_page_number
             )
             _test(result)
 
@@ -302,10 +306,12 @@ def test_partition_pdf_with_no_page_breaks(
 def test_partition_pdf_with_fast_strategy(
     filename=example_doc_path("layout-parser-paper-fast.pdf"),
 ):
-    elements = pdf.partition_pdf(filename=filename, url=None, strategy=PartitionStrategy.FAST)
+    elements = pdf.partition_pdf(
+        filename=filename, url=None, strategy=PartitionStrategy.FAST, starting_page_number=3
+    )
     assert len(elements) > 10
     # check that the pdf has multiple different page numbers
-    assert {element.metadata.page_number for element in elements} == {1, 2}
+    assert {element.metadata.page_number for element in elements} == {3, 4}
     for element in elements:
         assert element.metadata.filename == "layout-parser-paper-fast.pdf"
 

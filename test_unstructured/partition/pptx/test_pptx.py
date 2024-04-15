@@ -703,10 +703,10 @@ class Describe_PptxPartitionerOptions:
         list(opts.increment_page_number())
         assert opts.page_number == 2
 
-    def it_assigns_the_correct_page_number_when_start_page_is_given(
+    def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args, start_page=3)
+        opts = _PptxPartitionerOptions(**opts_args, starting_page_number=3)
         # -- move to the "first" slide --
         list(opts.increment_page_number())
 
