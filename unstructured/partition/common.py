@@ -581,6 +581,11 @@ def document_to_element_list(
                 element.metadata.text_as_html = (
                     layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
                 )
+                element.metadata.table_as_cells = (
+                    layout_element.table_as_cells
+                    if hasattr(layout_element, "table_as_cells")
+                    else None
+                )
                 try:
                     if (
                         isinstance(element, Title) and element.metadata.category_depth is None

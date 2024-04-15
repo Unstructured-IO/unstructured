@@ -8,9 +8,11 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
+from unstructured_inference.models.tables import cells_to_html
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
+from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
@@ -261,8 +263,9 @@ def supplement_element_with_table_extraction(
     extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
-    that are extracted will have a metadata field "text_as_html" where
-    the table's text content is rendered into an html string.
+    that are extracted will have a metadata fields "text_as_html" where
+    the table's text content is rendered into a html string and "table_as_cells"
+    with the raw table cells output from table agent
     """
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
@@ -284,7 +287,18 @@ def supplement_element_with_table_extraction(
             extracted_regions=extracted_regions,
             table_element=padded_element,
         )
-        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+        tatr_cells = tables_agent.predict(
+            cropped_image, ocr_tokens=table_tokens, result_format="cells"
+        )
+        text_as_html = cells_to_html(tatr_cells)
+        simple_table_cells = [
+            SimpleTableCell.from_table_transformer_cell(cell) for cell in tatr_cells
+        ]
+        serializable_simple_cells = [cell.to_dict() for cell in simple_table_cells]
+
+        element.text_as_html = text_as_html
+        element.table_as_cells = serializable_simple_cells
+
     return elements
 
 
