@@ -15,7 +15,6 @@ from unstructured.documents.elements import (
     CheckBox,
     Element,
     ElementMetadata,
-    NoID,
 )
 from unstructured.partition.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
@@ -56,7 +55,7 @@ def elements_from_dicts(element_dicts: Iterable[dict[str, Any]]) -> list[Element
     elements: list[Element] = []
 
     for item in element_dicts:
-        element_id: str = item.get("element_id", NoID())
+        element_id: str = item.get("element_id", None)
         metadata = (
             ElementMetadata()
             if item.get("metadata") is None

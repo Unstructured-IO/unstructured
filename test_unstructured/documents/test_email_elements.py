@@ -4,7 +4,7 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, Name, NoID
+from unstructured.documents.email_elements import EmailElement, Name
 
 
 def test_text_hash_id():
@@ -17,7 +17,7 @@ def test_text_hash_id():
     [
         EmailElement(text=""),  # should default to UUID
         Name(name="Example", text="hello there!"),  # should default to UUID
-        Name(name="Example", text="hello there!", element_id=NoID()),
+        Name(name="Example", text="hello there!", element_id=None),
     ],
 )
 def test_text_uuid(element: EmailElement):

@@ -24,7 +24,6 @@ from unstructured.documents.elements import (
     DataSourceMetadata,
     Element,
     ElementMetadata,
-    NoID,
     Points,
     RegexMetadata,
     Text,
@@ -63,7 +62,7 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     [
         Element(),  # should default to UUID
         Text(text="hello there!"),  # should default to UUID
-        Text(text="hello there!", element_id=NoID()),
+        Text(text="hello there!", element_id=None),
     ],
 )
 def test_Element_self_assigns_itself_a_UUID_id(element: Element):
