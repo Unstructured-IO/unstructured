@@ -623,8 +623,8 @@ def document_to_element_list(
         if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
+        if include_page_breaks and i < num_pages - 1:
             sorted_page_elements.append(PageBreak(text=""))
-        if include_page_breaks and page_number < starting_page_number + num_pages:
         elements.extend(sorted_page_elements)
 
     return elements
