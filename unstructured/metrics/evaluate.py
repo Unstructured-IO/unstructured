@@ -117,6 +117,14 @@ def measure_text_extraction_accuracy(
                 # if any of the output/source file is unable to open, skip the loop
                 continue
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+
+            if accuracy <= 0.001:
+                logger.error(f"H>>>> accuracy lower than 0:  {accuracy}, for ")
+                logger.error(str(output_cct))
+                logger.error("H>>>> compared to ")
+                logger.error(str(source_cct))
+                logger.info(f"H>>> {fn_txt}")
+
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
             rows.append([filename, doctype, connector, accuracy, percent_missing])
 
