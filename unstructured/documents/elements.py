@@ -676,10 +676,11 @@ class Element(abc.ABC):
     There are a few design principles that are followed when creating an element:
     1. It will always have an ID, which by default is a random UUID.
     2. Asking for an ID should always return a string, it can never be None.
-    3. When deterministic behavior is needed, the ID can be converted.
+    3. ID is lazy, meaning it will be generated when asked for the first time.
+    4. When deterministic behavior is needed, the ID can be converted.
         to a hash based on its text `element.id_to_hash()`
     4. Even if text attribute is not defined in a subclass, it will default to a blank string.
-    5. Assigning a string ID manually is possible, but is meant to be used
+    6. Assigning a string ID manually is possible, but is meant to be used
         only for deserialization purposes.
     """
 
