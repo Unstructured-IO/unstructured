@@ -97,13 +97,14 @@ class TableEvalProcessor:
         prediction: List[Dict[str, Any]],
         ground_truth: List[Dict[str, Any]],
         cutoff: float = 0.8,
+        source_type: str = "html",
     ):
         """
         Initializes the TableEvalProcessor prediction and ground truth.
 
         Args:
-            prediction: Predicted table data.
             ground_truth: Ground truth table data. The tables text should be in the deckerd format.
+            prediction: Predicted table data.
             cutoff: The cutoff value for the element level alignment. Default is 0.8.
 
         Examples:
@@ -128,15 +129,27 @@ class TableEvalProcessor:
                     ...
                     "metadata": {
                         ...
-                        "text_as_html": "<table><thead><th rowspan=\"2\">June....</tr></td></table>"
-                    },
-                }
+                        "text_as_html": "<table><thead><tr><th rowspan=\"2\">June....</tr></td></table>",
+                        "table_as_cells":
+                        [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "w": 1,
+                                "h": 2,
+                                "content": "June"
+                            },
+                            ...
+                        ]
+                    }
+                },
             ]
 
         """
         self.prediction = prediction
         self.ground_truth = ground_truth
         self.cutoff = cutoff
+        self.source_type = source_type
 
     @classmethod
     def from_json_files(
@@ -144,12 +157,15 @@ class TableEvalProcessor:
         prediction_file: Path,
         ground_truth_file: Path,
         cutoff: Optional[float] = None,
+        source_type: str = "html",
     ) -> "TableEvalProcessor":
         """Factory classmethod to initialize the object with path to json files instead of dicts
 
         Args:
           prediction_file: Path to the json file containing the predicted table data.
           ground_truth_file: Path to the json file containing the ground truth table data.
+          source_type: 'cells' or 'html'. 'cells' refers to reading 'table_as_cells' field while
+            'html' is extracted from 'text_as_html'
           cutoff: The cutoff value for the element level alignment.
             If not set, class default value is used (=0.8).
 
@@ -161,9 +177,14 @@ class TableEvalProcessor:
         with open(ground_truth_file) as f:
             ground_truth = json.load(f)
         if cutoff is not None:
-            return cls(prediction=prediction, ground_truth=ground_truth, cutoff=cutoff)
+            return cls(
+                prediction=prediction,
+                ground_truth=ground_truth,
+                cutoff=cutoff,
+                source_type=source_type,
+            )
         else:
-            return cls(prediction=prediction, ground_truth=ground_truth)
+            return cls(prediction=prediction, ground_truth=ground_truth, source_type=source_type)
 
     def process_file(self) -> TableEvaluation:
         """Processes the files and computes table-level and element-level accuracy.
@@ -171,12 +192,12 @@ class TableEvalProcessor:
         Returns:
             TableEvaluation: A dataclass object containing the computed metrics.
         """
-
-        predicted_table_data = extract_and_convert_tables_from_prediction(
-            self.prediction,
-        )
         ground_truth_table_data = extract_and_convert_tables_from_ground_truth(
             self.ground_truth,
+        )
+
+        predicted_table_data = extract_and_convert_tables_from_prediction(
+            file_elements=self.prediction, source_type=self.source_type
         )
 
         matched_indices = TableAlignment.get_table_level_alignment(
