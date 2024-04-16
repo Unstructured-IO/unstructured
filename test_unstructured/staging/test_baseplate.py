@@ -23,8 +23,7 @@ def test_stage_for_baseplate():
         [
             Title("A Wonderful Story About A Fox", metadata=metadata),
             NarrativeText(
-                "A fox ran into the chicken coop and the chickens flew off!",
-                metadata=metadata,
+                "A fox ran into the chicken coop and the chickens flew off!", metadata=metadata
             ),
         ]
     )
