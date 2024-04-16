@@ -7,23 +7,39 @@ from unstructured.cleaners.translate import translate_text
 from unstructured.documents.email_elements import EmailElement, Name
 
 
-def test_text_hash_id():
-    name_element = Name(name="Example", text="hello there!")
-    assert name_element.id_to_hash() == "c69509590d81db2f37f9d75480c8efed"
+def test_Name_should_assign_a_deterministic_and_an_idempotent_hash():
+    element = Name(name="Example", text="hello there!")
+    expected_hash = "c69509590d81db2f37f9d75480c8efed"
+
+    assert element._element_id is None, "Element should not have an ID yet"
+    assert element.id_to_hash() == expected_hash  # -- calculating hash for the first time --
+    assert element.id == expected_hash  # -- the `id` property should return the same hash --
+    assert element.id_to_hash() == expected_hash, "The hash should not change"
 
 
 @pytest.mark.parametrize(
     "element",
     [
-        EmailElement(text=""),  # should default to UUID
-        Name(name="Example", text="hello there!"),  # should default to UUID
+        EmailElement(text=""),  # -- the default `element_id` is None
+        Name(name="Example", text="hello there!"),  # -- the default `element_id` is None
         Name(name="Example", text="hello there!", element_id=None),
     ],
 )
-def test_text_uuid(element: EmailElement):
-    assert isinstance(element.id, str)
-    assert len(element.id) == 36
-    assert element.id.count("-") == 4
+def test_EmailElement_should_assign_a_UUID_only_once_and_only_at_the_first_id_request(
+    element: EmailElement,
+):
+    assert element._element_id is None, "Element should not have an ID yet"
+
+    # -- this should generate and assign a fresh UUID --
+    id_value = element.id
+
+    # -- check that the UUID is valid --
+    assert element._element_id is not None, "Element should already have an ID"
+    assert isinstance(id_value, str)
+    assert len(id_value) == 36
+    assert id_value.count("-") == 4
+
+    assert element.id == id_value, "UUID assignment should happen only once"
 
 
 def test_text_element_apply_cleaners():
