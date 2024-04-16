@@ -31,18 +31,27 @@ from unstructured.documents.elements import (
 )
 
 
+def test_Text_is_JSON_serializable():
+    # -- This shold run without an error --
+    json.dumps(Text(text="hello there!", element_id=None).to_dict())
+
+
 @pytest.mark.parametrize(
     "element",
     [
         Element(),
-        Text(text=""),
+        Text(text=""),  # -- element_id should be implicitly None --
+        Text(text="", element_id=None),  # -- setting explicitly to None --
         CheckBox(),
     ],
 )
 def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
     element: Element,
 ):
-    # -- element self-assigns itself a UUID --
+    # -- initially, id should not be assigned
+    assert element._element_id is None
+
+    # -- element self-assigns itself a UUID only when the ID is requested --
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
@@ -55,20 +64,6 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     # -- `.id_to_hash()` is idempotent --
     assert element.id_to_hash() == expected_hash
     assert element.id == expected_hash
-
-
-@pytest.mark.parametrize(
-    "element",
-    [
-        Element(),  # should default to UUID
-        Text(text="hello there!"),  # should default to UUID
-        Text(text="hello there!", element_id=None),
-    ],
-)
-def test_Element_self_assigns_itself_a_UUID_id(element: Element):
-    assert isinstance(element.id, str)
-    assert len(element.id) == 36
-    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():
