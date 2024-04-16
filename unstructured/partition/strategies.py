@@ -21,8 +21,6 @@ def validate_strategy(strategy: str, is_image: bool = False):
         raise ValueError("The fast strategy is not available for image files.")
 
 
-from unstructured.logger import logger
-
 def determine_pdf_or_image_strategy(
     strategy: str,
     is_image: bool = False,
@@ -32,17 +30,17 @@ def determine_pdf_or_image_strategy(
     extract_image_block_types: Optional[List[str]] = None,
 ):
     # log all params
-    logger.info("!!!!!!!!!!!!!!!!!!!")
-    logger.info(f"determine_pdf_or_image_strategy \n strategy: {strategy}, is_image: {is_image}, "
+    logger.warning("!!!!!!!!!!!!!!!!!!!")
+    logger.warning(f"determine_pdf_or_image_strategy \n strategy: {strategy}, is_image: {is_image}, "
                 f"pdf_text_extractable: {pdf_text_extractable}, infer_table_structure: {infer_table_structure}, "
                 f"extract_images_in_pdf: {extract_images_in_pdf}, extract_image_block_types: {extract_image_block_types}")
 
     pytesseract_installed = dependency_exists("pytesseract")
     unstructured_inference_installed = dependency_exists("unstructured_inference")
-    logger.info(f"pytesseract_installed {pytesseract_installed}  unstructured_inference_installed {unstructured_inference_installed}")
+    logger.warning(f"pytesseract_installed {pytesseract_installed}  unstructured_inference_installed {unstructured_inference_installed}")
 
     if strategy == PartitionStrategy.AUTO:
-        logger.info("Auto strategy")
+        logger.warning("Auto strategy")
         extract_element = extract_images_in_pdf or bool(extract_image_block_types)
         if is_image:
             strategy = _determine_image_auto_strategy()
@@ -52,7 +50,7 @@ def determine_pdf_or_image_strategy(
                 infer_table_structure=infer_table_structure,
                 extract_element=extract_element,
             )
-        logger.info(f"Auto strategy chosen {strategy}")
+        logger.warning(f"Auto strategy chosen {strategy}")
 
     if all(
         [not unstructured_inference_installed, not pytesseract_installed, not pdf_text_extractable],
@@ -110,7 +108,7 @@ def _determine_pdf_auto_strategy(
     for PDFs."""
     # NOTE(robinson) - Currently "hi_res" is the only strategy where
     # infer_table_structure and extract_images_in_pdf are used.
-    logger.info(f"*** _determine_pdf_auto_strategy: pdf_text_extractable={pdf_text_extractable}, infer_table_structure={infer_table_structure}, extract_element={extract_element}")
+    logger.warning(f"*** _determine_pdf_auto_strategy: pdf_text_extractable={pdf_text_extractable}, infer_table_structure={infer_table_structure}, extract_element={extract_element}")
 
     if infer_table_structure or extract_element:
         return PartitionStrategy.HI_RES

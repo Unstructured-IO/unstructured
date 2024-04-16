@@ -294,7 +294,7 @@ def partition_pdf_or_image(
         extract_images_in_pdf=extract_images_in_pdf,
         extract_image_block_types=extract_image_block_types,
     )
-    logger.info(f"!!!!!!!!!!!!!!!!!!! chosen {strategy}")
+    logger.warning(f"!!!!!!!!!!!!!!!!!!! chosen {strategy} for {filename}")
 
     if file is not None:
         file.seek(0)
