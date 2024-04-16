@@ -679,7 +679,7 @@ class Element(abc.ABC):
     3. ID is lazy, meaning it will be generated when asked for the first time.
     4. When deterministic behavior is needed, the ID can be converted.
         to a hash based on its text `element.id_to_hash()`
-    4. Even if text attribute is not defined in a subclass, it will default to a blank string.
+    4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
     6. Assigning a string ID manually is possible, but is meant to be used
         only for deserialization purposes.
     """
