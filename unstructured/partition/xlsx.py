@@ -141,12 +141,10 @@ def partition_xlsx(
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component.subtable)
 
-                metadata = _get_metadata(sheet_name, page_number, opts)
-
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
                 for content in subtable_parser.iter_leading_single_cell_rows_texts():
                     element = _create_element(str(content))
-                    element.metadata = metadata
+                    element.metadata = _get_metadata(sheet_name, page_number, opts)
                     elements.append(element)
 
                 # -- emit core-table (if it exists) as a `Table` element --
@@ -162,7 +160,7 @@ def partition_xlsx(
                         ).text_content(),
                     )
                     element = Table(text=text)
-                    element.metadata = metadata
+                    element.metadata = _get_metadata(sheet_name, page_number, opts)
                     element.metadata.text_as_html = (
                         html_text if opts.infer_table_structure else None
                     )
@@ -173,7 +171,7 @@ def partition_xlsx(
                 # -- emit each trailing single-cell row as its own `Text`-subtype element --
                 for content in subtable_parser.iter_trailing_single_cell_rows_texts():
                     element = _create_element(str(content))
-                    element.metadata = metadata
+                    element.metadata = _get_metadata(sheet_name, page_number, opts)
                     elements.append(element)
 
     elements = list(
