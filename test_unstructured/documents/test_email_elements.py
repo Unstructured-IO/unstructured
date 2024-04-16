@@ -12,16 +12,21 @@ def test_Name_should_assign_a_deterministic_and_an_idempotent_hash():
     expected_hash = "c69509590d81db2f37f9d75480c8efed"
 
     assert element._element_id is None, "Element should not have an ID yet"
-    assert element.id_to_hash() == expected_hash  # -- calculating hash for the first time --
-    assert element.id == expected_hash  # -- the `id` property should return the same hash --
-    assert element.id_to_hash() == expected_hash, "The hash should not change"
+
+    # -- calculating hash for the first time --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
 
 
 @pytest.mark.parametrize(
     "element",
     [
-        EmailElement(text=""),  # -- the default `element_id` is None
-        Name(name="Example", text="hello there!"),  # -- the default `element_id` is None
+        EmailElement(text=""),  # -- the default `element_id` is None --
+        Name(name="Example", text="hello there!"),  # -- the default `element_id` is None --
         Name(name="Example", text="hello there!", element_id=None),
     ],
 )

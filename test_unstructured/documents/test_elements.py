@@ -48,8 +48,7 @@ def test_Text_is_JSON_serializable():
 def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
     element: Element,
 ):
-    # -- initially, id should not be assigned
-    assert element._element_id is None
+    assert element._element_id is None, "Element should not have an ID yet"
 
     # -- element self-assigns itself a UUID only when the ID is requested --
     assert isinstance(element.id, str)
