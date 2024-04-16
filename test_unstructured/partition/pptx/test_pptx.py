@@ -703,6 +703,21 @@ class Describe_PptxPartitionerOptions:
         list(opts.increment_page_number())
         assert opts.page_number == 2
 
+    def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = _PptxPartitionerOptions(**opts_args, starting_page_number=3)
+        # -- move to the "first" slide --
+        list(opts.increment_page_number())
+
+        table_metadata = opts.table_metadata(text_as_html="<table><tr/></table>")
+        text_metadata = opts.text_metadata()
+
+        assert isinstance(table_metadata, ElementMetadata)
+        assert isinstance(text_metadata, ElementMetadata)
+        assert text_metadata.page_number == 3
+        assert table_metadata.page_number == 3
+
     # -- .pptx_file ------------------------------
 
     def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
