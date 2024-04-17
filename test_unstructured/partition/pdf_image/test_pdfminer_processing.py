@@ -4,8 +4,8 @@ from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
+from unstructured.partition.pdf_image.pdfminer_processing import clean_pdfminer_inner_elements
 from unstructured.partition.utils.constants import Source
-from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 
 # A set of elements with pdfminer elements inside tables
 deletable_elements_inside_table = [

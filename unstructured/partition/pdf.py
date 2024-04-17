@@ -81,6 +81,7 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_duplicate_image_elements,
+    clean_pdfminer_inner_elements,
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
@@ -96,7 +97,6 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
