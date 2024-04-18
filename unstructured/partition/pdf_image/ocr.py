@@ -8,7 +8,6 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from unstructured_inference.models.tables import cells_to_html
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
@@ -254,6 +253,7 @@ def supplement_page_layout_with_ocr(
     return page_layout
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_element_with_table_extraction(
     elements: List["LayoutElement"],
     image: PILImage,
@@ -267,6 +267,7 @@ def supplement_element_with_table_extraction(
     the table's text content is rendered into a html string and "table_as_cells"
     with the raw table cells output from table agent
     """
+    from unstructured_inference.models.tables import cells_to_html
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
@@ -292,12 +293,11 @@ def supplement_element_with_table_extraction(
         )
         text_as_html = cells_to_html(tatr_cells)
         simple_table_cells = [
-            SimpleTableCell.from_table_transformer_cell(cell) for cell in tatr_cells
+            SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
         ]
-        serializable_simple_cells = [cell.to_dict() for cell in simple_table_cells]
 
         element.text_as_html = text_as_html
-        element.table_as_cells = serializable_simple_cells
+        element.table_as_cells = simple_table_cells
 
     return elements
 

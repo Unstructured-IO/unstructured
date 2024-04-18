@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 
-from more_itertools import first
-
 
 @dataclass
 class SimpleTableCell:
@@ -26,13 +24,19 @@ class SimpleTableCell:
                         "cell text": "Text inside cell"
                     }
         """
-        rows_sorted = sorted(tatr_table_cell["row_nums"])
-        columns_sorted = sorted(tatr_table_cell["column_nums"])
 
-        x = first(columns_sorted)
-        y = first(rows_sorted)
+        row_nums = tatr_table_cell.get("row_nums", [])
+        column_nums = tatr_table_cell.get("column_nums", [])
 
-        width = len(columns_sorted)
-        height = len(rows_sorted)
+        if not row_nums:
+            raise ValueError(f'Cell {tatr_table_cell} has missing values under "row_nums" key')
+        if not column_nums:
+            raise ValueError(f'Cell {tatr_table_cell} has missing values under "column_nums" key')
 
-        return cls(x=x, y=y, w=width, h=height, content=tatr_table_cell["cell text"])
+        x = sorted(column_nums)[0]
+        y = sorted(row_nums)[0]
+
+        width = len(column_nums)
+        height = len(row_nums)
+
+        return cls(x=x, y=y, w=width, h=height, content=tatr_table_cell.get("cell text", ""))
