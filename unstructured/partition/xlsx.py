@@ -55,6 +55,7 @@ def partition_xlsx(
     include_header: bool = False,
     find_subtable: bool = True,
     date_from_file_object: bool = False,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Excel Documents in .xlsx format into its document elements.
@@ -103,7 +104,9 @@ def partition_xlsx(
     )
 
     elements: list[Element] = []
-    for page_number, (sheet_name, sheet) in enumerate(opts.sheets.items(), start=1):
+    for page_number, (sheet_name, sheet) in enumerate(
+        opts.sheets.items(), start=starting_page_number
+    ):
         if not opts.find_subtable:
             html_text = (
                 sheet.to_html(  # pyright: ignore[reportUnknownMemberType]

@@ -363,6 +363,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         extract_image_block_to_payload=False,
         hi_res_model_name=None,
         date_from_file_object=False,
+        starting_page_number=1,
     )
 
 
@@ -838,6 +839,11 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+def test_auto_partition_respects_starting_page_number_argument_for_xlsx():
+    elements = partition("example-docs/stanley-cups.xlsx", starting_page_number=3)
+    assert elements[1].metadata.page_number == 3
 
 
 EXPECTED_XLS_TEXT_LEN = 550

@@ -4,13 +4,15 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import pathlib
 import tempfile
-from typing import Any
+from typing import Any, Iterator
 
 import pptx
 import pytest
+from pptx.shapes.picture import Picture
 from pptx.util import Inches
 from pytest_mock import MockFixture
 
@@ -23,14 +25,20 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
+    Element,
     ElementMetadata,
+    Image,
     ListItem,
     NarrativeText,
     PageBreak,
     Text,
     Title,
 )
-from unstructured.partition.pptx import _PptxPartitionerOptions, partition_pptx
+from unstructured.partition.pptx import (
+    _PptxPartitionerOptions,
+    partition_pptx,
+    register_picture_partitioner,
+)
 
 EXPECTED_PPTX_OUTPUT = [
     Title(text="Adding a Bullet Slide"),
@@ -261,7 +269,33 @@ def test_partition_pptx_malformed():
         assert element.metadata.filename == "fake-power-point-malformed.pptx"
 
 
-# == DescribePptxPartitionerMetadataBehaviors ====================================================
+# == image sub-partitioning behaviors ============================================================
+
+
+def test_partition_pptx_generates_no_Image_elements_by_default():
+    assert partition_pptx(example_doc_path("picture.pptx")) == []
+
+
+def test_partition_pptx_uses_registered_picture_partitioner():
+    class FakePicturePartitioner:
+        @classmethod
+        def iter_elements(
+            cls, picture: Picture, opts: _PptxPartitionerOptions
+        ) -> Iterator[Element]:
+            image_hash = hashlib.sha1(picture.image.blob).hexdigest()
+            yield Image(f"Image with hash {image_hash}, strategy: {opts.strategy}")
+
+    register_picture_partitioner(FakePicturePartitioner)
+
+    elements = partition_pptx(example_doc_path("picture.pptx"))
+
+    assert len(elements) == 1
+    image = elements[0]
+    assert type(image) is Image
+    assert image.text == "Image with hash b0a1e6cf904691e6fa42bd9e72acc2b05280dc86, strategy: fast"
+
+
+# == metadata behaviors ==========================================================================
 
 
 def test_partition_pptx_metadata_date(mocker: MockFixture):
@@ -357,7 +391,7 @@ def test_partition_pptx_raises_TypeError_for_invalid_languages():
         partition_pptx(example_doc_path("fake-power-point.pptx"), languages="eng")  # type: ignore
 
 
-# == DescribePptxPartitionerDownstreamBehaviors ==================================================
+# == downstream behaviors ========================================================================
 
 
 def test_partition_pptx_with_json():
@@ -669,6 +703,21 @@ class Describe_PptxPartitionerOptions:
         list(opts.increment_page_number())
         assert opts.page_number == 2
 
+    def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = _PptxPartitionerOptions(**opts_args, starting_page_number=3)
+        # -- move to the "first" slide --
+        list(opts.increment_page_number())
+
+        table_metadata = opts.table_metadata(text_as_html="<table><tr/></table>")
+        text_metadata = opts.text_metadata()
+
+        assert isinstance(table_metadata, ElementMetadata)
+        assert isinstance(text_metadata, ElementMetadata)
+        assert text_metadata.page_number == 3
+        assert table_metadata.page_number == 3
+
     # -- .pptx_file ------------------------------
 
     def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
@@ -713,6 +762,17 @@ class Describe_PptxPartitionerOptions:
 
         with pytest.raises(ValueError, match="No PPTX document specified, either `filename` or "):
             opts.pptx_file
+
+    # -- .strategy -------------------------------
+
+    @pytest.mark.parametrize("arg_value", ["fast", "hi_res"])
+    def it_knows_which_partitioning_strategy_to_use(
+        self, arg_value: str, opts_args: dict[str, Any]
+    ):
+        opts_args["strategy"] = arg_value
+        opts = _PptxPartitionerOptions(**opts_args)
+
+        assert opts.strategy == arg_value
 
     # -- .table_metadata -------------------------
 
@@ -776,4 +836,5 @@ class Describe_PptxPartitionerOptions:
             "infer_table_structure": True,
             "metadata_file_path": None,
             "metadata_last_modified": None,
+            "strategy": "fast",
         }

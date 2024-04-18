@@ -157,7 +157,7 @@ if you'd like to use the IDs as a primary key in a database, for example.
 Element ID Design Principles
 """"""""""""""""""""""""""""""""""""
 
-#. A partitioning function can assign only one of two available ID types to a returned element: a hash or UUID.
+#. A partitioning function can assign only one of two available ID types to a returned element: a hash or a UUID.
 #. All elements that are returned come with an ID, which is never None.
 #. No matter which type of ID is used, it will always be in string format.
 #. Partitioning a document returns elements with hashes as their default IDs, ensuring they are both deterministic and unique within a document.

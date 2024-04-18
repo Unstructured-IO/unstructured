@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from abc import ABC
 from datetime import datetime
-from typing import Callable
+from typing import Callable, Optional
 
-from unstructured.documents.elements import NoID, Text
+from unstructured.documents.elements import Text
 
 
 class NoDatestamp(ABC):
@@ -25,7 +25,7 @@ class Name(EmailElement):
         name: str,
         text: str,
         datestamp: datetime | NoDatestamp = NoDatestamp(),
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
     ):
         self.name: str = name
 

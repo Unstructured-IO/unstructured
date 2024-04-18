@@ -80,6 +80,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        85
+      ],
       "link_texts": [
         "\n        text\n      "
       ],
@@ -101,6 +104,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "\n        text\n      "
@@ -381,6 +387,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "\n        https://www.notion.so/icons/airplane_brown.svg\n      "
       ],
@@ -403,6 +412,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "\n        https://www.wikipedia.org/\n      "
       ],
@@ -424,6 +436,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "\n        https://play-lh.googleusercontent.com/KwUBNPbMTk9jDXYS2AeX3illtVRTkrKVh5xR1Mg4WHd0CG2tV4mrh1z3kXi5z_warlk\n      "
@@ -463,6 +478,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        -1
+      ],
       "link_texts": [
         "\n        Analytics\n      "
       ],
@@ -500,6 +518,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "\n        Untitled\n      "

@@ -28,14 +28,6 @@ Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
 
 
-class NoID(abc.ABC):
-    """Class to indicate that an element do not have an ID."""
-
-
-class UUID(abc.ABC):
-    """Class to indicate that an element should have a UUID."""
-
-
 @dc.dataclass
 class DataSourceMetadata:
     """Metadata fields that pertain to the data source of the document."""
@@ -188,6 +180,7 @@ class ElementMetadata:
     last_modified: Optional[str]
     link_texts: Optional[list[str]]
     link_urls: Optional[list[str]]
+    link_start_indexes: Optional[list[int]]
     links: Optional[list[Link]]
     # -- used in chunks only, allowing access to element(s) chunk was formed from when enabled --
     orig_elements: Optional[list[Element]]
@@ -195,7 +188,7 @@ class ElementMetadata:
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
-    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
     # -- EPUB document section --
@@ -235,11 +228,12 @@ class ElementMetadata:
         last_modified: Optional[str] = None,
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
+        link_start_indexes: Optional[list[int]] = None,
         links: Optional[list[Link]] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
-        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
         section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
@@ -274,6 +268,7 @@ class ElementMetadata:
         self.last_modified = last_modified
         self.link_texts = link_texts
         self.link_urls = link_urls
+        self.link_start_indexes = link_start_indexes
         self.links = links
         self.orig_elements = orig_elements
         self.page_name = page_name
@@ -485,6 +480,7 @@ class ConsolidationStrategy(enum.Enum):
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,
             "link_urls": cls.LIST_CONCATENATE,
+            "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
@@ -681,10 +677,11 @@ class Element(abc.ABC):
     There are a few design principles that are followed when creating an element:
     1. It will always have an ID, which by default is a random UUID.
     2. Asking for an ID should always return a string, it can never be None.
-    3. When deterministic behavior is needed, the ID can be converted.
-        to a hash based on its text and position via `element.id_to_hash(position)`
-    4. Even if text attribute is not defined in a subclass, it will default to a blank string.
-    5. Assigning a string ID manually is possible, but is meant to be used
+    3. ID is lazy, meaning it will be generated when asked for the first time.
+    4. When deterministic behavior is needed, the ID can be converted.
+        to a hash based on its text `element.id_to_hash(position)`
+    4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
+    6. Assigning a string ID manually is possible, but is meant to be used
         only for deserialization purposes.
     """
 
@@ -692,19 +689,16 @@ class Element(abc.ABC):
 
     def __init__(
         self,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if isinstance(element_id, NoID):
-            self.id = str(uuid.uuid4())
-        elif isinstance(element_id, str):
-            self.id = element_id
-        else:
-            raise ValueError("element_id must be of type str or NoID.")
+        if element_id is not None and not isinstance(element_id, str):
+            raise ValueError("element_id must be of type str or None.")
 
+        self._element_id = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -755,12 +749,17 @@ class Element(abc.ABC):
         Args:
             index_in_sequence: The index of the element in the sequence of elements.
 
-        Returns:
-            The first 32 characters of the SHA256 hash of the concatenated input parameters.
+        Returns: new ID value
         """
         data = f"{self.text}{index_in_sequence}"
-        self.id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
         return self.id
+
+    @property
+    def id(self):
+        if self._element_id is None:
+            self._element_id = str(uuid.uuid4())
+        return self._element_id
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -779,7 +778,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -823,7 +822,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | NoID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,

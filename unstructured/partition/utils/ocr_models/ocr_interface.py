@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 import functools
 import importlib
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, List
+from typing import TYPE_CHECKING
 
 from unstructured.partition.utils.constants import OCR_AGENT_MODULES_WHITELIST
 
 if TYPE_CHECKING:
-    from PIL import PILImage
+    from PIL import Image as PILImage
     from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layoutelement import (
         LayoutElement,
@@ -14,31 +16,26 @@ if TYPE_CHECKING:
 
 
 class OCRAgent(ABC):
-    def __init__(self):
-        self.agent = self.load_agent()
-
-    @abstractmethod
-    def load_agent(self, language: str) -> Any:
-        pass
+    """Defines the interface for an Optical Character Recognition (OCR) service."""
 
     @abstractmethod
     def is_text_sorted(self) -> bool:
         pass
 
     @abstractmethod
-    def get_text_from_image(self, image: "PILImage", ocr_languages: str = "eng") -> str:
+    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
         pass
 
     @abstractmethod
     def get_layout_from_image(
-        self, image: "PILImage", ocr_languages: str = "eng"
-    ) -> List["TextRegion"]:
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[TextRegion]:
         pass
 
     @abstractmethod
     def get_layout_elements_from_image(
-        self, image: "PILImage", ocr_languages: str = "eng"
-    ) -> List["LayoutElement"]:
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[LayoutElement]:
         pass
 
     @staticmethod
@@ -51,6 +48,6 @@ class OCRAgent(ABC):
             return loaded_class()
         else:
             raise ValueError(
-                f"Environment variable OCR_AGENT module name {module_name}",
-                f" must be set to a whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
+                f"Environment variable OCR_AGENT module name {module_name}, must be set to a"
+                f" whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
             )
