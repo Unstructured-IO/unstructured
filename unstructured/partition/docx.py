@@ -90,6 +90,7 @@ def convert_and_partition_docx(
     metadata_last_modified: Optional[str] = None,
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    starting_page_number: int = 1,
 ) -> List[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
@@ -119,6 +120,10 @@ def convert_and_partition_docx(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     exactly_one(filename=filename, file=file)
 
@@ -161,6 +166,7 @@ def convert_and_partition_docx(
             metadata_last_modified=metadata_last_modified,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
         )
 
     return elements
