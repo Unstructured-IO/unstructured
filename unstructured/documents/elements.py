@@ -754,14 +754,15 @@ class Element(abc.ABC):
     def id_to_hash(self, sequence_number: int) -> str:
         """Calculates and assigns a deterministic hash as an ID.
 
-        The hash ID is based on element's text, and index in sequence.
+        The hash ID is based on element's text, sequence number on page,
+        page number and its filename.
 
         Args:
-            sequence_number: The index of the element in the sequence of elements.
+            sequence_number: index on page
 
         Returns: new ID value
         """
-        data = f"{self.text}{self.metadata.page_number}{sequence_number}"
+        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
         self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
         return self.id
 
