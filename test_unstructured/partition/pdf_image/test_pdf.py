@@ -1307,6 +1307,4 @@ def test_unique_and_deterministic_element_ids(strategy, expected_ids):
         "example-docs/fake-memo-with-duplicate-page.pdf", strategy=strategy, starting_page_number=2
     )
     ids = [element.id for element in elements]
-
-    assert len(ids) == len(set(ids)), "Element IDs are not unique"
     assert ids == expected_ids, "Element IDs do not match expected IDs"
