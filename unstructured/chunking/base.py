@@ -497,7 +497,19 @@ class TablePreChunk:
         Note this is a fresh copy of the metadata on each call since it will need to be mutated
         differently for each chunk formed from from this pre-chunk.
         """
+        CS = ConsolidationStrategy
         metadata = copy.deepcopy(self._table.metadata)
+
+        # -- drop metadata fields not appropriate for chunks, in particular
+        # -- parent_id's will not reliably point to an existing element
+        drop_field_names = [
+            field_name
+            for field_name, strategy in CS.field_consolidation_strategies().items()
+            if strategy is CS.DROP
+        ]
+        for field_name in drop_field_names:
+            setattr(metadata, field_name, None)
+
         if self._opts.include_orig_elements:
             metadata.orig_elements = self._orig_elements
         return metadata

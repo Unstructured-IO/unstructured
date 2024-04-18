@@ -1,3 +1,4 @@
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -18,13 +19,14 @@ def test_stage_for_baseplate():
     system = PixelSpace(width=1700, height=2200)
     coordinates_metadata = CoordinatesMetadata(points=points, system=system)
     metadata = ElementMetadata(filename="fox.pdf", coordinates=coordinates_metadata)
-    elements = [
-        Title("A Wonderful Story About A Fox", metadata=metadata),
-        NarrativeText(
-            "A fox ran into the chicken coop and the chickens flew off!",
-            metadata=metadata,
-        ),
-    ]
+    elements = assign_hash_ids(
+        [
+            Title("A Wonderful Story About A Fox", metadata=metadata),
+            NarrativeText(
+                "A fox ran into the chicken coop and the chickens flew off!", metadata=metadata
+            ),
+        ]
+    )
 
     rows = stage_for_baseplate(elements)
     assert rows == {

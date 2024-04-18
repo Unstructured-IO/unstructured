@@ -1,8 +1,7 @@
 import os
-import uuid
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence
 
-from unstructured.documents.elements import UUID, NoID, Text
+from unstructured.documents.elements import Text
 
 VALID_ATTACHMENT_TYPES: List[str] = ["IMAGE", "VIDEO", "RAW_TEXT", "TEXT_URL", "HTML"]
 
@@ -50,7 +49,7 @@ def stage_for_label_box(
     Stages documents to be uploaded to LabelBox and generates LabelBox configuration.
     ref: https://docs.labelbox.com/reference/data-import-format-overview
     """
-    ids: Sequence[Union[str, uuid.UUID, NoID, UUID]]
+    ids: Sequence[str]
     if (external_ids is not None) and len(external_ids) != len(elements):
         raise ValueError(
             "The external_ids parameter must be a list and the length of external_ids parameter "
