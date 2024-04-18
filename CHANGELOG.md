@@ -1,4 +1,4 @@
-## 0.13.3
+## 0.13.3-dev9
 
 ### Enhancements
 
@@ -10,6 +10,8 @@
 * **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
 
 ### Features
+
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
 
