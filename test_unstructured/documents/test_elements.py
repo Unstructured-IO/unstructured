@@ -42,7 +42,7 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     assert len(element.id) == 36
     assert element.id.count("-") == 4
 
-    expected_hash = "5feceb66ffc86f38d952786c6d696c79"
+    expected_hash = "5336294a19f32ff03ef80066fbc3e0f7"
     # -- calling `.id_to_hash()` changes the element's id-type to hash --
     assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
@@ -415,10 +415,7 @@ class DescribeElementMetadata:
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (
-                "eJyFzU0KwjAQhuGrlKxdNE2bJt5AcFlXIjKTmUqhf9QR1NK7myx"
-                "143KG5+M9r4p7HniUa0dqnyldM1TaAXpvkQmDrnJXIIIho8l5tc"
-                "vUwAIEAtGvW7yFn5K2x2nhIQF5zZweTSc9q0h+K7YIWufoLZFha"
-                "h3VbQkUWrSlMxTqv5XsMN8fX63TGED4Ni3dm6lJdrt8AEnKRLw="
+                "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrErtM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp1LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
             ),
             "page_number": 2,
         }
@@ -712,7 +709,6 @@ def test_hash_ids_are_unique_for_duplicate_elements():
 
 
 def test_hash_ids_are_deterministic():
-    # GIVEN
     parent = Text(
         text="Parent",
         metadata=ElementMetadata(page_number=1),
@@ -729,37 +725,36 @@ def test_hash_ids_are_deterministic():
         ),
     ]
 
-    # WHEN
     updated_elements = assign_and_map_hash_ids(elements)
     ids = [element.id for element in updated_elements]
     parent_ids = [element.metadata.parent_id for element in updated_elements]
 
-    # THEN
     assert ids == [
-        "4b7193f7741dc9ed2674599e73df10d8",
-        "6e85abbe7cd1e40bc7ed789f911ea18b",
-        "52732bb9750fe76418e2a9ce9046ff66",
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "4112a8d24886276e18e759d06956021b",
+        "eba84bbe7f03e8b91a1527323040ee3d",
     ]
     assert parent_ids == [
         None,
-        "4b7193f7741dc9ed2674599e73df10d8",
-        "4b7193f7741dc9ed2674599e73df10d8",
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "ea9eb7e80383c190f8cafce1ad666624",
     ]
 
 
 @pytest.mark.parametrize(
-    ("text", "index_in_sequence", "expected_hash"),
+    ("text", "sequence_number", "filename", "page_number", "expected_hash"),
     [
-        ("foo", 1, "bb4eca334f61af3b67b5d528907d3028"),
-        ("foo", 2, "4963bd713a7eb1bce458868b0c8472bd"),
-        ("some text", 0, "483459f0809b83b5c4209bd08a7d2fc1"),
-        ("some text", 1, "3f6c09eb80423bb4cba97555cb334919"),
+        ("foo", 1, "foo.pdf", 1, "4bb264eb23ceb44cd8fcc5af44f8dc71"),
+        ("foo", 2, "foo.pdf", 1, "75fc1de48cf724ec00aa8d1c5a0d3758"),
+        # -- txt file types don't have a page number --
+        ("some text", 0, "some.txt", None, "1a2627b5760c06b1440102f11a1edb0f"),
+        ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
     ],
 )
-def test_id_to_hash(text, index_in_sequence, expected_hash):
+def test_id_to_hash_calculates(text, sequence_number, filename, page_number, expected_hash):
     element = Text(
         text=text,
-        metadata=ElementMetadata(),
+        metadata=ElementMetadata(filename=filename, page_number=page_number),
     )
-    assert element.id_to_hash(index_in_sequence) == expected_hash, "Returned ID does not match"
+    assert element.id_to_hash(sequence_number) == expected_hash, "Returned ID does not match"
     assert element.id == expected_hash, "ID should be set"

@@ -873,11 +873,11 @@ def test_ids_are_unique_and_deterministic():
 
     ids = [e.id for e in elements]
     assert ids == [
-        "c904eb7ab8be023c0628ee48088aa12f",
-        "48b7e93a5ca126555fe5770627f44c0d",
-        "389aef9b43174d9a51f669312fe649f3",
-        "bbf352a4284087546e8bc1f19d459916",
-        "0523e6fcd71c35c9cb1e9cf9591b78c9",
-        "6b71251537279ed472bc673126f84555",
-        "283be4ff64c9cf8b510d3c0ffe72c6a7",
+        "2f22d82eea1faf5f40dac60cef52700e",
+        "ca9e1f448e531a5152d960e14eefc360",
+        "9ddeacb172ac17fb45e6f3f15f3c703d",
+        "a4fd85d3f4141acae38c8f9c936ed2f3",
+        "44ebaaf66640719c918246d4ccba1c45",
+        "f36e8ebcb3b6a051940a168fe73cbc44",
+        "532b395177652c7d61e1e4d855f1dc1d",
     ], "IDs are not deterministic"

@@ -23,13 +23,13 @@ def test_partition_doc_for_deterministic_and_unique_ids():
     ids = [element.id for element in partition_doc("example-docs/duplicate-paragraphs.doc")]
 
     assert ids == [
-        "c904eb7ab8be023c0628ee48088aa12f",
-        "48b7e93a5ca126555fe5770627f44c0d",
-        "389aef9b43174d9a51f669312fe649f3",
-        "bbf352a4284087546e8bc1f19d459916",
-        "0523e6fcd71c35c9cb1e9cf9591b78c9",
-        "6b71251537279ed472bc673126f84555",
-        "283be4ff64c9cf8b510d3c0ffe72c6a7",
+        "ade273c622c48d67a7be7b3816d5b4d8",
+        "7d0b32fdf169f9578723486cb4bc1235",
+        "1feb6e8e9c1662cfaef75907aeeb0900",
+        "aa2a8ac10143b12f0fe2087837ea11d2",
+        "da31ba7ed3919067d2c6572dc1617271",
+        "1914359c179a160df921b769acf8c353",
+        "f9d0d379fc791bae487b7a45f65caa50",
     ]
 
 
