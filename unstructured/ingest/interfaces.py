@@ -246,14 +246,11 @@ class ChunkingConfig(BaseConfig):
     overlap_all: t.Optional[bool] = None
 
     def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        chunking_strategy = (
-            self.chunking_strategy
-            if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
-        )
+        if self.chunking_strategy not in ("by_title", "basic"):
+            return elements
 
-        if chunking_strategy == "by_title":
-            return chunk_by_title(
+        if self.chunking_strategy == "by_title":
+            chunks = chunk_by_title(
                 elements=elements,
                 combine_text_under_n_chars=self.combine_text_under_n_chars,
                 include_orig_elements=self.include_orig_elements,
@@ -263,9 +260,8 @@ class ChunkingConfig(BaseConfig):
                 overlap=self.overlap,
                 overlap_all=self.overlap_all,
             )
-
-        if chunking_strategy == "basic":
-            return chunk_elements(
+        else:
+            chunks = chunk_elements(
                 elements=elements,
                 include_orig_elements=self.include_orig_elements,
                 max_characters=self.max_characters,
@@ -274,7 +270,10 @@ class ChunkingConfig(BaseConfig):
                 overlap_all=self.overlap_all,
             )
 
-        return elements
+        for chunk in chunks:
+            chunk.id_to_hash()
+
+        return chunks
 
 
 @dataclass

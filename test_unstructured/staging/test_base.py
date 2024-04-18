@@ -8,6 +8,7 @@ from tempfile import NamedTemporaryFile
 import pandas as pd
 import pytest
 
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.elements import (
     Address,
     CheckBox,
@@ -44,7 +45,7 @@ def test_base64_gzipped_json_to_elements_can_deserialize_compressed_elements_fro
 
 
 def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str():
-    elements = [Title("Lorem"), Text("Lorem Ipsum")]
+    elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
 
     assert base.elements_to_base64_gzipped_json(elements) == (
         "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
