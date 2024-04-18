@@ -275,6 +275,10 @@ install-pandoc:
 install-paddleocr:
 	ARCH=${ARCH} ./scripts/install-paddleocr.sh
 
+.PHONY: install-googlevisionocr
+install-googlevisionocr:
+	python3 -m pip install -r requirements/extra-googlevisionocr.txt
+
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
 pip-compile:

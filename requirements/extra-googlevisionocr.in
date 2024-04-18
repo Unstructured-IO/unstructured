@@ -1,0 +1,4 @@
+-c ./deps/constraints.txt
+-c base.txt
+
+google-cloud-vision
