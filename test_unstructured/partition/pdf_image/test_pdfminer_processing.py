@@ -4,8 +4,10 @@ from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
-from unstructured.partition.pdf_image.pdfminer_processing import clean_pdfminer_inner_elements, \
-    clean_pdfminer_duplicate_image_elements
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    clean_pdfminer_duplicate_image_elements,
+    clean_pdfminer_inner_elements,
+)
 from unstructured.partition.utils.constants import Source
 
 # A set of elements with pdfminer elements inside tables
@@ -94,10 +96,7 @@ elements_with_duplicate_images = [
         source=Source.PDFMINER,
     ),
     LayoutElement(
-        bbox=Rectangle(10, 10, 110, 110),
-        text="Image1",
-        type="Image",
-        source=Source.PDFMINER
+        bbox=Rectangle(10, 10, 110, 110), text="Image1", type="Image", source=Source.PDFMINER
     ),
     LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
 ]
@@ -123,6 +122,7 @@ elements_without_duplicate_images = [
     ),
     LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
 ]
+
 
 @pytest.mark.parametrize(
     ("elements", "expected_document_length"),
