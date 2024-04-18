@@ -678,20 +678,11 @@ class DescribeElementMetadata:
 
 def test_hash_ids_are_unique_for_duplicate_elements():
     # GIVEN
-    parent = Text(
-        text="Parent",
-        metadata=ElementMetadata(page_number=1),
-    )
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
     elements = [
         parent,
-        Text(
-            text="Element",
-            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
-        ),
-        Text(
-            text="Element",
-            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
-        ),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
     ]
 
     # WHEN
@@ -712,20 +703,11 @@ def test_hash_ids_are_unique_for_duplicate_elements():
 
 
 def test_hash_ids_are_deterministic():
-    parent = Text(
-        text="Parent",
-        metadata=ElementMetadata(page_number=1),
-    )
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
     elements = [
         parent,
-        Text(
-            text="Element",
-            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
-        ),
-        Text(
-            text="Element",
-            metadata=ElementMetadata(page_number=1, parent_id=parent.id),
-        ),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
     ]
 
     updated_elements = assign_and_map_hash_ids(elements)
@@ -747,9 +729,10 @@ def test_hash_ids_are_deterministic():
 @pytest.mark.parametrize(
     ("text", "sequence_number", "filename", "page_number", "expected_hash"),
     [
+        # -- pdf files support page numbers --
         ("foo", 1, "foo.pdf", 1, "4bb264eb23ceb44cd8fcc5af44f8dc71"),
         ("foo", 2, "foo.pdf", 1, "75fc1de48cf724ec00aa8d1c5a0d3758"),
-        # -- txt file types don't have a page number --
+        # -- txt files don't have a page number --
         ("some text", 0, "some.txt", None, "1a2627b5760c06b1440102f11a1edb0f"),
         ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
     ],
