@@ -178,7 +178,7 @@ def test_stage_with_annotation():
     label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
+            "data": {"text": "A big brown bear", "ref_id": "2812a3676591a479c5425789f9c0156f"},
             "annotations": [
                 {
                     "result": [
@@ -218,7 +218,7 @@ def test_stage_with_prediction():
     label_studio_data = label_studio.stage_for_label_studio(elements, predictions=[prediction])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
+            "data": {"text": "A big brown bear", "ref_id": "2812a3676591a479c5425789f9c0156f"},
             "predictions": [
                 {
                     "result": [
@@ -258,7 +258,7 @@ def test_stage_with_annotation_for_ner():
     label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
+            "data": {"text": "A big brown bear", "ref_id": "2812a3676591a479c5425789f9c0156f"},
             "annotations": [
                 {
                     "result": [
@@ -344,7 +344,7 @@ def test_stage_with_reviewed_annotation():
     label_studio_data = label_studio.stage_for_label_studio(elements, [annotations])
     assert label_studio_data == [
         {
-            "data": {"text": "A big brown bear", "ref_id": "6153a3c2af8e562361e4aa14d3b4079d"},
+            "data": {"text": "A big brown bear", "ref_id": "2812a3676591a479c5425789f9c0156f"},
             "annotations": [
                 {
                     "result": [

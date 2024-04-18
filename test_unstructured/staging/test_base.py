@@ -48,10 +48,10 @@ def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str(
     elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
 
     assert base.elements_to_base64_gzipped_json(elements) == (
-        "eJyFzU0KwjAQhuGrlKxdNE2bJt5AcFlXIjKTmUqhf9QR1NK7myx"
-        "143KG5+M9r4p7HniUa0dqnyldM1TaAXpvkQmDrnJXIIIho8l5tc"
-        "vUwAIEAtGvW7yFn5K2x2nhIQF5zZweTSc9q0h+K7YIWufoLZFha"
-        "h3VbQkUWrSlMxTqv5XsMN8fX63TGED4Ni3dm6lJdrt8AEnKRLw="
+        "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
+        "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
+        "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp1"
+        "LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
     )
 
 

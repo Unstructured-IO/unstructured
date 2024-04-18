@@ -33,7 +33,7 @@ def test_stage_for_baseplate():
         "rows": [
             {
                 "data": {
-                    "element_id": "4982120de228327384e259e169f90e24",
+                    "element_id": "933d9fce18f44b09f4ec6975f470a0d7",
                     "text": "A Wonderful Story About A Fox",
                     "type": "Title",
                 },
@@ -52,7 +52,7 @@ def test_stage_for_baseplate():
             },
             {
                 "data": {
-                    "element_id": "84ce27a5715a722b6581fa40b66a87f7",
+                    "element_id": "d154ec57da0d7d4439aaed8ec6546f6e",
                     "text": "A fox ran into the chicken coop and the chickens flew off!",
                     "type": "NarrativeText",
                 },
