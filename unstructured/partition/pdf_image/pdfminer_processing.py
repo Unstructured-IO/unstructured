@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
 from pdfminer.utils import open_filename
@@ -141,12 +140,13 @@ def merge_inferred_with_extracted_layout(
 
 @requires_dependencies("unstructured_inference")
 def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
-    """Clean pdfminer elements from inside tables and stores them in extra_info dictionary
-    with the table id as key"""
+    """Clean pdfminer elements from inside tables.
+
+    This function removes elements sourced from PDFMiner that are subregions within table elements.
+    """
 
     from unstructured_inference.config import inference_config
 
-    defaultdict(list)
     for page in document.pages:
         tables = [e for e in page.elements if e.type == ElementType.TABLE]
         for i, element in enumerate(page.elements):
