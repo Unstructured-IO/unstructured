@@ -515,18 +515,19 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     Returns:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
+    # -- generate sequence number for each element on a page --
     page_numbers = [e.metadata.page_number for e in elements]
     page_seq_pairs = [
-        seq_on_page
-        for page, group in groupby(page_numbers)
-        for seq_on_page, _ in enumerate(group)
+        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
     ]
 
+    # -- assign hash IDs to elements --
     old_to_new_mapping = {
         element.id: element.id_to_hash(seq_on_page_counter)
         for element, seq_on_page_counter in zip(elements, page_seq_pairs)
     }
 
+    # -- map old parent IDs to new ones --
     for e in elements:
         parent_id = e.metadata.parent_id
         if not parent_id:
