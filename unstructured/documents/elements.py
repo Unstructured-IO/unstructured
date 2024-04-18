@@ -11,6 +11,7 @@ import os
 import pathlib
 import re
 import uuid
+from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -514,8 +515,17 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     Returns:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_pairs = [
+        seq_on_page
+        for page, group in groupby(page_numbers)
+        for seq_on_page, _ in enumerate(group)
+    ]
 
-    old_to_new_mapping = {e.id: e.id_to_hash(idx) for idx, e in enumerate(elements)}
+    old_to_new_mapping = {
+        element.id: element.id_to_hash(seq_on_page_counter)
+        for element, seq_on_page_counter in zip(elements, page_seq_pairs)
+    }
 
     for e in elements:
         parent_id = e.metadata.parent_id
@@ -741,17 +751,17 @@ class Element(abc.ABC):
 
         return new_coordinates
 
-    def id_to_hash(self, index_in_sequence: int) -> str:
+    def id_to_hash(self, sequence_number: int) -> str:
         """Calculates and assigns a deterministic hash as an ID.
 
         The hash ID is based on element's text, and index in sequence.
 
         Args:
-            index_in_sequence: The index of the element in the sequence of elements.
+            sequence_number: The index of the element in the sequence of elements.
 
         Returns: new ID value
         """
-        data = f"{self.text}{index_in_sequence}"
+        data = f"{self.text}{self.metadata.page_number}{sequence_number}"
         self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
         return self.id
 
