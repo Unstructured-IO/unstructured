@@ -1245,46 +1245,46 @@ def test_partition_pdf_always_keep_all_image_elements(
 @pytest.fixture()
 def expected_element_ids_for_fast_strategy():
     return [
-        "bda75fa1dc739a5998c417becfa9d3e6",
-        "e5c6eeed164ded84c0fd459bd83d1bcc",
-        "9b8e3fac56379252d193b24388c10e28",
-        "17a1f4f717c2f6da2236529194f4124c",
-        "239250ddb86bbe769a3952a5bb3f0eb8",
-        "f3880dc53e3a0e49ad5ad03bfb16c0b5",
-        "7dd9f9dd49f96eb921031a8978c037ef",
-        "3c632205e76a40cf0be7c093041762b0",
-        "80a60eb51813bd622b7b49ba8082a562",
-        "ed061e83f143b6d25e1035b51e24ee65",
+        "27a6cb3e5a4ad399b2f865729bbd3840",
+        "a90a54baba0093296a013d26b7acbc17",
+        "9be424e2d151dac4b5f36a85e9bbfe65",
+        "4631da875fb4996c63b2d80cea6b588e",
+        "6264f4eda97a049f4710f9bea0c01cbd",
+        "abded7b2ff3a5542c88b4a831755ec24",
+        "b781ea5123cb31e0571391b7b42cac75",
+        "033f27d2618ba4cda9068b267b5a731e",
+        "8982a12fcced30dd12ccbf61d14f30bf",
+        "41af2fd5df0cf47aa7e8ecca200d3ac6",
     ]
 
 
 @pytest.fixture()
 def expected_element_ids_for_hi_res_strategy():
     return [
-        "bda75fa1dc739a5998c417becfa9d3e6",
-        "e5c6eeed164ded84c0fd459bd83d1bcc",
-        "9b8e3fac56379252d193b24388c10e28",
-        "17a1f4f717c2f6da2236529194f4124c",
-        "239250ddb86bbe769a3952a5bb3f0eb8",
-        "f3880dc53e3a0e49ad5ad03bfb16c0b5",
-        "7dd9f9dd49f96eb921031a8978c037ef",
-        "3c632205e76a40cf0be7c093041762b0",
-        "80a60eb51813bd622b7b49ba8082a562",
-        "ed061e83f143b6d25e1035b51e24ee65",
+        "27a6cb3e5a4ad399b2f865729bbd3840",
+        "a90a54baba0093296a013d26b7acbc17",
+        "9be424e2d151dac4b5f36a85e9bbfe65",
+        "4631da875fb4996c63b2d80cea6b588e",
+        "6264f4eda97a049f4710f9bea0c01cbd",
+        "abded7b2ff3a5542c88b4a831755ec24",
+        "b781ea5123cb31e0571391b7b42cac75",
+        "033f27d2618ba4cda9068b267b5a731e",
+        "8982a12fcced30dd12ccbf61d14f30bf",
+        "41af2fd5df0cf47aa7e8ecca200d3ac6",
     ]
 
 
 @pytest.fixture()
 def expected_element_ids_for_ocr_strategy():
     return [
-        "98af5fe19df25cf8f761826b8212a407",
-        "27deb269eb3583de2fdc70b226b64b7a",
-        "c42d6644042b0bae7eb5848dbc32eb10",
-        "c318da7e07060293732f4db3898fde50",
-        "383febbf385f6572bab2f84dd339820d",
-        "3c632205e76a40cf0be7c093041762b0",
-        "80a60eb51813bd622b7b49ba8082a562",
-        "ed061e83f143b6d25e1035b51e24ee65",
+        "272ab65cbe81795161128aea59599d83",
+        "b38affd7bbbb3dddf5c85ba8b14d380d",
+        "65903214d456b8b3cba6faa6714bd9ba",
+        "5b41ceae05dcfaeeac32ff8e82dc2ff1",
+        "6582fc6c6c595225feeddcc3263f0ae3",
+        "64b610c8f4274f1ce2175bf30814409d",
+        "8edde8bf2d3a68370dc4bd142c408ca4",
+        "a052bc17696043efce2e4f4f28393a83",
     ]
 
 
