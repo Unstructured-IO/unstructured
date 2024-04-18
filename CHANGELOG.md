@@ -1,8 +1,7 @@
 ## 0.13.3-dev8
 
 ### Enhancements
-* **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
-* **Unique ID hashed at the document level** Now, the element IDs returned by any partitioning function are deterministic and unique at the document level by default. Before, hashes depended solely on text, but they now incorporate the element's sequence position within the document. Hashing remains the default option, but the `unique_element_ids=True` feature for random UUIDs is still an option.
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning function are now deterministic and unique at the document level by default. Before, hashes were based only on text; however, they now also take into account the element's sequence number on a page, the page's number in the document, and the document's file name.
 
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
@@ -16,6 +15,8 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+
+## 0.13.2
 
 ### Enhancements
 
