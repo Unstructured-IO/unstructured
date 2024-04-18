@@ -4,7 +4,7 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, Name, NoID, Subject
+from unstructured.documents.email_elements import EmailElement, Name, Subject
 
 
 @pytest.mark.parametrize(
@@ -25,7 +25,6 @@ def test_EmailElement_autoassigns_a_UUID_then_becomes_an_idempotent_and_determin
 
     # -- `.id_to_hash()` is idempotent --
     assert element.id_to_hash(0) == expected_hash
-from unstructured.documents.email_elements import EmailElement, Name
 
 
 def test_Name_should_assign_a_deterministic_and_an_idempotent_hash():
@@ -55,7 +54,7 @@ def test_EmailElement_self_assigns_itself_a_UUID_id(element: EmailElement):
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
-)
+
 
 def test_EmailElement_should_assign_a_UUID_only_once_and_only_at_the_first_id_request(
     element: EmailElement,

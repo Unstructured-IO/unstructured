@@ -50,6 +50,8 @@ def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic
     # -- `.id_to_hash()` is idempotent --
     assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
+
+
 def test_Text_is_JSON_serializable():
     # -- This shold run without an error --
     json.dumps(Text(text="hello there!", element_id=None).to_dict())
@@ -68,26 +70,6 @@ def test_Element_self_assigns_itself_a_UUID_id(element: Element):
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
-    ],
-)
-def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
-    element: Element,
-):
-    assert element._element_id is None, "Element should not have an ID yet"
-
-    # -- element self-assigns itself a UUID only when the ID is requested --
-    assert isinstance(element.id, str)
-    assert len(element.id) == 36
-    assert element.id.count("-") == 4
-
-    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
-    # -- calling `.id_to_hash()` changes the element's id-type to hash --
-    assert element.id_to_hash() == expected_hash
-    assert element.id == expected_hash
-
-    # -- `.id_to_hash()` is idempotent --
-    assert element.id_to_hash() == expected_hash
-    assert element.id == expected_hash
 
 
 def test_text_element_apply_cleaners():
