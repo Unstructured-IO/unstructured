@@ -120,8 +120,10 @@ class Chunker(ReformatNode):
                 max_characters=self.chunking_config.max_characters,
                 multipage_sections=self.chunking_config.multipage_sections,
                 new_after_n_chars=self.chunking_config.new_after_n_chars,
-                overlap=self.chunking_config.overlap,
-                overlap_all=self.chunking_config.overlap_all,
+                # -- These are not supported by older versions of unstructured-client, which we have
+                # -- pinned to <=0.18.0
+                # overlap=self.chunking_config.overlap,
+                # overlap_all=self.chunking_config.overlap_all,
             )
         # -- Warn that the defined chunking_strategy is not locally available --
         logger.warning(

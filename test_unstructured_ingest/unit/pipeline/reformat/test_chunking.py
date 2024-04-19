@@ -130,8 +130,8 @@ class DescribeChunker:
             max_characters=None,
             multipage_sections=None,
             new_after_n_chars=None,
-            overlap=None,
-            overlap_all=None,
+            # overlap=None,
+            # overlap_all=None,
         )
 
     # -- fixtures --------------------------------------------------------------------------------
