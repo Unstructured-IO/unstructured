@@ -32,7 +32,7 @@ httplib2==0.22.0
     # via
     #   google-api-python-client
     #   google-auth-httplib2
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests

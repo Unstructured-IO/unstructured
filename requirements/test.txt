@@ -41,7 +41,7 @@ freezegun==1.4.0
     # via -r ./test.in
 grpcio==1.62.1
     # via -r ./test.in
-idna==3.6
+idna==3.7
     # via
     #   -c ./base.txt
     #   requests
@@ -87,11 +87,11 @@ pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pyflakes==3.2.0
     # via
@@ -115,7 +115,7 @@ requests==2.31.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-ruff==0.3.5
+ruff==0.3.7
     # via -r ./test.in
 six==1.16.0
     # via

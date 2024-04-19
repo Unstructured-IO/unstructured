@@ -48,7 +48,7 @@ exceptiongroup==1.2.0
     # via anyio
 fastapi==0.110.1
     # via chromadb
-filelock==3.13.3
+filelock==3.13.4
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
@@ -70,7 +70,7 @@ huggingface-hub==0.22.2
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -139,11 +139,11 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   chromadb
     #   fastapi
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pypika==0.48.9
     # via chromadb

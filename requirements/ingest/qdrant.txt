@@ -36,7 +36,7 @@ httpx[http2]==0.27.0
     # via qdrant-client
 hyperframe==6.0.1
     # via h2
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -51,9 +51,9 @@ protobuf==4.23.4
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
-pydantic==2.6.4
+pydantic==2.7.0
     # via qdrant-client
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 qdrant-client==1.8.2
     # via -r ./ingest/qdrant.in

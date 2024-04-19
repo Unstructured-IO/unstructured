@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     #   requests
 dnspython==2.6.1
     # via pinecone-client
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests

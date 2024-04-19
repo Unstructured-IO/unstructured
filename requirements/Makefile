@@ -8,7 +8,7 @@ INGEST_REQUIREMENTSTXT := $(patsubst %.in,%.txt,$(INGEST_REQUIREMENTS))
 
 
 .PHONY: all
-all: compile-base compile-ingest
+all: compile-all-base compile-ingest
 
 .PHONY: compile-test
 compile-test:
@@ -19,7 +19,11 @@ compile-dev:
 	pip-compile --upgrade dev.in
 
 .PHONY: compile-base
-compile-base: compile-test compile-dev
+compile-base:
+	pip-compile --upgrade base.in
+
+.PHONY: compile-all-base
+compile-all-base: compile-base compile-test compile-dev
 	@$(foreach file,$(BASE_REQUIREMENTS),echo "compiling: $(file)" && pip-compile --upgrade $(file);)
 
 .PHONY: compile-ingest
