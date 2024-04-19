@@ -35,7 +35,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.pptx import (
-    _PptxPartitionerOptions,
+    PptxPartitionerOptions,
     partition_pptx,
     register_picture_partitioner,
 )
@@ -279,9 +279,7 @@ def test_partition_pptx_generates_no_Image_elements_by_default():
 def test_partition_pptx_uses_registered_picture_partitioner():
     class FakePicturePartitioner:
         @classmethod
-        def iter_elements(
-            cls, picture: Picture, opts: _PptxPartitionerOptions
-        ) -> Iterator[Element]:
+        def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
             image_hash = hashlib.sha1(picture.image.blob).hexdigest()
             yield Image(f"Image with hash {image_hash}, strategy: {opts.strategy}")
 
@@ -549,15 +547,15 @@ def test_partition_pptx_hierarchy_sample_document():
 # ================================================================================================
 
 
-class Describe_PptxPartitionerOptions:
-    """Unit-test suite for `unstructured.partition.xlsx._PptxPartitionerOptions` objects."""
+class DescribePptxPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.xlsx.PptxPartitionerOptions` objects."""
 
     @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_emit_PageBreak_elements_as_part_of_the_output_element_stream(
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.include_page_breaks is arg_value
 
@@ -566,7 +564,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["include_slide_notes"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.include_slide_notes is arg_value
 
@@ -575,7 +573,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["infer_table_structure"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.infer_table_structure is arg_value
 
@@ -584,7 +582,7 @@ class Describe_PptxPartitionerOptions:
     def it_generates_a_PageBreak_element_when_the_page_number_is_incremented(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -598,7 +596,7 @@ class Describe_PptxPartitionerOptions:
     def but_it_does_not_generate_a_PageBreak_element_for_the_first_slide(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         page_break_iter = opts.increment_page_number()
 
@@ -610,7 +608,7 @@ class Describe_PptxPartitionerOptions:
         self, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = False
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -626,7 +624,7 @@ class Describe_PptxPartitionerOptions:
         self, opts_args: dict[str, Any]
     ):
         opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.last_modified == "2024-03-05T17:02:53"
 
@@ -635,7 +633,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = "a/b/spreadsheet.pptx"
         get_last_modified_date_.return_value = "2024-04-02T20:32:35"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -649,7 +647,7 @@ class Describe_PptxPartitionerOptions:
         opts_args["file"] = file
         opts_args["date_from_file_object"] = True
         get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -663,7 +661,7 @@ class Describe_PptxPartitionerOptions:
         opts_args["file"] = file
         opts_args["date_from_file_object"] = False
         get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -677,7 +675,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = "x/y/z.pptx"
         opts_args["metadata_file_path"] = "a/b/c.pptx"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == "a/b/c.pptx"
 
@@ -687,7 +685,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = file_path
         opts_args["metadata_file_path"] = None
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == file_path
 
@@ -695,7 +693,7 @@ class Describe_PptxPartitionerOptions:
 
     def it_keeps_track_of_the_page_number(self, opts_args: dict[str, Any]):
         """In PPTX, page-number is the slide number."""
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.page_number == 0
         list(opts.increment_page_number())
@@ -706,7 +704,7 @@ class Describe_PptxPartitionerOptions:
     def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args, starting_page_number=3)
+        opts = PptxPartitionerOptions(**opts_args, starting_page_number=3)
         # -- move to the "first" slide --
         list(opts.increment_page_number())
 
@@ -724,7 +722,7 @@ class Describe_PptxPartitionerOptions:
         self, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = "l/m/n.pptx"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.pptx_file == "l/m/n.pptx"
 
@@ -734,7 +732,7 @@ class Describe_PptxPartitionerOptions:
         spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(b"abcdefg")
         opts_args["file"] = spooled_temp_file
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         pptx_file = opts.pptx_file
 
@@ -747,7 +745,7 @@ class Describe_PptxPartitionerOptions:
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         pptx_file = opts.pptx_file
 
@@ -758,7 +756,7 @@ class Describe_PptxPartitionerOptions:
     def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         with pytest.raises(ValueError, match="No PPTX document specified, either `filename` or "):
             opts.pptx_file
@@ -770,7 +768,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: str, opts_args: dict[str, Any]
     ):
         opts_args["strategy"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.strategy == arg_value
 
@@ -779,7 +777,7 @@ class Describe_PptxPartitionerOptions:
     def it_can_create_table_metadata(self, opts_args: dict[str, Any]):
         opts_args["metadata_file_path"] = "d/e/f.pptx"
         opts_args["metadata_last_modified"] = "2024-04-02T19:51:55"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -796,7 +794,7 @@ class Describe_PptxPartitionerOptions:
     def it_can_create_text_metadata(self, opts_args: dict[str, Any]):
         opts_args["metadata_file_path"] = "d/e/f.pptx"
         opts_args["metadata_last_modified"] = "2024-04-02T19:56:40"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 

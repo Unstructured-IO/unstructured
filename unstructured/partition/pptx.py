@@ -1,3 +1,9 @@
+"""Partitioner for PPTX documents.
+
+PPTX files are PowerPoint 2007+ documents. These are XML-based and "open" (documented ISO standard),
+unlike the `.ppt` format which was binary and proprietary.
+"""
+
 from __future__ import annotations
 
 import io
@@ -48,7 +54,7 @@ DETECTION_ORIGIN = "pptx"
 
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
     """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
-    _PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
+    PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
 
 
 # ================================================================================================
@@ -66,7 +72,7 @@ class AbstractPicturePartitioner(Protocol):
     """
 
     @classmethod
-    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """Generate document elements derived from `picture`, a PPTX Picture shape."""
         ...
 
@@ -134,7 +140,7 @@ def partition_pptx(
         This information will be reflected in elements' metadata and can be be especially
         useful when partitioning a document that is part of a larger document.
     """
-    opts = _PptxPartitionerOptions(
+    opts = PptxPartitionerOptions(
         date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
@@ -159,11 +165,11 @@ def partition_pptx(
 class _PptxPartitioner:
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
 
-    def __init__(self, opts: _PptxPartitionerOptions):
+    def __init__(self, opts: PptxPartitionerOptions):
         self._opts = opts
 
     @classmethod
-    def iter_presentation_elements(cls, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_presentation_elements(cls, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return cls(opts)._iter_presentation_elements()
 
@@ -350,7 +356,7 @@ class _PptxPartitioner:
         return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
 
 
-class _PptxPartitionerOptions:
+class PptxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
     _PicturePartitionerCls = None
@@ -545,7 +551,7 @@ class _NullPicturePartitioner:
     """Does not parse the provided Picture element and generates zero elements."""
 
     @classmethod
-    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """No-op picture partitioner."""
         return
         yield

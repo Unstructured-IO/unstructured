@@ -3,6 +3,7 @@
 ### Enhancements
 * **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning function are now deterministic and unique at the document level by default. Before, hashes were based only on text; however, they now also take into account the element's sequence number on a page, the page's number in the document, and the document's file name.
 
+* **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 * **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
