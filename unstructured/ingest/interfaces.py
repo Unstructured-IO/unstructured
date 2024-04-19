@@ -16,7 +16,7 @@ from dataclasses_json.core import Json, _decode_dataclass
 
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.documents.elements import DataSourceMetadata, assign_and_map_hash_ids
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
@@ -270,10 +270,7 @@ class ChunkingConfig(BaseConfig):
                 overlap_all=self.overlap_all,
             )
 
-        for idx, chunk in enumerate(chunks):
-            chunk.id_to_hash(idx)
-
-        return chunks
+        return assign_and_map_hash_ids(chunks)
 
 
 @dataclass
