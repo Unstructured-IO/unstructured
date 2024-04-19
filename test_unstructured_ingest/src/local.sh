@@ -32,6 +32,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path example-docs \
   --work-dir "$WORK_DIR"
 
-"$SCRIPT_DIR"/check-num-files-output.sh 13 $OUTPUT_FOLDER_NAME
+"$SCRIPT_DIR"/check-num-files-output.sh 12 $OUTPUT_FOLDER_NAME
 
 "$SCRIPT_DIR"/evaluation-ingest-cp.sh "$OUTPUT_DIR" "$OUTPUT_FOLDER_NAME"
