@@ -27,7 +27,7 @@ class EnhancedField(Field):
             f"overload_name={self.overload_name!r}",
             f"_field_type={self._field_type}",
         ]
-        if kw_only := getattr(self, "kw_only"):
+        if kw_only := getattr(self, "kw_only", None):
             fields_array.append(f"kw_only={kw_only!r}")
         return "Field({})".format(",".join(fields_array))
 
