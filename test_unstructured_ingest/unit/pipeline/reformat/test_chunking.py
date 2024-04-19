@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import logging
 import os
-import tempfile
 
 import pytest
 from _pytest.logging import LogCaptureFixture
@@ -29,95 +29,98 @@ class DescribeChunker:
     # -- Chunker.run() -----------------------------------------------------------------------------
 
     # -- integration test --
-    def it_creates_json(self, _ingest_docs_map_: Mock):
-        chunking_config = ChunkingConfig(chunking_strategy="by_title")
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig()
+    def it_creates_json(self, _ingest_docs_map_: Mock, tmpdir: str):
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy="by_title"),
+            pipeline_context=PipelineContext(work_dir=tmpdir),
+            partition_config=PartitionConfig(),
         )
-        with tempfile.TemporaryDirectory() as tmpdir:
-            # -- `Chunker.chunk()` defaults to writing to "{work_dir}/chunked", which is located in
-            # -- "/.cache" of a user's profile.
-            # -- Define `work_dir` add the "/chunked" subdirectory to it:
-            chunker.pipeline_context.work_dir = tmpdir
-            os.makedirs(os.path.join(tmpdir, "chunked"), exist_ok=True)
+        # -- `Chunker.chunk()` defaults to writing to "{work_dir}/chunked", which is located in
+        # -- "/.cache" of a user's profile.
+        # -- Define `work_dir` add the "/chunked" subdirectory to it:
+        os.makedirs(os.path.join(tmpdir, "chunked"), exist_ok=True)
 
-            filename = chunker.run(ELEMENTS_JSON_FILE)
-            head, tail = os.path.split(filename if filename else "")
-            # -- Check that a json file was created in `/chunked` --
-            assert head.endswith("chunked")
-            assert tail.endswith(".json")
+        filename = chunker.run(ELEMENTS_JSON_FILE)
+
+        head, tail = os.path.split(filename if filename else "")
+        # -- Check that a json file was created in `/chunked` --
+        assert head.endswith("chunked")
+        assert tail.endswith(".json")
+
+    def it_returns_None_and_logs_message_without_chunking_strategy(
+        self, _ingest_docs_map_: Mock, caplog: LogCaptureFixture
+    ):
+        chunker = Chunker(
+            chunking_config=ChunkingConfig(),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(),
+        )
+        caplog.set_level(logging.INFO)
+
+        assert chunker.run(ELEMENTS_JSON_FILE) is None
+        assert "chunking_strategy is None, skipping chunking for" in caplog.text
 
     def it_logs_error_with_invalid_remote_chunking_args(
         self, _ingest_docs_map_: Mock, caplog: LogCaptureFixture
     ):
-        chunking_config = ChunkingConfig(chunking_strategy="by_invalid")
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig(partition_by_api=True)
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy="by_invalid"),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(partition_by_api=True),
         )
+
         chunker.run(ELEMENTS_JSON_FILE)
+
         assert "Input should be 'basic', 'by_page', 'by_similarity'" in caplog.text
 
     def it_warns_with_nonlocal_chunking_strategy_and_partition_by_api_False(
         self, _ingest_docs_map_: Mock, caplog: LogCaptureFixture
     ):
-        chunking_config = ChunkingConfig(chunking_strategy="by_similarity")
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig(partition_by_api=True)
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy="by_similarity"),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(partition_by_api=False),
         )
 
         chunker.run(ELEMENTS_JSON_FILE)
+
         assert "There is no locally available chunking_strategy:" in caplog.text
 
     # -- Chunker.chunk() ---------------------------------------------------------------------------
 
     def it_skips_chunking_if_strategy_is_None(self):
-        chunking_config = ChunkingConfig(chunking_strategy=None)
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig()
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy=None),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(),
         )
+
         assert chunker.chunk(ELEMENTS_JSON_FILE) is None
 
     # -- integration test --
     @pytest.mark.parametrize("strategy", ["by_title", "basic"])
     def it_chunks_locally(self, strategy: str, _ingest_docs_map_: Mock):
-        chunking_config = ChunkingConfig(chunking_strategy=strategy)
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig()
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy=strategy),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(),
         )
+
         chunked_elements = chunker.chunk(ELEMENTS_JSON_FILE)
+
         assert all(isinstance(elem, CompositeElement) for elem in chunked_elements)  # type: ignore
 
     def it_chunks_remotely(self, _ingest_docs_map_: Mock, _partition_via_api_: Mock):
-        chunking_config = ChunkingConfig(chunking_strategy="by_similarity")
-        pipeline_context = PipelineContext()
-        partition_config = PartitionConfig(partition_by_api=True, api_key="aaaaaaaaaaaaaaaaaaaaa")
         chunker = Chunker(
-            chunking_config=chunking_config,
-            pipeline_context=pipeline_context,
-            partition_config=partition_config,
+            chunking_config=ChunkingConfig(chunking_strategy="by_similarity"),
+            pipeline_context=PipelineContext(),
+            partition_config=PartitionConfig(
+                partition_by_api=True, api_key="aaaaaaaaaaaaaaaaaaaaa"
+            ),
         )
 
         chunker.chunk(ELEMENTS_JSON_FILE)
+
         _partition_via_api_.assert_called_once_with(
             filename=ELEMENTS_JSON_FILE,
             api_key="aaaaaaaaaaaaaaaaaaaaa",

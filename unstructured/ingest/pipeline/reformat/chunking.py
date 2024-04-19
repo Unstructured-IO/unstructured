@@ -125,8 +125,8 @@ class Chunker(ReformatNode):
             )
         # -- Warn that the defined chunking_strategy is not locally available --
         logger.warning(
-            "There is no locally available chunking_strategy:"
+            f"There is no locally available chunking_strategy:"
             f" {self.chunking_config.chunking_strategy}."
-            "If trying to partition remotely, check that `partition_by_api`, `api_url`,"
-            "and `api_key` are correctly defined."
+            f" If trying to partition remotely, check that `partition_by_api`, `api_url`,"
+            f" and `api_key` are correctly defined."
         )
