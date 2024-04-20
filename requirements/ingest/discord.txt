@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/discord.in
 #
-aiohttp==3.9.4
+aiohttp==3.9.5
     # via discord-py
 aiosignal==1.3.1
     # via aiohttp

@@ -4,9 +4,9 @@
 #
 #    pip-compile ./ingest/azure.in
 #
-adlfs==2024.2.0
+adlfs==2024.4.1
     # via -r ./ingest/azure.in
-aiohttp==3.9.4
+aiohttp==3.9.5
     # via adlfs
 aiosignal==1.3.1
     # via aiohttp
@@ -80,7 +80,9 @@ portalocker==2.8.2
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.31.0
     # via
     #   -c ./ingest/../base.txt

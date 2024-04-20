@@ -18,7 +18,7 @@ charset-normalizer==3.3.2
     #   -c ./ingest/../base.txt
     #   requests
 cryptography==42.0.5
-    # via simple-salesforce
+    # via pyjwt
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
@@ -32,21 +32,14 @@ lxml==4.9.4
     #   zeep
 more-itertools==10.2.0
     # via simple-salesforce
-pendulum==3.0.0
-    # via simple-salesforce
 platformdirs==3.10.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   zeep
 pycparser==2.22
     # via cffi
-pyjwt==2.8.0
+pyjwt[crypto]==2.8.0
     # via simple-salesforce
-python-dateutil==2.9.0.post0
-    # via
-    #   -c ./ingest/../base.txt
-    #   pendulum
-    #   time-machine
 pytz==2024.1
     # via zeep
 requests==2.31.0
@@ -60,17 +53,16 @@ requests-file==2.0.0
     # via zeep
 requests-toolbelt==1.0.0
     # via zeep
-simple-salesforce==1.12.5
+simple-salesforce==1.12.6
     # via -r ./ingest/salesforce.in
 six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   isodate
-    #   python-dateutil
-time-machine==2.14.1
-    # via pendulum
-tzdata==2024.1
-    # via pendulum
+typing-extensions==4.11.0
+    # via
+    #   -c ./ingest/../base.txt
+    #   simple-salesforce
 urllib3==1.26.18
     # via
     #   -c ./ingest/../base.txt

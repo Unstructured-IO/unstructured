@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/gcs.in
 #
-aiohttp==3.9.4
+aiohttp==3.9.5
     # via gcsfs
 aiosignal==1.3.1
     # via aiohttp

@@ -64,7 +64,7 @@ pyyaml==6.0.1
     # via
     #   huggingface-hub
     #   transformers
-regex==2023.12.25
+regex==2024.4.16
     # via
     #   -c ./base.txt
     #   sacremoses
@@ -76,10 +76,8 @@ requests==2.31.0
     #   transformers
 sacremoses==0.1.1
     # via -r ./huggingface.in
-safetensors==0.3.2
-    # via
-    #   -c ././deps/constraints.txt
-    #   transformers
+safetensors==0.4.3
+    # via transformers
 sentencepiece==0.2.0
     # via -r ./huggingface.in
 six==1.16.0
@@ -88,7 +86,7 @@ six==1.16.0
     #   langdetect
 sympy==1.12
     # via torch
-tokenizers==0.15.2
+tokenizers==0.19.1
     # via transformers
 torch==2.2.2
     # via
@@ -100,7 +98,7 @@ tqdm==4.66.2
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.37.1
+transformers==4.40.0
     # via -r ./huggingface.in
 typing-extensions==4.11.0
     # via

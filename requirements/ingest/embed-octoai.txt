@@ -24,7 +24,7 @@ charset-normalizer==3.3.2
     #   requests
 distro==1.9.0
     # via openai
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via anyio
 h11==0.14.0
     # via httpcore
@@ -38,13 +38,13 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.17.0
+openai==1.23.2
     # via -r ./ingest/embed-octoai.in
 pydantic==2.7.0
     # via openai
 pydantic-core==2.18.1
     # via pydantic
-regex==2023.12.25
+regex==2024.4.16
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
