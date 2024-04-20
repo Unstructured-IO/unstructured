@@ -24,11 +24,11 @@ compile-base:
 
 .PHONY: compile-all-base
 compile-all-base: compile-base compile-test compile-dev
-	@$(foreach file,$(BASE_REQUIREMENTS),echo "compiling: $(file)" && pip-compile --upgrade $(file);)
+	@$(foreach file,$(BASE_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --upgrade $(file) || exit;)
 
 .PHONY: compile-ingest
 compile-ingest:
-	@$(foreach file,$(INGEST_REQUIREMENTS),echo "compiling: $(file)" && pip-compile --upgrade $(file);)
+	@$(foreach file,$(INGEST_REQUIREMENTS),echo -e "\n\ncompiling: $(file)" && pip-compile --no-strip-extras --upgrade $(file) || exit;)
 
 .PHONY: clean
 clean: clean-base clean-ingest
