@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-aws-bedrock.in
 #
-aiohttp==3.9.4
+aiohttp==3.9.5
     # via langchain-community
 aiosignal==1.3.1
     # via aiohttp
@@ -51,11 +51,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.32
+langchain-community==0.0.34
     # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.1.42
+langchain-core==0.1.45
     # via langchain-community
-langsmith==0.1.46
+langsmith==0.1.49
     # via
     #   langchain-community
     #   langchain-core
@@ -75,7 +75,7 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-orjson==3.10.0
+orjson==3.10.1
     # via langsmith
 packaging==23.2
     # via

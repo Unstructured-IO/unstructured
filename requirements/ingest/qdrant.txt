@@ -16,13 +16,13 @@ certifi==2024.2.2
     #   -c ./ingest/../deps/constraints.txt
     #   httpcore
     #   httpx
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via anyio
-grpcio==1.62.1
+grpcio==1.62.2
     # via
     #   grpcio-tools
     #   qdrant-client
-grpcio-tools==1.62.1
+grpcio-tools==1.62.2
     # via qdrant-client
 h11==0.14.0
     # via httpcore
@@ -33,7 +33,9 @@ hpack==4.0.0
 httpcore==1.0.5
     # via httpx
 httpx[http2]==0.27.0
-    # via qdrant-client
+    # via
+    #   httpx
+    #   qdrant-client
 hyperframe==6.0.1
     # via h2
 idna==3.7

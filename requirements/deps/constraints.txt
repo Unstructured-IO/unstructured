@@ -22,8 +22,6 @@ Office365-REST-Python-Client<2.4.3
 # unstructured-inference to be upgraded when unstructured library is upgraded
 # https://github.com/Unstructured-IO/unstructured/issues/1458
 # unstructured-inference
-# unable to build wheel for arm on 0.3.3+
-safetensors<=0.3.2
 # use the known compatible version of weaviate and unstructured.pytesseract
 unstructured.pytesseract>=0.3.12
 weaviate-client>3.25.0
@@ -38,7 +36,6 @@ torch>2
 # pinned in unstructured paddleocr
 opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
-onnxruntime==1.15.1
 platformdirs==3.10.0
 
 # TODO: Constraint due to langchain, remove when that gets updated:

@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.3.1
     # via -r ./test.in
-black==24.3.0
+black==24.4.0
     # via -r ./test.in
 certifi==2024.2.2
     # via
@@ -29,7 +29,7 @@ coverage[toml]==7.4.4
     # via
     #   -r ./test.in
     #   pytest-cov
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via pytest
 flake8==7.0.0
     # via
@@ -39,7 +39,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.4.0
     # via -r ./test.in
-grpcio==1.62.1
+grpcio==1.62.2
     # via -r ./test.in
 idna==3.7
     # via
@@ -81,7 +81,7 @@ platformdirs==3.10.0
     # via
     #   -c ././deps/constraints.txt
     #   black
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
 pycodestyle==2.11.1
     # via
@@ -115,7 +115,7 @@ requests==2.31.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-ruff==0.3.7
+ruff==0.4.1
     # via -r ./test.in
 six==1.16.0
     # via

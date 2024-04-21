@@ -100,10 +100,8 @@ onnx==1.16.0
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.15.1
-    # via
-    #   -c ././deps/constraints.txt
-    #   unstructured-inference
+onnxruntime==1.17.3
+    # via unstructured-inference
 opencv-python==4.8.0.76
     # via
     #   -c ././deps/constraints.txt
@@ -132,7 +130,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.0
     # via layoutparser
-pikepdf==8.15.0
+pikepdf==8.15.1
     # via -r ./extra-pdf-image.in
 pillow==10.3.0
     # via
@@ -190,7 +188,7 @@ rapidfuzz==3.8.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2023.12.25
+regex==2024.4.16
     # via
     #   -c ./base.txt
     #   transformers
@@ -199,9 +197,8 @@ requests==2.31.0
     #   -c ./base.txt
     #   huggingface-hub
     #   transformers
-safetensors==0.3.2
+safetensors==0.4.3
     # via
-    #   -c ././deps/constraints.txt
     #   timm
     #   transformers
 scipy==1.10.1
@@ -218,7 +215,7 @@ sympy==1.12
     #   torch
 timm==0.9.16
     # via effdet
-tokenizers==0.15.2
+tokenizers==0.19.1
     # via transformers
 torch==2.2.2
     # via
@@ -238,7 +235,7 @@ tqdm==4.66.2
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.37.1
+transformers==4.40.0
     # via unstructured-inference
 typing-extensions==4.11.0
     # via
@@ -249,7 +246,7 @@ typing-extensions==4.11.0
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.25
+unstructured-inference==0.7.27
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

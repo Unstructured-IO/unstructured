@@ -73,7 +73,7 @@ defusedxml==0.7.1
     # via nbconvert
 distlib==0.3.8
     # via virtualenv
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via
     #   -c ./test.txt
     #   anyio
@@ -91,7 +91,7 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via jupyterlab
-identify==2.5.35
+identify==2.5.36
     # via pre-commit
 idna==3.7
     # via
@@ -195,7 +195,7 @@ markupsafe==2.1.5
     # via
     #   jinja2
     #   nbconvert
-matplotlib-inline==0.1.6
+matplotlib-inline==0.1.7
     # via
     #   ipykernel
     #   ipython
@@ -216,7 +216,7 @@ nest-asyncio==1.6.0
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.1.2
+notebook==7.1.3
     # via jupyter
 notebook-shim==0.2.4
     # via
@@ -294,7 +294,7 @@ pyyaml==6.0.1
     #   -c ./test.txt
     #   jupyter-events
     #   pre-commit
-pyzmq==25.1.2
+pyzmq==26.0.2
     # via
     #   ipykernel
     #   jupyter-client
@@ -368,7 +368,7 @@ tornado==6.4
     #   jupyterlab
     #   notebook
     #   terminado
-traitlets==5.14.2
+traitlets==5.14.3
     # via
     #   comm
     #   ipykernel
@@ -401,7 +401,7 @@ urllib3==1.26.18
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.25.1
+virtualenv==20.25.3
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit

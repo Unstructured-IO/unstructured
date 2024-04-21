@@ -63,7 +63,7 @@ importlib-metadata==7.1.0
     # via flask
 importlib-resources==6.4.0
     # via matplotlib
-itsdangerous==2.1.2
+itsdangerous==2.2.0
     # via flask
 jinja2==3.1.3
     # via
@@ -188,7 +188,7 @@ scipy==1.10.1
     #   -c ././deps/constraints.txt
     #   imgaug
     #   scikit-image
-shapely==2.0.3
+shapely==2.0.4
     # via
     #   imgaug
     #   unstructured-paddleocr
@@ -200,7 +200,7 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.2.12
+tifffile==2024.4.18
     # via scikit-image
 tqdm==4.66.2
     # via

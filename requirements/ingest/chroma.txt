@@ -44,9 +44,9 @@ coloredlogs==15.0.1
     # via onnxruntime
 deprecated==1.2.14
     # via opentelemetry-api
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via anyio
-fastapi==0.110.1
+fastapi==0.110.2
     # via chromadb
 filelock==3.13.4
     # via huggingface-hub
@@ -58,7 +58,7 @@ google-auth==2.29.0
     # via kubernetes
 googleapis-common-protos==1.63.0
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.62.1
+grpcio==1.62.2
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -95,10 +95,8 @@ oauthlib==3.2.2
     # via
     #   kubernetes
     #   requests-oauthlib
-onnxruntime==1.15.1
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   chromadb
+onnxruntime==1.17.3
+    # via chromadb
 opentelemetry-api==1.16.0
     # via
     #   chromadb
@@ -131,7 +129,7 @@ protobuf==4.23.4
     #   googleapis-common-protos
     #   onnxruntime
     #   opentelemetry-proto
-pulsar-client==3.4.0
+pulsar-client==3.5.0
     # via chromadb
 pyasn1==0.6.0
     # via
@@ -186,7 +184,7 @@ sympy==1.12
     # via onnxruntime
 tenacity==8.2.3
     # via chromadb
-tokenizers==0.15.2
+tokenizers==0.19.1
     # via chromadb
 tqdm==4.66.2
     # via
@@ -216,7 +214,9 @@ urllib3==1.26.18
     #   kubernetes
     #   requests
 uvicorn[standard]==0.29.0
-    # via chromadb
+    # via
+    #   chromadb
+    #   uvicorn
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
