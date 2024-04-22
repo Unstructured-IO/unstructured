@@ -40,6 +40,8 @@ fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
+greenlet==3.0.3
+    # via sqlalchemy
 huggingface==0.0.1
     # via -r ./ingest/embed-huggingface.in
 huggingface-hub==0.22.2
