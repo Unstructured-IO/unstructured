@@ -1,3 +1,4 @@
+import os
 from unstructured.ingest.connector.fsspec.azure import (
     AzureAccessConfig,
     SimpleAzureBlobStorageConfig,
@@ -22,7 +23,7 @@ if __name__ == "__main__":
         partition_config=PartitionConfig(),
         connector_config=SimpleAzureBlobStorageConfig(
             access_config=AzureAccessConfig(
-                account_name="azureunstructured1",
+                account_name=os.getenv("AZURE_ACCOUNT_NAME"),
             ),
             remote_url="abfs://container1/",
         ),
