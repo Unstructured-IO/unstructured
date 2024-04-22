@@ -80,6 +80,8 @@ from unstructured.partition.pdf_image.pdf_image_utils import (
     save_elements,
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    clean_pdfminer_duplicate_image_elements,
+    clean_pdfminer_inner_elements,
     merge_inferred_with_extracted_layout,
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
@@ -95,7 +97,6 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
@@ -525,6 +526,7 @@ def _partition_pdf_or_image_local(
     if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
         kwargs["sort_mode"] = SORT_MODE_DONT
 
+    final_document_layout = clean_pdfminer_duplicate_image_elements(final_document_layout)
     final_document_layout = clean_pdfminer_inner_elements(final_document_layout)
 
     for page in final_document_layout.pages:

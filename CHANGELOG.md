@@ -1,7 +1,8 @@
-## 0.13.3-dev7
+## 0.13.3
 
 ### Enhancements
 
+* **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 * **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
@@ -15,6 +16,7 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
 
 ## 0.13.2
 

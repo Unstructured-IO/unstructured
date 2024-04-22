@@ -104,5 +104,10 @@ class ENVConfig:
         """
         return self._get_float("OCR_LAYOUT_SUBREGION_THRESHOLD", 0.5)
 
+    @property
+    def EMBEDDED_IMAGE_SAME_REGION_THRESHOLD(self) -> float:
+        """threshold to consider the bounding boxes of two embedded images as the same region"""
+        return self._get_float("EMBEDDED_IMAGE_SAME_REGION_THRESHOLD", 0.6)
+
 
 env_config = ENVConfig()
