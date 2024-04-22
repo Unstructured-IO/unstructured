@@ -27,7 +27,3 @@ if __name__ == "__main__":
         ),
     )
     runner.run()
-
-
-#### INFO: Response status code: 500 Retry attempt #14. Sleeping 60.0 seconds before retry.
-# INFO: {"detail":"Could not determine delimiter"}
