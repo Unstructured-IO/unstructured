@@ -1,6 +1,8 @@
 import copy
+import json
 import typing as t
 from dataclasses import dataclass, field
+from warnings import warn
 
 from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
@@ -21,8 +23,6 @@ from unstructured.utils import requires_dependencies
 if t.TYPE_CHECKING:
     from astrapy.db import AstraDB, AstraDBCollection
 
-NON_INDEXED_FIELDS = ["metadata._node_content", "content"]
-
 
 @dataclass
 class AstraAccessConfig(AccessConfig):
@@ -35,6 +35,8 @@ class SimpleAstraConfig(BaseConnectorConfig):
     access_config: AstraAccessConfig
     collection_name: str
     embedding_dimension: int
+    namespace: t.Optional[str] = None
+    requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
 
 
 @dataclass
@@ -67,7 +69,18 @@ class AstraDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
         if self._astra_db_collection is None:
+            from astrapy.api import APIRequestError
             from astrapy.db import AstraDB
+
+            # Get the collection_name and embedding dimension
+            collection_name = self.connector_config.collection_name
+            embedding_dimension = self.connector_config.embedding_dimension
+            requested_indexing_policy = self.connector_config.requested_indexing_policy
+
+            if requested_indexing_policy is not None:
+                _options = {"indexing": requested_indexing_policy}
+            else:
+                _options = None
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
@@ -78,12 +91,68 @@ class AstraDestinationConnector(BaseDestinationConnector):
                 caller_version=integration_version,
             )
 
-            # Create and connect to the newly created collection
-            self._astra_db_collection = self._astra_db.create_collection(
-                collection_name=self.connector_config.collection_name,
-                dimension=self.connector_config.embedding_dimension,
-                options={"indexing": {"deny": NON_INDEXED_FIELDS}},
-            )
+            try:
+                # Create and connect to the newly created collection
+                self._astra_db_collection = self._astra_db.create_collection(
+                    collection_name=collection_name,
+                    dimension=embedding_dimension,
+                    options=_options,
+                )
+            except APIRequestError:
+                # possibly the collection is preexisting and has legacy
+                # indexing settings: verify
+                get_coll_response = self._astra_db.get_collections(
+                    options={"explain": True}
+                )
+                collections = (get_coll_response["status"] or {}).get("collections") or []
+                preexisting = [
+                    collection
+                    for collection in collections
+                    if collection["name"] == self.connector_config.collection_name
+                ]
+                if preexisting:
+                    pre_collection = preexisting[0]
+                    # if it has no "indexing", it is a legacy collection;
+                    # otherwise it's unexpected warn and proceed at user's risk
+                    pre_col_options = pre_collection.get("options") or {}
+                    if "indexing" not in pre_col_options:
+                        warn(
+                            (
+                                f"Collection '{collection_name}' is detected as "
+                                "having indexing turned on for all fields "
+                                "(either created manually or by older versions "
+                                "of this plugin). This implies stricter "
+                                "limitations on the amount of text"
+                                " each entry can store. Consider reindexing anew on a"
+                                " fresh collection to be able to store longer texts."
+                            ),
+                            UserWarning,
+                            stacklevel=2,
+                        )
+                        self._astra_db_collection = self._astra_db.collection(
+                            collection_name=collection_name,
+                        )
+                    else:
+                        options_json = json.dumps(pre_col_options["indexing"])
+                        warn(
+                            (
+                                f"Collection '{collection_name}' has unexpected 'indexing'"
+                                f" settings (options.indexing = {options_json})."
+                                " This can result in odd behaviour when running "
+                                " metadata filtering and/or unwarranted limitations"
+                                " on storing long texts. Consider reindexing anew on a"
+                                " fresh collection."
+                            ),
+                            UserWarning,
+                            stacklevel=2,
+                        )
+                        self._astra_db_collection = self._astra_db.collection(
+                            collection_name=collection_name,
+                        )
+                else:
+                    # other exception
+                    raise
+
         return self._astra_db_collection
 
     @requires_dependencies(["astrapy"], extras="astra")
