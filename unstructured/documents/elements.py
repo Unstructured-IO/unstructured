@@ -10,6 +10,8 @@ import inspect
 import os
 import pathlib
 import re
+import sys
+import traceback
 import uuid
 from itertools import groupby
 from types import MappingProxyType
@@ -526,6 +528,7 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
         element.id: element.id_to_hash(seq_on_page_counter)
         for element, seq_on_page_counter in zip(elements, page_seq_pairs)
     }
+    traceback.print_stack(file=sys.stdout)
 
     # -- map old parent IDs to new ones --
     for e in elements:
