@@ -107,7 +107,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
                 preexisting = [
                     collection
                     for collection in collections
-                    if collection["name"] == self.connector_config.collection_name
+                    if collection["name"] == collection_name
                 ]
                 if preexisting:
                     pre_collection = preexisting[0]
