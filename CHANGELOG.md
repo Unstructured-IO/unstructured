@@ -1,3 +1,13 @@
+## 0.13.4
+
+### Enhancements
+
+* **Allow `UnstructuredTableTransformerModel` returning predictions in not parsed format
+
+### Features
+
+### Fixes
+
 ## 0.13.3
 
 ### Enhancements
