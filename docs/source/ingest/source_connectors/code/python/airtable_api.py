@@ -14,11 +14,8 @@ if __name__ == "__main__":
             verbose=True,
             output_dir="airtable-ingest-output",
             num_processes=2,
-            reprocess=True,
         ),
-        read_config=ReadConfig(
-            download_dir="airtable-ingest-download",
-        ),
+        read_config=ReadConfig(),
         partition_config=PartitionConfig(
             partition_by_api=True,
             api_key=os.getenv("UNSTRUCTURED_API_KEY"),
