@@ -1,3 +1,13 @@
+
+## 0.13.4-dev0
+
+### Enhancements
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning function are now deterministic and unique at the document level by default. Before, hashes were based only on text; however, they now also take into account the element's sequence number on a page, the page's number in the document, and the document's file name.
+
+### Features
+
+### Fixes
+
 ## 0.13.3
 
 ### Enhancements
