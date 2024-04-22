@@ -180,6 +180,6 @@ class AstraDestinationConnector(BaseDestinationConnector):
             "$vector": element_dict.pop("embeddings", None),
             "content": element_dict.pop("text", None),
             "metadata": flatten_dict(
-                element_dict, separator="-", flatten_lists=True, remove_none=True
+                element_dict, separator="_", flatten_lists=True, remove_none=True
             ),
         }
