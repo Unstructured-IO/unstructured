@@ -1,3 +1,3 @@
 metric	average	sample_sd	population_sd	count
-cct-accuracy	0.811	0.239	0.232	17
-cct-%missing	0.024	0.032	0.031	17
+cct-accuracy	0.0			1
+cct-%missing	0.018			1
