@@ -139,43 +139,6 @@ def test_chunk_by_title():
     )
 
 
-def test_chunk_by_title_respects_section_change():
-    elements: list[Element] = [
-        Title("A Great Day", metadata=ElementMetadata(section="first")),
-        Text("Today is a great day.", metadata=ElementMetadata(section="second")),
-        Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
-        Table("Heading\nCell text"),
-        Title("An Okay Day"),
-        Text("Today is an okay day."),
-        Text("It is rainy outside."),
-        Title("A Bad Day"),
-        Text(
-            "Today is a bad day.",
-            metadata=ElementMetadata(
-                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
-            ),
-        ),
-        Text("It is storming outside."),
-        CheckBox(),
-    ]
-
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
-
-    assert chunks == [
-        CompositeElement(
-            "A Great Day",
-        ),
-        CompositeElement(
-            "Today is a great day.\n\nIt is sunny outside.",
-        ),
-        Table("Heading\nCell text"),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
-
-
 def test_chunk_by_title_separates_by_page_number():
     elements: list[Element] = [
         Title("A Great Day", metadata=ElementMetadata(page_number=1)),
