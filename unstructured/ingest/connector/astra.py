@@ -101,9 +101,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             except APIRequestError:
                 # possibly the collection is preexisting and has legacy
                 # indexing settings: verify
-                get_coll_response = self._astra_db.get_collections(
-                    options={"explain": True}
-                )
+                get_coll_response = self._astra_db.get_collections(options={"explain": True})
                 collections = (get_coll_response["status"] or {}).get("collections") or []
                 preexisting = [
                     collection
