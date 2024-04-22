@@ -17,7 +17,7 @@ def test_simple_table_cell_parsing_from_table_transformer_when_expected_input(
 ):
     table_transformer_cell = {"row_nums": row_nums, "column_nums": column_nums, "cell text": "text"}
     transformed_cell = SimpleTableCell.from_table_transformer_cell(table_transformer_cell)
-    expected_cell = SimpleTableCell(x=x, y=y, width=w, height=h, content="text")
+    expected_cell = SimpleTableCell(x=x, y=y, w=w, h=h, content="text")
     assert expected_cell == transformed_cell
 
 

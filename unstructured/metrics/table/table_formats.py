@@ -5,16 +5,16 @@ from dataclasses import dataclass
 class SimpleTableCell:
     x: int
     y: int
-    width: int
-    height: int
+    w: int
+    h: int
     content: str = ""
 
     def to_dict(self):
         return {
             "x": self.x,
             "y": self.y,
-            "width": self.width,
-            "height": self.height,
+            "w": self.w,
+            "h": self.h,
             "content": self.content,
         }
 
@@ -42,7 +42,7 @@ class SimpleTableCell:
         return cls(
             x=min(column_nums),
             y=min(row_nums),
-            width=len(column_nums),
-            height=len(row_nums),
+            w=len(column_nums),
+            h=len(row_nums),
             content=tatr_table_cell.get("cell text", ""),
         )
