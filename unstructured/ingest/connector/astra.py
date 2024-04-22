@@ -17,7 +17,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import chunk_generator
-from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
