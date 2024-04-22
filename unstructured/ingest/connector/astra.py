@@ -80,7 +80,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             if requested_indexing_policy is not None:
                 _options = {"indexing": requested_indexing_policy}
             else:
-                _options = None
+                _options = {"indexing": {"deny": ["metadata"]}}
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
@@ -179,7 +179,5 @@ class AstraDestinationConnector(BaseDestinationConnector):
         return {
             "$vector": element_dict.pop("embeddings", None),
             "content": element_dict.pop("text", None),
-            "metadata": flatten_dict(
-                element_dict, separator="_", flatten_lists=True, remove_none=True
-            ),
+            "metadata": element_dict,
         }
