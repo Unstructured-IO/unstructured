@@ -79,7 +79,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             if requested_indexing_policy is not None:
                 _options = {"indexing": requested_indexing_policy}
             else:
-                _options = {"indexing": {"deny": ["metadata"]}}
+                _options = None
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
