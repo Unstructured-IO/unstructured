@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -23,9 +23,9 @@ inflection==0.5.1
     # via pyairtable
 pyairtable==2.3.3
     # via -r ./ingest/airtable.in
-pydantic==2.6.4
+pydantic==2.7.0
     # via pyairtable
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 requests==2.31.0
     # via

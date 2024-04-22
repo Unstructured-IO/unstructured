@@ -1,4 +1,4 @@
-## 0.13.3-dev8
+## 0.13.3
 
 ### Enhancements
 * **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning function are now deterministic and unique at the document level by default. Before, hashes were based only on text; however, they now also take into account the element's sequence number on a page, the page's number in the document, and the document's file name.
@@ -16,6 +16,7 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
 
 ## 0.13.2
 
