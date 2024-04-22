@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-vertexai.in
 #
-aiohttp==3.9.3
+aiohttp==3.9.5
     # via
     #   langchain
     #   langchain-community
@@ -42,6 +42,7 @@ frozenlist==1.4.1
     #   aiosignal
 google-api-core[grpc]==2.18.0
     # via
+    #   google-api-core
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
     #   google-cloud-core
@@ -55,9 +56,9 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.46.0
+google-cloud-aiplatform==1.48.0
     # via langchain-google-vertexai
-google-cloud-bigquery==3.20.1
+google-cloud-bigquery==3.21.0
     # via google-cloud-aiplatform
 google-cloud-core==2.4.1
     # via
@@ -84,15 +85,15 @@ googleapis-common-protos[grpc]==1.63.0
     #   grpcio-status
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
-grpcio==1.62.1
+grpcio==1.62.2
     # via
     #   google-api-core
     #   googleapis-common-protos
     #   grpc-google-iam-v1
     #   grpcio-status
-grpcio-status==1.62.1
+grpcio-status==1.62.2
     # via google-api-core
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -103,23 +104,23 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.14
+langchain==0.1.16
     # via -r ./ingest/embed-vertexai.in
-langchain-community==0.0.31
+langchain-community==0.0.34
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
-langchain-core==0.1.40
+langchain-core==0.1.45
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==0.1.2
+langchain-google-vertexai==1.0.1
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.40
+langsmith==0.1.49
     # via
     #   langchain
     #   langchain-community
@@ -142,7 +143,7 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   shapely
-orjson==3.10.0
+orjson==3.10.1
     # via langsmith
 packaging==23.2
     # via
@@ -173,13 +174,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 python-dateutil==2.9.0.post0
     # via
@@ -201,7 +202,7 @@ requests==2.31.0
     #   langsmith
 rsa==4.9
     # via google-auth
-shapely==2.0.3
+shapely==2.0.4
     # via google-cloud-aiplatform
 six==1.16.0
     # via
@@ -216,7 +217,7 @@ tenacity==8.2.3
     #   langchain
     #   langchain-community
     #   langchain-core
-types-protobuf==4.24.0.20240311
+types-protobuf==4.25.0.20240417
     # via langchain-google-vertexai
 types-requests==2.31.0.6
     # via langchain-google-vertexai

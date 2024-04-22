@@ -10,6 +10,7 @@ from functools import partial
 
 import pytest
 
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
@@ -17,14 +18,12 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.documents.elements import (
-    UUID,
     CheckBox,
     ConsolidationStrategy,
     CoordinatesMetadata,
     DataSourceMetadata,
     Element,
     ElementMetadata,
-    NoID,
     Points,
     RegexMetadata,
     Text,
@@ -32,31 +31,38 @@ from unstructured.documents.elements import (
 )
 
 
-def test_text_id():
-    text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+def test_Text_is_JSON_serializable():
+    # -- This shold run without an error --
+    json.dumps(Text(text="hello there!", element_id=None).to_dict())
 
 
-def test_text_uuid():
-    text_element = Text(text="hello there!", element_id=UUID())
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),
+        Text(text=""),  # -- element_id should be implicitly None --
+        Text(text="", element_id=None),  # -- setting explicitly to None --
+        CheckBox(),
+    ],
+)
+def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: Element,
+):
+    assert element._element_id is None, "Element should not have an ID yet"
 
-    id = text_element.id
+    # -- element self-assigns itself a UUID only when the ID is requested --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
-    assert isinstance(id, str)
-    assert len(id) == 36
-    assert id.count("-") == 4
-    # -- Test that the element is JSON serializable. This shold run without an error --
-    json.dumps(text_element.to_dict())
+    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
 
-
-def test_element_defaults_to_blank_id():
-    element = Element()
-    assert isinstance(element.id, NoID)
-
-
-def test_element_uuid():
-    element = Element(element_id=UUID())
-    assert isinstance(element.id, UUID)
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash() == expected_hash
+    assert element.id == expected_hash
 
 
 def test_text_element_apply_cleaners():
@@ -392,11 +398,13 @@ class DescribeElementMetadata:
         }
 
     def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
+        elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
         meta = ElementMetadata(
             category_depth=1,
-            orig_elements=[Title("Lorem"), Text("Lorem Ipsum")],
+            orig_elements=elements,
             page_number=2,
         )
+
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (

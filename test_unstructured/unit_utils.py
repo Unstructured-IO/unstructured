@@ -62,6 +62,13 @@ def assert_round_trips_through_JSON(elements: List[Element]) -> None:
     )
 
 
+def assign_hash_ids(elements: list[Element]) -> list[Element]:
+    """Updates the `id` attribute of each element to a hash."""
+    for element in elements:
+        element.id_to_hash()
+    return elements
+
+
 def _diff(heading: str, actual: str, expected: str):
     """Diff of actual compared to expected.
 

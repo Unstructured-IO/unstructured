@@ -294,6 +294,7 @@ def add_element_metadata(
     links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
+    link_start_indexes = [link.get("start_index") for link in links] if links else None
     emphasized_texts = (
         element.emphasized_texts
         if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
@@ -320,6 +321,7 @@ def add_element_metadata(
         text_as_html=text_as_html,
         link_urls=link_urls,
         link_texts=link_texts,
+        link_start_indexes=link_start_indexes,
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
         section=section,
@@ -538,13 +540,14 @@ def document_to_element_list(
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     languages: Optional[List[str]] = None,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
 
     num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
         page_elements: List[Element] = []
 
         page_image_metadata = _get_page_image_metadata(page)
@@ -569,7 +572,7 @@ def document_to_element_list(
                 for el in element:
                     if last_modification_date:
                         el.metadata.last_modified = last_modification_date
-                    el.metadata.page_number = i + 1
+                    el.metadata.page_number = page_number
                 page_elements.extend(element)
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
@@ -599,7 +602,7 @@ def document_to_element_list(
 
             add_element_metadata(
                 element,
-                page_number=i + 1,
+                page_number=page_number,
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
@@ -620,7 +623,7 @@ def document_to_element_list(
         if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
-        if include_page_breaks and i < num_pages - 1:
+        if include_page_breaks and page_number < num_pages + starting_page_number:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
 
