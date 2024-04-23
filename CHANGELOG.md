@@ -1,12 +1,13 @@
 ## 0.13.4-dev1
 
 ### Enhancements
-
-* **Allow `UnstructuredTableTransformerModel` returning predictions in not parsed format
+s3://utic-dev-tech-fixtures/data_for_external_3rd_party_chinese_company/Table_Annotation/annotated_json/
 
 ### Features
 
 ### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
 
 ## 0.13.3
 
