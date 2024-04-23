@@ -42,6 +42,8 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
+greenlet==3.0.3
+    # via sqlalchemy
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5

@@ -1,8 +1,10 @@
-## 0.13.4-dev0
+## 0.13.4-dev1
 
 ### Enhancements
 
 ### Features
+
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
 

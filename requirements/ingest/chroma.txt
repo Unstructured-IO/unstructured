@@ -214,9 +214,7 @@ urllib3==1.26.18
     #   kubernetes
     #   requests
 uvicorn[standard]==0.29.0
-    # via
-    #   chromadb
-    #   uvicorn
+    # via chromadb
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0

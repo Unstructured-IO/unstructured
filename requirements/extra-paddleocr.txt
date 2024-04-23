@@ -53,7 +53,7 @@ idna==3.7
     # via
     #   -c ./base.txt
     #   requests
-imageio==2.34.0
+imageio==2.34.1
     # via
     #   imgaug
     #   scikit-image
