@@ -103,7 +103,7 @@ install-xlsx:
 	python3 -m pip install -r requirements/extra-xlsx.txt
 
 .PHONY: install-all-docs
-install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx install-googlevisionocr
+install-all-docs: install-base install-csv install-docx install-epub install-odt install-pypandoc install-markdown install-msg install-pdf-image install-pptx install-xlsx
 
 .PHONY: install-all-ingest
 install-all-ingest:
@@ -274,10 +274,6 @@ install-pandoc:
 .PHONY: install-paddleocr
 install-paddleocr:
 	ARCH=${ARCH} ./scripts/install-paddleocr.sh
-
-.PHONY: install-googlevisionocr
-install-googlevisionocr:
-	python3 -m pip install -r requirements/extra-googlevisionocr.txt
 
 ## pip-compile:             compiles all base/dev/test requirements
 .PHONY: pip-compile
