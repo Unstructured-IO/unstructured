@@ -23,15 +23,11 @@ def test_simple_table_cell_parsing_from_table_transformer_when_expected_input(
 
 def test_simple_table_cell_parsing_from_table_transformer_when_missing_row_nums():
     cell = {"row_nums": [], "column_nums": [1], "cell text": "text"}
-    with pytest.raises(
-        ValueError, match='Cell {str(cell)} has missing values under "row_nums" key'
-    ):
+    with pytest.raises(ValueError, match='has missing values under "row_nums" key'):
         SimpleTableCell.from_table_transformer_cell(cell)
 
 
 def test_simple_table_cell_parsing_from_table_transformer_when_missing_column_nums():
     cell = {"row_nums": [1], "column_nums": [], "cell text": "text"}
-    with pytest.raises(
-        ValueError, match=f'Cell {str(cell)} has missing values under "column_nums" key'
-    ):
+    with pytest.raises(ValueError, match='has missing values under "column_nums" key'):
         SimpleTableCell.from_table_transformer_cell(cell)
