@@ -6,11 +6,17 @@ from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
-from unstructured.ingest.error import DestinationConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
+    BaseSingleIngestDoc,
+    BaseSourceConnector,
+    IngestDocCleanupMixin,
+    IngestDocSessionHandleMixin,
+    SourceConnectorCleanupMixin,
+    SourceMetadata,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -115,3 +121,55 @@ class AstraDestinationConnector(BaseDestinationConnector):
                 element_dict, separator="-", flatten_lists=True, remove_none=True
             ),
         }
+    
+
+@dataclass
+class AstraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
+    connector_config: SimpleAstraConfig
+    meta: t.Dict[str, str] = field(default_factory=dict)
+    registry_name: str = "astra"
+
+    def update_source_metadata(self):
+        self.source_metadata = SourceMetadata(
+            exists=True,
+        )
+
+class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    """Objects of this class support fetching document(s) from Astra DB"""
+
+    connector_config: SimpleAstraConfig
+
+    def initialize(self):
+        pass
+
+    @requires_dependencies(dependencies=["astrapy"], extras="astra")
+    def check_connection(self):
+        from astrapy.db import AstraDB
+
+        try:
+            # Build the Astra DB object.
+            # caller_name/version for AstraDB tracking
+            AstraDB(
+                api_endpoint=self.connector_config.access_config.api_endpoint,
+                token=self.connector_config.access_config.token,
+                # namespace=self.connector_config.namespace,
+                caller_name=integration_name,
+                caller_version=integration_version,
+            )
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
+    def get_ingest_docs(self):
+        records = []  # TODO: Add
+
+        return [
+            AstraIngestDoc(
+                connector_config=self.connector_config,
+                processor_config=self.processor_config,
+                read_config=self.read_config,
+                meta=record,
+            )
+            for record in records
+        ]
