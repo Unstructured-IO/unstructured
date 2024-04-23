@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Union
 
 
 @dataclass
@@ -19,7 +20,7 @@ class SimpleTableCell:
         }
 
     @classmethod
-    def from_table_transformer_cell(cls, tatr_table_cell: dict[str, list[int] | str]):
+    def from_table_transformer_cell(cls, tatr_table_cell: dict[str, Union[list[int], str]]):
         """
         Args:
             tatr_table_cell (dict):
