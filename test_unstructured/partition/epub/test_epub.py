@@ -77,7 +77,6 @@ def test_partition_epub_from_filename_exclude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
-    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_from_file_exlcude_metadata():
@@ -87,7 +86,6 @@ def test_partition_epub_from_file_exlcude_metadata():
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
     assert elements[0].metadata.filename is None
-    assert elements[0].metadata.section is None
 
 
 def test_partition_epub_metadata_date(

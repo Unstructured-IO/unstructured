@@ -191,8 +191,6 @@ class ElementMetadata:
     parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
-    # -- EPUB document section --
-    section: Optional[str]
 
     # -- e-mail specific metadata fields --
     sent_from: Optional[list[str]]
@@ -235,7 +233,6 @@ class ElementMetadata:
         page_number: Optional[int] = None,
         parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
-        section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
@@ -275,7 +272,6 @@ class ElementMetadata:
         self.page_number = page_number
         self.parent_id = parent_id
         self.regex_metadata = regex_metadata
-        self.section = section
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
@@ -488,7 +484,6 @@ class ConsolidationStrategy(enum.Enum):
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
             "regex_metadata": cls.REGEX,
-            "section": cls.FIRST,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
@@ -671,7 +666,7 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document.
+    """An element is a semantically-coherent component of a document, often a paragraph.
 
     There are a few design principles that are followed when creating an element:
     1. It will always have an ID, which by default is a random UUID.
@@ -694,7 +689,9 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if element_id is not None and not isinstance(element_id, str):
+        if element_id is not None and not isinstance(
+            element_id, str
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("element_id must be of type str or None.")
 
         self._element_id = element_id
@@ -885,7 +882,12 @@ class Formula(Text):
 
 
 class CompositeElement(Text):
-    """A section of text consisting of a combination of elements."""
+    """A chunk formed from text (non-Table) elements.
+
+    Only produced by chunking. An instance may be formed by combining one or more sequential
+    elements produced by partitioning. It it also used when text-splitting an "oversized" element,
+    a single element that by itself is larger than the requested chunk size.
+    """
 
     category = "CompositeElement"
 

@@ -2,6 +2,18 @@
 
 ### Enhancements
 
+### Features
+
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
+
+### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
+
+## 0.13.3
+
+### Enhancements
+
 * **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
@@ -10,8 +22,6 @@
 * **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
 
 ### Features
-
-* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
 
