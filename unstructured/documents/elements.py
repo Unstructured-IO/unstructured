@@ -492,6 +492,7 @@ class ConsolidationStrategy(enum.Enum):
             "signature": cls.FIRST,
             "subject": cls.FIRST,
             "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
         }
 
