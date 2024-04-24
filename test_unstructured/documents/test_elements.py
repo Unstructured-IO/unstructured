@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import pathlib
 from functools import partial
@@ -28,7 +29,27 @@ from unstructured.documents.elements import (
     RegexMetadata,
     Text,
     Title,
+    assign_and_map_hash_ids,
 )
+
+
+@pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
+def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: Element,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "5336294a19f32ff03ef80066fbc3e0f7"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
 
 
 def test_Text_is_JSON_serializable():
@@ -45,24 +66,10 @@ def test_Text_is_JSON_serializable():
         CheckBox(),
     ],
 )
-def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
-    element: Element,
-):
-    assert element._element_id is None, "Element should not have an ID yet"
-
-    # -- element self-assigns itself a UUID only when the ID is requested --
+def test_Element_self_assigns_itself_a_UUID_id(element: Element):
     assert isinstance(element.id, str)
     assert len(element.id) == 36
     assert element.id.count("-") == 4
-
-    expected_hash = "e3b0c44298fc1c149afbf4c8996fb924"
-    # -- calling `.id_to_hash()` changes the element's id-type to hash --
-    assert element.id_to_hash() == expected_hash
-    assert element.id == expected_hash
-
-    # -- `.id_to_hash()` is idempotent --
-    assert element.id_to_hash() == expected_hash
-    assert element.id == expected_hash
 
 
 def test_text_element_apply_cleaners():
@@ -408,9 +415,10 @@ class DescribeElementMetadata:
         assert meta.to_dict() == {
             "category_depth": 1,
             "orig_elements": (
-                "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWt"
-                "JVm5WDoqNUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQp"
-                "ZRxYZcCA/1spDtP98dU6DTEw3sa5fWOqs10vH0cLQn0="
+                "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
+                "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
+                "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp"
+                "1LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
             ),
             "page_number": 2,
         }
@@ -666,3 +674,73 @@ class DescribeElementMetadata:
                 f"ElementMetadata field `.{field_name}` does not have a consolidation strategy."
                 f" Add one in `ConsolidationStrategy.field_consolidation_strategies()."
             )
+
+
+def test_hash_ids_are_unique_for_duplicate_elements():
+    # GIVEN
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    elements = [
+        parent,
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+    ]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+    ids = [element.id for element in updated_elements]
+
+    # THEN
+    assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
+    assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
+
+    for idx, updated_element in enumerate(updated_elements):
+        assert updated_element.id != elements[idx].id, "IDs haven't changed after recalculation"
+        if updated_element.metadata.parent_id is not None:
+            assert updated_element.metadata.parent_id in ids, "Parent ID not in the list of IDs"
+            assert (
+                updated_element.metadata.parent_id != elements[idx].metadata.parent_id
+            ), "Parent ID hasn't changed after recalculation"
+
+
+def test_hash_ids_are_deterministic():
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    elements = [
+        parent,
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+    ]
+
+    updated_elements = assign_and_map_hash_ids(elements)
+    ids = [element.id for element in updated_elements]
+    parent_ids = [element.metadata.parent_id for element in updated_elements]
+
+    assert ids == [
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "4112a8d24886276e18e759d06956021b",
+        "eba84bbe7f03e8b91a1527323040ee3d",
+    ]
+    assert parent_ids == [
+        None,
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "ea9eb7e80383c190f8cafce1ad666624",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "sequence_number", "filename", "page_number", "expected_hash"),
+    [
+        # -- pdf files support page numbers --
+        ("foo", 1, "foo.pdf", 1, "4bb264eb23ceb44cd8fcc5af44f8dc71"),
+        ("foo", 2, "foo.pdf", 1, "75fc1de48cf724ec00aa8d1c5a0d3758"),
+        # -- txt files don't have a page number --
+        ("some text", 0, "some.txt", None, "1a2627b5760c06b1440102f11a1edb0f"),
+        ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
+    ],
+)
+def test_id_to_hash_calculates(text, sequence_number, filename, page_number, expected_hash):
+    element = Text(
+        text=text,
+        metadata=ElementMetadata(filename=filename, page_number=page_number),
+    )
+    assert element.id_to_hash(sequence_number) == expected_hash, "Returned ID does not match"
+    assert element.id == expected_hash, "ID should be set"

@@ -1240,3 +1240,71 @@ def test_partition_pdf_always_keep_all_image_elements(
     )
     image_elements = [el for el in elements if el.category == ElementType.IMAGE]
     assert len(image_elements) == 3
+
+
+@pytest.fixture()
+def expected_element_ids_for_fast_strategy():
+    return [
+        "27a6cb3e5a4ad399b2f865729bbd3840",
+        "a90a54baba0093296a013d26b7acbc17",
+        "9be424e2d151dac4b5f36a85e9bbfe65",
+        "4631da875fb4996c63b2d80cea6b588e",
+        "6264f4eda97a049f4710f9bea0c01cbd",
+        "abded7b2ff3a5542c88b4a831755ec24",
+        "b781ea5123cb31e0571391b7b42cac75",
+        "033f27d2618ba4cda9068b267b5a731e",
+        "8982a12fcced30dd12ccbf61d14f30bf",
+        "41af2fd5df0cf47aa7e8ecca200d3ac6",
+    ]
+
+
+@pytest.fixture()
+def expected_element_ids_for_hi_res_strategy():
+    return [
+        "27a6cb3e5a4ad399b2f865729bbd3840",
+        "a90a54baba0093296a013d26b7acbc17",
+        "9be424e2d151dac4b5f36a85e9bbfe65",
+        "4631da875fb4996c63b2d80cea6b588e",
+        "6264f4eda97a049f4710f9bea0c01cbd",
+        "abded7b2ff3a5542c88b4a831755ec24",
+        "b781ea5123cb31e0571391b7b42cac75",
+        "033f27d2618ba4cda9068b267b5a731e",
+        "8982a12fcced30dd12ccbf61d14f30bf",
+        "41af2fd5df0cf47aa7e8ecca200d3ac6",
+    ]
+
+
+@pytest.fixture()
+def expected_element_ids_for_ocr_strategy():
+    return [
+        "272ab65cbe81795161128aea59599d83",
+        "b38affd7bbbb3dddf5c85ba8b14d380d",
+        "65903214d456b8b3cba6faa6714bd9ba",
+        "5b41ceae05dcfaeeac32ff8e82dc2ff1",
+        "6582fc6c6c595225feeddcc3263f0ae3",
+        "64b610c8f4274f1ce2175bf30814409d",
+        "8edde8bf2d3a68370dc4bd142c408ca4",
+        "a052bc17696043efce2e4f4f28393a83",
+    ]
+
+
+@pytest.fixture()
+def expected_ids(request):
+    return request.getfixturevalue(request.param)
+
+
+@pytest.mark.parametrize(
+    ("strategy", "expected_ids"),
+    [
+        (PartitionStrategy.FAST, "expected_element_ids_for_fast_strategy"),
+        (PartitionStrategy.HI_RES, "expected_element_ids_for_hi_res_strategy"),
+        (PartitionStrategy.OCR_ONLY, "expected_element_ids_for_ocr_strategy"),
+    ],
+    indirect=["expected_ids"],
+)
+def test_unique_and_deterministic_element_ids(strategy, expected_ids):
+    elements = pdf.partition_pdf(
+        "example-docs/fake-memo-with-duplicate-page.pdf", strategy=strategy, starting_page_number=2
+    )
+    ids = [element.id for element in elements]
+    assert ids == expected_ids, "Element IDs do not match expected IDs"

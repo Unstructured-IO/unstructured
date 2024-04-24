@@ -866,3 +866,18 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
     filename = str(tmp_path / "mock_document.docx")
     mock_document.save(filename)
     return filename
+
+
+def test_ids_are_unique_and_deterministic():
+    elements = partition_docx("example-docs/duplicate-paragraphs.docx")
+
+    ids = [e.id for e in elements]
+    assert ids == [
+        "2f22d82eea1faf5f40dac60cef52700e",
+        "ca9e1f448e531a5152d960e14eefc360",
+        "9ddeacb172ac17fb45e6f3f15f3c703d",
+        "a4fd85d3f4141acae38c8f9c936ed2f3",
+        "44ebaaf66640719c918246d4ccba1c45",
+        "f36e8ebcb3b6a051940a168fe73cbc44",
+        "532b395177652c7d61e1e4d855f1dc1d",
+    ], "IDs are not deterministic"

@@ -11,6 +11,7 @@ import os
 import pathlib
 import re
 import uuid
+from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -509,8 +510,19 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     Returns:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
-    old_to_new_mapping = {e.id: e.id_to_hash() for e in elements}
+    # -- generate sequence number for each element on a page --
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_pairs = [
+        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
+    ]
 
+    # -- assign hash IDs to elements --
+    old_to_new_mapping = {
+        element.id: element.id_to_hash(seq_on_page_counter)
+        for element, seq_on_page_counter in zip(elements, page_seq_pairs)
+    }
+
+    # -- map old parent IDs to new ones --
     for e in elements:
         parent_id = e.metadata.parent_id
         if not parent_id:
@@ -673,7 +685,7 @@ class Element(abc.ABC):
     2. Asking for an ID should always return a string, it can never be None.
     3. ID is lazy, meaning it will be generated when asked for the first time.
     4. When deterministic behavior is needed, the ID can be converted.
-        to a hash based on its text `element.id_to_hash()`
+        to a hash based on its text `element.id_to_hash(position)`
     4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
     6. Assigning a string ID manually is possible, but is meant to be used
         only for deserialization purposes.
@@ -737,22 +749,26 @@ class Element(abc.ABC):
 
         return new_coordinates
 
+    def id_to_hash(self, sequence_number: int) -> str:
+        """Calculates and assigns a deterministic hash as an ID.
+
+        The hash ID is based on element's text, sequence number on page,
+        page number and its filename.
+
+        Args:
+            sequence_number: index on page
+
+        Returns: new ID value
+        """
+        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
+
     @property
     def id(self):
         if self._element_id is None:
             self._element_id = str(uuid.uuid4())
         return self._element_id
-
-    def id_to_hash(self) -> str:
-        """Calculates and assigns a deterministic hash as an ID.
-
-        The hash ID is based on element's text.
-
-        Returns:
-            The first 32 characters of the SHA256 hash of the concatenated input parameters.
-        """
-        self._element_id = hashlib.sha256(self.text.encode()).hexdigest()[:32]
-        return self.id
 
     def to_dict(self) -> dict[str, Any]:
         return {
