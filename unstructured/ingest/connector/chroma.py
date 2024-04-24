@@ -111,7 +111,7 @@ class ChromaDestinationConnector(BaseDestinationConnector):
 
         try:
             # Chroma wants lists even if there is only one element
-            collection.add(
+            collection.upsert(
                 ids=batch["ids"],
                 documents=batch["documents"],
                 embeddings=batch["embeddings"],
@@ -147,8 +147,9 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             self.upsert_batch(self.prepare_chroma_list(chunk))
 
     def normalize_dict(self, element_dict: dict) -> dict:
+        element_id = element_dict.get("element_id", str(uuid.uuid4()))
         return {
-            "id": str(uuid.uuid4()),
+            "id": element_id,
             "embedding": element_dict.pop("embeddings", None),
             "document": element_dict.pop("text", None),
             "metadata": flatten_dict(
