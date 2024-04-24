@@ -41,6 +41,7 @@ class SimpleChromaConfig(BaseConnectorConfig):
 @dataclass
 class ChromaWriteConfig(WriteConfig):
     batch_size: int = 100
+    optional_doc_metadata: t.Optional[t.Dict[str, str]] = None
 
 
 @dataclass
@@ -147,11 +148,12 @@ class ChromaDestinationConnector(BaseDestinationConnector):
             self.upsert_batch(self.prepare_chroma_list(chunk))
 
     def normalize_dict(self, element_dict: dict) -> dict:
+        additional_metadata = self.write_config.optional_doc_metadata or {}
         return {
             "id": str(uuid.uuid4()),
             "embedding": element_dict.pop("embeddings", None),
             "document": element_dict.pop("text", None),
-            "metadata": flatten_dict(
+            "metadata": {**flatten_dict(
                 element_dict, separator="-", flatten_lists=True, remove_none=True
-            ),
+            ), **additional_metadata},
         }
