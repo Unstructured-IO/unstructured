@@ -4,21 +4,41 @@ import pytest
 
 from unstructured.cleaners.core import clean_prefix
 from unstructured.cleaners.translate import translate_text
-from unstructured.documents.email_elements import EmailElement, Name
+from unstructured.documents.email_elements import EmailElement, Name, Subject
+
+
+@pytest.mark.parametrize(
+    "element", [EmailElement(text=""), Name(text="", name=""), Subject(text="")]
+)
+def test_EmailElement_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: EmailElement,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "5336294a19f32ff03ef80066fbc3e0f7"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash(0) == expected_hash
 
 
 def test_Name_should_assign_a_deterministic_and_an_idempotent_hash():
     element = Name(name="Example", text="hello there!")
-    expected_hash = "c69509590d81db2f37f9d75480c8efed"
+    expected_hash = "7d191bcecf80c122578c497de5f0dae7"
 
     assert element._element_id is None, "Element should not have an ID yet"
 
     # -- calculating hash for the first time --
-    assert element.id_to_hash() == expected_hash
+    assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
 
     # -- `.id_to_hash()` is idempotent --
-    assert element.id_to_hash() == expected_hash
+    assert element.id_to_hash(0) == expected_hash
     assert element.id == expected_hash
 
 
@@ -30,7 +50,7 @@ def test_Name_should_assign_a_deterministic_and_an_idempotent_hash():
         Name(name="Example", text="hello there!", element_id=None),
     ],
 )
-def test_EmailElement_should_assign_a_UUID_only_once_and_only_at_the_first_id_request(
+def test_EmailElement_assigns_a_UUID_only_once_and_only_at_the_first_id_request(
     element: EmailElement,
 ):
     assert element._element_id is None, "Element should not have an ID yet"
