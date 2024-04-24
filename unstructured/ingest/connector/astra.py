@@ -165,8 +165,9 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @property
     def astra_db_collection(self):
         if self._astra_db_collection is None:
-            self._astra_db_collection = self.astra_db.get_collection(
-                self.connector_config.collection_name
+            self._astra_db_collection = self.astra_db.create_collection(
+                self.connector_config.collection_name,
+                self.connector_config.embedding_dimension,
             )
 
         return self._astra_db_collection
