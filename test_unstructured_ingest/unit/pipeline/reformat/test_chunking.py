@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 
@@ -29,7 +30,7 @@ class DescribeChunker:
     # -- Chunker.run() -----------------------------------------------------------------------------
 
     # -- integration test --
-    def it_creates_json(self, _ingest_docs_map_: Mock, tmpdir: str):
+    def it_creates_JSON_elements(self, _ingest_docs_map_: Mock, tmpdir: str):
         chunker = Chunker(
             chunking_config=ChunkingConfig(chunking_strategy="by_title"),
             pipeline_context=PipelineContext(work_dir=tmpdir),
@@ -40,12 +41,17 @@ class DescribeChunker:
         # -- Define `work_dir` add the "/chunked" subdirectory to it:
         os.makedirs(os.path.join(tmpdir, "chunked"), exist_ok=True)
 
-        filename = chunker.run(ELEMENTS_JSON_FILE)
+        filename = chunker.run(ELEMENTS_JSON_FILE) or ""
 
         head, tail = os.path.split(filename if filename else "")
         # -- Check that a json file was created in `/chunked` --
         assert head.endswith("chunked")
         assert tail.endswith(".json")
+        # -- Check contents of file --
+        with open(filename) as json_f:
+            json_data = json.load(json_f)
+        assert all(d.get("type") == "CompositeElement" for d in json_data)
+        assert len(json_data) == 5
 
     def it_returns_None_and_logs_message_without_chunking_strategy(
         self, _ingest_docs_map_: Mock, caplog: LogCaptureFixture
@@ -60,7 +66,7 @@ class DescribeChunker:
         assert chunker.run(ELEMENTS_JSON_FILE) is None
         assert "chunking_strategy is None, skipping chunking for" in caplog.text
 
-    def it_logs_error_with_invalid_remote_chunking_args(
+    def it_logs_error_on_invalid_remote_chunking_strategy(
         self, _ingest_docs_map_: Mock, caplog: LogCaptureFixture
     ):
         chunker = Chunker(

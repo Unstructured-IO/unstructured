@@ -90,7 +90,7 @@ class Chunker(ReformatNode):
         # -- No chunking_strategy means no chunking --
         if self.chunking_config.chunking_strategy is None:
             return
-        # -- Chunk locally --
+        # -- Chunk locally for open-source chunking strategies, even when partitioning remotely --
         if self.chunking_config.chunking_strategy in ("basic", "by_title"):
             return dispatch.chunk(
                 elements=elements_from_json(filename=elements_json_file),
