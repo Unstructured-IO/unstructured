@@ -42,7 +42,6 @@ frozenlist==1.4.1
     #   aiosignal
 google-api-core[grpc]==2.18.0
     # via
-    #   google-api-core
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
     #   google-cloud-core
@@ -83,6 +82,8 @@ googleapis-common-protos[grpc]==1.63.0
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
+greenlet==3.0.3
+    # via sqlalchemy
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
 grpcio==1.62.2
