@@ -6,7 +6,11 @@ from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
-from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import (
+    DestinationConnectionError,
+    SourceConnectionError,
+    SourceConnectionNetworkError,
+)
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -32,8 +36,8 @@ NON_INDEXED_FIELDS = ["metadata._node_content", "content"]
 
 @dataclass
 class AstraAccessConfig(AccessConfig):
-    token: t.Optional[str] = enhanced_field(default=None, sensitive=True)
-    api_endpoint: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    token: str = enhanced_field(sensitive=True)
+    api_endpoint: str = enhanced_field(sensitive=True)
 
 
 @dataclass
@@ -121,7 +125,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
                 element_dict, separator="-", flatten_lists=True, remove_none=True
             ),
         }
-    
+
 
 @dataclass
 class AstraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
@@ -134,6 +138,7 @@ class AstraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSin
             exists=True,
         )
 
+
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     """Objects of this class support fetching document(s) from Astra DB"""
 
@@ -141,6 +146,30 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
     def initialize(self):
         pass
+
+    @property
+    def astra_db(self):
+        from astrapy.db import AstraDB
+
+        if self._astra_db is None:
+            self.astra_db = AstraDB(
+                api_endpoint=self.connector_config.access_config.api_endpoint,
+                token=self.connector_config.access_config.token,
+                # namespace=self.connector_config.namespace,
+                caller_name=integration_name,
+                caller_version=integration_version,
+            )
+
+        return self._astra_db
+
+    @property
+    def astra_db_collection(self):
+        if self._astra_db_collection is None:
+            self._astra_db_collection = self.astra_db.get_collection(
+                self.connector_config.collection_name
+            )
+
+        return self._astra_db_collection
 
     @requires_dependencies(dependencies=["astrapy"], extras="astra")
     def check_connection(self):
@@ -162,7 +191,8 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     def get_ingest_docs(self):
-        records = []  # TODO: Add
+        # Perform the find operation
+        astra_docs = list(self.astra_db_collection.paginated_find())
 
         return [
             AstraIngestDoc(
@@ -171,5 +201,5 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 read_config=self.read_config,
                 meta=record,
             )
-            for record in records
+            for record in astra_docs
         ]
