@@ -1,7 +1,7 @@
 ## 0.13.4-dev1
 
 ### Enhancements
-s3://utic-dev-tech-fixtures/data_for_external_3rd_party_chinese_company/Table_Annotation/annotated_json/
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
 
 ### Features
 
