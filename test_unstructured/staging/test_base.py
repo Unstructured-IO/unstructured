@@ -48,9 +48,10 @@ def test_elements_to_base64_gzipped_json_can_serialize_elements_to_a_base64_str(
     elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
 
     assert base.elements_to_base64_gzipped_json(elements) == (
-        "eJyFzcsKwjAQheFXKVm7yDS3xjcQXNaViKTJjBR6o46glr67zVI3Lmf4Dv95EdhhjwNf2yT2hYDGUaWtJVm5WDoq"
-        "NUL0UoJrqtLHJHaF6JFDChw2v6zbzfjkvD2OM/YZ8GvC/Khb7lBs5LcilUwRyCsblQYTiBQpZRxYZcCA/1spDtP9"
-        "8dU6DTEw3sa5fWOqs10vH0cLQn0="
+        "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
+        "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
+        "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp1"
+        "LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
     )
 
 
@@ -166,7 +167,6 @@ def test_default_pandas_dtypes():
             sent_from=["sent", "from"],
             sent_to=["sent", "to"],
             subject="subject",
-            section="section",
             header_footer_type="header_footer_type",
             emphasized_text_contents=["emphasized", "text", "contents"],
             emphasized_text_tags=["emphasized", "text", "tags"],
@@ -321,7 +321,6 @@ def test_convert_to_coco():
                 sent_from=["sent", "from"],
                 sent_to=["sent", "to"],
                 subject="subject",
-                section="section",
                 header_footer_type="header_footer_type",
                 emphasized_text_contents=["emphasized", "text", "contents"],
                 emphasized_text_tags=["emphasized", "text", "tags"],
@@ -366,7 +365,6 @@ def test_convert_to_coco():
                 sent_from=["sent", "from"],
                 sent_to=["sent", "to"],
                 subject="subject",
-                section="section",
                 header_footer_type="header_footer_type",
                 emphasized_text_contents=["emphasized", "text", "contents"],
                 emphasized_text_tags=["emphasized", "text", "tags"],

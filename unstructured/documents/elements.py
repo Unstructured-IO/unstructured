@@ -11,6 +11,7 @@ import os
 import pathlib
 import re
 import uuid
+from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -191,8 +192,6 @@ class ElementMetadata:
     parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
-    # -- EPUB document section --
-    section: Optional[str]
 
     # -- e-mail specific metadata fields --
     sent_from: Optional[list[str]]
@@ -235,7 +234,6 @@ class ElementMetadata:
         page_number: Optional[int] = None,
         parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
-        section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
@@ -275,7 +273,6 @@ class ElementMetadata:
         self.page_number = page_number
         self.parent_id = parent_id
         self.regex_metadata = regex_metadata
-        self.section = section
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
@@ -488,7 +485,6 @@ class ConsolidationStrategy(enum.Enum):
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
             "regex_metadata": cls.REGEX,
-            "section": cls.FIRST,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
@@ -514,8 +510,19 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
     Returns:
         List of updated Element objects with hashes for `id` and `parent_id`.
     """
-    old_to_new_mapping = {e.id: e.id_to_hash() for e in elements}
+    # -- generate sequence number for each element on a page --
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_pairs = [
+        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
+    ]
 
+    # -- assign hash IDs to elements --
+    old_to_new_mapping = {
+        element.id: element.id_to_hash(seq_on_page_counter)
+        for element, seq_on_page_counter in zip(elements, page_seq_pairs)
+    }
+
+    # -- map old parent IDs to new ones --
     for e in elements:
         parent_id = e.metadata.parent_id
         if not parent_id:
@@ -671,14 +678,14 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document.
+    """An element is a semantically-coherent component of a document, often a paragraph.
 
     There are a few design principles that are followed when creating an element:
     1. It will always have an ID, which by default is a random UUID.
     2. Asking for an ID should always return a string, it can never be None.
     3. ID is lazy, meaning it will be generated when asked for the first time.
     4. When deterministic behavior is needed, the ID can be converted.
-        to a hash based on its text `element.id_to_hash()`
+        to a hash based on its text `element.id_to_hash(position)`
     4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
     6. Assigning a string ID manually is possible, but is meant to be used
         only for deserialization purposes.
@@ -694,7 +701,9 @@ class Element(abc.ABC):
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        if element_id is not None and not isinstance(element_id, str):
+        if element_id is not None and not isinstance(
+            element_id, str
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
             raise ValueError("element_id must be of type str or None.")
 
         self._element_id = element_id
@@ -740,22 +749,26 @@ class Element(abc.ABC):
 
         return new_coordinates
 
+    def id_to_hash(self, sequence_number: int) -> str:
+        """Calculates and assigns a deterministic hash as an ID.
+
+        The hash ID is based on element's text, sequence number on page,
+        page number and its filename.
+
+        Args:
+            sequence_number: index on page
+
+        Returns: new ID value
+        """
+        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
+
     @property
     def id(self):
         if self._element_id is None:
             self._element_id = str(uuid.uuid4())
         return self._element_id
-
-    def id_to_hash(self) -> str:
-        """Calculates and assigns a deterministic hash as an ID.
-
-        The hash ID is based on element's text.
-
-        Returns:
-            The first 32 characters of the SHA256 hash of the concatenated input parameters.
-        """
-        self._element_id = hashlib.sha256(self.text.encode()).hexdigest()[:32]
-        return self.id
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -885,7 +898,12 @@ class Formula(Text):
 
 
 class CompositeElement(Text):
-    """A section of text consisting of a combination of elements."""
+    """A chunk formed from text (non-Table) elements.
+
+    Only produced by chunking. An instance may be formed by combining one or more sequential
+    elements produced by partitioning. It it also used when text-splitting an "oversized" element,
+    a single element that by itself is larger than the requested chunk size.
+    """
 
     category = "CompositeElement"
 

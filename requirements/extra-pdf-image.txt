@@ -6,6 +6,8 @@
 #
 antlr4-python3-runtime==4.9.3
     # via omegaconf
+cachetools==5.3.3
+    # via google-auth
 certifi==2024.2.2
     # via
     #   -c ././deps/constraints.txt
@@ -43,6 +45,24 @@ fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
+google-api-core[grpc]==2.18.0
+    # via google-cloud-vision
+google-auth==2.29.0
+    # via
+    #   google-api-core
+    #   google-cloud-vision
+google-cloud-vision==3.7.2
+    # via -r ./extra-pdf-image.in
+googleapis-common-protos==1.63.0
+    # via
+    #   google-api-core
+    #   grpcio-status
+grpcio==1.62.2
+    # via
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.62.2
+    # via google-api-core
 huggingface-hub==0.22.2
     # via
     #   timm
@@ -147,11 +167,26 @@ pillow-heif==0.16.0
     # via -r ./extra-pdf-image.in
 portalocker==2.8.2
     # via iopath
+proto-plus==1.23.0
+    # via
+    #   google-api-core
+    #   google-cloud-vision
 protobuf==4.23.4
     # via
     #   -c ././deps/constraints.txt
+    #   google-api-core
+    #   google-cloud-vision
+    #   googleapis-common-protos
+    #   grpcio-status
     #   onnx
     #   onnxruntime
+    #   proto-plus
+pyasn1==0.6.0
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.0
+    # via google-auth
 pycocotools==2.0.7
     # via
     #   -c ././deps/constraints.txt
@@ -195,8 +230,11 @@ regex==2024.4.16
 requests==2.31.0
     # via
     #   -c ./base.txt
+    #   google-api-core
     #   huggingface-hub
     #   transformers
+rsa==4.9
+    # via google-auth
 safetensors==0.4.3
     # via
     #   timm
