@@ -9,10 +9,6 @@ anyio==3.7.1
     #   -c ././deps/constraints.txt
     #   httpx
     #   jupyter-server
-appnope==0.1.4
-    # via
-    #   ipykernel
-    #   ipython
 argon2-cffi==23.1.0
     # via jupyter-server
 argon2-cffi-bindings==21.2.0
@@ -185,7 +181,7 @@ jupyterlab==4.1.6
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
-jupyterlab-server==2.26.0
+jupyterlab-server==2.27.0
     # via
     #   jupyterlab
     #   notebook

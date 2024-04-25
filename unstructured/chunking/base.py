@@ -1022,51 +1022,6 @@ class TextPreChunkAccumulator:
 # ================================================================================================
 
 
-def is_in_next_section() -> BoundaryPredicate:
-    """Not a predicate itself, calling this returns a predicate that triggers on each new section.
-
-    The lifetime of the returned callable cannot extend beyond a single element-stream because it
-    stores current state (current section) that is particular to that element stream.
-
-    A "section" of this type is particular to the EPUB format (so far) and not to be confused with
-    a "section" composed of a section-heading (`Title` element) followed by content elements.
-
-    The returned predicate tracks the current section, starting at `None`. Calling with an element
-    with a different value for `metadata.section` returns True, indicating the element starts a new
-    section boundary, and updates the enclosed section name ready for the next transition.
-    """
-    current_section: Optional[str] = None
-    is_first: bool = True
-
-    def section_changed(element: Element) -> bool:
-        nonlocal current_section, is_first
-
-        section = element.metadata.section
-
-        # -- The first element never reports a section break, it starts the first section of the
-        # -- document. That section could be named (section is non-None) or anonymous (section is
-        # -- None). We don't really have to care.
-        if is_first:
-            current_section = section
-            is_first = False
-            return False
-
-        # -- An element with a `None` section is assumed to continue the current section. It never
-        # -- updates the current-section because once set, the current-section is "sticky" until
-        # -- replaced by another explicit section.
-        if section is None:
-            return False
-
-        # -- another element with the same section continues that section --
-        if section == current_section:
-            return False
-
-        current_section = section
-        return True
-
-    return section_changed
-
-
 def is_on_next_page() -> BoundaryPredicate:
     """Not a predicate itself, calling this returns a predicate that triggers on each new page.
 

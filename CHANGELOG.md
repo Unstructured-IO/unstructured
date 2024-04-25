@@ -1,4 +1,24 @@
-## 0.13.4
+## 0.13.4-dev4
+
+### Enhancements
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
+  function are now deterministic and unique at the document level by default. Before, hashes were
+  based only on text; however, they now also take into account the element's sequence number on a
+  page, the page's number in the document, and the document's file name.
+* **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
+  previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
+  options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
+
+### Features
+
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
+
+### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
+
+## 0.13.3
 
 ### Enhancements
 

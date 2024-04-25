@@ -272,7 +272,6 @@ def add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
-    section: Optional[str] = None,
     image_path: Optional[str] = None,
     detection_origin: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -324,7 +323,6 @@ def add_element_metadata(
         link_start_indexes=link_start_indexes,
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
-        section=section,
         category_depth=depth,
         image_path=image_path,
         languages=languages,
@@ -579,9 +577,8 @@ def document_to_element_list(
             else:
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
-                )
+                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
+                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
                 try:
                     if (
                         isinstance(element, Title) and element.metadata.category_depth is None

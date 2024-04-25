@@ -19,6 +19,20 @@ from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
 
+def test_partition_doc_for_deterministic_and_unique_ids():
+    ids = [element.id for element in partition_doc("example-docs/duplicate-paragraphs.doc")]
+
+    assert ids == [
+        "ade273c622c48d67a7be7b3816d5b4d8",
+        "7d0b32fdf169f9578723486cb4bc1235",
+        "1feb6e8e9c1662cfaef75907aeeb0900",
+        "aa2a8ac10143b12f0fe2087837ea11d2",
+        "da31ba7ed3919067d2c6572dc1617271",
+        "1914359c179a160df921b769acf8c353",
+        "f9d0d379fc791bae487b7a45f65caa50",
+    ]
+
+
 @pytest.fixture()
 def mock_document():
     document = docx.Document()

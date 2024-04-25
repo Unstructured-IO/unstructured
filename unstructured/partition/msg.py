@@ -120,13 +120,13 @@ def partition_msg(
         last_modification_date = (
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
-    metadata = build_msg_metadata(
-        msg_obj,
-        metadata_filename or filename,
-        metadata_last_modified=metadata_last_modified,
-        last_modification_date=last_modification_date,
-    )
     for element in elements:
+        metadata = build_msg_metadata(
+            msg_obj,
+            metadata_filename or filename,
+            metadata_last_modified=metadata_last_modified,
+            last_modification_date=last_modification_date,
+        )
         element.metadata = metadata
 
     if process_attachments:
