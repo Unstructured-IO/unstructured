@@ -25,7 +25,7 @@ if __name__ == "__main__":
         ),
         connector_config=SimpleAzureBlobStorageConfig(
             access_config=AzureAccessConfig(
-                account_name="azureunstructured1",
+                account_name=os.getenv("AZURE_ACCOUNT_NAME"),
             ),
             remote_url="abfs://container1/",
         ),

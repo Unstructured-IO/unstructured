@@ -11,4 +11,4 @@ unstructured-ingest \
   --recursive \
   --verbose \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

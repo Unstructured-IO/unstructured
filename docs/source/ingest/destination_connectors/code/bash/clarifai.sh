@@ -9,7 +9,7 @@ unstructured-ingest \
   --num-processes 2 \
   --verbose \
   clarifai \
-  --app-id "<your clarifai app name>" \
-  --user-id "<your clarifai user id>" \
-  --api-key "<your clarifai PAT key>" \
+  --app-id "$CLARIFAI_APP_ID" \
+  --user-id "$CLARIFAI_USER_ID" \
+  --api-key "$CLARIFAI_PAT_KEY" \
   --batch-size 100
