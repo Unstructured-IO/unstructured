@@ -13,7 +13,7 @@
 
 ### Features
 
-* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**. Previously, a threshold value that affects the capture of embedded links was passed as a parameter. This allows users to configure this threshold value via an environment variable.
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
 * **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
