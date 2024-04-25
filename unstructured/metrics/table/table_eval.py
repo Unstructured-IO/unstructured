@@ -129,7 +129,8 @@ class TableEvalProcessor:
                     ...
                     "metadata": {
                         ...
-                        "text_as_html": "<table><thead><tr><th rowspan=\"2\">June....</tr></td></table>",
+                        "text_as_html": "<table><thead><tr><th rowspan=\"2\">June....
+                                                                </tr></td></table>",
                         "table_as_cells":
                         [
                             {

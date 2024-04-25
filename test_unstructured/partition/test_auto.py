@@ -212,26 +212,34 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
-def test_auto_partition_json_from_filename():
+def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
-    filename = os.path.join(
-        EXAMPLE_DOCS_DIRECTORY,
-        "..",
-        "test_unstructured_ingest",
-        "expected-structured-output",
-        "azure",
-        "spring-weather.html.json",
+    original_file_name = "spring-weather.html"
+    json_file_path = (
+        pathlib.Path(DIRECTORY).parents[1]
+        / "test_unstructured_ingest"
+        / "expected-structured-output"
+        / "azure"
+        / f"{original_file_name}.json"
     )
-    with open(filename) as json_f:
-        json_data = json.load(json_f)
-    json_elems = json.loads(
-        elements_to_json(partition(filename=filename, strategy=PartitionStrategy.HI_RES))
+    with open(json_file_path) as json_f:
+        expected_result = json.load(json_f)
+
+    partitioning_result = json.loads(
+        elements_to_json(
+            partition(
+                filename=json_file_path,
+                # -- use the original file name to get the same element IDs (hashes) --
+                metadata_filename=original_file_name,
+                strategy=PartitionStrategy.HI_RES,
+            )
+        )
     )
-    for elem in json_elems:
+    for elem in partitioning_result:
         elem.pop("metadata")
-    for elem in json_data:
+    for elem in expected_result:
         elem.pop("metadata")
-    assert json_data == json_elems
+    assert expected_result == partitioning_result
 
 
 def test_auto_partition_json_raises_with_unprocessable_json(tmpdir):
@@ -363,6 +371,7 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         extract_image_block_to_payload=False,
         hi_res_model_name=None,
         date_from_file_object=False,
+        starting_page_number=1,
     )
 
 
@@ -838,6 +847,11 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
     assert elements[1].metadata.page_number == 1
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
+
+
+def test_auto_partition_respects_starting_page_number_argument_for_xlsx():
+    elements = partition("example-docs/stanley-cups.xlsx", starting_page_number=3)
+    assert elements[1].metadata.page_number == 3
 
 
 EXPECTED_XLS_TEXT_LEN = 550

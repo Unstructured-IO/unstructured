@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import uuid
 from tempfile import SpooledTemporaryFile
 from typing import Optional, Type
 
@@ -506,19 +507,23 @@ def test_partition_text_from_file_without_metadata_date():
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_text_with_unique_ids():
-    elements = partition_text(text="hello there!")
-    assert elements[0].id == "c69509590d81db2f37f9d75480c8efed"
-    # Test that the element is JSON serializable. This should run without an error
-    json.dumps(elements[0].to_dict())
+def test_Text_element_assigns_id_hashes_that_are_unique_and_deterministic():
+    ids = [element.id for element in partition_text(text="hello\nhello\nhello")]
+    assert ids == [
+        "8657c0ec31a4cfc822f6cd4a5684cafd",
+        "72aefb4a12be063ad160931fdb380163",
+        "ba8c1a216ca585aecdd365a72e6124f1",
+    ]
 
-    elements = partition_text(text="hello there!", unique_element_ids=True)
-    id = elements[0].id
-    assert isinstance(id, str)  # included for type-narrowing
-    assert len(id) == 36
-    assert id.count("-") == 4
-    # Test that the element is JSON serializable. This should run without an error
-    json.dumps(elements[0].to_dict())
+
+def test_Text_element_assings_UUID_when_unique_element_ids_is_True():
+    elements = partition_text(text="hello\nhello\nhello", unique_element_ids=True)
+
+    for element in elements:
+        assert uuid.UUID(element.id, version=4)
+
+        # Test that the element is JSON serializable. This should run without an error
+        json.dumps(element.to_dict())
 
 
 @pytest.mark.parametrize(

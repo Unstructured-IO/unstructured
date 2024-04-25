@@ -4,8 +4,11 @@ from unstructured_inference.constants import Source as InferenceSource
 from unstructured_inference.inference.elements import Rectangle
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
+from unstructured.partition.pdf_image.pdfminer_processing import (
+    clean_pdfminer_duplicate_image_elements,
+    clean_pdfminer_inner_elements,
+)
 from unstructured.partition.utils.constants import Source
-from unstructured.partition.utils.processing_elements import clean_pdfminer_inner_elements
 
 # A set of elements with pdfminer elements inside tables
 deletable_elements_inside_table = [
@@ -82,4 +85,57 @@ def test_clean_pdfminer_inner_elements(elements, length_extra_info, expected_doc
     cleaned_doc = clean_pdfminer_inner_elements(document)
 
     # check that the pdfminer elements were stored in the extra_info dictionary
+    assert len(cleaned_doc.pages[0].elements) == expected_document_length
+
+
+elements_with_duplicate_images = [
+    LayoutElement(
+        bbox=Rectangle(0, 0, 100, 100),
+        text="Image1",
+        type="Image",
+        source=Source.PDFMINER,
+    ),
+    LayoutElement(
+        bbox=Rectangle(10, 10, 110, 110), text="Image1", type="Image", source=Source.PDFMINER
+    ),
+    LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
+]
+
+elements_without_duplicate_images = [
+    LayoutElement(
+        bbox=Rectangle(0, 0, 100, 100),
+        text="Sample image",
+        type="Image",
+        source=Source.PDFMINER,
+    ),
+    LayoutElement(
+        bbox=Rectangle(10, 10, 110, 110),
+        text="Sample image with similar bbox",
+        type="Image",
+        source=Source.PDFMINER,
+    ),
+    LayoutElement(
+        bbox=Rectangle(200, 200, 250, 250),
+        text="Sample image",
+        type="Image",
+        source=Source.PDFMINER,
+    ),
+    LayoutElement(bbox=Rectangle(150, 150, 170, 170), text="Title1", type="Title"),
+]
+
+
+@pytest.mark.parametrize(
+    ("elements", "expected_document_length"),
+    [
+        (elements_with_duplicate_images, 2),
+        (elements_without_duplicate_images, 4),
+    ],
+)
+def test_clean_pdfminer_duplicate_image_elements(elements, expected_document_length):
+    page = PageLayout(number=1, image=Image.new("1", (1, 1)))
+    page.elements = elements
+    document = DocumentLayout(pages=[page])
+
+    cleaned_doc = clean_pdfminer_duplicate_image_elements(document)
+
     assert len(cleaned_doc.pages[0].elements) == expected_document_length

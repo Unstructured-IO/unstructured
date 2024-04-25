@@ -156,6 +156,7 @@ def partition(
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
     date_from_file_object: bool = False,
+    starting_page_number: int = 1,
     **kwargs,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
@@ -243,6 +244,10 @@ def partition(
         Applies only when providing file via `file` parameter. If this option is True and inference
         from message header failed, attempt to infer last_modified metadata from bytes,
         otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -308,6 +313,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.DOCX:
@@ -318,6 +324,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.ODT:
@@ -328,6 +335,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.EML:
@@ -426,6 +434,7 @@ def partition(
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
             extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype in IMAGE_FILETYPES:
@@ -485,6 +494,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.JSON:
@@ -502,6 +512,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.CSV:

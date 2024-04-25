@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-
-from more_itertools import first
+from typing import Union
 
 
 @dataclass
@@ -12,10 +11,16 @@ class SimpleTableCell:
     content: str = ""
 
     def to_dict(self):
-        return {"x": self.x, "y": self.y, "w": self.w, "h": self.h, "content": self.content}
+        return {
+            "x": self.x,
+            "y": self.y,
+            "w": self.w,
+            "h": self.h,
+            "content": self.content,
+        }
 
     @classmethod
-    def from_table_transformer_cell(cls, tatr_table_cell: dict[str, list[int] | str]):
+    def from_table_transformer_cell(cls, tatr_table_cell: dict[str, Union[list[int], str]]):
         """
         Args:
             tatr_table_cell (dict):
@@ -26,13 +31,19 @@ class SimpleTableCell:
                         "cell text": "Text inside cell"
                     }
         """
-        rows_sorted = sorted(tatr_table_cell["row_nums"])
-        columns_sorted = sorted(tatr_table_cell["column_nums"])
 
-        x = first(columns_sorted)
-        y = first(rows_sorted)
+        row_nums = tatr_table_cell.get("row_nums", [])
+        column_nums = tatr_table_cell.get("column_nums", [])
 
-        width = len(columns_sorted)
-        height = len(rows_sorted)
+        if not row_nums:
+            raise ValueError(f'Cell {tatr_table_cell} has missing values under "row_nums" key')
+        if not column_nums:
+            raise ValueError(f'Cell {tatr_table_cell} has missing values under "column_nums" key')
 
-        return cls(x=x, y=y, w=width, h=height, content=tatr_table_cell["cell text"])
+        return cls(
+            x=min(column_nums),
+            y=min(row_nums),
+            w=len(column_nums),
+            h=len(row_nums),
+            content=tatr_table_cell.get("cell text", ""),
+        )

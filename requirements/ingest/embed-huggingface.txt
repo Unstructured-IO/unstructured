@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-huggingface.in
 #
-aiohttp==3.9.3
+aiohttp==3.9.5
     # via langchain-community
 aiosignal==1.3.1
     # via aiohttp
@@ -27,11 +27,12 @@ dataclasses-json==0.6.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.13.3
+filelock==3.13.4
     # via
     #   huggingface-hub
     #   torch
     #   transformers
+    #   triton
 frozenlist==1.4.1
     # via
     #   aiohttp
@@ -40,6 +41,8 @@ fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
+greenlet==3.0.3
+    # via sqlalchemy
 huggingface==0.0.1
     # via -r ./ingest/embed-huggingface.in
 huggingface-hub==0.22.2
@@ -47,14 +50,14 @@ huggingface-hub==0.22.2
     #   sentence-transformers
     #   tokenizers
     #   transformers
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
     #   yarl
 jinja2==3.1.3
     # via torch
-joblib==1.3.2
+joblib==1.4.0
     # via
     #   -c ./ingest/../base.txt
     #   scikit-learn
@@ -62,11 +65,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.31
+langchain-community==0.0.34
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.1.40
+langchain-core==0.1.45
     # via langchain-community
-langsmith==0.1.40
+langsmith==0.1.49
     # via
     #   langchain-community
     #   langchain-core
@@ -96,7 +99,38 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-orjson==3.10.0
+nvidia-cublas-cu12==12.1.3.1
+    # via
+    #   nvidia-cudnn-cu12
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-cuda-cupti-cu12==12.1.105
+    # via torch
+nvidia-cuda-nvrtc-cu12==12.1.105
+    # via torch
+nvidia-cuda-runtime-cu12==12.1.105
+    # via torch
+nvidia-cudnn-cu12==8.9.2.26
+    # via torch
+nvidia-cufft-cu12==11.0.2.54
+    # via torch
+nvidia-curand-cu12==10.3.2.106
+    # via torch
+nvidia-cusolver-cu12==11.4.5.107
+    # via torch
+nvidia-cusparse-cu12==12.1.0.106
+    # via
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-nccl-cu12==2.19.3
+    # via torch
+nvidia-nvjitlink-cu12==12.4.127
+    # via
+    #   nvidia-cusolver-cu12
+    #   nvidia-cusparse-cu12
+nvidia-nvtx-cu12==12.1.105
+    # via torch
+orjson==3.10.1
     # via langsmith
 packaging==23.2
     # via
@@ -108,11 +142,11 @@ packaging==23.2
     #   transformers
 pillow==10.3.0
     # via sentence-transformers
-pydantic==2.6.4
+pydantic==2.7.0
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.16.3
+pydantic-core==2.18.1
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -120,7 +154,7 @@ pyyaml==6.0.1
     #   langchain-community
     #   langchain-core
     #   transformers
-regex==2023.12.25
+regex==2024.4.16
     # via
     #   -c ./ingest/../base.txt
     #   transformers
@@ -131,18 +165,16 @@ requests==2.31.0
     #   langchain-community
     #   langsmith
     #   transformers
-safetensors==0.3.2
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   transformers
-scikit-learn==1.4.1.post1
+safetensors==0.4.3
+    # via transformers
+scikit-learn==1.4.2
     # via sentence-transformers
 scipy==1.10.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==2.6.1
+sentence-transformers==2.7.0
     # via -r ./ingest/embed-huggingface.in
 sqlalchemy==2.0.29
     # via langchain-community
@@ -154,7 +186,7 @@ tenacity==8.2.3
     #   langchain-core
 threadpoolctl==3.4.0
     # via scikit-learn
-tokenizers==0.15.2
+tokenizers==0.19.1
     # via transformers
 torch==2.2.2
     # via
@@ -166,8 +198,10 @@ tqdm==4.66.2
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.37.1
+transformers==4.40.0
     # via sentence-transformers
+triton==2.2.0
+    # via torch
 typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt

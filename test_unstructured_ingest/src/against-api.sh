@@ -34,6 +34,8 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
   --partition-by-api \
   --strategy hi_res \
+  --chunking-strategy by_page \
+  --chunk-max-characters 10000 \
   --pdf-infer-table-structure \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \

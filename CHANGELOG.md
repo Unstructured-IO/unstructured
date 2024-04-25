@@ -1,12 +1,34 @@
-## 0.13.3-dev4
+## 0.13.4-dev4
+
+### Enhancements
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
+  function are now deterministic and unique at the document level by default. Before, hashes were
+  based only on text; however, they now also take into account the element's sequence number on a
+  page, the page's number in the document, and the document's file name.
+* **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
+  previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
+  options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+
+### Features
+
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
+
+### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
+
+## 0.13.3
 
 ### Enhancements
 
+* **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
 * **Add support for `start_index` in `html` links extraction**
 * **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
 * **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
-* **Allow `UnstructuredTableTransformerModel` returning predictions in not parsed format**
-* **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Introduce `starting_page_number` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
+* **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
 
 ### Features
 
@@ -14,6 +36,7 @@
 
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
 
 ## 0.13.2
 

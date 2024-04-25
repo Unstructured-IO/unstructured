@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
@@ -147,7 +149,14 @@ def extract_cells_from_text_as_html(element: Dict[str, Any]) -> List[Dict[str, A
         {
             "type": "Table",
             "metadata": {
-                "text_as_html": "<table><thead><th>Month A.</th></thead><tr><td>22</td></tr></table>"
+                "text_as_html": "<table>
+                                    <thead>
+                                        <th>Month A.</th>
+                                    </thead>
+                                    <tr>
+                                        <td>22</td><
+                                    /tr>
+                                </table>"
             }
         }
 

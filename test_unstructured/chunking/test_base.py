@@ -17,7 +17,6 @@ from unstructured.chunking.base import (
     TextPreChunk,
     TextPreChunkAccumulator,
     _TextSplitter,
-    is_in_next_section,
     is_on_next_page,
     is_title,
 )
@@ -1512,68 +1511,6 @@ class DescribeTextPreChunkAccumulator:
 # ================================================================================================
 # (SEMANTIC) BOUNDARY PREDICATES
 # ================================================================================================
-
-
-class Describe_is_in_next_section:
-    """Unit-test suite for `unstructured.chunking.base.is_in_next_section()` function.
-
-    `is_in_next_section()` is not itself a predicate, rather it returns a predicate on Element
-    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
-    element stream.
-    """
-
-    def it_is_false_for_the_first_element_when_it_has_a_non_None_section(self):
-        """This is an explicit first-section; first-section does not represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_false_for_the_first_element_when_it_has_a_None_section(self):
-        """This is an anonymous first-section; still doesn't represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-
-    def it_is_false_for_None_section_elements_that_follow_an_explicit_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def and_it_is_false_for_None_section_elements_that_follow_an_anonymous_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def it_is_false_for_matching_section_elements_that_follow_an_explicit_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def it_is_true_for_an_explicit_section_element_that_follows_an_anonymous_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_true_for_a_different_explicit_section_that_follows_an_explicit_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Summary")))
-
-    def it_is_true_whenever_the_section_explicitly_changes_except_at_the_start(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl"))
-        assert not pred(Text("mnop", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("qrst"))
-        assert pred(Text("uvwx", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("yzab", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("cdef"))
-        assert pred(Text("ghij", metadata=ElementMetadata(section="Appendix")))
 
 
 class Describe_is_on_next_page:

@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import TYPE_CHECKING, BinaryIO, Dict, List, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import pdf2image
 
@@ -8,7 +10,6 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from unstructured_inference.models.tables import cells_to_html
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
@@ -41,7 +42,7 @@ if "OMP_THREAD_LIMIT" not in os.environ:
 
 
 def process_data_with_ocr(
-    data: Union[bytes, BinaryIO],
+    data: bytes | IO[bytes],
     out_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
@@ -78,7 +79,8 @@ def process_data_with_ocr(
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
     with tempfile.NamedTemporaryFile() as tmp_file:
-        tmp_file.write(data.read() if hasattr(data, "read") else data)
+        data_bytes = data if isinstance(data, bytes) else data.read()
+        tmp_file.write(data_bytes)
         tmp_file.flush()
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
@@ -133,7 +135,7 @@ def process_file_with_ocr(
 
     from unstructured_inference.inference.layout import DocumentLayout
 
-    merged_page_layouts = []
+    merged_page_layouts: list[PageLayout] = []
     try:
         if is_image:
             with PILImage.open(filename) as images:
@@ -184,7 +186,7 @@ def process_file_with_ocr(
 @requires_dependencies("unstructured_inference")
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
-    image: PILImage,
+    image: PILImage.Image,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -254,9 +256,10 @@ def supplement_page_layout_with_ocr(
     return page_layout
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_element_with_table_extraction(
     elements: List["LayoutElement"],
-    image: PILImage,
+    image: PILImage.Image,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
@@ -267,6 +270,7 @@ def supplement_element_with_table_extraction(
     the table's text content is rendered into a html string and "table_as_cells"
     with the raw table cells output from table agent
     """
+    from unstructured_inference.models.tables import cells_to_html
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
@@ -292,23 +296,22 @@ def supplement_element_with_table_extraction(
         )
         text_as_html = cells_to_html(tatr_cells)
         simple_table_cells = [
-            SimpleTableCell.from_table_transformer_cell(cell) for cell in tatr_cells
+            SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
         ]
-        serializable_simple_cells = [cell.to_dict() for cell in simple_table_cells]
 
         element.text_as_html = text_as_html
-        element.table_as_cells = serializable_simple_cells
+        element.table_as_cells = simple_table_cells
 
     return elements
 
 
 def get_table_tokens(
-    table_element_image: PILImage,
+    table_element_image: PILImage.Image,
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
     extracted_regions: Optional[List["TextRegion"]] = None,
     table_element: Optional["LayoutElement"] = None,
-) -> List[Dict]:
+) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
     ocr_layout = ocr_agent.get_layout_from_image(
@@ -431,7 +434,7 @@ def supplement_layout_with_ocr_elements(
         build_layout_elements_from_ocr_regions,
     )
 
-    ocr_regions_to_remove = []
+    ocr_regions_to_remove: list[TextRegion] = []
     for ocr_region in ocr_layout:
         for el in layout:
             ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(

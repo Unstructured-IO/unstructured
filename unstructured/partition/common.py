@@ -272,7 +272,6 @@ def add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
-    section: Optional[str] = None,
     image_path: Optional[str] = None,
     detection_origin: Optional[str] = None,
     languages: Optional[List[str]] = None,
@@ -324,7 +323,6 @@ def add_element_metadata(
         link_start_indexes=link_start_indexes,
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
-        section=section,
         category_depth=depth,
         image_path=image_path,
         languages=languages,
@@ -540,13 +538,14 @@ def document_to_element_list(
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     languages: Optional[List[str]] = None,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> List[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: List[Element] = []
 
     num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
         page_elements: List[Element] = []
 
         page_image_metadata = _get_page_image_metadata(page)
@@ -571,21 +570,15 @@ def document_to_element_list(
                 for el in element:
                     if last_modification_date:
                         el.metadata.last_modified = last_modification_date
-                    el.metadata.page_number = i + 1
+                    el.metadata.page_number = page_number
                 page_elements.extend(element)
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
-                )
-                element.metadata.table_as_cells = (
-                    layout_element.table_as_cells
-                    if hasattr(layout_element, "table_as_cells")
-                    else None
-                )
+                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
+                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
                 try:
                     if (
                         isinstance(element, Title) and element.metadata.category_depth is None
@@ -606,7 +599,7 @@ def document_to_element_list(
 
             add_element_metadata(
                 element,
-                page_number=i + 1,
+                page_number=page_number,
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
@@ -627,7 +620,7 @@ def document_to_element_list(
         if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
-        if include_page_breaks and i < num_pages - 1:
+        if include_page_breaks and page_number < num_pages + starting_page_number:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
 

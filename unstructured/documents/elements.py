@@ -11,6 +11,7 @@ import os
 import pathlib
 import re
 import uuid
+from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -26,14 +27,6 @@ from unstructured.utils import lazyproperty
 
 Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
-
-
-class NoID(abc.ABC):
-    """Class to indicate that an element do not have an ID."""
-
-
-class UUID(abc.ABC):
-    """Class to indicate that an element should have a UUID."""
 
 
 @dc.dataclass
@@ -196,11 +189,9 @@ class ElementMetadata:
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
-    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
-    # -- EPUB document section --
-    section: Optional[str]
 
     # -- e-mail specific metadata fields --
     sent_from: Optional[list[str]]
@@ -242,9 +233,8 @@ class ElementMetadata:
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
-        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
-        section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
@@ -285,7 +275,6 @@ class ElementMetadata:
         self.page_number = page_number
         self.parent_id = parent_id
         self.regex_metadata = regex_metadata
-        self.section = section
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
@@ -499,17 +488,52 @@ class ConsolidationStrategy(enum.Enum):
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
             "regex_metadata": cls.REGEX,
-            "section": cls.FIRST,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
+            "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
         }
 
 
 _P = ParamSpec("_P")
+
+
+def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
+    """Converts `id` and `parent_id` of elements from UUIDs to hashes.
+
+    This function ensures deterministic IDs by:
+    1. Converting each element's UUID into a hash.
+    2. Updating the `parent_id` to match the new hash ID of parent elements.
+
+    Args:
+        elements: A list of Element objects to update.
+
+    Returns:
+        List of updated Element objects with hashes for `id` and `parent_id`.
+    """
+    # -- generate sequence number for each element on a page --
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_pairs = [
+        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
+    ]
+
+    # -- assign hash IDs to elements --
+    old_to_new_mapping = {
+        element.id: element.id_to_hash(seq_on_page_counter)
+        for element, seq_on_page_counter in zip(elements, page_seq_pairs)
+    }
+
+    # -- map old parent IDs to new ones --
+    for e in elements:
+        parent_id = e.metadata.parent_id
+        if not parent_id:
+            continue
+        e.metadata.parent_id = old_to_new_mapping[parent_id]
+
+    return elements
 
 
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
@@ -556,10 +580,10 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
+
             unique_element_ids: bool = params.get("unique_element_ids", False)
-            if unique_element_ids:
-                for element in elements:
-                    element.id_to_uuid()
+            if unique_element_ids is False:
+                elements = assign_and_map_hash_ids(elements)
 
             return elements
 
@@ -658,19 +682,35 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document."""
+    """An element is a semantically-coherent component of a document, often a paragraph.
+
+    There are a few design principles that are followed when creating an element:
+    1. It will always have an ID, which by default is a random UUID.
+    2. Asking for an ID should always return a string, it can never be None.
+    3. ID is lazy, meaning it will be generated when asked for the first time.
+    4. When deterministic behavior is needed, the ID can be converted.
+        to a hash based on its text `element.id_to_hash(position)`
+    4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
+    6. Assigning a string ID manually is possible, but is meant to be used
+        only for deserialization purposes.
+    """
 
     text: str
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: str | uuid.UUID | NoID | UUID = element_id
+        if element_id is not None and not isinstance(
+            element_id, str
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise ValueError("element_id must be of type str or None.")
+
+        self._element_id = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -681,16 +721,8 @@ class Element(abc.ABC):
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
 
-    def id_to_uuid(self):
-        self.id = str(uuid.uuid4())
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "type": None,
-            "element_id": self.id,
-            "text": self.text,
-            "metadata": self.metadata.to_dict(),
-        }
+    def __str__(self):
+        return self.text
 
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
@@ -721,8 +753,34 @@ class Element(abc.ABC):
 
         return new_coordinates
 
-    def __str__(self):
-        return self.text
+    def id_to_hash(self, sequence_number: int) -> str:
+        """Calculates and assigns a deterministic hash as an ID.
+
+        The hash ID is based on element's text, sequence number on page,
+        page number and its filename.
+
+        Args:
+            sequence_number: index on page
+
+        Returns: new ID value
+        """
+        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
+
+    @property
+    def id(self):
+        if self._element_id is None:
+            self._element_id = str(uuid.uuid4())
+        return self._element_id
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "type": None,
+            "element_id": self.id,
+            "text": self.text,
+            "metadata": self.metadata.to_dict(),
+        }
 
 
 class CheckBox(Element):
@@ -733,7 +791,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -777,7 +835,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -787,13 +845,6 @@ class Text(Element):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
-
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
-            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
@@ -815,15 +866,8 @@ class Text(Element):
             ),
         )
 
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["element_id"] = self.id
-        out["type"] = self.category
-        out["text"] = self.text
-        if self.embeddings:
-            out["embeddings"] = self.embeddings
-        return out
+    def __str__(self):
+        return self.text
 
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.
@@ -840,6 +884,16 @@ class Text(Element):
 
         self.text = cleaned_text
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["element_id"] = self.id
+        out["type"] = self.category
+        out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
+        return out
+
 
 class Formula(Text):
     "An element containing formulas in a document"
@@ -848,7 +902,12 @@ class Formula(Text):
 
 
 class CompositeElement(Text):
-    """A section of text consisting of a combination of elements."""
+    """A chunk formed from text (non-Table) elements.
+
+    Only produced by chunking. An instance may be formed by combining one or more sequential
+    elements produced by partitioning. It it also used when text-splitting an "oversized" element,
+    a single element that by itself is larger than the requested chunk size.
+    """
 
     category = "CompositeElement"
 
@@ -945,7 +1004,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.SUB_HEADLINE: Title,
     ElementType.FIELD_NAME: Title,
     ElementType.UNCATEGORIZED_TEXT: Text,
-    ElementType.COMPOSITE_ELEMENT: Text,
+    ElementType.COMPOSITE_ELEMENT: CompositeElement,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
     ElementType.PARAGRAPH: NarrativeText,
