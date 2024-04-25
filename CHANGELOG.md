@@ -1,4 +1,4 @@
-## 0.13.4-dev2
+## 0.13.4-dev3
 
 ### Enhancements
 * **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
@@ -8,6 +8,7 @@
 * **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
   previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
   options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
 
 ### Features
 
