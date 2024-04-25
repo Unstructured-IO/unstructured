@@ -38,9 +38,24 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
             ),
             click.Option(
                 ["--embedding-dimension"],
+                required=True,
                 default=384,
                 type=int,
                 help="The dimensionality of the embeddings",
+            ),
+            click.Option(
+                ["--namespace"],
+                required=False,
+                default=None,
+                type=str,
+                help="The Astra DB namespace to write into.",
+            ),
+            click.Option(
+                ["--requested-indexing-policy"],
+                required=False,
+                default=None,
+                type=str,
+                help="The indexing policy to use for the collection.",
             ),
         ]
         return options
