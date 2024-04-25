@@ -12,6 +12,6 @@ unstructured-ingest \
   --num-processes 2 \
   --verbose \
   qdrant \
-  --collection-name "test" \
+  --collection-name "$QDRANT_COLLECTION_NAME" \
   --location "http://localhost:6333" \
   --batch-size 80

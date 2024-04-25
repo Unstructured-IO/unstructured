@@ -18,10 +18,10 @@ if __name__ == "__main__":
         ),
         connector_config=SimpleRedditConfig(
             access_config=RedditAccessConfig(
-                client_secret="<client secret here>",
+                client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
             ),
             subreddit_name="machinelearning",
-            client_id="<client id here>",
+            client_id=os.getenv("REDDIT_CLIENT_ID"),
             user_agent=r"Unstructured Ingest Subreddit fetcher by \\u\...",
             search_query="Unstructured",
             num_posts=10,

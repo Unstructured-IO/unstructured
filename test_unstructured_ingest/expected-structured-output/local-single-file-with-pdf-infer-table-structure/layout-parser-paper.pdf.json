@@ -775,6 +775,134 @@
         "eng"
       ],
       "page_number": 5,
+      "table_as_cells": [
+        {
+          "content": "Dataset",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "content": "PubLayNet B8]|",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 1
+        },
+        {
+          "content": "PRImA",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 2
+        },
+        {
+          "content": "Newspaper",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 3
+        },
+        {
+          "content": "TableBank",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 4
+        },
+        {
+          "content": "HJDataset",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 5
+        },
+        {
+          "content": "| Base Model'|",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 0
+        },
+        {
+          "content": "F/M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 1
+        },
+        {
+          "content": "M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 2
+        },
+        {
+          "content": "F",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 3
+        },
+        {
+          "content": "F",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 4
+        },
+        {
+          "content": "F/M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 5
+        },
+        {
+          "content": "| Notes",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 0
+        },
+        {
+          "content": "Layouts of modern scientific documents",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 1
+        },
+        {
+          "content": "Layouts of scanned modern magazines and scientific report",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 2
+        },
+        {
+          "content": "Layouts of scanned US newspapers from the 20th century",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 3
+        },
+        {
+          "content": "Table region on modern scientific and business document",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 4
+        },
+        {
+          "content": "Layouts of history Japanese documents",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 5
+        }
+      ],
       "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model'|</th><th>| Notes</th></thead><tr><td>PubLayNet B8]|</td><td>F/M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA</td><td>M</td><td>Layouts of scanned modern magazines and scientific report</td></tr><tr><td>Newspaper</td><td>F</td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank</td><td>F</td><td>Table region on modern scientific and business document</td></tr><tr><td>HJDataset</td><td>F/M</td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Dataset Base Model1 Large Model Notes PubLayNet [38] PRImA [3] Newspaper [17] TableBank [18] HJDataset [31] F / M M F F F / M M - - F - Layouts of modern scientiﬁc documents Layouts of scanned modern magazines and scientiﬁc reports Layouts of scanned US newspapers from the 20th century Table region on modern scientiﬁc and business document Layouts of history Japanese documents",
@@ -1276,6 +1404,260 @@
         "eng"
       ],
       "page_number": 8,
+      "table_as_cells": [
+        {
+          "content": "block.pad(top, bottom,",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "content": "block.scale(fx, fy)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 1
+        },
+        {
+          "content": "block.shift(dx, dy)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 2
+        },
+        {
+          "content": "block1.is_in(block2)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 3
+        },
+        {
+          "content": "block1. intersect (block2)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 4
+        },
+        {
+          "content": "block1.union(block2)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 5
+        },
+        {
+          "content": "block1.relative_to(block2)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 6
+        },
+        {
+          "content": "block1.condition_on(block2)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 7
+        },
+        {
+          "content": "block. crop_image (image)",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 8
+        },
+        {
+          "content": "right,",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 0
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 1
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 2
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 3
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 4
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 5
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 6
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 7
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 8
+        },
+        {
+          "content": "left)",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 0
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 1
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 2
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 3
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 4
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 5
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 6
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 7
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 8
+        },
+        {
+          "content": "Enlarge the current block according to the input",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 0
+        },
+        {
+          "content": "Scale the current block given the ratio in x and y direction",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 1
+        },
+        {
+          "content": "Move the current block with the shift distances in x and y direction",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 2
+        },
+        {
+          "content": "Whether block] is inside of block2",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 3
+        },
+        {
+          "content": "Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 4
+        },
+        {
+          "content": "Return the union region of blockl and block2. Coordinate type to be determined based on the inputs",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 5
+        },
+        {
+          "content": "Convert the absolute coordinates of block to relative coordinates to block2",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 6
+        },
+        {
+          "content": "Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 7
+        },
+        {
+          "content": "Obtain the image segments in the block region",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 8
+        }
+      ],
       "text_as_html": "<table><thead><th>block.pad(top, bottom,</th><th>right,</th><th>left)</th><th>Enlarge the current block according to the input</th></thead><tr><td>block.scale(fx, fy)</td><td></td><td></td><td>Scale the current block given the ratio in x and y direction</td></tr><tr><td>block.shift(dx, dy)</td><td></td><td></td><td>Move the current block with the shift distances in x and y direction</td></tr><tr><td>block1.is_in(block2)</td><td></td><td></td><td>Whether block] is inside of block2</td></tr><tr><td>block1. intersect (block2)</td><td></td><td></td><td>Return the intersection region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.union(block2)</td><td></td><td></td><td>Return the union region of blockl and block2. Coordinate type to be determined based on the inputs</td></tr><tr><td>block1.relative_to(block2)</td><td></td><td></td><td>Convert the absolute coordinates of block to relative coordinates to block2</td></tr><tr><td>block1.condition_on(block2)</td><td></td><td></td><td>Calculate the absolute coordinates of blockl given the canvas block2’s absolute coordinates</td></tr><tr><td>block. crop_image (image)</td><td></td><td></td><td>Obtain the image segments in the block region</td></tr></table>"
     },
     "text": "Operation Name Description block.pad(top, bottom, right, left) Enlarge the current block according to the input block.scale(fx, fy) Scale the current block given the ratio in x and y direction block.shift(dx, dy) Move the current block with the shift distances in x and y direction block1.is in(block2) Whether block1 is inside of block2 block1.intersect(block2) Return the intersection region of block1 and block2. Coordinate type to be determined based on the inputs. block1.union(block2) Return the union region of block1 and block2. Coordinate type to be determined based on the inputs. block1.relative to(block2) Convert the absolute coordinates of block1 to relative coordinates to block2 block1.condition on(block2) Calculate the absolute coordinates of block1 given the canvas block2’s absolute coordinates block.crop image(image) Obtain the image segments in the block region",
