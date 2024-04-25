@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.confluence import ConfluenceAccessConfig, SimpleConfluenceConfig
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
 from unstructured.ingest.runner import ConfluenceRunner
@@ -15,9 +17,9 @@ if __name__ == "__main__":
         ),
         connector_config=SimpleConfluenceConfig(
             access_config=ConfluenceAccessConfig(
-                api_token="ABCDE1234ABDE1234ABCDE1234",
+                api_token=os.getenv("CONFLUENCE_API_TOKEN"),
             ),
-            user_email="12345678@unstructured.io",
+            user_email=os.getenv("CONFLUENCE_USER_EMAIL"),
             url="https://unstructured-ingest-test.atlassian.net",
         ),
     )

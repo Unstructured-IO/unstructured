@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.jira import JiraAccessConfig, SimpleJiraConfig
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
 from unstructured.ingest.runner import JiraRunner
@@ -14,9 +16,9 @@ if __name__ == "__main__":
             metadata_exclude=["filename", "file_directory", "metadata.data_source.date_processed"],
         ),
         connector_config=SimpleJiraConfig(
-            access_config=JiraAccessConfig(api_token="ABCDE1234ABDE1234ABCDE1234"),
-            url="https://unstructured-jira-connector-test.atlassian.net",
-            user_email="12345678@unstructured.io",
+            access_config=JiraAccessConfig(api_token=os.getenv("JIRA_API_TOKEN")),
+            url=os.getenv("JIRA_URL"),
+            user_email=os.getenv("JIRA_EMAIL"),
         ),
     )
     runner.run()

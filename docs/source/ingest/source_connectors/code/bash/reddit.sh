@@ -3,8 +3,8 @@
 unstructured-ingest \
   reddit \
   --subreddit-name machinelearning \
-  --client-id "<client id here>" \
-  --client-secret "<client secret here>" \
+  --client-id "$REDDIT_CLIENT_ID" \
+  --client-secret "$REDDIT_CLIENT_SECRET" \
   --user-agent "Unstructured Ingest Subreddit fetcher by \u\..." \
   --search-query "Unstructured" \
   --num-posts 10 \
