@@ -201,6 +201,7 @@ class ElementMetadata:
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
+    table_as_cells: Optional[dict[str, str | int]]
     url: Optional[str]
 
     # -- debug fields can be assigned and referenced using dotted-notation but are not serialized
@@ -239,6 +240,7 @@ class ElementMetadata:
         signature: Optional[str] = None,
         subject: Optional[str] = None,
         text_as_html: Optional[str] = None,
+        table_as_cells: Optional[dict[str, str | int]] = None,
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
@@ -278,6 +280,7 @@ class ElementMetadata:
         self.signature = signature
         self.subject = subject
         self.text_as_html = text_as_html
+        self.table_as_cells = table_as_cells
         self.url = url
 
     def __eq__(self, other: object) -> bool:
@@ -490,6 +493,7 @@ class ConsolidationStrategy(enum.Enum):
             "signature": cls.FIRST,
             "subject": cls.FIRST,
             "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
         }
 
