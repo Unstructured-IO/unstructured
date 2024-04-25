@@ -1000,7 +1000,7 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.SUB_HEADLINE: Title,
     ElementType.FIELD_NAME: Title,
     ElementType.UNCATEGORIZED_TEXT: Text,
-    ElementType.COMPOSITE_ELEMENT: Text,
+    ElementType.COMPOSITE_ELEMENT: CompositeElement,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
     ElementType.PARAGRAPH: NarrativeText,
