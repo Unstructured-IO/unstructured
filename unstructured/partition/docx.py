@@ -415,6 +415,10 @@ class _DocxPartitioner:
         """
 
         def iter_cell_block_items(cell: _Cell) -> Iterator[str]:
+            """Generate the text of each paragraph or table in `cell` as a separate string.
+
+            A table nested in `cell` is converted to HTML and emitted as that string.
+            """
             for block_item in cell.iter_inner_content():
                 if isinstance(block_item, Paragraph):
                     # -- all docx content is ultimately in a paragraph; a nested table contributes
@@ -425,11 +429,26 @@ class _DocxPartitioner:
                 ):
                     yield self._convert_table_to_html(block_item, is_nested=True)
 
-        def iter_cells(row: _Row) -> Iterator[str]:
-            return ("\n".join(iter_cell_block_items(cell)) for cell in row.cells)
+        def iter_row_cells_as_text(row: _Row) -> Iterator[str]:
+            """Generate the text of each cell in `row` as a separate string.
+
+            The text of each paragraph within a cell is separated from the next by a newline
+            (`"\n"`). A table nested in a cell is first converted to HTML and then included as a
+            string, also separated by a newline.
+            """
+            # -- each omitted cell at the start of the row (pretty rare) gets the empty string --
+            for _ in range(row.grid_cols_before):
+                yield ""
+
+            for cell in row.cells:
+                yield "\n".join(iter_cell_block_items(cell))
+
+            # -- each omitted cell at the end of the row (also rare) gets the empty string --
+            for _ in range(row.grid_cols_after):
+                yield ""
 
         return tabulate(
-            [list(iter_cells(row)) for row in table.rows],
+            [list(iter_row_cells_as_text(row)) for row in table.rows],
             headers=[] if is_nested else "firstrow",
             # -- tabulate isn't really designed for recursive tables so we have to do any
             # -- HTML-escaping for ourselves. `unsafehtml` disables tabulate html-escaping of cell
@@ -739,7 +758,7 @@ class _DocxPartitioner:
                 if tc.vMerge == "continue":
                     continue
                 # -- do not generate empty strings --
-                yield from (text for text in iter_cell_texts(_Cell(tc, row)) if text)
+                yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
 
     @lazyproperty
     def _last_modified(self) -> Optional[str]:
@@ -846,7 +865,7 @@ class _DocxPartitioner:
         # Determine category depth from paragraph ilvl xpath
         xpath = paragraph._element.xpath("./w:pPr/w:numPr/w:ilvl/@w:val")
         if xpath:
-            return int(xpath[0])
+            return round(float(xpath[0]))
 
         # Determine category depth from style name
         style_name = (paragraph.style and paragraph.style.name) or "Normal"
