@@ -335,6 +335,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.EML:

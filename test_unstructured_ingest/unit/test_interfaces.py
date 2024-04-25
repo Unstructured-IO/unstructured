@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 from dataclasses import dataclass
@@ -9,6 +11,7 @@ from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
+    ChunkingConfig,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
@@ -255,3 +258,24 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
     expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
+
+
+class DescribeChunkingConfig:
+    """Unit tests for unstructured.ingest.interfaces.ChunkingConfig"""
+
+    def it_accepts_chunking_strategy_by_itself(self):
+        config = ChunkingConfig(chunking_strategy="basic")
+        assert config.chunking_strategy == "basic"
+
+    def it_defaults_to_chunk_by_title_if_only_chunk_elements_is_True(self):
+        config = ChunkingConfig(chunk_elements=True)
+        assert config.chunking_strategy == "by_title"
+
+    def but_it_defaults_to_chunking_strategy_over_chunk_elements(self):
+        config = ChunkingConfig(chunk_elements=True, chunking_strategy="basic")
+        assert config.chunking_strategy == "basic"
+
+    def it_silently_accepts_unrecognized_chunker(self, caplog: pytest.LogCaptureFixture):
+        config = ChunkingConfig(chunking_strategy="foobar")
+        assert config.chunking_strategy == "foobar"
+        assert caplog.text == ""

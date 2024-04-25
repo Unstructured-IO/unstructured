@@ -1,7 +1,7 @@
 import logging
 import multiprocessing as mp
-import typing as t
 from dataclasses import dataclass, field
+from typing import Any, Optional
 
 from dataclasses_json import DataClassJsonMixin
 
@@ -26,10 +26,10 @@ class Pipeline(DataClassJsonMixin):
     pipeline_context: PipelineContext
     doc_factory_node: DocFactoryNode
     source_node: SourceNode
-    partition_node: t.Optional[PartitionNode] = None
-    write_node: t.Optional[WriteNode] = None
-    reformat_nodes: t.List[ReformatNode] = field(default_factory=list)
-    permissions_node: t.Optional[PermissionsDataCleaner] = None
+    partition_node: Optional[PartitionNode] = None
+    write_node: Optional[WriteNode] = None
+    reformat_nodes: "list[ReformatNode]" = field(default_factory=list)
+    permissions_node: Optional[PermissionsDataCleaner] = None
 
     def initialize(self):
         ingest_log_streaming_init(logging.DEBUG if self.pipeline_context.verbose else logging.INFO)
@@ -42,8 +42,8 @@ class Pipeline(DataClassJsonMixin):
         nodes.append(Copier(pipeline_context=self.pipeline_context))
         return " -> ".join([node.__class__.__name__ for node in nodes])
 
-    def expand_batch_docs(self, dict_docs: t.List[dict]) -> t.List[dict]:
-        expanded_docs = []
+    def expand_batch_docs(self, dict_docs: "list[dict[str, Any]]") -> "list[dict[str, Any]]":
+        expanded_docs: list[dict[str, Any]] = []
         for d in dict_docs:
             doc = create_ingest_doc_from_dict(d)
             if isinstance(doc, BaseSingleIngestDoc):
@@ -65,6 +65,7 @@ class Pipeline(DataClassJsonMixin):
         self.initialize()
         manager = mp.Manager()
         self.pipeline_context.ingest_docs_map = manager.dict()
+        # -- Get the documents to be processed --
         dict_docs = self.doc_factory_node()
         dict_docs = [manager.dict(d) for d in dict_docs]
         if not dict_docs:
@@ -83,8 +84,8 @@ class Pipeline(DataClassJsonMixin):
         if not fetched_filenames:
             logger.info("No files to run partition over")
             return
-        # To support batches ingest docs, expand those into the populated single ingest
-        # docs after downloading content
+        # -- To support batches ingest docs, expand those into the populated single ingest
+        # -- docs after downloading content
         dict_docs = self.expand_batch_docs(dict_docs=dict_docs)
         if self.partition_node is None:
             raise ValueError("partition node not set")
@@ -99,7 +100,7 @@ class Pipeline(DataClassJsonMixin):
                 return
             partitioned_jsons = reformatted_jsons
 
-        # Copy the final destination to the desired location
+        # -- Copy the final destination to the desired location --
         copier = Copier(
             pipeline_context=self.pipeline_context,
         )

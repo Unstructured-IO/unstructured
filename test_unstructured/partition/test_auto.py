@@ -212,26 +212,34 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
-def test_auto_partition_json_from_filename():
+def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
-    filename = os.path.join(
-        EXAMPLE_DOCS_DIRECTORY,
-        "..",
-        "test_unstructured_ingest",
-        "expected-structured-output",
-        "azure",
-        "spring-weather.html.json",
+    original_file_name = "spring-weather.html"
+    json_file_path = (
+        pathlib.Path(DIRECTORY).parents[1]
+        / "test_unstructured_ingest"
+        / "expected-structured-output"
+        / "azure"
+        / f"{original_file_name}.json"
     )
-    with open(filename) as json_f:
-        json_data = json.load(json_f)
-    json_elems = json.loads(
-        elements_to_json(partition(filename=filename, strategy=PartitionStrategy.HI_RES))
+    with open(json_file_path) as json_f:
+        expected_result = json.load(json_f)
+
+    partitioning_result = json.loads(
+        elements_to_json(
+            partition(
+                filename=json_file_path,
+                # -- use the original file name to get the same element IDs (hashes) --
+                metadata_filename=original_file_name,
+                strategy=PartitionStrategy.HI_RES,
+            )
+        )
     )
-    for elem in json_elems:
+    for elem in partitioning_result:
         elem.pop("metadata")
-    for elem in json_data:
+    for elem in expected_result:
         elem.pop("metadata")
-    assert json_data == json_elems
+    assert expected_result == partitioning_result
 
 
 def test_auto_partition_json_raises_with_unprocessable_json(tmpdir):
