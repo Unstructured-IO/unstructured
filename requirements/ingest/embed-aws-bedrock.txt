@@ -57,7 +57,7 @@ langchain-community==0.0.34
     # via -r ./ingest/embed-aws-bedrock.in
 langchain-core==0.1.45
     # via langchain-community
-langsmith==0.1.49
+langsmith==0.1.50
     # via
     #   langchain-community
     #   langchain-core
@@ -85,11 +85,11 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 python-dateutil==2.9.0.post0
     # via

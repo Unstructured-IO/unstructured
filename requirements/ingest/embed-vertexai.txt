@@ -121,7 +121,7 @@ langchain-google-vertexai==1.0.1
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.49
+langsmith==0.1.50
     # via
     #   langchain
     #   langchain-community
@@ -175,13 +175,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 python-dateutil==2.9.0.post0
     # via
