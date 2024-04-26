@@ -801,13 +801,17 @@ def _combine_list_elements(
     tmp_element = None
     updated_elements: List[Element] = []
     for element in elements:
-        if isinstance(element, ListItem):
+        if tmp_element is None and isinstance(element, ListItem):
             tmp_element = element
             tmp_text = element.text
             tmp_coords = element.metadata.coordinates
-        elif tmp_element and check_coords_within_boundary(
-            coordinates=element.metadata.coordinates,
-            boundary=tmp_coords,
+        elif (
+            tmp_element is not None
+            and isinstance(tmp_element, ListItem)
+            and check_coords_within_boundary(
+                coordinates=element.metadata.coordinates,
+                boundary=tmp_coords,
+            )
         ):
             tmp_element.text = f"{tmp_text} {element.text}"
             # replace "element" with the corrected element
