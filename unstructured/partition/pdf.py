@@ -155,6 +155,8 @@ def partition_pdf(
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+
     **kwargs: Any,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -232,6 +234,7 @@ def partition_pdf(
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
+        extract_forms=extract_forms,
         **kwargs,
     )
 
@@ -253,6 +256,8 @@ def partition_pdf_or_image(
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+
     **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -323,7 +328,8 @@ def partition_pdf_or_image(
                 extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 starting_page_number=starting_page_number,
-                **kwargs,
+                extract_forms=extract_forms,
+            **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
 
@@ -385,6 +391,10 @@ def get_the_last_modification_date_pdf_or_img(
     return last_modification_date
 
 
+def run_form_extraction(filename: str, file: IO[bytes], model_name: str) -> List[FormMetadata]:
+    raise NotImplementedError("Form extraction not yet available.")
+
+
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
@@ -406,6 +416,7 @@ def _partition_pdf_or_image_local(
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
     **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
@@ -523,6 +534,11 @@ def _partition_pdf_or_image_local(
                 pdf_image_dpi=pdf_image_dpi,
             )
 
+    if extract_forms:
+        forms = run_form_extraction(file=file, filename=filename, model_name=hi_res_model_name)
+    else:
+        forms = []
+
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
         kwargs["sort_mode"] = SORT_MODE_DONT
@@ -597,7 +613,7 @@ def _partition_pdf_or_image_local(
             if el.text or isinstance(el, PageBreak) or hi_res_model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
-    return out_elements
+    return out_elements + forms
 
 
 def _process_uncategorized_text_elements(elements: List[Element]):

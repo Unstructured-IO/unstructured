@@ -30,6 +30,8 @@ def partition_image(
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
+    extract_forms: bool = False,
+
     **kwargs,
 ) -> List[Element]:
     """Parses an image into a list of interpreted elements.
@@ -87,6 +89,9 @@ def partition_image(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    extract_forms
+        Whether the form extraction logic should be run
+        (results in adding FormKeysValues elements to output).
     """
     exactly_one(filename=filename, file=file)
 
@@ -107,5 +112,6 @@ def partition_image(
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
+        extract_forms=extract_forms,
         **kwargs,
     )
