@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import os
 import re
@@ -871,7 +872,7 @@ def _combine_coordinates_into_element1(
         points=points,
         system=coordinate_system,
     )
-    return element1
+    return copy.deepcopy(element1)
 
 
 def convert_pdf_to_images(
