@@ -42,9 +42,7 @@ jsonpath-python==1.0.6
 langdetect==1.0.9
     # via -r ./base.in
 lxml==4.9.4
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json
