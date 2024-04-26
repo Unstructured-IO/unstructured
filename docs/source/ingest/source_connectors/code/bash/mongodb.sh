@@ -3,8 +3,8 @@
 unstructured-ingest \
   mongodb \
   --metadata-exclude filename,file_directory,metadata.data_source.date_processed \
-  --uri "<MongoDB uri>" \
-  --database "<MongoDB Database Name>" \
-  --collection "<MongoDB Collection name>" \
+  --uri "$MONGODB_URI" \
+  --database "$MONGODB_DATABASE" \
+  --collection "$MONGODB_COLLECTION" \
   --output-dir mongodb-ingest-output \
   --num-processes 2
