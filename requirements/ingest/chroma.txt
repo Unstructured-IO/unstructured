@@ -137,11 +137,11 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   chromadb
     #   fastapi
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 pypika==0.48.9
     # via chromadb
@@ -219,7 +219,7 @@ uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
     # via uvicorn
-websocket-client==1.7.0
+websocket-client==1.8.0
     # via kubernetes
 websockets==12.0
     # via uvicorn

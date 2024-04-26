@@ -577,9 +577,8 @@ def document_to_element_list(
             else:
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
-                )
+                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
+                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
                 try:
                     if (
                         isinstance(element, Title) and element.metadata.category_depth is None

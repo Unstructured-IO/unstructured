@@ -8,7 +8,7 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.14.0
     # via flask-babel
-bce-python-sdk==0.9.6
+bce-python-sdk==0.9.7
     # via visualdl
 blinker==1.7.0
     # via flask
@@ -200,7 +200,7 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.4.18
+tifffile==2024.4.24
     # via scikit-image
 tqdm==4.66.2
     # via

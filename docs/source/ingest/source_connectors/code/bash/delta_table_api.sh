@@ -7,4 +7,4 @@ unstructured-ingest \
   --storage_options "AWS_REGION=us-east-2,AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID,AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
   --verbose \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

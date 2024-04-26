@@ -51,9 +51,9 @@ protobuf==4.23.4
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   grpcio-tools
-pydantic==2.7.0
+pydantic==2.7.1
     # via qdrant-client
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 qdrant-client==1.9.0
     # via -r ./ingest/qdrant.in

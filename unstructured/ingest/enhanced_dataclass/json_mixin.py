@@ -31,6 +31,22 @@ dataclasses_json_core._decode_dataclass = custom_decode_dataclass
 
 
 class EnhancedDataClassJsonMixin(DataClassJsonMixin):
+    """A mixin class extending DataClassJsonMixin.
+
+    This class extends the functionality of DataClassJsonMixin to provide enhanced functionality
+    for JSON serialization and deserialization. It introduces options for redacting sensitive
+    information, custom encoding, and more advanced schema handling.
+
+    Attributes:
+        N/A (No additional attributes)
+
+    Methods:
+        to_json: Serialize the object to JSON format with customizable options.
+        from_dict: Deserialize a dictionary into an object of this class.
+        to_dict: Convert the object to a dictionary with customizable options.
+        schema: Generate a schema for validating and parsing JSON data based on this class.
+    """
+
     def to_json(
         self,
         *,

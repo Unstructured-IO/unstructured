@@ -40,8 +40,6 @@ fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
-greenlet==3.0.3
-    # via sqlalchemy
 huggingface==0.0.1
     # via -r ./ingest/embed-huggingface.in
 huggingface-hub==0.22.2
@@ -66,9 +64,9 @@ jsonpointer==2.4
     # via jsonpatch
 langchain-community==0.0.34
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.1.45
+langchain-core==0.1.46
     # via langchain-community
-langsmith==0.1.49
+langsmith==0.1.51
     # via
     #   langchain-community
     #   langchain-core
@@ -110,11 +108,11 @@ packaging==23.2
     #   transformers
 pillow==10.3.0
     # via sentence-transformers
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -156,7 +154,7 @@ threadpoolctl==3.4.0
     # via scikit-learn
 tokenizers==0.19.1
     # via transformers
-torch==2.2.2
+torch==2.3.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   sentence-transformers
@@ -166,7 +164,7 @@ tqdm==4.66.2
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.40.0
+transformers==4.40.1
     # via sentence-transformers
 typing-extensions==4.11.0
     # via

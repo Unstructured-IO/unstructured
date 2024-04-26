@@ -88,7 +88,7 @@ sympy==1.12
     # via torch
 tokenizers==0.19.1
     # via transformers
-torch==2.2.2
+torch==2.3.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./huggingface.in
@@ -98,7 +98,7 @@ tqdm==4.66.2
     #   huggingface-hub
     #   sacremoses
     #   transformers
-transformers==4.40.0
+transformers==4.40.1
     # via -r ./huggingface.in
 typing-extensions==4.11.0
     # via

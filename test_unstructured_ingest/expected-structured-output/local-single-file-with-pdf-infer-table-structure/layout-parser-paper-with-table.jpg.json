@@ -55,6 +55,176 @@
         "eng"
       ],
       "page_number": 1,
+      "table_as_cells": [
+        {
+          "content": "Dataset",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 0
+        },
+        {
+          "content": "PubLayNet [33]",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 1
+        },
+        {
+          "content": "PRImA [3]",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 2
+        },
+        {
+          "content": "Newspaper [17]",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 3
+        },
+        {
+          "content": "TableBank [18]",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 4
+        },
+        {
+          "content": "HIDataset [31]",
+          "h": 1,
+          "w": 1,
+          "x": 0,
+          "y": 5
+        },
+        {
+          "content": "| Base Model!|",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 0
+        },
+        {
+          "content": "P/M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 1
+        },
+        {
+          "content": "M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 2
+        },
+        {
+          "content": "P",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 3
+        },
+        {
+          "content": "P",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 4
+        },
+        {
+          "content": "P/M",
+          "h": 1,
+          "w": 1,
+          "x": 1,
+          "y": 5
+        },
+        {
+          "content": "Large Model",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 0
+        },
+        {
+          "content": "M",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 1
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 2
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 3
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 4
+        },
+        {
+          "content": "",
+          "h": 1,
+          "w": 1,
+          "x": 2,
+          "y": 5
+        },
+        {
+          "content": "| Notes",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 0
+        },
+        {
+          "content": "Layouts of modern scientific documents",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 1
+        },
+        {
+          "content": "Layouts of scanned modern magazines and scientific reports",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 2
+        },
+        {
+          "content": "Layouts of scanned US newspapers from the 20th century",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 3
+        },
+        {
+          "content": "Table region on modern scientific and business document",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 4
+        },
+        {
+          "content": "Layouts of history Japanese documents",
+          "h": 1,
+          "w": 1,
+          "x": 3,
+          "y": 5
+        }
+      ],
       "text_as_html": "<table><thead><th>Dataset</th><th>| Base Model!|</th><th>Large Model</th><th>| Notes</th></thead><tr><td>PubLayNet [33]</td><td>P/M</td><td>M</td><td>Layouts of modern scientific documents</td></tr><tr><td>PRImA [3]</td><td>M</td><td></td><td>Layouts of scanned modern magazines and scientific reports</td></tr><tr><td>Newspaper [17]</td><td>P</td><td></td><td>Layouts of scanned US newspapers from the 20th century</td></tr><tr><td>TableBank [18]</td><td>P</td><td></td><td>Table region on modern scientific and business document</td></tr><tr><td>HIDataset [31]</td><td>P/M</td><td></td><td>Layouts of history Japanese documents</td></tr></table>"
     },
     "text": "Dataset | Base Model\" Large Model | Notes PubLayNet [38] P/M M Layouts of modern scientific documents PRImA [3) M - Layouts of scanned modern magazines and scientific reports Newspaper [17] P - Layouts of scanned US newspapers from the 20th century ‘TableBank (18) P P Table region on modern scientific and business document HJDataset (31) | F/M - Layouts of history Japanese documents",
