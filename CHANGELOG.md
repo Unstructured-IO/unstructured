@@ -1,3 +1,12 @@
+## 0.13.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+
 ## 0.13.4
 
 ### Enhancements
