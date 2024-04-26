@@ -44,6 +44,8 @@ packaging<24.0
 # TODO: Constaint due to boto, with python before 3.10 not requiring openssl 1.1.1, remove when that gets
 # updated or we drop support for 3.9
 urllib3<1.27
+# NOTE(crag): later versions conflict with above pinned urllib3, apparently
+types-requests<=2.31.0.6
 
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
 botocore<1.34.52

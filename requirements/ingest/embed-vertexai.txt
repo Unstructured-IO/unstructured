@@ -82,8 +82,6 @@ googleapis-common-protos[grpc]==1.63.0
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
-greenlet==3.0.3
-    # via sqlalchemy
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
 grpcio==1.62.2
@@ -111,7 +109,7 @@ langchain-community==0.0.34
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
-langchain-core==0.1.45
+langchain-core==0.1.46
     # via
     #   langchain
     #   langchain-community
@@ -121,7 +119,7 @@ langchain-google-vertexai==1.0.1
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.49
+langsmith==0.1.51
     # via
     #   langchain
     #   langchain-community
@@ -175,13 +173,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 python-dateutil==2.9.0.post0
     # via
@@ -221,7 +219,9 @@ tenacity==8.2.3
 types-protobuf==4.25.0.20240417
     # via langchain-google-vertexai
 types-requests==2.31.0.6
-    # via langchain-google-vertexai
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   langchain-google-vertexai
 types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.11.0
