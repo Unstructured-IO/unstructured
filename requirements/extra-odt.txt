@@ -4,9 +4,8 @@
 #
 #    pip-compile ./extra-odt.in
 #
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   python-docx
 pypandoc==1.13

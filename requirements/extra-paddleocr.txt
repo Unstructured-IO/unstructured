@@ -77,9 +77,8 @@ lazy-loader==0.4
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   premailer
     #   unstructured-paddleocr

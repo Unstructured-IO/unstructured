@@ -85,9 +85,8 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   pikepdf
 markupsafe==2.1.5
