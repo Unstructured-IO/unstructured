@@ -33,5 +33,5 @@ urllib3==1.26.18
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-websocket-client==1.7.0
+websocket-client==1.8.0
     # via praw

@@ -10,7 +10,7 @@ appdirs==1.4.4
     # via label-studio-tools
 autoflake==2.3.1
     # via -r ./test.in
-black==24.4.0
+black==24.4.2
     # via -r ./test.in
 certifi==2024.2.2
     # via
@@ -25,7 +25,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.4.4
+coverage[toml]==7.5.0
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -37,7 +37,7 @@ flake8==7.0.0
     #   flake8-print
 flake8-print==5.0.0
     # via -r ./test.in
-freezegun==1.4.0
+freezegun==1.5.0
     # via -r ./test.in
 grpcio==1.62.2
     # via -r ./test.in
@@ -62,7 +62,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.9.0
+mypy==1.10.0
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -87,11 +87,11 @@ pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   -r ./test.in
     #   label-studio-sdk
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 pyflakes==3.2.0
     # via
@@ -115,7 +115,7 @@ requests==2.31.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-ruff==0.4.1
+ruff==0.4.2
     # via -r ./test.in
 six==1.16.0
     # via
