@@ -14,7 +14,7 @@ bson==0.5.10
     # via astrapy
 cassandra-driver==3.29.1
     # via cassio
-cassio==0.1.6
+cassio==0.1.7
     # via astrapy
 certifi==2024.2.2
     # via
