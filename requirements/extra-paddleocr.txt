@@ -10,7 +10,7 @@ babel==2.14.0
     # via flask-babel
 bce-python-sdk==0.9.7
     # via visualdl
-blinker==1.7.0
+blinker==1.8.0
     # via flask
 cachetools==5.3.3
     # via premailer
