@@ -1,3 +1,13 @@
+## 0.13.5-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
 ## 0.13.4
 
 ### Enhancements
