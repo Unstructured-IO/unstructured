@@ -42,8 +42,6 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.0.3
-    # via sqlalchemy
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
@@ -63,9 +61,9 @@ jsonpointer==2.4
     # via jsonpatch
 langchain-community==0.0.34
     # via -r ./ingest/embed-openai.in
-langchain-core==0.1.45
+langchain-core==0.1.46
     # via langchain-community
-langsmith==0.1.50
+langsmith==0.1.51
     # via
     #   langchain-community
     #   langchain-core
