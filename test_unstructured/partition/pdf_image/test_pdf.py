@@ -889,7 +889,8 @@ def test_partition_pdf_word_bbox_not_char(
     try:
         elements = pdf.partition_pdf(filename=filename, strategy="fast")
         from unstructured.staging.base import elements_to_json
-        #elements_to_json(elements, filename="/tmp/elments-gh-pr-2940.json", indent=2)
+
+        # elements_to_json(elements, filename="/tmp/elments-gh-pr-2940.json", indent=2)
         elements_to_json(elements, filename="/tmp/elments-fast-main-9e46ed016.json", indent=2)
     except Exception as e:
         raise ("Partitioning fail: %s" % e)
