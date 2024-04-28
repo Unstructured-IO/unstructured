@@ -9,6 +9,10 @@ anyio==3.7.1
     #   -c ././deps/constraints.txt
     #   httpx
     #   jupyter-server
+appnope==0.1.4
+    # via
+    #   ipykernel
+    #   ipython
 argon2-cffi==23.1.0
     # via jupyter-server
 argon2-cffi-bindings==21.2.0
@@ -177,11 +181,11 @@ jupyter-server==2.14.0
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.1.6
+jupyterlab==4.1.8
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
-jupyterlab-server==2.27.0
+jupyterlab-server==2.27.1
     # via
     #   jupyterlab
     #   notebook
@@ -301,7 +305,7 @@ qtconsole==5.5.1
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.34.0
+referencing==0.35.0
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -347,7 +351,7 @@ terminado==0.18.1
     # via
     #   jupyter-server
     #   jupyter-server-terminals
-tinycss2==1.2.1
+tinycss2==1.3.0
     # via nbconvert
 tomli==2.0.1
     # via
@@ -397,7 +401,7 @@ urllib3==1.26.18
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.25.3
+virtualenv==20.26.0
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
@@ -407,7 +411,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-websocket-client==1.7.0
+websocket-client==1.8.0
     # via jupyter-server
 wheel==0.43.0
     # via

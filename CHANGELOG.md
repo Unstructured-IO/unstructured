@@ -1,6 +1,17 @@
-## 0.13.4-dev4
+## 0.13.5-dev0
 
 ### Enhancements
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
+## 0.13.4
+
+### Enhancements
+
 * **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
   function are now deterministic and unique at the document level by default. Before, hashes were
   based only on text; however, they now also take into account the element's sequence number on a
@@ -12,6 +23,7 @@
 
 ### Features
 
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
 * **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
