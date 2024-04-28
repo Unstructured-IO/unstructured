@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.cli.interfaces import CliConfig
+from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.astra import AstraWriteConfig, SimpleAstraConfig
 
 
@@ -54,8 +54,9 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 ["--requested-indexing-policy"],
                 required=False,
                 default=None,
-                type=str,
-                help="The indexing policy to use for the collection.",
+                type=Dict(),
+                help="The indexing policy to use for the collection."
+                'example: \'{"deny": "metadata"}\' ',
             ),
         ]
         return options
