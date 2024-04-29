@@ -893,6 +893,14 @@ def test_partition_pdf_word_bbox_not_char(
     assert len(elements) == 17
 
 
+def test_partition_pdf_fast_no_mapping_errors(
+    filename=example_doc_path("a1977-backus-p21.pdf"),
+):
+    """Verify there is no regression for https://github.com/Unstructured-IO/unstructured/pull/2940,
+    failing to map old parent_id's to new"""
+    pdf.partition_pdf(filename=filename, strategy="fast")
+
+
 def test_partition_pdf_raises_TypeError_for_invalid_languages():
     filename = example_doc_path("chevron-page.pdf")
     with pytest.raises(TypeError):
