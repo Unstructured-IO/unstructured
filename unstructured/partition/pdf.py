@@ -21,6 +21,7 @@ from typing import (
     cast,
 )
 
+import joblib
 import numpy as np
 import pdf2image
 import wrapt
@@ -136,26 +137,26 @@ def default_hi_res_model() -> str:
 @add_metadata_with_filetype(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
-    filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
-    include_page_breaks: bool = False,
-    strategy: str = PartitionStrategy.AUTO,
-    infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: Optional[List[str]] = None,
-    include_metadata: bool = True,  # used by decorator
-    metadata_filename: Optional[str] = None,  # used by decorator
-    metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
-    links: Sequence[Link] = [],
-    hi_res_model_name: Optional[str] = None,
-    extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
-    extract_image_block_output_dir: Optional[str] = None,
-    extract_image_block_to_payload: bool = False,
-    date_from_file_object: bool = False,
-    starting_page_number: int = 1,
-    **kwargs: Any,
+        filename: str = "",
+        file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+        include_page_breaks: bool = False,
+        strategy: str = PartitionStrategy.AUTO,
+        infer_table_structure: bool = False,
+        ocr_languages: Optional[str] = None,  # changing to optional for deprecation
+        languages: Optional[List[str]] = None,
+        include_metadata: bool = True,  # used by decorator
+        metadata_filename: Optional[str] = None,  # used by decorator
+        metadata_last_modified: Optional[str] = None,
+        chunking_strategy: Optional[str] = None,  # used by decorator
+        links: Sequence[Link] = [],
+        hi_res_model_name: Optional[str] = None,
+        extract_images_in_pdf: bool = False,
+        extract_image_block_types: Optional[List[str]] = None,
+        extract_image_block_output_dir: Optional[str] = None,
+        extract_image_block_to_payload: bool = False,
+        date_from_file_object: bool = False,
+        starting_page_number: int = 1,
+        **kwargs: Any,
 ) -> List[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
@@ -237,23 +238,23 @@ def partition_pdf(
 
 
 def partition_pdf_or_image(
-    filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    is_image: bool = False,
-    include_page_breaks: bool = False,
-    strategy: str = PartitionStrategy.AUTO,
-    infer_table_structure: bool = False,
-    ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = None,
-    metadata_last_modified: Optional[str] = None,
-    hi_res_model_name: Optional[str] = None,
-    extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
-    extract_image_block_output_dir: Optional[str] = None,
-    extract_image_block_to_payload: bool = False,
-    date_from_file_object: bool = False,
-    starting_page_number: int = 1,
-    **kwargs,
+        filename: str = "",
+        file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+        is_image: bool = False,
+        include_page_breaks: bool = False,
+        strategy: str = PartitionStrategy.AUTO,
+        infer_table_structure: bool = False,
+        ocr_languages: Optional[str] = None,
+        languages: Optional[List[str]] = None,
+        metadata_last_modified: Optional[str] = None,
+        hi_res_model_name: Optional[str] = None,
+        extract_images_in_pdf: bool = False,
+        extract_image_block_types: Optional[List[str]] = None,
+        extract_image_block_output_dir: Optional[str] = None,
+        extract_image_block_to_payload: bool = False,
+        date_from_file_object: bool = False,
+        starting_page_number: int = 1,
+        **kwargs,
 ) -> List[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     # TODO(alan): Extract information about the filetype to be processed from the template
@@ -349,13 +350,13 @@ def partition_pdf_or_image(
 
 
 def extractable_elements(
-    filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
-    include_page_breaks: bool = False,
-    languages: Optional[List[str]] = None,
-    metadata_last_modified: Optional[str] = None,
-    starting_page_number: int = 1,
-    **kwargs: Any,
+        filename: str = "",
+        file: Optional[Union[bytes, IO[bytes]]] = None,
+        include_page_breaks: bool = False,
+        languages: Optional[List[str]] = None,
+        metadata_last_modified: Optional[str] = None,
+        starting_page_number: int = 1,
+        **kwargs: Any,
 ):
     if isinstance(file, bytes):
         file = io.BytesIO(file)
@@ -371,9 +372,9 @@ def extractable_elements(
 
 
 def get_the_last_modification_date_pdf_or_img(
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
-    filename: Optional[str] = "",
-    date_from_file_object: bool = False,
+        file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+        filename: Optional[str] = "",
+        date_from_file_object: bool = False,
 ) -> Union[str, None]:
     last_modification_date = None
     if not file and filename:
@@ -387,26 +388,26 @@ def get_the_last_modification_date_pdf_or_img(
 
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
-    filename: str = "",
-    file: Optional[Union[bytes, BinaryIO]] = None,
-    is_image: bool = False,
-    infer_table_structure: bool = False,
-    include_page_breaks: bool = False,
-    languages: Optional[List[str]] = None,
-    ocr_mode: str = OCRMode.FULL_PAGE.value,
-    model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
-    hi_res_model_name: Optional[str] = None,
-    pdf_image_dpi: Optional[int] = None,
-    metadata_last_modified: Optional[str] = None,
-    pdf_text_extractable: bool = False,
-    extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
-    extract_image_block_output_dir: Optional[str] = None,
-    extract_image_block_to_payload: bool = False,
-    analysis: bool = False,
-    analyzed_image_output_dir_path: Optional[str] = None,
-    starting_page_number: int = 1,
-    **kwargs,
+        filename: str = "",
+        file: Optional[Union[bytes, BinaryIO]] = None,
+        is_image: bool = False,
+        infer_table_structure: bool = False,
+        include_page_breaks: bool = False,
+        languages: Optional[List[str]] = None,
+        ocr_mode: str = OCRMode.FULL_PAGE.value,
+        model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
+        hi_res_model_name: Optional[str] = None,
+        pdf_image_dpi: Optional[int] = None,
+        metadata_last_modified: Optional[str] = None,
+        pdf_text_extractable: bool = False,
+        extract_images_in_pdf: bool = False,
+        extract_image_block_types: Optional[List[str]] = None,
+        extract_image_block_output_dir: Optional[str] = None,
+        extract_image_block_to_payload: bool = False,
+        analysis: bool = False,
+        analyzed_image_output_dir_path: Optional[str] = None,
+        starting_page_number: int = 1,
+        **kwargs,
 ) -> List[Element]:
     """Partition using package installed locally"""
     from unstructured_inference.inference.layout import (
@@ -512,16 +513,20 @@ def _partition_pdf_or_image_local(
 
             if hasattr(file, "seek"):
                 file.seek(0)
-            final_document_layout = process_data_with_ocr(
-                file,
-                merged_document_layout,
-                extracted_layout=extracted_layout,
-                is_image=is_image,
-                infer_table_structure=infer_table_structure,
-                ocr_languages=ocr_languages,
-                ocr_mode=ocr_mode,
-                pdf_image_dpi=pdf_image_dpi,
-            )
+
+            # [javier@cohere.com] Do not log microsoft/table-transformer-structure-recognition warnings
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                final_document_layout = process_data_with_ocr(
+                    file,
+                    merged_document_layout,
+                    extracted_layout=extracted_layout,
+                    is_image=is_image,
+                    infer_table_structure=infer_table_structure,
+                    ocr_languages=ocr_languages,
+                    ocr_mode=ocr_mode,
+                    pdf_image_dpi=pdf_image_dpi,
+                )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
@@ -618,13 +623,13 @@ def _process_uncategorized_text_elements(elements: List[Element]):
 
 
 def _partition_pdf_with_pdfminer(
-    filename: str,
-    file: Optional[IO[bytes]],
-    include_page_breaks: bool,
-    languages: List[str],
-    metadata_last_modified: Optional[str],
-    starting_page_number: int = 1,
-    **kwargs: Any,
+        filename: str,
+        file: Optional[IO[bytes]],
+        include_page_breaks: bool,
+        languages: List[str],
+        metadata_last_modified: Optional[str],
+        starting_page_number: int = 1,
+        **kwargs: Any,
 ) -> List[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
@@ -700,23 +705,20 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
 
 @requires_dependencies("pdfminer")
 def _process_pdfminer_pages(
-    fp: BinaryIO,
-    filename: str,
-    include_page_breaks: bool,
-    languages: List[str],
-    metadata_last_modified: Optional[str],
-    sort_mode: str = SORT_MODE_XY_CUT,
-    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
-    starting_page_number: int = 1,
-    **kwargs,
+        fp: BinaryIO,
+        filename: str,
+        include_page_breaks: bool,
+        languages: List[str],
+        metadata_last_modified: Optional[str],
+        sort_mode: str = SORT_MODE_XY_CUT,
+        annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
+        starting_page_number: int = 1,
+        **kwargs,
 ):
     """Uses PDFMiner to split a document into pages and process them."""
 
-    elements: List[Element] = []
-
-    for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp), start=starting_page_number
-    ):
+    # [javier@cohere.com] parallel pdfminer processing
+    def process(page_number, page, page_layout):
         width, height = page_layout.width, page_layout.height
 
         page_elements: List[Element] = []
@@ -786,16 +788,23 @@ def _process_pdfminer_pages(
         if sort_mode != SORT_MODE_BASIC:
             sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
 
-        elements += sorted_page_elements
-
         if include_page_breaks:
-            elements.append(PageBreak(text=""))
+            sorted_page_elements.append(PageBreak(text=""))
 
+        return sorted_page_elements
+
+    elements = joblib.Parallel(n_jobs=joblib.cpu_count())(
+        joblib.delayed(process)(page_number, page, page_layout)
+        for page_number, (page, page_layout) in enumerate(
+            open_pdfminer_pages_generator(fp), start=starting_page_number
+        )
+    )
+    elements = [el for sublist in elements for el in sublist]
     return elements
 
 
 def _combine_list_elements(
-    elements: List[Element], coordinate_system: Union[PixelSpace, PointSpace]
+        elements: List[Element], coordinate_system: Union[PixelSpace, PointSpace]
 ) -> List[Element]:
     """Combine elements that should be considered a single ListItem element."""
     tmp_element = None
@@ -806,8 +815,8 @@ def _combine_list_elements(
             tmp_text = element.text
             tmp_coords = element.metadata.coordinates
         elif tmp_element and check_coords_within_boundary(
-            coordinates=element.metadata.coordinates,
-            boundary=tmp_coords,
+                coordinates=element.metadata.coordinates,
+                boundary=tmp_coords,
         ):
             tmp_element.text = f"{tmp_text} {element.text}"
             # replace "element" with the corrected element
@@ -823,7 +832,7 @@ def _combine_list_elements(
 
 
 def _get_links_from_urls_metadata(
-    urls_metadata: List[Dict[str, Any]], moved_indices: np.ndarray
+        urls_metadata: List[Dict[str, Any]], moved_indices: np.ndarray
 ) -> List[Link]:
     """Extracts links from a list of URL metadata."""
     links: List[Link] = []
@@ -843,7 +852,7 @@ def _get_links_from_urls_metadata(
 
 
 def _combine_coordinates_into_element1(
-    element1: Element, element2: Element, coordinate_system: Union[PixelSpace, PointSpace]
+        element1: Element, element2: Element, coordinate_system: Union[PixelSpace, PointSpace]
 ) -> Element:
     """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
     x1 = min(
@@ -871,9 +880,9 @@ def _combine_coordinates_into_element1(
 
 
 def convert_pdf_to_images(
-    filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
-    chunk_size: int = 10,
+        filename: str = "",
+        file: Optional[Union[bytes, IO[bytes]]] = None,
+        chunk_size: int = 10,
 ) -> Iterator[PILImage.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
     exactly_one(filename=filename, file=file)
@@ -905,14 +914,14 @@ def convert_pdf_to_images(
 
 
 def _partition_pdf_or_image_with_ocr(
-    filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
-    include_page_breaks: bool = False,
-    languages: Optional[List[str]] = ["eng"],
-    is_image: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    starting_page_number: int = 1,
-    **kwargs,
+        filename: str = "",
+        file: Optional[Union[bytes, IO[bytes]]] = None,
+        include_page_breaks: bool = False,
+        languages: Optional[List[str]] = ["eng"],
+        is_image: bool = False,
+        metadata_last_modified: Optional[str] = None,
+        starting_page_number: int = 1,
+        **kwargs,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -935,7 +944,7 @@ def _partition_pdf_or_image_with_ocr(
             elements.extend(page_elements)
     else:
         for page_number, image in enumerate(
-            convert_pdf_to_images(filename, file), start=starting_page_number
+                convert_pdf_to_images(filename, file), start=starting_page_number
         ):
             page_elements = _partition_pdf_or_image_with_ocr_from_image(
                 image=image,
@@ -951,13 +960,13 @@ def _partition_pdf_or_image_with_ocr(
 
 
 def _partition_pdf_or_image_with_ocr_from_image(
-    image: PILImage,
-    languages: Optional[List[str]] = None,
-    page_number: int = 1,
-    include_page_breaks: bool = False,
-    metadata_last_modified: Optional[str] = None,
-    sort_mode: str = SORT_MODE_XY_CUT,
-    **kwargs,
+        image: PILImage,
+        languages: Optional[List[str]] = None,
+        page_number: int = 1,
+        include_page_breaks: bool = False,
+        metadata_last_modified: Optional[str] = None,
+        sort_mode: str = SORT_MODE_XY_CUT,
+        **kwargs,
 ) -> List[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
@@ -1001,10 +1010,10 @@ def _partition_pdf_or_image_with_ocr_from_image(
 
 
 def check_coords_within_boundary(
-    coordinates: CoordinatesMetadata,
-    boundary: CoordinatesMetadata,
-    horizontal_threshold: float = 0.2,
-    vertical_threshold: float = 0.3,
+        coordinates: CoordinatesMetadata,
+        boundary: CoordinatesMetadata,
+        horizontal_threshold: float = 0.2,
+        vertical_threshold: float = 0.3,
 ) -> bool:
     """Checks if the coordinates are within boundary thresholds.
     Parameters
@@ -1033,22 +1042,22 @@ def check_coords_within_boundary(
     line_height = boundary_y_max - boundary_y_min
 
     x_within_boundary = (
-        (coordinates.points[0][0] > boundary_x_min - (horizontal_threshold * line_width))
-        and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
-        and (coordinates.points[0][0] >= boundary_x_min)
+            (coordinates.points[0][0] > boundary_x_min - (horizontal_threshold * line_width))
+            and (coordinates.points[2][0] < boundary_x_max + (horizontal_threshold * line_width))
+            and (coordinates.points[0][0] >= boundary_x_min)
     )
     y_within_boundary = (
-        coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height)
-    ) and (coordinates.points[0][1] > boundary_y_min - (vertical_threshold * line_height))
+                                coordinates.points[0][1] < boundary_y_max + (vertical_threshold * line_height)
+                        ) and (coordinates.points[0][1] > boundary_y_min - (vertical_threshold * line_height))
 
     return x_within_boundary and y_within_boundary
 
 
 def get_uris(
-    annots: Union[PDFObjRef, List[PDFObjRef]],
-    height: float,
-    coordinate_system: Union[PixelSpace, PointSpace],
-    page_number: int,
+        annots: Union[PDFObjRef, List[PDFObjRef]],
+        height: float,
+        coordinate_system: Union[PixelSpace, PointSpace],
+        page_number: int,
 ) -> List[Dict[str, Any]]:
     """
     Extracts URI annotations from a single or a list of PDF object references on a specific page.
@@ -1076,10 +1085,10 @@ def get_uris(
 
 
 def get_uris_from_annots(
-    annots: List[PDFObjRef],
-    height: Union[int, float],
-    coordinate_system: Union[PixelSpace, PointSpace],
-    page_number: int,
+        annots: List[PDFObjRef],
+        height: Union[int, float],
+        coordinate_system: Union[PixelSpace, PointSpace],
+        page_number: int,
 ) -> List[Dict[str, Any]]:
     """
     Extracts URI annotations from a list of PDF object references.
@@ -1158,8 +1167,8 @@ def try_resolve(annot: PDFObjRef):
 
 
 def calculate_intersection_area(
-    bbox1: Tuple[float, float, float, float],
-    bbox2: Tuple[float, float, float, float],
+        bbox1: Tuple[float, float, float, float],
+        bbox2: Tuple[float, float, float, float],
 ) -> float:
     """
     Calculate the area of intersection between two bounding boxes.
@@ -1208,10 +1217,10 @@ def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
 
 
 def check_annotations_within_element(
-    annotation_list: List[Dict[str, Any]],
-    element_bbox: Tuple[float, float, float, float],
-    page_number: int,
-    annotation_threshold: float,
+        annotation_list: List[Dict[str, Any]],
+        element_bbox: Tuple[float, float, float, float],
+        page_number: int,
+        annotation_threshold: float,
 ) -> List[Dict[str, Any]]:
     """
     Filter annotations that are within or highly overlap with a specified element on a page.
@@ -1236,16 +1245,16 @@ def check_annotations_within_element(
         if annotation["page_number"] == page_number:
             annotation_bbox_size = calculate_bbox_area(annotation["bbox"])
             if annotation_bbox_size and (
-                calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
-                > annotation_threshold
+                    calculate_intersection_area(element_bbox, annotation["bbox"]) / annotation_bbox_size
+                    > annotation_threshold
             ):
                 annotations_within_element.append(annotation)
     return annotations_within_element
 
 
 def get_word_bounding_box_from_element(
-    obj: LTTextBox,
-    height: float,
+        obj: LTTextBox,
+        height: float,
 ) -> Tuple[List[LTChar], List[Dict[str, Any]]]:
     """
     Extracts characters and word bounding boxes from a PDF text element.
