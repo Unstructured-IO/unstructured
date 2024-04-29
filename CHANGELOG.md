@@ -1,3 +1,14 @@
+## 0.13.5-cohere
+
+### Enhancements
+
+* **Parallelise pdf parsing functions**. Some functions inside `partition_pdf` have been parallelized for faster parsing. 
+
+### Features
+
+### Fixes
+
+
 ## 0.13.5
 
 ### Enhancements
