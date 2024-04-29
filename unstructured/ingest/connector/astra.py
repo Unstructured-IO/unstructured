@@ -178,10 +178,8 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             )
 
             # Create and connect to the newly created collection
-            self._astra_db_collection = self._astra_db.create_collection(
+            self._astra_db_collection = self._astra_db.collection(
                 collection_name=self.connector_config.collection_name,
-                dimension=self.connector_config.embedding_dimension,
-                options={"indexing": {"deny": NON_INDEXED_FIELDS}},
             )
         return self._astra_db_collection
 
