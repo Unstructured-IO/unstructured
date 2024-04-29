@@ -488,7 +488,7 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
             ),
             click.Option(
                 ["--chunking-strategy"],
-                type=click.Choice(["basic", "by_title"]),
+                type=str,
                 help="The rule-set to use to form chunks. Omit to disable chunking.",
             ),
             click.Option(

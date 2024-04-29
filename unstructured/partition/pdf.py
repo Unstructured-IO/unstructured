@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import os
 import re
@@ -90,6 +91,7 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
 )
 from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
     SORT_MODE_DONT,
@@ -705,7 +707,7 @@ def _process_pdfminer_pages(
     languages: List[str],
     metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
-    annotation_threshold: Optional[float] = 0.9,
+    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     **kwargs,
 ):
@@ -866,7 +868,7 @@ def _combine_coordinates_into_element1(
         points=points,
         system=coordinate_system,
     )
-    return element1
+    return copy.deepcopy(element1)
 
 
 def convert_pdf_to_images(

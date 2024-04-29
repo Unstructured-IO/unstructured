@@ -7,4 +7,4 @@ unstructured-ingest \
   --num-processes 2 \
   --verbose \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

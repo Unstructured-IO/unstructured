@@ -255,14 +255,14 @@ timm==0.9.16
     # via effdet
 tokenizers==0.19.1
     # via transformers
-torch==2.2.2
+torch==2.3.0
     # via
     #   -c ././deps/constraints.txt
     #   effdet
     #   layoutparser
     #   timm
     #   torchvision
-torchvision==0.17.2
+torchvision==0.18.0
     # via
     #   effdet
     #   layoutparser
@@ -273,7 +273,7 @@ tqdm==4.66.2
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.40.0
+transformers==4.40.1
     # via unstructured-inference
 typing-extensions==4.11.0
     # via
@@ -284,7 +284,7 @@ typing-extensions==4.11.0
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.27
+unstructured-inference==0.7.29
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

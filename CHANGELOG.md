@@ -1,10 +1,30 @@
-## 0.13.4-dev1
+## 0.13.5
 
 ### Enhancements
-* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning function are now deterministic and unique at the document level by default. Before, hashes were based only on text; however, they now also take into account the element's sequence number on a page, the page's number in the document, and the document's file name.
 
 ### Features
 
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
+## 0.13.4
+
+### Enhancements
+
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
+  function are now deterministic and unique at the document level by default. Before, hashes were
+  based only on text; however, they now also take into account the element's sequence number on a
+  page, the page's number in the document, and the document's file name.
+* **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
+  previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
+  options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
+
+### Features
+
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
 * **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes
