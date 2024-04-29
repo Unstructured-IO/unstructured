@@ -4,6 +4,7 @@ import os
 import tempfile
 from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
+import joblib
 import pdf2image
 
 # NOTE(yuming): Rename PIL.Image to avoid conflict with
@@ -139,20 +140,23 @@ def process_file_with_ocr(
     try:
         if is_image:
             with PILImage.open(filename) as images:
-                image_format = images.format
-                for i, image in enumerate(ImageSequence.Iterator(images)):
+                def merge_page_layouts_from_image(image, image_format, page_i):
                     image = image.convert("RGB")
                     image.format = image_format
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
-                    merged_page_layout = supplement_page_layout_with_ocr(
-                        page_layout=out_layout.pages[i],
+                    return supplement_page_layout_with_ocr(
+                        page_layout=out_layout.pages[page_i],
                         image=image,
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
-                        extracted_regions=extracted_regions,
+                        extracted_regions=extracted_layout[page_i] if page_i < len(extracted_layout) else None,
                     )
-                    merged_page_layouts.append(merged_page_layout)
+
+                # [javier@cohere.com] Run OCR in parallel for each page
+                merged_page_layouts = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer="threads")(
+                    joblib.delayed(merge_page_layouts_from_image)(image, images.format, i)
+                    for i, image in enumerate(ImageSequence.Iterator(images))
+                )
                 return DocumentLayout.from_pages(merged_page_layouts)
         else:
             with tempfile.TemporaryDirectory() as temp_dir:
@@ -163,18 +167,23 @@ def process_file_with_ocr(
                     paths_only=True,
                 )
                 image_paths = cast(List[str], _image_paths)
-                for i, image_path in enumerate(image_paths):
-                    extracted_regions = extracted_layout[i] if i < len(extracted_layout) else None
+
+                def merge_page_layouts_from_image_path(image_path, page_i):
                     with PILImage.open(image_path) as image:
-                        merged_page_layout = supplement_page_layout_with_ocr(
-                            page_layout=out_layout.pages[i],
+                        return supplement_page_layout_with_ocr(
+                            page_layout=out_layout.pages[page_i],
                             image=image,
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
-                            extracted_regions=extracted_regions,
+                            extracted_regions=extracted_layout[page_i] if page_i < len(extracted_layout) else None,
                         )
-                        merged_page_layouts.append(merged_page_layout)
+
+                # [javier@cohere.com] Run OCR in parallel for each page
+                merged_page_layouts = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer="threads")(
+                    joblib.delayed(merge_page_layouts_from_image_path)(image_path, i)
+                    for i, image_path in enumerate(image_paths)
+                )
                 return DocumentLayout.from_pages(merged_page_layouts)
     except Exception as e:
         if os.path.isdir(filename) or os.path.isfile(filename):

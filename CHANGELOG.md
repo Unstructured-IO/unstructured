@@ -1,4 +1,15 @@
-## 0.13.5-dev0
+## 0.13.5-cohere
+
+### Enhancements
+
+* **Parallelise pdf parsing functions**. Some functions inside `partition_pdf` have been parallelized for faster parsing. 
+
+### Features
+
+### Fixes
+
+
+## 0.13.5
 
 ### Enhancements
 
@@ -6,6 +17,7 @@
 
 ### Fixes
 
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
 * **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
 
 ## 0.13.4
