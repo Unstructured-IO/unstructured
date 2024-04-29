@@ -1,3 +1,12 @@
+## 0.13.6-dev0
+
+### Enhancements
+* **Upload all element fields to Qdrant** Since Qdrant allows any content that can be represented as JSON as the "payload", upload all element fields to the destination. Previous approach included redundant parsing.
+
+### Features
+
+### Fixes
+
 ## 0.13.5
 
 ### Enhancements

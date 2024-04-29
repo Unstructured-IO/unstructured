@@ -1,4 +1,3 @@
-import json
 import multiprocessing as mp
 import typing as t
 import uuid
@@ -16,7 +15,6 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import chunk_generator
-from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -133,13 +131,7 @@ class QdrantDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationCon
         return {
             "id": str(uuid.uuid4()),
             "vector": element_dict.pop("embeddings", {}),
-            "payload": {
-                "text": element_dict.pop("text", None),
-                "element_serialized": json.dumps(element_dict),
-                **flatten_dict(
-                    element_dict,
-                    separator="-",
-                    flatten_lists=True,
-                ),
-            },
+            # In Qdrant, "payload" can be any information that can be represented using JSON.
+            # https://qdrant.tech/documentation/concepts/payload/#payload
+            "payload": element_dict,
         }
