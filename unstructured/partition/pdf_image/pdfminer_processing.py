@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
+import joblib
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
@@ -45,11 +46,10 @@ def process_data_with_pdfminer(
     )
     from unstructured_inference.inference.ordering import order_layout
 
-    layouts = []
-    # Coefficient to rescale bounding box to be compatible with images
-    coef = dpi / 72
-    for page, page_layout in open_pdfminer_pages_generator(file):
+    def process(page_layout):
         height = page_layout.height
+        # Coefficient to rescale bounding box to be compatible with images
+        coef = dpi / 72
 
         layout: List["TextRegion"] = []
         for obj in page_layout:
@@ -83,10 +83,12 @@ def process_data_with_pdfminer(
         layout = order_layout(layout)
 
         # apply the current default sorting to the layout elements extracted by pdfminer
-        layout = sort_text_regions(layout)
+        return sort_text_regions(layout)
 
-        layouts.append(layout)
-
+    layouts = joblib.Parallel(n_jobs=joblib.cpu_count())(
+        joblib.delayed(process)(page_layout)
+        for _, page_layout in open_pdfminer_pages_generator(file)
+    )
     return layouts
 
 
