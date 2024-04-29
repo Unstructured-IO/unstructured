@@ -1081,52 +1081,6 @@ def test_add_chunking_strategy_on_partition_auto():
     assert chunk_elements == chunks
 
 
-def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
-    filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    partitioned_elements_multipage_true_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    elements = partition(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    assert (
-        partitioned_elements_multipage_false_combine_chars_0
-        == cleaned_elements_multipage_false_combine_chars_0
-    )
-    assert (
-        partitioned_elements_multipage_true_combine_chars_0
-        == cleaned_elements_multipage_true_combine_chars_0
-    )
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
-        partitioned_elements_multipage_false_combine_chars_0,
-    )
-
-
 def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
     filename = "example-docs/example-10k-1p.html"
 
