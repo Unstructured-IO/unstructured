@@ -887,10 +887,18 @@ def test_partition_pdf_word_bbox_not_char(
     filename=example_doc_path("interface-config-guide-p93.pdf"),
 ):
     try:
-        elements = pdf.partition_pdf(filename=filename)
+        elements = pdf.partition_pdf(filename=filename, strategy="fast")
     except Exception as e:
         raise ("Partitioning fail: %s" % e)
     assert len(elements) == 17
+
+
+def test_partition_pdf_fast_no_mapping_errors(
+    filename=example_doc_path("a1977-backus-p21.pdf"),
+):
+    """Verify there is no regression for https://github.com/Unstructured-IO/unstructured/pull/2940,
+    failing to map old parent_id's to new"""
+    pdf.partition_pdf(filename=filename, strategy="fast")
 
 
 def test_partition_pdf_raises_TypeError_for_invalid_languages():
