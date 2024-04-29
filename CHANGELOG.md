@@ -1,3 +1,14 @@
+## 0.13.7
+
+### Enhancements
+
+* **Parallelise pdf parsing functions**. Some functions inside `partition_pdf` have been parallelized for faster parsing. 
+
+### Features
+
+### Fixes
+
+
 ## 0.13.6
 
 ### Enhancements
