@@ -609,6 +609,22 @@ def test_auto_partition_from_url():
     assert elements[0].metadata.url == url
 
 
+def test_auto_partition_from_url_with_rfc9110_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(
+        url=url, content_type="text/plain; charset=utf-8", strategy=PartitionStrategy.HI_RES
+    )
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
+def test_auto_partition_from_url_without_providing_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(url=url, strategy=PartitionStrategy.HI_RES)
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
 def test_partition_md_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy=PartitionStrategy.HI_RES)

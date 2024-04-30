@@ -1,4 +1,4 @@
-## 0.13.6
+## 0.13.7
 
 ### Enhancements
 
@@ -8,6 +8,16 @@
 
 ### Fixes
 
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
 
 ## 0.13.5
 

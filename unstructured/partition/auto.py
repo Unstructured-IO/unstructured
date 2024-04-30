@@ -564,7 +564,9 @@ def file_and_type_from_url(
     response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
-    content_type = content_type or response.headers.get("Content-Type")
+    content_type = (
+        content_type or response.headers.get("Content-Type", "").split(";")[0].strip().lower()
+    )
     encoding = response.headers.get("Content-Encoding", "utf-8")
 
     filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
