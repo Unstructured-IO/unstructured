@@ -1,6 +1,7 @@
-## 0.13.7-dev0
+## 0.13.7-dev1
 
 ### Enhancements
+
 * **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
 
 ### Features
