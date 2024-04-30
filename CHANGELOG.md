@@ -1,11 +1,21 @@
-## 0.13.6
+## 0.13.7
 
 ### Enhancements
-* Remove `page_number` metadata fields for HTML partition until we have a better strategy to decide page counting.
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
 
 ### Features
 
 ### Fixes
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
 
 ## 0.13.5
 
