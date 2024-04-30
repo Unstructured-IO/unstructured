@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 import click
 
+from unstructured.ingest.cli.base.src import BaseSrcCmd
 from unstructured.ingest.cli.interfaces import CliConfig, Dict
 from unstructured.ingest.connector.astra import AstraWriteConfig, SimpleAstraConfig
 
@@ -75,6 +76,13 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
             ),
         ]
         return options
+
+def get_base_src_cmd() -> BaseSrcCmd:
+    cmd_cls = BaseSrcCmd(
+        cmd_name="astra",
+        cli_config=AstraCliConfig,
+    )
+    return cmd_cls
 
 
 def get_base_dest_cmd():

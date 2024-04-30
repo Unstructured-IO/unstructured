@@ -9,6 +9,7 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
    :maxdepth: 1
 
    source_connectors/airtable
+   source_connectors/astra
    source_connectors/azure
    source_connectors/biomed
    source_connectors/box

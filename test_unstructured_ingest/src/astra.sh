@@ -51,7 +51,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --api-endpoint "$ASTRA_DB_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \
   --embedding-dimension "$EMBEDDING_DIMENSION" \
-  --recursive \
   --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
