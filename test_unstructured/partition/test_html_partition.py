@@ -731,15 +731,13 @@ def test_all_element_ids_are_unique():
 
 
 def test_element_ids_are_deterministic():
-    ids = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
-    assert ids == [
-        "cba9e551ed975e0f8a1956095894e92a",
-        "f540ea3b6569aafeb433df6616e79971",
-        "f4a34ee0fac26589fffdb53d0dfedbaf",
-        "15168aeddbd19da60791109a5a45af65",
-        "0c027f66120dd96271489dd0bb69bff5",
-        "abe89090c2e46dda8fff81053cc79f17",
+    ids_first_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
     ]
+    ids_second_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
+    ]
+    assert ids_first_partition == ids_second_partition
 
 
 def test_partition_html_b_tag_parsing():
