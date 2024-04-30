@@ -204,8 +204,10 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             logger.error(f"Failed to validate connection {e}", exc_info=True)
             raise SourceConnectionNetworkError(f"failed to validate connection: {e}")
 
+    @requires_dependencies(["astrapy"], extras="astra")
     def get_ingest_docs(self):
         # Perform the find operation
+        breakpoint()
         astra_docs = list(self.astra_db_collection.paginated_find())
 
         return [

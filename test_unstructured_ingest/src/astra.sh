@@ -49,8 +49,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --verbose \
   --token "$ASTRA_DB_TOKEN" \
   --api-endpoint "$ASTRA_DB_ENDPOINT" \
-  --collection-name "$COLLECTION_NAME" \
-  --embedding-dimension "$EMBEDDING_DIMENSION" \
+  --collection-name "ingest_test_collection" \
   --work-dir "$WORK_DIR"
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
