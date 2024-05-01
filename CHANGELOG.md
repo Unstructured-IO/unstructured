@@ -1,3 +1,33 @@
+## 0.13.7-dev0
+
+### Enhancements
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+
+### Features
+
+### Fixes
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
+## 0.13.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
 ## 0.13.4
 
 ### Enhancements
