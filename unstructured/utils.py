@@ -7,6 +7,7 @@ import json
 import os
 import platform
 import subprocess
+import tempfile
 import threading
 from datetime import datetime
 from functools import wraps
@@ -73,6 +74,15 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             yield f"<td>{s.strip()}</td>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def is_temp_file_path(file_path: str) -> bool:
+    """True when file_path is in the Python-defined tempdir.
+
+    The Python-defined temp directory is platform dependent (macOS != Linux != Windows)
+    and can also be determined by an environment variable (TMPDIR, TEMP, or TMP).
+    """
+    return file_path.startswith(tempfile.gettempdir())
 
 
 class lazyproperty(Generic[_T]):

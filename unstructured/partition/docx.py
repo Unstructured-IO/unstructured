@@ -69,7 +69,12 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import dependency_exists, lazyproperty, requires_dependencies
+from unstructured.utils import (
+    dependency_exists,
+    is_temp_file_path,
+    lazyproperty,
+    requires_dependencies,
+)
 
 if dependency_exists("pypandoc"):
     import pypandoc
@@ -772,7 +777,7 @@ class _DocxPartitioner:
 
         # -- if the file is on the filesystem, get its date from there --
         if file_path is not None:
-            return None if file_path.startswith("/tmp") else get_last_modified_date(file_path)
+            return None if is_temp_file_path(file_path) else get_last_modified_date(file_path)
 
         # -- otherwise, as long as user explicitly requested it, try getting it from the file-like
         # -- object (unlikely since BytesIO and its brethren have no such metadata).
