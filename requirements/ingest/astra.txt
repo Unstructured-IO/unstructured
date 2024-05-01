@@ -46,7 +46,9 @@ hpack==4.0.0
 httpcore==1.0.5
     # via httpx
 httpx[http2]==0.27.0
-    # via astrapy
+    # via
+    #   astrapy
+    #   httpx
 hyperframe==6.0.1
     # via h2
 idna==3.7

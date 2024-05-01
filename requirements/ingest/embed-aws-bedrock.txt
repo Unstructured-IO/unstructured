@@ -30,7 +30,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.4
+dataclasses-json==0.6.5
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
@@ -51,11 +51,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.34
+langchain-community==0.0.36
     # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.1.46
+langchain-core==0.1.48
     # via langchain-community
-langsmith==0.1.51
+langsmith==0.1.52
     # via
     #   langchain-community
     #   langchain-core
@@ -75,7 +75,7 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-orjson==3.10.1
+orjson==3.10.2
     # via langsmith
 packaging==23.2
     # via

@@ -39,7 +39,7 @@ flake8-print==5.0.0
     # via -r ./test.in
 freezegun==1.5.0
     # via -r ./test.in
-grpcio==1.62.2
+grpcio==1.63.0
     # via -r ./test.in
 idna==3.7
     # via
@@ -50,11 +50,10 @@ iniconfig==2.0.0
     # via pytest
 label-studio-sdk==0.0.32
     # via -r ./test.in
-label-studio-tools==0.0.3
+label-studio-tools==0.0.4
     # via label-studio-sdk
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   label-studio-sdk
     #   label-studio-tools
@@ -97,7 +96,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.1.2
+pytest==8.2.0
     # via
     #   pytest-cov
     #   pytest-mock

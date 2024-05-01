@@ -80,7 +80,9 @@ portalocker==2.8.2
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.31.0
     # via
     #   -c ./ingest/../base.txt
