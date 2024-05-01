@@ -97,7 +97,7 @@ pyflakes==3.2.0
     # via
     #   autoflake
     #   flake8
-pytest==8.1.1
+pytest==8.1.2
     # via
     #   pytest-cov
     #   pytest-mock

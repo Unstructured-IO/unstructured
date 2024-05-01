@@ -142,7 +142,7 @@ def partition_html(
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
 
-    return list(
+    elements = list(
         apply_lang_metadata(
             document_to_element_list(
                 document,
@@ -157,6 +157,13 @@ def partition_html(
             detect_language_per_element=detect_language_per_element,
         ),
     )
+
+    # Note(yuming): Rip off page_number metadata fields here
+    # until we have a better way to handle page counting for html files
+    for element in elements:
+        if hasattr(element.metadata, "page_number"):
+            element.metadata.page_number = None
+    return elements
 
 
 def convert_and_partition_html(
