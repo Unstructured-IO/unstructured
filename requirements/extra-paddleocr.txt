@@ -10,7 +10,7 @@ babel==2.14.0
     # via flask-babel
 bce-python-sdk==0.9.7
     # via visualdl
-blinker==1.8.0
+blinker==1.8.1
     # via flask
 cachetools==5.3.3
     # via premailer
@@ -77,9 +77,8 @@ lazy-loader==0.4
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   premailer
     #   unstructured-paddleocr
