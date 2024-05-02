@@ -1,12 +1,11 @@
-from typing import Any, BinaryIO, List, Optional
+from __future__ import annotations
+
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.docx import convert_and_partition_docx
 
 
@@ -15,18 +14,18 @@ from unstructured.partition.docx import convert_and_partition_docx
 @add_chunking_strategy
 def partition_odt(
     filename: Optional[str] = None,
-    file: Optional[BinaryIO] = None,
+    file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
 
     Parameters
