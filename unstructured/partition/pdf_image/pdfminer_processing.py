@@ -85,7 +85,7 @@ def process_data_with_pdfminer(
         # apply the current default sorting to the layout elements extracted by pdfminer
         return sort_text_regions(layout)
 
-    layouts = joblib.Parallel(n_jobs=joblib.cpu_count())(
+    layouts = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer="threads")(
         joblib.delayed(process)(page_layout)
         for _, page_layout in open_pdfminer_pages_generator(file)
     )

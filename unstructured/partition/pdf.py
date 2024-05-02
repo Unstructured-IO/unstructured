@@ -794,7 +794,7 @@ def _process_pdfminer_pages(
 
         return sorted_page_elements
 
-    elements = joblib.Parallel(n_jobs=joblib.cpu_count())(
+    elements = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer="threads")(
         joblib.delayed(process)(page_number, page, page_layout)
         for page_number, (page, page_layout) in enumerate(
             open_pdfminer_pages_generator(fp), start=starting_page_number
