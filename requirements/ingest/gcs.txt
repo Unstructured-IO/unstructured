@@ -41,7 +41,7 @@ fsspec==2024.3.1
     #   gcsfs
 gcsfs==2024.3.1
     # via -r ./ingest/gcs.in
-google-api-core==2.18.0
+google-api-core==2.19.0
     # via
     #   google-cloud-core
     #   google-cloud-storage

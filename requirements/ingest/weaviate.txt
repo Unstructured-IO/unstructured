@@ -29,7 +29,7 @@ cryptography==42.0.5
     # via authlib
 exceptiongroup==1.2.1
     # via anyio
-grpcio==1.62.2
+grpcio==1.63.0
     # via
     #   grpcio-health-checking
     #   grpcio-tools
@@ -79,9 +79,9 @@ urllib3==1.26.18
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-validators==0.28.0
+validators==0.28.1
     # via weaviate-client
-weaviate-client==4.5.6
+weaviate-client==4.5.7
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in

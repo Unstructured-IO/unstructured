@@ -175,6 +175,38 @@ def test_chunk_by_title_separates_by_page_number():
     ]
 
 
+def test_chuck_by_title_respects_multipage():
+    elements: list[Element] = [
+        Title("A Great Day", metadata=ElementMetadata(page_number=1)),
+        Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
+        Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
+        Table("Heading\nCell text"),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+        Text("It is rainy outside."),
+        Title("A Bad Day"),
+        Text(
+            "Today is a bad day.",
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
+        ),
+        Text("It is storming outside."),
+        CheckBox(),
+    ]
+    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    assert chunks == [
+        CompositeElement(
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
+        ),
+        Table("Heading\nCell text"),
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
+            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
+        ),
+    ]
+
+
 def test_chunk_by_title_does_not_break_on_regex_metadata_change():
     """PreChunker is insensitive to regex-metadata changes.
 
@@ -326,52 +358,6 @@ def test_add_chunking_strategy_respects_max_characters():
         assert len(chunk_element.text) <= 100
     assert chunk_elements != elements
     assert chunk_elements == chunks
-
-
-def test_add_chunking_strategy_on_partition_html_respects_multipage():
-    filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition_html(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    partitioned_elements_multipage_true_combine_chars_0 = partition_html(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    elements = partition_html(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    assert (
-        partitioned_elements_multipage_false_combine_chars_0
-        == cleaned_elements_multipage_false_combine_chars_0
-    )
-    assert (
-        partitioned_elements_multipage_true_combine_chars_0
-        == cleaned_elements_multipage_true_combine_chars_0
-    )
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
-        partitioned_elements_multipage_false_combine_chars_0,
-    )
 
 
 def test_chunk_by_title_drops_detection_class_prob():

@@ -32,7 +32,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via layoutparser
-filelock==3.13.4
+filelock==3.14.0
     # via
     #   huggingface-hub
     #   torch
@@ -45,8 +45,10 @@ fsspec==2024.3.1
     # via
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.18.0
-    # via google-cloud-vision
+google-api-core[grpc]==2.19.0
+    # via
+    #   google-api-core
+    #   google-cloud-vision
 google-auth==2.29.0
     # via
     #   google-api-core
@@ -57,7 +59,7 @@ googleapis-common-protos==1.63.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.62.2
+grpcio==1.63.0
     # via
     #   google-api-core
     #   grpcio-status
@@ -85,9 +87,8 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   pikepdf
 markupsafe==2.1.5
@@ -223,7 +224,7 @@ rapidfuzz==3.8.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.4.16
+regex==2024.4.28
     # via
     #   -c ./base.txt
     #   transformers

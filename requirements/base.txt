@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     #   unstructured-client
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.4
+dataclasses-json==0.6.5
     # via -r ./base.in
 dataclasses-json-speakeasy==0.5.11
     # via unstructured-client
@@ -39,10 +39,8 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==4.9.4
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+lxml==5.2.1
+    # via -r ./base.in
 marshmallow==3.21.1
     # via
     #   dataclasses-json
@@ -63,13 +61,13 @@ packaging==23.2
     #   unstructured-client
 python-dateutil==2.9.0.post0
     # via unstructured-client
-python-iso639==2024.2.7
+python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
 rapidfuzz==3.8.1
     # via -r ./base.in
-regex==2024.4.16
+regex==2024.4.28
     # via nltk
 requests==2.31.0
     # via

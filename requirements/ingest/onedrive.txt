@@ -40,7 +40,9 @@ office365-rest-python-client==2.4.2
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 pytz==2024.1
     # via office365-rest-python-client
 requests==2.31.0

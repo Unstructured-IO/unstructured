@@ -47,7 +47,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.utils import lazyproperty
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN = "pptx"
 
@@ -442,7 +442,7 @@ class PptxPartitionerOptions:
         if self._file_path:
             return (
                 None
-                if self._file_path.startswith("/tmp")
+                if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
             )
 

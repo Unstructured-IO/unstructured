@@ -23,11 +23,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.4
+dataclasses-json==0.6.5
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.13.4
+filelock==3.14.0
     # via
     #   huggingface-hub
     #   torch
@@ -62,11 +62,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.34
+langchain-community==0.0.36
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.1.46
+langchain-core==0.1.48
     # via langchain-community
-langsmith==0.1.51
+langsmith==0.1.52
     # via
     #   langchain-community
     #   langchain-core
@@ -96,7 +96,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-orjson==3.10.1
+orjson==3.10.2
     # via langsmith
 packaging==23.2
     # via
@@ -120,7 +120,7 @@ pyyaml==6.0.1
     #   langchain-community
     #   langchain-core
     #   transformers
-regex==2024.4.16
+regex==2024.4.28
     # via
     #   -c ./ingest/../base.txt
     #   transformers
@@ -150,7 +150,7 @@ tenacity==8.2.3
     # via
     #   langchain-community
     #   langchain-core
-threadpoolctl==3.4.0
+threadpoolctl==3.5.0
     # via scikit-learn
 tokenizers==0.19.1
     # via transformers

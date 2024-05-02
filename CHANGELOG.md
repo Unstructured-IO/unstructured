@@ -1,3 +1,26 @@
+## 0.13.7-dev4
+
+### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+
+### Features
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
 ## 0.13.5
 
 ### Enhancements
