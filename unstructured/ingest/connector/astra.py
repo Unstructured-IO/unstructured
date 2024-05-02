@@ -137,7 +137,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
         }
 
 @dataclass
-class AstraIngestDoc(IngestDocSessionHandleMixin, IngestDocCleanupMixin, BaseSingleIngestDoc):
+class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleAstraConfig
     meta: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "astra"
@@ -172,7 +172,8 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        if self._astra_db_collection is None:
+        if self._astra_db_collection is not None: ### FIX THIS IS NEVER NONE
+            print("getting connection **************")
             from astrapy.db import AstraDB
 
             # Build the Astra DB object.
@@ -185,7 +186,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 caller_version=integration_version,
             )
 
-            # Create and connect to the newly created collection
+            # Create and connect to the collection
             self._astra_db_collection = self._astra_db.collection(
                 collection_name=self.connector_config.collection_name,
             )
@@ -207,7 +208,6 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @requires_dependencies(["astrapy"], extras="astra")
     def get_ingest_docs(self):
         # Perform the find operation
-        breakpoint()
         astra_docs = list(self.astra_db_collection.paginated_find())
 
         return [
