@@ -6,21 +6,7 @@ import io
 import os
 import re
 import warnings
-from tempfile import SpooledTemporaryFile
-from typing import (
-    IO,
-    TYPE_CHECKING,
-    Any,
-    BinaryIO,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Tuple,
-    Union,
-    cast,
-)
+from typing import IO, TYPE_CHECKING, Any, Iterator, Optional, Sequence, cast
 
 import numpy as np
 import pdf2image
@@ -138,12 +124,12 @@ def default_hi_res_model() -> str:
 @add_chunking_strategy
 def partition_pdf(
     filename: str = "",
-    file: Optional[Union[BinaryIO, SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     include_metadata: bool = True,  # used by decorator
     metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
@@ -151,13 +137,13 @@ def partition_pdf(
     links: Sequence[Link] = [],
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
     Parameters
     ----------
@@ -239,23 +225,23 @@ def partition_pdf(
 
 def partition_pdf_or_image(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     is_image: bool = False,
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
     # TODO(alan): Extract information about the filetype to be processed from the template
     # route. Decoding the routing should probably be handled by a single function designed for
@@ -351,9 +337,9 @@ def partition_pdf_or_image(
 
 def extractable_elements(
     filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     include_page_breaks: bool = False,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     **kwargs: Any,
@@ -372,10 +358,10 @@ def extractable_elements(
 
 
 def get_the_last_modification_date_pdf_or_img(
-    file: Optional[Union[bytes, BinaryIO, SpooledTemporaryFile]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     filename: Optional[str] = "",
     date_from_file_object: bool = False,
-) -> Union[str, None]:
+) -> str | None:
     last_modification_date = None
     if not file and filename:
         last_modification_date = get_last_modified_date(filename=filename)
@@ -389,11 +375,11 @@ def get_the_last_modification_date_pdf_or_img(
 @requires_dependencies("unstructured_inference")
 def _partition_pdf_or_image_local(
     filename: str = "",
-    file: Optional[Union[bytes, BinaryIO]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     is_image: bool = False,
     infer_table_structure: bool = False,
     include_page_breaks: bool = False,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     model_name: Optional[str] = None,  # to be deprecated in favor of `hi_res_model_name`
     hi_res_model_name: Optional[str] = None,
@@ -401,14 +387,14 @@ def _partition_pdf_or_image_local(
     metadata_last_modified: Optional[str] = None,
     pdf_text_extractable: bool = False,
     extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     starting_page_number: int = 1,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partition using package installed locally"""
     from unstructured_inference.inference.layout import (
         process_data_with_model,
@@ -540,7 +526,7 @@ def _partition_pdf_or_image_local(
         sortable=True,
         include_page_breaks=include_page_breaks,
         last_modification_date=metadata_last_modified,
-        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "List"
+        # NOTE(crag): do not attempt to derive ListItem's from a layout-recognized "list"
         # block with NLP rules. Otherwise, the assumptions in
         # unstructured.partition.common::layout_list_to_list_items often result in weird chunking.
         infer_list_items=False,
@@ -601,7 +587,7 @@ def _partition_pdf_or_image_local(
     return out_elements
 
 
-def _process_uncategorized_text_elements(elements: List[Element]):
+def _process_uncategorized_text_elements(elements: list[Element]):
     """Processes a list of elements, creating a new list where elements with the
     category `UncategorizedText` are replaced with corresponding
     elements created from their text content."""
@@ -622,11 +608,11 @@ def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
     include_page_breaks: bool,
-    languages: List[str],
+    languages: list[str],
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
 
@@ -641,7 +627,7 @@ def _partition_pdf_with_pdfminer(
     exactly_one(filename=filename, file=file)
     if filename:
         with open_filename(filename, "rb") as fp:
-            fp = cast(BinaryIO, fp)
+            fp = cast(IO[bytes], fp)
             elements = _process_pdfminer_pages(
                 fp=fp,
                 filename=filename,
@@ -653,9 +639,8 @@ def _partition_pdf_with_pdfminer(
             )
 
     elif file:
-        fp = cast(BinaryIO, file)
         elements = _process_pdfminer_pages(
-            fp=fp,
+            fp=file,
             filename=filename,
             include_page_breaks=include_page_breaks,
             languages=languages,
@@ -701,10 +686,10 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
 
 @requires_dependencies("pdfminer")
 def _process_pdfminer_pages(
-    fp: BinaryIO,
+    fp: IO[bytes],
     filename: str,
     include_page_breaks: bool,
-    languages: List[str],
+    languages: list[str],
     metadata_last_modified: Optional[str],
     sort_mode: str = SORT_MODE_XY_CUT,
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
@@ -713,14 +698,14 @@ def _process_pdfminer_pages(
 ):
     """Uses PDFMiner to split a document into pages and process them."""
 
-    elements: List[Element] = []
+    elements: list[Element] = []
 
     for page_number, (page, page_layout) in enumerate(
         open_pdfminer_pages_generator(fp), start=starting_page_number
     ):
         width, height = page_layout.width, page_layout.height
 
-        page_elements: List[Element] = []
+        page_elements: list[Element] = []
         annotation_list = []
 
         coordinate_system = PixelSpace(
@@ -734,7 +719,7 @@ def _process_pdfminer_pages(
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             bbox = (x1, y1, x2, y2)
 
-            urls_metadata: List[Dict[str, Any]] = []
+            urls_metadata: list[dict[str, Any]] = []
 
             if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
                 annotations_within_element = check_annotations_within_element(
@@ -748,7 +733,7 @@ def _process_pdfminer_pages(
                     urls_metadata.append(map_bbox_and_index(words, annot))
 
             if hasattr(obj, "get_text"):
-                _text_snippets: List = [obj.get_text()]
+                _text_snippets: list[str] = [obj.get_text()]
             else:
                 _text = _extract_text(obj)
                 _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
@@ -796,11 +781,11 @@ def _process_pdfminer_pages(
 
 
 def _combine_list_elements(
-    elements: List[Element], coordinate_system: Union[PixelSpace, PointSpace]
-) -> List[Element]:
+    elements: list[Element], coordinate_system: PixelSpace | PointSpace
+) -> list[Element]:
     """Combine elements that should be considered a single ListItem element."""
     tmp_element = None
-    updated_elements: List[Element] = []
+    updated_elements: list[Element] = []
     for element in elements:
         if isinstance(element, ListItem):
             tmp_element = element
@@ -824,10 +809,10 @@ def _combine_list_elements(
 
 
 def _get_links_from_urls_metadata(
-    urls_metadata: List[Dict[str, Any]], moved_indices: np.ndarray
-) -> List[Link]:
+    urls_metadata: list[dict[str, Any]], moved_indices: np.ndarray
+) -> list[Link]:
     """Extracts links from a list of URL metadata."""
-    links: List[Link] = []
+    links: list[Link] = []
     for url in urls_metadata:
         with contextlib.suppress(IndexError):
             links.append(
@@ -844,7 +829,7 @@ def _get_links_from_urls_metadata(
 
 
 def _combine_coordinates_into_element1(
-    element1: Element, element2: Element, coordinate_system: Union[PixelSpace, PointSpace]
+    element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
 ) -> Element:
     """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
     x1 = min(
@@ -873,7 +858,7 @@ def _combine_coordinates_into_element1(
 
 def convert_pdf_to_images(
     filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     chunk_size: int = 10,
 ) -> Iterator[PILImage.Image]:
     # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
@@ -907,13 +892,13 @@ def convert_pdf_to_images(
 
 def _partition_pdf_or_image_with_ocr(
     filename: str = "",
-    file: Optional[Union[bytes, IO[bytes]]] = None,
+    file: Optional[bytes | IO[bytes]] = None,
     include_page_breaks: bool = False,
-    languages: Optional[List[str]] = ["eng"],
+    languages: Optional[list[str]] = ["eng"],
     is_image: bool = False,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
-    **kwargs,
+    **kwargs: Any,
 ):
     """Partitions an image or PDF using OCR. For PDFs, each page is converted
     to an image prior to processing."""
@@ -953,13 +938,13 @@ def _partition_pdf_or_image_with_ocr(
 
 def _partition_pdf_or_image_with_ocr_from_image(
     image: PILImage,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
     **kwargs,
-) -> List[Element]:
+) -> list[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
     from unstructured.partition.pdf_image.ocr import (
@@ -1046,29 +1031,29 @@ def check_coords_within_boundary(
 
 
 def get_uris(
-    annots: Union[PDFObjRef, List[PDFObjRef]],
+    annots: PDFObjRef | list[PDFObjRef],
     height: float,
-    coordinate_system: Union[PixelSpace, PointSpace],
+    coordinate_system: PixelSpace | PointSpace,
     page_number: int,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Extracts URI annotations from a single or a list of PDF object references on a specific page.
     The type of annots (list or not) depends on the pdf formatting. The function detectes the type
-    of annots and then pass on to get_uris_from_annots function as a List.
+    of annots and then pass on to get_uris_from_annots function as a list.
 
     Args:
-        annots (Union[PDFObjRef, List[PDFObjRef]]): A single or a list of PDF object references
+        annots (PDFObjRef | list[PDFObjRef]): A single or a list of PDF object references
             representing annotations on the page.
         height (float): The height of the page in the specified coordinate system.
-        coordinate_system (Union[PixelSpace, PointSpace]): The coordinate system used to represent
+        coordinate_system (PixelSpace | PointSpace): The coordinate system used to represent
             the annotations' coordinates.
         page_number (int): The page number from which to extract annotations.
 
     Returns:
-        List[dict]: A list of dictionaries, each containing information about a URI annotation,
+        list[dict]: A list of dictionaries, each containing information about a URI annotation,
         including its coordinates, bounding box, type, URI link, and page number.
     """
-    if isinstance(annots, List):
+    if isinstance(annots, list):
         return get_uris_from_annots(annots, height, coordinate_system, page_number)
     resolved_annots = annots.resolve()
     if resolved_annots is None:
@@ -1077,24 +1062,24 @@ def get_uris(
 
 
 def get_uris_from_annots(
-    annots: List[PDFObjRef],
-    height: Union[int, float],
-    coordinate_system: Union[PixelSpace, PointSpace],
+    annots: list[PDFObjRef],
+    height: int | float,
+    coordinate_system: PixelSpace | PointSpace,
     page_number: int,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Extracts URI annotations from a list of PDF object references.
 
     Args:
-        annots (List[PDFObjRef]): A list of PDF object references representing annotations on
+        annots (list[PDFObjRef]): A list of PDF object references representing annotations on
             a page.
-        height (Union[int, float]): The height of the page in the specified coordinate system.
-        coordinate_system (Union[PixelSpace, PointSpace]): The coordinate system used to represent
+        height (int | float): The height of the page in the specified coordinate system.
+        coordinate_system (PixelSpace | PointSpace): The coordinate system used to represent
             the annotations' coordinates.
         page_number (int): The page number from which to extract annotations.
 
     Returns:
-        List[dict]: A list of dictionaries, each containing information about a URI annotation,
+        list[dict]: A list of dictionaries, each containing information about a URI annotation,
         including its coordinates, bounding box, type, URI link, and page number.
     """
     annotation_list = []
@@ -1159,16 +1144,16 @@ def try_resolve(annot: PDFObjRef):
 
 
 def calculate_intersection_area(
-    bbox1: Tuple[float, float, float, float],
-    bbox2: Tuple[float, float, float, float],
+    bbox1: tuple[float, float, float, float],
+    bbox2: tuple[float, float, float, float],
 ) -> float:
     """
     Calculate the area of intersection between two bounding boxes.
 
     Args:
-        bbox1 (Tuple[float, float, float, float]): The coordinates of the first bounding box
+        bbox1 (tuple[float, float, float, float]): The coordinates of the first bounding box
             in the format (x1, y1, x2, y2).
-        bbox2 (Tuple[float, float, float, float]): The coordinates of the second bounding box
+        bbox2 (tuple[float, float, float, float]): The coordinates of the second bounding box
             in the format (x1, y1, x2, y2).
 
     Returns:
@@ -1192,12 +1177,12 @@ def calculate_intersection_area(
         return 0.0
 
 
-def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
+def calculate_bbox_area(bbox: tuple[float, float, float, float]) -> float:
     """
     Calculate the area of a bounding box.
 
     Args:
-        bbox (Tuple[float, float, float, float]): The coordinates of the bounding box
+        bbox (tuple[float, float, float, float]): The coordinates of the bounding box
             in the format (x1, y1, x2, y2).
 
     Returns:
@@ -1209,18 +1194,18 @@ def calculate_bbox_area(bbox: Tuple[float, float, float, float]) -> float:
 
 
 def check_annotations_within_element(
-    annotation_list: List[Dict[str, Any]],
-    element_bbox: Tuple[float, float, float, float],
+    annotation_list: list[dict[str, Any]],
+    element_bbox: tuple[float, float, float, float],
     page_number: int,
     annotation_threshold: float,
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """
     Filter annotations that are within or highly overlap with a specified element on a page.
 
     Args:
-        annotation_list (List[Dict[str,Any]]): A list of dictionaries, each containing information
+        annotation_list (list[dict[str,Any]]): A list of dictionaries, each containing information
             about an annotation.
-        element_bbox (Tuple[float, float, float, float]): The bounding box coordinates of the
+        element_bbox (tuple[float, float, float, float]): The bounding box coordinates of the
             specified element in the bbox format (x1, y1, x2, y2).
         page_number (int): The page number to which the annotations and element belong.
         annotation_threshold (float, optional): The threshold value (between 0.0 and 1.0)
@@ -1228,7 +1213,7 @@ def check_annotations_within_element(
             within the element. Default is 0.9.
 
     Returns:
-        List[Dict[str,Any]]: A list of dictionaries containing information about annotations
+        list[dict[str,Any]]: A list of dictionaries containing information about annotations
         that are within or highly overlap with the specified element on the given page, based on
         the specified threshold.
     """
@@ -1247,7 +1232,7 @@ def check_annotations_within_element(
 def get_word_bounding_box_from_element(
     obj: LTTextBox,
     height: float,
-) -> Tuple[List[LTChar], List[Dict[str, Any]]]:
+) -> tuple[list[LTChar], list[dict[str, Any]]]:
     """
     Extracts characters and word bounding boxes from a PDF text element.
 
@@ -1256,9 +1241,9 @@ def get_word_bounding_box_from_element(
         height (float): The height of the page in the specified coordinate system.
 
     Returns:
-        Tuple[List[LTChar], List[Dict[str,Any]]]: A tuple containing two lists:
-            - List[LTChar]: A list of LTChar objects representing individual characters.
-            - List[Dict[str,Any]]]: A list of dictionaries, each containing information about
+        tuple[list[LTChar], list[dict[str,Any]]]: A tuple containing two lists:
+            - list[LTChar]: A list of LTChar objects representing individual characters.
+            - list[dict[str,Any]]]: A list of dictionaries, each containing information about
                 a word, including its text, bounding box, and start index in the element's text.
     """
     characters = []
@@ -1307,14 +1292,14 @@ def get_word_bounding_box_from_element(
     return characters, words
 
 
-def map_bbox_and_index(words: List[Dict[str, Any]], annot: Dict[str, Any]):
+def map_bbox_and_index(words: list[dict[str, Any]], annot: dict[str, Any]):
     """
     Maps a bounding box annotation to the corresponding text and start index within a list of words.
 
     Args:
-        words (List[Dict[str,Any]]): A list of dictionaries, each containing information about
+        words (list[dict[str,Any]]): A list of dictionaries, each containing information about
             a word, including its text, bounding box, and start index.
-        annot (Dict[str,Any]): The annotation dictionary to be mapped, which will be updated with
+        annot (dict[str,Any]): The annotation dictionary to be mapped, which will be updated with
         "text" and "start_index" fields.
 
     Returns:

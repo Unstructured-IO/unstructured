@@ -1,4 +1,6 @@
-from typing import IO, List, Optional
+from __future__ import annotations
+
+from typing import IO, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element
@@ -18,10 +20,10 @@ def partition_org(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions an org document. The document is first converted to HTML and then
     partitioned using partition_html.
 
