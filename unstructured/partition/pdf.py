@@ -937,21 +937,19 @@ def _partition_pdf_or_image_with_ocr(
 
 
 def _partition_pdf_or_image_with_ocr_from_image(
-    image: PILImage,
+    image: PILImage.Image,
     languages: Optional[list[str]] = None,
     page_number: int = 1,
     include_page_breaks: bool = False,
     metadata_last_modified: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
-    **kwargs,
+    **kwargs: Any,
 ) -> list[Element]:
     """Extract `unstructured` elements from an image using OCR and perform partitioning."""
 
-    from unstructured.partition.pdf_image.ocr import (
-        get_ocr_agent,
-    )
+    from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
-    ocr_agent = get_ocr_agent()
+    ocr_agent = OCRAgent.get_agent()
     ocr_languages = prepare_languages_for_tesseract(languages)
 
     # NOTE(christine): `unstructured_pytesseract.image_to_string()` returns sorted text

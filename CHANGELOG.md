@@ -1,8 +1,9 @@
-## 0.13.7-dev5
+## 0.13.7-dev6
 
 ### Enhancements
 
 * **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
 
 ### Features
 
