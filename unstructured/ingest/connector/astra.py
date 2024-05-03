@@ -181,7 +181,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             self._astra_db = AstraDB(
                 api_endpoint=self.connector_config.access_config.api_endpoint,
                 token=self.connector_config.access_config.token,
-                # namespace=self.connector_config.namespace,
+                namespace=self.connector_config.namespace,
                 caller_name=integration_name,
                 caller_version=integration_version,
             )
