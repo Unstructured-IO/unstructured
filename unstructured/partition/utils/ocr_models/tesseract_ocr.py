@@ -22,9 +22,7 @@ from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import (
-        LayoutElement,
-    )
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 class OCRAgentTesseract(OCRAgent):

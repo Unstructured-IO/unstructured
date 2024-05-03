@@ -10,33 +10,11 @@ from unstructured.partition.utils.constants import OCR_AGENT_MODULES_WHITELIST
 if TYPE_CHECKING:
     from PIL import Image as PILImage
     from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import (
-        LayoutElement,
-    )
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 class OCRAgent(ABC):
     """Defines the interface for an Optical Character Recognition (OCR) service."""
-
-    @abstractmethod
-    def is_text_sorted(self) -> bool:
-        pass
-
-    @abstractmethod
-    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
-        pass
-
-    @abstractmethod
-    def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[TextRegion]:
-        pass
-
-    @abstractmethod
-    def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
-    ) -> list[LayoutElement]:
-        pass
 
     @staticmethod
     @functools.lru_cache(maxsize=None)
@@ -51,3 +29,23 @@ class OCRAgent(ABC):
                 f"Environment variable OCR_AGENT module name {module_name}, must be set to a"
                 f" whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
             )
+
+    @abstractmethod
+    def get_layout_elements_from_image(
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[LayoutElement]:
+        pass
+
+    @abstractmethod
+    def get_layout_from_image(
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[TextRegion]:
+        pass
+
+    @abstractmethod
+    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+        pass
+
+    @abstractmethod
+    def is_text_sorted(self) -> bool:
+        pass

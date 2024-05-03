@@ -23,9 +23,7 @@ from unstructured.partition.utils.constants import (
     OCR_AGENT_TESSERACT_OLD,
     OCRMode,
 )
-from unstructured.partition.utils.ocr_models.ocr_interface import (
-    OCRAgent,
-)
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
