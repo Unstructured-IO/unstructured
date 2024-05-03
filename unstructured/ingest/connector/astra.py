@@ -18,7 +18,6 @@ from unstructured.ingest.interfaces import (
     BaseSingleIngestDoc,
     BaseSourceConnector,
     IngestDocCleanupMixin,
-    IngestDocSessionHandleMixin,
     SourceConnectorCleanupMixin,
     SourceMetadata,
     WriteConfig,
@@ -119,7 +118,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             _ = self.astra_db_collection
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
-            raise DestinationConnectionNetworkError(f"failed to validate connection: {e}")
+            raise DestinationConnectionError(f"failed to validate connection: {e}")
 
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(f"Inserting / updating {len(elements_dict)} documents to Astra.")
@@ -139,13 +138,70 @@ class AstraDestinationConnector(BaseDestinationConnector):
 @dataclass
 class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleAstraConfig
-    meta: t.Dict[str, str] = field(default_factory=dict)
+    metadata: t.Dict[str, str] = field(default_factory=dict)
     registry_name: str = "astra"
 
-    def update_source_metadata(self):
+    def uri_filename(self) -> str:
+        basename = os.path.basename(self.uri)
+
+        return os.path.splitext(basename)[0]
+
+    @property
+    def filename(self):
+        return (Path(self.read_config.download_dir) / f"{self.uri_filename()}.csv").resolve()
+
+    @property
+    def _output_filename(self):
+        return Path(self.processor_config.output_dir) / f"{self.uri_filename()}.json"
+
+    @requires_dependencies(["fsspec"], extras="astra")
+    def _get_fs_from_uri(self):
+        from fsspec.core import url_to_fs
+
+        try:
+            fs, _ = url_to_fs(self.uri)
+        except ImportError as error:
+            raise ImportError(
+                f"uri {self.uri} may be associated with a filesystem that "
+                f"requires additional dependencies: {error}",
+            )
+        
+        return fs
+
+    def _update_source_metadata(self):
+        # Get the filesystem from the URI
+        fs = kwargs.get("fs", self._get_fs_from_uri())
+
+        # Check if the file exists
+        exists = fs.exists(self.uri) 
+
+        # Update the source metadata
         self.source_metadata = SourceMetadata(
-            exists=True,
+            exists=exists,
         )
+
+    @SourceConnectionNetworkError.wrap
+    def _get_pandas_df(self, filesystem):
+        import pyarrow.parquet as pq
+
+        return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
+
+    @SourceConnectionError.wrap
+    @BaseSingleIngestDoc.skip_if_file_exists
+    def get_file(self):
+        # Get the filesystem from the URI
+        fs = self._get_fs_from_uri()
+        self._update_source_metadata(fs=fs)
+
+        # Create the full path to the temporary directory
+        self._create_full_tmp_dir_path()
+
+        # Get the pandas dataframe from the filesystem
+        df = self._get_pandas_df(filesystem=fs)
+
+        # Write the dataframe to a CSV file
+        logger.info(f"Writing {len(df)} rows to {self.filename}")
+        df.to_csv(self.filename)
 
 
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
@@ -203,7 +259,8 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             _ = self.astra_db_collection
         except Exception as e:
             logger.error(f"Failed to validate connection {e}", exc_info=True)
-            raise SourceConnectionNetworkError(f"failed to validate connection: {e}")
+            
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["astrapy"], extras="astra")
     def get_ingest_docs(self):
@@ -215,7 +272,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 connector_config=self.connector_config,
                 processor_config=self.processor_config,
                 read_config=self.read_config,
-                meta=record,
+                metadata=record,
             )
             for record in astra_docs
         ]
