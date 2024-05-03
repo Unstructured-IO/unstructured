@@ -26,12 +26,6 @@ if TYPE_CHECKING:
     from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 
-# Force tesseract to be single threaded,
-# otherwise we see major performance problems
-if "OMP_THREAD_LIMIT" not in os.environ:
-    os.environ["OMP_THREAD_LIMIT"] = "1"
-
-
 def process_data_with_ocr(
     data: bytes | IO[bytes],
     out_layout: "DocumentLayout",

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, List
 
 import cv2
@@ -23,6 +24,10 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layoutelement import LayoutElement
+
+# -- force tesseract to be single threaded, otherwise we see major performance problems --
+if "OMP_THREAD_LIMIT" not in os.environ:
+    os.environ["OMP_THREAD_LIMIT"] = "1"
 
 
 class OCRAgentTesseract(OCRAgent):
