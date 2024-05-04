@@ -1,4 +1,4 @@
-## 0.13.7-dev6
+## 0.13.7-dev7
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 * **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
 
 ### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
 
 ### Fixes
 
