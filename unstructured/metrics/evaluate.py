@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import concurrent.futures
 import logging
 import os
 import sys
@@ -94,31 +95,35 @@ def measure_text_extraction_accuracy(
     rows = []
     ext_index = -(len(output_type) + 1)
 
-    # assumption: output file name convention is name-of-file.doc.json
-    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
-    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
-        # filename = (doc.split("/")[-1]).split(f".{output_type}")[0]
+    def process_doc(doc):
         filename = os.path.basename(doc)[:ext_index]
         doctype = filename.rsplit(".", 1)[-1]
         fn_txt = filename + ".txt"
         connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
 
-        # not all odetta cct files follow the same naming convention;
-        # some exclude the original filetype from the name
         if fn_txt not in source_list:
             fn = filename.rsplit(".", 1)[0]
             fn_txt = fn + ".txt"
 
-        if fn_txt in source_list:  # type: ignore
+        if fn_txt in source_list:
             try:
                 output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
                 source_cct = _read_text_file(os.path.join(source_dir, fn_txt))
             except Exception:
-                # if any of the output/source file is unable to open, skip the loop
-                continue
+                return None
             accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
-            rows.append([filename, doctype, connector, accuracy, percent_missing])
+            return [filename, doctype, connector, accuracy, percent_missing]
+        return None
+
+    # assumption: output file name convention is name-of-file.doc.json
+    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
+    max_processors = int(os.environ.get("MAX_PROCESSORS", os.cpu_count()))
+    logger.info(f"Using {max_processors} processors for parallel processing.")
+
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processors) as executor:
+        rows = list(tqdm(executor.map(process_doc, output_list), total=len(output_list)))
+    rows = [row for row in rows if row is not None]
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
