@@ -13,7 +13,7 @@ from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
 from unstructured.metrics.table.table_formats import SimpleTableCell
-from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
+from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
