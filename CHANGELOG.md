@@ -1,3 +1,13 @@
+## 0.13.7-dev8
+
+### Enhancements
+
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
+
+### Features
+
+### Fixes
+
 ## 0.13.7-dev7
 
 ### Enhancements
