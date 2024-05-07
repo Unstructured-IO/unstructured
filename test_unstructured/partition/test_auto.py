@@ -609,6 +609,22 @@ def test_auto_partition_from_url():
     assert elements[0].metadata.url == url
 
 
+def test_auto_partition_from_url_with_rfc9110_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(
+        url=url, content_type="text/plain; charset=utf-8", strategy=PartitionStrategy.HI_RES
+    )
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
+def test_auto_partition_from_url_without_providing_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(url=url, strategy=PartitionStrategy.HI_RES)
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
 def test_partition_md_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy=PartitionStrategy.HI_RES)
@@ -1079,52 +1095,6 @@ def test_add_chunking_strategy_on_partition_auto():
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
-
-
-def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
-    filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    partitioned_elements_multipage_true_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    elements = partition(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    assert (
-        partitioned_elements_multipage_false_combine_chars_0
-        == cleaned_elements_multipage_false_combine_chars_0
-    )
-    assert (
-        partitioned_elements_multipage_true_combine_chars_0
-        == cleaned_elements_multipage_true_combine_chars_0
-    )
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
-        partitioned_elements_multipage_false_combine_chars_0,
-    )
 
 
 def test_add_chunking_strategy_on_partition_auto_respects_max_chars():

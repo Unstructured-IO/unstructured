@@ -46,9 +46,9 @@ deprecated==1.2.14
     # via opentelemetry-api
 exceptiongroup==1.2.1
     # via anyio
-fastapi==0.110.2
+fastapi==0.110.3
     # via chromadb
-filelock==3.13.4
+filelock==3.14.0
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
@@ -58,7 +58,7 @@ google-auth==2.29.0
     # via kubernetes
 googleapis-common-protos==1.63.0
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.62.2
+grpcio==1.63.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -137,11 +137,11 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   chromadb
     #   fastapi
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 pypika==0.48.9
     # via chromadb
@@ -214,12 +214,14 @@ urllib3==1.26.18
     #   kubernetes
     #   requests
 uvicorn[standard]==0.29.0
-    # via chromadb
+    # via
+    #   chromadb
+    #   uvicorn
 uvloop==0.19.0
     # via uvicorn
 watchfiles==0.21.0
     # via uvicorn
-websocket-client==1.7.0
+websocket-client==1.8.0
     # via kubernetes
 websockets==12.0
     # via uvicorn

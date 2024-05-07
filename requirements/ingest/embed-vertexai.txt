@@ -29,7 +29,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.4
+dataclasses-json==0.6.5
     # via
     #   -c ./ingest/../base.txt
     #   langchain
@@ -40,8 +40,9 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-google-api-core[grpc]==2.18.0
+google-api-core[grpc]==2.19.0
     # via
+    #   google-api-core
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
     #   google-cloud-core
@@ -55,7 +56,7 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.48.0
+google-cloud-aiplatform==1.49.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.21.0
     # via google-cloud-aiplatform
@@ -82,11 +83,9 @@ googleapis-common-protos[grpc]==1.63.0
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
-greenlet==3.0.3
-    # via sqlalchemy
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
-grpcio==1.62.2
+grpcio==1.63.0
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -105,23 +104,23 @@ jsonpatch==1.33
     #   langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.16
+langchain==0.1.17
     # via -r ./ingest/embed-vertexai.in
-langchain-community==0.0.34
+langchain-community==0.0.36
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
-langchain-core==0.1.45
+langchain-core==0.1.48
     # via
     #   langchain
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.1
+langchain-google-vertexai==1.0.3
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.49
+langsmith==0.1.52
     # via
     #   langchain
     #   langchain-community
@@ -144,7 +143,7 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   shapely
-orjson==3.10.1
+orjson==3.10.2
     # via langsmith
 packaging==23.2
     # via
@@ -175,13 +174,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.0
+pydantic==2.7.1
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.1
+pydantic-core==2.18.2
     # via pydantic
 python-dateutil==2.9.0.post0
     # via

@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import re
-from typing import Iterable, Iterator, List, Optional, Union
+from typing import Iterable, Iterator, Optional
 
 import iso639
 from langdetect import DetectorFactory, detect_langs, lang_detect_exception
@@ -143,7 +145,7 @@ PYTESSERACT_LANG_CODES = [
 ]
 
 
-def prepare_languages_for_tesseract(languages: Optional[List[str]] = ["eng"]) -> str:
+def prepare_languages_for_tesseract(languages: Optional[list[str]] = ["eng"]) -> str:
     """
     Entry point: convert languages (list of strings) into tesseract ocr langcode format (uses +)
     """
@@ -291,8 +293,8 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
 
 def detect_languages(
     text: str,
-    languages: Optional[List[str]] = ["auto"],
-) -> Optional[List[str]]:
+    languages: Optional[list[str]] = ["auto"],
+) -> Optional[list[str]]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
@@ -370,7 +372,7 @@ def detect_languages(
 
 def apply_lang_metadata(
     elements: Iterable[Element],
-    languages: Optional[List[str]],
+    languages: Optional[list[str]],
     detect_language_per_element: bool = False,
 ) -> Iterator[Element]:
     """Detect language and apply it to metadata.languages for each element in `elements`.
@@ -393,7 +395,7 @@ def apply_lang_metadata(
         return
 
     # Convert elements to a list to get the text, detect the language, and add it to the elements
-    if not isinstance(elements, List):
+    if not isinstance(elements, list):
         elements = list(elements)
 
     full_text = " ".join(e.text for e in elements if hasattr(e, "text"))
@@ -416,7 +418,7 @@ def apply_lang_metadata(
                 yield e
 
 
-def _clean_ocr_languages_arg(ocr_languages: Union[List[str], str]) -> str:
+def _clean_ocr_languages_arg(ocr_languages: list[str] | str) -> str:
     """Fix common incorrect definitions for ocr_languages:
     defining it as a list, adding extra quotation marks, adding brackets.
     Returns a single string of ocr_languages"""

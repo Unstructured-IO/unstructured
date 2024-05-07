@@ -12,5 +12,5 @@ unstructured-ingest \
   --num-processes 2 \
   --verbose \
   azure \
-  --account-name azureunstructured1 \
+  --account-name "$AZURE_ACCOUNT_NAME" \
   --remote-url "<your destination path here, ie 'az://unstructured/war-and-peace-output'>"

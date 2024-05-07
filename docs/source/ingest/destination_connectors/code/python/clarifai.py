@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.clarifai import (
     ClarifaiAccessConfig,
     ClarifaiWriteConfig,
@@ -20,9 +22,9 @@ from unstructured.ingest.runner.writers.clarifai import (
 def get_writer() -> Writer:
     return ClarifaiWriter(
         connector_config=SimpleClarifaiConfig(
-            access_config=ClarifaiAccessConfig(api_key="CLARIFAI_PAT"),
-            app_id="CLARIFAI_APP",
-            user_id="CLARIFAI_USER_ID",
+            access_config=ClarifaiAccessConfig(api_key=os.getenv("CLARIFAI_PAT_KEY")),
+            app_id=os.getenv("CLARIFAI_APP_ID"),
+            user_id=os.getenv("CLARIFAI_USER_ID"),
         ),
         write_config=ClarifaiWriteConfig(),
     )

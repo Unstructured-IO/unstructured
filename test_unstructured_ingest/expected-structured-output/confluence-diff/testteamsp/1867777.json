@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "9b56cbe96f509d43ba706a4faaf671f0",
+    "element_id": "05ef452e8c54005abc4c0666d8404dfd",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -15,14 +15,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 1",
     "type": "NarrativeText"
   },
   {
-    "element_id": "e89817ef5b10d7bd5cacc62083530114",
+    "element_id": "683293ea6931fb5021d4adaec2c4fce7",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -37,14 +36,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 2",
     "type": "NarrativeText"
   },
   {
-    "element_id": "e38e0e00f7fb8d4b32271530cfde5c3a",
+    "element_id": "54da27b49c6c112ed419e6b8895be2c4",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -59,14 +57,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 3",
     "type": "NarrativeText"
   },
   {
-    "element_id": "3885e42cbd9d0c4c9854475c75450b29",
+    "element_id": "1a9848c57a6d51bdc462e33fbc95602d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -81,14 +78,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 4",
     "type": "NarrativeText"
   },
   {
-    "element_id": "69e8d160b997383de9ef07ede5fd0693",
+    "element_id": "a30c9fa2274f7308a14fec6454deb88d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -103,14 +99,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 5",
     "type": "NarrativeText"
   },
   {
-    "element_id": "32bb7799e53f295ef8a92d93634fb753",
+    "element_id": "b030841bd2c052c02beffba231c16613",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -125,14 +120,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 6",
     "type": "NarrativeText"
   },
   {
-    "element_id": "9a2c033a0ae7cbe306a7032162911085",
+    "element_id": "cfc808c5bcc358e14b673d6202c2f09d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -147,14 +141,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 7",
     "type": "NarrativeText"
   },
   {
-    "element_id": "529da18f70a29f756ffba75f10feefa0",
+    "element_id": "a51cb5b3992630d3bfffe014a285370f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -169,14 +162,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 8",
     "type": "NarrativeText"
   },
   {
-    "element_id": "bc115408c67b2109fd0730d7fd013e12",
+    "element_id": "f05150f3d4675e976a42a5ea8055b1fe",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -191,14 +183,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 9",
     "type": "NarrativeText"
   },
   {
-    "element_id": "4714a0ee9493d579ec617bda1a900b45",
+    "element_id": "1ad195d0303ee0f0924b4f41b0335a56",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-11T17:01:19.072000",
@@ -213,8 +204,7 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Testdoc1 has only this text for 10 times: 10",
     "type": "NarrativeText"

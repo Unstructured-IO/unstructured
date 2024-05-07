@@ -3,8 +3,9 @@ from tempfile import SpooledTemporaryFile
 
 import docx
 import pytest
+from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
@@ -237,21 +238,32 @@ def test_partition_doc_metadata_date_with_custom_metadata(
     assert elements[0].metadata.last_modified == expected_last_modified_date
 
 
-def test_partition_doc_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake.doc",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+def test_partition_doc_suppresses_modified_date_from_file_by_default(mocker: MockFixture):
+    modified_date_on_file = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value=modified_date_on_file,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake.doc"), "rb") as f:
         elements = partition_doc(file=f)
 
     assert elements[0].metadata.last_modified is None
+
+
+def test_partition_doc_pulls_modified_date_from_file_when_date_from_file_object_arg_is_True(
+    mocker: MockFixture,
+):
+    modified_date_on_file = "2024-05-01T09:24:28"
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date_from_file",
+        return_value=modified_date_on_file,
+    )
+
+    with open(example_doc_path("fake.doc"), "rb") as f:
+        elements = partition_doc(file=f, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified == modified_date_on_file
 
 
 def test_partition_doc_from_file_explicit_get_metadata_date(

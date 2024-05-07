@@ -38,6 +38,10 @@ opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
 platformdirs==3.10.0
 
+# Note(scanny): partition_docx() uses table features added in python-docx v1.1.2. Added here since
+# multiple formats have a python-docx dependency (docx, odt)
+python-docx>=1.1.2
+
 # TODO: Constraint due to langchain, remove when that gets updated:
 packaging<24.0
 
@@ -47,9 +51,6 @@ urllib3<1.27
 
 # TODO: Constriant due to aiobotocore, remove when that gets updates:
 botocore<1.34.52
-
-# TODO: constraint due to current release of pikepdf (v8.14.0), remove once next version releases since fix is on main
-lxml<5
 
 # NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
 unstructured-client<=0.18.0

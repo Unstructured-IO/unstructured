@@ -1,6 +1,45 @@
-## 0.13.4-dev4
+## 0.13.7-dev8
 
 ### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+
+### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
+## 0.13.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
+## 0.13.4
+
+### Enhancements
+
 * **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
   function are now deterministic and unique at the document level by default. Before, hashes were
   based only on text; however, they now also take into account the element's sequence number on a
@@ -9,10 +48,10 @@
   previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
   options via the API are now accessible.
 * **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
-* **Add calculation of table related metrics which take into account colspans and rowspans**
 
 ### Features
 
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
 * **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
 
 ### Fixes

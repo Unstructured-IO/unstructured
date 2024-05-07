@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, List, Optional
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -26,12 +28,12 @@ def partition_ppt(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 
     Parameters

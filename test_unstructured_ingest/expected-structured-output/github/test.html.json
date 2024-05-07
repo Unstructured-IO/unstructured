@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "3223d6a33166a8c5c464b9726d609925",
+    "element_id": "218722ac66e142a570ab2053b430c6c4",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -14,14 +14,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Downloadify Example",
     "type": "Title"
   },
   {
-    "element_id": "bc3bc4f4fcca56a055650a485a8cbb18",
+    "element_id": "bf0fab1925c4b2cbb23a53afce28ebd2",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -44,14 +43,13 @@
       ],
       "link_urls": [
         "http://github.com/dcneiner/Downloadify"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "More info available at the Github Project Page",
     "type": "Title"
   },
   {
-    "element_id": "77c31f18a75cde83aee435615eebcc81",
+    "element_id": "d31b62e7e93ed0f7cdebc476a335b3b7",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -65,14 +63,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Filename",
     "type": "Title"
   },
   {
-    "element_id": "5f70a0a170439dfafbb7fa107f37f4eb",
+    "element_id": "3cc4ede1735d2fe4f5e3f7e5aa29f277",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -86,14 +83,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "File Contents",
     "type": "Title"
   },
   {
-    "element_id": "de83f06b2b2af045473b428b52ef037d",
+    "element_id": "4064323aa25900cf4cb136f665a2aa06",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -107,14 +103,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Whatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
     "type": "NarrativeText"
   },
   {
-    "element_id": "f1b2d229355f02158e09d4b8c3c2cd69",
+    "element_id": "4a6c95c31bb76c1c7f818ca31ea6e0a6",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -128,14 +123,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "You must have Flash 10 installed to download this file.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "cc31bfb2c9233c850f7924fb3bc43f89",
+    "element_id": "6eeead38cfa3d4b7462eb9042aead2c4",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -149,14 +143,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Downloadify Invoke Script For This Page",
     "type": "Title"
   },
   {
-    "element_id": "d89aec93c26ff28fb2cf35a8336cd856",
+    "element_id": "69aedad22d0d13473663cb65051284a0",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
@@ -170,8 +163,7 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Downloadify.create('downloadify',{\n  filename: function(){\n    return document.getElementById('filename').value;\n  },\n  data: function(){ \n    return document.getElementById('data').value;\n  },\n  onComplete: function(){ \n    alert('Your File Has Been Saved!'); \n  },\n  onCancel: function(){ \n    alert('You have cancelled the saving of this file.');\n  },\n  onError: function(){ \n    alert('You must put something in the File Contents or there will be nothing to save!'); \n  },\n  swf: 'media/downloadify.swf',\n  downloadImage: 'images/download.png',\n  width: 100,\n  height: 30,\n  transparent: true,\n  append: false\n});",
     "type": "NarrativeText"

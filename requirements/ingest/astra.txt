@@ -8,13 +8,13 @@ anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-astrapy==1.0.0
+astrapy==1.1.0
     # via -r ./ingest/astra.in
 bson==0.5.10
     # via astrapy
 cassandra-driver==3.29.1
     # via cassio
-cassio==0.1.6
+cassio==0.1.7
     # via astrapy
 certifi==2024.2.2
     # via
@@ -46,7 +46,9 @@ hpack==4.0.0
 httpcore==1.0.5
     # via httpx
 httpx[http2]==0.27.0
-    # via astrapy
+    # via
+    #   astrapy
+    #   httpx
 hyperframe==6.0.1
     # via h2
 idna==3.7
