@@ -1,10 +1,13 @@
-## 0.13.7-dev8
+## 0.13.7-dev9
 
 ### Enhancements
 
 * **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
 * **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
 * **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element,
+  chunking is made available because the Table element is often larger than the desired chunk
+  size and must be divided into smaller chunks.
 
 ### Features
 
