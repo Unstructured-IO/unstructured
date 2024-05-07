@@ -240,7 +240,6 @@ def test_partition_tsv_header():
 
 
 def test_partition_tsv_supports_chunking_strategy_while_partitioning():
-    # The same chunks are returned if chunking elements or chunking during partitioning.
     elements = partition_tsv(filename=example_doc_path("stanley-cups.tsv"))
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
 
@@ -252,4 +251,5 @@ def test_partition_tsv_supports_chunking_strategy_while_partitioning():
         include_header=False,
     )
 
+    # The same chunks are returned if chunking elements or chunking during partitioning.
     assert chunk_elements == chunks
