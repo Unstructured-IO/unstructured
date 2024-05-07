@@ -108,12 +108,6 @@ def default_hi_res_model() -> str:
     # the default hi res model name is done on importing of this submodule; this allows (if user
     # prefers) for setting env after importing the sub module and changing the default model name
 
-    # if tabler structure is needed we defaul to use yolox for better table detection
-    logger.warning(
-        "This function will be deprecated in a future release and `unstructured` will simply "
-        "use the DEFAULT_MODEL from `unstructured_inference.model.base` to set default model "
-        "name"
-    )
     from unstructured_inference.models.base import DEFAULT_MODEL
 
     return os.environ.get("UNSTRUCTURED_HI_RES_MODEL_NAME", DEFAULT_MODEL)
