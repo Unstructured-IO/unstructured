@@ -11,19 +11,6 @@ EMPTY_CELL = {
 }
 
 
-from __future__ import annotations
-
-from typing import Any, Dict, List
-
-from bs4 import BeautifulSoup
-
-EMPTY_CELL = {
-    "row_index": "",
-    "col_index": "",
-    "content": "",
-}
-
-
 def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
     """Convert html format to table structure.
 
