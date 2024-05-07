@@ -26,6 +26,7 @@ from unstructured.partition.utils.lang import apply_lang_metadata
 @add_chunking_strategy
 def partition_msg(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     max_partition: Optional[int] = 1500,
     include_metadata: bool = True,

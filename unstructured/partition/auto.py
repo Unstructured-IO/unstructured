@@ -133,6 +133,7 @@ def _get_partition_with_extras(
 def partition(
     filename: Optional[str] = None,
     content_type: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     file_filename: Optional[str] = None,
     url: Optional[str] = None,

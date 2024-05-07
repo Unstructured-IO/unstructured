@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 @add_chunking_strategy
 def partition_html(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     url: Optional[str] = None,

@@ -14,6 +14,7 @@ DETECTION_ORIGIN: str = "org"
 @add_chunking_strategy
 def partition_org(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,

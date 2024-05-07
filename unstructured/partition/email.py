@@ -268,6 +268,7 @@ def parse_email(
 @add_chunking_strategy
 def partition_email(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",

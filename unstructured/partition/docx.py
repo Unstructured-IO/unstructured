@@ -182,6 +182,7 @@ def convert_and_partition_docx(
 @add_chunking_strategy
 def partition_docx(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,

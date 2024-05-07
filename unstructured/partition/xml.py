@@ -79,6 +79,7 @@ def _get_leaf_elements(
 @add_chunking_strategy
 def partition_xml(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     xml_keep_tags: bool = False,

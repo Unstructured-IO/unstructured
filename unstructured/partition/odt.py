@@ -17,6 +17,7 @@ from unstructured.partition.utils.common import (
 @add_chunking_strategy
 def partition_odt(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     include_metadata: bool = True,
     infer_table_structure: bool = True,

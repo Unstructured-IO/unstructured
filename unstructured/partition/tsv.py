@@ -27,6 +27,7 @@ DETECTION_ORIGIN: str = "tsv"
 @add_metadata_with_filetype(FileType.TSV)
 def partition_tsv(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,

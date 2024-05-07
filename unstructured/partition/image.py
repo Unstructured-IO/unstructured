@@ -18,6 +18,7 @@ from unstructured.partition.utils.lang import (
 @add_chunking_strategy
 def partition_image(
     filename: str = "",
+    *,
     file: Optional[bytes] = None,
     include_page_breaks: bool = False,
     infer_table_structure: bool = False,

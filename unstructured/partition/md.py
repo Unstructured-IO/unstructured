@@ -31,6 +31,7 @@ DETECTION_ORIGIN: str = "md"
 @add_chunking_strategy
 def partition_md(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     url: Optional[str] = None,

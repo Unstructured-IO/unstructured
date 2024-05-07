@@ -15,6 +15,7 @@ DETECTION_ORIGIN: str = "rst"
 @add_chunking_strategy
 def partition_rst(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,

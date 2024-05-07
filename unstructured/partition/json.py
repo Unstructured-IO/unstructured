@@ -32,6 +32,7 @@ from unstructured.staging.base import elements_from_dicts
 @add_chunking_strategy
 def partition_json(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     include_metadata: bool = True,

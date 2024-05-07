@@ -48,6 +48,7 @@ DETECTION_ORIGIN: str = "xlsx"
 @add_chunking_strategy
 def partition_xlsx(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,

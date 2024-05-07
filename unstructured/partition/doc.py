@@ -21,6 +21,7 @@ from unstructured.partition.utils.common import (
 @add_chunking_strategy
 def partition_doc(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
     include_metadata: bool = True,

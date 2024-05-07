@@ -121,6 +121,7 @@ def partition_text(
 @add_chunking_strategy
 def _partition_text(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
