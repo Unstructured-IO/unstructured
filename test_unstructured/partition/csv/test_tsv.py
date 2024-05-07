@@ -229,7 +229,7 @@ def test_partition_tsv_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_csv_header():
+def test_partition_tsv_header():
     filename = "example-docs/stanley-cups.tsv"
     elements = partition_tsv(filename=filename, strategy="fast", include_header=True)
     assert (
@@ -239,8 +239,8 @@ def test_partition_csv_header():
     assert "<thead>" in elements[0].metadata.text_as_html
 
 
-def test_add_chunking_strategy_to_partition_tsv_non_default():
-    """The same chunks are returned if chunking elements or chunking during partitioning."""
+def test_partition_tsv_supports_chunking_strategy_while_partitioning():
+    # The same chunks are returned if chunking elements or chunking during partitioning.
     elements = partition_tsv(filename=example_doc_path("stanley-cups.tsv"))
     chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
 
