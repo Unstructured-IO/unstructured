@@ -188,7 +188,6 @@ def partition_docx(
     include_metadata: bool = True,  # used by decorator
     infer_table_structure: bool = True,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
     languages: Optional[List[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,

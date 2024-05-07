@@ -34,7 +34,6 @@ def partition_msg(
     process_attachments: bool = False,
     attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,

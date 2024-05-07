@@ -45,7 +45,6 @@ def partition_html(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,

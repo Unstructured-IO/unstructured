@@ -22,7 +22,6 @@ def partition_odt(
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,

@@ -25,7 +25,6 @@ def partition_image(
     languages: Optional[list[str]] = None,
     strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,

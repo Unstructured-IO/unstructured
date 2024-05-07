@@ -136,7 +136,6 @@ def partition_pdf(
     include_metadata: bool = True,  # used by decorator
     metadata_filename: Optional[str] = None,  # used by decorator
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
     links: Sequence[Link] = [],
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
