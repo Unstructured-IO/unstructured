@@ -1,9 +1,12 @@
 #! /usr/bin/env python3
 
+from __future__ import annotations
+
 import concurrent.futures
 import logging
 import os
 import sys
+from functools import partial
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -54,6 +57,89 @@ table_eval_metrics = [
 ]
 
 
+def generate_text_extraction_metrics_for_doc(
+    doc: str,
+    source_dir: Path,
+    source_list: list[str],
+    output_dir: Path,
+    output_type: str,
+    weights: tuple[int, int, int],
+) -> Optional[list]:
+    ext_index = -(len(output_type) + 1)
+    filename = os.path.basename(doc)[:ext_index]
+    logger.info(f"Processing {filename}")
+    doctype = filename.rsplit(".", 1)[-1]
+    fn_txt = filename + ".txt"
+    connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
+
+    if fn_txt not in source_list:
+        fn = filename.rsplit(".", 1)[0]
+        fn_txt = fn + ".txt"
+
+    if fn_txt in source_list:
+        try:
+            output_cct = _prepare_output_cct(output_dir / doc, output_type)
+            source_cct = _read_text_file(source_dir / fn_txt)
+        except Exception:
+            return None
+        accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+        percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
+        return [filename, doctype, connector, accuracy, percent_missing]
+    return None
+
+
+def generate_element_type_metrics_for_doc(
+    doc: str, source_list: list[str], source_dir: Path, output_dir: Path
+) -> Optional[list]:
+    filename = (doc.split("/")[-1]).split(".json")[0]
+    doctype = filename.rsplit(".", 1)[-1]
+    fn_json = filename + ".json"
+    connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
+
+    if fn_json not in source_list:  # type: ignore
+        return None
+
+    output = get_element_type_frequency(_read_text_file(output_dir / doc))
+    source = get_element_type_frequency(_read_text_file(source_dir / fn_json))
+    accuracy = round(calculate_element_type_percent_match(output, source), 3)
+    return [filename, doctype, connector, accuracy]
+
+
+def generate_table_eval_metrics_for_doc(
+    doc: str, source_list: list[str], source_dir: Path, output_dir: Path, cutoff: Optional[float]
+) -> Optional[list]:
+    doc_path = Path(doc)
+    out_filename = doc_path.stem
+    doctype = Path(out_filename).suffix[1:]
+    src_gt_filename = out_filename + ".json"
+    connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
+
+    if src_gt_filename not in source_list:  # type: ignore
+        return None
+
+    prediction_file = output_dir / doc
+    if not prediction_file.exists():
+        logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+        return None
+
+    ground_truth_file = source_dir / src_gt_filename
+    if not ground_truth_file.exists():
+        logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
+        return None
+
+    processor = TableEvalProcessor.from_json_files(
+        prediction_file=prediction_file,
+        ground_truth_file=ground_truth_file,
+        cutoff=cutoff,
+    )
+    report = processor.process_file()
+    return [
+        out_filename,
+        doctype,
+        connector,
+    ] + [getattr(report, metric) for metric in table_eval_metrics]
+
+
 def measure_text_extraction_accuracy(
     output_dir: str,
     source_dir: str,
@@ -92,38 +178,30 @@ def measure_text_extraction_accuracy(
                 Please note that some files will be skipped."
         )
 
-    rows = []
-    ext_index = -(len(output_type) + 1)
-
-    def process_doc(doc):
-        filename = os.path.basename(doc)[:ext_index]
-        doctype = filename.rsplit(".", 1)[-1]
-        fn_txt = filename + ".txt"
-        connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
-
-        if fn_txt not in source_list:
-            fn = filename.rsplit(".", 1)[0]
-            fn_txt = fn + ".txt"
-
-        if fn_txt in source_list:
-            try:
-                output_cct = _prepare_output_cct(os.path.join(output_dir, doc), output_type)
-                source_cct = _read_text_file(os.path.join(source_dir, fn_txt))
-            except Exception:
-                return None
-            accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
-            percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
-            return [filename, doctype, connector, accuracy, percent_missing]
-        return None
-
-    # assumption: output file name convention is name-of-file.doc.json
-    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
     max_processors = int(os.environ.get("MAX_PROCESSORS", os.cpu_count()))
     logger.info(f"Using {max_processors} processors for parallel processing.")
+    from functools import partial
+
+    process_doc_fn = partial(
+        generate_text_extraction_metrics_for_doc,
+        source_dir=Path(source_dir),
+        source_list=source_list,
+        output_dir=Path(output_dir),
+        output_type=output_type,
+        weights=weights,
+    )
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_processors) as executor:
-        rows = list(tqdm(executor.map(process_doc, output_list), total=len(output_list)))
-    rows = [row for row in rows if row is not None]
+        rows = [
+            row
+            for row in tqdm(
+                executor.map(process_doc_fn, output_list),
+                total=len(output_list),
+                leave=False,
+                disable=not visualize,
+            )
+            if row is not None
+        ]
 
     headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
     df = pd.DataFrame(rows, columns=headers)
@@ -167,20 +245,26 @@ def measure_element_type_accuracy(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
-    rows = []
+    max_processors = int(os.environ.get("MAX_PROCESSORS", os.cpu_count()))
+    logger.info(f"Using {max_processors} processors for parallel processing.")
 
-    # NOTE(klaijan) - disable=True means to not show, disable=False means to show the progress bar
-    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
-        filename = (doc.split("/")[-1]).split(".json")[0]
-        doctype = filename.rsplit(".", 1)[-1]
-        fn_json = filename + ".json"
-        connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
-
-        if fn_json in source_list:  # type: ignore
-            output = get_element_type_frequency(_read_text_file(os.path.join(output_dir, doc)))
-            source = get_element_type_frequency(_read_text_file(os.path.join(source_dir, fn_json)))
-            accuracy = round(calculate_element_type_percent_match(output, source), 3)
-            rows.append([filename, doctype, connector, accuracy])
+    process_doc_fn = partial(
+        generate_element_type_metrics_for_doc,
+        source_dir=Path(source_dir),
+        source_list=source_list,
+        output_dir=Path(output_dir),
+    )
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processors) as executor:
+        rows = [
+            row
+            for row in tqdm(
+                executor.map(process_doc_fn, output_list),
+                total=len(output_list),
+                leave=False,
+                disable=not visualize,
+            )
+            if row is not None
+        ]
 
     headers = ["filename", "doctype", "connector", "element-type-accuracy"]
     df = pd.DataFrame(rows, columns=headers)
@@ -317,40 +401,27 @@ def measure_table_structure_accuracy(
     if not source_list:
         source_list = _listdir_recursive(source_dir)
 
-    rows = []
-    for doc in tqdm(output_list, leave=False, disable=not visualize):  # type: ignore
-        doc_path = Path(doc)
-        out_filename = doc_path.stem
-        doctype = Path(out_filename).suffix[1:]
-        src_gt_filename = out_filename + ".json"
-        connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
+    max_processes = int(os.environ.get("MAX_PROCESSES", os.cpu_count()))
+    logger.info(f"Using {max_processes} processors for parallel processing.")
 
-        if src_gt_filename in source_list:  # type: ignore
-            prediction_file = Path(output_dir) / doc
-            if not prediction_file.exists():
-                logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
-                continue
-
-            ground_truth_file = Path(source_dir) / src_gt_filename
-            if not ground_truth_file.exists():
-                logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
-                continue
-
-            processor = TableEvalProcessor.from_json_files(
-                prediction_file=prediction_file,
-                ground_truth_file=ground_truth_file,
-                cutoff=cutoff,
+    process_doc_fn = partial(
+        generate_table_eval_metrics_for_doc,
+        source_list=source_list,
+        source_dir=Path(source_dir),
+        output_dir=Path(output_dir),
+        cutoff=cutoff,
+    )
+    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processes) as executor:
+        rows = [
+            row
+            for row in tqdm(
+                executor.map(process_doc_fn, output_list),
+                total=len(output_list),
+                leave=False,
+                disable=not visualize,
             )
-            report = processor.process_file()
-            rows.append(
-                [
-                    out_filename,
-                    doctype,
-                    connector,
-                ]
-                + [getattr(report, metric) for metric in table_eval_metrics]
-            )
-
+            if row is not None
+        ]
     headers = [
         "filename",
         "doctype",
