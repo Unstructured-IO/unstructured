@@ -48,19 +48,6 @@ from unstructured.file_utils.filetype import (
 )
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition.common import (
-    convert_to_bytes,
-    document_to_element_list,
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-    ocr_data_to_elements,
-    spooled_to_bytes_io_if_needed,
-)
-from unstructured.partition.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -75,8 +62,16 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
-from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
+from unstructured.partition.utils.common import (
+    convert_to_bytes,
+    document_to_element_list,
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+    ocr_data_to_elements,
+    spooled_to_bytes_io_if_needed,
+)
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     SORT_MODE_BASIC,
@@ -85,9 +80,17 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
+from unstructured.partition.utils.lang import (
+    check_language_args,
+    prepare_languages_for_tesseract,
+)
 from unstructured.partition.utils.sorting import (
     coord_has_valid_points,
     sort_page_elements,
+)
+from unstructured.partition.utils.strategies import (
+    determine_pdf_or_image_strategy,
+    validate_strategy,
 )
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies

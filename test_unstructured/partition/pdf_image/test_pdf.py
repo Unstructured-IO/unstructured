@@ -25,9 +25,10 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition import pdf, strategies
+from unstructured.partition import pdf
 from unstructured.partition.pdf import get_uris_from_annots
 from unstructured.partition.pdf_image import ocr, pdfminer_processing
+from unstructured.partition.utils import strategies
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,

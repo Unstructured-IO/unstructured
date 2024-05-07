@@ -33,7 +33,7 @@ from unstructured.documents.elements import (
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
-from unstructured.partition.text_type import (
+from unstructured.partition.utils.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,

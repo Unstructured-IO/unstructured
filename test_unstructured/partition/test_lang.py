@@ -14,7 +14,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     PageBreak,
 )
-from unstructured.partition.lang import (
+from unstructured.partition.utils.lang import (
     _clean_ocr_languages_arg,
     _convert_language_code_to_pytesseract_lang_code,
     apply_lang_metadata,

@@ -1,3 +1,7 @@
+"""
+This module contains common utility functions used by partitioners.
+"""
+
 from __future__ import annotations
 
 import numbers

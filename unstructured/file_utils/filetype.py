@@ -14,7 +14,7 @@ from typing_extensions import ParamSpec
 from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
-from unstructured.partition.common import (
+from unstructured.partition.utils.common import (
     add_element_metadata,
     exactly_one,
     remove_element_metadata,

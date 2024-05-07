@@ -16,13 +16,13 @@ from unstructured.file_utils.filetype import (
     is_json_processable,
 )
 from unstructured.logger import logger
-from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
-from unstructured.partition.lang import check_language_args
 from unstructured.partition.text import partition_text
+from unstructured.partition.utils.common import exactly_one
 from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.partition.utils.lang import check_language_args
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 

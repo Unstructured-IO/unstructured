@@ -10,7 +10,7 @@ from unstructured_client.models import shared
 
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
-from unstructured.partition.common import exactly_one
+from unstructured.partition.utils.common import exactly_one
 from unstructured.staging.base import elements_from_dicts, elements_from_json
 
 

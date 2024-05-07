@@ -6,7 +6,7 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.html import convert_and_partition_html
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.utils.lang import apply_lang_metadata
 
 DETECTION_ORIGIN: str = "epub"
 

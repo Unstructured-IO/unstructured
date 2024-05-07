@@ -29,7 +29,7 @@ from unstructured.documents.elements import (
 from unstructured.documents.elements import (
     Image as ImageElement,
 )
-from unstructured.partition import common
+from unstructured.partition.utils import common
 from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DONT, SORT_MODE_XY_CUT
 
 

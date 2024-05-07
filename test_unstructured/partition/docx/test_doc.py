@@ -15,9 +15,9 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
+from unstructured.partition.utils.common import convert_office_doc
 
 
 def test_partition_doc_for_deterministic_and_unique_ids():

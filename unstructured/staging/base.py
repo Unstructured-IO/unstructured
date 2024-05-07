@@ -16,7 +16,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
 )
-from unstructured.partition.common import exactly_one
+from unstructured.partition.utils.common import exactly_one
 from unstructured.utils import Point, dependency_exists, requires_dependencies
 
 if dependency_exists("pandas"):

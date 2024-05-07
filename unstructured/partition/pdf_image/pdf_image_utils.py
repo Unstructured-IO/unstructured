@@ -14,7 +14,7 @@ from PIL import Image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.common import convert_to_bytes
+from unstructured.partition.utils.common import convert_to_bytes
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:

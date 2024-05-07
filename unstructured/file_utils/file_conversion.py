@@ -1,7 +1,7 @@
 import tempfile
 from typing import IO, Optional
 
-from unstructured.partition.common import exactly_one
+from unstructured.partition.utils.common import exactly_one
 from unstructured.utils import dependency_exists, requires_dependencies
 
 if dependency_exists("pypandoc"):

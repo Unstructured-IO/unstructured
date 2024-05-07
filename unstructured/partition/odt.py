@@ -5,8 +5,11 @@ from typing import IO, Any, Optional
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.docx import convert_and_partition_docx
+from unstructured.partition.utils.common import (
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 
 
 @process_metadata()

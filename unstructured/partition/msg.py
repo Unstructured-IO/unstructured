@@ -10,15 +10,15 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger
-from unstructured.partition.common import (
+from unstructured.partition.email import convert_to_iso_8601
+from unstructured.partition.html import partition_html
+from unstructured.partition.text import partition_text
+from unstructured.partition.utils.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.partition.email import convert_to_iso_8601
-from unstructured.partition.html import partition_html
-from unstructured.partition.lang import apply_lang_metadata
-from unstructured.partition.text import partition_text
+from unstructured.partition.utils.lang import apply_lang_metadata
 
 
 @process_metadata()

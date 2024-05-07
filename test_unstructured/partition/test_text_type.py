@@ -7,7 +7,7 @@ from test_unstructured.nlp.mock_nltk import (
     mock_sent_tokenize,
     mock_word_tokenize,
 )
-from unstructured.partition import text_type
+from unstructured.partition.utils import text_type
 
 
 @pytest.mark.parametrize(

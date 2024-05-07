@@ -18,13 +18,13 @@ from unstructured.file_utils.encoding import (
     validate_encoding,
 )
 from unstructured.logger import logger
-from unstructured.partition.common import (
+from unstructured.partition.utils.common import (
     convert_to_bytes,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.utils.lang import apply_lang_metadata
 
 if sys.version_info < (3, 8):
     from typing_extensions import Final

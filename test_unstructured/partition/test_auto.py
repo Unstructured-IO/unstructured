@@ -33,7 +33,7 @@ from unstructured.documents.elements import (
 from unstructured.file_utils.filetype import FILETYPE_TO_MIMETYPE, FileType
 from unstructured.partition import auto
 from unstructured.partition.auto import _get_partition_with_extras, partition
-from unstructured.partition.common import convert_office_doc
+from unstructured.partition.utils.common import convert_office_doc
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.staging.base import elements_to_json
 

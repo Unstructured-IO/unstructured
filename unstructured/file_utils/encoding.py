@@ -2,7 +2,7 @@ from typing import IO, Optional, Tuple, Union
 
 import chardet
 
-from unstructured.partition.common import convert_to_bytes
+from unstructured.partition.utils.common import convert_to_bytes
 
 ENCODE_REC_THRESHOLD = 0.8
 

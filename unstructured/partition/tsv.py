@@ -12,13 +12,13 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
+from unstructured.partition.utils.common import (
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import apply_lang_metadata
+from unstructured.partition.utils.lang import apply_lang_metadata
 
 DETECTION_ORIGIN: str = "tsv"
 
