@@ -54,10 +54,14 @@ OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 class BaseMetricsCalculator(ABC):
     output_dir: Path
     source_dir: Path
-    output_list: Optional[list[str]]
-    source_list: Optional[list[str]]
+    output_list: Optional[list[str]] = None
+    source_list: Optional[list[str]] = None
 
     def __post_init__(self):
+        # -- ensure those are Path objects --
+        self.output_dir = Path(self.output_dir)
+        self.source_dir = Path(self.source_dir)
+
         if not self.output_list:
             self.output_list = _listdir_recursive(self.output_dir)
         self.output_paths = [Path(p) for p in self.output_list]
@@ -118,7 +122,7 @@ class BaseMetricsCalculator(ABC):
 
 @dataclass
 class TableStructureMetricsCalculator(BaseMetricsCalculator):
-    cutoff: Optional[float]
+    cutoff: Optional[float] = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -222,9 +226,9 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
 @dataclass
 class TextExtractionMetricsCalculator(BaseMetricsCalculator):
-    group_by: Optional[str]
-    weights: tuple[int, int, int]
-    output_type: str
+    group_by: Optional[str] = None
+    weights: tuple[int, int, int] = (1, 1, 1)
+    output_type: str = "json"
 
     def __post_init__(self):
         super().__post_init__()
@@ -306,18 +310,20 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
 @dataclass
 class ElementTypeMetricsCalculator(BaseMetricsCalculator):
-    group_by: Optional[str]
+    group_by: Optional[str] = None
 
     def calculate(
         self,
         executor: Optional[concurrent.futures.Executor] = None,
         export_dir: Optional[str | Path] = None,
         visualize_progress: bool = True,
+        display_agg_df: bool = False,
     ):
         df = super().calculate(
             executor=executor,
             export_dir=export_dir,
             visualize_progress=visualize_progress,
+            display_agg_df=display_agg_df,
         )
 
         if export_dir is not None and self.group_by:
@@ -379,14 +385,14 @@ def measure_text_extraction_accuracy(
     Also calculates the aggregated accuracy and percent missing.
     """
     TextExtractionMetricsCalculator(
-        output_dir=Path(output_dir),
-        source_dir=Path(source_dir),
+        output_dir=output_dir,
+        source_dir=source_dir,
         output_list=output_list,
         source_list=source_list,
         group_by=group_by,
         weights=weights,
         output_type=output_type,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize)
+    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
 
 
 def measure_element_type_accuracy(
@@ -407,12 +413,12 @@ def measure_element_type_accuracy(
     whole list, write to tsv. Also calculates the aggregated accuracy.
     """
     ElementTypeMetricsCalculator(
-        output_dir=Path(output_dir),
-        source_dir=Path(source_dir),
+        output_dir=output_dir,
+        source_dir=source_dir,
         output_list=output_list,
         source_list=source_list,
         group_by=group_by,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize)
+    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
 
 
 def measure_table_structure_accuracy(
@@ -442,12 +448,12 @@ def measure_table_structure_accuracy(
     After looped through the whole list, write to tsv. Also calculates the aggregated accuracy.
     """
     TableStructureMetricsCalculator(
-        output_dir=Path(output_dir),
-        source_dir=Path(source_dir),
+        output_dir=output_dir,
+        source_dir=source_dir,
         output_list=output_list,
         source_list=source_list,
         cutoff=cutoff,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize)
+    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
 
 
 def get_mean_grouping(
