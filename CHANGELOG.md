@@ -1,4 +1,14 @@
-## 0.13.7-dev10
+## 0.13.8-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Add missing starting_page_num param to partition_image**
+
+## 0.13.7
 
 ### Enhancements
 
@@ -16,7 +26,6 @@
 * **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
 * **Remove unnecessary warning log for using default layout model.**
 * **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element, chunking is made available because the Table element is often larger than the desired chunk size and must be divided into smaller chunks.
-* **Add missing starting_page_num param to partition_image**
 
 ## 0.13.6
 
