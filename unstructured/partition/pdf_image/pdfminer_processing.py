@@ -93,7 +93,7 @@ def process_data_with_pdfminer(
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
 
-        for obj in page[page_index].get_objects():
+        for obj in pdf[page_index].get_objects():
             if isinstance(obj, pdfium.PdfImage) and obj.type == 3:
                 # Not sure if rect_to_bbox function shouldn't be used here
                 # x1, y1, x2, y2 = rect_to_bbox(obj.get_pos(), height)
