@@ -38,7 +38,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -80,9 +80,7 @@ portalocker==2.8.2
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via
-    #   msal
-    #   pyjwt
+    # via msal
 requests==2.31.0
     # via
     #   -c ./ingest/../base.txt

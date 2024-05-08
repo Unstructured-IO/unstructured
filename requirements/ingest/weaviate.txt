@@ -25,7 +25,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via authlib
 exceptiongroup==1.2.1
     # via anyio

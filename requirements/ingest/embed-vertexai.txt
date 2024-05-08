@@ -42,7 +42,6 @@ frozenlist==1.4.1
     #   aiosignal
 google-api-core[grpc]==2.19.0
     # via
-    #   google-api-core
     #   google-cloud-aiplatform
     #   google-cloud-bigquery
     #   google-cloud-core
@@ -56,9 +55,9 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.49.0
+google-cloud-aiplatform==1.50.0
     # via langchain-google-vertexai
-google-cloud-bigquery==3.21.0
+google-cloud-bigquery==3.22.0
     # via google-cloud-aiplatform
 google-cloud-core==2.4.1
     # via
@@ -106,11 +105,11 @@ jsonpointer==2.4
     # via jsonpatch
 langchain==0.1.17
     # via -r ./ingest/embed-vertexai.in
-langchain-community==0.0.36
+langchain-community==0.0.37
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
-langchain-core==0.1.48
+langchain-core==0.1.52
     # via
     #   langchain
     #   langchain-community
@@ -120,12 +119,12 @@ langchain-google-vertexai==1.0.3
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.52
+langsmith==0.1.54
     # via
     #   langchain
     #   langchain-community
     #   langchain-core
-marshmallow==3.21.1
+marshmallow==3.21.2
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
@@ -143,7 +142,7 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   shapely
-orjson==3.10.2
+orjson==3.10.3
     # via langsmith
 packaging==23.2
     # via
@@ -208,11 +207,11 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   python-dateutil
-sqlalchemy==2.0.29
+sqlalchemy==2.0.30
     # via
     #   langchain
     #   langchain-community
-tenacity==8.2.3
+tenacity==8.3.0
     # via
     #   langchain
     #   langchain-community
