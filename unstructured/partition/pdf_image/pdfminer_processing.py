@@ -87,7 +87,7 @@ def process_data_with_pdfminer(
                 x2 * coef,
                 y2 * coef,
                 text=_text,
-                source="pdftext",
+                source=Source.PDFTEXT,
             )
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
@@ -104,7 +104,7 @@ def process_data_with_pdfminer(
                     x2 * coef,
                     y2 * coef,
                     text=None,
-                    source="pdftext",
+                    source=Source.PDFTEXT,
                 )
                 if image_region.bbox is not None and image_region.bbox.area > 0:
                     layout.append(image_region)
