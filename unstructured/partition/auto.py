@@ -454,6 +454,7 @@ def partition(
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
             extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.TXT:
