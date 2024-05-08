@@ -6,7 +6,8 @@ import concurrent.futures
 import logging
 import os
 import sys
-from functools import partial
+from abc import ABC
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -45,16 +46,318 @@ if "eval_log_handler" not in [h.name for h in logger.handlers]:
 
 logger.setLevel(logging.DEBUG)
 
-agg_headers = ["metric", "average", "sample_sd", "population_sd", "count"]
-table_eval_metrics = [
-    "total_tables",
-    "table_level_acc",
-    "composite_structure_acc",
-    "element_col_level_index_acc",
-    "element_row_level_index_acc",
-    "element_col_level_content_acc",
-    "element_row_level_content_acc",
-]
+AGG_HEADERS = ["metric", "average", "sample_sd", "population_sd", "count"]
+OUTPUT_TYPE_OPTIONS = ["json", "txt"]
+
+
+@dataclass
+class BaseMetricsCalculator(ABC):
+    output_dir: Path
+    source_dir: Path
+    output_list: Optional[list[str]]
+    source_list: Optional[list[str]]
+
+    def __post_init__(self):
+        if not self.output_list:
+            self.output_list = _listdir_recursive(self.output_dir)
+        self.output_paths = [Path(p) for p in self.output_list]
+
+        if not self.source_list:
+            self.source_list = _listdir_recursive(self.source_dir)
+        self.source_paths = [Path(p) for p in self.source_list]
+
+    def calculate(
+        self,
+        executor: Optional[concurrent.futures.Executor] = None,
+        export_dir: Optional[str | Path] = None,
+        visualize_progress: bool = True,
+        display_agg_df: bool = True,
+    ) -> pd.DataFrame:
+        if executor is None:
+            executor = self._default_executor()
+        rows = self._process_all_documents(executor, visualize_progress)
+        df, agg_df = self._generate_dataframes(rows)
+
+        if export_dir is not None:
+            _write_to_file(export_dir, self.default_tsv_name, df)
+            _write_to_file(export_dir, self.default_agg_tsv_name, agg_df)
+
+        if display_agg_df is True:
+            _display(agg_df)
+        return df
+
+    @classmethod
+    def _default_executor(cls):
+        max_processors = int(os.environ.get("MAX_PROCESSES", os.cpu_count()))
+        logger.info(f"Configuring a pool of {max_processors} processors for parallel processing.")
+        return concurrent.futures.ProcessPoolExecutor(max_workers=max_processors)
+
+    def _process_all_documents(
+        self, executor: concurrent.futures.Executor, visualize_progress: bool
+    ):
+        with executor:
+            return [
+                row
+                for row in tqdm(
+                    executor.map(self._try_process_document, self.output_paths),
+                    total=len(self.output_paths),
+                    leave=False,
+                    disable=not visualize_progress,
+                )
+                if row is not None
+            ]
+
+    def _try_process_document(self, doc: Path) -> Optional[list]:
+        logger.info(f"Processing {doc}")
+        try:
+            return self._process_document(doc)
+        except Exception as e:
+            logger.error(f"Failed to process document {doc}: {e}")
+            return None
+
+
+@dataclass
+class TableStructureMetricsCalculator(BaseMetricsCalculator):
+    cutoff: Optional[float]
+
+    def __post_init__(self):
+        super().__post_init__()
+
+    @property
+    def supported_metric_names(self):
+        return [
+            "total_tables",
+            "table_level_acc",
+            "composite_structure_acc",
+            "element_col_level_index_acc",
+            "element_row_level_index_acc",
+            "element_col_level_content_acc",
+            "element_row_level_content_acc",
+        ]
+
+    @property
+    def default_tsv_name(self):
+        return "all-docs-table-structure-accuracy.tsv"
+
+    @property
+    def default_agg_tsv_name(self):
+        return "aggregate-table-structure-accuracy.tsv"
+
+    def _process_document(self, doc: Path) -> list:
+        doc_path = Path(doc)
+        out_filename = doc_path.stem
+        doctype = Path(out_filename).suffix[1:]
+        src_gt_filename = out_filename + ".json"
+        connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
+
+        if src_gt_filename in self.source_list:  # type: ignore
+            prediction_file = self.output_dir / doc
+            if not prediction_file.exists():
+                logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+                return None
+
+        ground_truth_file = self.source_dir / src_gt_filename
+        if not ground_truth_file.exists():
+            logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
+            return None
+
+        processor_from_text_as_html = TableEvalProcessor.from_json_files(
+            prediction_file=prediction_file,
+            ground_truth_file=ground_truth_file,
+            cutoff=self.cutoff,
+            source_type="html",
+        )
+        report_from_html = processor_from_text_as_html.process_file()
+
+        processor_from_table_as_cells = TableEvalProcessor.from_json_files(
+            prediction_file=prediction_file,
+            ground_truth_file=ground_truth_file,
+            cutoff=self.cutoff,
+            source_type="cells",
+        )
+        report_from_cells = processor_from_table_as_cells.process_file()
+        return (
+            [
+                out_filename,
+                doctype,
+                connector,
+            ]
+            + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
+            + [getattr(report_from_cells, metric) for metric in self.supported_metric_names]
+        )
+
+    def _generate_dataframes(self, rows):
+        suffixed_table_eval_metrics = [
+            f"{metric}_with_spans" for metric in self.supported_metric_names
+        ]
+        combined_table_metrics = self.supported_metric_names + suffixed_table_eval_metrics
+        headers = [
+            "filename",
+            "doctype",
+            "connector",
+        ] + combined_table_metrics
+
+        df = pd.DataFrame(rows, columns=headers)
+        has_tables_df = df[df["total_tables"] > 0]
+
+        if has_tables_df.empty:
+            agg_df = pd.DataFrame(
+                [[metric, None, None, None, 0] for metric in self.supported_metric_names]
+            ).reset_index()
+        else:
+            element_metrics_results = {}
+            for metric in combined_table_metrics:
+                metric_df = has_tables_df[has_tables_df[metric].notnull()]
+                agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+                if agg_metric.empty:
+                    element_metrics_results[metric] = pd.Series(
+                        data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                    )
+                else:
+                    element_metrics_results[metric] = agg_metric
+            agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
+        agg_df.columns = AGG_HEADERS
+        return df, agg_df
+
+
+@dataclass
+class TextExtractionMetricsCalculator(BaseMetricsCalculator):
+    group_by: Optional[str]
+    weights: tuple[int, int, int]
+    output_type: str
+
+    def __post_init__(self):
+        super().__post_init__()
+        self._validate_inputs()
+
+    @property
+    def default_tsv_name(self) -> str:
+        return "all-docs-cct.tsv"
+
+    @property
+    def default_agg_tsv_name(self) -> str:
+        return "aggregate-scores-cct.tsv"
+
+    def calculate(
+        self,
+        executor: Optional[concurrent.futures.Executor] = None,
+        export_dir: Optional[str | Path] = None,
+        visualize_progress: bool = True,
+        display_agg_df: bool = True,
+    ) -> pd.DataFrame:
+        df = super().calculate(
+            executor=executor,
+            export_dir=export_dir,
+            visualize_progress=visualize_progress,
+            display_agg_df=display_agg_df,
+        )
+
+        if export_dir is not None and self.group_by:
+            get_mean_grouping(self.group_by, df, export_dir, "text_extraction")
+
+    def _validate_inputs(self):
+        if not self.output_list:
+            logger.info("No output files to calculate to edit distances for, exiting")
+            sys.exit(0)
+        if self.output_type not in OUTPUT_TYPE_OPTIONS:
+            raise ValueError(
+                "Specified file type under `output_dir` or `output_list` should be one of "
+                f"`json` or `txt`. The given file type is {self.output_type}, exiting."
+            )
+        if not all(path.suffixes[-1] == f".{self.output_type}" for path in self.output_paths):
+            logger.warning(
+                "The directory contains file type inconsistent with the given input. "
+                "Please note that some files will be skipped."
+            )
+
+    def _process_document(self, doc: Path) -> list:
+        original_filename = doc.stem
+        doctype = doc.suffixes[0]
+        connector = doc.parts[0] if len(doc.parts) > 1 else None
+
+        output_cct, source_cct = self._get_ccts(doc)
+        accuracy = round(calculate_accuracy(output_cct, source_cct, self.weights), 3)
+        percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
+        return [original_filename, doctype, connector, accuracy, percent_missing]
+
+    def _get_ccts(self, doc: str) -> tuple[str, str]:
+        doc_filename_with_json_ext = doc.with_suffix(".json").name
+        output_cct = _prepare_output_cct(
+            docpath=self.output_dir / doc_filename_with_json_ext, output_type=self.output_type
+        )
+        doc_filename_with_txt_ext = doc.with_suffix(".txt").name
+        source_cct = _read_text_file(self.source_dir / doc_filename_with_txt_ext)
+
+        return output_cct, source_cct
+
+    def _generate_dataframes(self, rows):
+        headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
+        df = pd.DataFrame(rows, columns=headers)
+
+        acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
+        miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
+        if acc.shape[1] == 0 and miss.shape[1] == 0:
+            agg_df = pd.DataFrame(columns=AGG_HEADERS)
+        else:
+            agg_df = pd.concat((acc, miss)).reset_index()
+            agg_df.columns = AGG_HEADERS
+
+        return df, agg_df
+
+
+@dataclass
+class ElementTypeMetricsCalculator(BaseMetricsCalculator):
+    group_by: Optional[str]
+
+    def calculate(
+        self,
+        executor: Optional[concurrent.futures.Executor] = None,
+        export_dir: Optional[str | Path] = None,
+        visualize_progress: bool = True,
+    ):
+        df = super().calculate(
+            executor=executor,
+            export_dir=export_dir,
+            visualize_progress=visualize_progress,
+        )
+
+        if export_dir is not None and self.group_by:
+            get_mean_grouping(self.group_by, df, export_dir, "element_type")
+
+    @property
+    def default_tsv_name(self) -> str:
+        return "all-docs-element-type-frequency.tsv"
+
+    @property
+    def default_agg_tsv_name(self) -> str:
+        return "aggregate-scores-element-type.tsv"
+
+    def _process_document(self, doc: str) -> Optional[list]:
+        filename = (doc.split("/")[-1]).split(".json")[0]
+        doctype = filename.rsplit(".", 1)[-1]
+        fn_json = filename + ".json"
+        connector = doc.split("/")[0] if len(doc.split("/")) > 1 else None
+
+        if fn_json not in self.source_list:  # type: ignore
+            return None
+
+        output = get_element_type_frequency(_read_text_file(self.output_dir / doc))
+        source = get_element_type_frequency(_read_text_file(self.source_dir / fn_json))
+        accuracy = round(calculate_element_type_percent_match(output, source), 3)
+        return [filename, doctype, connector, accuracy]
+
+    def _generate_dataframes(self, rows):
+        headers = ["filename", "doctype", "connector", "element-type-accuracy"]
+        df = pd.DataFrame(rows, columns=headers)
+        if df.empty:
+            agg_df = pd.DataFrame(["element-type-accuracy", None, None, None, 0]).transpose()
+        else:
+            agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, _count]}).transpose()
+            agg_df = agg_df.reset_index()
+
+        agg_df.columns = AGG_HEADERS
+
+        return df, agg_df
 
 
 def generate_text_extraction_metrics_for_doc(
@@ -159,68 +462,15 @@ def measure_text_extraction_accuracy(
     Calculates text accuracy and percent missing. After looped through the whole list, write to tsv.
     Also calculates the aggregated accuracy and percent missing.
     """
-    if not output_list:
-        output_list = _listdir_recursive(output_dir)
-    if not source_list:
-        source_list = _listdir_recursive(source_dir)
-
-    if not output_list:
-        logger.info("No output files to calculate to edit distances for, exiting")
-        sys.exit(0)
-    if output_type not in ["json", "txt"]:
-        raise ValueError(
-            f"Specified file type under `output_dir` or `output_list` should be one of \
-                `json` or `txt`. The given file type is {output_type}, exiting."
-        )
-    if not all(_.endswith(output_type) for _ in output_list):
-        logger.warning(
-            "The directory contains file type inconsistent with the given input. \
-                Please note that some files will be skipped."
-        )
-
-    max_processors = int(os.environ.get("MAX_PROCESSORS", os.cpu_count()))
-    logger.info(f"Using {max_processors} processors for parallel processing.")
-    from functools import partial
-
-    process_doc_fn = partial(
-        generate_text_extraction_metrics_for_doc,
-        source_dir=Path(source_dir),
-        source_list=source_list,
+    TextExtractionMetricsCalculator(
         output_dir=Path(output_dir),
-        output_type=output_type,
+        source_dir=Path(source_dir),
+        output_list=output_list,
+        source_list=source_list,
+        group_by=group_by,
         weights=weights,
-    )
-
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processors) as executor:
-        rows = [
-            row
-            for row in tqdm(
-                executor.map(process_doc_fn, output_list),
-                total=len(output_list),
-                leave=False,
-                disable=not visualize,
-            )
-            if row is not None
-        ]
-
-    headers = ["filename", "doctype", "connector", "cct-accuracy", "cct-%missing"]
-    df = pd.DataFrame(rows, columns=headers)
-
-    acc = df[["cct-accuracy"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
-    miss = df[["cct-%missing"]].agg([_mean, _stdev, _pstdev, _count]).transpose()
-    if acc.shape[1] == 0 and miss.shape[1] == 0:
-        agg_df = pd.DataFrame(columns=agg_headers)
-    else:
-        agg_df = pd.concat((acc, miss)).reset_index()
-        agg_df.columns = agg_headers
-
-    _write_to_file(export_dir, "all-docs-cct.tsv", df)
-    _write_to_file(export_dir, "aggregate-scores-cct.tsv", agg_df)
-
-    if group_by:
-        get_mean_grouping(group_by, df, export_dir, "text_extraction")
-
-    _display(agg_df)
+        output_type=output_type,
+    ).calculate(export_dir=export_dir, visualize_progress=visualize)
 
 
 def measure_element_type_accuracy(
@@ -240,49 +490,48 @@ def measure_element_type_accuracy(
     Calculates element type frequency accuracy and percent missing. After looped through the
     whole list, write to tsv. Also calculates the aggregated accuracy.
     """
-    if not output_list:
-        output_list = _listdir_recursive(output_dir)
-    if not source_list:
-        source_list = _listdir_recursive(source_dir)
-
-    max_processors = int(os.environ.get("MAX_PROCESSORS", os.cpu_count()))
-    logger.info(f"Using {max_processors} processors for parallel processing.")
-
-    process_doc_fn = partial(
-        generate_element_type_metrics_for_doc,
-        source_dir=Path(source_dir),
-        source_list=source_list,
+    ElementTypeMetricsCalculator(
         output_dir=Path(output_dir),
-    )
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processors) as executor:
-        rows = [
-            row
-            for row in tqdm(
-                executor.map(process_doc_fn, output_list),
-                total=len(output_list),
-                leave=False,
-                disable=not visualize,
-            )
-            if row is not None
-        ]
+        source_dir=Path(source_dir),
+        output_list=output_list,
+        source_list=source_list,
+        group_by=group_by,
+    ).calculate(export_dir=export_dir, visualize_progress=visualize)
 
-    headers = ["filename", "doctype", "connector", "element-type-accuracy"]
-    df = pd.DataFrame(rows, columns=headers)
-    if df.empty:
-        agg_df = pd.DataFrame(["element-type-accuracy", None, None, None, 0]).transpose()
-    else:
-        agg_df = df.agg({"element-type-accuracy": [_mean, _stdev, _pstdev, _count]}).transpose()
-        agg_df = agg_df.reset_index()
 
-    agg_df.columns = agg_headers
+def measure_table_structure_accuracy(
+    output_dir: str,
+    source_dir: str,
+    output_list: Optional[List[str]] = None,
+    source_list: Optional[List[str]] = None,
+    export_dir: str = "metrics",
+    visualize: bool = False,
+    cutoff: Optional[float] = None,
+):
+    """
+    Loops through the list of structured output from all of `output_dir` or selected files from
+    `output_list`, and compare with gold-standard of the same file name under `source_dir` or
+    selected files from `source_list`. Supports also a json file with filenames as keys and
+    structured gold-standard output as values.
 
-    _write_to_file(export_dir, "all-docs-element-type-frequency.tsv", df)
-    _write_to_file(export_dir, "aggregate-scores-element-type.tsv", agg_df)
+    Calculates:
+        - table found accuracy
+        - table level accuracy
+        - element in column index accuracy
+        - element in row index accuracy
+        - element's column content accuracy
+        - element's row content accuracy
 
-    if group_by:
-        get_mean_grouping(group_by, df, export_dir, "element_type")
 
-    _display(agg_df)
+    After looped through the whole list, write to tsv. Also calculates the aggregated accuracy.
+    """
+    TableStructureMetricsCalculator(
+        output_dir=Path(output_dir),
+        source_dir=Path(source_dir),
+        output_list=output_list,
+        source_list=source_list,
+        cutoff=cutoff,
+    ).calculate(export_dir=export_dir, visualize_progress=visualize)
 
 
 def get_mean_grouping(
@@ -317,8 +566,7 @@ def get_mean_grouping(
         agg_name = "element-type"
     else:
         raise ValueError(
-            "Unknown metric. Expected `text_extraction` or \
-                         `element_type` or `table_extraction`."
+            "Unknown metric. Expected `text_extraction` or `element_type` or `table_extraction`."
         )
 
     if isinstance(data_input, str):
@@ -369,92 +617,6 @@ def get_mean_grouping(
         _write_to_file(export_dir, export_filename, grouped_df)
     else:
         _write_to_file(export_dir, f"all-{group_by}-agg-{agg_name}.tsv", grouped_df)
-
-
-def measure_table_structure_accuracy(
-    output_dir: str,
-    source_dir: str,
-    output_list: Optional[List[str]] = None,
-    source_list: Optional[List[str]] = None,
-    export_dir: str = "metrics",
-    visualize: bool = False,
-    cutoff: Optional[float] = None,
-):
-    """
-    Loops through the list of structured output from all of `output_dir` or selected files from
-    `output_list`, and compare with gold-standard of the same file name under `source_dir` or
-    selected files from `source_list`. Supports also a json file with filenames as keys and
-    structured gold-standard output as values.
-
-    Calculates:
-        - table found accuracy
-        - table level accuracy
-        - element in column index accuracy
-        - element in row index accuracy
-        - element's column content accuracy
-        - element's row content accuracy
-
-    After looped through the whole list, write to tsv. Also calculates the aggregated accuracy.
-    """
-    if not output_list:
-        output_list = _listdir_recursive(output_dir)
-    if not source_list:
-        source_list = _listdir_recursive(source_dir)
-
-    max_processes = int(os.environ.get("MAX_PROCESSES", os.cpu_count()))
-    logger.info(f"Using {max_processes} processors for parallel processing.")
-
-    process_doc_fn = partial(
-        generate_table_eval_metrics_for_doc,
-        source_list=source_list,
-        source_dir=Path(source_dir),
-        output_dir=Path(output_dir),
-        cutoff=cutoff,
-    )
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_processes) as executor:
-        rows = [
-            row
-            for row in tqdm(
-                executor.map(process_doc_fn, output_list),
-                total=len(output_list),
-                leave=False,
-                disable=not visualize,
-            )
-            if row is not None
-        ]
-    headers = [
-        "filename",
-        "doctype",
-        "connector",
-    ] + table_eval_metrics
-    df = pd.DataFrame(rows, columns=headers)
-    has_tables_df = df[df["total_tables"] > 0]
-
-    if has_tables_df.empty:
-        agg_df = pd.DataFrame(
-            [[metric, None, None, None, 0] for metric in table_eval_metrics]
-        ).reset_index()
-    else:
-        element_metrics_results = {}
-        for metric in table_eval_metrics:
-            metric_df = has_tables_df[has_tables_df[metric].notnull()]
-            agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
-            if agg_metric.empty:
-                element_metrics_results[metric] = pd.Series(
-                    data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
-                )
-            else:
-                element_metrics_results[metric] = agg_metric
-        agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
-
-    agg_df.columns = agg_headers
-    _write_to_file(
-        export_dir, "all-docs-table-structure-accuracy.tsv", _rename_aggregated_columns(df)
-    )
-    _write_to_file(
-        export_dir, "aggregate-table-structure-accuracy.tsv", _rename_aggregated_columns(agg_df)
-    )
-    _display(agg_df)
 
 
 def filter_metrics(
