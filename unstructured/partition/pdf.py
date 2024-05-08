@@ -11,7 +11,7 @@ from typing import IO, TYPE_CHECKING, Any, Iterator, Optional, Sequence, cast
 import numpy as np
 import pdf2image
 import wrapt
-from pdfminer import psparser
+# from pdfminer import psparser
 from pdfminer.layout import (
     LTChar,
     LTContainer,
@@ -20,9 +20,11 @@ from pdfminer.layout import (
     LTTextBox,
 )
 from pdfminer.pdftypes import PDFObjRef
-from pdfminer.utils import open_filename
+# from pdfminer.utils import open_filename
 from PIL import Image as PILImage
 from pillow_heif import register_heif_opener
+from pdftext.extraction import dictionary_output
+import pypdfium2 as pdfium
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -97,7 +99,7 @@ if TYPE_CHECKING:
 
 # NOTE(alan): Patching this to fix a bug in pdfminer.six. Submitted this PR into pdfminer.six to fix
 # the bug: https://github.com/pdfminer/pdfminer.six/pull/885
-psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
+# psparser.PSBaseParser._parse_keyword = parse_keyword  # type: ignore
 
 RE_MULTISPACE_INCLUDING_NEWLINES = re.compile(pattern=r"\s+", flags=re.DOTALL)
 
@@ -626,7 +628,8 @@ def _partition_pdf_with_pdfminer(
 
     exactly_one(filename=filename, file=file)
     if filename:
-        with open_filename(filename, "rb") as fp:
+        # Only reason to change this is to not use PDFminer functions
+        with open(filename, "rb") as fp:
             fp = cast(IO[bytes], fp)
             elements = _process_pdfminer_pages(
                 fp=fp,
@@ -683,7 +686,45 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
 
     return wrapped(resources)
 
+# Simple implementation, combines blocks into one singe text element
+# Each line ends with \n so it's possible to easily split them if needed
+def _extract_text_pdftext(lines: list[dict[str, Any]]) -> str:
+    text = ""
+    
+    for line in lines:
+        for span in line["spans"]:
+            text += span["text"]
+            
+    return text
 
+# This function is not meant to be used right away
+# Needs better implementation but the point is that
+# it's possible to extracts URL annotations using pydfium2
+def _extract_urls_pydfium2(raw_pdf, raw_page) -> str:
+    import ctypes as ct
+    import pypdfium2.raw as pdfium_c
+    
+    annotCount = pdfium_c.FPDFPage_GetAnnotCount(raw_page)
+    
+    urls = []
+
+    for i in range(annotCount):
+        annot = pdfium_c.FPDFPage_GetAnnot(raw_page, i)
+        annot_type = pdfium_c.FPDFAnnot_GetSubtype(annot)
+        if annot_type == 2:     # Check if annotation is a link
+            annot_link = pdfium_c.FPDFAnnot_GetLink(annot)
+            link_action = pdfium_c.FPDFLink_GetAction(annot_link)
+            strbuf = ct.create_string_buffer(128)       # This buffer size is nothing specific, lower/higher value might turn out better.
+            pdfium_c.FPDFAction_GetURIPath(raw_pdf, link_action, strbuf, len(strbuf))
+            urls.append(strbuf.value)
+        pdfium_c.FPDFPage_CloseAnnot(annot)
+        
+    return urls
+
+
+# Commented lines are meant for URL annotation extraction
+# The above function shows that it's possible to extract
+# URLs with pypdfium2 lib
 @requires_dependencies("pdfminer")
 def _process_pdfminer_pages(
     fp: IO[bytes],
@@ -699,70 +740,78 @@ def _process_pdfminer_pages(
     """Uses PDFMiner to split a document into pages and process them."""
 
     elements: list[Element] = []
+    
+    pdf = pdfium.PdfDocument(fp)
 
-    for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp), start=starting_page_number
+    for page_number, page in enumerate(
+        # Sorting that comes with PdfText gives worse cct-accuracy results
+        # then the sorting we are using currently
+        dictionary_output(pdf, sort=False), start=starting_page_number
     ):
-        width, height = page_layout.width, page_layout.height
+        width, height = page['width'], page['height']
 
         page_elements: list[Element] = []
-        annotation_list = []
+        # annotation_list = []
 
         coordinate_system = PixelSpace(
             width=width,
             height=height,
         )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+        # if page.annots:
+        #     annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            bbox = (x1, y1, x2, y2)
+        for obj in page["blocks"]:
+            x1, y1, x2, y2 = obj['bbox']
+            # bbox = (x1, y1, x2, y2)
 
-            urls_metadata: list[dict[str, Any]] = []
+            # urls_metadata: list[dict[str, Any]] = []
 
-            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
-                annotations_within_element = check_annotations_within_element(
-                    annotation_list,
-                    bbox,
-                    page_number,
-                    annotation_threshold,
+            # if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
+            #     annotations_within_element = check_annotations_within_element(
+            #         annotation_list,
+            #         bbox,
+            #         page_number,
+            #         annotation_threshold,
+            #     )
+            #     _, words = get_word_bounding_box_from_element(obj, height)
+            #     for annot in annotations_within_element:
+            #         urls_metadata.append(map_bbox_and_index(words, annot))
+
+            _text = _extract_text_pdftext(obj["lines"])
+            
+            
+            # ---------------------------------------------------------------------
+            # Uncommenting these two lines (and adding indent to lines below them) 
+            # splits texts into separate lines
+            
+            # _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+            # for _text in _text_snippets:
+            # ---------------------------------------------------------------------
+            
+            _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
+            if _text.strip():
+                points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                element = element_from_text(
+                    _text,
+                    coordinates=points,
+                    coordinate_system=coordinate_system,
                 )
-                _, words = get_word_bounding_box_from_element(obj, height)
-                for annot in annotations_within_element:
-                    urls_metadata.append(map_bbox_and_index(words, annot))
+                coordinates_metadata = CoordinatesMetadata(
+                    points=points,
+                    system=coordinate_system,
+                )
+                # links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
 
-            if hasattr(obj, "get_text"):
-                _text_snippets: list[str] = [obj.get_text()]
-            else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
-
-            for _text in _text_snippets:
-                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
-                if _text.strip():
-                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element = element_from_text(
-                        _text,
-                        coordinates=points,
-                        coordinate_system=coordinate_system,
-                    )
-                    coordinates_metadata = CoordinatesMetadata(
-                        points=points,
-                        system=coordinate_system,
-                    )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
-
-                    element.metadata = ElementMetadata(
-                        filename=filename,
-                        page_number=page_number,
-                        coordinates=coordinates_metadata,
-                        last_modified=metadata_last_modified,
-                        links=links,
-                        languages=languages,
-                    )
-                    element.metadata.detection_origin = "pdfminer"
-                    page_elements.append(element)
+                element.metadata = ElementMetadata(
+                    filename=filename,
+                    page_number=page_number,
+                    coordinates=coordinates_metadata,
+                    last_modified=metadata_last_modified,
+                    # links=links,
+                    languages=languages,
+                )
+                element.metadata.detection_origin = "pdftext"
+                page_elements.append(element)
 
         page_elements = _combine_list_elements(page_elements, coordinate_system)
 
