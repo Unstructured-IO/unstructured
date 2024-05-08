@@ -10,6 +10,7 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.tsv import partition_tsv
@@ -228,7 +229,7 @@ def test_partition_tsv_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_csv_header():
+def test_partition_tsv_header():
     filename = "example-docs/stanley-cups.tsv"
     elements = partition_tsv(filename=filename, strategy="fast", include_header=True)
     assert (
@@ -236,3 +237,19 @@ def test_partition_csv_header():
         == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     )
     assert "<thead>" in elements[0].metadata.text_as_html
+
+
+def test_partition_tsv_supports_chunking_strategy_while_partitioning():
+    elements = partition_tsv(filename=example_doc_path("stanley-cups.tsv"))
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
+
+    chunk_elements = partition_tsv(
+        example_doc_path("stanley-cups.tsv"),
+        chunking_strategy="by_title",
+        max_characters=9,
+        combine_text_under_n_chars=0,
+        include_header=False,
+    )
+
+    # The same chunks are returned if chunking elements or chunking during partitioning.
+    assert chunk_elements == chunks
