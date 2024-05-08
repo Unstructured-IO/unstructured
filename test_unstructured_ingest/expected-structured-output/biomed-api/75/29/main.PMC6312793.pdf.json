@@ -312,7 +312,7 @@
     "type": "Title"
   },
   {
-    "element_id": "dda0b2be071a3ce693f68df4b55f48f8",
+    "element_id": "3fd146f524ee939baa27aa7cab719384",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -321,11 +321,11 @@
       ],
       "page_number": 2
     },
-    "text": "© The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP.",
+    "text": "The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the performance of the algorithms for the MDVSP.",
     "type": "ListItem"
   },
   {
-    "element_id": "26ac34f98623dc94e0854dc5e841d4e4",
+    "element_id": "aa39ed0fc2399ef4a2ad9844766bf18d",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -334,11 +334,11 @@
       ],
       "page_number": 2
     },
-    "text": "© The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
+    "text": "The data provide all the information that is required to model the MDVSP by using the existing mathematical formulations.",
     "type": "ListItem"
   },
   {
-    "element_id": "3ef13ef244943d8c0c99a778ae8a177e",
+    "element_id": "8713d3b0382aca858921dc67c8bc65f4",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -347,7 +347,7 @@
       ],
       "page_number": 2
     },
-    "text": "e All the problem instances are available for use without any restrictions. e The benchmark solutions and solution time for the problem instances are presented in [3] and can",
+    "text": "All the problem instances are available for use without any restrictions. The benchmark solutions and solution time for the problem instances are presented in [3] and can",
     "type": "NarrativeText"
   },
   {
@@ -364,7 +364,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "c1cff3abe7c7915accab35910df1c5cd",
+    "element_id": "1f8df26a88f0a3975f722481fd690eab",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -373,7 +373,7 @@
       ],
       "page_number": 2
     },
-    "text": "© The dataset includes a program that can generate similar problem instances of different sizes.",
+    "text": "The dataset includes a program that can generate similar problem instances of different sizes.",
     "type": "NarrativeText"
   },
   {
@@ -455,7 +455,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "8d5157e6f596a6e1f4f9c031b8fedb5e",
+    "element_id": "0c3dcda3f511573f1a1d038360d9b86b",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -464,7 +464,7 @@
       ],
       "page_number": 2
     },
-    "text": "e The travel time, 6j, between any two locations i,j ¢1,...,1.",
+    "text": "The travel time, δij, between any two locations i; j A 1; …; l.",
     "type": "ListItem"
   },
   {
@@ -520,7 +520,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "5362f4e57c1d38b8cad8861d11835a85",
+    "element_id": "822f6f993ad2fc8dc3fb4eafeac6e64c",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -529,7 +529,7 @@
       ],
       "page_number": 3
     },
-    "text": "A trip j can be covered after trip i by the same vehicle, if t} > tf +5ee- If lh 4 f, the vehicle must travel empty from I; to hi. otherwise, the vehicle may require waiting at I; for the duration of (Gj —¢). Aschedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisfied:",
+    "text": "j , the vehicle must travel empty from le j te i Þ. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satisﬁed:",
     "type": "NarrativeText"
   },
   {

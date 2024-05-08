@@ -80,7 +80,7 @@
     "type": "Title"
   },
   {
-    "element_id": "33dff5d4db499a435f61220a890d3f04",
+    "element_id": "62d3ec7d7bfc7a893356bae3c92caa01",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -96,7 +96,7 @@
       ],
       "page_number": 1
     },
-    "text": "Zejiang Shen! (4), Ruochen Zhang”, Melissa Dell?, Benjamin Charles Germain Lee*, Jacob Carlson’, and Weining Li>",
+    "text": "Zejiang Shen1 (), Ruochen Zhang2, Melissa Dell3, Benjamin Charles Germain Lee4, Jacob Carlson3, and Weining Li5",
     "type": "NarrativeText"
   },
   {
@@ -2764,7 +2764,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "8605ad66ac8429ae6e92841d5026f0de",
+    "element_id": "51f9e282e73abaa537ae262d3a3c6997",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2780,7 +2780,7 @@
       ],
       "page_number": 15
     },
-    "text": "Gardner, M., Grus, J., Neumann, M., Tafjord, O., Dasigi, P., Liu, N., Peters, M., Schmitz, M., Zettlemoyer, L.: Allennlp: A deep semantic natural language processing platform. arXiv preprint arXiv:1803.07640 (2018) Lukasz Garncarek, Powalski, R., Stanistawek, T., Topolski, B., Halama, P., Graliriski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
+    "text": "[8] Gardner, M., Grus, J., Neumann, M., Tafjord, O., Dasigi, P., Liu, N., Peters, M., Schmitz, M., Zettlemoyer, L.: Allennlp: A deep semantic natural language processing platform. arXiv preprint arXiv:1803.07640 (2018) Lukasz Garncarek, Powalski, R., Stanislawek, T., Topolski, B., Halama, P., Grali´nski, F.: Lambert: Layout-aware (language) modeling using bert for in- formation extraction (2020)",
     "type": "NarrativeText"
   },
   {

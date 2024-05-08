@@ -351,7 +351,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5738486524b113c530187175089c2ada",
+    "element_id": "abb2383aeaec5cf5d76456525a8996e0",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -360,11 +360,11 @@
       ],
       "page_number": 2
     },
-    "text": "© Data presented here provide optimum conditions of waste material as inhibitor for stainless steel Type 316 in 0.5M H2SO4 medium. The given data describe the inhibitive performance of eco-friendly egg shell powder on austenitic stainless steel Type 316 corrosion in sulphuric acid environment.",
+    "text": "Data presented here provide optimum conditions of waste material as inhibitor for stainless steel Type 316 in 0.5 M H2SO4 medium. The given data describe the inhibitive performance of eco-friendly egg shell powder on austenitic stainless steel Type 316 corrosion in sulphuric acid environment.",
     "type": "ListItem"
   },
   {
-    "element_id": "01a22eb39213ca23143f65379ffc44b3",
+    "element_id": "76000a372aa0991633a013e8e63774d3",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -373,11 +373,11 @@
       ],
       "page_number": 2
     },
-    "text": "© The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316 can be used as basis in determining the inhibitive performance of the same inhibitor in other environments.",
+    "text": "The data obtained for the inhibition of waste product (egg shell powder) on stainless steel Type 316 can be used as basis in determining the inhibitive performance of the same inhibitor in other environments.",
     "type": "ListItem"
   },
   {
-    "element_id": "bd0f9e47bdef04cdb80722f75151f134",
+    "element_id": "61bff3933066a6dc811f09825c77a122",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -386,7 +386,7 @@
       ],
       "page_number": 2
     },
-    "text": "© The data can be used to examine the relationship between the process variable as it affect the",
+    "text": "The data can be used to examine the relationship between the process variable as it affect the",
     "type": "NarrativeText"
   },
   {
@@ -611,7 +611,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b6e672fb23fd678860f5a255190cf5d7",
+    "element_id": "0724925274c9eccc34a63e2ab6e4660e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -620,7 +620,7 @@
       ],
       "page_number": 4
     },
-    "text": "Inhibitor be (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm?) Polarization Corrosion concentration (g) resistance (Q) rate (mm/year) oO 0.0335 0.0409 —0.9393 0.0003 24.0910 2.8163 2 1.9460 0.0596 —0.8276 0.0002 121.440 1.5054 4 0.0163 0.2369 —0.8825 0.0001 42.121 0.9476 6 0.3233 0.0540 —0.8027 5.39E-05 373.180 0.4318 8 0.1240 0.0556 —0.5896 5.46E-05 305.650 0.3772 10 0.0382 0.0086 —0.5356 1.24E-05 246.080 0.0919",
+    "text": "Inhibitor concentration (g) bc (V/dec) ba (V/dec) Ecorr (V) icorr (A/cm2) Polarization resistance (Ω) 0 2 4 6 8 10 0.0335 1.9460 0.0163 0.3233 0.1240 0.0382 0.0409 0.0596 0.2369 0.0540 0.0556 0.0086 0.9393 0.8276 0.8825 0.8027 0.5896 0.5356 0.0003 0.0002 0.0001 5.39E-05 5.46E-05 1.24E-05 24.0910 121.440 42.121 373.180 305.650 246.080 2.8163 1.5054 0.9476 0.4318 0.3772 0.0919",
     "type": "Table"
   },
   {
@@ -923,7 +923,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "02e068fc4978fc17556d1708744d48c9",
+    "element_id": "0b39422d610aa2024c1780f12f459ecb",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -932,8 +932,8 @@
       ],
       "page_number": 6
     },
-    "text": "87.6W = (ar",
-    "type": "UncategorizedText"
+    "text": "Þ ¼ 87:6W DAT",
+    "type": "Title"
   },
   {
     "element_id": "3ea6811be10934fd3c8d884e9174047b",
@@ -962,7 +962,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "afe4e57ab4c1f95ae48924fc26f9f598",
+    "element_id": "4182d697649b8fcab669f8fe172cd56e",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -971,11 +971,11 @@
       ],
       "page_number": 6
     },
-    "text": "_ CRo—CR O= OR",
+    "text": "θ ¼ CRo CR CRo",
     "type": "Formula"
   },
   {
-    "element_id": "8927c6b0343d5688f2b8ef20da2067a4",
+    "element_id": "cd1626cbc0b7522a0ad5b2ca32dca671",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -984,7 +984,7 @@
       ],
       "page_number": 6
     },
-    "text": "CRo=CR , 100 IE (0) = CR",
+    "text": "IE ð%Þ ¼ CRo CR CRo x 100 1",
     "type": "Formula"
   },
   {
@@ -1066,7 +1066,7 @@
     "type": "Header"
   },
   {
-    "element_id": "a4a5548f9589cad7dbecc69c079dd5cb",
+    "element_id": "a125482d3d1ce527bd90b01c01f6c823",
     "metadata": {
       "data_source": {},
       "filetype": "application/pdf",
@@ -1075,7 +1075,7 @@
       ],
       "page_number": 7
     },
-    "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10nA (minimum). LSV staircase parameter start potential —1.5v, step potential 0.001 m/s and stop potential of + 1.5 v set was used in this study.",
+    "text": "steps of the linear polarization plot are substituted to get corrosion current. Nova software was used with linear polarization resistance (LPR) and the current was set to 10 mA (maximum) and 10 nA (minimum). LSV staircase parameter start potential 1.5 v, step potential 0.001 m/s and stop potential of þ1.5 v set was used in this study.",
     "type": "NarrativeText"
   },
   {
