@@ -1,3 +1,13 @@
+## 0.13.8-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+
 ## 0.13.7
 
 ### Enhancements
