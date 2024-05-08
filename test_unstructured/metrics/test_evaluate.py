@@ -7,10 +7,11 @@ import pandas as pd
 import pytest
 
 from unstructured.metrics.evaluate import (
+    ElementTypeMetricsCalculator,
+    TableStructureMetricsCalculator,
+    TextExtractionMetricsCalculator,
     filter_metrics,
     get_mean_grouping,
-    measure_element_type_accuracy,
-    measure_table_structure_accuracy,
     measure_text_extraction_accuracy,
 )
 
@@ -86,9 +87,11 @@ def test_text_extraction_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
+
+    TextExtractionMetricsCalculator(output_dir=output_dir, source_dir=source_dir).calculate(
+        export_dir=export_dir, visualize_progress=False, display_agg_df=False
     )
+
     assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
@@ -117,9 +120,12 @@ def test_element_type_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_ELEMENT_TYPE_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_element_type_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
-    )
+
+    ElementTypeMetricsCalculator(
+        output_dir=output_dir,
+        source_dir=source_dir,
+    ).calculate(export_dir=export_dir, visualize_progress=False)
+
     assert os.path.isfile(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"), sep="\t")
     assert len(df) == 1
@@ -133,9 +139,12 @@ def test_table_structure_evaluation():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_TABLE_STRUCTURE_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_result_table_structure")
-    measure_table_structure_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
-    )
+
+    TableStructureMetricsCalculator(
+        output_dir=output_dir,
+        source_dir=source_dir,
+    ).calculate(export_dir=export_dir, visualize_progress=False)
+
     assert os.path.isfile(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"))
     assert os.path.isfile(os.path.join(export_dir, "aggregate-table-structure-accuracy.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
