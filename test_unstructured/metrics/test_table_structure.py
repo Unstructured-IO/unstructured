@@ -89,6 +89,115 @@ def test_table_eval_processor_simple():
     assert result.element_col_level_content_acc == 1.0
 
 
+def test_table_eval_processor_simple_when_input_as_cells():
+    prediction = [
+        {
+            "type": "Table",
+            "metadata": {
+                "table_as_cells": [
+                    {
+                        "x": 1,
+                        "y": 1,
+                        "w": 1,
+                        "h": 1,
+                        "content": "r2c2",
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": 1,
+                        "h": 1,
+                        "content": "r1c1",
+                    },
+                    {
+                        "x": 0,
+                        "y": 1,
+                        "w": 1,
+                        "h": 1,
+                        "content": "r2c1",
+                    },
+                    {
+                        "x": 1,
+                        "y": 0,
+                        "w": 1,
+                        "h": 1,
+                        "content": "r1c2",
+                    },
+                ]
+            },
+        }
+    ]
+
+    ground_truth = [
+        {
+            "type": "Table",
+            "text": [
+                {
+                    "id": "ee862c7a-d27e-4484-92de-4faa42a63f3b",
+                    "x": 0,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "r1c1",
+                },
+                {
+                    "id": "6237ac7b-bfc8-40d2-92f2-d138277205e2",
+                    "x": 0,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "r2c1",
+                },
+                {
+                    "id": "9d0933a9-5984-4cad-80d9-6752bf9bc4df",
+                    "x": 1,
+                    "y": 0,
+                    "w": 1,
+                    "h": 1,
+                    "content": "r1c2",
+                },
+                {
+                    "id": "1152d043-5ead-4ab8-8b88-888d48831ac2",
+                    "x": 1,
+                    "y": 1,
+                    "w": 1,
+                    "h": 1,
+                    "content": "r2c2",
+                },
+            ],
+        }
+    ]
+
+    te_processor = TableEvalProcessor(prediction, ground_truth, source_type="cells")
+    result = te_processor.process_file()
+    assert result.total_tables == 1
+    assert result.table_level_acc == 1.0
+    assert result.element_row_level_index_acc == 1.0
+    assert result.element_col_level_index_acc == 1.0
+    assert result.element_row_level_content_acc == 1.0
+    assert result.element_col_level_content_acc == 1.0
+
+
+def test_table_eval_processor_when_wrong_source_type():
+    prediction = [
+        {
+            "type": "Table",
+            "metadata": {"table_as_cells": []},
+        }
+    ]
+
+    ground_truth = [
+        {
+            "type": "Table",
+            "text": [],
+        }
+    ]
+
+    te_processor = TableEvalProcessor(prediction, ground_truth, source_type="wrong_type")
+    with pytest.raises(ValueError):
+        te_processor.process_file()
+
+
 @pytest.mark.parametrize(
     "text_as_html",
     [

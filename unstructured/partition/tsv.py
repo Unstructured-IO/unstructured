@@ -5,6 +5,7 @@ from typing import IO, Any, Optional
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -25,6 +26,7 @@ DETECTION_ORIGIN: str = "tsv"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TSV)
+@add_chunking_strategy
 def partition_tsv(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,

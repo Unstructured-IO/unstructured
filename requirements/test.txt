@@ -25,7 +25,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.5.0
+coverage[toml]==7.5.1
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -114,7 +114,7 @@ requests==2.31.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-ruff==0.4.2
+ruff==0.4.3
     # via -r ./test.in
 six==1.16.0
     # via
