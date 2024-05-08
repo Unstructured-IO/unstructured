@@ -72,6 +72,7 @@ from unstructured.partition.pdf_image.pdfminer_processing import (
     clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
     merge_inferred_with_extracted_layout,
+    _extract_text_pdftext
 )
 from unstructured.partition.pdf_image.pdfminer_utils import (
     open_pdfminer_pages_generator,
@@ -686,17 +687,6 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
 
     return wrapped(resources)
 
-# Simple implementation, combines blocks into one singe text element
-# Each line ends with \n so it's possible to easily split them if needed
-def _extract_text_pdftext(lines: list[dict[str, Any]]) -> str:
-    text = ""
-    
-    for line in lines:
-        for span in line["spans"]:
-            text += span["text"]
-            
-    return text
-
 # This function is not meant to be used right away
 # Needs better implementation but the point is that
 # it's possible to extracts URL annotations using pydfium2
@@ -741,6 +731,7 @@ def _process_pdfminer_pages(
 
     elements: list[Element] = []
     
+    # Open the PDF file using pypdfium2
     pdf = pdfium.PdfDocument(fp)
 
     for page_number, page in enumerate(
@@ -761,7 +752,10 @@ def _process_pdfminer_pages(
         #     annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
 
         for obj in page["blocks"]:
+            # Not sure if rect_to_bbox function shouldn't be used here
+            # x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
             x1, y1, x2, y2 = obj['bbox']
+            
             # bbox = (x1, y1, x2, y2)
 
             # urls_metadata: list[dict[str, Any]] = []
