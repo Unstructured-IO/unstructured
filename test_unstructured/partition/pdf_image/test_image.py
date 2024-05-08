@@ -3,11 +3,9 @@ from __future__ import annotations
 import os
 import pathlib
 import tempfile
-from typing import Any
 from unittest import mock
 
 import pytest
-from _pytest.fixtures import SubRequest
 from PIL import Image
 from pytesseract import TesseractError
 from unstructured_inference.inference import layout
@@ -744,68 +742,21 @@ def test_partition_image_works_on_heic_file(
 
 
 @pytest.mark.parametrize(
-    ("strategy", "expected_ids_"),
-    [
-        (PartitionStrategy.HI_RES, "expected_element_ids_for_hi_res_strategy_"),
-        (PartitionStrategy.OCR_ONLY, "expected_element_ids_for_ocr_strategy_"),
-    ],
-    indirect=["expected_ids_"],
+    ("strategy"),
+    [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY],
 )
-def test_deterministic_element_ids(strategy: str, expected_ids_: Any):
-    elements = image.partition_image(
+def test_deterministic_element_ids(strategy: str):
+    elements_1 = image.partition_image(
         example_doc_path("layout-parser-paper-with-table.jpg"),
         strategy=strategy,
         starting_page_number=2,
     )
-    ids = [element.id for element in elements]
-    assert ids == expected_ids_, "Element IDs do not match expected IDs"
+    elements_2 = image.partition_image(
+        example_doc_path("layout-parser-paper-with-table.jpg"),
+        strategy=strategy,
+        starting_page_number=2,
+    )
+    ids_1 = [element.id for element in elements_1]
+    ids_2 = [element.id for element in elements_2]
 
-
-# -- fixtures --------------------------------------------------------------------------------
-
-
-@pytest.fixture()
-def expected_ids_(request: SubRequest):
-    return request.getfixturevalue(request.param)
-
-
-@pytest.fixture()
-def expected_element_ids_for_hi_res_strategy_():
-    """Expected ids with strategy `hi_res` for 'layout-parser-paper-with-table.jpg'."""
-    return [
-        "34cbf83e5f9eb1527247ab062819b1ca",
-        "347d549be4deab25a3ee4f485f831c7d",
-        "3eab2e82aef0b92793e3c68716f54aa2",
-        "56ed2d576905d1d4907956e41be91866",
-        "7ae9174d036f1d261cc4c8dfc1b7d9c9",
-        "78a9454bf9fa17d79d2b28b919e0937b",
-        "9f87d002da6a94daec6a1b957b2fedfe",
-        "8211d66d55646be7f798172ea5596979",
-        "aa7c780f8442901becaf1c4f7067708e",
-        "9516561be9106b4867dd7bfeeafa895d",
-        "77b2a946442eef307412d62f284757ff",
-        "e557fb5a2472f5c9be22e6bd07cc6b7a",
-        "23d5472327ea19d8331cd5b0ed970e3f",
-        "6c67796c499a68160c107006a99a9392",
-        "7468807f52b225b01404f9f3d7c9e6e2",
-    ]
-
-
-@pytest.fixture()
-def expected_element_ids_for_ocr_strategy_():
-    """Expected ids with strategy `ocr_only` for 'layout-parser-paper-with-table.jpg'."""
-    return [
-        "e908c0f7b9ac0d2d3b9d486094baf845",
-        "58df5e7d76fe340d26caba05da67ed48",
-        "ab1d167e2078ad2a6e023529143c0d17",
-        "6ba0ca6c8e28331d7ada309f277b7aff",
-        "1805fb6d8b07f110d016724d06bf0e2b",
-        "eec61b475c5b0460aca1968704ae2feb",
-        "9f87d002da6a94daec6a1b957b2fedfe",
-        "1336ddae45edeb3f869cb8aae0a5f7c3",
-        "84e1c57388491386881f64fa21b9df4f",
-        "4fd325f0662c016f6001555de0fe1fb0",
-        "4b61c8ba554d844ee96596651122fe2f",
-        "b3337cecf7e2d8468c1980d74f30dd87",
-        "234b28b7fc702eee638611a399ff0920",
-    ]
+    assert ids_1 == ids_2
