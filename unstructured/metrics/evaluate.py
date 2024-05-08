@@ -272,15 +272,8 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> list:
         filename = doc.stem
-        doctype = filename.rsplit(".", 1)[-1]
-        fn_txt = filename + ".txt"
-        connector = str(doc).split("/")[0] if len(str(doc).split("/")) > 1 else None
-
-        # not all odetta cct files follow the same naming convention;
-        # some exclude the original filetype from the name
-        if fn_txt not in self.source_list:
-            fn = filename.rsplit(".", 1)[0]
-            fn_txt = fn + ".txt"
+        doctype = doc.suffixes[0]
+        connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(doc)
         accuracy = round(calculate_accuracy(output_cct, source_cct, self.weights), 3)
@@ -288,7 +281,6 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         return [filename, doctype, connector, accuracy, percent_missing]
 
     def _get_ccts(self, doc: str) -> tuple[str, str]:
-        # doc_filename_with_json_ext = doc.with_suffix(".json").name
         output_cct = _prepare_output_cct(
             docpath=self.output_dir / doc.name, output_type=self.output_type
         )
@@ -340,10 +332,10 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
         return "aggregate-scores-element-type.tsv"
 
     def _process_document(self, doc: str) -> Optional[list]:
-        filename = (str(doc).split("/")[-1]).split(".json")[0]
-        doctype = filename.rsplit(".", 1)[-1]
-        fn_json = filename + ".json"
-        connector = str(doc).split("/")[0] if len(str(doc).split("/")) > 1 else None
+        filename = doc.stem
+        doctype = doc.suffixes[0]
+        fn_json = doc.with_suffix(".json").name
+        connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         if fn_json not in self.source_list:  # type: ignore
             return None
