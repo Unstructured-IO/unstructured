@@ -248,6 +248,12 @@ def is_cid_present(text: str) -> bool:
     return text.find("(cid:") != -1
 
 
+def clean_cid(text: str) -> str:
+    cid_pattern = r"\(cid\:(\d+)\)"
+    cleaned_text = re.sub(cid_pattern, "", text)
+    return cleaned_text
+
+
 def annotate_layout_elements_with_image(
     inferred_page_layout: "PageLayout",
     extracted_page_layout: Optional["PageLayout"],

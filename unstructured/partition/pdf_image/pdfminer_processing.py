@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
+from unstructured.partition.pdf_image.pdf_image_utils import clean_cid
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
     open_pdfminer_pages_generator,
@@ -66,12 +67,14 @@ def process_data_with_pdfminer(
                 else:
                     continue
 
+            text = clean_cid(_text) if _text else _text
+
             text_region = element_class.from_coords(
                 x1 * coef,
                 y1 * coef,
                 x2 * coef,
                 y2 * coef,
-                text=_text,
+                text=text,
                 source=Source.PDFMINER,
             )
 
