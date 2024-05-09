@@ -1,4 +1,4 @@
-## 0.13.8-dev0
+## 0.13.8-dev1
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 
 ## 0.13.7
 
