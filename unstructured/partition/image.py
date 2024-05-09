@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -17,8 +17,8 @@ from unstructured.partition.utils.constants import PartitionStrategy
 @add_metadata
 @add_chunking_strategy
 def partition_image(
-    filename: str = "",
-    file: Optional[bytes] = None,
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,

@@ -116,7 +116,13 @@ def measure_text_extraction_accuracy(
             except Exception:
                 # if any of the output/source file is unable to open, skip the loop
                 continue
-            accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            # NOTE(amadeusz): Levenshtein distance calculation takes too long
+            # skip it if file sizes differ wildly
+            if 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0:
+                accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            else:
+                # 0.01 to distinguish it was set manually
+                accuracy = 0.01
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
             rows.append([filename, doctype, connector, accuracy, percent_missing])
 
