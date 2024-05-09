@@ -6,7 +6,7 @@
 #
 alabaster==0.7.16
     # via sphinx
-babel==2.14.0
+babel==2.15.0
     # via sphinx
 beautifulsoup4==4.12.3
     # via
@@ -38,7 +38,7 @@ imagesize==1.4.1
     # via sphinx
 importlib-metadata==7.1.0
     # via sphinx
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   myst-parser
     #   sphinx
@@ -59,7 +59,7 @@ packaging==23.2
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   sphinx
-pygments==2.17.2
+pygments==2.18.0
     # via
     #   furo
     #   sphinx

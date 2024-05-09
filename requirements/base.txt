@@ -33,7 +33,7 @@ idna==3.7
     # via
     #   requests
     #   unstructured-client
-joblib==1.4.0
+joblib==1.4.2
     # via nltk
 jsonpath-python==1.0.6
     # via unstructured-client
@@ -41,7 +41,7 @@ langdetect==1.0.9
     # via -r ./base.in
 lxml==5.2.1
     # via -r ./base.in
-marshmallow==3.21.1
+marshmallow==3.21.2
     # via
     #   dataclasses-json
     #   dataclasses-json-speakeasy
@@ -65,7 +65,7 @@ python-iso639==2024.4.27
     # via -r ./base.in
 python-magic==0.4.27
     # via -r ./base.in
-rapidfuzz==3.8.1
+rapidfuzz==3.9.0
     # via -r ./base.in
 regex==2024.4.28
     # via nltk
@@ -82,7 +82,7 @@ soupsieve==2.5
     # via beautifulsoup4
 tabulate==0.9.0
     # via -r ./base.in
-tqdm==4.66.2
+tqdm==4.66.4
     # via nltk
 typing-extensions==4.11.0
     # via
