@@ -12,13 +12,7 @@ import numpy as np
 import pdf2image
 import wrapt
 from pdfminer import psparser
-from pdfminer.layout import (
-    LTChar,
-    LTContainer,
-    LTImage,
-    LTItem,
-    LTTextBox,
-)
+from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -35,6 +29,7 @@ from unstructured.documents.elements import (
     Element,
     ElementMetadata,
     ElementType,
+    FormKeysValues,
     Image,
     Link,
     ListItem,
@@ -42,10 +37,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -57,10 +49,7 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
+from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -85,10 +74,7 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.sorting import (
-    coord_has_valid_points,
-    sort_page_elements,
-)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
@@ -137,7 +123,6 @@ def partition_pdf(
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
     extract_forms: bool = False,
-
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -194,6 +179,10 @@ def partition_pdf(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    extract_forms
+        Whether the form extraction logic should be run
+        (results in adding FormKeysValues elements to output).
+
     """
 
     exactly_one(filename=filename, file=file)
@@ -309,7 +298,7 @@ def partition_pdf_or_image(
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 starting_page_number=starting_page_number,
                 extract_forms=extract_forms,
-            **kwargs,
+                **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
 
@@ -371,7 +360,7 @@ def get_the_last_modification_date_pdf_or_img(
     return last_modification_date
 
 
-def run_form_extraction(filename: str, file: IO[bytes], model_name: str) -> List[FormMetadata]:
+def run_form_extraction(filename: str, file: IO[bytes], model_name: str) -> list[FormKeysValues]:
     raise NotImplementedError("Form extraction not yet available.")
 
 
@@ -405,10 +394,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.pdf_image.ocr import (
-        process_data_with_ocr,
-        process_file_with_ocr,
-    )
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
@@ -589,7 +575,9 @@ def _partition_pdf_or_image_local(
                 out_elements.append(cast(Element, el))
 
     if extract_forms:
-        out_elements.extend(run_form_extraction(file=file, filename=filename, model_name=hi_res_model_name))
+        out_elements.extend(
+            run_form_extraction(file=file, filename=filename, model_name=hi_res_model_name)
+        )
 
     return out_elements
 
