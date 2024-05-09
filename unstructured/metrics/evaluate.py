@@ -68,10 +68,10 @@ class BaseMetricsCalculator(ABC):
     def on_files(
         self, document_paths: list[str | Path], ground_truth_paths: list[str | Path]
     ) -> BaseMetricsCalculator:
-        if document_paths is not None:
+        if document_paths:
             self._document_paths = [Path(p) for p in document_paths]
 
-        if ground_truth_paths is not None:
+        if ground_truth_paths:
             self._ground_truth_paths = [Path(p) for p in ground_truth_paths]
 
         return self
