@@ -117,7 +117,7 @@ def default_hi_res_model() -> str:
 @add_metadata_with_filetype(FileType.PDF)
 @add_chunking_strategy
 def partition_pdf(
-    filename: str = "",
+    filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
