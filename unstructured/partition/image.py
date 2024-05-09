@@ -32,6 +32,7 @@ def partition_image(
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
+    starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses an image into a list of interpreted elements.
@@ -109,5 +110,6 @@ def partition_image(
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
+        starting_page_number=starting_page_number,
         **kwargs,
     )

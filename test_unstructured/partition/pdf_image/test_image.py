@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 import tempfile
@@ -737,3 +739,34 @@ def test_partition_image_works_on_heic_file(
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     titles = [el.text for el in elements if el.category == ElementType.TITLE]
     assert "CREATURES" in titles
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY],
+)
+def test_deterministic_element_ids(strategy: str):
+    elements_1 = image.partition_image(
+        example_doc_path("layout-parser-paper-with-table.jpg"),
+        strategy=strategy,
+        starting_page_number=2,
+    )
+    elements_2 = image.partition_image(
+        example_doc_path("layout-parser-paper-with-table.jpg"),
+        strategy=strategy,
+        starting_page_number=2,
+    )
+    ids_1 = [element.id for element in elements_1]
+    ids_2 = [element.id for element in elements_2]
+
+    assert ids_1 == ids_2
+
+
+def test_multipage_tiff_starts_on_starting_page_number():
+    elements = image.partition_image(
+        example_doc_path("layout-parser-paper-combined.tiff"),
+        starting_page_number=2,
+    )
+    pages = {element.metadata.page_number for element in elements}
+
+    assert pages == {2, 3}

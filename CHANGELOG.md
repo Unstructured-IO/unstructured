@@ -2,10 +2,13 @@
 
 ### Enhancements
 
+**Faster evaluation** Support for concurrent processing of documents during evaluation
+
 ### Features
 
 ### Fixes
 
+* **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
 * **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 
