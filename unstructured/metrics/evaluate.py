@@ -258,6 +258,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
         if export_dir is not None and self.group_by:
             get_mean_grouping(self.group_by, df, export_dir, "text_extraction")
+        return df
 
     def _validate_inputs(self):
         if not self.output_list:
@@ -318,7 +319,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
         export_dir: Optional[str | Path] = None,
         visualize_progress: bool = True,
         display_agg_df: bool = False,
-    ):
+    ) -> pd.DataFrame:
         df = super().calculate(
             executor=executor,
             export_dir=export_dir,
@@ -328,6 +329,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
 
         if export_dir is not None and self.group_by:
             get_mean_grouping(self.group_by, df, export_dir, "element_type")
+        return df
 
     @property
     def default_tsv_name(self) -> str:
