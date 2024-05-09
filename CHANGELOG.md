@@ -8,6 +8,7 @@
 
 ### Fixes
 
+* **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
 
 ## 0.13.7
