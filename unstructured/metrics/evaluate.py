@@ -83,6 +83,19 @@ class BaseMetricsCalculator(ABC):
         visualize_progress: bool = True,
         display_agg_df: bool = True,
     ) -> pd.DataFrame:
+        """Calculation metrics for each document using the provided executor.
+
+        Optionally, the results can be exported and displayed.
+
+        Args:
+            executor: concurrent.futures.Executor instance
+            export_dir: directory to export the results
+            visualize_progress: whether to display progress bar
+            display_agg_df: whether to display the aggregated results
+
+        Returns:
+            list of metrics for each document as a pandas DataFrame
+        """
         if executor is None:
             executor = self._default_executor()
         rows = self._process_all_documents(executor, visualize_progress)
@@ -104,7 +117,11 @@ class BaseMetricsCalculator(ABC):
 
     def _process_all_documents(
         self, executor: concurrent.futures.Executor, visualize_progress: bool
-    ):
+    ) -> list:
+        """Triggers processing of all documents using the provided executor.
+
+        Failures are omitted from the returned result.
+        """
         with executor:
             return [
                 row
@@ -118,6 +135,7 @@ class BaseMetricsCalculator(ABC):
             ]
 
     def _try_process_document(self, doc: Path) -> Optional[list]:
+        """Safe wrapper around the document processing method."""
         logger.info(f"Processing {doc}")
         try:
             return self._process_document(doc)
