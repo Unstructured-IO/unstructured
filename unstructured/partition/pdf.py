@@ -514,11 +514,6 @@ def _partition_pdf_or_image_local(
                 pdf_image_dpi=pdf_image_dpi,
             )
 
-    if extract_forms:
-        forms = run_form_extraction(file=file, filename=filename, model_name=hi_res_model_name)
-    else:
-        forms = []
-
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
     if hi_res_model_name.startswith("chipper") and hi_res_model_name != "chipperv1":
         kwargs["sort_mode"] = SORT_MODE_DONT
@@ -593,7 +588,10 @@ def _partition_pdf_or_image_local(
             if el.text or isinstance(el, PageBreak) or hi_res_model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
-    return out_elements + forms
+    if extract_forms:
+        out_elements.extend(run_form_extraction(file=file, filename=filename, model_name=hi_res_model_name))
+
+    return out_elements
 
 
 def _process_uncategorized_text_elements(elements: list[Element]):
