@@ -760,3 +760,13 @@ def test_deterministic_element_ids(strategy: str):
     ids_2 = [element.id for element in elements_2]
 
     assert ids_1 == ids_2
+
+
+def test_multipage_tiff_starts_on_starting_page_number():
+    elements = image.partition_image(
+        example_doc_path("layout-parser-paper-combined.tiff"),
+        starting_page_number=2,
+    )
+    pages = {element.metadata.page_number for element in elements}
+
+    assert pages == {2, 3}
