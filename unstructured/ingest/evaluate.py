@@ -82,7 +82,7 @@ def measure_text_extraction_accuracy_command(
             ground_truths_dir=source_dir,
             group_by=group_by,
             weights=weights,
-            document_types=output_type,
+            document_type=output_type,
         )
         .on_files(document_paths=output_list, ground_truth_paths=source_list)
         .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
