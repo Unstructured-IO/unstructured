@@ -184,12 +184,14 @@ def test_add_chunking_strategy_by_title_on_partition_ppt():
 def test_partition_ppt_params():
     """Integration test of params: languages, include_page_break, and include_slide_notes."""
     elements = partition_ppt(
-        example_doc_path("fake-power-point.ppt"), include_page_breaks=True, include_slide_notes=True
+        example_doc_path("language-docs/eng_spa_mult.ppt"),
+        include_page_breaks=True,
+        include_slide_notes=True,
     )
     assert elements[0].metadata.languages == ["eng"]
     assert any(isinstance(element, PageBreak) for element in elements)
-    # The example doc contains a slide note with the text "This is a slide note"
-    assert any(element.text == "This is a slide note" for element in elements)
+    # The example doc contains a slide note with the text "This is a slide note."
+    assert any(element.text == "This is a slide note." for element in elements)
 
 
 def test_partition_ppt_respects_detect_language_per_element():
