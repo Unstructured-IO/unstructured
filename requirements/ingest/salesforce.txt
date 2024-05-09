@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via pyjwt
 idna==3.7
     # via
@@ -25,10 +25,9 @@ idna==3.7
     #   requests
 isodate==0.6.1
     # via zeep
-lxml==4.9.4
+lxml==5.2.1
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   zeep
 more-itertools==10.2.0
     # via simple-salesforce

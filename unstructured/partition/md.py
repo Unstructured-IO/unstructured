@@ -1,4 +1,6 @@
-from typing import IO, List, Optional, Union
+from __future__ import annotations
+
+from typing import IO, Any, Optional, Union
 
 import markdown
 import requests
@@ -38,11 +40,11 @@ def partition_md(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions a markdown file into its constituent elements
 
     Parameters

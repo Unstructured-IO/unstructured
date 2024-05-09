@@ -1,3 +1,54 @@
+## 0.13.8-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+
+## 0.13.7
+
+### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
+
+### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+* **Remove unnecessary warning log for using default layout model.**
+* **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element, chunking is made available because the Table element is often larger than the desired chunk size and must be divided into smaller chunks.
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
+## 0.13.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
 ## 0.13.4
 
 ### Enhancements

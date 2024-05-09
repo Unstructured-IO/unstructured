@@ -116,7 +116,13 @@ def measure_text_extraction_accuracy(
             except Exception:
                 # if any of the output/source file is unable to open, skip the loop
                 continue
-            accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            # NOTE(amadeusz): Levenshtein distance calculation takes too long
+            # skip it if file sizes differ wildly
+            if 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0:
+                accuracy = round(calculate_accuracy(output_cct, source_cct, weights), 3)
+            else:
+                # 0.01 to distinguish it was set manually
+                accuracy = 0.01
             percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
             rows.append([filename, doctype, connector, accuracy, percent_missing])
 
@@ -331,26 +337,41 @@ def measure_table_structure_accuracy(
                 logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
                 continue
 
-            processor = TableEvalProcessor.from_json_files(
+            processor_from_text_as_html = TableEvalProcessor.from_json_files(
                 prediction_file=prediction_file,
                 ground_truth_file=ground_truth_file,
                 cutoff=cutoff,
+                source_type="html",
             )
-            report = processor.process_file()
+            report_from_html = processor_from_text_as_html.process_file()
+
+            processor_from_table_as_cells = TableEvalProcessor.from_json_files(
+                prediction_file=prediction_file,
+                ground_truth_file=ground_truth_file,
+                cutoff=cutoff,
+                source_type="cells",
+            )
+            report_from_cells = processor_from_table_as_cells.process_file()
+
             rows.append(
                 [
                     out_filename,
                     doctype,
                     connector,
                 ]
-                + [getattr(report, metric) for metric in table_eval_metrics]
+                + [getattr(report_from_html, metric) for metric in table_eval_metrics]
+                + [getattr(report_from_cells, metric) for metric in table_eval_metrics]
             )
+
+    suffixed_table_eval_metrics = [f"{metric}_with_spans" for metric in table_eval_metrics]
+    combined_table_metrics = table_eval_metrics + suffixed_table_eval_metrics
 
     headers = [
         "filename",
         "doctype",
         "connector",
-    ] + table_eval_metrics
+    ] + combined_table_metrics
+
     df = pd.DataFrame(rows, columns=headers)
     has_tables_df = df[df["total_tables"] > 0]
 
@@ -360,7 +381,7 @@ def measure_table_structure_accuracy(
         ).reset_index()
     else:
         element_metrics_results = {}
-        for metric in table_eval_metrics:
+        for metric in combined_table_metrics:
             metric_df = has_tables_df[has_tables_df[metric].notnull()]
             agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
             if agg_metric.empty:

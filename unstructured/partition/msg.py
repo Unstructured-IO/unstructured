@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, Callable, Dict, List, Optional
+from typing import IO, Any, Callable, Optional
 
 import msg_parser
 
@@ -30,14 +32,14 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable] = None,
+    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions a MSFT Outlook .msg file
 
     Parameters
@@ -89,7 +91,7 @@ def partition_msg(
     content_type = msg_obj.header_dict.get("Content-Type", "")
     is_encrypted = "encrypted" in content_type
     text = msg_obj.body
-    elements: List[Element] = []
+    elements: list[Element] = []
     if is_encrypted:
         logger.warning(
             "Encrypted email detected. Partition function will return an empty list.",
@@ -166,7 +168,7 @@ def build_msg_metadata(
     filename: Optional[str],
     metadata_last_modified: Optional[str],
     last_modification_date: Optional[str],
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -198,7 +200,7 @@ def extract_msg_attachment_info(
     file: Optional[IO[bytes]] = None,
     output_dir: Optional[str] = None,
     msg_obj: Optional[msg_parser.MsOxMessage] = None,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
     """Extracts information from email message attachments and returns a list of dictionaries.
     If 'output_dir' is provided, attachments are also saved to that directory.
     """

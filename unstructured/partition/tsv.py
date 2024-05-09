@@ -1,9 +1,11 @@
-from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
+from __future__ import annotations
+
+from typing import IO, Any, Optional
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
 
+from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import (
     Element,
     ElementMetadata,
@@ -24,19 +26,20 @@ DETECTION_ORIGIN: str = "tsv"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.TSV)
+@add_chunking_strategy
 def partition_tsv(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     include_metadata: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     # NOTE (jennings) partition_tsv generates a single TableElement
     # so detect_language_per_element is not included as a param
     date_from_file_object: bool = False,
-    **kwargs,
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions TSV files into document elements.
 
     Parameters
@@ -68,9 +71,9 @@ def partition_tsv(
         table = pd.read_csv(filename, sep="\t", header=header)
         last_modification_date = get_last_modified_date(filename)
     elif file:
-        f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file),
-        )
+        # -- Note(scanny): `SpooledTemporaryFile` on Python<3.11 does not implement `.readable()`
+        # -- which triggers an exception on `pd.DataFrame.read_csv()` call.
+        f = spooled_to_bytes_io_if_needed(file)
         table = pd.read_csv(f, sep="\t", header=header)
         last_modification_date = (
             get_last_modified_date_from_file(file) if date_from_file_object else None

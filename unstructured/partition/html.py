@@ -1,4 +1,6 @@
-from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional
+from __future__ import annotations
+
+from typing import IO, TYPE_CHECKING, Any, Optional
 
 import requests
 
@@ -35,7 +37,7 @@ def partition_html(
     encoding: Optional[str] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
-    headers: Dict[str, str] = {},
+    headers: dict[str, str] = {},
     ssl_verify: bool = True,
     parser: VALID_PARSERS = None,
     source_format: Optional[str] = None,
@@ -44,12 +46,12 @@ def partition_html(
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
     date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
 
     Parameters
@@ -142,7 +144,7 @@ def partition_html(
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
 
-    return list(
+    elements = list(
         apply_lang_metadata(
             document_to_element_list(
                 document,
@@ -158,6 +160,13 @@ def partition_html(
         ),
     )
 
+    # Note(yuming): Rip off page_number metadata fields here
+    # until we have a better way to handle page counting for html files
+    for element in elements:
+        if hasattr(element.metadata, "page_number"):
+            element.metadata.page_number = None
+    return elements
+
 
 def convert_and_partition_html(
     source_format: str,
@@ -166,11 +175,11 @@ def convert_and_partition_html(
     include_page_breaks: bool = False,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     detection_origin: Optional[str] = None,
     date_from_file_object: bool = False,
-) -> List[Element]:
+) -> list[Element]:
     """Converts a document to HTML and then partitions it using partition_html. Works with
     any file format support by pandoc.
 
