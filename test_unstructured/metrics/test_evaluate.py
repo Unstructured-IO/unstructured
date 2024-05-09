@@ -13,7 +13,6 @@ from unstructured.metrics.evaluate import (
     TextExtractionMetricsCalculator,
     filter_metrics,
     get_mean_grouping,
-    measure_text_extraction_accuracy,
 )
 
 is_in_docker = os.path.exists("/.dockerenv")
@@ -143,9 +142,11 @@ def test_text_extraction_evaluation_type_txt():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_CCT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="txt"
-    )
+
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir, ground_truths_dir=source_dir, document_type="txt"
+    ).calculate(export_dir=export_dir)
+
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
@@ -198,12 +199,12 @@ def test_text_extraction_takes_list():
     output_list = ["currency.csv.json"]
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir,
-        source_dir=source_dir,
-        output_list=output_list,
-        export_dir=export_dir,
-    )
+
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
+    ).on_files(document_paths=output_list).calculate(export_dir=export_dir)
+
     # check that only the listed files are included
     assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
@@ -216,9 +217,13 @@ def test_text_extraction_with_grouping():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, group_by="doctype"
-    )
+
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
+        group_by="doctype",
+    ).calculate(export_dir=export_dir)
+
     df = pd.read_csv(os.path.join(export_dir, "all-doctype-agg-cct.tsv"), sep="\t")
     assert len(df) == 4  # metrics row and doctype rows
 
@@ -230,9 +235,9 @@ def test_text_extraction_wrong_type():
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
     with pytest.raises(ValueError):
-        measure_text_extraction_accuracy(
-            output_dir=output_dir, source_dir=source_dir, export_dir=export_dir, output_type="wrong"
-        )
+        TextExtractionMetricsCalculator(
+            documents_dir=output_dir, ground_truths_dir=source_dir, document_type="invalid type"
+        ).calculate(export_dir=export_dir)
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -256,9 +261,12 @@ def test_get_mean_grouping_tsv_input():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
-    )
+
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
+    ).calculate(export_dir=export_dir)
+
     filename = os.path.join(export_dir, "all-docs-cct.tsv")
     get_mean_grouping(
         group_by="doctype",
@@ -276,9 +284,12 @@ def test_get_mean_grouping_invalid_group():
     output_dir = os.path.join(TESTING_FILE_DIR, UNSTRUCTURED_OUTPUT_DIRNAME)
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
-    measure_text_extraction_accuracy(
-        output_dir=output_dir, source_dir=source_dir, export_dir=export_dir
-    )
+
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
+    ).calculate(export_dir=export_dir)
+
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     with pytest.raises(ValueError):
         get_mean_grouping(

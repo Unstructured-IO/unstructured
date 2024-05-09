@@ -16,7 +16,6 @@
 
 * **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
 * **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
-* **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add calculation of table related metrics which take into account colspans and rowspans**
 * **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
 

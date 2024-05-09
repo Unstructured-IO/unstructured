@@ -5,11 +5,11 @@ from typing import List, Optional, Tuple, Union
 import click
 
 from unstructured.metrics.evaluate import (
+    ElementTypeMetricsCalculator,
+    TableStructureMetricsCalculator,
+    TextExtractionMetricsCalculator,
     filter_metrics,
     get_mean_grouping,
-    measure_element_type_accuracy,
-    measure_table_structure_accuracy,
-    measure_text_extraction_accuracy,
 )
 
 
@@ -76,16 +76,16 @@ def measure_text_extraction_accuracy_command(
     source_list: Optional[List[str]] = None,
     group_by: Optional[str] = None,
 ):
-    return measure_text_extraction_accuracy(
-        output_dir,
-        source_dir,
-        output_list,
-        source_list,
-        export_dir,
-        group_by,
-        weights,
-        visualize,
-        output_type,
+    return (
+        TextExtractionMetricsCalculator(
+            documents_dir=output_dir,
+            ground_truths_dir=source_dir,
+            group_by=group_by,
+            weights=weights,
+            document_types=output_type,
+        )
+        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
 
@@ -128,8 +128,13 @@ def measure_element_type_accuracy_command(
     output_list: Optional[List[str]] = None,
     source_list: Optional[List[str]] = None,
 ):
-    return measure_element_type_accuracy(
-        output_dir, source_dir, output_list, source_list, export_dir, visualize
+    return (
+        ElementTypeMetricsCalculator(
+            documents_dir=output_dir,
+            ground_truths_dir=source_dir,
+        )
+        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
 
@@ -233,8 +238,14 @@ def measure_table_structure_accuracy_command(
     source_list: Optional[List[str]] = None,
     cutoff: Optional[float] = None,
 ):
-    return measure_table_structure_accuracy(
-        output_dir, source_dir, output_list, source_list, export_dir, visualize, cutoff
+    return (
+        TableStructureMetricsCalculator(
+            documents_dir=output_dir,
+            ground_truths_dir=source_dir,
+            cutoff=cutoff,
+        )
+        .on_files(document_paths=output_list, ground_truth_paths=source_list)
+        .calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
     )
 
 
