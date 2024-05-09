@@ -3,6 +3,7 @@
 ### Enhancements
 
 ### Features
+* **Add form extraction basics (document elements and placeholder code in partition)
 
 ### Fixes
 
