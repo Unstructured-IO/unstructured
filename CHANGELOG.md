@@ -1,7 +1,8 @@
-## 0.13.7-dev10
-## 0.13.8-dev0
+## 0.13.8-dev1
 
 ### Enhancements
+
+**Faster evaluation** Support for concurrent processing of documents during evaluation
 
 ### Features
 
