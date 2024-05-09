@@ -89,9 +89,9 @@ def test_text_extraction_evaluation():
     source_dir = os.path.join(TESTING_FILE_DIR, GOLD_CCT_DIRNAME)
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
 
-    TextExtractionMetricsCalculator(output_dir=output_dir, source_dir=source_dir).calculate(
-        export_dir=export_dir, visualize_progress=False, display_agg_df=False
-    )
+    TextExtractionMetricsCalculator(
+        documents_dir=output_dir, ground_truths_dir=source_dir
+    ).calculate(export_dir=export_dir, visualize_progress=False, display_agg_df=False)
 
     assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
@@ -108,7 +108,7 @@ def test_text_extraction_evaluation():
             UNSTRUCTURED_CCT_DIRNAME,
             GOLD_CCT_DIRNAME,
             5,
-            {"output_type": "txt"},
+            {"document_type": "txt"},
         ),
         (
             TableStructureMetricsCalculator,
@@ -132,8 +132,8 @@ def test_process_document_returns_the_correct_amount_of_values(
     output_dir = Path(TESTING_FILE_DIR) / output_dirname
     source_dir = Path(TESTING_FILE_DIR) / source_dirname
 
-    calculator = calculator_class(output_dir=output_dir, source_dir=source_dir, **kwargs)
-    output_list = calculator._process_document(calculator.output_paths[0])
+    calculator = calculator_class(documents_dir=output_dir, ground_truths_dir=source_dir, **kwargs)
+    output_list = calculator._process_document(calculator._document_paths[0])
     assert len(output_list) == expected_length
 
 
@@ -160,8 +160,8 @@ def test_element_type_evaluation():
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_results_cct")
 
     ElementTypeMetricsCalculator(
-        output_dir=output_dir,
-        source_dir=source_dir,
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
     ).calculate(export_dir=export_dir, visualize_progress=False)
 
     assert os.path.isfile(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"))
@@ -179,8 +179,8 @@ def test_table_structure_evaluation():
     export_dir = os.path.join(TESTING_FILE_DIR, "test_evaluate_result_table_structure")
 
     TableStructureMetricsCalculator(
-        output_dir=output_dir,
-        source_dir=source_dir,
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
     ).calculate(export_dir=export_dir, visualize_progress=False)
 
     assert os.path.isfile(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"))

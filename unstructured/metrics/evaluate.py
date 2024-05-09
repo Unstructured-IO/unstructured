@@ -6,7 +6,7 @@ import concurrent.futures
 import logging
 import os
 import sys
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
@@ -24,7 +24,6 @@ from unstructured.metrics.utils import (
     _count,
     _display,
     _format_grouping_output,
-    _listdir_recursive,
     _mean,
     _prepare_output_cct,
     _pstdev,
@@ -52,23 +51,30 @@ OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 @dataclass
 class BaseMetricsCalculator(ABC):
-    output_dir: Path
-    source_dir: Path
-    output_list: Optional[list[str]] = None
-    source_list: Optional[list[str]] = None
+    documents_dir: str | Path
+    ground_truths_dir: str | Path
 
     def __post_init__(self):
-        # -- ensure those are Path objects --
-        self.output_dir = Path(self.output_dir)
-        self.source_dir = Path(self.source_dir)
+        self.documents_dir = Path(self.documents_dir).resolve()
+        self.ground_truths_dir = Path(self.ground_truths_dir).resolve()
 
-        if not self.output_list:
-            self.output_list = _listdir_recursive(self.output_dir)
-        self.output_paths = [Path(p) for p in self.output_list]
+        self._document_paths = [
+            path.relative_to(self.documents_dir) for path in self.documents_dir.rglob("*")
+        ]
+        self._ground_truth_paths = [
+            path.relative_to(self.ground_truths_dir) for path in self.ground_truths_dir.rglob("*")
+        ]
 
-        if not self.source_list:
-            self.source_list = _listdir_recursive(self.source_dir)
-        self.source_paths = [Path(p) for p in self.source_list]
+    def on_files(
+        self, document_paths: list[str | Path], ground_truth_paths: list[str | Path]
+    ) -> BaseMetricsCalculator:
+        if document_paths is not None:
+            self._document_paths = [Path(p) for p in document_paths]
+
+        if ground_truth_paths is not None:
+            self._ground_truth_paths = [Path(p) for p in ground_truth_paths]
+
+        return self
 
     def calculate(
         self,
@@ -103,8 +109,8 @@ class BaseMetricsCalculator(ABC):
             return [
                 row
                 for row in tqdm(
-                    executor.map(self._try_process_document, self.output_paths),
-                    total=len(self.output_paths),
+                    executor.map(self._try_process_document, self._document_paths),
+                    total=len(self._document_paths),
                     leave=False,
                     disable=not visualize_progress,
                 )
@@ -118,6 +124,10 @@ class BaseMetricsCalculator(ABC):
         except Exception as e:
             logger.error(f"Failed to process document {doc}: {e}")
             return None
+
+    @abstractmethod
+    def _process_document(self, doc: Path) -> list:
+        pass
 
 
 @dataclass
@@ -154,13 +164,15 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
 
-        if src_gt_filename in self.source_list:  # type: ignore
-            prediction_file = self.output_dir / doc
-            if not prediction_file.exists():
-                logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
-                return None
+        if src_gt_filename in self._ground_truth_paths:  # type: ignore
+            return None
 
-        ground_truth_file = self.source_dir / src_gt_filename
+        prediction_file = self.documents_dir / doc
+        if not prediction_file.exists():
+            logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+            return None
+
+        ground_truth_file = self.ground_truths_dir / src_gt_filename
         if not ground_truth_file.exists():
             logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
             return None
@@ -228,7 +240,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 class TextExtractionMetricsCalculator(BaseMetricsCalculator):
     group_by: Optional[str] = None
     weights: tuple[int, int, int] = (1, 1, 1)
-    output_type: str = "json"
+    document_type: str = "json"
 
     def __post_init__(self):
         super().__post_init__()
@@ -261,15 +273,15 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         return df
 
     def _validate_inputs(self):
-        if not self.output_list:
+        if not self._document_paths:
             logger.info("No output files to calculate to edit distances for, exiting")
             sys.exit(0)
-        if self.output_type not in OUTPUT_TYPE_OPTIONS:
+        if self.document_type not in OUTPUT_TYPE_OPTIONS:
             raise ValueError(
-                "Specified file type under `output_dir` or `output_list` should be one of "
-                f"`json` or `txt`. The given file type is {self.output_type}, exiting."
+                "Specified file type under `documents_dir` or `output_list` should be one of "
+                f"`json` or `txt`. The given file type is {self.document_type}, exiting."
             )
-        if not all(path.suffixes[-1] == f".{self.output_type}" for path in self.output_paths):
+        if not all(path.suffixes[-1] == f".{self.document_type}" for path in self._document_paths):
             logger.warning(
                 "The directory contains file type inconsistent with the given input. "
                 "Please note that some files will be skipped."
@@ -285,12 +297,11 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
         return [filename, doctype, connector, accuracy, percent_missing]
 
-    def _get_ccts(self, doc: str) -> tuple[str, str]:
+    def _get_ccts(self, doc: Path) -> tuple[str, str]:
         output_cct = _prepare_output_cct(
-            docpath=self.output_dir / doc.name, output_type=self.output_type
+            docpath=self.documents_dir / doc, output_type=self.document_type
         )
-        doc_filename_with_txt_ext = doc.with_suffix(".txt").name
-        source_cct = _read_text_file(self.source_dir / doc_filename_with_txt_ext)
+        source_cct = _read_text_file(self.ground_truths_dir / doc.with_suffix(".txt"))
 
         return output_cct, source_cct
 
@@ -339,17 +350,15 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, doc: str) -> Optional[list]:
+    def _process_document(self, doc: Path) -> Optional[list]:
         filename = doc.stem
         doctype = doc.suffixes[0]
-        fn_json = doc.with_suffix(".json").name
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
-        if fn_json not in self.source_list:  # type: ignore
-            return None
-
-        output = get_element_type_frequency(_read_text_file(self.output_dir / doc))
-        source = get_element_type_frequency(_read_text_file(self.source_dir / fn_json))
+        output = get_element_type_frequency(_read_text_file(self.documents_dir / doc))
+        source = get_element_type_frequency(
+            _read_text_file(self.ground_truths_dir / doc.with_suffix(".json"))
+        )
         accuracy = round(calculate_element_type_percent_match(output, source), 3)
         return [filename, doctype, connector, accuracy]
 
@@ -387,14 +396,14 @@ def measure_text_extraction_accuracy(
     Also calculates the aggregated accuracy and percent missing.
     """
     TextExtractionMetricsCalculator(
-        output_dir=output_dir,
-        source_dir=source_dir,
-        output_list=output_list,
-        source_list=source_list,
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
         group_by=group_by,
         weights=weights,
-        output_type=output_type,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
+        document_type=output_type,
+    ).on_files(document_paths=output_list, ground_truth_paths=source_list).calculate(
+        export_dir=export_dir, visualize_progress=visualize, display_agg_df=True
+    )
 
 
 def measure_element_type_accuracy(
@@ -415,12 +424,12 @@ def measure_element_type_accuracy(
     whole list, write to tsv. Also calculates the aggregated accuracy.
     """
     ElementTypeMetricsCalculator(
-        output_dir=output_dir,
-        source_dir=source_dir,
-        output_list=output_list,
-        source_list=source_list,
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
         group_by=group_by,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
+    ).on_files(document_paths=output_list, ground_truth_paths=source_list).calculate(
+        export_dir=export_dir, visualize_progress=visualize, display_agg_df=True
+    )
 
 
 def measure_table_structure_accuracy(
@@ -450,12 +459,12 @@ def measure_table_structure_accuracy(
     After looped through the whole list, write to tsv. Also calculates the aggregated accuracy.
     """
     TableStructureMetricsCalculator(
-        output_dir=output_dir,
-        source_dir=source_dir,
-        output_list=output_list,
-        source_list=source_list,
+        documents_dir=output_dir,
+        ground_truths_dir=source_dir,
         cutoff=cutoff,
-    ).calculate(export_dir=export_dir, visualize_progress=visualize, display_agg_df=True)
+    ).on_files(document_paths=output_list, ground_truth_paths=source_list).calculate(
+        export_dir=export_dir, visualize_progress=visualize, display_agg_df=True
+    )
 
 
 def get_mean_grouping(
