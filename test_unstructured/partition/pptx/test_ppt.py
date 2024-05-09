@@ -7,7 +7,7 @@ from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, PageBreak, Title
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -181,9 +181,15 @@ def test_add_chunking_strategy_by_title_on_partition_ppt():
     assert chunk_elements == chunks
 
 
-def test_partition_ppt_element_metadata_has_languages():
-    elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
+def test_partition_ppt_params():
+    """Integration test of params: languages, include_page_break, and include_slide_notes."""
+    elements = partition_ppt(
+        example_doc_path("fake-power-point.ppt"), include_page_breaks=True, include_slide_notes=True
+    )
     assert elements[0].metadata.languages == ["eng"]
+    assert any(isinstance(element, PageBreak) for element in elements)
+    # The example doc contains a slide note with the text "This is a slide note"
+    assert any(element.text == "This is a slide note" for element in elements)
 
 
 def test_partition_ppt_respects_detect_language_per_element():

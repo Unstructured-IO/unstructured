@@ -24,6 +24,7 @@ def partition_ppt(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    include_slide_notes: bool = False,
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
@@ -44,6 +45,8 @@ def partition_ppt(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    include_slide_notes
+        If True, includes the slide notes as element
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -102,11 +105,13 @@ def partition_ppt(
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(
             filename=pptx_filename,
+            detect_language_per_element=detect_language_per_element,
+            include_page_breaks=include_page_breaks,
+            include_slide_notes=include_slide_notes,
             infer_table_structure=infer_table_structure,
+            languages=languages,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
             starting_page_number=starting_page_number,
         )
 
