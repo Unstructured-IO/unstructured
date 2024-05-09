@@ -1,4 +1,15 @@
 ## 0.13.7-dev10
+## 0.13.8-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+
+## 0.13.7
 
 ### Enhancements
 
@@ -6,6 +17,7 @@
 * **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
 
 ### Features
 
