@@ -8,7 +8,6 @@ import pandas as pd
 import pytest
 
 from unstructured.metrics.evaluate import (
-    BaseMetricsCalculator,
     ElementTypeMetricsCalculator,
     TableStructureMetricsCalculator,
     TextExtractionMetricsCalculator,
@@ -102,7 +101,7 @@ def test_text_extraction_evaluation():
 
 
 @pytest.mark.parametrize(
-    "calculator_class, output_dirname, source_dirname, expected_length, kwargs",
+    ("calculator_class", "output_dirname", "source_dirname", "expected_length", "kwargs"),
     [
         (
             TextExtractionMetricsCalculator,
