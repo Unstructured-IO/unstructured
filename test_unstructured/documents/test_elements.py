@@ -5,13 +5,14 @@
 from __future__ import annotations
 
 import copy
+import io
 import json
 import pathlib
 from functools import partial
 
 import pytest
 
-from test_unstructured.unit_utils import assign_hash_ids
+from test_unstructured.unit_utils import assign_hash_ids, example_doc_path
 from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
@@ -31,6 +32,7 @@ from unstructured.documents.elements import (
     Title,
     assign_and_map_hash_ids,
 )
+from unstructured.partition.json import partition_json
 
 
 @pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
@@ -744,3 +746,14 @@ def test_id_to_hash_calculates(text, sequence_number, filename, page_number, exp
     )
     assert element.id_to_hash(sequence_number) == expected_hash, "Returned ID does not match"
     assert element.id == expected_hash, "ID should be set"
+
+
+def test_formskeysvalues_reads_saves():
+    filename = example_doc_path("fake_form_element/form.json")
+    with open(filename) as inF:
+        as_read = partition_json(filename=filename)
+    tmp_file = io.StringIO()
+    json.dump([element.to_dict() for element in as_read], tmp_file)
+    tmp_file.seek(0)
+    as_read_2 = partition_json(file=tmp_file)
+    assert as_read == as_read_2
