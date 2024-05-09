@@ -4,6 +4,8 @@
 onnx
 pdf2image
 pdfminer.six
+pdftext
+pypdfium2
 pikepdf
 pillow_heif
 pypdf
