@@ -1,12 +1,14 @@
 import os
 import pathlib
 import shutil
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
 from unstructured.metrics.evaluate import (
+    BaseMetricsCalculator,
     ElementTypeMetricsCalculator,
     TableStructureMetricsCalculator,
     TextExtractionMetricsCalculator,
@@ -97,6 +99,43 @@ def test_text_extraction_evaluation():
     assert len(df) == 3
     assert len(df.columns) == 5
     assert df.iloc[0].filename == "Bank Good Credit Loan.pptx"
+
+
+@pytest.mark.parametrize(
+    "calculator_class, output_dirname, source_dirname, expected_length, kwargs",
+    [
+        (
+            TextExtractionMetricsCalculator,
+            UNSTRUCTURED_CCT_DIRNAME,
+            GOLD_CCT_DIRNAME,
+            5,
+            {"output_type": "txt"},
+        ),
+        (
+            TableStructureMetricsCalculator,
+            UNSTRUCTURED_TABLE_STRUCTURE_DIRNAME,
+            GOLD_TABLE_STRUCTURE_DIRNAME,
+            17,
+            {},
+        ),
+        (
+            ElementTypeMetricsCalculator,
+            UNSTRUCTURED_OUTPUT_DIRNAME,
+            GOLD_ELEMENT_TYPE_DIRNAME,
+            4,
+            {},
+        ),
+    ],
+)
+def test_process_document_returns_the_correct_amount_of_values(
+    calculator_class, output_dirname, source_dirname, expected_length, kwargs
+):
+    output_dir = Path(TESTING_FILE_DIR) / output_dirname
+    source_dir = Path(TESTING_FILE_DIR) / source_dirname
+
+    calculator = calculator_class(output_dir=output_dir, source_dir=source_dir, **kwargs)
+    output_list = calculator._process_document(calculator.output_paths[0])
+    assert len(output_list) == expected_length
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
