@@ -9,7 +9,7 @@ import sys
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Union
 
 import pandas as pd
 from tqdm import tqdm
@@ -51,13 +51,21 @@ OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 @dataclass
 class BaseMetricsCalculator(ABC):
+    """Foundation class for specialized metrics calculators.
+
+    It provides a common interface for calculating metrics based on outputs and ground truths.
+    Those can be provided as either directories or lists of files.
+    """
+
     documents_dir: str | Path
     ground_truths_dir: str | Path
 
     def __post_init__(self):
+        """Discover all files in the provided directories."""
         self.documents_dir = Path(self.documents_dir).resolve()
         self.ground_truths_dir = Path(self.ground_truths_dir).resolve()
 
+        # -- auto-discover all files in the directories --
         self._document_paths = [
             path.relative_to(self.documents_dir) for path in self.documents_dir.rglob("*")
         ]
@@ -70,6 +78,7 @@ class BaseMetricsCalculator(ABC):
         document_paths: Optional[list[str | Path]] = None,
         ground_truth_paths: Optional[list[str | Path]] = None,
     ) -> BaseMetricsCalculator:
+        """Overrides the default list of files to process."""
         if document_paths:
             self._document_paths = [Path(p) for p in document_paths]
 
@@ -85,9 +94,12 @@ class BaseMetricsCalculator(ABC):
         visualize_progress: bool = True,
         display_agg_df: bool = True,
     ) -> pd.DataFrame:
-        """Calculation metrics for each document using the provided executor.
+        """Calculates metrics for each document using the provided executor.
 
-        Optionally, the results can be exported and displayed.
+        * Optionally, the results can be exported and displayed.
+        * It loops through the list of structured output from all of `documents_dir` or
+        selected files from `document_paths`, and compares them with gold-standard
+        of the same file name under `ground_truths_dir` or selected files from `ground_truth_paths`.
 
         Args:
             executor: concurrent.futures.Executor instance
@@ -96,7 +108,7 @@ class BaseMetricsCalculator(ABC):
             display_agg_df: whether to display the aggregated results
 
         Returns:
-            list of metrics for each document as a pandas DataFrame
+            Metrics for each document as a pandas DataFrame
         """
         if executor is None:
             executor = self._default_executor()
@@ -147,11 +159,22 @@ class BaseMetricsCalculator(ABC):
 
     @abstractmethod
     def _process_document(self, doc: Path) -> list:
+        """Should return all metadata and metrics for a single document."""
         pass
 
 
 @dataclass
 class TableStructureMetricsCalculator(BaseMetricsCalculator):
+    """Calculates the following metrics for tables:
+        - tables found accuracy
+        - table-level accuracy
+        - element in column index accuracy
+        - element in row index accuracy
+        - element's column content accuracy
+        - element's row content accuracy
+    It also calculates the aggregated accuracy.
+    """
+
     cutoff: Optional[float] = None
 
     def __post_init__(self):
@@ -223,6 +246,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         )
 
     def _generate_dataframes(self, rows):
+        # NOTE(mike): this logic should be simplified
         suffixed_table_eval_metrics = [
             f"{metric}_with_spans" for metric in self.supported_metric_names
         ]
@@ -258,6 +282,11 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
 @dataclass
 class TextExtractionMetricsCalculator(BaseMetricsCalculator):
+    """Calculates text accuracy and percent missing between document and ground truth texts.
+
+    It also calculates the aggregated accuracy and percent missing.
+    """
+
     group_by: Optional[str] = None
     weights: tuple[int, int, int] = (1, 1, 1)
     document_type: str = "json"
@@ -281,6 +310,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         visualize_progress: bool = True,
         display_agg_df: bool = True,
     ) -> pd.DataFrame:
+        """See the parent class for the method's docstring."""
         df = super().calculate(
             executor=executor,
             export_dir=export_dir,
@@ -342,6 +372,11 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
 
 @dataclass
 class ElementTypeMetricsCalculator(BaseMetricsCalculator):
+    """
+    Calculates element type frequency accuracy, percent missing and
+    aggregated accuracy between document and ground truth.
+    """
+
     group_by: Optional[str] = None
 
     def calculate(
@@ -351,6 +386,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
         visualize_progress: bool = True,
         display_agg_df: bool = False,
     ) -> pd.DataFrame:
+        """See the parent class for the method's docstring."""
         df = super().calculate(
             executor=executor,
             export_dir=export_dir,
@@ -370,7 +406,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, doc: Path) -> Optional[list]:
+    def _process_document(self, doc: Path) -> list:
         filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
