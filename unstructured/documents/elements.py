@@ -6,7 +6,6 @@ import dataclasses as dc
 import enum
 import functools
 import hashlib
-import inspect
 import os
 import pathlib
 import re
@@ -23,7 +22,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.utils import lazyproperty
+from unstructured.utils import get_call_args_with_defaults, lazyproperty
 
 Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
@@ -568,11 +567,7 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
+            params = get_call_args_with_defaults(func, *args, **kwargs)
 
             regex_metadata: dict["str", "str"] = params.get("regex_metadata", {})
             # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
