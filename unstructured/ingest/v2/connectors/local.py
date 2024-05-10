@@ -8,17 +8,17 @@ from typing import Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.v2.interfaces import (
-    BaseDownloaderConfig,
-    BaseIndexerConfig,
-    BaseUploaderConfig,
     Destination,
     Downloader,
+    DownloaderConfig,
     FileData,
     Indexer,
+    IndexerConfig,
     Source,
     SourceIdentifiers,
     UploadContent,
     Uploader,
+    UploaderConfig,
 )
 from unstructured.ingest.v2.logging import logger
 
@@ -26,10 +26,14 @@ CONNECTOR_TYPE = "local"
 
 
 @dataclass
-class LocalIndexerConfig(BaseIndexerConfig):
-    input_path: Path
+class LocalIndexerConfig(IndexerConfig):
+    input_directory: str
     recursive: bool = False
     file_glob: Optional[list[str]] = None
+
+    @property
+    def input_path(self) -> Path:
+        return Path(self.input_directory).resolve()
 
 
 @dataclass
@@ -75,15 +79,18 @@ class LocalIndexer(Indexer):
             yield file_data
 
 
-class LocalDownloaderConfig(BaseDownloaderConfig):
+class LocalDownloaderConfig(DownloaderConfig):
     pass
 
 
 class LocalDownloader(Downloader):
     download_config: Optional[LocalDownloaderConfig] = None
 
+    def get_download_path(self, file_data: FileData) -> Path:
+        return Path(file_data.source_identifiers.fullpath)
+
     def run(self, file_data: FileData, **kwargs) -> Path:
-        return Path(file_data.source_identifiers)
+        return Path(file_data.source_identifiers.fullpath)
 
 
 @dataclass(kw_only=True)
@@ -98,8 +105,12 @@ class LocalSource(Source):
 
 
 @dataclass
-class LocalUploaderConfig(BaseUploaderConfig):
-    output_path: Path
+class LocalUploaderConfig(UploaderConfig):
+    output_directory: str
+
+    @property
+    def output_path(self) -> Path:
+        return Path(self.output_directory).resolve()
 
 
 @dataclass
