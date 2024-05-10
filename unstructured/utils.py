@@ -47,6 +47,20 @@ _T = TypeVar("_T")
 _P = ParamSpec("_P")
 
 
+def get_call_args_applying_defaults(
+    func: Callable[_P, List[Element]],
+    *args: _P.args,
+    **kwargs: _P.kwargs,
+) -> dict[str, Any]:
+    """Map both explicit and default arguments of decorated func call by param name."""
+    sig = inspect.signature(func)
+    call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+    for arg in sig.parameters.values():
+        if arg.name not in call_args and arg.default is not arg.empty:
+            call_args[arg.name] = arg.default
+    return call_args
+
+
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
     """Form an HTML table from "rows" and "columns" of `matrix`.
 
@@ -807,16 +821,3 @@ class FileHandler:
         with self.lock:
             if os.path.exists(self.file_path):
                 os.remove(self.file_path)
-
-
-def get_call_args_with_defaults(
-    func: Callable[_P, List[Element]],
-    *args: _P.args,
-    **kwargs: _P.kwargs,
-) -> dict[str, Any]:
-    sig = inspect.signature(func)
-    params: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-    for param in sig.parameters.values():
-        if param.name not in params and param.default is not param.empty:
-            params[param.name] = param.default
-    return params

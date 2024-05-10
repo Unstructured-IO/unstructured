@@ -16,7 +16,7 @@ from typing_extensions import ParamSpec
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element
-from unstructured.utils import get_call_args_with_defaults, lazyproperty
+from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 _P = ParamSpec("_P")
 
@@ -74,7 +74,7 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
         elements = func(*args, **kwargs)
 
         # -- look for a chunking-strategy argument --
-        call_args = get_call_args_with_defaults(func, *args, **kwargs)
+        call_args = get_call_args_applying_defaults(func, *args, **kwargs)
         chunking_strategy = call_args.pop("chunking_strategy", None)
 
         # -- no chunking-strategy means no chunking --
