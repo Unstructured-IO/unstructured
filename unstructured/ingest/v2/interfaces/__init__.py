@@ -1,25 +1,27 @@
 from .destination import Destination
-from .downloader import BaseDownloaderConfig, Downloader
+from .downloader import Downloader, DownloaderConfig
 from .file_data import FileData, SourceIdentifiers
-from .indexer import BaseIndexerConfig, Indexer
+from .indexer import Indexer, IndexerConfig
 from .process import BaseProcess
+from .processor import ProcessorConfig
 from .source import Source
-from .upload_stager import BaseUploadStagerConfig, UploadStager
-from .uploader import BaseUploaderConfig, UploadContent, Uploader
+from .upload_stager import UploadStager, UploadStagerConfig
+from .uploader import UploadContent, Uploader, UploaderConfig
 
 __all__ = [
     "Destination",
     "Downloader",
-    "BaseDownloaderConfig",
+    "DownloaderConfig",
     "FileData",
     "Indexer",
-    "BaseIndexerConfig",
+    "IndexerConfig",
     "BaseProcess",
+    "ProcessorConfig",
     "Source",
     "UploadStager",
-    "BaseUploadStagerConfig",
+    "UploadStagerConfig",
     "Uploader",
-    "BaseUploaderConfig",
+    "UploaderConfig",
     "SourceIdentifiers",
     "UploadContent",
 ]

@@ -2,17 +2,19 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Generator, Optional, TypeVar
 
+from dataclasses_json import DataClassJsonMixin
+
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class BaseIndexerConfig:
+class IndexerConfig(DataClassJsonMixin):
     pass
 
 
-config_type = TypeVar("config_type", bound=BaseIndexerConfig)
+config_type = TypeVar("config_type", bound=IndexerConfig)
 
 
 @dataclass

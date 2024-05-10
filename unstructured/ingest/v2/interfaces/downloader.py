@@ -9,11 +9,11 @@ from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class BaseDownloaderConfig:
-    pass
+class DownloaderConfig:
+    download_dir: Optional[Path] = ""
 
 
-config_type = TypeVar("config_type", bound=BaseDownloaderConfig)
+config_type = TypeVar("config_type", bound=DownloaderConfig)
 
 
 @dataclass
@@ -24,8 +24,12 @@ class Downloader(BaseProcess, BaseConnector, ABC):
         return True
 
     @abstractmethod
+    def get_download_path(self, file_data: FileData) -> Path:
+        pass
+
+    @abstractmethod
     def run(self, file_data: FileData, **kwargs) -> Path:
         pass
 
     async def run_async(self, file_data: FileData, **kwargs) -> Path:
-        return self.run(**kwargs)
+        return self.run(file_data=file_data, **kwargs)
