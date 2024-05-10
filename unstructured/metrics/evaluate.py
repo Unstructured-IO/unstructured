@@ -343,7 +343,13 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
         output_cct, source_cct = self._get_ccts(doc)
-        accuracy = round(calculate_accuracy(output_cct, source_cct, self.weights), 3)
+        # NOTE(amadeusz): Levenshtein distance calculation takes too long
+        # skip it if file sizes differ wildly
+        if 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0:
+            accuracy = round(calculate_accuracy(output_cct, source_cct, self.weights), 3)
+        else:
+            # 0.01 to distinguish it was set manually
+            accuracy = 0.01
         percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
         return [filename, doctype, connector, accuracy, percent_missing]
 
