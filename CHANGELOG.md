@@ -1,4 +1,4 @@
-## 0.13.8-dev1
+## 0.13.8-dev2
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 
 * **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Re-apply: skip accuracy calculation feature** Overwritten by mistake
 
 ## 0.13.7
 
