@@ -111,19 +111,23 @@ def partition_csv(
     return list(elements)
 
 
-def get_delimiter(file_path=None, file=None):
-    """
-    Use the standard csv sniffer to determine the delimiter.
-    Read just a small portion in case the file is large.
+def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
+    """Use the standard csv sniffer to determine the delimiter.
+
+    Reads just a small portion in case the file is large.
     """
     sniffer = csv.Sniffer()
+    num_bytes = 65536
 
-    num_bytes = 8192
+    # -- read whole lines, sniffer can be confused by a trailing partial line --
     if file:
-        data = file.read(num_bytes).decode("utf-8")
+        lines = file.readlines(num_bytes)
         file.seek(0)
-    else:
+        data = "\n".join(ln.decode("utf-8") for ln in lines)
+    elif file_path is not None:
         with open(file_path) as f:
-            data = f.read(num_bytes)
+            data = "\n".join(f.readlines(num_bytes))
+    else:
+        raise ValueError("either `file_path` or `file` argument must be provided")
 
-    return sniffer.sniff(data, delimiters=[",", ";"]).delimiter
+    return sniffer.sniff(data, delimiters=",;").delimiter
