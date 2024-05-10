@@ -16,7 +16,6 @@ from unstructured.documents.elements import (
     Address,
     CompositeElement,
     Element,
-    ElementType,
     Footer,
     Header,
     ListItem,
@@ -131,6 +130,133 @@ class Describe_DocxPartitioner:
         """
         table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
         assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
+
+    def it_can_partition_tables_with_incomplete_rows(self):
+        """DOCX permits table rows to start late and end early.
+
+        It is relatively rare in the wild, but DOCX tables are unique (as far as I know) in that
+        they allow rows to start late, like in column 3, and end early, like the last cell is in
+        column 5 of a 7 column table.
+
+        A practical example might look like this:
+
+                       +------+------+
+                       | East | West |
+            +----------+------+------+
+            | Started  |  25  |  32  |
+            +----------+------+------+
+            | Finished |  17  |  21  |
+            +----------+------+------+
+        """
+        elements = iter(partition_docx(example_doc_path("tables-with-incomplete-rows.docx")))
+
+        e = next(elements)
+        assert e.text.startswith("Example of DOCX table ")
+        # --
+        # ┌───┬───┐
+        # │ a │ b │
+        # ├───┼───┤
+        # │ c │ d │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
+            "</table>"
+        )
+        # --
+        # ┌───┐
+        # │ a │
+        # ├───┼───┐
+        # │ b │ c │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───────┐
+        # │   a   │
+        # ├───┬───┼───┐
+        # │ b │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───┬───┐
+        # │   │ b │
+        # │ a ├───┼───┐
+        # │   │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # -- late-start, early-end, and >2 rows vertical span --
+        # ┌───────┬───┬───┐
+        # │   a   │ b │ c │
+        # └───┬───┴───┼───┘
+        #     │   d   │
+        # ┌───┤       ├───┐
+        # │ e │       │ f │
+        # └───┤       ├───┘
+        #     │       │
+        #     └───────┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d e f", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
+            "</thead>\n<tbody>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # -- The table from the specimen file we received with the bug report. --
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
+            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
+            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
+            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
 
     # -- page-break behaviors --------------------------------------------------------------------
 
@@ -299,11 +425,7 @@ def test_parition_docx_from_team_chat():
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
         "saved-by Dennis Forsythe",
     ]
-    assert [e.category for e in elements] == [
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.TABLE,
-    ]
+    assert [type(e) for e in elements] == [Text, Text, Table]
 
 
 @pytest.mark.parametrize("infer_table_structure", [True, False])
@@ -687,7 +809,7 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
         filename = "example-docs/handbook-1p.docx"
         partition_docx(
             filename=filename,
-            languages="eng",  # pyright: ignore[reportGeneralTypeIssues]
+            languages="eng",  # pyright: ignore[reportArgumentType]
         )
 
 

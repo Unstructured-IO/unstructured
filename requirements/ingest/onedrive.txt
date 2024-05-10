@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via
     #   msal
     #   pyjwt

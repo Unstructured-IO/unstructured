@@ -12,20 +12,11 @@ from PIL import Image as PILImage
 from PIL import ImageSequence
 
 from unstructured.documents.elements import ElementType
-from unstructured.logger import logger
 from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import (
-    OCR_AGENT_PADDLE,
-    OCR_AGENT_PADDLE_OLD,
-    OCR_AGENT_TESSERACT,
-    OCR_AGENT_TESSERACT_OLD,
-    OCRMode,
-)
-from unstructured.partition.utils.ocr_models.ocr_interface import (
-    OCRAgent,
-)
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
@@ -33,12 +24,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
     from unstructured_inference.models.tables import UnstructuredTableTransformerModel
-
-
-# Force tesseract to be single threaded,
-# otherwise we see major performance problems
-if "OMP_THREAD_LIMIT" not in os.environ:
-    os.environ["OMP_THREAD_LIMIT"] = "1"
 
 
 def process_data_with_ocr(
@@ -200,7 +185,7 @@ def supplement_page_layout_with_ocr(
     with no text and add text from OCR to each element.
     """
 
-    ocr_agent = get_ocr_agent()
+    ocr_agent = OCRAgent.get_agent()
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = ocr_agent.get_layout_from_image(
             image,
@@ -453,34 +438,3 @@ def supplement_layout_with_ocr_elements(
         final_layout = layout
 
     return final_layout
-
-
-def get_ocr_agent() -> OCRAgent:
-    ocr_agent_module = env_config.OCR_AGENT
-    message = (
-        "OCR agent name %s is outdated and will be deprecated in a future release; please use %s "
-        "instead"
-    )
-    # deal with compatibility with origin way to set OCR
-    if ocr_agent_module.lower() == OCR_AGENT_TESSERACT_OLD:
-        logger.warning(
-            message,
-            ocr_agent_module,
-            OCR_AGENT_TESSERACT,
-        )
-        ocr_agent_module = OCR_AGENT_TESSERACT
-    elif ocr_agent_module.lower() == OCR_AGENT_PADDLE_OLD:
-        logger.warning(
-            message,
-            ocr_agent_module,
-            OCR_AGENT_PADDLE,
-        )
-        ocr_agent_module = OCR_AGENT_PADDLE
-    try:
-        ocr_agent = OCRAgent.get_instance(ocr_agent_module)
-    except (ImportError, AttributeError):
-        raise ValueError(
-            "Environment variable OCR_AGENT",
-            f" must be set to an existing ocr agent module, not {ocr_agent_module}.",
-        )
-    return ocr_agent

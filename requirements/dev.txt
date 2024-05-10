@@ -27,7 +27,7 @@ attrs==23.2.0
     # via
     #   jsonschema
     #   referencing
-babel==2.14.0
+babel==2.15.0
     # via jupyterlab-server
 backcall==0.2.0
     # via ipython
@@ -81,7 +81,7 @@ executing==2.0.1
     # via stack-data
 fastjsonschema==2.19.1
     # via nbformat
-filelock==3.13.4
+filelock==3.14.0
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -128,7 +128,7 @@ isoduration==20.11.0
     # via jsonschema
 jedi==0.19.1
     # via ipython
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   jupyter-server
     #   jupyterlab
@@ -138,7 +138,7 @@ json5==0.9.25
     # via jupyterlab-server
 jsonpointer==2.4
     # via jsonschema
-jsonschema[format-nongpl]==4.21.1
+jsonschema[format-nongpl]==4.22.0
     # via
     #   jupyter-events
     #   jupyterlab-server
@@ -203,7 +203,7 @@ mistune==3.0.2
     # via nbconvert
 nbclient==0.10.0
     # via nbconvert
-nbconvert==7.16.3
+nbconvert==7.16.4
     # via
     #   jupyter
     #   jupyter-server
@@ -271,13 +271,13 @@ pure-eval==0.2.2
     # via stack-data
 pycparser==2.22
     # via cffi
-pygments==2.17.2
+pygments==2.18.0
     # via
     #   ipython
     #   jupyter-console
     #   nbconvert
     #   qtconsole
-pyproject-hooks==1.0.0
+pyproject-hooks==1.1.0
     # via
     #   build
     #   pip-tools
@@ -294,18 +294,18 @@ pyyaml==6.0.1
     #   -c ./test.txt
     #   jupyter-events
     #   pre-commit
-pyzmq==26.0.2
+pyzmq==26.0.3
     # via
     #   ipykernel
     #   jupyter-client
     #   jupyter-console
     #   jupyter-server
     #   qtconsole
-qtconsole==5.5.1
+qtconsole==5.5.2
     # via jupyter
 qtpy==2.4.1
     # via qtconsole
-referencing==0.35.0
+referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -323,7 +323,7 @@ rfc3986-validator==0.1.1
     # via
     #   jsonschema
     #   jupyter-events
-rpds-py==0.18.0
+rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
@@ -359,7 +359,6 @@ tomli==2.0.1
     #   build
     #   jupyterlab
     #   pip-tools
-    #   pyproject-hooks
 tornado==6.4
     # via
     #   ipykernel
@@ -401,7 +400,7 @@ urllib3==1.26.18
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.26.0
+virtualenv==20.26.1
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
