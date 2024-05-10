@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional
+
+from dataclasses_json import DataClassJsonMixin
 
 from unstructured.documents.elements import DataSourceMetadata
 
@@ -27,13 +29,10 @@ class SourceIdentifiers:
         return self.rel_path or self.fullpath
 
 
-source_id_type = TypeVar("source_id_type", bound=SourceIdentifiers)
-
-
 @dataclass
-class FileData:
+class FileData(DataClassJsonMixin):
     identifier: str
     connector_type: str
-    source_identifiers: source_id_type
+    source_identifiers: SourceIdentifiers
     doc_type: IndexDocType = field(default=IndexDocType.FILE)
     metadata: Optional[DataSourceMetadata] = None

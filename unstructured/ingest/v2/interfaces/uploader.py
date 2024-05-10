@@ -9,11 +9,11 @@ from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class BaseUploaderConfig:
+class UploaderConfig:
     pass
 
 
-config_type = TypeVar("config_type", bound=BaseUploaderConfig)
+config_type = TypeVar("config_type", bound=UploaderConfig)
 
 
 @dataclass
