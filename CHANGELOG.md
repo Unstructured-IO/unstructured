@@ -1,11 +1,36 @@
-## 0.13.7-dev0
+## 0.13.8-dev2
 
 ### Enhancements
-* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+
+**Faster evaluation** Support for concurrent processing of documents during evaluation
 
 ### Features
 
 ### Fixes
+
+* **Add missing starting_page_num param to partition_image**
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Re-apply: skip accuracy calculation feature** Overwritten by mistake
+
+## 0.13.7
+
+### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
+
+### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+* **Remove unnecessary warning log for using default layout model.**
+* **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element, chunking is made available because the Table element is often larger than the desired chunk size and must be divided into smaller chunks.
 
 ## 0.13.6
 

@@ -1,4 +1,6 @@
-"""partition.py implements logic for partitioning plain text documents into sections."""
+"""Provides functions for classifying text for Element selection during partitioning."""
+
+from __future__ import annotations
 
 import os
 import re

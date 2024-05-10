@@ -38,13 +38,13 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.23.6
+openai==1.26.0
     # via -r ./ingest/embed-octoai.in
 pydantic==2.7.1
     # via openai
 pydantic-core==2.18.2
     # via pydantic
-regex==2024.4.16
+regex==2024.4.28
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
@@ -59,7 +59,7 @@ sniffio==1.3.1
     #   openai
 tiktoken==0.6.0
     # via -r ./ingest/embed-octoai.in
-tqdm==4.66.2
+tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   openai

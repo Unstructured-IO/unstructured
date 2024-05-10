@@ -6,11 +6,11 @@
 #
 attrdict==2.0.1
     # via unstructured-paddleocr
-babel==2.14.0
+babel==2.15.0
     # via flask-babel
 bce-python-sdk==0.9.7
     # via visualdl
-blinker==1.8.0
+blinker==1.8.2
     # via flask
 cachetools==5.3.3
     # via premailer
@@ -65,7 +65,7 @@ importlib-resources==6.4.0
     # via matplotlib
 itsdangerous==2.2.0
     # via flask
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   flask
     #   flask-babel
@@ -77,9 +77,8 @@ lazy-loader==0.4
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
-lxml==4.9.4
+lxml==5.2.1
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   premailer
     #   unstructured-paddleocr
@@ -168,7 +167,7 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.8.1
+rapidfuzz==3.9.0
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -200,9 +199,9 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.4.24
+tifffile==2024.5.3
     # via scikit-image
-tqdm==4.66.2
+tqdm==4.66.4
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -217,7 +216,7 @@ urllib3==1.26.18
     #   requests
 visualdl==2.5.3
     # via unstructured-paddleocr
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via flask
 zipp==3.18.1
     # via
