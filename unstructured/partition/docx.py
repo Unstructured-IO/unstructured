@@ -238,6 +238,159 @@ def partition_docx(
     return list(elements)
 
 
+class DocxPartitionerOptions:
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
+
+    def __init__(
+        self,
+        *,
+        date_from_file_object: bool,
+        file: IO[bytes] | None,
+        file_path: str | None,
+        include_page_breaks: bool,
+        infer_table_structure: bool,
+        metadata_file_path: Optional[str],
+        metadata_last_modified: Optional[str],
+        starting_page_number: int = 1,
+    ):
+        self._date_from_file_object = date_from_file_object
+        self._file = file
+        self._file_path = file_path
+        self._include_page_breaks = include_page_breaks
+        self._infer_table_structure = infer_table_structure
+        self._metadata_file_path = metadata_file_path
+        self._metadata_last_modified = metadata_last_modified
+        # -- options object maintains page-number state --
+        self._page_counter = starting_page_number
+
+    @lazyproperty
+    def document(self) -> Document:
+        """The python-docx `Document` object loaded from file or filename."""
+        return docx.Document(self._docx_file)
+
+    @lazyproperty
+    def include_page_breaks(self) -> bool:
+        """When True, include `PageBreak` elements in element-stream.
+
+        Note that regardless of this setting, page-breaks are detected, and page-number is tracked
+        and included in element metadata. Only the presence of distinct `PageBreak` elements (which
+        contain no text) in the element stream is affected.
+        """
+        return self._include_page_breaks
+
+    def increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        # -- only emit page-breaks when enabled --
+        if self._include_page_breaks:
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
+
+    @lazyproperty
+    def infer_table_structure(self) -> bool:
+        """True when partitioner should compute and apply `text_as_html` metadata for tables."""
+        return self._infer_table_structure
+
+    @lazyproperty
+    def last_modified(self) -> Optional[str]:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format, and any last-modified date for the file
+        # -- would be just now.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return (
+                None
+                if is_temp_file_path(self._file_path)
+                else get_last_modified_date(self._file_path)
+            )
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @lazyproperty
+    def metadata_file_path(self) -> str | None:
+        """The best available file-path for this document or `None` if unavailable."""
+        return self._metadata_file_path or self._file_path
+
+    @property
+    def metadata_page_number(self) -> Optional[int]:
+        """The current page number to report in metadata, or None if we can't really tell.
+
+        Page numbers are not added to element metadata if we can't find any page-breaks in the
+        document (which may be a common case).
+
+        In the DOCX format, determining page numbers is strictly a best-efforts attempt since
+        actual page-breaks are determined at rendering time (e.g. printing) based on the
+        font-metrics of the target device. Explicit (hard) page-breaks are always recorded in the
+        docx file but the rendered page-breaks are only added optionally.
+        """
+        return self._page_counter if self._document_contains_pagebreaks else None
+
+    @property
+    def page_number(self) -> int:
+        """The current page number.
+
+        Note this value may not represent the actual rendered page number when rendered page-break
+        indicators are not present in the document (not uncommon). Use `.metadata_page_number` for
+        metadata purposes, which is `None` when rendered page-breaks are not present in this
+        document.
+        """
+        return self._page_counter
+
+    @lazyproperty
+    def _document_contains_pagebreaks(self) -> bool:
+        """True when there is at least one page-break detected in the document.
+
+        Only `w:lastRenderedPageBreak` elements reliably indicate a page-break. These are reliably
+        inserted by Microsoft Word, but probably don't appear in documents converted into .docx
+        format from for example .odt format.
+        """
+        xpath = (
+            # NOTE(scanny) - w:lastRenderedPageBreak (lrpb) is run (w:r) inner content. `w:r` can
+            # appear in a paragraph (w:p). w:r can also appear in a hyperlink (w:hyperlink), which
+            # is w:p inner-content and both of these can occur inside a table-cell as well as the
+            # document body
+            "./w:body/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+        )
+
+        return bool(self.document.element.xpath(xpath))
+
+    @lazyproperty
+    def _docx_file(self) -> str | IO[bytes]:
+        """The Word 2007+ document file to be partitioned.
+
+        This is either a `str` path or a file-like object. `python-docx` accepts either for opening
+        a document file.
+        """
+        if self._file_path:
+            return self._file_path
+
+        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
+        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
+        # -- to work around that bug here.
+        if isinstance(self._file, tempfile.SpooledTemporaryFile):
+            self._file.seek(0)
+            return io.BytesIO(self._file.read())
+
+        if self._file:
+            return self._file
+
+        raise ValueError(
+            "No DOCX document specified, either `filename` or `file` argument must be provided"
+        )
+
+
 class _DocxPartitioner:
     """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
 
