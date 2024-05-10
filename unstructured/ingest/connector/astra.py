@@ -76,10 +76,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             requested_indexing_policy = self.connector_config.requested_indexing_policy
 
             # If the user has requested an indexing policy, pass it to the AstraDB
-            if requested_indexing_policy is not None:
-                _options = {"indexing": requested_indexing_policy}
-            else:
-                _options = None
+            options = {"indexing": requested_indexing_policy} if requested_indexing_policy else None
 
             # Build the Astra DB object.
             # caller_name/version for AstraDB tracking
@@ -95,7 +92,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
             self._astra_db_collection = self._astra_db.create_collection(
                 collection_name=collection_name,
                 dimension=embedding_dimension,
-                options=_options,
+                options=options,
             )
         return self._astra_db_collection
 
