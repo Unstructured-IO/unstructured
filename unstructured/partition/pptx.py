@@ -92,7 +92,7 @@ def partition_pptx(
     date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
     include_page_breaks: bool = True,
-    include_slide_notes: bool = False,
+    include_slide_notes: Optional[bool] = None,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
@@ -376,7 +376,7 @@ class PptxPartitionerOptions:
         file: Optional[IO[bytes]],
         file_path: Optional[str],
         include_page_breaks: bool,
-        include_slide_notes: bool,
+        include_slide_notes: Optional[bool],
         infer_table_structure: bool,
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
@@ -413,7 +413,7 @@ class PptxPartitionerOptions:
     @lazyproperty
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
-        return self._include_slide_notes
+        return False if self._include_slide_notes is None else self._include_slide_notes
 
     def increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
