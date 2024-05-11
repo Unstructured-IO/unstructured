@@ -14,6 +14,7 @@
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
 * **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 
 ## 0.13.7
 
