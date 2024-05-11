@@ -29,322 +29,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.docx import _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
-
-class Describe_DocxPartitioner:
-    """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
-
-    # -- table behaviors -------------------------------------------------------------------------
-
-    def it_can_convert_a_table_to_html(self):
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert _DocxPartitioner()._convert_table_to_html(table) == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
-            "</tbody>\n"
-            "</table>"
-        )
-
-    def and_it_can_convert_a_nested_table_to_html(self):
-        """
-        Fixture table is:
-
-            +---+-------------+---+
-            | a |     >b<     | c |
-            +---+-------------+---+
-            |   | +-----+---+ |   |
-            |   | |  e  | f | |   |
-            | d | +-----+---+ | i |
-            |   | | g&t | h | |   |
-            |   | +-----+---+ |   |
-            +---+-------------+---+
-            | j |      k      | l |
-            +---+-------------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-
-        # -- re.sub() strips out the extra padding inserted by tabulate --
-        html = re.sub(r" +<", "<", _DocxPartitioner()._convert_table_to_html(table))
-
-        expected_lines = [
-            "<table>",
-            "<thead>",
-            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
-            "</thead>",
-            "<tbody>",
-            "<tr><td>d</td><td><table>",
-            "<tbody>",
-            "<tr><td>e</td><td>f</td></tr>",
-            "<tr><td>g&amp;t</td><td>h</td></tr>",
-            "</tbody>",
-            "</table></td><td>i</td></tr>",
-            "<tr><td>j</td><td>k</td><td>l</td></tr>",
-            "</tbody>",
-            "</table>",
-        ]
-        actual_lines = html.splitlines()
-        for expected, actual in zip(expected_lines, actual_lines):
-            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
-
-    def it_can_convert_a_table_to_plain_text(self):
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
-            "Header Col 1 Header Col 2 Lorem ipsum A link example"
-        )
-
-    def and_it_can_convert_a_nested_table_to_plain_text(self):
-        """
-        Fixture table is:
-
-            +---+-------------+---+
-            | a |     >b<     | c |
-            +---+-------------+---+
-            |   | +-----+---+ |   |
-            |   | |  e  | f | |   |
-            | d | +-----+---+ | i |
-            |   | | g&t | h | |   |
-            |   | +-----+---+ |   |
-            +---+-------------+---+
-            | j |      k      | l |
-            +---+-------------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
-            "a >b< c d e f g&t h i j k l"
-        )
-
-    def but_the_text_of_a_merged_cell_appears_only_once(self):
-        """
-        Fixture table is:
-
-            +---+-------+
-            | a | b     |
-            |   +---+---+
-            |   | c | d |
-            +---+---+   |
-            | e     |   |
-            +-------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
-
-    def it_can_partition_tables_with_incomplete_rows(self):
-        """DOCX permits table rows to start late and end early.
-
-        It is relatively rare in the wild, but DOCX tables are unique (as far as I know) in that
-        they allow rows to start late, like in column 3, and end early, like the last cell is in
-        column 5 of a 7 column table.
-
-        A practical example might look like this:
-
-                       +------+------+
-                       | East | West |
-            +----------+------+------+
-            | Started  |  25  |  32  |
-            +----------+------+------+
-            | Finished |  17  |  21  |
-            +----------+------+------+
-        """
-        elements = iter(partition_docx(example_doc_path("tables-with-incomplete-rows.docx")))
-
-        e = next(elements)
-        assert e.text.startswith("Example of DOCX table ")
-        # --
-        # ┌───┬───┐
-        # │ a │ b │
-        # ├───┼───┤
-        # │ c │ d │
-        # └───┴───┘
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "a b c d"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
-            "</table>"
-        )
-        # --
-        # ┌───┐
-        # │ a │
-        # ├───┼───┐
-        # │ b │ c │
-        # └───┴───┘
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "a b c", f"actual {e.text=}"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
-            "</table>"
-        ), f"actual {e.metadata.text_as_html=}"
-        # --
-        # ┌───────┐
-        # │   a   │
-        # ├───┬───┼───┐
-        # │ b │ c │ d │
-        # └───┴───┴───┘
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "a b c d", f"actual {e.text=}"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
-            "</table>"
-        ), f"actual {e.metadata.text_as_html=}"
-        # --
-        # ┌───┬───┐
-        # │   │ b │
-        # │ a ├───┼───┐
-        # │   │ c │ d │
-        # └───┴───┴───┘
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "a b c d", f"actual {e.text=}"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
-            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
-            "</table>"
-        ), f"actual {e.metadata.text_as_html=}"
-        # -- late-start, early-end, and >2 rows vertical span --
-        # ┌───────┬───┬───┐
-        # │   a   │ b │ c │
-        # └───┬───┴───┼───┘
-        #     │   d   │
-        # ┌───┤       ├───┐
-        # │ e │       │ f │
-        # └───┤       ├───┘
-        #     │       │
-        #     └───────┘
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "a b c d e f", f"actual {e.text=}"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
-            "</thead>\n<tbody>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
-            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
-            "</tbody>\n"
-            "</table>"
-        ), f"actual {e.metadata.text_as_html=}"
-        # --
-        # -- The table from the specimen file we received with the bug report. --
-        e = next(elements)
-        assert type(e).__name__ == "Table"
-        assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
-        assert e.metadata.text_as_html == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
-            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
-            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
-            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
-            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
-            "</tbody>\n"
-            "</table>"
-        ), f"actual {e.metadata.text_as_html=}"
-
-    # -- page-break behaviors --------------------------------------------------------------------
-
-    def it_places_page_breaks_precisely_where_they_occur(self):
-        """Page-break behavior has some subtleties.
-
-        * A hard page-break does not generate a PageBreak element (because that would double-count
-          it). Word inserts a rendered page-break for the hard break at the effective location.
-        * A (rendered) page-break mid-paragraph produces two elements, like `Text, PageBreak, Text`,
-          so each Text (subclass) element gets the right page-number.
-        * A rendered page-break mid-hyperlink produces two text elements, but the hyperlink itself
-          is not split; the entire hyperlink goes on the page where the hyperlink starts, even
-          though some of its text appears on the following page. The rest of the paragraph, after
-          the hyperlink, appears on the following page.
-        * Odd and even-page section starts can lead to two page-breaks, like an odd-page section
-          start could go from page 3 to page 5 because 5 is the next odd page.
-        """
-
-        def str_repr(e: Element) -> str:
-            """A more detailed `repr()` to aid debugging when assertion fails."""
-            return f"{e.__class__.__name__}('{e}')"
-
-        expected = [
-            # NOTE(scanny) - -- page 1 --
-            NarrativeText(
-                "First page, tab here:\t"
-                "followed by line-break here:\n"
-                "here:\n"
-                "and here:\n"
-                "no-break hyphen here:-"
-                "and hard page-break here>>"
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 2 --
-            NarrativeText(
-                "<<Text on second page. The font is big so it breaks onto third page--"
-                "------------------here-->> <<but break falls inside link so text stays"
-                " together."
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 3 --
-            NarrativeText("Continuous section break here>>"),
-            NarrativeText("<<followed by text on same page"),
-            NarrativeText("Odd-page section break here>>"),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 4 --
-            PageBreak(""),
-            # NOTE(scanny) - -- page 5 --
-            NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
-            NarrativeText(
-                'Then text gets big again so a "natural" rendered page break happens again here>> '
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 6 --
-            Title("<<and then more text proceeds."),
-        ]
-
-        elements = _DocxPartitioner.iter_document_elements(example_doc_path("page-breaks.docx"))
-
-        for idx, e in enumerate(elements):
-            assert e == expected[idx], (
-                f"\n\nExpected: {str_repr(expected[idx])}"
-                # --
-                f"\n\nGot:      {str_repr(e)}\n"
-            )
-
-    # -- header/footer behaviors -----------------------------------------------------------------
-
-    def it_includes_table_cell_text_in_Header_text(self):
-        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
-        section = partitioner._document.sections[0]
-
-        header_iter = partitioner._iter_section_headers(section)
-
-        element = next(header_iter)
-        assert element.text == "First header para\nTable cell1 Table cell2\nLast header para"
-
-    def it_includes_table_cell_text_in_Footer_text(self):
-        """This case also verifies nested-table and merged-cell behaviors."""
-        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
-        section = partitioner._document.sections[0]
-
-        footer_iter = partitioner._iter_section_footers(section)
-
-        element = next(footer_iter)
-        assert element.text == "para1\ncell1 a b c d e f\npara2"
-
-
 # -- docx-file loading behaviors -----------------------------------------------------------------
 
 
@@ -1003,3 +687,326 @@ def test_ids_are_unique_and_deterministic():
         "f36e8ebcb3b6a051940a168fe73cbc44",
         "532b395177652c7d61e1e4d855f1dc1d",
     ], "IDs are not deterministic"
+
+
+# ================================================================================================
+# ISOLATED UNIT TESTS
+# ================================================================================================
+# These test components used by `partition_docx()` in isolation such that all edge cases can be
+# exercised.
+# ================================================================================================
+
+
+class Describe_DocxPartitioner:
+    """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
+
+    # -- table behaviors -------------------------------------------------------------------------
+
+    def it_can_convert_a_table_to_html(self):
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+        assert _DocxPartitioner()._convert_table_to_html(table) == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+
+    def and_it_can_convert_a_nested_table_to_html(self):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+
+        # -- re.sub() strips out the extra padding inserted by tabulate --
+        html = re.sub(r" +<", "<", _DocxPartitioner()._convert_table_to_html(table))
+
+        expected_lines = [
+            "<table>",
+            "<thead>",
+            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
+            "</thead>",
+            "<tbody>",
+            "<tr><td>d</td><td><table>",
+            "<tbody>",
+            "<tr><td>e</td><td>f</td></tr>",
+            "<tr><td>g&amp;t</td><td>h</td></tr>",
+            "</tbody>",
+            "</table></td><td>i</td></tr>",
+            "<tr><td>j</td><td>k</td><td>l</td></tr>",
+            "</tbody>",
+            "</table>",
+        ]
+        actual_lines = html.splitlines()
+        for expected, actual in zip(expected_lines, actual_lines):
+            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
+
+    def it_can_convert_a_table_to_plain_text(self):
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "Header Col 1 Header Col 2 Lorem ipsum A link example"
+        )
+
+    def and_it_can_convert_a_nested_table_to_plain_text(self):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
+            "a >b< c d e f g&t h i j k l"
+        )
+
+    def but_the_text_of_a_merged_cell_appears_only_once(self):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
+
+    def it_can_partition_tables_with_incomplete_rows(self):
+        """DOCX permits table rows to start late and end early.
+
+        It is relatively rare in the wild, but DOCX tables are unique (as far as I know) in that
+        they allow rows to start late, like in column 3, and end early, like the last cell is in
+        column 5 of a 7 column table.
+
+        A practical example might look like this:
+
+                       +------+------+
+                       | East | West |
+            +----------+------+------+
+            | Started  |  25  |  32  |
+            +----------+------+------+
+            | Finished |  17  |  21  |
+            +----------+------+------+
+        """
+        elements = iter(partition_docx(example_doc_path("tables-with-incomplete-rows.docx")))
+
+        e = next(elements)
+        assert e.text.startswith("Example of DOCX table ")
+        # --
+        # ┌───┬───┐
+        # │ a │ b │
+        # ├───┼───┤
+        # │ c │ d │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
+            "</table>"
+        )
+        # --
+        # ┌───┐
+        # │ a │
+        # ├───┼───┐
+        # │ b │ c │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───────┐
+        # │   a   │
+        # ├───┬───┼───┐
+        # │ b │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───┬───┐
+        # │   │ b │
+        # │ a ├───┼───┐
+        # │   │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # -- late-start, early-end, and >2 rows vertical span --
+        # ┌───────┬───┬───┐
+        # │   a   │ b │ c │
+        # └───┬───┴───┼───┘
+        #     │   d   │
+        # ┌───┤       ├───┐
+        # │ e │       │ f │
+        # └───┤       ├───┘
+        #     │       │
+        #     └───────┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d e f", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
+            "</thead>\n<tbody>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # -- The table from the specimen file we received with the bug report. --
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
+            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
+            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
+            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+
+    # -- page-break behaviors --------------------------------------------------------------------
+
+    def it_places_page_breaks_precisely_where_they_occur(self):
+        """Page-break behavior has some subtleties.
+
+        * A hard page-break does not generate a PageBreak element (because that would double-count
+          it). Word inserts a rendered page-break for the hard break at the effective location.
+        * A (rendered) page-break mid-paragraph produces two elements, like `Text, PageBreak, Text`,
+          so each Text (subclass) element gets the right page-number.
+        * A rendered page-break mid-hyperlink produces two text elements, but the hyperlink itself
+          is not split; the entire hyperlink goes on the page where the hyperlink starts, even
+          though some of its text appears on the following page. The rest of the paragraph, after
+          the hyperlink, appears on the following page.
+        * Odd and even-page section starts can lead to two page-breaks, like an odd-page section
+          start could go from page 3 to page 5 because 5 is the next odd page.
+        """
+
+        def str_repr(e: Element) -> str:
+            """A more detailed `repr()` to aid debugging when assertion fails."""
+            return f"{e.__class__.__name__}('{e}')"
+
+        expected = [
+            # NOTE(scanny) - -- page 1 --
+            NarrativeText(
+                "First page, tab here:\t"
+                "followed by line-break here:\n"
+                "here:\n"
+                "and here:\n"
+                "no-break hyphen here:-"
+                "and hard page-break here>>"
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 2 --
+            NarrativeText(
+                "<<Text on second page. The font is big so it breaks onto third page--"
+                "------------------here-->> <<but break falls inside link so text stays"
+                " together."
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 3 --
+            NarrativeText("Continuous section break here>>"),
+            NarrativeText("<<followed by text on same page"),
+            NarrativeText("Odd-page section break here>>"),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 4 --
+            PageBreak(""),
+            # NOTE(scanny) - -- page 5 --
+            NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
+            NarrativeText(
+                'Then text gets big again so a "natural" rendered page break happens again here>> '
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 6 --
+            Title("<<and then more text proceeds."),
+        ]
+
+        elements = _DocxPartitioner.iter_document_elements(example_doc_path("page-breaks.docx"))
+
+        for idx, e in enumerate(elements):
+            assert e == expected[idx], (
+                f"\n\nExpected: {str_repr(expected[idx])}"
+                # --
+                f"\n\nGot:      {str_repr(e)}\n"
+            )
+
+    # -- header/footer behaviors -----------------------------------------------------------------
+
+    def it_includes_table_cell_text_in_Header_text(self):
+        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
+        section = partitioner._document.sections[0]
+
+        header_iter = partitioner._iter_section_headers(section)
+
+        element = next(header_iter)
+        assert element.text == "First header para\nTable cell1 Table cell2\nLast header para"
+
+    def it_includes_table_cell_text_in_Footer_text(self):
+        """This case also verifies nested-table and merged-cell behaviors."""
+        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
+        section = partitioner._document.sections[0]
+
+        footer_iter = partitioner._iter_section_footers(section)
+
+        element = next(footer_iter)
+        assert element.text == "para1\ncell1 a b c d e f\npara2"
