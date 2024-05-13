@@ -40,7 +40,10 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.docx import DocxPartitionerOptions, _DocxPartitioner, partition_docx
-from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
+from unstructured.partition.utils.constants import (
+    UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
+    PartitionStrategy,
+)
 
 # -- docx-file loading behaviors -----------------------------------------------------------------
 
@@ -701,6 +704,7 @@ def opts_args() -> dict[str, Any]:
         "infer_table_structure": True,
         "metadata_file_path": None,
         "metadata_last_modified": None,
+        "strategy": None,
     }
 
 
@@ -904,6 +908,20 @@ class DescribeDocxPartitionerOptions:
         assert opts.page_number == 3
         list(opts.increment_page_number())
         assert opts.page_number == 4
+
+    # -- .strategy -------------------------------
+
+    @pytest.mark.parametrize(
+        ("arg_value", "expected_value"),
+        [(None, "hi_res"), (PartitionStrategy.FAST, "fast"), (PartitionStrategy.HI_RES, "hi_res")],
+    )
+    def it_knows_which_partitioning_strategy_to_use(
+        self, opts_args: dict[str, Any], arg_value: str, expected_value: str
+    ):
+        opts_args["strategy"] = arg_value
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.strategy == expected_value
 
     # -- ._document_contains_pagebreaks ----------
 
