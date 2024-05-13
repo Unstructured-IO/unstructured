@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, TypeVar
 
@@ -10,15 +10,29 @@ from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 @dataclass
 class DownloaderConfig:
-    download_dir: Optional[Path] = ""
+    download_dir: Optional[Path] = None
 
 
 config_type = TypeVar("config_type", bound=DownloaderConfig)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Downloader(BaseProcess, BaseConnector, ABC):
-    download_config: Optional[config_type] = None
+    connector_type: str
+    download_config: Optional[config_type] = field(default_factory=DownloaderConfig)
+
+    @property
+    def download_dir(self) -> Path:
+        if self.download_config.download_dir is None:
+            self.download_config.download_dir = (
+                Path.home()
+                / ".cache"
+                / "unstructured"
+                / "ingest"
+                / "download"
+                / self.connector_type
+            ).resolve()
+        return self.download_config.download_dir
 
     def is_async(self) -> bool:
         return True

@@ -6,8 +6,8 @@ from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logging import logger
-from unstructured.ingest.v2.partitioner import Partitioner
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.processes.partitioner import Partitioner
 
 STEP_ID = "partition"
 

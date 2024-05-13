@@ -1,7 +1,9 @@
 from pathlib import Path
 
-from unstructured.ingest.v2.chunker import Chunker, ChunkerConfig
-from unstructured.ingest.v2.connectors.local import (
+from unstructured.ingest.v2.interfaces import ProcessorConfig
+from unstructured.ingest.v2.pipeline.pipeline import Pipeline
+from unstructured.ingest.v2.processes.chunker import Chunker, ChunkerConfig
+from unstructured.ingest.v2.processes.connectors.local import (
     LocalDestination,
     LocalIndexer,
     LocalIndexerConfig,
@@ -9,10 +11,8 @@ from unstructured.ingest.v2.connectors.local import (
     LocalUploader,
     LocalUploaderConfig,
 )
-from unstructured.ingest.v2.embedder import Embedder, EmbedderConfig
-from unstructured.ingest.v2.interfaces import ProcessorConfig
-from unstructured.ingest.v2.partitioner import Partitioner, PartitionerConfig
-from unstructured.ingest.v2.pipeline.pipeline import Pipeline
+from unstructured.ingest.v2.processes.embedder import Embedder, EmbedderConfig
+from unstructured.ingest.v2.processes.partitioner import Partitioner, PartitionerConfig
 
 base_path = Path(__file__).parent.parent.parent.parent
 docs_path = base_path / "example-docs"
