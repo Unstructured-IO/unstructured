@@ -1,7 +1,8 @@
-import multiprocessing as mp
 from dataclasses import InitVar, dataclass, field
 
-from unstructured.ingest.v2.pipeline.context import PipelineContext
+from unstructured.ingest.v2.connectors.local import LocalUploader
+from unstructured.ingest.v2.interfaces import ProcessorConfig
+from unstructured.ingest.v2.logging import logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
 from unstructured.ingest.v2.pipeline.steps.download import DownloadStep, download_type
 from unstructured.ingest.v2.pipeline.steps.embed import Embedder, EmbedStep
@@ -13,7 +14,7 @@ from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
 
 @dataclass
 class Pipeline:
-    context: PipelineContext
+    context: ProcessorConfig
     indexer: InitVar[index_type]
     indexer_step: IndexStep = field(init=False)
     downloader: InitVar[download_type]
@@ -26,7 +27,7 @@ class Pipeline:
     embedder_step: EmbedStep = field(init=False, default=None)
     stager: InitVar[UploadStager] = None
     stager_step: UploadStageStep = field(init=False, default=None)
-    uploader: InitVar[Uploader] = None
+    uploader: InitVar[Uploader] = field(default=LocalUploader)
     uploader_step: UploadStep = field(init=False, default=None)
 
     def __post_init__(
@@ -47,9 +48,36 @@ class Pipeline:
         self.stager_step = UploadStageStep(process=stager, context=self.context) if stager else None
         self.uploader_step = UploadStep(process=uploader, context=self.context)
 
+    def cleanup(self):
+        pass
+
+    def __str__(self):
+        s = []
+        s.append(f"{self.indexer_step.identifier} ({self.indexer_step.process.__class__.__name__})")
+        s.append(
+            f"{self.downloader_step.identifier} ({self.downloader_step.process.__class__.__name__})"
+        )
+        s.append(f"{self.partitioner_step.identifier}")
+        if self.chunker_step:
+            s.append(
+                f"{self.chunker_step.identifier} "
+                f"({self.chunker_step.process.config.chunking_strategy})"
+            )
+        if self.embedder_step:
+            s.append(
+                f"{self.embedder_step.identifier} ({self.embedder_step.process.config.provider})"
+            )
+        if self.stager_step:
+            s.append(
+                f"{self.stager_step.identifier} ({self.stager_step.process.__class__.__name__})"
+            )
+        s.append(
+            f"{self.uploader_step.identifier} ({self.uploader_step.process.__class__.__name__})"
+        )
+        return " -> ".join(s)
+
     def run(self):
-        manager = mp.Manager()
-        self.context.statuses = manager.dict()
+        logger.info(f"Running local pipline: {self}")
         indices = self.indexer_step.run()
         indies_inputs = [{"file_data_path": i} for i in indices]
         downloaded_data = self.downloader_step(indies_inputs)
@@ -64,3 +92,4 @@ class Pipeline:
             elements = self.stager_step(elements)
 
         self.uploader_step.run(contents=elements)
+        self.cleanup()

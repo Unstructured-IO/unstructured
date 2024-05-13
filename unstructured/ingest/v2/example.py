@@ -10,8 +10,8 @@ from unstructured.ingest.v2.connectors.local import (
     LocalUploaderConfig,
 )
 from unstructured.ingest.v2.embedder import Embedder, EmbedderConfig
+from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.partitioner import Partitioner, PartitionerConfig
-from unstructured.ingest.v2.pipeline.context import PipelineContext
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
 
 base_path = Path(__file__).parent.parent.parent.parent
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         )
     )
     pipeline = Pipeline(
-        context=PipelineContext(work_dir=str(work_dir.resolve())),
+        context=ProcessorConfig(work_dir=str(work_dir.resolve())),
         indexer=source.indexer,
         downloader=source.downloader,
         partitioner=partitioner,

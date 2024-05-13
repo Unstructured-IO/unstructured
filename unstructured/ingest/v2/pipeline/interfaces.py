@@ -5,9 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional, TypeVar
 
-from unstructured.ingest.v2.interfaces import BaseProcess
+from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
 from unstructured.ingest.v2.logging import logger
-from unstructured.ingest.v2.pipeline.context import PipelineContext
 
 process_type = TypeVar("process_type", bound=BaseProcess)
 iterable_input = list[dict[str, Any]]
@@ -17,7 +16,7 @@ iterable_input = list[dict[str, Any]]
 class PipelineStep(ABC):
     identifier: str
     process: process_type
-    context: PipelineContext
+    context: ProcessorConfig
 
     def process_serially(self, iterable: iterable_input) -> Any:
         logger.info("processing content serially")
