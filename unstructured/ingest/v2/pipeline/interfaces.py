@@ -3,13 +3,14 @@ import multiprocessing as mp
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from unstructured.ingest.v2.interfaces import BaseProcess
 from unstructured.ingest.v2.logging import logger
 from unstructured.ingest.v2.pipeline.context import PipelineContext
 
 process_type = TypeVar("process_type", bound=BaseProcess)
+iterable_input = list[dict[str, Any]]
 
 
 @dataclass
@@ -18,28 +19,37 @@ class PipelineStep(ABC):
     process: process_type
     context: PipelineContext
 
-    def process_serially(self, iterable: Iterable[Any]) -> Any:
+    def process_serially(self, iterable: iterable_input) -> Any:
         if iterable:
-            return [self.run(it) for it in iterable]
-        return self.run()
+            return [self.run(**it) for it in iterable]
+        return [self.run()]
 
-    async def _process_async(self, iterable: Iterable[Any]) -> Any:
+    async def _process_async(self, iterable: iterable_input) -> Any:
         if iterable:
-            return await asyncio.gather(*[self.run_async(i) for i in iterable])
-        return await self.run_async()
+            if len(iterable) == 1:
+                return [await self.run_async(**iterable[0])]
+            return await asyncio.gather(*[self.run_async(**i) for i in iterable])
+        return [await self.run_async()]
 
-    def process_async(self, iterable: Iterable[Any]) -> Any:
+    def process_async(self, iterable: iterable_input) -> Any:
         return asyncio.run(self._process_async(iterable=iterable))
 
-    def process_multiprocess(self, iterable: Iterable[Any]) -> Any:
+    def process_multiprocess(self, iterable: iterable_input) -> Any:
+
         if iterable:
+            if len(iterable) == 1:
+                return [self.run(**iterable[0])]
             with mp.Pool(
                 processes=self.context.num_processes,
             ) as pool:
-                return pool.map(self.run, iterable)
-        return self.run()
+                return pool.map(self._wrap_mp, iterable)
+        return [self.run()]
 
-    def __call__(self, iterable: Optional[Iterable[Any]] = None) -> Any:
+    def _wrap_mp(self, input_kwargs: dict) -> Any:
+        # Allow mapping of kwargs via multiprocessing map()
+        return self.run(**input_kwargs)
+
+    def __call__(self, iterable: Optional[iterable_input] = None) -> Any:
         iterable = iterable or []
         if iterable:
             logger.info(
@@ -64,3 +74,22 @@ class PipelineStep(ABC):
     @property
     def cache_dir(self) -> Path:
         return Path(self.context.work_dir) / self.identifier
+
+
+def log_error() -> Callable[[Callable], Callable]:
+    # When running functions inside of a multiprocessing Pool, errors can get swallowed.
+    # Use this to make sure the stack trace is appropriately logged
+
+    def error_handler(func: Callable) -> Callable:
+        def wrap_with_logger(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                logger.error(
+                    f"Exception raised while processing {func.__name__}: {e}", exc_info=True
+                )
+                raise e
+
+        return wrap_with_logger
+
+    return error_handler

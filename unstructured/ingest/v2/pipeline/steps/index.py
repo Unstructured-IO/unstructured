@@ -11,18 +11,12 @@ index_type = TypeVar("index_type", bound=Indexer)
 STEP_ID = "index"
 
 
-@dataclass
-class IndexStepResponse:
-    record_id: str
-    path: str
-
-
 @dataclass(kw_only=True)
 class IndexStep(PipelineStep):
     identifier: str = STEP_ID
     process: index_type
 
-    def run(self) -> Generator[IndexStepResponse, None, None]:
+    def run(self) -> Generator[str, None, None]:
         for file_data in self.process.run():
             record_hash = self.get_hash(extras=[file_data.identifier])
             filename = f"{record_hash}.json"
@@ -30,7 +24,7 @@ class IndexStep(PipelineStep):
             filepath.parent.mkdir(parents=True, exist_ok=True)
             with open(str(filepath), "w") as f:
                 json.dump(file_data.to_dict(), f, indent=2)
-            yield IndexStepResponse(record_id=record_hash, path=str(filepath))
+            yield str(filepath)
 
     def get_hash(self, extras: Optional[list[str]]) -> str:
         hashable_string = json.dumps(self.process.index_config.to_dict())
