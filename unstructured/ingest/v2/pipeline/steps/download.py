@@ -1,8 +1,7 @@
 import hashlib
 import json
 from dataclasses import dataclass
-from pathlib import Path
-from typing import Optional, TypeVar
+from typing import Optional, TypedDict, TypeVar
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.downloader import Downloader
@@ -13,10 +12,9 @@ download_type = TypeVar("download_type", bound=Downloader)
 STEP_ID = "download"
 
 
-@dataclass
-class DownloadStepResponse:
-    record_id: str
-    path: Path
+class DownloadStepResponse(TypedDict):
+    file_data_path: str
+    path: str
 
 
 @dataclass(kw_only=True)
@@ -53,26 +51,26 @@ class DownloadStep(PipelineStep):
         file_data = FileData.from_dict(file_data_dict)
         return file_data
 
-    def run(self, file_data_path: str) -> str:
+    def run(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = self.get_file_data(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data):
-            return str(download_path)
+            return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = self.process.run(file_data=file_data)
-        return str(download_path)
+        return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
-    async def run_async(self, file_data_path: str) -> Path:
+    async def run_async(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = self.get_file_data(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data):
-            return download_path
+            return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = await self.process.run_async(file_data=file_data)
-        return download_path
+        return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
     def get_hash(self, extras: Optional[list[str]]) -> str:
-        hashable_string = json.dumps(self.process.download_config.to_dict())
+        hashable_string = json.dumps(self.process.download_config.to_dict(), sort_keys=True)
         if extras:
             hashable_string += "".join(extras)
         return hashlib.sha256(hashable_string.encode()).hexdigest()[:12]

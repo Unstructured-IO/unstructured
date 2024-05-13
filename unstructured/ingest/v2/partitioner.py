@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logging import logger
@@ -11,7 +12,7 @@ from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 
 @dataclass
-class PartitionerConfig:
+class PartitionerConfig(EnhancedDataClassJsonMixin):
     pdf_infer_table_structure: bool = True
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
@@ -26,7 +27,7 @@ class PartitionerConfig:
     metadata_include: list[str] = field(default_factory=list)
     partition_endpoint: Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
-    api_key: Optional[str] = str(enhanced_field(default=None, sensitive=True)) or None
+    api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
     hi_res_model_name: Optional[str] = None
 
     def to_partition_kwargs(self) -> dict[str, Any]:
