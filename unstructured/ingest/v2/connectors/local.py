@@ -106,7 +106,7 @@ class LocalSource(Source):
 
 @dataclass
 class LocalUploaderConfig(UploaderConfig):
-    output_directory: str
+    output_directory: str = field(default="structured-output")
 
     @property
     def output_path(self) -> Path:
@@ -119,7 +119,7 @@ class LocalUploaderConfig(UploaderConfig):
 
 @dataclass
 class LocalUploader(Uploader):
-    upload_config: LocalUploaderConfig
+    upload_config: LocalUploaderConfig = field(default_factory=LocalUploaderConfig)
 
     def is_async(self) -> bool:
         return False
