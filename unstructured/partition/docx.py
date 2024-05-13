@@ -171,17 +171,15 @@ def convert_and_partition_docx(
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,  # used by decorator
     infer_table_structure: bool = True,
+    metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
-    **kwargs: Any,  # used by decorator
+    **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
@@ -191,6 +189,9 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_page_breaks
+        When True, add a `PageBreak` element to the element-stream when a page-break is detected in
+        the document. Note that not all DOCX files include page-break information.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -213,9 +214,8 @@ def partition_docx(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
+        Assign this number to the first page of this document and increment the page number from
+        there.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
