@@ -70,6 +70,7 @@ def partition_via_api(
     sdk = UnstructuredClient(api_key_auth=api_key, server_url=base_url)
 
     if filename is not None:
+        logger.info(f"partition_by_api {filename}")
         with open(filename, "rb") as f:
             files = shared.Files(
                 content=f.read(),
@@ -92,7 +93,11 @@ def partition_via_api(
             request_kwargs[k] = json.dumps(v)
 
     req = shared.PartitionParameters(files=files, **request_kwargs)
+    logger.info(f"partition_by_api {filename} calling sdk")
+
     response = sdk.general.partition(req)
+
+    logger.info(f"partition_by_api {filename} - returned response!")
 
     if response.status_code == 200:
         return elements_from_json(text=response.raw_response.text)

@@ -548,7 +548,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         from unstructured.partition.auto import partition
 
         if not partition_config.partition_by_api:
-            logger.debug("Using local partition")
+            logger.info("Using local partition")
             elements = partition(
                 filename=str(self.filename),
                 data_source_metadata=DataSourceMetadata(
@@ -565,7 +565,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         else:
             endpoint = partition_config.partition_endpoint
 
-            logger.debug(f"Using remote partition ({endpoint})")
+            logger.info(f"Using remote partition ({endpoint})")
 
             passthrough_partition_kwargs = {
                 k: str(v) for k, v in partition_kwargs.items() if v is not None
@@ -591,7 +591,13 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         logger.info(f"Processing {self.filename}")
 
         elements = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        if elements:
+            logger.info(f"Processed {self.filename}, got {len(elements)}")
+        else:
+            logger.info(f"Processed {self.filename}, got empty elements")
+
         element_dicts = elements_to_dicts(elements)
+        logger.info(f" {self.filename} - converted to dicts ")
 
         self.isd_elems_no_filename: list[dict[str, Any]] = []
         for elem in element_dicts:
