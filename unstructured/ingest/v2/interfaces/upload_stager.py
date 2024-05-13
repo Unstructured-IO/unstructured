@@ -1,5 +1,6 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Optional, TypeVar
 
 from unstructured.ingest.v2.interfaces.process import BaseProcess
@@ -15,4 +16,11 @@ config_type = TypeVar("config_type", bound=UploadStagerConfig)
 
 @dataclass
 class UploadStager(BaseProcess, ABC):
-    upload_config: Optional[config_type] = None
+    upload_stager_config: Optional[config_type] = None
+
+    @abstractmethod
+    def run(self, elements_filepath: Path, **kwargs) -> Path:
+        pass
+
+    async def run_async(self, elements_filepath: Path, **kwargs) -> Path:
+        return self.run(elements_filepath=elements_filepath, **kwargs)

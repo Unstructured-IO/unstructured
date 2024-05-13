@@ -3,16 +3,17 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
+from unstructured.documents.elements import Element
 from unstructured.embed.interfaces import BaseEmbeddingEncoder
-from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.staging.base import elements_from_json
 
 
 @dataclass
-class EmbedderConfig:
+class EmbedderConfig(EnhancedDataClassJsonMixin):
     provider: str
-    api_key: Optional[str] = str(enhanced_field(default=None, sensitive=True)) or None
+    api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
     model_name: Optional[str] = None
     aws_access_key_id: Optional[str] = None
     aws_secret_access_key: Optional[str] = None
@@ -69,10 +70,10 @@ class Embedder(BaseProcess, ABC):
         # huggingface is run locally rather than via an api call so don't run async
         return self.config.provider not in ["langchain-huggingface"]
 
-    def run(self, elements_filepath: Path, **kwargs) -> Any:
+    def run(self, elements_filepath: Path, **kwargs) -> list[Element]:
         embedder = self.config.get_embedder()
         elements = elements_from_json(filename=str(elements_filepath))
         return embedder.embed_documents(elements=elements)
 
-    async def run_async(self, elements_filepath: Path, **kwargs) -> Any:
+    async def run_async(self, elements_filepath: Path, **kwargs) -> list[Element]:
         return self.run(elements_filepath=elements_filepath, **kwargs)
