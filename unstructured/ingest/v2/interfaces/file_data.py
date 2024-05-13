@@ -37,6 +37,7 @@ class FileData(DataClassJsonMixin):
     source_identifiers: SourceIdentifiers
     doc_type: IndexDocType = field(default=IndexDocType.FILE)
     metadata: Optional[DataSourceMetadata] = None
+    reprocess: bool = False
 
     @classmethod
     def from_file(cls, path: str) -> "FileData":
@@ -47,3 +48,9 @@ class FileData(DataClassJsonMixin):
             file_data_dict = json.load(f)
         file_data = FileData.from_dict(file_data_dict)
         return file_data
+
+    def to_file(self, path: str) -> None:
+        path = Path(path).resolve()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(str(path.resolve()), "w") as f:
+            json.dump(self.to_dict(), f, indent=2)

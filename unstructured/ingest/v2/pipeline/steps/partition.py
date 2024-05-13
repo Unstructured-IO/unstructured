@@ -22,8 +22,8 @@ class PartitionStep(PipelineStep):
     identifier: str = STEP_ID
     process: Partitioner
 
-    def should_partition(self, filepath: Path) -> bool:
-        if self.context.reprocess:
+    def should_partition(self, filepath: Path, file_data: FileData) -> bool:
+        if self.context.reprocess or file_data.reprocess:
             return True
         if not filepath.exists():
             return True
@@ -43,11 +43,11 @@ class PartitionStep(PipelineStep):
     @log_error()
     def run(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
+        file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
-        if not self.should_partition(filepath=output_filepath):
+        if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.info(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        file_data = FileData.from_file(path=file_data_path)
         partitioned_content = self.process.run(filename=path, metadata=file_data.metadata)
         self._save_output(
             output_filepath=str(output_filepath), partitioned_content=partitioned_content
@@ -56,11 +56,11 @@ class PartitionStep(PipelineStep):
 
     async def run_async(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
+        file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
-        if not self.should_partition(filepath=output_filepath):
+        if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.info(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        file_data = FileData.from_file(path=file_data_path)
         partitioned_content = await self.process.run_async(
             filename=path, metadata=file_data.metadata
         )

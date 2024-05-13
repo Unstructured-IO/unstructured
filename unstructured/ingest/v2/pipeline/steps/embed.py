@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.embedder import Embedder
+from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logging import logger
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
 from unstructured.staging.base import elements_to_dicts
@@ -22,8 +23,8 @@ class EmbedStep(PipelineStep):
     identifier: str = STEP_ID
     process: Embedder
 
-    def should_embed(self, filepath: Path) -> bool:
-        if self.context.reprocess:
+    def should_embed(self, filepath: Path, file_data: FileData) -> bool:
+        if self.context.reprocess or file_data.reprocess:
             return True
         if not filepath.exists():
             return True
@@ -43,8 +44,10 @@ class EmbedStep(PipelineStep):
     @log_error()
     def run(self, path: str, file_data_path: str) -> EmbedStepResponse:
         path = Path(path)
+        file_data = FileData.from_file(path=file_data_path)
+
         output_filepath = self.get_output_filepath(filename=path)
-        if not self.should_embed(filepath=output_filepath):
+        if not self.should_embed(filepath=output_filepath, file_data=file_data):
             logger.info(f"Skipping embedding, output already exists: {output_filepath}")
             return EmbedStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         embed_content_raw = self.process.run(elements_filepath=path)
@@ -56,8 +59,9 @@ class EmbedStep(PipelineStep):
 
     async def run_async(self, path: str, file_data_path: str) -> EmbedStepResponse:
         path = Path(path)
+        file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
-        if not self.should_embed(filepath=output_filepath):
+        if not self.should_embed(filepath=output_filepath, file_data=file_data):
             logger.info(f"Skipping embedding, output already exists: {output_filepath}")
             return EmbedStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         embed_content_raw = await self.process.run_async(elements_filepath=path)
