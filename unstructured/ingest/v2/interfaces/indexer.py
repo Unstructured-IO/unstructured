@@ -17,8 +17,9 @@ class IndexerConfig(DataClassJsonMixin):
 config_type = TypeVar("config_type", bound=IndexerConfig)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Indexer(BaseProcess, BaseConnector, ABC):
+    connector_type: str
     index_config: Optional[config_type] = None
 
     def is_async(self) -> bool:
