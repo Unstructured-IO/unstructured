@@ -20,6 +20,7 @@ class PipelineStep(ABC):
     context: PipelineContext
 
     def process_serially(self, iterable: iterable_input) -> Any:
+        logger.info("processing content serially")
         if iterable:
             return [self.run(**it) for it in iterable]
         return [self.run()]
@@ -32,9 +33,11 @@ class PipelineStep(ABC):
         return [await self.run_async()]
 
     def process_async(self, iterable: iterable_input) -> Any:
+        logger.info("processing content async")
         return asyncio.run(self._process_async(iterable=iterable))
 
     def process_multiprocess(self, iterable: iterable_input) -> Any:
+        logger.info("processing content across processes")
 
         if iterable:
             if len(iterable) == 1:
