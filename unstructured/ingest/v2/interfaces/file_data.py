@@ -1,3 +1,4 @@
+import json
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -36,3 +37,13 @@ class FileData(DataClassJsonMixin):
     source_identifiers: SourceIdentifiers
     doc_type: IndexDocType = field(default=IndexDocType.FILE)
     metadata: Optional[DataSourceMetadata] = None
+
+    @classmethod
+    def from_file(cls, path: str) -> "FileData":
+        path = Path(path).resolve()
+        if not path.exists() or not path.is_file():
+            raise ValueError(f"file path not valid: {path}")
+        with open(str(path.resolve()), "rb") as f:
+            file_data_dict = json.load(f)
+        file_data = FileData.from_dict(file_data_dict)
+        return file_data
