@@ -5,18 +5,18 @@ from typing import Any, Optional
 
 from unstructured.chunking import dispatch
 from unstructured.documents.elements import Element, assign_and_map_hash_ids
-from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logging import logger
 from unstructured.staging.base import dict_to_elements, elements_from_json
 
 
 @dataclass
-class ChunkerConfig:
+class ChunkerConfig(EnhancedDataClassJsonMixin):
     chunking_strategy: Optional[str] = None
     chunking_endpoint: Optional[str] = "https://api.unstructured.io/general/v0/general"
     chunk_by_api: bool = False
-    chunk_api_key: Optional[str] = str(enhanced_field(default=None, sensitive=True)) or None
+    chunk_api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
 
     combine_text_under_n_chars: Optional[int] = None
     include_orig_elements: Optional[bool] = None
