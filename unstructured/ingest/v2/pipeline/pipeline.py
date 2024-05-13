@@ -1,6 +1,5 @@
 from dataclasses import InitVar, dataclass, field
 
-from unstructured.ingest.v2.connectors.local import LocalUploader
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logging import logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
@@ -11,6 +10,7 @@ from unstructured.ingest.v2.pipeline.steps.partition import Partitioner, Partiti
 from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStageStep
 from unstructured.ingest.v2.pipeline.steps.uncompress import Uncompressor, UncompressStep
 from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
+from unstructured.ingest.v2.processes.connectors import LocalUploader
 
 
 @dataclass
@@ -92,11 +92,13 @@ class Pipeline:
         if not elements:
             return
 
+        # Run element specific modifiers
         for step in [self.chunker_step, self.embedder_step, self.stager_step]:
             elements = step(elements) if step else elements
             if not elements:
                 return
 
+        # Upload the final result
         self.uploader_step.run(contents=elements)
 
     def __str__(self):

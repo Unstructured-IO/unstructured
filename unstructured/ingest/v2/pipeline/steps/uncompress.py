@@ -4,7 +4,7 @@ from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
-from unstructured.ingest.v2.uncompress import Uncompressor
+from unstructured.ingest.v2.processes.uncompress import Uncompressor
 
 STEP_ID = "uncompress"
 

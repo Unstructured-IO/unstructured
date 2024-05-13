@@ -4,10 +4,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, TypedDict
 
-from unstructured.ingest.v2.embedder import Embedder
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logging import logger
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.processes.embedder import Embedder
 from unstructured.staging.base import elements_to_dicts
 
 STEP_ID = "embed"
