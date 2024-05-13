@@ -253,7 +253,7 @@ platformdirs==3.10.0
     #   -c ./test.txt
     #   jupyter-core
     #   virtualenv
-pre-commit==3.7.0
+pre-commit==3.7.1
     # via -r ./dev.in
 prometheus-client==0.20.0
     # via jupyter-server

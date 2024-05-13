@@ -29,7 +29,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.5
+dataclasses-json==0.6.6
     # via
     #   -c ./ingest/../base.txt
     #   langchain
@@ -55,7 +55,7 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.50.0
+google-cloud-aiplatform==1.51.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.22.0
     # via google-cloud-aiplatform
@@ -98,14 +98,12 @@ idna==3.7
     #   requests
     #   yarl
 jsonpatch==1.33
-    # via
-    #   langchain
-    #   langchain-core
+    # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.1.17
+langchain==0.1.20
     # via -r ./ingest/embed-vertexai.in
-langchain-community==0.0.37
+langchain-community==0.0.38
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain
@@ -119,7 +117,7 @@ langchain-google-vertexai==1.0.3
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.54
+langsmith==0.1.57
     # via
     #   langchain
     #   langchain-community
