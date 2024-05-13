@@ -16,7 +16,7 @@ from typing_extensions import ParamSpec
 from unstructured.chunking.basic import chunk_elements
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Element
-from unstructured.utils import lazyproperty
+from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 _P = ParamSpec("_P")
 
@@ -70,20 +70,11 @@ def add_chunking_strategy(func: Callable[_P, list[Element]]) -> Callable[_P, lis
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
         """The decorated function is replaced with this one."""
 
-        def get_call_args_applying_defaults() -> dict[str, Any]:
-            """Map both explicit and default arguments of decorated func call by param name."""
-            sig = inspect.signature(func)
-            call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in call_args and param.default is not param.empty:
-                    call_args[param.name] = param.default
-            return call_args
-
         # -- call the partitioning function to get the elements --
         elements = func(*args, **kwargs)
 
         # -- look for a chunking-strategy argument --
-        call_args = get_call_args_applying_defaults()
+        call_args = get_call_args_applying_defaults(func, *args, **kwargs)
         chunking_strategy = call_args.pop("chunking_strategy", None)
 
         # -- no chunking-strategy means no chunking --
