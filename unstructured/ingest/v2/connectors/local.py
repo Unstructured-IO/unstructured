@@ -112,6 +112,10 @@ class LocalUploaderConfig(UploaderConfig):
     def output_path(self) -> Path:
         return Path(self.output_directory).resolve()
 
+    def __post_init__(self):
+        if self.output_path.exists() and self.output_path.is_file():
+            raise ValueError("output path already exists as a file")
+
 
 @dataclass
 class LocalUploader(Uploader):
@@ -121,7 +125,7 @@ class LocalUploader(Uploader):
         return False
 
     def run(self, contents: list[UploadContent], **kwargs):
-        self.upload_config.output_path.parent.mkdir(parents=True, exist_ok=True)
+        self.upload_config.output_path.mkdir(parents=True, exist_ok=True)
         for content in contents:
             identifiers = content.file_data.source_identifiers
             new_path = self.upload_config.output_path / identifiers.relative_path
