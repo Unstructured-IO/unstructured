@@ -13,7 +13,6 @@ class ProcessorConfig:
             (Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve()
         )
     )
-    output_dir: str = "structured-output"
     num_processes: int = 2
     raise_on_error: bool = False
     disable_parallelism: bool = field(
