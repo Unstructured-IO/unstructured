@@ -22,3 +22,4 @@ class ProcessorConfig:
     download_only: bool = False
     max_docs: Optional[int] = None
     re_download: bool = False
+    uncompress: bool = False
