@@ -1,8 +1,8 @@
-## 0.13.8-dev7
+## 0.13.8-dev8
 
 ### Enhancements
 
-**Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
 
 ### Features
 
