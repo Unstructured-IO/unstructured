@@ -26,7 +26,6 @@ class ENVConfig:
     """class for configuring enviorment parameters"""
 
     def __post_init__(self):
-        print(f"=================POST INIT==================")
         if self.STORAGE_ENABLED:
             self._setup_tmpdir(self.STORAGE_TMPDIR)
 

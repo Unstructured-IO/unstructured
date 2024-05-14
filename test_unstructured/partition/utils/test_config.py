@@ -19,7 +19,7 @@ def test_env_override(monkeypatch):
 
 
 @pytest.fixture()
-def setup_tmpdir():
+def _setup_tmpdir():
     from unstructured.partition.utils.config import env_config
 
     _tmpdir = tempfile.tempdir
@@ -36,21 +36,23 @@ def setup_tmpdir():
         tempfile.tempdir = _tmpdir
 
 
-def test_env_storage_disabled(monkeypatch, setup_tmpdir):
+@pytest.mark.usefixtures("_setup_tmpdir")
+def test_env_storage_disabled(monkeypatch):
     monkeypatch.setenv("STORAGE_ENABLED", "false")
     from unstructured.partition.utils.config import env_config
 
-    assert env_config.STORAGE_ENABLED == False
+    assert not env_config.STORAGE_ENABLED
     assert str(Path.home() / ".cache/unstructured") == env_config.STORAGE_DIR
-    assert Path(env_config.STORAGE_TMPDIR).is_dir() == False
+    assert not Path(env_config.STORAGE_TMPDIR).is_dir()
     assert tempfile.gettempdir() != env_config.STORAGE_TMPDIR
 
 
-def test_env_storage_enabled(monkeypatch, setup_tmpdir):
+@pytest.mark.usefixtures("_setup_tmpdir")
+def test_env_storage_enabled(monkeypatch):
     monkeypatch.setenv("STORAGE_ENABLED", "true")
     from unstructured.partition.utils.config import env_config
 
-    assert env_config.STORAGE_ENABLED == True
+    assert env_config.STORAGE_ENABLED
     assert str(Path.home() / ".cache/unstructured") == env_config.STORAGE_DIR
-    assert Path(env_config.STORAGE_TMPDIR).is_dir() == True
+    assert Path(env_config.STORAGE_TMPDIR).is_dir()
     assert tempfile.gettempdir() == env_config.STORAGE_TMPDIR
