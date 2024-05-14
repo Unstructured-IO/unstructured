@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from typing import TypeVar
 
@@ -15,7 +15,3 @@ class Source(BaseConnector, ABC):
     connector_type: str
     indexer: indexer_type
     downloader: downloader_type
-
-    @abstractmethod
-    def check_connection(self):
-        pass

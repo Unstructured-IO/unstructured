@@ -5,7 +5,8 @@ from typing import Optional, TypedDict, TypeVar
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.downloader import Downloader
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
+from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
 
 download_type = TypeVar("download_type", bound=Downloader)
 
@@ -48,10 +49,12 @@ class DownloadStep(PipelineStep):
             return True
         return False
 
+    @log_error()
     def run(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
+            logger.info(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = self.process.run(file_data=file_data)
@@ -61,6 +64,7 @@ class DownloadStep(PipelineStep):
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
+            logger.info(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = await self.process.run_async(file_data=file_data)

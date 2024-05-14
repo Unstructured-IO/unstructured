@@ -10,7 +10,7 @@ from unstructured.ingest.v2.pipeline.steps.partition import Partitioner, Partiti
 from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStageStep
 from unstructured.ingest.v2.pipeline.steps.uncompress import Uncompressor, UncompressStep
 from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
-from unstructured.ingest.v2.processes.connectors import LocalUploader
+from unstructured.ingest.v2.processes.connectors.local import LocalUploader
 
 
 @dataclass
@@ -77,7 +77,6 @@ class Pipeline:
         downloaded_data = [x for xs in downloaded_data for x in xs]
         if not downloaded_data:
             return
-
         # Run uncompress if available
         if self.uncompress_step:
             downloaded_data = self.uncompress_step(downloaded_data)
@@ -99,7 +98,7 @@ class Pipeline:
                 return
 
         # Upload the final result
-        self.uploader_step.run(contents=elements)
+        self.uploader_step(iterable=elements)
 
     def __str__(self):
         s = [
