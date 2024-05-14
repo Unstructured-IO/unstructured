@@ -143,7 +143,9 @@ def test_save_elements(
                 assert not el.metadata.image_mime_type
 
 
-def test_save_elements_with_output_dir_path_none():
+@pytest.mark.parametrize("storage_enabled", [False, True])
+def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
+    monkeypatch.setenv("STORAGE_ENABLED", storage_enabled)
     with (
         patch("PIL.Image.open"),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
@@ -161,7 +163,12 @@ def test_save_elements_with_output_dir_path_none():
         )
 
         # Verify that the images are saved in the expected directory
-        expected_output_dir = os.path.join(tmpdir, "figures")
+        if storage_enabled:
+            from unstructured.partition.utils.config import env_config
+
+            expected_output_dir = os.path.join(env_config.STORAGE_TMPDIR, "figures")
+        else:
+            expected_output_dir = os.path.join(tmpdir, "figures")
         assert os.path.exists(expected_output_dir)
         assert os.path.isdir(expected_output_dir)
         os.chdir(original_cwd)

@@ -439,9 +439,12 @@ def _partition_pdf_or_image_local(
 
             if analysis:
                 if not analyzed_image_output_dir_path:
-                    analyzed_image_output_dir_path = str(
-                        Path(env_config.STORAGE_TMPDIR) / "annotated"
-                    )
+                    if env_config.STORAGE_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.STORAGE_TMPDIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
                 os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
                 annotate_layout_elements(
                     inferred_document_layout=inferred_document_layout,

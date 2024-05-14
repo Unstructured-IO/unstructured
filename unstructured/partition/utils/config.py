@@ -11,20 +11,24 @@ import tempfile
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from time import time
 
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def get_tempdir(dir: str) -> str:
-    tempdir = Path(dir) / f"tmp/{int(time())}"
+    tempdir = Path(dir) / f"tmp/{os.getpgid(0)}"
     return str(tempdir)
 
 
 @dataclass
 class ENVConfig:
     """class for configuring enviorment parameters"""
+
+    def __post_init__(self):
+        print(f"=================POST INIT==================")
+        if self.STORAGE_ENABLED:
+            self._setup_tmpdir(self.STORAGE_TMPDIR)
 
     def _get_string(self, var: str, default_value: str = "") -> str:
         """attempt to get the value of var from the os environment; if not present return the
@@ -40,6 +44,15 @@ class ENVConfig:
         if value := self._get_string(var):
             return float(value)
         return default_value
+
+    def _get_bool(self, var: str, default_value: bool) -> bool:
+        if value := self._get_string(var):
+            return value.lower() in ("true", "1", "t")
+        return default_value
+
+    def _setup_tmpdir(self, tmpdir: str) -> None:
+        Path(tmpdir).mkdir(parents=True, exist_ok=True)
+        tempfile.tempdir = tmpdir
 
     @property
     def IMAGE_CROP_PAD(self) -> int:
@@ -128,6 +141,11 @@ class ENVConfig:
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
     @property
+    def STORAGE_ENABLED(self) -> bool:
+        """Enable usage of STORAGE_DIR and STORAGE_TMPDIR."""
+        return self._get_bool("STORAGE_ENABLED", False)
+
+    @property
     def STORAGE_DIR(self) -> str:
         """Path to Unstructured storage directory."""
         return self._get_string("STORAGE_DIR", str(Path.home() / ".cache/unstructured"))
@@ -135,12 +153,15 @@ class ENVConfig:
     @property
     def STORAGE_TMPDIR(self) -> str:
         """Path to Unstructured storage tempdir. Overrides TMPDIR, TEMP and TMP.
-        Defaults to ${STORAGE_DIR}/tmp-{timestamp} .
+        Defaults to '{STORAGE_DIR}/tmp/{os.getpgid(0)}'.
         """
-        return self._get_string("STORAGE_TMPDIR", get_tempdir(dir=self.STORAGE_DIR))
+        default_tmpdir = get_tempdir(dir=self.STORAGE_DIR)
+        tmpdir = self._get_string("STORAGE_TMPDIR", default_tmpdir)
+        if tmpdir == "":
+            tmpdir = default_tmpdir
+        if self.STORAGE_ENABLED:
+            self._setup_tmpdir(tmpdir)
+        return tmpdir
 
 
 env_config = ENVConfig()
-if env_config.STORAGE_TMPDIR:
-    Path(env_config.STORAGE_TMPDIR).mkdir(parents=True, exist_ok=True)
-    tempfile.tempdir = env_config.STORAGE_TMPDIR
