@@ -7,19 +7,7 @@ import io
 import itertools
 import os
 import tempfile
-from tempfile import SpooledTemporaryFile
-from typing import (
-    IO,
-    Any,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-    cast,
-)
+from typing import IO, Any, Iterator, Optional, Type, cast
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -80,8 +68,8 @@ if dependency_exists("pypandoc"):
     import pypandoc
 
 DETECTION_ORIGIN: str = "docx"
-BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
-BlockItem: TypeAlias = Union[Paragraph, DocxTable]
+BlockElement: TypeAlias = "CT_P | CT_Tbl"
+BlockItem: TypeAlias = "Paragraph | DocxTable"
 
 
 @requires_dependencies("pypandoc")
@@ -93,10 +81,10 @@ def convert_and_partition_docx(
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     starting_page_number: int = 1,
-) -> List[Element]:
+) -> list[Element]:
     """Converts a document to DOCX and then partitions it using partition_docx.
 
     Works with any file format support by pandoc.
@@ -183,18 +171,16 @@ def convert_and_partition_docx(
 def partition_docx(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,  # used by decorator
     infer_table_structure: bool = True,
+    metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
-    **kwargs: Any,  # used by decorator
-) -> List[Element]:
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
     Parameters
@@ -203,6 +189,9 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_page_breaks
+        When True, add a `PageBreak` element to the element-stream when a page-break is detected in
+        the document. Note that not all DOCX files include page-break information.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -225,9 +214,8 @@ def partition_docx(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
+        Assign this number to the first page of this document and increment the page number from
+        there.
     """
     # -- verify that only one file-specifier argument was provided --
     exactly_one(filename=filename, file=file)
@@ -315,7 +303,7 @@ class _DocxPartitioner:
         # -- This implementation composes a collection of iterators into a "combined" iterator
         # -- return value using `yield from`. You can think of the return value as an Element
         # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
         # -- and using `elements.extend()` for the results of each of the function calls, but is
         # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
         # -- those small lists), is more flexible for later iterator operations like filter,
@@ -470,7 +458,7 @@ class _DocxPartitioner:
             return docx.Document(filename)
 
         assert file is not None
-        if isinstance(file, SpooledTemporaryFile):
+        if isinstance(file, tempfile.SpooledTemporaryFile):
             file.seek(0)
             file = io.BytesIO(file.read())
         return docx.Document(file)
@@ -595,7 +583,7 @@ class _DocxPartitioner:
             else:
                 yield from self._increment_page_number()
 
-    def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
+    def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
         for run in paragraph.runs:
             text = run.text.strip() if run.text else ""
@@ -728,7 +716,7 @@ class _DocxPartitioner:
             ),
         )
 
-    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[Dict[str, str]]:
+    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
             for cell in row.cells:
@@ -800,12 +788,12 @@ class _DocxPartitioner:
         """
         return self._page_counter if self._document_contains_pagebreaks else None
 
-    def _paragraph_emphasis(self, paragraph: Paragraph) -> Tuple[List[str], List[str]]:
+    def _paragraph_emphasis(self, paragraph: Paragraph) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
-    def _paragraph_link_meta(self, paragraph: Paragraph) -> Tuple[List[str], List[str], List[Link]]:
+    def _paragraph_link_meta(self, paragraph: Paragraph) -> tuple[list[str], list[str], list[Link]]:
         """Describes hyperlinks in `paragraph`, if any."""
         if not paragraph.hyperlinks:
             return [], [], []
@@ -977,7 +965,7 @@ class _DocxPartitioner:
         # in the mapping. Unknown style names will also return None.
         return STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
-    def _table_emphasis(self, table: DocxTable) -> Tuple[List[str], List[str]]:
+    def _table_emphasis(self, table: DocxTable) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])

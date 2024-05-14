@@ -1,16 +1,19 @@
 # pyright: reportPrivateUsage=false
 
+"""Test suite for `unstructured.partition.docx` module."""
+
+from __future__ import annotations
+
 import pathlib
 import re
-from tempfile import SpooledTemporaryFile
-from typing import Dict, List
+import tempfile
 
 import docx
 import pytest
 from docx.document import Document
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
@@ -33,8 +36,7 @@ from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_ME
 
 
 def test_partition_docx_from_filename(
-    mock_document_file_path: str,
-    expected_elements: List[Element],
+    mock_document_file_path: str, expected_elements: list[Element]
 ):
     elements = partition_docx(mock_document_file_path)
 
@@ -52,7 +54,7 @@ def test_partition_docx_from_filename_with_metadata_filename(mock_document_file_
 
 
 def test_partition_docx_with_spooled_file(
-    mock_document_file_path: str, expected_elements: List[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     """`partition_docx()` accepts a SpooledTemporaryFile as its `file` argument.
 
@@ -60,7 +62,7 @@ def test_partition_docx_with_spooled_file(
     to ensure the source file is appropriately converted in this case.
     """
     with open(mock_document_file_path, "rb") as test_file:
-        spooled_temp_file = SpooledTemporaryFile()
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
         elements = partition_docx(file=spooled_temp_file)
@@ -69,7 +71,7 @@ def test_partition_docx_with_spooled_file(
             assert element.metadata.filename is None
 
 
-def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: List[Text]):
+def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
     with open(mock_document_file_path, "rb") as f:
         elements = partition_docx(file=f)
     assert elements == expected_elements
@@ -78,7 +80,7 @@ def test_partition_docx_from_file(mock_document_file_path: str, expected_element
 
 
 def test_partition_docx_from_file_with_metadata_filename(
-    mock_document_file_path: str, expected_elements: List[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     with open(mock_document_file_path, "rb") as f:
         elements = partition_docx(file=f, metadata_filename="test")
@@ -282,7 +284,7 @@ def test_partition_docx_from_file_metadata_date_with_custom_metadata(mocker: Moc
 def test_partition_docx_from_file_without_metadata_date():
     """Test partition_docx() with file that are not possible to get last modified date"""
     with open(example_doc_path("fake.docx"), "rb") as f:
-        sf = SpooledTemporaryFile()
+        sf = tempfile.SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
         elements = partition_docx(file=sf, date_from_file_object=True)
@@ -290,9 +292,9 @@ def test_partition_docx_from_file_without_metadata_date():
     assert elements[0].metadata.last_modified is None
 
 
-def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
+def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: list[dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
+        example_doc_path("fake-doc-emphasized-text.docx"),
         None,
         None,
         False,
@@ -315,9 +317,9 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
     assert emphasized_texts == []
 
 
-def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
+def test_iter_table_emphasis(expected_emphasized_texts: list[dict[str, str]]):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
+        example_doc_path("fake-doc-emphasized-text.docx"),
         None,
         None,
         False,
@@ -330,11 +332,11 @@ def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
 
 
 def test_table_emphasis(
-    expected_emphasized_text_contents: List[str],
-    expected_emphasized_text_tags: List[str],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
     partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
+        example_doc_path("fake-doc-emphasized-text.docx"),
         None,
         None,
         False,
@@ -348,8 +350,8 @@ def test_table_emphasis(
 
 
 def test_partition_docx_grabs_emphasized_texts(
-    expected_emphasized_text_contents: List[str],
-    expected_emphasized_text_tags: List[str],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
     elements = partition_docx(example_doc_path("fake-doc-emphasized-text.docx"))
 
@@ -373,7 +375,7 @@ def test_partition_docx_with_json(mock_document_file_path: str):
 
 def test_parse_category_depth_by_style():
     partitioner = _DocxPartitioner(
-        "example-docs/category-level.docx",
+        example_doc_path("category-level.docx"),
         None,
         None,
         False,
@@ -470,27 +472,27 @@ def test_add_chunking_strategy_on_partition_docx():
 
 
 def test_partition_docx_element_metadata_has_languages():
-    filename = "example-docs/handbook-1p.docx"
+    filename = example_doc_path("handbook-1p.docx")
     elements = partition_docx(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_docx_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    filename = example_doc_path("language-docs/eng_spa_mult.docx")
     elements = partition_docx(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
 def test_partition_docx_respects_languages_arg():
-    filename = "example-docs/handbook-1p.docx"
+    filename = example_doc_path("handbook-1p.docx")
     elements = partition_docx(filename=filename, languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]
 
 
 def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
-        filename = "example-docs/handbook-1p.docx"
+        filename = example_doc_path("handbook-1p.docx")
         partition_docx(
             filename=filename,
             languages="eng",  # pyright: ignore[reportArgumentType]
@@ -584,6 +586,18 @@ def test_partition_docx_includes_hyperlink_metadata():
     assert metadata.link_urls is None
 
 
+def test_partition_docx_assigns_deterministic_and_unique_element_ids():
+    document_path = example_doc_path("duplicate-paragraphs.docx")
+
+    ids = [element.id for element in partition_docx(document_path)]
+    ids_2 = [element.id for element in partition_docx(document_path)]
+
+    # -- ids match even though partitioned separately (deterministic on content) --
+    assert ids == ids_2
+    # -- ids are unique --
+    assert len(ids) == len(set(ids))
+
+
 # -- shape behaviors -----------------------------------------------------------------------------
 
 
@@ -601,13 +615,8 @@ def test_it_considers_text_inside_shapes():
 # -- module-level fixtures -----------------------------------------------------------------------
 
 
-def example_doc_path(filename: str) -> str:
-    """String path to a file in the example-docs/ directory."""
-    return str(pathlib.Path(__file__).parent.parent.parent.parent / "example-docs" / filename)
-
-
 @pytest.fixture()
-def expected_elements() -> List[Text]:
+def expected_elements() -> list[Text]:
     return [
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
@@ -621,12 +630,12 @@ def expected_elements() -> List[Text]:
 
 
 @pytest.fixture()
-def expected_emphasized_text_contents() -> List[str]:
+def expected_emphasized_text_contents() -> list[str]:
     return ["bold", "italic", "bold-italic", "bold-italic"]
 
 
 @pytest.fixture()
-def expected_emphasized_text_tags() -> List[str]:
+def expected_emphasized_text_tags() -> list[str]:
     return ["b", "i", "b", "i"]
 
 
@@ -672,21 +681,6 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
     filename = str(tmp_path / "mock_document.docx")
     mock_document.save(filename)
     return filename
-
-
-def test_ids_are_unique_and_deterministic():
-    elements = partition_docx("example-docs/duplicate-paragraphs.docx")
-
-    ids = [e.id for e in elements]
-    assert ids == [
-        "2f22d82eea1faf5f40dac60cef52700e",
-        "ca9e1f448e531a5152d960e14eefc360",
-        "9ddeacb172ac17fb45e6f3f15f3c703d",
-        "a4fd85d3f4141acae38c8f9c936ed2f3",
-        "44ebaaf66640719c918246d4ccba1c45",
-        "f36e8ebcb3b6a051940a168fe73cbc44",
-        "532b395177652c7d61e1e4d855f1dc1d",
-    ], "IDs are not deterministic"
 
 
 # ================================================================================================
