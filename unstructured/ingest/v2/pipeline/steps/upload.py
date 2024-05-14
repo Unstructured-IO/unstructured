@@ -5,7 +5,7 @@ from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.uploader import UploadContent, Uploader
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, iterable_input, log_error
 
 STEP_ID = "upload"
