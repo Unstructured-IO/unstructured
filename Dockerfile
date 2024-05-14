@@ -29,6 +29,7 @@ RUN chown -R nonroot:nonroot /app
 USER nonroot
 
 RUN pip3.11 install --no-cache-dir --user -r requirements/base.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/test.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-csv.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-docx.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-epub.txt && \
