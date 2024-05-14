@@ -136,6 +136,7 @@ def process_file_with_ocr(
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
                         extracted_regions=extracted_regions,
+                        filename=filename,
                     )
                     merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -158,6 +159,7 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
+                            filename=filename
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
@@ -176,6 +178,7 @@ def supplement_page_layout_with_ocr(
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
     extracted_regions: Optional[List["TextRegion"]] = None,
+    filename=None,
 ) -> "PageLayout":
     """
     Supplement an PageLayout with OCR results depending on OCR mode.
@@ -236,6 +239,7 @@ def supplement_page_layout_with_ocr(
             ocr_languages=ocr_languages,
             ocr_agent=ocr_agent,
             extracted_regions=extracted_regions,
+            filename=filename
         )
 
     return page_layout
@@ -249,6 +253,7 @@ def supplement_element_with_table_extraction(
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
     extracted_regions: Optional[List["TextRegion"]] = None,
+    filename=None,
 ) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata fields "text_as_html" where
@@ -258,7 +263,7 @@ def supplement_element_with_table_extraction(
     from unstructured_inference.models.tables import cells_to_html
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
-    for element in table_elements:
+    for i, element in enumerate(table_elements):
         padding = env_config.TABLE_IMAGE_CROP_PAD
         padded_element = pad_element_bboxes(element, padding=padding)
         cropped_image = image.crop(
@@ -277,7 +282,8 @@ def supplement_element_with_table_extraction(
             table_element=padded_element,
         )
         tatr_cells = tables_agent.predict(
-            cropped_image, ocr_tokens=table_tokens, result_format="cells"
+            cropped_image, ocr_tokens=table_tokens, result_format="cells",
+            filename=filename+f'/{i}.jpg',
         )
         text_as_html = cells_to_html(tatr_cells)
         simple_table_cells = [
