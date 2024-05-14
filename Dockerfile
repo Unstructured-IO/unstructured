@@ -1,41 +1,48 @@
-# syntax=docker/dockerfile:experimental
-FROM quay.io/unstructured-io/base-images:rocky9.2-9@sha256:73d8492452f086144d4b92b7931aa04719f085c74d16cae81e8826ef873729c9 as base
+FROM cgr.dev/chainguard/wolfi-base:latest
 
-# NOTE(crag): NB_USER ARG for mybinder.org compat:
-#             https://mybinder.readthedocs.io/en/latest/tutorials/dockerfile.html
-ARG NB_USER=notebook-user
-ARG NB_UID=1000
-ARG PIP_VERSION
+WORKDIR /app
 
-# Set up environment
-ENV HOME /home/${NB_USER}
-ENV PYTHONPATH="${PYTHONPATH}:${HOME}"
-ENV PATH="/home/usr/.local/bin:${PATH}"
+USER root
 
-RUN groupadd --gid ${NB_UID} ${NB_USER}
-RUN useradd --uid ${NB_UID} --gid ${NB_UID} ${NB_USER}
-WORKDIR ${HOME}
-
-FROM base as deps
-# Copy and install Unstructured
-COPY requirements requirements
-
-RUN python3.10 -m pip install pip==${PIP_VERSION} && \
-  dnf -y groupinstall "Development Tools" && \
-  find requirements/ -type f -name "*.txt" -exec python3 -m pip install --no-cache -r '{}' ';' && \
-  dnf -y groupremove "Development Tools" && \
-  dnf clean all
-
-RUN python3.10 -c "import nltk; nltk.download('punkt')" && \
-  python3.10 -c "import nltk; nltk.download('averaged_perceptron_tagger')"
-
-FROM deps as code
-
-USER ${NB_USER}
-
-COPY example-docs example-docs
+COPY ./docker-packages/*.apk packages/
+COPY ./requirements/*.txt requirements/
 COPY unstructured unstructured
+COPY example-docs example-docs
 
-RUN python3.10 -c "from unstructured.partition.model_init import initialize; initialize()"
+RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
+  apk add --allow-untrusted packages/pandoc-3.1.8-r0.apk && \
+  apk add --allow-untrusted packages/poppler-23.09.0-r0.apk && \
+  apk add --allow-untrusted packages/leptonica-1.83.0-r0.apk && \
+  apk add --allow-untrusted packages/tesseract-5.3.2-r0.apk && \
+  apk add --allow-untrusted packages/libreoffice-7.6.5-r0.apk && \
+  apk add bash && \
+  mv /share/tessdata/configs /usr/local/share/tessdata/ && \
+  mv /share/tessdata/tessconfigs /usr/local/share/tessdata/ && \
+  ln -s /usr/local/lib/libreoffice/program/soffice.bin /usr/local/bin/libreoffice && \
+  ln -s /usr/local/lib/libreoffice/program/soffice.bin /usr/local/bin/soffice && \
+  chmod +x /usr/local/lib/libreoffice/program/soffice.bin && \
+  chmod +x /usr/local/bin/libreoffice && \
+  chmod +x /usr/local/bin/soffice
+
+RUN chown -R nonroot:nonroot /app
+
+USER nonroot
+
+RUN pip3.11 install --no-cache-dir --user -r requirements/base.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-csv.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-docx.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-epub.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-markdown.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-msg.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-odt.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-paddleocr.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-pdf-image.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-pptx.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/extra-xlsx.txt
+
+RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
+  python3.11 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
+  python3.11 -c "from unstructured.partition.model_init import initialize; initialize()" && \
+  python3.11 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 CMD ["/bin/bash"]
