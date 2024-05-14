@@ -7,9 +7,19 @@ in bytes). Constants should go into `./constants.py`
 """
 
 import os
+import tempfile
 from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
+from time import time
 
 from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT
+
+
+@lru_cache
+def get_tempdir(dir: str) -> str:
+    tempdir = Path(dir) / f"tmp/{int(time())}"
+    return str(tempdir)
 
 
 @dataclass
@@ -117,5 +127,20 @@ class ENVConfig:
 
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
+    @property
+    def STORAGE_DIR(self) -> str:
+        """Path to Unstructured storage directory."""
+        return self._get_string("STORAGE_DIR", str(Path.home() / ".cache/unstructured"))
+
+    @property
+    def STORAGE_TMPDIR(self) -> str:
+        """Path to Unstructured storage tempdir. Overrides TMPDIR, TEMP and TMP.
+        Defaults to ${STORAGE_DIR}/tmp-{timestamp} .
+        """
+        return self._get_string("STORAGE_TMPDIR", get_tempdir(dir=self.STORAGE_DIR))
+
 
 env_config = ENVConfig()
+if env_config.STORAGE_TMPDIR:
+    Path(env_config.STORAGE_TMPDIR).mkdir(parents=True, exist_ok=True)
+    tempfile.tempdir = env_config.STORAGE_TMPDIR

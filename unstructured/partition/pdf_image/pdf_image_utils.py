@@ -4,7 +4,7 @@ import re
 import tempfile
 from copy import deepcopy
 from io import BytesIO
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Tuple, Union, cast
 
 import cv2
@@ -131,7 +131,7 @@ def save_elements(
     """
 
     if not output_dir_path:
-        output_dir_path = os.path.join(os.getcwd(), "figures")
+        output_dir_path = str(Path(env_config.STORAGE_TMPDIR) / "figures")
     os.makedirs(output_dir_path, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:

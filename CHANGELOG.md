@@ -1,8 +1,9 @@
-## 0.13.8-dev5
+## 0.13.8-dev6
 
 ### Enhancements
 
-**Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Faster evaluation.** Support for concurrent processing of documents during evaluation.
+* **Add STORAGE_DIR and STORAGE_TMPDIR** configuration parameteres to control temporary storage.
 
 ### Features
 
