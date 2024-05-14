@@ -5,6 +5,12 @@ from typing import Any, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.v2.processes.connector_registry import (
+    DestinationRegistryEntry,
+    SourceRegistryEntry,
+    add_destination_entry,
+    add_source_entry,
+)
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
     FsspecConnectionConfig,
@@ -109,3 +115,20 @@ class S3Upload(FsspecUploader):
 class S3Destination(FsspecDestination):
     uploader: S3Upload
     connector_type: str = CONNECTOR_TYPE
+
+
+add_source_entry(
+    source_type=CONNECTOR_TYPE,
+    entry=SourceRegistryEntry(
+        indexer=S3Indexer,
+        indexer_config=S3IndexerConfig,
+        downloader=S3Downloader,
+        downloader_config=S3DownloaderConfig,
+        connection_config=S3ConnectionConfig,
+    ),
+)
+
+add_destination_entry(
+    destination_type=CONNECTOR_TYPE,
+    entry=DestinationRegistryEntry(uploader=S3Upload, uploader_config=S3UploaderConfig),
+)

@@ -1,7 +1,7 @@
 from dataclasses import InitVar, dataclass, field
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
 from unstructured.ingest.v2.pipeline.steps.download import DownloadStep, download_type
 from unstructured.ingest.v2.pipeline.steps.embed import Embedder, EmbedStep

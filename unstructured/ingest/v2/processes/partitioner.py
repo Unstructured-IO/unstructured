@@ -7,7 +7,7 @@ from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 
