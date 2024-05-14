@@ -47,6 +47,7 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build images
       run: |
+        make docker-dl-packages
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
