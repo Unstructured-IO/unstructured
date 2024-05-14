@@ -27,7 +27,7 @@ from unstructured.ingest.v2.interfaces import (
     Uploader,
     UploaderConfig,
 )
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
 from unstructured.ingest.v2.processes.chunker import Chunker
 from unstructured.staging.base import elements_to_dicts

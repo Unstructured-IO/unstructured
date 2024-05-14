@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Callable, Optional, TypeVar
 
 from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 
 process_type = TypeVar("process_type", bound=BaseProcess)
 iterable_input = list[dict[str, Any]]

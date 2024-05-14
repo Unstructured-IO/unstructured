@@ -7,7 +7,7 @@ from unstructured.chunking import dispatch
 from unstructured.documents.elements import Element, assign_and_map_hash_ids
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import dict_to_elements, elements_from_json
 
 

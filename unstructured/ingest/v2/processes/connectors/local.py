@@ -20,20 +20,26 @@ from unstructured.ingest.v2.interfaces import (
     Uploader,
     UploaderConfig,
 )
-from unstructured.ingest.v2.logging import logger
+from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.processes.connector_registry import (
+    DestinationRegistryEntry,
+    SourceRegistryEntry,
+    add_destination_entry,
+    add_source_entry,
+)
 
 CONNECTOR_TYPE = "local"
 
 
 @dataclass
 class LocalIndexerConfig(IndexerConfig):
-    input_directory: str
+    input_filepath: str
     recursive: bool = False
     file_glob: Optional[list[str]] = None
 
     @property
     def input_path(self) -> Path:
-        return Path(self.input_directory).resolve()
+        return Path(self.input_filepath).resolve()
 
 
 @dataclass
@@ -149,3 +155,19 @@ class LocalDestination(Destination):
             raise ValueError(
                 f"input path points to an existing file: {self.uploader.upload_config.output_path}"
             )
+
+
+add_source_entry(
+    source_type=CONNECTOR_TYPE,
+    entry=SourceRegistryEntry(
+        indexer=LocalIndexer,
+        indexer_config=LocalIndexerConfig,
+        downloader=LocalDownloader,
+        downloader_config=LocalDownloaderConfig,
+    ),
+)
+
+add_destination_entry(
+    destination_type=CONNECTOR_TYPE,
+    entry=DestinationRegistryEntry(uploader=LocalUploader, uploader_config=LocalUploaderConfig),
+)
