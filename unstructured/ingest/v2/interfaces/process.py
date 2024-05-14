@@ -15,3 +15,7 @@ class BaseProcess(ABC):
 
     async def run_async(self, **kwargs) -> Any:
         return self.run(**kwargs)
+
+    def check_connection(self):
+        # If the process requires external connections, run a quick check
+        pass

@@ -1,3 +1,4 @@
+from .connector import AccessConfig, BaseConnector, ConnectionConfig
 from .destination import Destination
 from .downloader import Downloader, DownloaderConfig
 from .file_data import FileData, SourceIdentifiers
@@ -24,4 +25,7 @@ __all__ = [
     "UploaderConfig",
     "SourceIdentifiers",
     "UploadContent",
+    "AccessConfig",
+    "ConnectionConfig",
+    "BaseConnector",
 ]
