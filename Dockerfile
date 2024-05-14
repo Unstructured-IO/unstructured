@@ -8,6 +8,7 @@ COPY ./docker-packages/*.apk packages/
 COPY ./requirements/*.txt requirements/
 COPY unstructured unstructured
 COPY example-docs example-docs
+COPY ./scripts/install-paddleocr.sh install-paddleocr.sh
 
 RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
   apk add --allow-untrusted packages/pandoc-3.1.8-r0.apk && \
@@ -35,10 +36,11 @@ RUN pip3.11 install --no-cache-dir --user -r requirements/base.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-markdown.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-msg.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-odt.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-paddleocr.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-pdf-image.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-pptx.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-xlsx.txt
+
+RUN ARCH=amd64 ./install-paddleocr.sh
 
 RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
   python3.11 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
