@@ -79,11 +79,14 @@ class LocalIndexer(Indexer):
             yield file_data
 
 
+@dataclass
 class LocalDownloaderConfig(DownloaderConfig):
     pass
 
 
+@dataclass
 class LocalDownloader(Downloader):
+    connector_type: str = CONNECTOR_TYPE
     download_config: Optional[LocalDownloaderConfig] = None
 
     def get_download_path(self, file_data: FileData) -> Path:

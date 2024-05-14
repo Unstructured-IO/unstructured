@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from typing import Optional, TypeVar
 
@@ -15,7 +15,3 @@ class Destination(BaseConnector, ABC):
     connector_type: str
     uploader: uploader_type
     stager: Optional[stager_type] = None
-
-    @abstractmethod
-    def check_connection(self):
-        pass

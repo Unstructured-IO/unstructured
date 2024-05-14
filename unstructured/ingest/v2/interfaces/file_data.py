@@ -19,7 +19,7 @@ class SourceIdentifiers:
     filename: str
     fullpath: str
     rel_path: Optional[str] = None
-    additional_metadata: Optional[dict[str, Any]] = None
+    additional_metadata: dict[str, Any] = field(default_factory=dict)
 
     @property
     def filename_stem(self) -> str:
@@ -36,7 +36,7 @@ class FileData(DataClassJsonMixin):
     connector_type: str
     source_identifiers: SourceIdentifiers
     doc_type: IndexDocType = field(default=IndexDocType.FILE)
-    metadata: Optional[DataSourceMetadata] = None
+    metadata: DataSourceMetadata = field(default_factory=DataSourceMetadata)
     reprocess: bool = False
 
     @classmethod
