@@ -388,6 +388,6 @@ Examples:
   translate_text("Ich bin ein Berliner!")
 
   # Output is "I can also translate Russian!"
-  translate_text("Я тоже можно переводать русский язык!", "ru", "en")
+  translate_text("Я тоже могу переводить русский язык!", "ru", "en")
 
 For more information about the ``translate_text`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/cleaners/translate.py>`__.
