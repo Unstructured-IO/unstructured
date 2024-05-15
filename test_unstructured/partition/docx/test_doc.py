@@ -22,10 +22,12 @@ from unstructured.partition.docx import partition_docx
 is_in_docker = os.path.exists("/.dockerenv")
 
 
-# NOTE(robinson) - Wasn't able to find the temp files in the chainguard wolfi
-# image, but wasn't able to figure out why
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
+def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir, request):
+    # NOTE(robinson) - Wasn't able to find the temp files in the chainguard wolfi
+    # image, but wasn't able to figure out why
+    if is_in_docker:
+        request.applymarket(pytest.mark.xfail)
+
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
     mock_document.save(docx_filename)
