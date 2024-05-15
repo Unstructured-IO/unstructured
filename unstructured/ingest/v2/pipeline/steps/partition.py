@@ -68,9 +68,15 @@ class PartitionStep(PipelineStep):
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        partitioned_content = await self.process.run_async(
-            filename=path, metadata=file_data.metadata
-        )
+        if semaphore := self.context.semaphore:
+            async with semaphore:
+                partitioned_content = await self.process.run_async(
+                    filename=path, metadata=file_data.metadata
+                )
+        else:
+            partitioned_content = await self.process.run_async(
+                filename=path, metadata=file_data.metadata
+            )
         self._save_output(
             output_filepath=str(output_filepath), partitioned_content=partitioned_content
         )
