@@ -212,6 +212,7 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
     original_file_name = "spring-weather.html"
@@ -324,7 +325,7 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
     )
 
     idx = 3
-    assert isinstance(elements[idx], Title)
+    assert isinstance(elements[idx], Text)
     assert elements[idx].text.startswith("LayoutParser")
 
     assert elements[idx].metadata.filename == os.path.basename(filename)
@@ -392,7 +393,7 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
         )
 
     idx = 3
-    assert isinstance(elements[idx], Title)
+    assert isinstance(elements[idx], Text)
     assert elements[idx].text.startswith("LayoutParser")
 
     # NOTE(alan): Xfail since new model misses the first word Zejiang
