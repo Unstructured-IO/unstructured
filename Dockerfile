@@ -41,6 +41,7 @@ RUN pip3.11 install --no-cache-dir --user -r requirements/base.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-pdf-image.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-pptx.txt && \
   pip3.11 install --no-cache-dir --user -r requirements/extra-xlsx.txt && \
+  pip3.11 install --no-cache-dir --user -r requirements/huggingface.txt && \
   pip3.11 install unstructured.paddlepaddle
 
 RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
