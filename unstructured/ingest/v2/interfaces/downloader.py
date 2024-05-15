@@ -3,23 +3,24 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, TypeVar
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class DownloaderConfig:
+class DownloaderConfig(EnhancedDataClassJsonMixin):
     download_dir: Optional[Path] = None
 
 
-config_type = TypeVar("config_type", bound=DownloaderConfig)
+DownloaderConfigT = TypeVar("DownloaderConfigT", bound=DownloaderConfig)
 
 
 @dataclass(kw_only=True)
 class Downloader(BaseProcess, BaseConnector, ABC):
     connector_type: str
-    download_config: Optional[config_type] = field(default_factory=DownloaderConfig)
+    download_config: Optional[DownloaderConfigT] = field(default_factory=DownloaderConfig)
 
     @property
     def download_dir(self) -> Path:

@@ -6,7 +6,8 @@ from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logger import logger
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 from unstructured.ingest.v2.processes.partitioner import Partitioner
 
 STEP_ID = "partition"
@@ -21,6 +22,13 @@ class PartitionStepResponse(TypedDict):
 class PartitionStep(PipelineStep):
     identifier: str = STEP_ID
     process: Partitioner
+
+    def __str__(self):
+        return f"{self.identifier} ({self.process.config.strategy})"
+
+    def __post_init__(self):
+        config = sterilize_dict(self.process.config.to_dict(redact_sensitive=True))
+        logger.info(f"Created {self.identifier} with configs: {config}")
 
     def should_partition(self, filepath: Path, file_data: FileData) -> bool:
         if self.context.reprocess or file_data.reprocess:
@@ -40,13 +48,12 @@ class PartitionStep(PipelineStep):
             logger.debug(f"Writing partitioned output to: {output_filepath}")
             json.dump(partitioned_content, f, indent=2)
 
-    @log_error()
-    def run(self, path: str, file_data_path: str) -> PartitionStepResponse:
+    def _run(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
-            logger.info(f"Skipping partitioning, output already exists: {output_filepath}")
+            logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         partitioned_content = self.process.run(filename=path, metadata=file_data.metadata)
         self._save_output(
@@ -54,12 +61,12 @@ class PartitionStep(PipelineStep):
         )
         return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
 
-    async def run_async(self, path: str, file_data_path: str) -> PartitionStepResponse:
+    async def _run_async(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
-            logger.info(f"Skipping partitioning, output already exists: {output_filepath}")
+            logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         partitioned_content = await self.process.run_async(
             filename=path, metadata=file_data.metadata

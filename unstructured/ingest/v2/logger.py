@@ -5,6 +5,7 @@ from logging import Formatter, Logger, StreamHandler, getLevelName, getLogger
 from typing import Any, Callable
 
 log_level = os.getenv("INGEST_LOG_LEVEL", "INFO")
+LOGGER_NAME = "unstructured.ingest.v2"
 
 
 def default_is_data_sensitive(k: str, v: Any) -> bool:
@@ -97,7 +98,7 @@ class SensitiveFormatter(Formatter):
 
 def make_default_logger(level: int) -> Logger:
     """Return a custom logger."""
-    logger = getLogger("unstructured.ingest.v2")
+    logger = getLogger(LOGGER_NAME)
     handler = StreamHandler()
     handler.name = "ingest_log_handler"
     formatter = SensitiveFormatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")

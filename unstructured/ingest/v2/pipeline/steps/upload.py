@@ -6,7 +6,8 @@ from typing import Optional, TypedDict
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.uploader import UploadContent, Uploader
 from unstructured.ingest.v2.logger import logger
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, iterable_input, log_error
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, iterable_input
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 
 STEP_ID = "upload"
 
@@ -20,6 +21,25 @@ class UploadStepContent(TypedDict):
 class UploadStep(PipelineStep):
     identifier: str = STEP_ID
     process: Uploader
+
+    def __str__(self):
+        return f"{self.identifier} ({self.process.__class__.__name__})"
+
+    def __post_init__(self):
+        config = (
+            sterilize_dict(self.process.upload_config.to_dict(redact_sensitive=True))
+            if self.process.upload_config
+            else None
+        )
+        connection_config = (
+            sterilize_dict(self.process.connection_config.to_dict(redact_sensitive=True))
+            if self.process.connection_config
+            else None
+        )
+        logger.info(
+            f"Created {self.identifier} with configs: {config}, "
+            f"connection configs: {connection_config}"
+        )
 
     def process_whole(self, iterable: iterable_input):
         self.run(iterable)
@@ -43,15 +63,14 @@ class UploadStep(PipelineStep):
     def get_hash(self, extras: Optional[list[str]]) -> str:
         pass
 
-    @log_error()
-    def run(self, contents: list[UploadStepContent]):
+    def _run(self, contents: list[UploadStepContent]):
         upload_contents = [
             UploadContent(path=Path(c["path"]), file_data=FileData.from_file(c["file_data_path"]))
             for c in contents
         ]
         self.process.run(contents=upload_contents)
 
-    async def run_async(self, path: str, file_data_path: str):
+    async def _run_async(self, path: str, file_data_path: str):
         await self.process.run_async(
             path=Path(path), file_data=FileData.from_file(path=file_data_path)
         )

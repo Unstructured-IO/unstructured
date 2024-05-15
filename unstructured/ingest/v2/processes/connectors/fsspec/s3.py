@@ -14,12 +14,10 @@ from unstructured.ingest.v2.processes.connector_registry import (
 from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecAccessConfig,
     FsspecConnectionConfig,
-    FsspecDestination,
     FsspecDownloader,
     FsspecDownloaderConfig,
     FsspecIndexer,
     FsspecIndexerConfig,
-    FsspecSource,
     FsspecUploader,
     FsspecUploaderConfig,
 )
@@ -93,13 +91,6 @@ class S3Downloader(FsspecDownloader):
     download_config: Optional[S3DownloaderConfig] = field(default_factory=S3DownloaderConfig)
 
 
-@dataclass(kw_only=True)
-class S3Source(FsspecSource):
-    indexer: S3Indexer
-    downloader: S3Downloader
-    connector_type: str = CONNECTOR_TYPE
-
-
 @dataclass
 class S3UploaderConfig(FsspecUploaderConfig):
     pass
@@ -109,12 +100,6 @@ class S3UploaderConfig(FsspecUploaderConfig):
 class S3Upload(FsspecUploader):
     connection_config: S3ConnectionConfig
     upload_config: S3UploaderConfig = field(default_factory=S3UploaderConfig)
-
-
-@dataclass(kw_only=True)
-class S3Destination(FsspecDestination):
-    uploader: S3Upload
-    connector_type: str = CONNECTOR_TYPE
 
 
 add_source_entry(

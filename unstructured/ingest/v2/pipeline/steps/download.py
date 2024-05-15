@@ -6,9 +6,10 @@ from typing import Optional, TypedDict, TypeVar
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.downloader import Downloader
 from unstructured.ingest.v2.logger import logger
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 
-download_type = TypeVar("download_type", bound=Downloader)
+DownloaderT = TypeVar("DownloaderT", bound=Downloader)
 
 STEP_ID = "download"
 
@@ -21,7 +22,26 @@ class DownloadStepResponse(TypedDict):
 @dataclass(kw_only=True)
 class DownloadStep(PipelineStep):
     identifier: str = STEP_ID
-    process: download_type
+    process: DownloaderT
+
+    def __str__(self):
+        return f"{self.identifier} ({self.process.__class__.__name__})"
+
+    def __post_init__(self):
+        config = (
+            sterilize_dict(self.process.download_config.to_dict(redact_sensitive=True))
+            if self.process.download_config
+            else None
+        )
+        connection_config = (
+            sterilize_dict(self.process.connection_config.to_dict(redact_sensitive=True))
+            if self.process.connection_config
+            else None
+        )
+        logger.info(
+            f"Created {self.identifier} with configs: {config}, "
+            f"connection configs: {connection_config}"
+        )
 
     @staticmethod
     def is_float(value: str):
@@ -49,22 +69,21 @@ class DownloadStep(PipelineStep):
             return True
         return False
 
-    @log_error()
-    def run(self, file_data_path: str) -> list[DownloadStepResponse]:
+    def _run(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
-            logger.info(f"Skipping download, file already exists locally: {download_path}")
+            logger.debug(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = self.process.run(file_data=file_data)
         return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
-    async def run_async(self, file_data_path: str) -> list[DownloadStepResponse]:
+    async def _run_async(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
-            logger.info(f"Skipping download, file already exists locally: {download_path}")
+            logger.debug(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
         download_path = await self.process.run_async(file_data=file_data)
