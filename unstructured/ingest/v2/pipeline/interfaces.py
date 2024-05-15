@@ -45,6 +45,8 @@ class PipelineStep(ABC):
         if iterable:
             if len(iterable) == 1:
                 return [self.run(**iterable[0])]
+            if self.context.num_processes == 1:
+                return self.process_serially(iterable)
             with mp.Pool(
                 processes=self.context.num_processes,
                 initializer=self._set_log_level,
@@ -83,7 +85,9 @@ class PipelineStep(ABC):
         try:
             return self._run(*args, **kwargs)
         except Exception as e:
-            logger.error("Exception raised while running pipeline", exc_info=e)
+            logger.error(f"Exception raised while running {self.identifier}", exc_info=e)
+            if "file_data_path" in kwargs:
+                self.context.status[kwargs["file_data_path"]] = {self.identifier: str(e)}
             if self.context.raise_on_error:
                 raise e
             return None
@@ -92,7 +96,9 @@ class PipelineStep(ABC):
         try:
             return await self._run_async(*args, **kwargs)
         except Exception as e:
-            logger.error("Exception raised while running pipeline", exc_info=e)
+            logger.error(f"Exception raised while running {self.identifier}", exc_info=e)
+            if "file_data_path" in kwargs:
+                self.context.status[kwargs["file_data_path"]] = {self.identifier: str(e)}
             if self.context.raise_on_error:
                 raise e
             return None

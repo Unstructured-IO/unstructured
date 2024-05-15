@@ -23,3 +23,6 @@ class ProcessorConfig(EnhancedDataClassJsonMixin):
     max_docs: Optional[int] = None
     re_download: bool = False
     uncompress: bool = False
+
+    # Used to keep track of state in pipeline
+    status: dict = field(default_factory=dict)

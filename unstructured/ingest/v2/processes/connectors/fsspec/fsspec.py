@@ -2,7 +2,7 @@ import fnmatch
 import json
 import os
 from contextlib import suppress
-from dataclasses import InitVar, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from time import time
@@ -32,9 +32,14 @@ if TYPE_CHECKING:
 CONNECTOR_TYPE = "fsspec"
 
 
+class Base(object):
+    def __post_init__(self):
+        pass
+
+
 @dataclass
-class FileConfig:
-    remote_url: InitVar[str]
+class FileConfig(Base):
+    remote_url: str
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     supported_protocols: list[str] = field(
@@ -51,8 +56,9 @@ class FileConfig:
         ]
     )
 
-    def __post_init__(self, remote_url: str):
-        self.protocol, self.path_without_protocol = remote_url.split("://")
+    def __post_init__(self):
+        super().__post_init__()
+        self.protocol, self.path_without_protocol = self.remote_url.split("://")
         if self.protocol not in self.supported_protocols:
             raise ValueError(
                 "Protocol {} not supported yet, only {} are supported.".format(
@@ -204,7 +210,7 @@ class FsspecDownloader(Downloader):
         )
 
     def get_download_path(self, file_data: FileData) -> Path:
-        return self.download_config.download_dir / file_data.source_identifiers.rel_path
+        return self.download_config.download_dir / Path(file_data.source_identifiers.rel_path)
 
     @staticmethod
     def is_float(value: str):
