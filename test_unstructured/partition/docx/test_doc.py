@@ -37,7 +37,7 @@ def test_partition_doc_matches_partition_docx():
 
     assert partition_doc(doc_file_path) == partition_docx(docx_file_path)
 
-    
+
 # -- document-source (file or filename) ----------------------------------------------------------
 
 
