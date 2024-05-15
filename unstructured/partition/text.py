@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import re
 import textwrap
-from typing import IO, Any, Callable, Optional
+from typing import IO, Any, Callable, Literal, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -49,7 +49,7 @@ def partition_text(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],
@@ -126,7 +126,7 @@ def _partition_text(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
     languages: Optional[list[str]] = ["auto"],

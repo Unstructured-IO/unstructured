@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     #   unstructured-client
 click==8.1.7
     # via nltk
-dataclasses-json==0.6.5
+dataclasses-json==0.6.6
     # via -r ./base.in
 dataclasses-json-speakeasy==0.5.11
     # via unstructured-client
@@ -39,7 +39,7 @@ jsonpath-python==1.0.6
     # via unstructured-client
 langdetect==1.0.9
     # via -r ./base.in
-lxml==5.2.1
+lxml==5.2.2
     # via -r ./base.in
 marshmallow==3.21.2
     # via
@@ -67,7 +67,7 @@ python-magic==0.4.27
     # via -r ./base.in
 rapidfuzz==3.9.0
     # via -r ./base.in
-regex==2024.4.28
+regex==2024.5.10
     # via nltk
 requests==2.31.0
     # via

@@ -1,8 +1,8 @@
-## 0.13.8-dev3
+## 0.13.8-dev9
 
 ### Enhancements
 
-**Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
 
 ### Features
 
@@ -10,8 +10,12 @@
 
 * **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
-* **AstraDB: opton to prevent indexing metadata**
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **AstraDB: option to prevent indexing metadata**
 
 ## 0.13.7
 

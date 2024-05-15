@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import io
-from typing import IO, Any, Callable, Optional
+from typing import IO, Any, Callable, Literal, Optional
 
 import requests
 
@@ -139,7 +139,7 @@ def partition(
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     headers: dict[str, str] = {},
     skip_infer_table_types: list[str] = [],
     ssl_verify: bool = True,

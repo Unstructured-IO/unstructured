@@ -37,7 +37,7 @@ flake8==7.0.0
     #   flake8-print
 flake8-print==5.0.0
     # via -r ./test.in
-freezegun==1.5.0
+freezegun==1.5.1
     # via -r ./test.in
 grpcio==1.63.0
     # via -r ./test.in
@@ -52,7 +52,7 @@ label-studio-sdk==0.0.32
     # via -r ./test.in
 label-studio-tools==0.0.4
     # via label-studio-sdk
-lxml==5.2.1
+lxml==5.2.2
     # via
     #   -c ./base.txt
     #   label-studio-sdk
@@ -114,7 +114,7 @@ requests==2.31.0
     # via
     #   -c ./base.txt
     #   label-studio-sdk
-ruff==0.4.3
+ruff==0.4.4
     # via -r ./test.in
 six==1.16.0
     # via

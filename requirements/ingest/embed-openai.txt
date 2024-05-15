@@ -30,7 +30,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.5
+dataclasses-json==0.6.6
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
@@ -59,11 +59,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain-community==0.0.37
+langchain-community==0.0.38
     # via -r ./ingest/embed-openai.in
 langchain-core==0.1.52
     # via langchain-community
-langsmith==0.1.54
+langsmith==0.1.57
     # via
     #   langchain-community
     #   langchain-core
@@ -83,7 +83,7 @@ numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-openai==1.26.0
+openai==1.28.1
     # via -r ./ingest/embed-openai.in
 orjson==3.10.3
     # via langsmith
@@ -104,7 +104,7 @@ pyyaml==6.0.1
     # via
     #   langchain-community
     #   langchain-core
-regex==2024.4.28
+regex==2024.5.10
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken

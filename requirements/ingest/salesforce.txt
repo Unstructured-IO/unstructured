@@ -25,7 +25,7 @@ idna==3.7
     #   requests
 isodate==0.6.1
     # via zeep
-lxml==5.2.1
+lxml==5.2.2
     # via
     #   -c ./ingest/../base.txt
     #   zeep
