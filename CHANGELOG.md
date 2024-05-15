@@ -1,4 +1,4 @@
-## 0.13.8-dev10
+## 0.13.8-dev11
 
 ### Enhancements
 
@@ -16,6 +16,7 @@
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
 * **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
 
 ## 0.13.7
 
