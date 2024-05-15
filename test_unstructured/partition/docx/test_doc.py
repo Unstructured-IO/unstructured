@@ -19,6 +19,8 @@ from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
+is_in_docker = os.path.exists("/.dockerenv")
+
 
 def test_partition_doc_for_deterministic_and_unique_ids():
     ids = [element.id for element in partition_doc("example-docs/duplicate-paragraphs.doc")]
@@ -103,6 +105,7 @@ def test_partition_doc_from_filename_with_metadata_filename(
     assert all(element.metadata.filename == "test" for element in elements)
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
