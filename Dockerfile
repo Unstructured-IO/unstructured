@@ -7,6 +7,7 @@ USER root
 COPY ./docker-packages/*.apk packages/
 COPY ./requirements/*.txt requirements/
 COPY unstructured unstructured
+COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
@@ -16,6 +17,7 @@ RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
   apk add --allow-untrusted packages/tesseract-5.3.2-r0.apk && \
   apk add --allow-untrusted packages/libreoffice-7.6.5-r0.apk && \
   apk add bash && \
+  apk add libmagic && \
   mv /share/tessdata/configs /usr/local/share/tessdata/ && \
   mv /share/tessdata/tessconfigs /usr/local/share/tessdata/ && \
   ln -s /usr/local/lib/libreoffice/program/soffice.bin /usr/local/bin/libreoffice && \
@@ -45,5 +47,7 @@ RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
   python3.11 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
   python3.11 -c "from unstructured.partition.model_init import initialize; initialize()" && \
   python3.11 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+
+ENV PATH="${PATH}:/home/nonroot/.local/bin"
 
 CMD ["/bin/bash"]
