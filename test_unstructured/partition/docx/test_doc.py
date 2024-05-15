@@ -28,8 +28,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
-is_in_docker = os.path.exists("/.dockerenv")
-
 
 def test_partition_doc_matches_partition_docx():
     doc_file_path = example_doc_path("simple.doc")
