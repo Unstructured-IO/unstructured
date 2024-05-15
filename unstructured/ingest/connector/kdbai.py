@@ -24,9 +24,7 @@ if t.TYPE_CHECKING:
 
 @dataclass
 class KDBAIAccessConfig(AccessConfig):
-    # api_key: str = enhanced_field(sensitive=True)
-    settings: t.Optional[t.Dict[str, str]] = None
-
+    api_key: str = enhanced_field(sensitive=True)
 
 
 @dataclass
@@ -34,7 +32,6 @@ class SimpleKDBAIConfig(BaseConnectorConfig):
     access_config: KDBAIAccessConfig
     table_name: str
     endpoint: t.Optional[str] = None
-    api_key: t.Optional[str] = None
 
 
 @dataclass
@@ -80,7 +77,7 @@ class KDBAIDestinationConnector(BaseDestinationConnector):
         try:
             session = kdbai.Session(
                 endpoint=self.connector_config.endpoint,
-                api_key=self.connector_config.api_key,
+                api_key=self.connector_config.access_config.api_key,
             )
         except Exception as e:
             raise ValueError(f"KDBAI error: {e}") from e

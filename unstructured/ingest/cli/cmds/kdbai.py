@@ -13,17 +13,19 @@ class KDBAICliConfig(SimpleKDBAIConfig, CliConfig):
     def get_cli_options() -> t.List[click.Option]:
         options = [
             click.Option(
-                ["--endpoint"],
-                required=False,
-                default="http://localhost:8082",
-                help="Endpoint url where KDBAI is hosted.",
-            ),
-            click.Option(
                 ["--api-key"],
                 required=False,
                 type=str,
                 default=None,
                 help="A string for the api-key, can be left empty when connecting to local KDBAI instance.",
+                envvar="KDBAI_API_KEY",
+                show_envvar=True,
+            ),
+            click.Option(
+                ["--endpoint"],
+                required=True,
+                default="http://localhost:8082",
+                help="Endpoint url where KDBAI is hosted.",
             ),
             click.Option(
                 ["--table-name"],
