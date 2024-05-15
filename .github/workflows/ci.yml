@@ -16,7 +16,7 @@ jobs:
   setup:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -30,7 +30,7 @@ jobs:
   check-deps:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
   check-extras:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10","3.11","3.12" ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -98,7 +98,7 @@ jobs:
   test_unit:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10","3.11", "3.12"]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -161,7 +161,7 @@ jobs:
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y poppler-utils
-        make install-pandoc
+        make install-pandoc install-test
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
         sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor

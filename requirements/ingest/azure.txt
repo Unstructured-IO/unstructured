@@ -48,8 +48,9 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/azure.in
     #   adlfs
 idna==3.7
@@ -80,7 +81,9 @@ portalocker==2.8.2
 pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
-    # via msal
+    # via
+    #   msal
+    #   pyjwt
 requests==2.31.0
     # via
     #   -c ./ingest/../base.txt
