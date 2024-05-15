@@ -11,6 +11,8 @@ fi
 touch "$SKIPPED_FILES_LOG"
 cd "$SCRIPT_DIR"/.. || exit 1
 
+EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
+
 # NOTE(crag): sets number of tesseract threads to 1 which may help with more reproducible outputs
 export OMP_THREAD_LIMIT=1
 
@@ -44,6 +46,7 @@ all_tests=(
   # 'airtable-large.sh'
   'local-single-file.sh'
   'local-single-file-basic-chunking.sh'
+  'local-single-file-chunk-no-orig-elements.sh'
   'local-single-file-with-encoding.sh'
   'local-single-file-with-pdf-infer-table-structure.sh'
   'notion.sh'
@@ -53,6 +56,9 @@ all_tests=(
   'sharepoint-with-permissions.sh'
   'hubspot.sh'
   'local-embed.sh'
+  'local-embed-bedrock.sh'
+  'local-embed-octoai.sh'
+  'local-embed-vertexai.sh'
   'sftp.sh'
   'mongodb.sh'
   'opensearch.sh'
@@ -121,6 +127,6 @@ all_eval=(
 for eval in "${all_eval[@]}"; do
   CURRENT_TEST="evaluation-metrics.sh $eval"
   echo "--------- RUNNING SCRIPT evaluation-metrics.sh $eval ---------"
-  ./test_unstructured_ingest/evaluation-metrics.sh "$eval"
+  ./test_unstructured_ingest/evaluation-metrics.sh "$eval" "$EVAL_OUTPUT_ROOT"
   echo "--------- FINISHED SCRIPT evaluation-metrics.sh $eval ---------"
 done

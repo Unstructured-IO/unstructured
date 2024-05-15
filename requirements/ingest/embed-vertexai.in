@@ -1,0 +1,5 @@
+-c ../deps/constraints.txt
+-c ../base.txt
+langchain
+langchain-community
+langchain-google-vertexai

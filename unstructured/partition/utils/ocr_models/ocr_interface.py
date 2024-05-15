@@ -1,46 +1,43 @@
+from __future__ import annotations
+
 import functools
 import importlib
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, cast
+from typing import TYPE_CHECKING
 
-from PIL import Image as PILImage
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
-    partition_groups_from_regions,
+from unstructured.logger import logger
+from unstructured.partition.utils.config import env_config
+from unstructured.partition.utils.constants import (
+    OCR_AGENT_MODULES_WHITELIST,
+    OCR_AGENT_PADDLE,
+    OCR_AGENT_PADDLE_OLD,
+    OCR_AGENT_TESSERACT,
+    OCR_AGENT_TESSERACT_OLD,
 )
 
-from unstructured.documents.elements import ElementType
-from unstructured.partition.utils.constants import OCR_AGENT_MODULES_WHITELIST
+if TYPE_CHECKING:
+    from PIL import Image as PILImage
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 class OCRAgent(ABC):
-    def __init__(self):
-        self.agent = self.load_agent()
+    """Defines the interface for an Optical Character Recognition (OCR) service."""
 
-    @abstractmethod
-    def load_agent(self, language: str) -> Any:
-        pass
+    @classmethod
+    def get_agent(cls) -> OCRAgent:
+        """Get the configured OCRAgent instance.
 
-    @abstractmethod
-    def is_text_sorted(self) -> bool:
-        pass
-
-    @abstractmethod
-    def get_text_from_image(self, image: PILImage, ocr_languages: str = "eng") -> str:
-        pass
-
-    @abstractmethod
-    def get_layout_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[TextRegion]:
-        pass
-
-    @abstractmethod
-    def get_layout_elements_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[LayoutElement]:
-        pass
+        The OCR package used by the agent is determined by the `OCR_AGENT` environment variable.
+        """
+        ocr_agent_cls_qname = cls._get_ocr_agent_cls_qname()
+        try:
+            return cls.get_instance(ocr_agent_cls_qname)
+        except (ImportError, AttributeError):
+            raise ValueError(
+                f"Environment variable OCR_AGENT must be set to an existing OCR agent module,"
+                f" not {ocr_agent_cls_qname}."
+            )
 
     @staticmethod
     @functools.lru_cache(maxsize=None)
@@ -52,76 +49,51 @@ class OCRAgent(ABC):
             return loaded_class()
         else:
             raise ValueError(
-                f"Environment variable OCR_AGENT module name {module_name}",
-                f" must be set to a whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
+                f"Environment variable OCR_AGENT module name {module_name}, must be set to a"
+                f" whitelisted module part of {OCR_AGENT_MODULES_WHITELIST}.",
             )
 
+    @abstractmethod
+    def get_layout_elements_from_image(
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[LayoutElement]:
+        pass
 
-def get_elements_from_ocr_regions(
-    ocr_regions: List[TextRegion],
-    ocr_text: Optional[str] = None,
-    group_by_ocr_text: bool = False,
-) -> List[LayoutElement]:
-    """
-    Get layout elements from OCR regions
-    """
+    @abstractmethod
+    def get_layout_from_image(
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[TextRegion]:
+        pass
 
-    if group_by_ocr_text:
-        text_sections = ocr_text.split("\n\n")
-        grouped_regions = []
-        for text_section in text_sections:
-            regions = []
-            words = text_section.replace("\n", " ").split()
-            for ocr_region in ocr_regions:
-                if not words:
-                    break
-                if ocr_region.text in words:
-                    regions.append(ocr_region)
-                    words.remove(ocr_region.text)
+    @abstractmethod
+    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+        pass
 
-            if not regions:
-                continue
+    @abstractmethod
+    def is_text_sorted(self) -> bool:
+        pass
 
-            for r in regions:
-                ocr_regions.remove(r)
+    @staticmethod
+    def _get_ocr_agent_cls_qname() -> str:
+        """Get the fully-qualified class name of the configured OCR agent.
 
-            grouped_regions.append(regions)
-    else:
-        grouped_regions = cast(
-            List[List[TextRegion]],
-            partition_groups_from_regions(ocr_regions),
-        )
+        The qualified name (qname) looks like:
+            "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
 
-    merged_regions = [merge_text_regions(group) for group in grouped_regions]
-    return [
-        LayoutElement(
-            text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox
-        )
-        for r in merged_regions
-    ]
+        The qname provides the full module address and class name of the OCR agent.
+        """
+        ocr_agent_qname = env_config.OCR_AGENT
 
+        # -- map legacy method of setting OCR agent by key-name to full qname --
+        qnames_by_keyname = {
+            OCR_AGENT_TESSERACT_OLD: OCR_AGENT_TESSERACT,
+            OCR_AGENT_PADDLE_OLD: OCR_AGENT_PADDLE,
+        }
+        if qname_mapped_from_keyname := qnames_by_keyname.get(ocr_agent_qname.lower()):
+            logger.warning(
+                f"OCR agent name {ocr_agent_qname} is outdated and will be removed in a future"
+                f" release; please use {qname_mapped_from_keyname} instead"
+            )
+            return qname_mapped_from_keyname
 
-def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
-    """
-    Merge a list of TextRegion objects into a single TextRegion.
-
-    Parameters:
-    - group (List[TextRegion]): A list of TextRegion objects to be merged.
-
-    Returns:
-    - TextRegion: A single merged TextRegion object.
-    """
-
-    if not regions:
-        raise ValueError("The text regions to be merged must be provided.")
-
-    min_x1 = min([tr.bbox.x1 for tr in regions])
-    min_y1 = min([tr.bbox.y1 for tr in regions])
-    max_x2 = max([tr.bbox.x2 for tr in regions])
-    max_y2 = max([tr.bbox.y2 for tr in regions])
-
-    merged_text = " ".join([tr.text for tr in regions if tr.text])
-    sources = [tr.source for tr in regions]
-    source = sources[0] if all(s == sources[0] for s in sources) else None
-
-    return TextRegion.from_coords(min_x1, min_y1, max_x2, max_y2, merged_text, source)
+        return ocr_agent_qname

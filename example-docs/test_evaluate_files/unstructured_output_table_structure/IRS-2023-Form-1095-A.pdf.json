@@ -1,0 +1,602 @@
+[
+  {
+    "element_id": "32fd0777e6bf9ab8ffdf0bc98d236660",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "CAUTION: NOT FOR FILING",
+    "type": "Title"
+  },
+  {
+    "element_id": "2415b0b6c0a4a1193a0b2c1f72c2687a",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "Form 1095-A is provided here for informational purposes only. Health Insurance Marketplaces use Form 1095-A to report information on enrollments in a qualified health plan in the individual market through the Marketplace. As the form is to be completed by the Marketplaces, individuals cannot complete and use Form 1095-A available on IRS.gov. Individuals receiving a completed Form 1095-A from the Health Insurance Marketplace will use the information received on the form and the guidance in the instructions to assist them in filing an accurate tax return.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "c78cc8bc220ef978871c8ce7b77aca9e",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Form 1095-A",
+    "type": "Title"
+  },
+  {
+    "element_id": "4f4b828be49912732b002f7d975f2a47",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Health Insurance Marketplace Statement",
+    "type": "Header"
+  },
+  {
+    "element_id": "90251d5ff4018bf08f45ca85f613ed0b",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "VOID",
+    "type": "Title"
+  },
+  {
+    "element_id": "1ea2600ce51a288c15e846b7d5f36c57",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "OMB No. 1545-2232",
+    "type": "Header"
+  },
+  {
+    "element_id": "d03a8a9f07e60c8122532448b03b32f3",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Department of the Treasury Internal Revenue Service",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "c06c1be4d49b392523cb6d468f7069e1",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Do not attach to your tax return. Keep for your records. Go to www.irs.gov/Form1095A for instructions and the latest information.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "9ba6c34da4e65b2a4eede121ef45c20c",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "CORRECTED",
+    "type": "Title"
+  },
+  {
+    "element_id": "0c209ae41d8dc31972b9ae2255c78c5d",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "2023 ",
+    "type": "Image"
+  },
+  {
+    "element_id": "1cede1791a3bf0486bb15fcef30d8293",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Part I Recipient Information",
+    "type": "Title"
+  },
+  {
+    "element_id": "ff474028197add36ffdec72cedb778bd",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "text_as_html": "<table><thead><th>1</th><th>Marketplace identifier</th><th>2 Marketplace-assigned policy number</th><th colspan=\"3\">3 Policy issuer’s name</th></thead><thead><th>4</th><th>Recipient’s name</th><th></th><th>5 Recipient’s SSN</th><th>6</th><th>Recipient’s date of birth</th></thead><tr><td>7</td><td>Recipient’s spouse’s name</td><td></td><td>8 Recipient’s spouse’s SSN</td><td>9</td><td>Recipient’s spouse’s date of birth</td></tr><tr><td>10</td><td>Policy start date</td><td>11 Policy termination date</td><td colspan=\"3\">12 Street address (including apartment no.)</td></tr><tr><td>13</td><td>City or town</td><td>14 State or province</td><td colspan=\"3\">15 Country and ZIP or foreign postal code</td></tr></table>",
+      "table_as_cells": [{"x": 0, "y": 0, "w": 1, "h": 1, "content": "1"}, {"x": 0, "y": 1, "w": 1, "h": 1, "content": "4"}, {"x": 0, "y": 2, "w": 1, "h": 1, "content": "7"}, {"x": 0, "y": 3, "w": 1, "h": 1, "content": "10"}, {"x": 0, "y": 4, "w": 1, "h": 1, "content": "13"}, {"x": 1, "y": 0, "w": 1, "h": 1, "content": "Marketplace identifier"}, {"x": 1, "y": 1, "w": 1, "h": 1, "content": "Recipient\u2019s name"}, {"x": 1, "y": 2, "w": 1, "h": 1, "content": "Recipient\u2019s spouse\u2019s name"}, {"x": 1, "y": 3, "w": 1, "h": 1, "content": "Policy start date"}, {"x": 1, "y": 4, "w": 1, "h": 1, "content": "City or town"}, {"x": 2, "y": 0, "w": 1, "h": 1, "content": "2 Marketplace-assigned policy number"}, {"x": 2, "y": 1, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 2, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 3, "w": 1, "h": 1, "content": "11 Policy termination date"}, {"x": 2, "y": 4, "w": 1, "h": 1, "content": "14 State or province"}, {"x": 3, "y": 1, "w": 1, "h": 1, "content": "5 Recipient\u2019s SSN"}, {"x": 3, "y": 2, "w": 1, "h": 1, "content": "8 Recipient\u2019s spouse\u2019s SSN"}, {"x": 4, "y": 1, "w": 1, "h": 1, "content": "6"}, {"x": 4, "y": 2, "w": 1, "h": 1, "content": "9"}, {"x": 5, "y": 1, "w": 1, "h": 1, "content": "Recipient\u2019s date of birth"}, {"x": 5, "y": 2, "w": 1, "h": 1, "content": "Recipient\u2019s spouse\u2019s date of birth"}, {"x": 3, "y": 3, "w": 3, "h": 1, "content": "12 Street address (including apartment no.)"}, {"x": 3, "y": 4, "w": 3, "h": 1, "content": "15 Country and ZIP or foreign postal code"}, {"x": 3, "y": 0, "w": 3, "h": 1, "content": "3 Policy issuer\u2019s name"}]
+    },
+    "text": "1 Marketplace identifier 2 Marketplace-assigned policy number 3 Policy issuer’s name 4 Recipient’s name 5 Recipient’s SSN 6 Recipient’s date of birth 7 Recipient’s spouse’s name 8 Recipient’s spouse’s SSN 9 Recipient’s spouse’s date of birth 10 Policy start date 11 Policy termination date 12 Street address (including apartment no.) 13 City or town 14 State or province 15 Country and ZIP or foreign postal code",
+    "type": "Table"
+  },
+  {
+    "element_id": "7f740a165e0bc921cb2e9b0d24399743",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Part II Covered Individuals",
+    "type": "Title"
+  },
+  {
+    "element_id": "c8e5c7d9cef4d7d42f7576a6f0257912",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "text_as_html": "<table><thead><th>A. Covered individual name</th><th>B. Covered individual SSN</th><th>C. Covered individual date of birth</th><th>D. Coverage start date</th><th>E. Coverage termination date</th></thead><tr><td colspan=\"5\">16</td></tr><tr><td colspan=\"5\">17</td></tr><tr><td>18</td><td></td><td></td><td></td><td></td></tr><tr><td colspan=\"5\">19</td></tr><tr><td>20</td><td></td><td></td><td></td><td></td></tr></table>",
+      "table_as_cells": [{"x": 0, "y": 0, "w": 1, "h": 1, "content": "A. Covered individual name"}, {"x": 0, "y": 3, "w": 1, "h": 1, "content": "18"}, {"x": 0, "y": 5, "w": 1, "h": 1, "content": "20"}, {"x": 1, "y": 0, "w": 1, "h": 1, "content": "B. Covered individual SSN"}, {"x": 1, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 1, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 0, "w": 1, "h": 1, "content": "C. Covered individual date of birth"}, {"x": 2, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 0, "w": 1, "h": 1, "content": "D. Coverage start date"}, {"x": 3, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 0, "w": 1, "h": 1, "content": "E. Coverage termination date"}, {"x": 4, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 0, "y": 1, "w": 5, "h": 1, "content": "16"}, {"x": 0, "y": 4, "w": 5, "h": 1, "content": "19"}, {"x": 0, "y": 2, "w": 5, "h": 1, "content": "17"}]
+    },
+    "text": "A. Covered individual name B. Covered individual SSN C. Covered individual date of birth D. Coverage start date E. Coverage termination date 16 17 18 19 20",
+    "type": "Table"
+  },
+  {
+    "element_id": "cec692aeb8c9a0f36906c9784823943f",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Part III Coverage Information",
+    "type": "Title"
+  },
+  {
+    "element_id": "168cf6186d92272d26f9c486b640ea4d",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "text_as_html": "<table><thead><th></th><th>Month A.</th><th>Monthly enrollment</th><th>premiums B. Monthly second lowest cost silver plan (SLCSP) premium</th><th>C. Monthly advance payment of premium tax credit</th></thead><tr><td>22</td><td>February</td><td></td><td></td><td></td></tr><tr><td>23</td><td>March</td><td></td><td></td><td></td></tr><tr><td>24</td><td>April</td><td></td><td></td><td></td></tr><tr><td>25</td><td>May</td><td></td><td></td><td></td></tr><tr><td>26</td><td>June</td><td></td><td></td><td></td></tr><tr><td>27</td><td>July</td><td></td><td></td><td></td></tr><tr><td>28</td><td>August</td><td></td><td></td><td></td></tr><tr><td>29</td><td>September</td><td></td><td></td><td></td></tr><tr><td>30</td><td>October</td><td></td><td></td><td></td></tr><tr><td>31</td><td>November</td><td></td><td></td><td></td></tr><tr><td>32</td><td>December</td><td></td><td></td><td></td></tr></table>",
+      "table_as_cells": [{"x": 0, "y": 0, "w": 1, "h": 1, "content": ""}, {"x": 0, "y": 1, "w": 1, "h": 1, "content": "22"}, {"x": 0, "y": 2, "w": 1, "h": 1, "content": "23"}, {"x": 0, "y": 3, "w": 1, "h": 1, "content": "24"}, {"x": 0, "y": 4, "w": 1, "h": 1, "content": "25"}, {"x": 0, "y": 5, "w": 1, "h": 1, "content": "26"}, {"x": 0, "y": 6, "w": 1, "h": 1, "content": "27"}, {"x": 0, "y": 7, "w": 1, "h": 1, "content": "28"}, {"x": 0, "y": 8, "w": 1, "h": 1, "content": "29"}, {"x": 0, "y": 9, "w": 1, "h": 1, "content": "30"}, {"x": 0, "y": 10, "w": 1, "h": 1, "content": "31"}, {"x": 0, "y": 11, "w": 1, "h": 1, "content": "32"}, {"x": 1, "y": 0, "w": 1, "h": 1, "content": "Month A."}, {"x": 1, "y": 1, "w": 1, "h": 1, "content": "February"}, {"x": 1, "y": 2, "w": 1, "h": 1, "content": "March"}, {"x": 1, "y": 3, "w": 1, "h": 1, "content": "April"}, {"x": 1, "y": 4, "w": 1, "h": 1, "content": "May"}, {"x": 1, "y": 5, "w": 1, "h": 1, "content": "June"}, {"x": 1, "y": 6, "w": 1, "h": 1, "content": "July"}, {"x": 1, "y": 7, "w": 1, "h": 1, "content": "August"}, {"x": 1, "y": 8, "w": 1, "h": 1, "content": "September"}, {"x": 1, "y": 9, "w": 1, "h": 1, "content": "October"}, {"x": 1, "y": 10, "w": 1, "h": 1, "content": "November"}, {"x": 1, "y": 11, "w": 1, "h": 1, "content": "December"}, {"x": 2, "y": 0, "w": 1, "h": 1, "content": "Monthly enrollment"}, {"x": 2, "y": 1, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 2, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 4, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 6, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 7, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 8, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 9, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 10, "w": 1, "h": 1, "content": ""}, {"x": 2, "y": 11, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 0, "w": 1, "h": 1, "content": "premiums B. Monthly second lowest cost silver plan (SLCSP) premium"}, {"x": 3, "y": 1, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 2, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 4, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 6, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 7, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 8, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 9, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 10, "w": 1, "h": 1, "content": ""}, {"x": 3, "y": 11, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 0, "w": 1, "h": 1, "content": "C. Monthly advance payment of premium tax credit"}, {"x": 4, "y": 1, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 2, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 3, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 4, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 5, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 6, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 7, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 8, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 9, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 10, "w": 1, "h": 1, "content": ""}, {"x": 4, "y": 11, "w": 1, "h": 1, "content": ""}]
+    },
+    "text": "Month A. Monthly enrollment premiums B. Monthly second lowest cost silver plan (SLCSP) premium C. Monthly advance payment of premium tax credit 21 January 22 February 23 March 24 April 25 May 26 June 27 July 28 August 29 September 30 October 31 November 32 December",
+    "type": "Table"
+  },
+  {
+    "element_id": "c508f4f0fea52ddb36fd48c15d3a04bc",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "33 Annual Totals For Privacy Act and Paperwork Reduction Act Notice, see separate instructions.",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "21c2f28c80dac74fdd2697e558a061fe",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Cat. No. 60703Q",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "db879eb2cb861d538e88bad00211ebb3",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2
+    },
+    "text": "Form 1095-A (2023)",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "04569cac0eb6a52ca631ada9921a8543",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "Form 1095-A (2023)",
+    "type": "Header"
+  },
+  {
+    "element_id": "2a862b1ef802bf890f6a83d2e20f2ca2",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "Instructions for Recipient You received this Form 1095-A because you or a family member enrolled in health insurance coverage through the Health Insurance Marketplace. This Form 1095-A provides information you need to complete Form 8962, Premium Tax Credit (PTC). You must complete Form 8962 and file it with your tax return (Form 1040, Form 1040-SR, or Form 1040-NR) if any amount other than zero is shown in Part III, column C, of this Form 1095-A (meaning that you received premium assistance through advance payments of the premium tax credit (also called advance credit payments)) or if you want to take the premium tax credit. The filing requirement applies whether or not you’re otherwise required to file a tax return. If you are filing Form 8962, you cannot file Form 1040-NR-EZ, Form 1040-SS, or Form 1040-PR. The Marketplace has also reported the information on this form to the IRS. If you or your family members enrolled at the Marketplace in more than one qualified health plan policy, you will receive a Form 1095-A for each policy. Check the information on this form carefully. Please contact your Marketplace if you have questions concerning its accuracy. If you or your family members were enrolled in a Marketplace catastrophic health plan or separate dental policy, you aren’t entitled to take a premium tax credit for this coverage when you file your return, even if you received a Form 1095-A for this coverage. For additional information related to Form 1095-A, go to www.irs.gov/Affordable-Care-Act/Individuals-and- Families/Health-Insurance-Marketplace-Statements. Additional information. For additional information about the tax provisions of the Affordable Care Act (ACA), including the premium tax credit, see www.irs.gov/Affordable-Care-Act/Individuals-and-Families or call the IRS Healthcare Hotline for ACA questions (800-919-0452). VOID box. If the “VOID” box is checked at the top of the form, you previously received a Form 1095-A for the policy described in Part I. That Form 1095-A was sent in error. You shouldn’t have received a Form 1095-A for this policy. Don’t use the information on this or the previously received Form 1095-A to figure your premium tax credit on Form 8962. CORRECTED box. If the “CORRECTED” box is checked at the top of the form, use the information on this Form 1095-A to figure the premium tax credit and reconcile any advance credit payments on Form 8962. Don’t use the information on the original Form 1095-A you received for this policy. Part I. Recipient Information, lines 1–15. Part I reports information about you, the insurance company that issued your policy, and the Marketplace where you enrolled in the coverage. Line 1. This line identifies the state where you enrolled in coverage through the Marketplace. Line 2. This line is the policy number assigned by the Marketplace to identify the policy in which you enrolled. If you are completing Part IV of Form 8962, enter this number on line 30, 31, 32, or 33, box a. Line 3. This is the name of the insurance company that issued your policy. Line 4. You are the recipient because you are the person the Marketplace identified at enrollment who is expected to file a tax return and who, if qualified, would take the premium tax credit for the year of coverage. Line 5. This is your social security number (SSN). For your protection, this form may show only the last four digits. However, the Marketplace has reported your complete SSN to the IRS. Line 6. A date of birth will be entered if there is no SSN on line 5. Lines 7, 8, and 9. Information about your spouse will be entered only if advance credit payments were made for your coverage. The date of birth will be entered on line 9 only if line 8 is blank. Lines 10 and 11. These are the starting and ending dates of the policy. Lines 12 through 15. Your address is entered on these lines. Part II. Covered Individuals, lines 16–20. Part II reports information about each individual who is covered under your policy. This information includes the name, SSN, date of birth, and the starting and ending dates of coverage for each covered individual. For each line, a date of birth is reported in column C only if an SSN isn’t entered in column B.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "794f7062cf3f56f2c7d70702bd3d13e1",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "Page 2",
+    "type": "Title"
+  },
+  {
+    "element_id": "3111061d9618db9e89daa1caff9edbc5",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "If advance credit payments are made, the only individuals listed on Form 1095-A will be those whom you certified to the Marketplace would be in your tax family for the year of coverage (yourself, spouse, and dependents). If you certified to the Marketplace at enrollment that one or more of the individuals who enrolled in the plan aren’t individuals who would be in your tax family for the year of coverage, those individuals won’t be listed on your Form 1095-A. For example, if you indicated to the Marketplace at enrollment that an individual enrolling in the policy is your adult child who will not be your dependent for the year of coverage, that child will receive a separate Form 1095-A and won’t be listed in Part II on your Form 1095-A.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "a1725ddb727fe5e14e39ac1d53a7a5ea",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "If advance credit payments are made and you certify that one or more enrolled individuals aren’t individuals who would be in your tax family for the year of coverage, your Form 1095-A will include coverage information in Part III that is applicable solely to the individuals listed on your Form 1095-A, and separately issued Forms 1095-A will include coverage information, including dollar amounts, applicable to those individuals not in your tax family.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "55320ec59d692366de355b44b22cfe70",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "If advance credit payments weren’t made and you didn’t identify at enrollment the individuals who would be in your tax family for the year of coverage, Form 1095-A will list all enrolled individuals in Part II on your Form 1095-A.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "590dd32e83354b093212f7a899785c63",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "If there are more than five individuals covered by a policy, you will",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "7f67dd09bd0e1d98bd178637f2275674",
+    "metadata": {
+      "data_source": {
+        "date_created": "2024-02-15 16:06:55.506805",
+        "date_modified": "2024-02-14 10:43:11.300753",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ],
+        "url": "/Users/tenzo/projects/unstructured.io/unstructured/test_unstructured_ingest/mini-holistic-all/src/IRS-2023-Form-1095-A.pdf"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3
+    },
+    "text": "receive one or more additional Forms 1095-A that continue Part II. Part III. Coverage Information, lines 21–33. Part III reports information about your insurance coverage that you will need to complete Form 8962 to reconcile advance credit payments or to take the premium tax credit when you file your return. Column A. This column is the monthly premiums for the plan in which you or family members were enrolled, including premiums that you paid and premiums that were paid through advance payments of the premium tax credit. If you or a family member enrolled in a separate dental plan with pediatric benefits, this column includes the portion of the dental plan premiums for the pediatric benefits. If your plan covered benefits that aren’t essential health benefits, such as adult dental or vision benefits, the amount in this column will be reduced by the premiums for the nonessential benefits. If the policy was terminated by your insurance company due to nonpayment of premiums for 1 or more months, then a -0- will appear in this column for these months regardless of whether advance credit payments were made for these months. See the instructions for Form 8962, Part II, on how to complete Form 8962 if -0- is reported for 1 or more months. Column B. This column is the monthly premium for the second lowest cost silver plan (SLCSP) that the Marketplace has determined applies to members of your family enrolled in the coverage. The applicable SLCSP premium is used to compute your monthly advance credit payments and the premium tax credit you take on your return. See the instructions for Form 8962, Part II, on how to use the information in this column or how to complete Form 8962 if there is no information entered, the information is incorrect, or the information is reported as -0-. If the policy was terminated by your insurance company due to nonpayment of premiums for 1 or more months, then a -0- will appear in this column for the months, regardless of whether advance credit payments were made for these months. Column C. This column is the monthly amount of advance credit payments that were made to your insurance company on your behalf to pay for all or part of the premiums for your coverage. If this is the only column in Part III that is filled in with an amount other than zero for a month, it means your policy was terminated by your insurance company due to nonpayment of premiums, and you aren’t entitled to take the premium tax credit for that month when you file your tax return. You must still reconcile the entire advance payment that was paid on your behalf for that month using Form 8962. No information will be entered in this column if no advance credit payments were made. Lines 21–33. The Marketplace will report the amounts in columns A, B, and C on lines 21–32 for each month and enter the totals on line 33. Use this information to complete Form 8962, line 11 or lines 12–23.",
+    "type": "NarrativeText"
+  }
+]

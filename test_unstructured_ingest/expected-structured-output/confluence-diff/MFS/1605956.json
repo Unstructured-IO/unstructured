@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "1ecab3c4488c97247faa0edbb05f1b15",
+    "element_id": "d5576cc299d7d8417c136933f890831c",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -15,14 +15,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Create a stellar overview",
     "type": "Title"
   },
   {
-    "element_id": "faa74744751fdb969877e67e52dcd0de",
+    "element_id": "d36113941235a14bdacafa399698ee71",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -37,14 +36,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "The overview is the first page visitors will see when they visit your space, so it helps to include some information on what the space is about and what your team is working on.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "437b714ee33c51c95abdbbfbabc708a7",
+    "element_id": "21e1683c1bc71c40ea20081368bcc7f6",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -65,14 +63,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Add a header image. This gives your overview visual appeal and makes it welcoming for visitors.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "aba6251ab2ab07b3c9c814ca04acd5a1",
+    "element_id": "65f03aec0f3637db38c5a3741968eeff",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -93,14 +90,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Explain what the space is for. Start by summarizing the purpose of the space. This could be your team's mission statement or a brief description of the kind of work you do.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "171eac4cd6690ac31242e257b3d3e81e",
+    "element_id": "e2522f792c3c5ef32bf1ba342a282fdd",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -122,6 +118,11 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        43,
+        49,
+        68
+      ],
       "link_texts": [
         "OKRs",
         "project plans",
@@ -131,14 +132,13 @@
         "https://www.atlassian.com/software/confluence/templates/okrs",
         "https://www.atlassian.com/software/confluence/templates/project-plan",
         "https://www.atlassian.com/software/confluence/templates/product-roadmap"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Share team goals. Add links to your team's OKRs, project plans, and product roadmaps so visitors can quickly get a sense of your team's goals.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "802d1b4528872abe7ef1781586c44be0",
+    "element_id": "bd058a2d2c45c92a3178e327564e135a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -159,14 +159,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Tell people how to contact you. Share your timezone and links to Slack channels, email aliases, or other contact details your team uses so visitors can contact you with questions or feedback about your team's work.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "8b3c0a2333a72ae522d8ded1146b91c2",
+    "element_id": "eab79997042ec6e273d0a13383347a57",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -181,14 +180,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Use shortcuts for easy access",
     "type": "Title"
   },
   {
-    "element_id": "7e1124d93d694e9d5f3a63af957f7167",
+    "element_id": "29cdfa9dda669b1dac60890795ab526c",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -203,14 +201,34 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Shortcuts are helpful for important pages that members of a space might need to get to often. These shortcuts are added and organized by the space administrator. Space admins can link to pages in the space, other related spaces, or relevant external web content as well as reorder the shortcuts as needed.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "db4d16de97f8fabed809260fbc2d1bc8",
+    "element_id": "3251fe353cdbb64ce5cf084aef00cd96",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:54:45.288000",
+        "date_modified": "2023-07-09T12:54:45.288000",
+        "record_locator": {
+          "page_id": "1605956",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "💭Start discussions with inline comments",
+    "type": "Title"
+  },
+  {
+    "element_id": "29a93ef334092c2a12daf86b1c1b61fb",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -226,41 +244,21 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
-    },
-    "text": "💭Start discussions with inline comments",
-    "type": "Title"
-  },
-  {
-    "element_id": "9d43760c2ac5873a7a9fb595a7d919d1",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.288000",
-        "date_modified": "2023-07-09T12:54:45.288000",
-        "record_locator": {
-          "page_id": "1605956",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
+      "link_start_indexes": [
+        186
       ],
       "link_texts": [
         null
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed. Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "a55418d1e1ad6f5eca52502cfd31903f",
+    "element_id": "15cc91b0ec273ab28ab202cd5e7836ea",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -275,14 +273,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "To leave an inline comment, highlight text on the page and the comment icon will appear.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "4c0fa7c962cb5fb406440cc9270c8b27",
+    "element_id": "c606d30a11f8686a33c4f5305ab878fa",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -297,14 +294,34 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Team members with permission to access the page can respond to any comment. Plus, when a comment thread comes to its natural conclusion, comments can be resolved and cleared away.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "57451018401881933a14a90bbad19a68",
+    "element_id": "9cec5c4cb40b1424590a7d2255ba5d98",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-07-09T12:54:45.288000",
+        "date_modified": "2023-07-09T12:54:45.288000",
+        "record_locator": {
+          "page_id": "1605956",
+          "url": "https://unstructured-ingest-test.atlassian.net"
+        },
+        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
+        "version": "1"
+      },
+      "filetype": "text/html",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "👋Loop in team members with @mentions",
+    "type": "Title"
+  },
+  {
+    "element_id": "158ce46e2f05121666d26652b44ce556",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -320,41 +337,21 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1
-    },
-    "text": "👋Loop in team members with @mentions",
-    "type": "Title"
-  },
-  {
-    "element_id": "1e60bb772f35af42c7b4bbed025790bd",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.288000",
-        "date_modified": "2023-07-09T12:54:45.288000",
-        "record_locator": {
-          "page_id": "1605956",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605956",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
+      "link_start_indexes": [
+        0
       ],
       "link_texts": [
         null
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "@mentions on Confluence function like @mentions on social media platforms like Twitter, Instagram, and Slack. Type the @ symbol on a Confluence page or in a comment, begin spelling a team member's first name, and a list will appear. Select the individual to ask a question or assign a task.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "b14d1b1ac79dfa9d746669d9e903af63",
+    "element_id": "aedbcb95b475418adc9e82fb50e1832f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -369,14 +366,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "👏Endorse ideas with reactions",
     "type": "Title"
   },
   {
-    "element_id": "5a0a06565120acb8ba0feead3b47c50f",
+    "element_id": "9dcf5a605331e2e0db925a329a727df8",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -391,14 +387,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Use reactions when you want to support a comment or acknowledge you've seen one without clogging up the thread with another comment.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "22283cc79ff46fabb9111017af6f0a61",
+    "element_id": "a26e40b5555fb394e0844b7ae0118a90",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -413,14 +408,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "You can also use reactions on a page or blog post. The author of the content will be notified, and if enough team members react or add comments to the content, it'll be surfaced on Confluence home feed",
     "type": "NarrativeText"
   },
   {
-    "element_id": "fba9640fdadd42f8fe71fa1c347b1182",
+    "element_id": "04dfe464a23b5192ca7465fca96e8a56",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -435,14 +429,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Take your Confluence space to the next level",
     "type": "Title"
   },
   {
-    "element_id": "23128defad5dc9096e86f4fbdc25396b",
+    "element_id": "0702e0badc70e2f3caa9d29e353e7983",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -457,14 +450,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Extend the capabilities of your Confluence pages by  adding extra functionality or including dynamic content.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "56b3466c8303df451cd42e976cf8f948",
+    "element_id": "7d4a53bc8e11c662ba62212041b24cf6",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -485,14 +477,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "To add functionality:",
     "type": "NarrativeText"
   },
   {
-    "element_id": "4f1b007ba2308a910c57cfc2d49ecac3",
+    "element_id": "29eaf10632e9bd8a0f0c46ac3f6ff876",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -507,14 +498,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Type ' / ' to open the list of items available to use",
     "type": "ListItem"
   },
   {
-    "element_id": "0e0c10bbf84a3370dfdcc1f10feb482a",
+    "element_id": "885e34b9230d70d0c3257eef2d3f6a0f",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -529,14 +519,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Find the item to be inserted and select it",
     "type": "ListItem"
   },
   {
-    "element_id": "149e9e865b0696eea528b97686d73fdd",
+    "element_id": "258ee604863fd54e308f2925d07ebd79",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -557,14 +546,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Select Insert",
     "type": "ListItem"
   },
   {
-    "element_id": "e31f628353416b00ad94095adf83a41a",
+    "element_id": "04a5e0e0b40cb961c84088dcc67b26b7",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -579,14 +567,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Useful elements for Team space",
     "type": "Title"
   },
   {
-    "element_id": "58909722a50f310da5c1606b63a23d5f",
+    "element_id": "bd4f8d2535746efce21ce872c09ef973",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -607,14 +594,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Introduce the team",
     "type": "Title"
   },
   {
-    "element_id": "87d31fcd2ab69ef4728d71a5476121aa",
+    "element_id": "433789f2b20ca6275f62a944390e3c1d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -630,19 +616,21 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        4
+      ],
       "link_texts": [
         "user profiles"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-user-profile-macro/"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Add user profiles to display a short summary of a given Confluence user's profile with their role, profile photo and contact details.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "cd49fa2c2756766040046a267d74711c",
+    "element_id": "959ffe89453ca67c279ed576df24e196",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -663,14 +651,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Share news and announcements with your team",
     "type": "Title"
   },
   {
-    "element_id": "16ed42f2003932ba291f8a0ef02dc4f6",
+    "element_id": "8b81b2db2cef191090cfa1d4204b8964",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -686,19 +673,21 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        27
+      ],
       "link_texts": [
         "blog posts"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-blog-posts-macro/"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Display a stream of latest blog posts so your team can easily see what's been going on.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "27a511512b3422fb415f87254c916998",
+    "element_id": "3fd46bb09e57e95f1211f475c45b575b",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -719,14 +708,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Display a list of important pages",
     "type": "NarrativeText"
   },
   {
-    "element_id": "8e42428bf09e6252568c28e588dbe1ad",
+    "element_id": "5cbfe913e369743f1f14830c0b6572ab",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.288000",
@@ -742,13 +730,15 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        53
+      ],
       "link_texts": [
         "content report table"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/insert-the-content-report-table-macro/"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Paste in page URLs to create smart links, or use the content report table to create a list of all the pages in the space.",
     "type": "NarrativeText"

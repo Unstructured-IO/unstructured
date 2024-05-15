@@ -4,58 +4,72 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import pathlib
 from functools import partial
 
 import pytest
 
-from unstructured.cleaners.core import clean_prefix
-from unstructured.cleaners.translate import translate_text
+from test_unstructured.unit_utils import assign_hash_ids
+from unstructured.cleaners.core import clean_bullets, clean_prefix
 from unstructured.documents.coordinates import (
     CoordinateSystem,
     Orientation,
     RelativeCoordinateSystem,
 )
 from unstructured.documents.elements import (
-    UUID,
+    CheckBox,
     ConsolidationStrategy,
     CoordinatesMetadata,
     DataSourceMetadata,
     Element,
     ElementMetadata,
-    NoID,
     Points,
     RegexMetadata,
     Text,
+    Title,
+    assign_and_map_hash_ids,
 )
 
 
-def test_text_id():
-    text_element = Text(text="hello there!")
-    assert text_element.id == "c69509590d81db2f37f9d75480c8efed"
+@pytest.mark.parametrize("element", [Element(), Text(text=""), CheckBox()])
+def test_Element_autoassigns_a_UUID_then_becomes_an_idempotent_and_deterministic_hash(
+    element: Element,
+):
+    # -- element self-assigns itself a UUID --
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
+
+    expected_hash = "5336294a19f32ff03ef80066fbc3e0f7"
+    # -- calling `.id_to_hash()` changes the element's id-type to hash --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
+
+    # -- `.id_to_hash()` is idempotent --
+    assert element.id_to_hash(0) == expected_hash
+    assert element.id == expected_hash
 
 
-def test_text_uuid():
-    text_element = Text(text="hello there!", element_id=UUID())
-
-    id = text_element.id
-
-    assert isinstance(id, str)
-    assert len(id) == 36
-    assert id.count("-") == 4
-    # -- Test that the element is JSON serializable. This shold run without an error --
-    json.dumps(text_element.to_dict())
+def test_Text_is_JSON_serializable():
+    # -- This shold run without an error --
+    json.dumps(Text(text="hello there!", element_id=None).to_dict())
 
 
-def test_element_defaults_to_blank_id():
-    element = Element()
-    assert isinstance(element.id, NoID)
-
-
-def test_element_uuid():
-    element = Element(element_id=UUID())
-    assert isinstance(element.id, UUID)
+@pytest.mark.parametrize(
+    "element",
+    [
+        Element(),
+        Text(text=""),  # -- element_id should be implicitly None --
+        Text(text="", element_id=None),  # -- setting explicitly to None --
+        CheckBox(),
+    ],
+)
+def test_Element_self_assigns_itself_a_UUID_id(element: Element):
+    assert isinstance(element.id, str)
+    assert len(element.id) == 36
+    assert element.id.count("-") == 4
 
 
 def test_text_element_apply_cleaners():
@@ -66,13 +80,18 @@ def test_text_element_apply_cleaners():
 
 
 def test_text_element_apply_multiple_cleaners():
-    cleaners = [
-        partial(clean_prefix, pattern=r"\[\d{1,2}\]"),
-        partial(translate_text, target_lang="ru"),
-    ]
-    text_element = Text(text="[1] A Textbook on Crocodile Habitats")
+    cleaners = [partial(clean_prefix, pattern=r"\[\d{1,2}\]"), partial(clean_bullets)]
+    text_element = Text(text="[1] \u2022 A Textbook on Crocodile Habitats")
     text_element.apply(*cleaners)
-    assert str(text_element) == "Учебник по крокодильным средам обитания"
+    assert str(text_element) == "A Textbook on Crocodile Habitats"
+
+
+def test_non_text_elements_are_serializable_to_text():
+    element = CheckBox()
+    assert hasattr(element, "text")
+    assert element.text is not None
+    assert element.text == ""
+    assert str(element) == ""
 
 
 def test_apply_raises_if_func_does_not_produce_string():
@@ -82,7 +101,7 @@ def test_apply_raises_if_func_does_not_produce_string():
     text_element = Text(text="[1] A Textbook on Crocodile Habitats")
 
     with pytest.raises(ValueError, match="Cleaner produced a non-string output."):
-        text_element.apply(bad_cleaner)  # pyright: ignore[reportGeneralTypeIssues]
+        text_element.apply(bad_cleaner)  # pyright: ignore[reportArgumentType]
 
 
 @pytest.mark.parametrize(
@@ -241,7 +260,7 @@ class DescribeElementMetadata:
 
     def it_detects_unknown_constructor_args_at_both_development_time_and_runtime(self):
         with pytest.raises(TypeError, match="got an unexpected keyword argument 'file_name'"):
-            ElementMetadata(file_name="memo.docx")  # pyright: ignore[reportGeneralTypeIssues]
+            ElementMetadata(file_name="memo.docx")  # pyright: ignore[reportCallIssue]
 
     @pytest.mark.parametrize(
         "file_path",
@@ -289,9 +308,9 @@ class DescribeElementMetadata:
 
     def it_knows_the_types_of_its_known_members_so_type_checking_support_is_available(self):
         ElementMetadata(
-            category_depth="2",  # pyright: ignore[reportGeneralTypeIssues]
-            file_directory=True,  # pyright: ignore[reportGeneralTypeIssues]
-            text_as_html=42,  # pyright: ignore[reportGeneralTypeIssues]
+            category_depth="2",  # pyright: ignore[reportArgumentType]
+            file_directory=True,  # pyright: ignore[reportArgumentType]
+            text_as_html=42,  # pyright: ignore[reportArgumentType]
         )
         # -- it does not check types at runtime however (choosing to avoid validation overhead) --
 
@@ -382,6 +401,25 @@ class DescribeElementMetadata:
                 "url": "https://www.nih.gov/about-nih/who-we-are/nih-director",
                 "date_created": "2023-11-09",
             },
+            "page_number": 2,
+        }
+
+    def and_it_serializes_an_orig_elements_sub_object_to_base64_when_it_is_present(self):
+        elements = assign_hash_ids([Title("Lorem"), Text("Lorem Ipsum")])
+        meta = ElementMetadata(
+            category_depth=1,
+            orig_elements=elements,
+            page_number=2,
+        )
+
+        assert meta.to_dict() == {
+            "category_depth": 1,
+            "orig_elements": (
+                "eJyFzcsKwjAQheFXKVm7MGkzbXwDocu6EpFcTqTQG3UEtfTdbZa"
+                "6cTnDd/jPi0CHHgNf2yAOmXCljjqXoErKoIw3hqJRXlPuyphrEr"
+                "tM9GAbLNvNL+t2M56ctvU4o0+AXxPSo2m5g9jIb6VwBE0VBSujp"
+                "1LJ6EiRLpwiSBf3fyvZcbo/vlqnwVvGbZzbN0KT7Hr5AG/eQyM="
+            ),
             "page_number": 2,
         }
 
@@ -526,7 +564,7 @@ class DescribeElementMetadata:
     def but_it_raises_on_attempt_to_update_from_a_non_ElementMetadata_object(self):
         meta = ElementMetadata()
         with pytest.raises(ValueError, match=r"ate\(\)' must be an instance of 'ElementMetadata'"):
-            meta.update({"coefficient": "0.56"})  # pyright: ignore[reportGeneralTypeIssues]
+            meta.update({"coefficient": "0.56"})  # pyright: ignore[reportArgumentType]
 
     # -- It knows when it is equal to another instance -------------------------------------------
 
@@ -636,3 +674,73 @@ class DescribeElementMetadata:
                 f"ElementMetadata field `.{field_name}` does not have a consolidation strategy."
                 f" Add one in `ConsolidationStrategy.field_consolidation_strategies()."
             )
+
+
+def test_hash_ids_are_unique_for_duplicate_elements():
+    # GIVEN
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    elements = [
+        parent,
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+    ]
+
+    # WHEN
+    updated_elements = assign_and_map_hash_ids(copy.deepcopy(elements))
+    ids = [element.id for element in updated_elements]
+
+    # THEN
+    assert len(ids) == len(set(ids)), "Recalculated IDs must be unique."
+    assert elements[1].metadata.parent_id == elements[2].metadata.parent_id
+
+    for idx, updated_element in enumerate(updated_elements):
+        assert updated_element.id != elements[idx].id, "IDs haven't changed after recalculation"
+        if updated_element.metadata.parent_id is not None:
+            assert updated_element.metadata.parent_id in ids, "Parent ID not in the list of IDs"
+            assert (
+                updated_element.metadata.parent_id != elements[idx].metadata.parent_id
+            ), "Parent ID hasn't changed after recalculation"
+
+
+def test_hash_ids_are_deterministic():
+    parent = Text(text="Parent", metadata=ElementMetadata(page_number=1))
+    elements = [
+        parent,
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+        Text(text="Element", metadata=ElementMetadata(page_number=1, parent_id=parent.id)),
+    ]
+
+    updated_elements = assign_and_map_hash_ids(elements)
+    ids = [element.id for element in updated_elements]
+    parent_ids = [element.metadata.parent_id for element in updated_elements]
+
+    assert ids == [
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "4112a8d24886276e18e759d06956021b",
+        "eba84bbe7f03e8b91a1527323040ee3d",
+    ]
+    assert parent_ids == [
+        None,
+        "ea9eb7e80383c190f8cafce1ad666624",
+        "ea9eb7e80383c190f8cafce1ad666624",
+    ]
+
+
+@pytest.mark.parametrize(
+    ("text", "sequence_number", "filename", "page_number", "expected_hash"),
+    [
+        # -- pdf files support page numbers --
+        ("foo", 1, "foo.pdf", 1, "4bb264eb23ceb44cd8fcc5af44f8dc71"),
+        ("foo", 2, "foo.pdf", 1, "75fc1de48cf724ec00aa8d1c5a0d3758"),
+        # -- txt files don't have a page number --
+        ("some text", 0, "some.txt", None, "1a2627b5760c06b1440102f11a1edb0f"),
+        ("some text", 1, "some.txt", None, "e3fd10d867c4a1c0264dde40e3d7e45a"),
+    ],
+)
+def test_id_to_hash_calculates(text, sequence_number, filename, page_number, expected_hash):
+    element = Text(
+        text=text,
+        metadata=ElementMetadata(filename=filename, page_number=page_number),
+    )
+    assert element.id_to_hash(sequence_number) == expected_hash, "Returned ID does not match"
+    assert element.id == expected_hash, "ID should be set"

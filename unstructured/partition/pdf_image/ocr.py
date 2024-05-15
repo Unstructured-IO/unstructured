@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import BinaryIO, Dict, List, Optional, Union, cast
+from typing import IO, TYPE_CHECKING, Any, List, Optional, cast
 
 import pdf2image
 
@@ -8,38 +10,24 @@ import pdf2image
 # unstructured.documents.elements.Image
 from PIL import Image as PILImage
 from PIL import ImageSequence
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout, PageLayout
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
-)
-from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 from unstructured.documents.elements import ElementType
-from unstructured.logger import logger
+from unstructured.metrics.table.table_formats import SimpleTableCell
 from unstructured.partition.pdf_image.pdf_image_utils import pad_element_bboxes, valid_text
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import (
-    OCR_AGENT_PADDLE,
-    OCR_AGENT_PADDLE_OLD,
-    OCR_AGENT_TESSERACT,
-    OCR_AGENT_TESSERACT_OLD,
-    SUBREGION_THRESHOLD_FOR_OCR,
-    OCRMode,
-)
-from unstructured.partition.utils.ocr_models.ocr_interface import (
-    OCRAgent,
-    get_elements_from_ocr_regions,
-)
+from unstructured.partition.utils.constants import OCR_AGENT_TESSERACT, OCRMode
+from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.utils import requires_dependencies
 
-# Force tesseract to be single threaded,
-# otherwise we see major performance problems
-if "OMP_THREAD_LIMIT" not in os.environ:
-    os.environ["OMP_THREAD_LIMIT"] = "1"
+if TYPE_CHECKING:
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+    from unstructured_inference.inference.layoutelement import LayoutElement
+    from unstructured_inference.models.tables import UnstructuredTableTransformerModel
 
 
 def process_data_with_ocr(
-    data: Union[bytes, BinaryIO],
+    data: bytes | IO[bytes],
     out_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
     is_image: bool = False,
@@ -76,7 +64,8 @@ def process_data_with_ocr(
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
     with tempfile.NamedTemporaryFile() as tmp_file:
-        tmp_file.write(data.read() if hasattr(data, "read") else data)
+        data_bytes = data if isinstance(data, bytes) else data.read()
+        tmp_file.write(data_bytes)
         tmp_file.flush()
         merged_layouts = process_file_with_ocr(
             filename=tmp_file.name,
@@ -91,6 +80,7 @@ def process_data_with_ocr(
         return merged_layouts
 
 
+@requires_dependencies("unstructured_inference")
 def process_file_with_ocr(
     filename: str,
     out_layout: "DocumentLayout",
@@ -127,7 +117,10 @@ def process_file_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    merged_page_layouts = []
+
+    from unstructured_inference.inference.layout import DocumentLayout
+
+    merged_page_layouts: list[PageLayout] = []
     try:
         if is_image:
             with PILImage.open(filename) as images:
@@ -175,9 +168,10 @@ def process_file_with_ocr(
             raise FileNotFoundError(f'File "{filename}" not found!') from e
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_page_layout_with_ocr(
     page_layout: "PageLayout",
-    image: PILImage,
+    image: PILImage.Image,
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
@@ -191,14 +185,14 @@ def supplement_page_layout_with_ocr(
     with no text and add text from OCR to each element.
     """
 
-    ocr_agent = get_ocr_agent()
+    ocr_agent = OCRAgent.get_agent()
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = ocr_agent.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
         )
         page_layout.elements[:] = merge_out_layout_with_ocr_layout(
-            out_layout=cast(List[LayoutElement], page_layout.elements),
+            out_layout=cast(List["LayoutElement"], page_layout.elements),
             ocr_layout=ocr_layout,
         )
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
@@ -236,7 +230,7 @@ def supplement_page_layout_with_ocr(
             raise RuntimeError("Unable to load table extraction agent.")
 
         page_layout.elements[:] = supplement_element_with_table_extraction(
-            elements=cast(List[LayoutElement], page_layout.elements),
+            elements=cast(List["LayoutElement"], page_layout.elements),
             image=image,
             tables_agent=tables.tables_agent,
             ocr_languages=ocr_languages,
@@ -247,18 +241,21 @@ def supplement_page_layout_with_ocr(
     return page_layout
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_element_with_table_extraction(
-    elements: List[LayoutElement],
-    image: PILImage,
+    elements: List["LayoutElement"],
+    image: PILImage.Image,
     tables_agent: "UnstructuredTableTransformerModel",
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
     extracted_regions: Optional[List["TextRegion"]] = None,
-) -> List[LayoutElement]:
+) -> List["LayoutElement"]:
     """Supplement the existing layout with table extraction. Any Table elements
-    that are extracted will have a metadata field "text_as_html" where
-    the table's text content is rendered into an html string.
+    that are extracted will have a metadata fields "text_as_html" where
+    the table's text content is rendered into a html string and "table_as_cells"
+    with the raw table cells output from table agent
     """
+    from unstructured_inference.models.tables import cells_to_html
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
     for element in table_elements:
@@ -279,17 +276,27 @@ def supplement_element_with_table_extraction(
             extracted_regions=extracted_regions,
             table_element=padded_element,
         )
-        element.text_as_html = tables_agent.predict(cropped_image, ocr_tokens=table_tokens)
+        tatr_cells = tables_agent.predict(
+            cropped_image, ocr_tokens=table_tokens, result_format="cells"
+        )
+        text_as_html = cells_to_html(tatr_cells)
+        simple_table_cells = [
+            SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
+        ]
+
+        element.text_as_html = text_as_html
+        element.table_as_cells = simple_table_cells
+
     return elements
 
 
 def get_table_tokens(
-    table_element_image: PILImage,
+    table_element_image: PILImage.Image,
     ocr_languages: str = "eng",
     ocr_agent: OCRAgent = OCRAgent.get_instance(OCR_AGENT_TESSERACT),
     extracted_regions: Optional[List["TextRegion"]] = None,
     table_element: Optional["LayoutElement"] = None,
-) -> List[Dict]:
+) -> List[dict[str, Any]]:
     """Get OCR tokens from either paddleocr or tesseract"""
 
     ocr_layout = ocr_agent.get_layout_from_image(
@@ -324,10 +331,10 @@ def get_table_tokens(
 
 
 def merge_out_layout_with_ocr_layout(
-    out_layout: List[LayoutElement],
-    ocr_layout: List[TextRegion],
+    out_layout: List["LayoutElement"],
+    ocr_layout: List["TextRegion"],
     supplement_with_ocr_elements: bool = True,
-) -> List[LayoutElement]:
+) -> List["LayoutElement"]:
     """
     Merge the out layout with the OCR-detected text regions on page level.
 
@@ -343,7 +350,6 @@ def merge_out_layout_with_ocr_layout(
         out_region.text = aggregate_ocr_text_by_block(
             ocr_layout,
             out_region,
-            SUBREGION_THRESHOLD_FOR_OCR,
         )
 
     final_layout = (
@@ -356,9 +362,9 @@ def merge_out_layout_with_ocr_layout(
 
 
 def aggregate_ocr_text_by_block(
-    ocr_layout: List[TextRegion],
-    region: TextRegion,
-    subregion_threshold: float,
+    ocr_layout: List["TextRegion"],
+    region: "TextRegion",
+    subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
 ) -> Optional[str]:
     """Extracts the text aggregated from the regions of the ocr layout that lie within the given
     block."""
@@ -368,7 +374,7 @@ def aggregate_ocr_text_by_block(
     for ocr_region in ocr_layout:
         ocr_region_is_subregion_of_given_region = ocr_region.bbox.is_almost_subregion_of(
             region.bbox,
-            subregion_threshold=subregion_threshold,
+            subregion_threshold,
         )
         if ocr_region_is_subregion_of_given_region and ocr_region.text:
             extracted_texts.append(ocr_region.text)
@@ -376,10 +382,12 @@ def aggregate_ocr_text_by_block(
     return " ".join(extracted_texts) if extracted_texts else ""
 
 
+@requires_dependencies("unstructured_inference")
 def supplement_layout_with_ocr_elements(
-    layout: List[LayoutElement],
-    ocr_layout: List[TextRegion],
-) -> List[LayoutElement]:
+    layout: List["LayoutElement"],
+    ocr_layout: List["TextRegion"],
+    subregion_threshold: float = env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
+) -> List["LayoutElement"]:
     """
     Supplement the existing layout with additional OCR-derived elements.
 
@@ -401,17 +409,22 @@ def supplement_layout_with_ocr_elements(
     Note:
     - The function relies on `is_almost_subregion_of()` method to determine if an OCR region
       is a subregion of an existing layout element.
-    - It also relies on `get_elements_from_ocr_regions()` to convert OCR regions to layout elements.
-    - The `SUBREGION_THRESHOLD_FOR_OCR` constant is used to specify the subregion matching
+    - It also relies on `build_layout_elements_from_ocr_regions()` to convert OCR regions to
+     layout elements.
+    - The env_config `OCR_LAYOUT_SUBREGION_THRESHOLD` is used to specify the subregion matching
      threshold.
     """
 
-    ocr_regions_to_remove = []
+    from unstructured.partition.pdf_image.inference_utils import (
+        build_layout_elements_from_ocr_regions,
+    )
+
+    ocr_regions_to_remove: list[TextRegion] = []
     for ocr_region in ocr_layout:
         for el in layout:
             ocr_region_is_subregion_of_out_el = ocr_region.bbox.is_almost_subregion_of(
                 el.bbox,
-                SUBREGION_THRESHOLD_FOR_OCR,
+                subregion_threshold,
             )
             if ocr_region_is_subregion_of_out_el:
                 ocr_regions_to_remove.append(ocr_region)
@@ -419,40 +432,9 @@ def supplement_layout_with_ocr_elements(
 
     ocr_regions_to_add = [region for region in ocr_layout if region not in ocr_regions_to_remove]
     if ocr_regions_to_add:
-        ocr_elements_to_add = get_elements_from_ocr_regions(ocr_regions_to_add)
+        ocr_elements_to_add = build_layout_elements_from_ocr_regions(ocr_regions_to_add)
         final_layout = layout + ocr_elements_to_add
     else:
         final_layout = layout
 
     return final_layout
-
-
-def get_ocr_agent() -> str:
-    ocr_agent_module = env_config.OCR_AGENT
-    message = (
-        "OCR agent name %s is outdated and will be deprecated in a future release; please use %s "
-        "instead"
-    )
-    # deal with compatibility with origin way to set OCR
-    if ocr_agent_module.lower() == OCR_AGENT_TESSERACT_OLD:
-        logger.warning(
-            message,
-            ocr_agent_module,
-            OCR_AGENT_TESSERACT,
-        )
-        ocr_agent_module = OCR_AGENT_TESSERACT
-    elif ocr_agent_module.lower() == OCR_AGENT_PADDLE_OLD:
-        logger.warning(
-            message,
-            ocr_agent_module,
-            OCR_AGENT_PADDLE,
-        )
-        ocr_agent_module = OCR_AGENT_PADDLE
-    try:
-        ocr_agent = OCRAgent.get_instance(ocr_agent_module)
-    except (ImportError, AttributeError):
-        raise ValueError(
-            "Environment variable OCR_AGENT",
-            f" must be set to an existing ocr agent module, not {ocr_agent_module}.",
-        )
-    return ocr_agent

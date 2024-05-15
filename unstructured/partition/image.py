@@ -1,4 +1,6 @@
-from typing import List, Optional
+from __future__ import annotations
+
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -13,24 +15,26 @@ from unstructured.partition.utils.constants import PartitionStrategy
 
 @process_metadata()
 @add_metadata
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_image(
-    filename: str = "",
-    file: Optional[bytes] = None,
+    filename: Optional[str] = None,
+    file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     infer_table_structure: bool = False,
     ocr_languages: Optional[str] = None,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     strategy: str = PartitionStrategy.HI_RES,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
     hi_res_model_name: Optional[str] = None,
     extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
-    **kwargs,
-) -> List[Element]:
+    date_from_file_object: bool = False,
+    starting_page_number: int = 1,
+    **kwargs: Any,
+) -> list[Element]:
     """Parses an image into a list of interpreted elements.
 
     Parameters
@@ -83,6 +87,9 @@ def partition_image(
         Only applicable if `strategy=hi_res` and `extract_image_block_to_payload=False`.
         The filesystem path for saving images of the element type(s)
         specified in 'extract_image_block_types'.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -102,5 +109,7 @@ def partition_image(
         extract_image_block_types=extract_image_block_types,
         extract_image_block_output_dir=extract_image_block_output_dir,
         extract_image_block_to_payload=extract_image_block_to_payload,
+        date_from_file_object=date_from_file_object,
+        starting_page_number=starting_page_number,
         **kwargs,
     )

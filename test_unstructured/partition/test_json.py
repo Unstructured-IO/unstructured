@@ -1,9 +1,15 @@
+"""Test-suite for `unstructured.partition.json` module."""
+
+from __future__ import annotations
+
 import os
 import pathlib
 import tempfile
 
 import pytest
+from pytest_mock import MockFixture
 
+from unstructured.documents.elements import CompositeElement
 from unstructured.file_utils.filetype import FileType, detect_filetype
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
@@ -25,12 +31,20 @@ test_files = [
 is_in_docker = os.path.exists("/.dockerenv")
 
 
+def test_it_chunks_elements_when_a_chunking_strategy_is_specified():
+    chunks = partition_json(
+        "example-docs/spring-weather.html.json", chunking_strategy="basic", max_characters=1500
+    )
+
+    assert len(chunks) == 10
+    assert all(isinstance(ch, CompositeElement) for ch in chunks)
+
+
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -58,9 +72,8 @@ def test_partition_json_from_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -84,9 +97,8 @@ def test_partition_json_from_filename_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -100,7 +112,7 @@ def test_partition_json_from_file(filename: str):
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
-        with open(test_path) as f:
+        with open(test_path, "rb") as f:
             test_elements = partition_json(file=f)
 
     assert len(elements) > 0
@@ -114,9 +126,8 @@ def test_partition_json_from_file(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_with_metadata_filename(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -129,7 +140,7 @@ def test_partition_json_from_file_with_metadata_filename(filename: str):
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
-        with open(test_path) as f:
+        with open(test_path, "rb") as f:
             test_elements = partition_json(file=f, metadata_filename="test")
 
     for i in range(len(test_elements)):
@@ -139,9 +150,8 @@ def test_partition_json_from_file_with_metadata_filename(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -182,9 +192,8 @@ def test_partition_json_works_with_empty_list():
 
 def test_partition_json_raises_with_too_many_specified():
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-text.txt")
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -197,8 +206,8 @@ def test_partition_json_raises_with_too_many_specified():
     with tempfile.TemporaryDirectory() as tmpdir:
         test_path = os.path.join(tmpdir, "fake-text.txt.json")
         elements_to_json(elements, filename=test_path, indent=2)
-        with open(test_path) as f:
-            text = f.read()
+        with open(test_path, "rb") as f:
+            text = f.read().decode("utf-8")
 
     with pytest.raises(ValueError):
         partition_json(filename=test_path, file=f)
@@ -216,9 +225,8 @@ def test_partition_json_raises_with_too_many_specified():
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_filename_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -241,9 +249,8 @@ def test_partition_json_from_filename_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_file_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -257,7 +264,7 @@ def test_partition_json_from_file_exclude_metadata(filename: str):
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
         elements_to_json(elements, filename=test_path, indent=2)
-        with open(test_path) as f:
+        with open(test_path, "rb") as f:
             test_elements = partition_json(file=f, include_metadata=False)
 
     for i in range(len(test_elements)):
@@ -267,9 +274,8 @@ def test_partition_json_from_file_exclude_metadata(filename: str):
 @pytest.mark.parametrize("filename", test_files)
 def test_partition_json_from_text_exclude_metadata(filename: str):
     path = os.path.join(DIRECTORY, "..", "..", "example-docs", filename)
-
+    elements = []
     filetype = detect_filetype(filename=path)
-
     if filetype == FileType.TXT:
         elements = partition_text(filename=path)
     if filetype == FileType.HTML:
@@ -278,6 +284,7 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
         elements = partition_xml(filename=path)
     if filetype == FileType.EML:
         elements = partition_email(filename=path)
+
     with tempfile.TemporaryDirectory() as tmpdir:
         _filename = os.path.basename(filename)
         test_path = os.path.join(tmpdir, _filename + ".json")
@@ -290,45 +297,48 @@ def test_partition_json_from_text_exclude_metadata(filename: str):
         assert any(test_elements[i].metadata.to_dict()) is False
 
 
-def test_partition_json_metadata_date(
-    mocker,
-    filename="example-docs/spring-weather.html.json",
-):
+def test_partition_json_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
-    elements = partition_json(
-        filename=filename,
-    )
+    elements = partition_json("example-docs/spring-weather.html.json")
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
-def test_partition_json_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/spring-weather.html.json",
-):
+def test_partition_json_with_custom_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
     elements = partition_json(
-        filename=filename,
+        "example-docs/spring-weather.html.json",
         metadata_last_modified=expected_last_modification_date,
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_json_from_file_metadata_date(
+def test_partition_json_from_file_metadata_date(mocker: MockFixture):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.json.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open("example-docs/spring-weather.html.json", "rb") as f:
+        elements = partition_json(file=f)
+
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_json_from_file_explicit_get_metadata_date(
     mocker,
     filename="example-docs/spring-weather.html.json",
 ):
@@ -342,53 +352,56 @@ def test_partition_json_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = partition_json(
             file=f,
+            date_from_file_object=True,
         )
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
-def test_partition_json_from_file_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/spring-weather.html.json",
-):
+def test_partition_json_from_file_with_custom_metadata_date(mocker: MockFixture):
     mocked_last_modification_date = "2029-07-05T09:24:28"
     expected_last_modification_date = "2020-07-05T09:24:28"
-
     mocker.patch(
         "unstructured.partition.json.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
 
-    with open(filename, "rb") as f:
+    with open("example-docs/spring-weather.html.json", "rb") as f:
         elements = partition_json(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_json_from_text_metadata_date(
-    filename="example-docs/spring-weather.html.json",
-):
-    with open(filename) as f:
+def test_partition_json_from_text_metadata_date():
+    with open("example-docs/spring-weather.html.json") as f:
         text = f.read()
 
-    elements = partition_json(
-        text=text,
-    )
+    elements = partition_json(text=text)
 
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_json_from_text_with_custom_metadata_date(
-    filename="example-docs/spring-weather.html.json",
-):
+def test_partition_json_from_text_with_custom_metadata_date():
     expected_last_modification_date = "2020-07-05T09:24:28"
-
-    with open(filename) as f:
+    with open("example-docs/spring-weather.html.json") as f:
         text = f.read()
 
     elements = partition_json(text=text, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_json_from_file_without_metadata_date(
+    filename="example-docs/spring-weather.html.json",
+):
+    """Test partition_json() with file that are not possible to get last modified date"""
+    with open(filename, "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_json(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_json_raises_with_unprocessable_json():

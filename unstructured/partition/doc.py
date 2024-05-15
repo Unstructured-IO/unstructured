@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, Any, List, Optional
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -16,7 +18,7 @@ from unstructured.partition.docx import partition_docx
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.DOC)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
@@ -26,10 +28,12 @@ def partition_doc(
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
+    starting_page_number: int = 1,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 
     Parameters
@@ -51,6 +55,13 @@ def partition_doc(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -73,7 +84,9 @@ def partition_doc(
         _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
         base_filename, _ = os.path.splitext(filename_no_path)
 
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
     with tempfile.TemporaryDirectory() as tmpdir:
         convert_office_doc(
@@ -91,6 +104,7 @@ def partition_doc(
             metadata_last_modified=metadata_last_modified or last_modification_date,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
         )
         # remove tmp.name from filename if parsing file
         if file:

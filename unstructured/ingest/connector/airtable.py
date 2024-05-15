@@ -3,8 +3,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-import requests
-
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
@@ -223,6 +221,8 @@ class AirtableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         self._api = api
 
     def check_connection(self):
+        import requests
+
         try:
             self.api.request(method="HEAD", url=self.api.build_url("meta", "bases"))
         except requests.HTTPError as http_error:

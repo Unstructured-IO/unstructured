@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "0e58869830c7b4461a4d1879223e4139",
+    "element_id": "782cf07be8b3ab8f05188e479edb7f61",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -24,10 +24,10 @@
       "page_number": 1
     },
     "text": "Data in Brief 22 (2019) 451–457",
-    "type": "UncategorizedText"
+    "type": "Header"
   },
   {
-    "element_id": "b0658ce9dccc0acba9a472c2bb992cc9",
+    "element_id": "c3e4ba0411db419c34f27ae55762b1c1",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -54,7 +54,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f2fe9c33b7e8535efebf7c20ebce297c",
+    "element_id": "a983d2e46059a8605ebb1077994e6fa3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -74,7 +74,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0ca3f075fdccf9232449ff461b63ceb9",
+    "element_id": "354cd2b49c1a201a5e91177a17f9b2a3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -101,7 +101,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0ccb3a9876bbc64a1ca09fa40c4f844d",
+    "element_id": "c1c1eeb08eba1d16beccf2034fc87bc8",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -121,7 +121,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9ad2f78909544aa8ddb755f6fcc7db7d",
+    "element_id": "f1b37e8056f39eb82901f43f4fe0a239",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -141,7 +141,7 @@
     "type": "Title"
   },
   {
-    "element_id": "43ba2d697eec5d4b647cf4579c185231",
+    "element_id": "1a4fcf35fcd5d2be9f843f0fb93f3d3e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -161,7 +161,7 @@
     "type": "Title"
   },
   {
-    "element_id": "893c64b557e9f51e0b4dbdca3e5e4216",
+    "element_id": "418af174cd1457a5db9b88c3c4a33ce3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -181,7 +181,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "fbd221e3c1f82c8601661213b98b0962",
+    "element_id": "698747e1178c3e0ec15b2eb293e58565",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -201,7 +201,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d6923075e35e5f3296e0d24ceb70a2bb",
+    "element_id": "19e64efbeabe463d8d8a6f577d4c6be7",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -221,7 +221,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c382dd715a85d683f056834c4af7be85",
+    "element_id": "8e23ddc47eb2833b067fe61c9c413955",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -241,7 +241,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "abe4641521caf8385f30e81099f3a8c6",
+    "element_id": "2b0eb4fb8b32b5944bcf711f448ef19a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -261,7 +261,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5ff19b29d56eb015cac7f80f93c4ae6b",
+    "element_id": "8930d3f5d6929e72cbe35523538fc807",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -281,7 +281,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "260cf1397ece5718c2d35900917688de",
+    "element_id": "aa8a123d8b7bf47bd15c389a6685d405",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -301,7 +301,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "8c625bd30cfb1b77c8ba8d4e863d0bb3",
+    "element_id": "0757794849e2cca941b30b4e1e82cd4b",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -321,7 +321,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7379bc18109a0a988413877dd9950c36",
+    "element_id": "bab7909d0362404432e0cc4f90049b3a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -341,7 +341,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b27e559f6c00d2bde61efba5db252e31",
+    "element_id": "227863137634b2d549494fac759af715",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -361,7 +361,7 @@
     "type": "Title"
   },
   {
-    "element_id": "1064dcef42380cfdb90c668aa3a670a3",
+    "element_id": "3f88b0d8c42101ff25aeb213051cf81f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -381,7 +381,7 @@
     "type": "Title"
   },
   {
-    "element_id": "e4359c72057b318ddf5a64f9b97539c4",
+    "element_id": "b6664d832b0c853cff911e63ce738371",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -401,7 +401,7 @@
     "type": "Title"
   },
   {
-    "element_id": "e102dc7c1db28c29d5e4bde8062592ed",
+    "element_id": "9b655d4b82dc2b1d75b9c21c7b0fc7f8",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -428,7 +428,7 @@
     "type": "Title"
   },
   {
-    "element_id": "511abaee4573f467ba654d2a697efb03",
+    "element_id": "96e9fe2b2775d750918a6f92f0d3ad95",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -465,7 +465,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "549a2fac47d713cc00f2db498ad6b557",
+    "element_id": "757b62f5ce8ceee7150b7ce16ea16c93",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -485,7 +485,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "fb14c87d94f1676010e46b776d688612",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -502,10 +502,10 @@
       "page_number": 2
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "6928b78d26af54b6acb804ed319b5c05",
+    "element_id": "72155e648a45896b081904929fc91cc6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -525,7 +525,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "41e0fa358cefcadbb2633ec45ff2d129",
+    "element_id": "a577cc1dfaa481812a9cff86c06d9835",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -545,7 +545,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9769bb23c49762a84b464e817703bc35",
+    "element_id": "9b9d298aef0e8b4a83bca09152a07128",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -565,7 +565,7 @@
     "type": "Title"
   },
   {
-    "element_id": "aa43321cb45fb76debb7e732249d42a5",
+    "element_id": "6f850529ced475435229c193a8ee7938",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -585,7 +585,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7ce6ee1aa50d28b85acf544f1db3e25c",
+    "element_id": "c1c91f3ea75c102b6ed42b94530cbafe",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -605,7 +605,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "596eda178f8c5adefbae7cfe1bec78c3",
+    "element_id": "a5dd74871d789945bd8a9c352d4817fb",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -625,7 +625,7 @@
     "type": "Title"
   },
   {
-    "element_id": "682e6210329b84f8b00548088196ffc9",
+    "element_id": "9bed69cd8287b2725bd845ca61ebb3cd",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -645,7 +645,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "1d61e3468bc681ba1a7e647000c6828c",
+    "element_id": "2ac3a042a8c89fd81718d1fda7ae576b",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -665,7 +665,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "39b6040280a179e1f8e4f4fb5ec4ae05",
+    "element_id": "4962aa80bf0712155f4b781df06b4f1a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -685,7 +685,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "1ddde62c3188f81dfc835b6f036f1734",
+    "element_id": "3b419c2d586d0eaf047f939c9e41b30f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -705,7 +705,7 @@
     "type": "Title"
   },
   {
-    "element_id": "c2b2b778d53cc9a1cb4dc340476bc5aa",
+    "element_id": "f742be9cbb2d0697a88a9f749bf3185c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -725,7 +725,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "bc0cfb704c66cc864253e6ccf90a2b86",
+    "element_id": "732dc7fa0795c651041c10c2d318a8ae",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -745,7 +745,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "e28e0dc941accc8694040c63091b580c",
+    "element_id": "f3a850e6bd8c0557408ad59167f5461e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -765,7 +765,7 @@
     "type": "Title"
   },
   {
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "element_id": "3cb4a395dab98ecdc71ad325411cf150",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -785,7 +785,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b780e72bd4f737713ae202feb46b5d55",
+    "element_id": "2b2ff92863f302ae630dc410b945333a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -805,7 +805,7 @@
     "type": "Title"
   },
   {
-    "element_id": "acac86c0e609ca906f632b0e2dacccb2",
+    "element_id": "0da3f5fd0fd07fc182d371760d9da3c0",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -825,7 +825,7 @@
     "type": "Title"
   },
   {
-    "element_id": "1bd621f0b71079e0948b0aad011a7f4b",
+    "element_id": "f929b69f05a08ec2b940c9b531740326",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -845,7 +845,7 @@
     "type": "Title"
   },
   {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "element_id": "f0fbafddf553bdea61ac009ad080f1bc",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -865,7 +865,7 @@
     "type": "Title"
   },
   {
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "element_id": "2b3d55b9ce69bcd15d67071cf0d11814",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -885,7 +885,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "element_id": "9673d82062115826d94732418d566ba2",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -905,7 +905,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
+    "element_id": "b0304d4851460afe7c95d41feb260093",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -925,7 +925,7 @@
     "type": "Title"
   },
   {
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "element_id": "7f646e71d7bc0398e9917eec2c29b9ef",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -945,7 +945,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "98010bd9270f9b100b6214a21754fd33",
+    "element_id": "12a72cb263173964cf41736e5d3707b2",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -965,7 +965,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
+    "element_id": "673fe20c15c1210d134b56828c5a8216",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -985,7 +985,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
+    "element_id": "c552ee9963f985fd6b3498e2cf2c6230",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1005,7 +1005,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
+    "element_id": "16e471ece5a33bfb80b79b89aed6c731",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1025,7 +1025,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a955dcf1d740ce40d62415d9f16da436",
+    "element_id": "829e97853a2843ff6a8f1cfd3a6c74db",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1045,7 +1045,7 @@
     "type": "Title"
   },
   {
-    "element_id": "25db7b1d2f5780559e1034d72bcb4050",
+    "element_id": "b6f97c1cdf0e9f1abebac577d4cf4b2a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1065,7 +1065,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "cbd563dd2fcd7d0b5a0b2173465fd328",
+    "element_id": "09a5818257d4c970dc57191f38e1c1b0",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1085,7 +1085,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "828e27fb21b2ca5e25ebdc5f0693ed7d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1102,10 +1102,10 @@
       "page_number": 3
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "0faf54c7569cac28ec5462f872384f7c",
+    "element_id": "81cbf4e59dfe4444a94794a547e9063c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1125,7 +1125,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4f0139b605dfdd9eb93e920a6115e1b5",
+    "element_id": "f1b0da24500b1f98c9debd55a2482b7f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1145,7 +1145,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "49e7364ce1027887460959b2a757b184",
+    "element_id": "9efd31c777cb3a30d24545982e71644e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1165,7 +1165,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "element_id": "a535b571914bff036ee8d7b941a9e14c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1185,7 +1185,7 @@
     "type": "Title"
   },
   {
-    "element_id": "a97b042d7bd59d92a46e8ab17f7dff73",
+    "element_id": "6445348d57f8715d980bbf266f6cc4b3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1205,7 +1205,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "8139b33952401b3ee0e2ca84651cb9a1",
+    "element_id": "dff5188d0e9db124ca45b71e4123404f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1225,7 +1225,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d300d49efc4cd0982dd6bc3377759ae8",
+    "element_id": "2e8665917db0a5ca56fee4e99f113c05",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1245,7 +1245,7 @@
     "type": "Title"
   },
   {
-    "element_id": "c2356069e9d1e79ca924378153cfbbfb",
+    "element_id": "9b38508e1e3ddd8056482945216e1a28",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1265,7 +1265,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "98010bd9270f9b100b6214a21754fd33",
+    "element_id": "4638ab00ad25c2044ed18ba57b766d7d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1285,7 +1285,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "8722616204217eddb39e7df969e0698a",
+    "element_id": "252b95fc79d992358f5e7e4423febe14",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1305,7 +1305,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "7b1a278f5abe8e9da907fc9c29dfd432",
+    "element_id": "963002fc37d4568e01e1361b0f053b53",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1325,7 +1325,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
+    "element_id": "292f8084988c4f4000fcd5bd2205c36a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1345,7 +1345,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "5ec1a0c99d428601ce42b407ae9c675e",
+    "element_id": "5c317addf6947e11fba4c4f584f095c1",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1365,7 +1365,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "80c3cd40fa35f9088b8741bd8be6153d",
+    "element_id": "95649afacb76442d050ed4534b80c4cc",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1385,7 +1385,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "eb3be230bbd2844b1f5d8f2e4fab9ffb",
+    "element_id": "dad2b03f8f9d732efa19ab6a421e971d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1405,7 +1405,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "239bb77f5ec344ce5e614979b8c49742",
+    "element_id": "8f500e748d82811ccbb3b715e1932be6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1425,7 +1425,7 @@
     "type": "Title"
   },
   {
-    "element_id": "117d87715ea957afdc44d5f9f442a7ea",
+    "element_id": "03f95f2413bbe205cdc6975b1b98ecbe",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1445,7 +1445,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
+    "element_id": "3c32d78e905ba61d1ae55e0b2ebd5946",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1465,7 +1465,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "69f59c273b6e669ac32a6dd5e1b2cb63",
+    "element_id": "78e1f4ff627e16f8159327279bdfcce0",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1485,7 +1485,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "ba5ec51d07a4ac0e951608704431d59a",
+    "element_id": "748c1e92cccf809f3776382792e93895",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1505,7 +1505,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "bbf3f11cb5b43e700273a78d12de55e4",
+    "element_id": "feccbab23ec407ef6cc22348a78244d3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1525,7 +1525,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "32ebb1abcc1c601ceb9c4e3c4faba0ca",
+    "element_id": "03ac492dccd89cf13a9d40ada0e543e1",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1545,7 +1545,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "bbe120714b80df07396e808f98b3f354",
+    "element_id": "2a02254b1d03abddd3537dc16c56a6fb",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1565,7 +1565,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "element_id": "67504491ab6c6c3603a75d246c50f54d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1585,7 +1585,7 @@
     "type": "Title"
   },
   {
-    "element_id": "74599fca46202613cccb12e97774b306",
+    "element_id": "6a2c597e6f8cfa0954a022873f9dcf6f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1605,7 +1605,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "de7d1b721a1e0632b7cf04edf5032c8e",
+    "element_id": "f84aae3bf521f4166f63e87b5ef4f035",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1625,7 +1625,7 @@
     "type": "Title"
   },
   {
-    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
+    "element_id": "b76e96beb931beaef6e3660f5d415c3d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1645,7 +1645,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "ff5a1ae012afa5d4c889c50ad427aaf5",
+    "element_id": "0309a67bcfd5df32328af8c537c708e6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1665,7 +1665,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
+    "element_id": "33add4c83afdffa0745406aea3c75b49",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1685,7 +1685,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "1a6562590ef19d1045d06c4055742d38",
+    "element_id": "e180205da17abbe716978d5c4aa4dd03",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1705,7 +1705,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "element_id": "18f47de0e9dbec383a50a39027960bc6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1725,7 +1725,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "624b60c58c9d8bfb6ff1886c2fd605d2",
+    "element_id": "89ac5d03f7c6d4fa92bda587be577ab8",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1745,7 +1745,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "85b99d4e3d8e29e46e512f9cca7ba627",
+    "element_id": "93a1080514211ba59a1850d5600c261c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1765,7 +1765,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "element_id": "a66d7b20adfb12a1efd70da1d5b65375",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1785,7 +1785,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "element_id": "82bf75b4e447974f22e48c9a450c45d5",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1805,7 +1805,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "5feceb66ffc86f38d952786c6d696c79",
+    "element_id": "d460a5ac4c345529812f84dabf681d9f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1825,7 +1825,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "f5ca38f748a1d6eaf726b8a42fb575c3",
+    "element_id": "a6282e95f41f8cb5061e0618a02dc09a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1845,7 +1845,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d59eced1ded07f84c145592f65bdf854",
+    "element_id": "44e027245f6667d8282ec4728ad9c2dd",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1865,7 +1865,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "39fa9ec190eee7b6f4dff1100d6343e1",
+    "element_id": "935862a8bb1abed65afc07fc8d1da166",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1885,7 +1885,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "48449a14a4ff7d79bb7a1b6f3d488eba",
+    "element_id": "fada482b9f03a3eda9be2ad92169bc9a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1905,7 +1905,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "ad57366865126e55649ecb23ae1d4888",
+    "element_id": "3179f53a093e5bb8064b777a8125c88e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1925,7 +1925,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2abaca4911e68fa9bfbf3482ee797fd5",
+    "element_id": "2053a3a5b1e12481504583f7f72979ff",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1945,7 +1945,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "dbae772db29058a88f9bd830e957c695",
+    "element_id": "b81dbb6336d2b992478316f8514e94b6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1965,7 +1965,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a512db2741cd20693e4b16f19891e72b",
+    "element_id": "d4eb5e157598e6fa21a6b5b4254e9b5e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -1985,7 +1985,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "7b69759630f869f2723875f873935fed",
+    "element_id": "f082a93dce4872ddd5ecc97c3a9341fb",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2005,7 +2005,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "a955dcf1d740ce40d62415d9f16da436",
+    "element_id": "4c19db10f909537bf29da9829ab6f81b",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2025,7 +2025,7 @@
     "type": "Title"
   },
   {
-    "element_id": "b679a61115e69becb7bae4fdaf139a29",
+    "element_id": "c566a56fa9e9ad6b97408310e357b079",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2045,7 +2045,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2de5af9e251e864412de9ee8c4456f3b",
+    "element_id": "21233d8e249dd8180c7f2c99a468f337",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2065,7 +2065,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d83c7ee736be931d85b78a4a60881ced",
+    "element_id": "443e25a2b54b8b2a43f8029e07f784b3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2085,7 +2085,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "48f89b630677c2cbb70e2ba05bf7a363",
+    "element_id": "33b112b0d8640ab4f13b22a2ee714086",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2105,7 +2105,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "e87ca7b3cd075aaa0de8030768aca87c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2122,10 +2122,10 @@
       "page_number": 4
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "f0e5c879f7d220552d8ad5b3503bd038",
+    "element_id": "fd8a0feb5e755ece5d9abceb844649ff",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2145,7 +2145,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c1589916b4d51307d5d804bbf911ea17",
+    "element_id": "598ed0a58406fc921332297f345b177a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2165,7 +2165,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "362d4a20958df0c88550b9e5d1f2ef5b",
+    "element_id": "9620a738189422654c5456fa16e507e7",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2185,7 +2185,7 @@
     "type": "Title"
   },
   {
-    "element_id": "bcf00b4904f5661d6baef52e7e09e9b1",
+    "element_id": "3acf3c88a28cad76984ac041a8f5984c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2205,7 +2205,7 @@
     "type": "Title"
   },
   {
-    "element_id": "12e486f4a9b3a1805bf7e95b5d01847b",
+    "element_id": "da72962f658cee29281fa0e11a548813",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2225,7 +2225,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7bc31ed7ab5a625735657499f636c1f2",
+    "element_id": "63a8b6b360c7a61ef88ad6c0b3d6581d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2245,7 +2245,7 @@
     "type": "Title"
   },
   {
-    "element_id": "6978574f5e6e70a2883ea5ea51aa34f7",
+    "element_id": "616ac8133f9b985812240add98badf5a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2265,7 +2265,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7507a06cf675785949d6312f1776e444",
+    "element_id": "5ef6c0b5c5c72f20a694c6bce97ed131",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2285,7 +2285,7 @@
     "type": "Title"
   },
   {
-    "element_id": "6d9d421c5383a3abfc3ff6f15c0b16cc",
+    "element_id": "6eff2d13b846a74ce08e348c7151dd1c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2305,7 +2305,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9492908fadeab22ca81f18f2ba4f4f35",
+    "element_id": "4a00cd3d6d5f9b71b105586a17125069",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2325,7 +2325,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "12751f842ba5664e7ad255016dbe371b",
+    "element_id": "812204070320132126dcfec00abb07f7",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2345,7 +2345,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "727d4758bcfadaaf5156b8682cd39810",
+    "element_id": "08c96eb52fe4877d6a26d862f8919d35",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2365,7 +2365,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2a789110c863b30156d63234c8a51477",
+    "element_id": "6fcf2a276d4b2d81f991b4eb6f04009a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2385,7 +2385,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d71f426079cb8c2bb3d960ce1e23d290",
+    "element_id": "a725c31d8b684d978174d4dc11d29106",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2405,7 +2405,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "1695e2ad2c62a337b135afbfc79ef69d",
+    "element_id": "f66516a9a89cb0ab07ccf9e15086f394",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2425,7 +2425,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "48bbf8e8b874e0e1f32be15f6c07c11c",
+    "element_id": "a6663f53eba15d4c5596b1f8ec4208fd",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2445,7 +2445,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "08a6fcd699c8c32f3d73794d26435061",
+    "element_id": "f5db77e611b74b7298f1b48a82ffc7be",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2465,7 +2465,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "6b51d431df5d7f141cbececcf79edf3d",
+    "element_id": "e4e5f97ab5b56767ed489d7cd3ee04f7",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2485,7 +2485,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "1797d9b8b07f302836186c20a19ebd0b",
+    "element_id": "afc0a737ef1e5ffa9d6b72bb32fef683",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2505,7 +2505,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "element_id": "d9a38658d857c1141618ad9115dc48b4",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2525,7 +2525,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2c624232cdd221771294dfbb310aca00",
+    "element_id": "2d046240fd1a0ff3420926f0a54e0aaa",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2545,7 +2545,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4a166cad507ccd016e6ad2d8652111e5",
+    "element_id": "4c136188f1e2e974ec1003968916824a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2565,7 +2565,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "element_id": "594366da1ff6e7a343ec1666c5852389",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2585,7 +2585,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "element_id": "d84c13ba166bd29d042db10acba6d243",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2605,7 +2605,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "element_id": "d4210b5ce6f99e242d8c1aa586691286",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2625,7 +2625,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "d4735e3a265e16eee03f59718b9b5d03",
+    "element_id": "7afb08e1cc308afebdc038fc7e4595ed",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2645,7 +2645,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4b227777d4dd1fc61c6f884f48641d02",
+    "element_id": "696d24804069bc593dc624bf7ba904e2",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2665,7 +2665,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "e7f6c011776e8db7cd330b54174fd76f",
+    "element_id": "ef054383c29789c2743d93a6189f7f47",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2685,7 +2685,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2c624232cdd221771294dfbb310aca00",
+    "element_id": "ae2f6fc244a6aa053403e38912fdc56a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2705,7 +2705,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "4a44dc15364204a80fe80e9039455cc1",
+    "element_id": "33c153482d9c925a35781bd5c9697648",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2725,7 +2725,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "c74caf15453477bf544f86e069d90da7",
+    "element_id": "8f325f6eb1678922e83e32746b981b80",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2745,7 +2745,7 @@
     "type": "Title"
   },
   {
-    "element_id": "8a3295d93db27fa58d12326d345eaad5",
+    "element_id": "9d46c2166a49c9e3a75ed98cb20ce13f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2765,7 +2765,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "9d639b03d26ec1872a4e91ac99031fdf",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2782,10 +2782,10 @@
       "page_number": 5
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "6cad98316bfa45c17e82a1836920ed12",
+    "element_id": "cfea47dcbf32f3d8597e777afa74d20e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2805,7 +2805,7 @@
     "type": "Title"
   },
   {
-    "element_id": "a0519775e2b55b825b45a8de351d74a1",
+    "element_id": "a1e6c9bab7935444a7491a47091be10c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2825,7 +2825,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "407b2e640f1765793469ae92c954bb7f",
+    "element_id": "49e093091da774c567151e5147c70027",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2845,7 +2845,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "f626051bc94422f26f4b774a2bca105e",
+    "element_id": "8ac2e9f97dc89f9d9bac5baec281f7f2",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2865,7 +2865,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "b3a8e0e1f9ab1bfe3a36f231f676f78b",
+    "element_id": "e303e27893be099ef5fd03235efee7fe",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2885,7 +2885,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "91c8bf5283b45a71164a103f496f93c1",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2902,10 +2902,10 @@
       "page_number": 6
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "a80826543c9e0d0e9f6c2108ae3c3f73",
+    "element_id": "bffefa92b06bc6009f81965d3dadc0ce",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2925,7 +2925,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "90b8c00ff7a1b170a14695aa51629f14",
+    "element_id": "484707d26d81d85df99f322c1bbb8ca3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2945,7 +2945,7 @@
     "type": "Title"
   },
   {
-    "element_id": "7c3b7c8c2993a59e71e009d051edd727",
+    "element_id": "79d10fe9600d8d3428b5df86faa7c099",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2965,7 +2965,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "1dc2692eee9b01e9a960f80c4dabe07b",
+    "element_id": "b6bd160c80816ff7b2d8a36ccfc67568",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -2985,7 +2985,7 @@
     "type": "Title"
   },
   {
-    "element_id": "b4a533760fabf85f66294a0441dacd1e",
+    "element_id": "aeafe864b565b167f053a348390b3eff",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3005,7 +3005,7 @@
     "type": "Title"
   },
   {
-    "element_id": "027d7539bf229e0a5fd99489c6ebd7fd",
+    "element_id": "0e51f945cacb5ec184a3613487b6fefb",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3025,7 +3025,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ae938bb6586c4ef6d0a287923ac2a9ae",
+    "element_id": "fed48b9de93d4324223aa5fbdfe2f359",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3045,7 +3045,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "825c6ae49ec498c873be5355109ca093",
+    "element_id": "2c4a913c3a4b8bccd9c7003f25ae25af",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3065,7 +3065,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "33a2b57b388470db1cb13defbe73dc18",
+    "element_id": "902d0aabf523c467c200f5203957e606",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3085,7 +3085,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "cecb8b44c9af4b76e85155170c509729",
+    "element_id": "44d54b6fb44ac7afc9f40a0e7a5fcde3",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3105,7 +3105,7 @@
     "type": "Title"
   },
   {
-    "element_id": "b05aa2b4b80cb8c20881dbd0c3af8822",
+    "element_id": "7459b20ea68d65b7a967500f22223507",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3125,7 +3125,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "62127212535b62092159e4fe305c868d",
+    "element_id": "d269706e81c2b5978ae0b5c820ce176a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3145,7 +3145,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
+    "element_id": "b2cc1eda5ffbccf6416235c44181538c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3165,7 +3165,7 @@
     "type": "Title"
   },
   {
-    "element_id": "c31b73fca4f97bb7e95a3d8634826d32",
+    "element_id": "d48a9ee64508de2e63b2f4579ef78432",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3185,7 +3185,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5a6824cbd64b72c37057f7d1dbee2798",
+    "element_id": "3bf244c1b2eb32875b292a28c130aba4",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3205,7 +3205,7 @@
     "type": "Title"
   },
   {
-    "element_id": "2d711642b726b04401627ca9fbac32f5",
+    "element_id": "2c6d5581a35c83236153f78c5b53cb60",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3225,7 +3225,7 @@
     "type": "Title"
   },
   {
-    "element_id": "3a81feba075b8ca26d6f86f392ff06df",
+    "element_id": "ca4aeca8c2a7e6b9df923db4a5902289",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3245,7 +3245,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "118f0531277e022b44f152b0bf2dee7c",
+    "element_id": "a47048cff18528a9a4838728a55e526a",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3265,7 +3265,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "6aa7f759e077aa037614e7f42897f09a",
+    "element_id": "6aabbfd8e92223470a6c9184a84857c0",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3285,7 +3285,7 @@
     "type": "Title"
   },
   {
-    "element_id": "2fe7511cdc6520c26e9f8e33ac45fe03",
+    "element_id": "c653c9cca5ebdd3089b705f279316500",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3305,7 +3305,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "53b531237b040202ad24f2c6e37aa792",
+    "element_id": "b1cdefa47658616bf79766f8fc353f7c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3325,7 +3325,7 @@
     "type": "Title"
   },
   {
-    "element_id": "41ceb2965d928f62e5bf4f63da952b22",
+    "element_id": "a1a035eeaa7c25a2b543757f4cc7d0fb",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3345,7 +3345,7 @@
     "type": "Title"
   },
   {
-    "element_id": "8e8a7a21640179b38d95ff4450b84e59",
+    "element_id": "74d17735c911d69b6d10e05d0c9d79d6",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3365,7 +3365,7 @@
     "type": "Title"
   },
   {
-    "element_id": "9ca201e648ed74cfc838b6661f59addf",
+    "element_id": "e40c3ee561b10ca5b7a76900c8d5b263",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3382,10 +3382,10 @@
       "page_number": 7
     },
     "text": "O. Sanni, A.P.I. Popoola / Data in Brief 22 (2019) 451–457",
-    "type": "NarrativeText"
+    "type": "Header"
   },
   {
-    "element_id": "24dcddab57a1cab7266a3c6b536ad2ff",
+    "element_id": "a8d445f830ed31990875a519f4be0eb5",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3405,7 +3405,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c9015d53b90846454375a2fdf2829c66",
+    "element_id": "2461424bae61c8cfad1cd33a949843f0",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3425,7 +3425,7 @@
     "type": "Title"
   },
   {
-    "element_id": "63cd602e78daef9ac25a20bbab27ecbc",
+    "element_id": "2d8a74bbba4ad3bb13afc8a98daec91d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3445,7 +3445,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "287fb148184f12ff62e9b0207567dac7",
+    "element_id": "154e2a7bdebd1347eccb08f349284130",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3465,7 +3465,7 @@
     "type": "Title"
   },
   {
-    "element_id": "d202816913e482abce90d70d88f202c3",
+    "element_id": "41a46b0a6852a31b1e51cf65a4ecf87d",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3485,7 +3485,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d434a0e19d0d34e92936b9566e1ebb45",
+    "element_id": "c5635281e7e879dd338b99ae84f94056",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3512,7 +3512,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "2ca250dde10d732278a9fa586a97e40a",
+    "element_id": "ee62928948d5d7b5e13edf65d917dc63",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3539,7 +3539,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "69824d3b0e70ca6aaa0da1613b65fd91",
+    "element_id": "dbe83d8d2b6784a17d8faae3633b97f9",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3559,7 +3559,7 @@
     "type": "Title"
   },
   {
-    "element_id": "d844a31ead19b2e2fae786d2a5495072",
+    "element_id": "d08513d888e4133fda75841dd05273d9",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3586,7 +3586,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "d0be94eaaf9c0f43bc51381f031e1381",
+    "element_id": "29736d79aeb1e5fc195876dbf12f1c57",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3618,7 +3618,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "7e9cfcc1c32c353e319aae7d9be537bd",
+    "element_id": "ca40f2c0d5a95e8cddab1c3b76f95e9e",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3645,7 +3645,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c00e8be0806aa2ded72da0ef746a4291",
+    "element_id": "e42cb45853ffd3e2c81095a126918c6c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3677,7 +3677,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "1d76a4bb6ba7984cea4548ab574beb8f",
+    "element_id": "610ae41b07604b353631457b9a4ad632",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3704,7 +3704,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "ffd9e4babdf76600a881851ebbf35d3f",
+    "element_id": "ae14702f67ee1c5d2e5316e8344a6971",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3736,7 +3736,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "dd7f4838500dd709556225fa3f6b7339",
+    "element_id": "d1c8e3e15192f1bdcda9cf8e38a5573f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3778,7 +3778,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "c81a7a9faa84a2eb68641888654caa14",
+    "element_id": "3827d49ec98a215986f78d1df2ae2d33",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -3805,7 +3805,7 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "353767b239099863e13ca954e20a66c9",
+    "element_id": "7fbcd3b873966a649efd837300e0c576",
     "metadata": {
       "data_source": {
         "permissions_data": [

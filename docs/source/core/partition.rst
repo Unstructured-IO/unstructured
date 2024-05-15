@@ -634,7 +634,7 @@ The available strategies for PDFs are ``"auto"``, ``"hi_res"``, ``"ocr_only"``, 
 
 * The ``"fast"`` strategy will extract the text using ``pdfminer`` and process the raw text with ``partition_text``. If the PDF text is not extractable, ``partition_pdf`` will fall back to ``"ocr_only"``. We recommend using the ``"fast"`` strategy in most cases where the PDF has extractable text.
 
-To extract images and elements as image blocks from a PDF, it is mandatory to set ``strategy="hi_res"`` when setting ``extract_images_in_pdf=True``. With this configuration, detected images are saved in a specified directory or encoded within the file. However, keep in mind that ``extract_images_in_pdf`` is being phased out in favor of ``extract_image_block_types``. This option allows you to specify types of images or elements, like "Image" or "Table". If some extracted images have content clipped, you can adjust the padding by specifying two environment variables "EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD" and "EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD" (for example, EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD = 20, EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD = 10). For integrating these images directly into web applications or APIs, ``extract_image_block_to_payload`` can be used to convert them into ``base64`` format, including details about the image type. Lastly, the ``extract_image_block_output_dir`` can be used to specify the filesystem path for saving the extracted images when not embedding them in payloads.
+To extract images and elements as image blocks from a PDF, it is mandatory to set ``strategy="hi_res"`` when setting ``extract_images_in_pdf=True``. With this configuration, detected images are saved in a specified directory or encoded within the file. However, keep in mind that ``extract_images_in_pdf`` is being phased out in favor of ``extract_image_block_types``. This option allows you to specify types of images or elements, like "Image" or "Table". If some extracted images have content clipped, you can adjust the padding by specifying two environment variables "EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD" and "EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD" (for example, EXTRACT_IMAGE_BLOCK_CROP_HORIZONTAL_PAD = 20, EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD = 10). For integrating these images directly into web applications or APIs, ``extract_image_block_to_payload`` can be used to convert them into ``base64`` format, including details about the image type, currently it's always ``image/jpeg``. Lastly, the ``extract_image_block_output_dir`` can be used to specify the filesystem path for saving the extracted images when not embedding them in payloads.
 
 Examples:
 
@@ -872,7 +872,21 @@ settings supported by the API.
   filename = "example-docs/DA-1p.pdf"
 
   elements = partition_via_api(
-    filename=filename, api_key=api_key, strategy="auto", pdf_infer_table_structure="true"
+    filename=filename, api_key=api_key, strategy="auto"
+  )
+
+If you are using the `Unstructured SaaS API <https://unstructured-io.github.io/unstructured/apis/saas_api.html>`__, you can use the ``api_url`` kwarg to point the ``partition_via_api`` function at your Unstructured SaaS API URL.
+
+.. code:: python
+
+  from unstructured.partition.api import partition_via_api
+
+  filename = "example-docs/eml/fake-email.eml"
+
+  elements = partition_via_api(
+    filename=filename,
+    api_key=<<REPLACE WITH YOUR API KEY>>,
+    api_url="https://<<REPLACE WITH YOUR API URL>>/general/v0/general"
   )
 
 If you are self-hosting or running the API locally, you can use the ``api_url`` kwarg
@@ -888,7 +902,8 @@ documentation on how to run the API as a container locally.
   filename = "example-docs/eml/fake-email.eml"
 
   elements = partition_via_api(
-    filename=filename, api_url="http://localhost:5000/general/v0/general"
+    filename=filename,
+    api_url="http://localhost:5000/general/v0/general"
   )
 
 For more information about the ``partition_via_api`` function, you can check the `source code here <https://github.com/Unstructured-IO/unstructured/blob/a583d47b841bdd426b9058b7c34f6aa3ed8de152/unstructured/partition/api.py>`__.

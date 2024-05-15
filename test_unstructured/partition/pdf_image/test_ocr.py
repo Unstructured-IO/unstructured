@@ -1,3 +1,4 @@
+from collections import namedtuple
 from unittest.mock import patch
 
 import numpy as np
@@ -15,13 +16,11 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
 from unstructured.partition.pdf_image.ocr import pad_element_bboxes
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
 )
-from unstructured.partition.utils.ocr_models.ocr_interface import (
-    get_elements_from_ocr_regions,
-    merge_text_regions,
-)
+from unstructured.partition.utils.ocr_models.google_vision_ocr import OCRAgentGoogleVision
 from unstructured.partition.utils.ocr_models.paddle_ocr import OCRAgentPaddle
 from unstructured.partition.utils.ocr_models.tesseract_ocr import (
     OCRAgentTesseract,
@@ -196,6 +195,90 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 
 
 @pytest.fixture()
+def google_vision_text_annotation():
+    from google.cloud.vision import (
+        Block,
+        BoundingPoly,
+        Page,
+        Paragraph,
+        Symbol,
+        TextAnnotation,
+        Vertex,
+        Word,
+    )
+
+    breaks = TextAnnotation.DetectedBreak.BreakType
+    symbols_hello = [Symbol(text=c) for c in "Hello"] + [
+        Symbol(
+            property=TextAnnotation.TextProperty(
+                detected_break=TextAnnotation.DetectedBreak(type_=breaks.SPACE)
+            )
+        )
+    ]
+    symbols_world = [Symbol(text=c) for c in "World!"] + [
+        Symbol(
+            property=TextAnnotation.TextProperty(
+                detected_break=TextAnnotation.DetectedBreak(type_=breaks.LINE_BREAK)
+            )
+        )
+    ]
+    words = [Word(symbols=symbols_hello), Word(symbols=symbols_world)]
+    bounding_box = BoundingPoly(
+        vertices=[Vertex(x=0, y=0), Vertex(x=0, y=10), Vertex(x=10, y=10), Vertex(x=10, y=0)]
+    )
+    paragraphs = [Paragraph(words=words, bounding_box=bounding_box)]
+    blocks = [Block(paragraphs=paragraphs)]
+    pages = [Page(blocks=blocks)]
+    return TextAnnotation(text="Hello World!", pages=pages)
+
+
+@pytest.fixture()
+def google_vision_client(google_vision_text_annotation):
+    Response = namedtuple("Response", "full_text_annotation")
+
+    class FakeGoogleVisionClient:
+        def document_text_detection(self, image):
+            return Response(full_text_annotation=google_vision_text_annotation)
+
+    class OCRAgentFakeGoogleVision(OCRAgentGoogleVision):
+        def __init__(self):
+            self.client = FakeGoogleVisionClient()
+
+    return OCRAgentFakeGoogleVision()
+
+
+def test_get_ocr_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    ocr_text = ocr_agent.get_text_from_image(image, ocr_languages="eng")
+
+    assert ocr_text == "Hello World!"
+
+
+def test_get_layout_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    regions = ocr_agent.get_layout_from_image(image, ocr_languages="eng")
+    assert len(regions) == 1
+    assert regions[0].text == "Hello World!"
+    assert regions[0].source == Source.OCR_GOOGLEVISION
+    assert regions[0].bbox.x1 == 0
+    assert regions[0].bbox.y1 == 0
+    assert regions[0].bbox.x2 == 10
+    assert regions[0].bbox.y2 == 10
+
+
+def test_get_layout_elements_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    layout_elements = ocr_agent.get_layout_elements_from_image(image, ocr_languages="eng")
+    assert len(layout_elements) == 1
+
+
+@pytest.fixture()
 def mock_ocr_regions():
     return [
         EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
@@ -231,35 +314,6 @@ def test_aggregate_ocr_text_by_block():
     assert text == expected
 
 
-def test_merge_text_regions(mock_embedded_text_regions):
-    expected = TextRegion.from_coords(
-        x1=437.83888888888885,
-        y1=317.319341111111,
-        x2=1256.334784222222,
-        y2=406.9837855555556,
-        text="LayoutParser: A Unified Toolkit for Deep Learning Based Document Image",
-    )
-
-    merged_text_region = merge_text_regions(mock_embedded_text_regions)
-    assert merged_text_region == expected
-
-
-def test_get_elements_from_ocr_regions(mock_embedded_text_regions):
-    expected = [
-        LayoutElement.from_coords(
-            x1=437.83888888888885,
-            y1=317.319341111111,
-            x2=1256.334784222222,
-            y2=406.9837855555556,
-            text="LayoutParser: A Unified Toolkit for Deep Learning Based Document Image",
-            type=ElementType.UNCATEGORIZED_TEXT,
-        ),
-    ]
-
-    elements = get_elements_from_ocr_regions(mock_embedded_text_regions)
-    assert elements == expected
-
-
 @pytest.mark.parametrize("zoom", [1, 0.1, 5, -1, 0])
 def test_zoom_image(zoom):
     image = Image.new("RGB", (100, 100))
@@ -277,82 +331,6 @@ def mock_layout(mock_embedded_text_regions):
     return [
         LayoutElement(text=r.text, type=ElementType.UNCATEGORIZED_TEXT, bbox=r.bbox)
         for r in mock_embedded_text_regions
-    ]
-
-
-@pytest.fixture()
-def mock_embedded_text_regions():
-    return [
-        EmbeddedTextRegion.from_coords(
-            x1=453.00277777777774,
-            y1=317.319341111111,
-            x2=711.5338541666665,
-            y2=358.28571222222206,
-            text="LayoutParser:",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=726.4778125,
-            y1=317.319341111111,
-            x2=760.3308594444444,
-            y2=357.1698966666667,
-            text="A",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=775.2748177777777,
-            y1=317.319341111111,
-            x2=917.3579885555555,
-            y2=357.1698966666667,
-            text="Unified",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=932.3019468888888,
-            y1=317.319341111111,
-            x2=1071.8426522222221,
-            y2=357.1698966666667,
-            text="Toolkit",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=1086.7866105555556,
-            y1=317.319341111111,
-            x2=1141.2105142777777,
-            y2=357.1698966666667,
-            text="for",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=1156.154472611111,
-            y1=317.319341111111,
-            x2=1256.334784222222,
-            y2=357.1698966666667,
-            text="Deep",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=437.83888888888885,
-            y1=367.13322999999986,
-            x2=610.0171992222222,
-            y2=406.9837855555556,
-            text="Learning",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=624.9611575555555,
-            y1=367.13322999999986,
-            x2=741.6754646666665,
-            y2=406.9837855555556,
-            text="Based",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=756.619423,
-            y1=367.13322999999986,
-            x2=958.3867708333332,
-            y2=406.9837855555556,
-            text="Document",
-        ),
-        EmbeddedTextRegion.from_coords(
-            x1=973.3307291666665,
-            y1=367.13322999999986,
-            x2=1092.0535042777776,
-            y2=406.9837855555556,
-            text="Image",
-        ),
     ]
 
 
@@ -376,7 +354,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
         for ocr_element in ocr_elements:
             if ocr_element.bbox.is_almost_subregion_of(
                 element.bbox,
-                ocr.SUBREGION_THRESHOLD_FOR_OCR,
+                env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
             ):
                 assert ocr_element not in final_layout
 

@@ -3,8 +3,8 @@
 unstructured-ingest \
   sftp \
   --remote-url sftp://address:port/upload \
-  --username foo \
-  --password bar \
+  --username "$SFTP_USERNAME" \
+  --password "$SFTP_PASSWORD" \
   --output-dir sftp-output \
   --num-processes 2 \
   --recursive \

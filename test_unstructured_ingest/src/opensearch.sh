@@ -46,7 +46,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
   --index-name movies \
-  --hosts http://localhost:9200 \
+  --hosts http://localhost:9247 \
   --username admin \
   --password admin \
   --use-ssl \

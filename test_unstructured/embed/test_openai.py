@@ -1,5 +1,5 @@
 from unstructured.documents.elements import Text
-from unstructured.embed.openai import OpenAiEmbeddingConfig, OpenAIEmbeddingEncoder
+from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
 
 def test_embed_documents_does_not_break_element_to_dict(mocker):
@@ -10,7 +10,7 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
     # Mock create_client to return our mock_client
     mocker.patch.object(OpenAIEmbeddingEncoder, "create_client", return_value=mock_client)
 
-    encoder = OpenAIEmbeddingEncoder(config=OpenAiEmbeddingConfig(api_key="api_key"))
+    encoder = OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(api_key="api_key"))
     elements = encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
     )

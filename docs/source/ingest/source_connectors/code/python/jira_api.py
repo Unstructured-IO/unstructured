@@ -18,9 +18,9 @@ if __name__ == "__main__":
             api_key=os.getenv("UNSTRUCTURED_API_KEY"),
         ),
         connector_config=SimpleJiraConfig(
-            access_config=JiraAccessConfig(api_token="ABCDE1234ABDE1234ABCDE1234"),
-            url="https://unstructured-jira-connector-test.atlassian.net",
-            user_email="12345678@unstructured.io",
+            access_config=JiraAccessConfig(api_token=os.getenv("JIRA_API_TOKEN")),
+            url=os.getenv("JIRA_URL"),
+            user_email=os.getenv("JIRA_EMAIL"),
         ),
     )
     runner.run()

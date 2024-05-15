@@ -4,20 +4,19 @@
 
 from __future__ import annotations
 
-from typing import List, Sequence
+from typing import Any, Optional, Sequence
 
 import pytest
 
 from unstructured.chunking.base import (
-    BasePreChunker,
     ChunkingOptions,
     PreChunkBuilder,
     PreChunkCombiner,
+    PreChunker,
     TablePreChunk,
     TextPreChunk,
     TextPreChunkAccumulator,
     _TextSplitter,
-    is_in_next_section,
     is_on_next_page,
     is_title,
 )
@@ -48,7 +47,7 @@ class DescribeChunkingOptions:
             ValueError,
             match=f"'max_characters' argument must be > 0, got {max_characters}",
         ):
-            ChunkingOptions.new(max_characters=max_characters)
+            ChunkingOptions(max_characters=max_characters)._validate()
 
     def it_does_not_complain_when_specifying_max_characters_by_itself(self):
         """Caller can specify `max_characters` arg without specifying any others.
@@ -58,44 +57,39 @@ class DescribeChunkingOptions:
         and trigger an exception.
         """
         try:
-            ChunkingOptions.new(max_characters=50)
+            ChunkingOptions(max_characters=50)._validate()
         except ValueError:
             pytest.fail("did not accept `max_characters` as option by itself")
 
-    @pytest.mark.parametrize("n_chars", [-1, -42])
-    def it_rejects_combine_text_under_n_chars_for_n_less_than_zero(self, n_chars: int):
-        with pytest.raises(
-            ValueError,
-            match=f"'combine_text_under_n_chars' argument must be >= 0, got {n_chars}",
-        ):
-            ChunkingOptions.new(combine_text_under_n_chars=n_chars)
+    @pytest.mark.parametrize(
+        ("combine_text_under_n_chars", "expected_value"), [(None, 0), (42, 42)]
+    )
+    def it_accepts_combine_text_under_n_chars_in_constructor_but_defaults_to_no_combining(
+        self, combine_text_under_n_chars: Optional[int], expected_value: int
+    ):
+        """Subclasses can store `combine_text_under_n_chars` but must validate and enable it.
 
-    def it_accepts_0_for_combine_text_under_n_chars_to_disable_chunk_combining(self):
-        """Specifying `combine_text_under_n_chars=0` is how a caller disables chunk-combining."""
-        opts = ChunkingOptions.new(combine_text_under_n_chars=0)
-        assert opts.combine_text_under_n_chars == 0
-
-    def it_does_not_complain_when_specifying_combine_text_under_n_chars_by_itself(self):
-        """Caller can specify `combine_text_under_n_chars` arg without specifying other options."""
-        try:
-            opts = ChunkingOptions.new(combine_text_under_n_chars=50)
-        except ValueError:
-            pytest.fail("did not accept `combine_text_under_n_chars` as option by itself")
-
-        assert opts.combine_text_under_n_chars == 50
-
-    def it_silently_accepts_combine_text_under_n_chars_greater_than_maxchars(self):
-        """`combine_text_under_n_chars` > `max_characters` doesn't affect chunking behavior.
-
-        So rather than raising an exception or warning, we just cap that value at `max_characters`
-        which is the behavioral equivalent.
+        The `combine_text_under_n_chars` option is not used by all chunkers and its behavior can
+        differ between subtypes. It is present in and stored by the contructur but it defaults to
+        `0` (no pre-chunk combining) and must be overridden by subclasses to give it the desired
+        behavior.
         """
-        try:
-            opts = ChunkingOptions.new(max_characters=500, combine_text_under_n_chars=600)
-        except ValueError:
-            pytest.fail("did not accept `combine_text_under_n_chars` greater than `max_characters`")
+        opts = ChunkingOptions(combine_text_under_n_chars=combine_text_under_n_chars)
+        assert opts.combine_text_under_n_chars == expected_value
 
-        assert opts.combine_text_under_n_chars == 500
+    @pytest.mark.parametrize(
+        ("kwargs", "expected_value"),
+        [
+            ({"include_orig_elements": True}, True),
+            ({"include_orig_elements": False}, False),
+            ({"include_orig_elements": None}, True),
+            ({}, True),
+        ],
+    )
+    def it_knows_whether_to_include_orig_elements_in_the_chunk_metadata(
+        self, kwargs: dict[str, Any], expected_value: bool
+    ):
+        assert ChunkingOptions(**kwargs).include_orig_elements is expected_value
 
     @pytest.mark.parametrize("n_chars", [-1, -42])
     def it_rejects_new_after_n_chars_for_n_less_than_zero(self, n_chars: int):
@@ -103,29 +97,33 @@ class DescribeChunkingOptions:
             ValueError,
             match=f"'new_after_n_chars' argument must be >= 0, got {n_chars}",
         ):
-            ChunkingOptions.new(new_after_n_chars=n_chars)
+            ChunkingOptions(new_after_n_chars=n_chars)._validate()
+
+    def it_rejects_overlap_not_less_than_max_characters(self):
+        with pytest.raises(
+            ValueError,
+            match="'overlap' argument must be less than `max_characters`, got 300 >= 200",
+        ):
+            ChunkingOptions(max_characters=200, overlap=300)._validate()
 
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
-        """Caller can specify `new_after_n_chars` arg without specifying any other options.
-
-        In particular, `combine_text_under_n_chars` value is adjusted down to the
-        `new_after_n_chars` value when the default for `combine_text_under_n_chars` exceeds the
-        value of `new_after_n_chars`.
-        """
+        """Caller can specify `new_after_n_chars` arg without specifying any other options."""
+        opts = ChunkingOptions(new_after_n_chars=200)
         try:
-            opts = ChunkingOptions.new(new_after_n_chars=200)
+            opts._validate()
         except ValueError:
             pytest.fail("did not accept `new_after_n_chars` as option by itself")
 
         assert opts.soft_max == 200
-        assert opts.combine_text_under_n_chars == 200
 
     def it_accepts_0_for_new_after_n_chars_to_put_each_element_into_its_own_chunk(self):
         """Specifying `new_after_n_chars=0` places each element into its own pre-chunk.
 
         This puts each element into its own chunk, although long chunks are still split.
         """
-        opts = ChunkingOptions.new(new_after_n_chars=0)
+        opts = ChunkingOptions(new_after_n_chars=0)
+        opts._validate()
+
         assert opts.soft_max == 0
 
     def it_silently_accepts_new_after_n_chars_greater_than_maxchars(self):
@@ -134,33 +132,32 @@ class DescribeChunkingOptions:
         So rather than raising an exception or warning, we just cap that value at `max_characters`
         which is the behavioral equivalent.
         """
+        opts = ChunkingOptions(max_characters=444, new_after_n_chars=555)
         try:
-            opts = ChunkingOptions.new(max_characters=444, new_after_n_chars=555)
+            opts._validate()
         except ValueError:
             pytest.fail("did not accept `new_after_n_chars` greater than `max_characters`")
 
         assert opts.soft_max == 444
 
     def it_knows_how_much_overlap_to_apply_to_split_chunks(self):
-        assert ChunkingOptions.new(overlap=10).overlap == 10
+        assert ChunkingOptions(overlap=10).overlap == 10
 
     def and_it_uses_the_same_value_for_inter_chunk_overlap_when_asked_to_overlap_all_chunks(self):
-        assert ChunkingOptions.new(overlap=10, overlap_all=True).inter_chunk_overlap == 10
+        assert ChunkingOptions(overlap=10, overlap_all=True).inter_chunk_overlap == 10
 
     def but_it_does_not_overlap_pre_chunks_by_default(self):
-        assert ChunkingOptions.new(overlap=10).inter_chunk_overlap == 0
+        assert ChunkingOptions(overlap=10).inter_chunk_overlap == 0
 
     def it_knows_the_text_separator_string(self):
-        assert ChunkingOptions.new().text_separator == "\n\n"
+        assert ChunkingOptions().text_separator == "\n\n"
 
 
 class Describe_TextSplitter:
     """Unit-test suite for `unstructured.chunking.base._TextSplitter` objects."""
 
     def it_splits_on_a_preferred_separator_when_it_can(self):
-        opts = ChunkingOptions.new(
-            max_characters=50, text_splitting_separators=("\n", " "), overlap=10
-        )
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=("\n", " "), overlap=10)
         split = _TextSplitter(opts)
         text = (
             "Lorem ipsum dolor amet consectetur adipiscing.  \n  "
@@ -182,9 +179,7 @@ class Describe_TextSplitter:
         assert remainder == ""
 
     def and_it_splits_on_the_next_available_separator_when_the_first_is_not_available(self):
-        opts = ChunkingOptions.new(
-            max_characters=40, text_splitting_separators=("\n", " "), overlap=10
-        )
+        opts = ChunkingOptions(max_characters=40, text_splitting_separators=("\n", " "), overlap=10)
         split = _TextSplitter(opts)
         text = (
             "Lorem ipsum dolor amet consectetur adipiscing. In rhoncus ipsum sed lectus porta"
@@ -204,9 +199,7 @@ class Describe_TextSplitter:
         assert remainder == ""
 
     def and_it_splits_on_an_arbitrary_character_as_a_last_resort(self):
-        opts = ChunkingOptions.new(
-            max_characters=30, text_splitting_separators=("\n", " "), overlap=10
-        )
+        opts = ChunkingOptions(max_characters=30, text_splitting_separators=("\n", " "), overlap=10)
         split = _TextSplitter(opts)
         text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
 
@@ -230,7 +223,7 @@ class Describe_TextSplitter:
         ],
     )
     def it_does_not_split_a_string_that_is_not_longer_than_maxlen(self, text: str):
-        opts = ChunkingOptions.new(max_characters=46, overlap=10)
+        opts = ChunkingOptions(max_characters=46, overlap=10)
         split = _TextSplitter(opts)
 
         s, remainder = split(text)
@@ -239,7 +232,7 @@ class Describe_TextSplitter:
         assert remainder == ""
 
     def it_fills_the_window_when_falling_back_to_an_arbitrary_character_split(self):
-        opts = ChunkingOptions.new(max_characters=38, overlap=10)
+        opts = ChunkingOptions(max_characters=38, overlap=10)
         split = _TextSplitter(opts)
         text = "Loremipsumdolorametconsecteturadipiscingelit. In rhoncus ipsum sed lectus porta."
 
@@ -250,9 +243,7 @@ class Describe_TextSplitter:
 
     @pytest.mark.parametrize("separators", [("\n", " "), (" ",)])
     def it_strips_whitespace_around_the_split(self, separators: Sequence[str]):
-        opts = ChunkingOptions.new(
-            max_characters=50, text_splitting_separators=separators, overlap=10
-        )
+        opts = ChunkingOptions(max_characters=50, text_splitting_separators=separators, overlap=10)
         split = _TextSplitter(opts)
         text = "Lorem ipsum dolor amet consectetur adipiscing.   \n\n In rhoncus ipsum sed lectus."
         #       |-------------------------------------------------^  50-chars
@@ -264,12 +255,12 @@ class Describe_TextSplitter:
 
 
 # ================================================================================================
-# BASE PRE-CHUNKER
+# PRE-CHUNKER
 # ================================================================================================
 
 
-class DescribeBasePreChunker:
-    """Unit-test suite for `unstructured.chunking.base.BasePreChunker` objects."""
+class DescribePreChunker:
+    """Unit-test suite for `unstructured.chunking.base.PreChunker` objects."""
 
     def it_gathers_elements_into_pre_chunks_respecting_the_specified_chunk_size(self):
         elements = [
@@ -282,9 +273,9 @@ class DescribeBasePreChunker:
             CheckBox(),
         ]
 
-        opts = ChunkingOptions.new(max_characters=150, new_after_n_chars=65)
+        opts = ChunkingOptions(max_characters=150, new_after_n_chars=65)
 
-        pre_chunk_iter = BasePreChunker.iter_pre_chunks(elements, opts=opts)
+        pre_chunk_iter = PreChunker.iter_pre_chunks(elements, opts=opts)
 
         pre_chunk = next(pre_chunk_iter)
         assert isinstance(pre_chunk, TextPreChunk)
@@ -337,7 +328,7 @@ class DescribeTablePreChunk:
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="ctus porta volutpat.",
-            opts=ChunkingOptions.new(max_characters=175),
+            opts=ChunkingOptions(max_characters=175),
         )
 
         chunk_iter = pre_chunk.iter_chunks()
@@ -360,7 +351,30 @@ class DescribeTablePreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
-    def but_it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+    def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
+        table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
+        opts = ChunkingOptions(include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, "", opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.text_as_html == "<table>foo bar</table>"
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_instructed_not_to(self):
+        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
+
+        chunk = next(pre_chunk.iter_chunks())
+
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements is None
+
+    def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
         # fixed-overhead = 8+8+9+8+9+8 = 50
         # per-row overhead = 27
         html_table = (
@@ -386,7 +400,7 @@ class DescribeTablePreChunk:
         pre_chunk = TablePreChunk(
             Table(text_table, metadata=ElementMetadata(text_as_html=html_table)),
             overlap_prefix="",
-            opts=ChunkingOptions.new(max_characters=100, text_splitting_separators=("\n", " ")),
+            opts=ChunkingOptions(max_characters=100, text_splitting_separators=("\n", " ")),
         )
 
         chunk_iter = pre_chunk.iter_chunks()
@@ -406,6 +420,7 @@ class DescribeTablePreChunk:
             "<tbody>\n"
             "<tr><td>Lo"
         )
+        assert not chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -416,6 +431,7 @@ class DescribeTablePreChunk:
             "rem ipsum    </td><td>A Link example</td></tr>\n"
             "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
         )
+        assert chunk.metadata.is_continuation
         # -- note that text runs out but HTML continues because it's significantly longer. So two
         # -- of these chunks have HTML but no text.
         chunk = next(chunk_iter)
@@ -426,6 +442,7 @@ class DescribeTablePreChunk:
             "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
             "<tr><td>Vivamus quis   </td><td>"
         )
+        assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -433,9 +450,33 @@ class DescribeTablePreChunk:
         assert chunk.metadata.text_as_html == (
             "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
         )
+        assert chunk.metadata.is_continuation
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    def and_it_includes_the_whole_original_Table_in_each_metadata_when_so_instructed(self):
+        """Even though text and html are split, the orig_elements metadata is not."""
+        table = Table(
+            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<table/>"),
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Header Col 1   Header Col 2"
+        assert chunk.metadata.orig_elements == [table]
+        assert not chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Lorem ipsum   dolor sit amet"
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.is_continuation
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
@@ -450,7 +491,7 @@ class DescribeTablePreChunk:
         self, text: str, expected_value: str
     ):
         pre_chunk = TablePreChunk(
-            Table(text), overlap_prefix="", opts=ChunkingOptions.new(overlap=20, overlap_all=True)
+            Table(text), overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
         )
         assert pre_chunk.overlap_tail == expected_value
 
@@ -473,13 +514,88 @@ class DescribeTablePreChunk:
         self, text: str, overlap_prefix: str, expected_value: str
     ):
         pre_chunk = TablePreChunk(
-            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions.new()
+            Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
         )
         assert pre_chunk._text == expected_value
+
+    def it_computes_metadata_for_each_chunk_to_help(self):
+        table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        metadata = pre_chunk._metadata
+
+        assert metadata.text_as_html == "<table/>"
+        # -- opts.include_orig_elements is True by default --
+        assert metadata.orig_elements == [table]
+        # -- it produces a new instance each time it is called so changing one chunk's metadata does
+        # -- not change that of any other chunk.
+        assert pre_chunk._metadata is not metadata
+
+    def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
+        pre_chunk = TablePreChunk(
+            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=False),
+        )
+
+        assert pre_chunk._metadata.orig_elements is None
+
+    def it_computes_the_original_elements_list_to_help(self):
+        table = Table(
+            "Lorem ipsum",
+            metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
+        )
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- a TablePreChunk always has exactly one original (Table) element --
+        assert len(orig_elements) == 1
+        orig_element = orig_elements[0]
+        # -- each item in orig_elements is a copy of the original element so we can mutate it
+        # -- without changing user's data.
+        assert orig_element == table
+        assert orig_element is not table
+        # -- it strips any .metadata.orig_elements from each element to prevent a recursive data
+        # -- structure
+        assert orig_element.metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
 
 
 class DescribeTextPreChunk:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunk` objects."""
+
+    @pytest.mark.parametrize(
+        ("overlap_pfx", "texts", "other_overlap_pfx", "other_texts", "expected_value"),
+        [
+            # -- same elements, and overlap-prefix --
+            ("foo", ["bar", "baz"], "foo", ["bar", "baz"], True),
+            # -- same elements, no overlap-prefix --
+            ("", ["bar", "baz"], "", ["bar", "baz"], True),
+            # -- same elements, different overlap-prefix --
+            ("foo", ["bar", "baz"], "fob", ["bar", "baz"], False),
+            # -- different elements, same overlap-prefix --
+            ("foo", ["bar", "baz"], "foo", ["bah", "dah"], False),
+            # -- different elements, different overlap-prefix --
+            ("", ["bar", "baz"], "foo", ["bah", "dah"], False),
+        ],
+    )
+    def it_knows_when_it_is_equal_to_another_TextPreChunk_instance(
+        self,
+        overlap_pfx: str,
+        texts: list[str],
+        other_overlap_pfx: str,
+        other_texts: list[str],
+        expected_value: bool,
+    ):
+        opts = ChunkingOptions()
+        pre_chunk = TextPreChunk([Text(t) for t in texts], overlap_prefix=overlap_pfx, opts=opts)
+        other_pre_chunk = TextPreChunk(
+            [Text(t) for t in other_texts], overlap_prefix=other_overlap_pfx, opts=opts
+        )
+
+        assert (pre_chunk == other_pre_chunk) is expected_value
 
     @pytest.mark.parametrize(
         ("max_characters", "combine_text_under_n_chars", "expected_value"),
@@ -498,7 +614,7 @@ class DescribeTextPreChunk:
         self, max_characters: int, combine_text_under_n_chars: int, expected_value: bool
     ):
         """This allows `PreChunkCombiner` to operate without knowing `TextPreChunk` internals."""
-        opts = ChunkingOptions.new(
+        opts = ChunkingOptions(
             max_characters=max_characters,
             combine_text_under_n_chars=combine_text_under_n_chars,
             overlap=20,
@@ -522,7 +638,7 @@ class DescribeTextPreChunk:
 
         Note that neither the original or other pre_chunk are mutated.
         """
-        opts = ChunkingOptions.new()
+        opts = ChunkingOptions()
         pre_chunk = TextPreChunk(
             [
                 Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."),
@@ -576,17 +692,15 @@ class DescribeTextPreChunk:
         )
 
     def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
-        pre_chunk = TextPreChunk(
-            [
-                Title("Introduction"),
-                Text(
-                    "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                    " lectus porta volutpat.",
-                ),
-            ],
-            overlap_prefix="e feugiat efficitur.",
-            opts=ChunkingOptions.new(max_characters=200),
-        )
+        elements = [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                " lectus porta volutpat.",
+            ),
+        ]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        pre_chunk = TextPreChunk(elements, overlap_prefix="e feugiat efficitur.", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -596,25 +710,31 @@ class DescribeTextPreChunk:
             " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
     def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
         # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
         # -- The pre-chunker will isolate that element in a pre_chunk of its own.
-        pre_chunk = TextPreChunk(
-            [
-                Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-                    " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
-                    " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
-                    " commodo consequat."
-                ),
-            ],
-            overlap_prefix="",
-            opts=ChunkingOptions.new(max_characters=200, text_splitting_separators=("\n", " ")),
-        )
+        elements = [
+            Text(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+                " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
+                " commodo consequat."
+            )
+        ]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        pre_chunk = TextPreChunk(elements, overlap_prefix="", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
+        # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
+        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
+        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
+        # -- `._consolidated_metadata)` for each text-split chunk.
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
@@ -622,13 +742,34 @@ class DescribeTextPreChunk:
             " veniam, quis nostrud exercitation ullamco laboris nisi ut"
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
-        assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata is pre_chunk._continuation_metadata
+        assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    def and_it_adds_the_is_continuation_flag_for_second_and_later_text_split_chunks(self):
+        metadata = ElementMetadata(
+            category_depth=0,
+            filename="foo.docx",
+            languages=["lat"],
+            parent_id="f87731e0",
+        )
+
+        pre_chunk = TextPreChunk(
+            # --   |--------------------- 48 ---------------------|
+            [Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)],
+            overlap_prefix="",
+            opts=ChunkingOptions(max_characters=20),
+        )
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        assert [c.metadata.is_continuation for c in chunk_iter] == [None, True, True]
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
@@ -643,7 +784,7 @@ class DescribeTextPreChunk:
         self, text: str, expected_value: str
     ):
         pre_chunk = TextPreChunk(
-            [Text(text)], overlap_prefix="", opts=ChunkingOptions.new(overlap=20, overlap_all=True)
+            [Text(text)], overlap_prefix="", opts=ChunkingOptions(overlap=20, overlap_all=True)
         )
         assert pre_chunk.overlap_tail == expected_value
 
@@ -670,7 +811,7 @@ class DescribeTextPreChunk:
                 ),
             ],
             overlap_prefix="",
-            opts=ChunkingOptions.new(),
+            opts=ChunkingOptions(),
         )
 
         assert pre_chunk._all_metadata_values == {
@@ -708,7 +849,7 @@ class DescribeTextPreChunk:
                 Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata_2),
             ],
             overlap_prefix="",
-            opts=ChunkingOptions.new(),
+            opts=ChunkingOptions(),
         )
 
         # -- ad-hoc fields "coefficient" and "quotient" do not appear --
@@ -719,6 +860,23 @@ class DescribeTextPreChunk:
             "languages": [["lat"], ["lat", "eng"]],
             "parent_id": ["f87731e0"],
         }
+
+    def and_it_adds_the_pre_chunk_elements_to_metadata_when_so_instructed(self):
+        opts = ChunkingOptions(include_orig_elements=True)
+        metadata = ElementMetadata(filename="foo.pdf")
+        element = Title("Lorem Ipsum", metadata=metadata)
+        element_2 = Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)
+        pre_chunk = TextPreChunk([element, element_2], overlap_prefix="", opts=opts)
+
+        consolidated_metadata = pre_chunk._consolidated_metadata
+
+        # -- pre-chunk elements are included as metadata --
+        orig_elements = consolidated_metadata.orig_elements
+        assert orig_elements is not None
+        assert orig_elements == [element, element_2]
+        # -- and they are the exact instances, not copies --
+        assert orig_elements[0] is element
+        assert orig_elements[1] is element_2
 
     def it_consolidates_regex_metadata_in_a_field_specific_way(self):
         """regex_metadata of chunk is combined regex_metadatas of its elements.
@@ -751,7 +909,7 @@ class DescribeTextPreChunk:
                 ),
             ],
             overlap_prefix="ficitur.",  # len == 8
-            opts=ChunkingOptions.new(),
+            opts=ChunkingOptions(),
         )
 
         regex_metadata = pre_chunk._consolidated_regex_meta
@@ -807,7 +965,7 @@ class DescribeTextPreChunk:
                 ),
             ],
             overlap_prefix="",
-            opts=ChunkingOptions.new(),
+            opts=ChunkingOptions(),
         )
 
         meta_kwargs = pre_chunk._meta_kwargs
@@ -826,6 +984,32 @@ class DescribeTextPreChunk:
             },
         }
 
+    def it_computes_the_original_elements_list_to_help(self):
+        element = Title("Introduction")
+        element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
+        element_3 = CompositeElement(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(orig_elements=[Text("Porta volupat.")]),
+        )
+        pre_chunk = TextPreChunk(
+            [element, element_2, element_3],
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=True),
+        )
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- all elements of pre-chunk are included --
+        assert orig_elements == [element, element_2, element_3]
+        # -- orig_elements that are chunks (having orig-elements of their own) are copied and the
+        # -- copy is stripped of its `.metadata.orig_elements` to prevent a recursive data
+        # -- structure that nests orig_elements within orig_elements.
+        assert orig_elements[0] is element
+        assert orig_elements[2] is not element_3
+        assert orig_elements[2].metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
+
     @pytest.mark.parametrize(
         ("elements", "overlap_prefix", "expected_value"),
         [
@@ -836,16 +1020,14 @@ class DescribeTextPreChunk:
         ],
     )
     def it_knows_the_concatenated_text_of_the_pre_chunk_to_help(
-        self, elements: List[Text], overlap_prefix: str, expected_value: str
+        self, elements: list[Text], overlap_prefix: str, expected_value: str
     ):
         """._text is the "joined" text of the pre-chunk elements.
 
         The text-segment contributed by each element is separated from the next by a blank line
         ("\n\n"). An element that contributes no text does not give rise to a separator.
         """
-        pre_chunk = TextPreChunk(
-            elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions.new()
-        )
+        pre_chunk = TextPreChunk(elements, overlap_prefix=overlap_prefix, opts=ChunkingOptions())
         assert pre_chunk._text == expected_value
 
 
@@ -858,13 +1040,13 @@ class DescribePreChunkBuilder:
     """Unit-test suite for `unstructured.chunking.base.PreChunkBuilder`."""
 
     def it_is_empty_on_construction(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
 
         assert builder._text_length == 0
         assert builder._remaining_space == 50
 
     def it_accumulates_elements_added_to_it(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
 
         builder.add_element(Title("Introduction"))
         assert builder._text_length == 12
@@ -881,7 +1063,7 @@ class DescribePreChunkBuilder:
 
     @pytest.mark.parametrize("element", [Table("Heading\nCell text"), Text("abcd " * 200)])
     def it_will_fit_a_Table_or_oversized_element_when_empty(self, element: Element):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder = PreChunkBuilder(opts=ChunkingOptions())
         assert builder.will_fit(element)
 
     @pytest.mark.parametrize(
@@ -896,22 +1078,20 @@ class DescribePreChunkBuilder:
     def but_not_when_it_already_contains_an_element_of_any_kind(
         self, existing_element: Element, next_element: Element
     ):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder = PreChunkBuilder(opts=ChunkingOptions())
         builder.add_element(existing_element)
 
         assert not builder.will_fit(next_element)
 
     @pytest.mark.parametrize("element", [Text("abcd"), Table("Fruits\nMango")])
     def it_will_not_fit_any_element_when_it_already_contains_a_table(self, element: Element):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new())
+        builder = PreChunkBuilder(opts=ChunkingOptions())
         builder.add_element(Table("Heading\nCell text"))
 
         assert not builder.will_fit(element)
 
     def it_will_not_fit_an_element_when_it_already_exceeds_the_soft_maxlen(self):
-        builder = PreChunkBuilder(
-            opts=ChunkingOptions.new(max_characters=100, new_after_n_chars=50)
-        )
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100, new_after_n_chars=50))
         builder.add_element(
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
         )
@@ -919,7 +1099,7 @@ class DescribePreChunkBuilder:
         assert not builder.will_fit(Text("In rhoncus ipsum."))
 
     def and_it_will_not_fit_an_element_when_that_would_cause_it_to_exceed_the_hard_maxlen(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
         builder.add_element(
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
         )
@@ -930,7 +1110,7 @@ class DescribePreChunkBuilder:
         )
 
     def but_it_will_fit_an_element_that_fits(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=100))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=100))
         builder.add_element(
             Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")  # 55-chars
         )
@@ -939,7 +1119,7 @@ class DescribePreChunkBuilder:
         assert builder.will_fit(Text("In rhoncus ipsum sed lectus porto volutpat."))  # 43-chars
 
     def it_generates_a_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
         builder.add_element(Title("Introduction"))
         builder.add_element(
             Text(
@@ -962,7 +1142,7 @@ class DescribePreChunkBuilder:
         assert builder._remaining_space == 150
 
     def and_it_generates_a_TablePreChunk_when_it_contains_a_Table_element(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
         builder.add_element(Table("Heading\nCell text"))
 
         pre_chunk = next(builder.flush())
@@ -978,7 +1158,7 @@ class DescribePreChunkBuilder:
         assert pre_chunk._table == Table("Heading\nCell text")
 
     def but_it_does_not_generate_a_pre_chunk_on_flush_when_empty(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=150))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=150))
 
         pre_chunks = list(builder.flush())
 
@@ -987,7 +1167,7 @@ class DescribePreChunkBuilder:
         assert builder._remaining_space == 150
 
     def it_computes_overlap_from_each_pre_chunk_and_applies_it_to_the_next(self):
-        opts = ChunkingOptions.new(overlap=15, overlap_all=True)
+        opts = ChunkingOptions(overlap=15, overlap_all=True)
         builder = PreChunkBuilder(opts=opts)
 
         builder.add_element(Text("Lorem ipsum dolor sit amet consectetur adipiscing elit."))
@@ -1006,7 +1186,7 @@ class DescribePreChunkBuilder:
         assert pre_chunk._text == "porta volutpat.\n\nDonec semper facilisis metus finibus."
 
     def it_considers_separator_length_when_computing_text_length_and_remaining_space(self):
-        builder = PreChunkBuilder(opts=ChunkingOptions.new(max_characters=50))
+        builder = PreChunkBuilder(opts=ChunkingOptions(max_characters=50))
         builder.add_element(Text("abcde"))
         builder.add_element(Text("fghij"))
 
@@ -1023,7 +1203,7 @@ class DescribePreChunkCombiner:
     """Unit-test suite for `unstructured.chunking.base.PreChunkCombiner`."""
 
     def it_combines_sequential_small_text_pre_chunks(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
@@ -1067,7 +1247,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def but_it_does_not_combine_table_pre_chunks(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         pre_chunks = [
             TextPreChunk(
                 [
@@ -1089,7 +1269,7 @@ class DescribePreChunkCombiner:
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=250)
+            pre_chunks, ChunkingOptions(max_characters=250, combine_text_under_n_chars=250)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1114,7 +1294,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_specified_combination_threshold(self):
-        opts = ChunkingOptions.new(max_characters=250, combine_text_under_n_chars=80)
+        opts = ChunkingOptions(max_characters=250, combine_text_under_n_chars=80)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
@@ -1165,7 +1345,7 @@ class DescribePreChunkCombiner:
             next(pre_chunk_iter)
 
     def it_respects_the_hard_maximum_window_length(self):
-        opts = ChunkingOptions.new(max_characters=200, combine_text_under_n_chars=200)
+        opts = ChunkingOptions(max_characters=200, combine_text_under_n_chars=200)
         pre_chunks = [
             TextPreChunk(  # 68
                 [
@@ -1218,7 +1398,7 @@ class DescribePreChunkCombiner:
 
     def it_accommodates_and_isolates_an_oversized_pre_chunk(self):
         """Such as occurs when a single element exceeds the window size."""
-        opts = ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+        opts = ChunkingOptions(max_characters=150, combine_text_under_n_chars=150)
         pre_chunks = [
             TextPreChunk([Title("Lorem Ipsum")], overlap_prefix="", opts=opts),
             TextPreChunk(  # 179
@@ -1236,7 +1416,7 @@ class DescribePreChunkCombiner:
         ]
 
         pre_chunk_iter = PreChunkCombiner(
-            pre_chunks, ChunkingOptions.new(max_characters=150, combine_text_under_n_chars=150)
+            pre_chunks, ChunkingOptions(max_characters=150, combine_text_under_n_chars=150)
         ).iter_combined_pre_chunks()
 
         pre_chunk = next(pre_chunk_iter)
@@ -1265,7 +1445,7 @@ class DescribeTextPreChunkAccumulator:
     """Unit-test suite for `unstructured.chunking.base.TextPreChunkAccumulator`."""
 
     def it_generates_a_combined_TextPreChunk_when_flushed_and_resets_itself_to_empty(self):
-        opts = ChunkingOptions.new()
+        opts = ChunkingOptions(combine_text_under_n_chars=500)
         accum = TextPreChunkAccumulator(opts=opts)
 
         pre_chunk = TextPreChunk(
@@ -1324,75 +1504,13 @@ class DescribeTextPreChunkAccumulator:
             next(accum.flush())
 
     def but_it_does_not_generate_a_TextPreChunk_on_flush_when_empty(self):
-        accum = TextPreChunkAccumulator(opts=ChunkingOptions.new(max_characters=150))
+        accum = TextPreChunkAccumulator(opts=ChunkingOptions(max_characters=150))
         assert list(accum.flush()) == []
 
 
 # ================================================================================================
 # (SEMANTIC) BOUNDARY PREDICATES
 # ================================================================================================
-
-
-class Describe_is_in_next_section:
-    """Unit-test suite for `unstructured.chunking.base.is_in_next_section()` function.
-
-    `is_in_next_section()` is not itself a predicate, rather it returns a predicate on Element
-    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
-    element stream.
-    """
-
-    def it_is_false_for_the_first_element_when_it_has_a_non_None_section(self):
-        """This is an explicit first-section; first-section does not represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_false_for_the_first_element_when_it_has_a_None_section(self):
-        """This is an anonymous first-section; still doesn't represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-
-    def it_is_false_for_None_section_elements_that_follow_an_explicit_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def and_it_is_false_for_None_section_elements_that_follow_an_anonymous_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def it_is_false_for_matching_section_elements_that_follow_an_explicit_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def it_is_true_for_an_explicit_section_element_that_follows_an_anonymous_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_true_for_a_different_explicit_section_that_follows_an_explicit_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Summary")))
-
-    def it_is_true_whenever_the_section_explicitly_changes_except_at_the_start(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl"))
-        assert not pred(Text("mnop", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("qrst"))
-        assert pred(Text("uvwx", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("yzab", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("cdef"))
-        assert pred(Text("ghij", metadata=ElementMetadata(section="Appendix")))
 
 
 class Describe_is_on_next_page:

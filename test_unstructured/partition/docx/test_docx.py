@@ -1,22 +1,34 @@
 # pyright: reportPrivateUsage=false
 
+"""Test suite for `unstructured.partition.docx` module."""
+
+from __future__ import annotations
+
+import io
 import pathlib
 import re
-from tempfile import SpooledTemporaryFile
-from typing import Dict, List
+import tempfile
+from typing import Any
 
 import docx
 import pytest
 from docx.document import Document
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON
+from test_unstructured.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+    instance_mock,
+    property_mock,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     Address,
     CompositeElement,
     Element,
-    ElementType,
     Footer,
     Header,
     ListItem,
@@ -27,204 +39,14 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.docx import _DocxPartitioner, partition_docx
+from unstructured.partition.docx import DocxPartitionerOptions, _DocxPartitioner, partition_docx
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-
-
-class Describe_DocxPartitioner:
-    """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
-
-    # -- table behaviors -------------------------------------------------------------------------
-
-    def it_can_convert_a_table_to_html(self):
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert _DocxPartitioner()._convert_table_to_html(table) == (
-            "<table>\n"
-            "<thead>\n"
-            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
-            "</thead>\n"
-            "<tbody>\n"
-            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
-            "</tbody>\n"
-            "</table>"
-        )
-
-    def and_it_can_convert_a_nested_table_to_html(self):
-        """
-        Fixture table is:
-
-            +---+-------------+---+
-            | a |     >b<     | c |
-            +---+-------------+---+
-            |   | +-----+---+ |   |
-            |   | |  e  | f | |   |
-            | d | +-----+---+ | i |
-            |   | | g&t | h | |   |
-            |   | +-----+---+ |   |
-            +---+-------------+---+
-            | j |      k      | l |
-            +---+-------------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-
-        # -- re.sub() strips out the extra padding inserted by tabulate --
-        html = re.sub(r" +<", "<", _DocxPartitioner()._convert_table_to_html(table))
-
-        expected_lines = [
-            "<table>",
-            "<thead>",
-            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
-            "</thead>",
-            "<tbody>",
-            "<tr><td>d</td><td><table>",
-            "<tbody>",
-            "<tr><td>e</td><td>f</td></tr>",
-            "<tr><td>g&amp;t</td><td>h</td></tr>",
-            "</tbody>",
-            "</table></td><td>i</td></tr>",
-            "<tr><td>j</td><td>k</td><td>l</td></tr>",
-            "</tbody>",
-            "</table>",
-        ]
-        actual_lines = html.splitlines()
-        for expected, actual in zip(expected_lines, actual_lines):
-            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
-
-    def it_can_convert_a_table_to_plain_text(self):
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
-            "Header Col 1 Header Col 2 Lorem ipsum A link example"
-        )
-
-    def and_it_can_convert_a_nested_table_to_plain_text(self):
-        """
-        Fixture table is:
-
-            +---+-------------+---+
-            | a |     >b<     | c |
-            +---+-------------+---+
-            |   | +-----+---+ |   |
-            |   | |  e  | f | |   |
-            | d | +-----+---+ | i |
-            |   | | g&t | h | |   |
-            |   | +-----+---+ |   |
-            +---+-------------+---+
-            | j |      k      | l |
-            +---+-------------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == (
-            "a >b< c d e f g&t h i j k l"
-        )
-
-    def but_the_text_of_a_merged_cell_appears_only_once(self):
-        """
-        Fixture table is:
-
-            +---+-------+
-            | a | b     |
-            |   +---+---+
-            |   | c | d |
-            +---+---+   |
-            | e     |   |
-            +-------+---+
-        """
-        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
-        assert " ".join(_DocxPartitioner()._iter_table_texts(table)) == "a b c d e"
-
-    # -- page-break behaviors --------------------------------------------------------------------
-
-    def it_places_page_breaks_precisely_where_they_occur(self):
-        """Page-break behavior has some subtleties.
-
-        * A hard page-break does not generate a PageBreak element (because that would double-count
-          it). Word inserts a rendered page-break for the hard break at the effective location.
-        * A (rendered) page-break mid-paragraph produces two elements, like `Text, PageBreak, Text`,
-          so each Text (subclass) element gets the right page-number.
-        * A rendered page-break mid-hyperlink produces two text elements, but the hyperlink itself
-          is not split; the entire hyperlink goes on the page where the hyperlink starts, even
-          though some of its text appears on the following page. The rest of the paragraph, after
-          the hyperlink, appears on the following page.
-        * Odd and even-page section starts can lead to two page-breaks, like an odd-page section
-          start could go from page 3 to page 5 because 5 is the next odd page.
-        """
-
-        def str_repr(e: Element) -> str:
-            """A more detailed `repr()` to aid debugging when assertion fails."""
-            return f"{e.__class__.__name__}('{e}')"
-
-        expected = [
-            # NOTE(scanny) - -- page 1 --
-            NarrativeText(
-                "First page, tab here:\t"
-                "followed by line-break here:\n"
-                "here:\n"
-                "and here:\n"
-                "no-break hyphen here:-"
-                "and hard page-break here>>"
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 2 --
-            NarrativeText(
-                "<<Text on second page. The font is big so it breaks onto third page--"
-                "------------------here-->> <<but break falls inside link so text stays"
-                " together."
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 3 --
-            NarrativeText("Continuous section break here>>"),
-            NarrativeText("<<followed by text on same page"),
-            NarrativeText("Odd-page section break here>>"),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 4 --
-            PageBreak(""),
-            # NOTE(scanny) - -- page 5 --
-            NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
-            NarrativeText(
-                'Then text gets big again so a "natural" rendered page break happens again here>> '
-            ),
-            PageBreak(""),
-            # NOTE(scanny) - -- page 6 --
-            Title("<<and then more text proceeds."),
-        ]
-
-        elements = _DocxPartitioner.iter_document_elements(example_doc_path("page-breaks.docx"))
-
-        for idx, e in enumerate(elements):
-            assert e == expected[idx], (
-                f"\n\nExpected: {str_repr(expected[idx])}"
-                # --
-                f"\n\nGot:      {str_repr(e)}\n"
-            )
-
-    # -- header/footer behaviors -----------------------------------------------------------------
-
-    def it_includes_table_cell_text_in_Header_text(self):
-        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
-        section = partitioner._document.sections[0]
-
-        header_iter = partitioner._iter_section_headers(section)
-
-        element = next(header_iter)
-        assert element.text == "First header para\nTable cell1 Table cell2\nLast header para"
-
-    def it_includes_table_cell_text_in_Footer_text(self):
-        """This case also verifies nested-table and merged-cell behaviors."""
-        partitioner = _DocxPartitioner(example_doc_path("docx-hdrftr.docx"))
-        section = partitioner._document.sections[0]
-
-        footer_iter = partitioner._iter_section_footers(section)
-
-        element = next(footer_iter)
-        assert element.text == "para1\ncell1 a b c d e f\npara2"
-
 
 # -- docx-file loading behaviors -----------------------------------------------------------------
 
 
 def test_partition_docx_from_filename(
-    mock_document_file_path: str,
-    expected_elements: List[Element],
+    mock_document_file_path: str, expected_elements: list[Element]
 ):
     elements = partition_docx(mock_document_file_path)
 
@@ -242,7 +64,7 @@ def test_partition_docx_from_filename_with_metadata_filename(mock_document_file_
 
 
 def test_partition_docx_with_spooled_file(
-    mock_document_file_path: str, expected_elements: List[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     """`partition_docx()` accepts a SpooledTemporaryFile as its `file` argument.
 
@@ -250,7 +72,7 @@ def test_partition_docx_with_spooled_file(
     to ensure the source file is appropriately converted in this case.
     """
     with open(mock_document_file_path, "rb") as test_file:
-        spooled_temp_file = SpooledTemporaryFile()
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
         elements = partition_docx(file=spooled_temp_file)
@@ -259,7 +81,7 @@ def test_partition_docx_with_spooled_file(
             assert element.metadata.filename is None
 
 
-def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: List[Text]):
+def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
     with open(mock_document_file_path, "rb") as f:
         elements = partition_docx(file=f)
     assert elements == expected_elements
@@ -268,7 +90,7 @@ def test_partition_docx_from_file(mock_document_file_path: str, expected_element
 
 
 def test_partition_docx_from_file_with_metadata_filename(
-    mock_document_file_path: str, expected_elements: List[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     with open(mock_document_file_path, "rb") as f:
         elements = partition_docx(file=f, metadata_filename="test")
@@ -277,14 +99,16 @@ def test_partition_docx_from_file_with_metadata_filename(
         assert element.metadata.filename == "test"
 
 
-def test_partition_docx_raises_with_both_specified(mock_document_file_path: str):
-    with open(mock_document_file_path, "rb") as f:
-        with pytest.raises(ValueError, match="Exactly one of filename and file must be specified"):
-            partition_docx(filename=mock_document_file_path, file=f)
+def test_partition_docx_uses_file_path_when_both_are_specified(
+    mock_document_file_path: str, expected_elements: list[Text]
+):
+    f = io.BytesIO(b"abcde")
+    elements = partition_docx(filename=mock_document_file_path, file=f)
+    assert elements == expected_elements
 
 
 def test_partition_docx_raises_with_neither():
-    with pytest.raises(ValueError, match="Exactly one of filename and file must be specified"):
+    with pytest.raises(ValueError, match="either `filename` or `file` argument must be provided"):
         partition_docx()
 
 
@@ -299,11 +123,7 @@ def test_parition_docx_from_team_chat():
         "0:0:3.270 --> 0:0:4.250\nJames Bond\nUmm.",
         "saved-by Dennis Forsythe",
     ]
-    assert [e.category for e in elements] == [
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.UNCATEGORIZED_TEXT,
-        ElementType.TABLE,
-    ]
+    assert [type(e) for e in elements] == [Text, Text, Table]
 
 
 @pytest.mark.parametrize("infer_table_structure", [True, False])
@@ -377,11 +197,13 @@ def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppr
 
 
 def test_partition_docx_includes_page_break_elements_when_so_instructed():
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=True)
+    elements = partition_docx(
+        example_doc_path("handbook-1p.docx"), include_page_breaks=True, starting_page_number=3
+    )
 
     assert "PageBreak" in [type(e).__name__ for e in elements]
-    assert elements[1].metadata.page_number == 1
-    assert elements[-2].metadata.page_number == 2
+    assert elements[1].metadata.page_number == 3
+    assert elements[-2].metadata.page_number == 4
 
 
 # ------------------------------------------------------------------------------------------------
@@ -444,6 +266,18 @@ def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
     with open(example_doc_path("fake.docx"), "rb") as f:
         elements = partition_docx(file=f)
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture):
+    mocker.patch(
+        "unstructured.partition.docx.get_last_modified_date_from_file",
+        return_value="2029-07-05T09:24:28",
+    )
+
+    with open(example_doc_path("fake.docx"), "rb") as f:
+        elements = partition_docx(file=f, date_from_file_object=True)
+
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
 
@@ -462,23 +296,21 @@ def test_partition_docx_from_file_metadata_date_with_custom_metadata(mocker: Moc
 def test_partition_docx_from_file_without_metadata_date():
     """Test partition_docx() with file that are not possible to get last modified date"""
     with open(example_doc_path("fake.docx"), "rb") as f:
-        sf = SpooledTemporaryFile()
+        sf = tempfile.SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_docx(file=sf)
+        elements = partition_docx(file=sf, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified is None
 
 
-def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dict[str, str]]):
-    partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        True,
-        None,
-    )
+def test_get_emphasized_texts_from_paragraph(
+    opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
+):
+    opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
+
     paragraph = partitioner._document.paragraphs[1]
     emphasized_texts = list(partitioner._iter_paragraph_emphasis(paragraph))
     assert paragraph.text == "I am a bold italic bold-italic text."
@@ -495,41 +327,38 @@ def test_get_emphasized_texts_from_paragraph(expected_emphasized_texts: List[Dic
     assert emphasized_texts == []
 
 
-def test_iter_table_emphasis(expected_emphasized_texts: List[Dict[str, str]]):
-    partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        True,
-        None,
-    )
+def test_iter_table_emphasis(
+    opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
+):
+    opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
     table = partitioner._document.tables[0]
+
     emphasized_texts = list(partitioner._iter_table_emphasis(table))
+
     assert emphasized_texts == expected_emphasized_texts
 
 
 def test_table_emphasis(
-    expected_emphasized_text_contents: List[str],
-    expected_emphasized_text_tags: List[str],
+    opts_args: dict[str, Any],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
-    partitioner = _DocxPartitioner(
-        "example-docs/fake-doc-emphasized-text.docx",
-        None,
-        None,
-        False,
-        True,
-        None,
-    )
+    opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
     table = partitioner._document.tables[0]
+
     emphasized_text_contents, emphasized_text_tags = partitioner._table_emphasis(table)
+
     assert emphasized_text_contents == expected_emphasized_text_contents
     assert emphasized_text_tags == expected_emphasized_text_tags
 
 
 def test_partition_docx_grabs_emphasized_texts(
-    expected_emphasized_text_contents: List[str],
-    expected_emphasized_text_tags: List[str],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
     elements = partition_docx(example_doc_path("fake-doc-emphasized-text.docx"))
 
@@ -551,15 +380,10 @@ def test_partition_docx_with_json(mock_document_file_path: str):
     assert_round_trips_through_JSON(elements)
 
 
-def test_parse_category_depth_by_style():
-    partitioner = _DocxPartitioner(
-        "example-docs/category-level.docx",
-        None,
-        None,
-        False,
-        True,
-        None,
-    )
+def test_parse_category_depth_by_style(opts_args: dict[str, Any]):
+    opts_args["file_path"] = example_doc_path("category-level.docx")
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
 
     # Category depths are 0-indexed and relative to the category type
     # Title, list item, bullet, narrative text, etc.
@@ -589,9 +413,9 @@ def test_parse_category_depth_by_style():
         ), f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
 
 
-def test_parse_category_depth_by_style_name():
-    partitioner = _DocxPartitioner(None, None, None, False, True, None)
-
+def test_parse_category_depth_by_style_name(opts_args: dict[str, Any]):
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
     test_cases = [
         (0, "Heading 1"),
         (1, "Heading 2"),
@@ -614,8 +438,9 @@ def test_parse_category_depth_by_style_name():
         ), f"test case {test_cases[idx]} failed"
 
 
-def test_parse_category_depth_by_style_ilvl():
-    partitioner = _DocxPartitioner(None, None, None, False, True, None)
+def test_parse_category_depth_by_style_ilvl(opts_args: dict[str, Any]):
+    opts = DocxPartitionerOptions(**opts_args)
+    partitioner = _DocxPartitioner(opts)
     assert partitioner._parse_category_depth_by_style_ilvl() == 0
 
 
@@ -650,30 +475,30 @@ def test_add_chunking_strategy_on_partition_docx():
 
 
 def test_partition_docx_element_metadata_has_languages():
-    filename = "example-docs/handbook-1p.docx"
+    filename = example_doc_path("handbook-1p.docx")
     elements = partition_docx(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_docx_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.docx"
+    filename = example_doc_path("language-docs/eng_spa_mult.docx")
     elements = partition_docx(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
 def test_partition_docx_respects_languages_arg():
-    filename = "example-docs/handbook-1p.docx"
+    filename = example_doc_path("handbook-1p.docx")
     elements = partition_docx(filename=filename, languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]
 
 
 def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
-        filename = "example-docs/handbook-1p.docx"
+        filename = example_doc_path("handbook-1p.docx")
         partition_docx(
             filename=filename,
-            languages="eng",  # pyright: ignore[reportGeneralTypeIssues]
+            languages="eng",  # pyright: ignore[reportArgumentType]
         )
 
 
@@ -764,16 +589,37 @@ def test_partition_docx_includes_hyperlink_metadata():
     assert metadata.link_urls is None
 
 
+def test_partition_docx_assigns_deterministic_and_unique_element_ids():
+    document_path = example_doc_path("duplicate-paragraphs.docx")
+
+    ids = [element.id for element in partition_docx(document_path)]
+    ids_2 = [element.id for element in partition_docx(document_path)]
+
+    # -- ids match even though partitioned separately (deterministic on content) --
+    assert ids == ids_2
+    # -- ids are unique --
+    assert len(ids) == len(set(ids))
+
+
+# -- shape behaviors -----------------------------------------------------------------------------
+
+
+def test_it_considers_text_inside_shapes():
+    # -- <bracketed> text is written inside inline shapes --
+    partitioned_doc = partition_docx(example_doc_path("docx-shapes.docx"))
+    assert [element.text for element in partitioned_doc] == [
+        "Paragraph with single <inline-image> within.",
+        "Paragraph with <inline-image1> and <inline-image2> within.",
+        # -- text "<floating-shape>" in floating shape is ignored --
+        "Paragraph with floating shape attached.",
+    ]
+
+
 # -- module-level fixtures -----------------------------------------------------------------------
 
 
-def example_doc_path(filename: str) -> str:
-    """String path to a file in the example-docs/ directory."""
-    return str(pathlib.Path(__file__).parent.parent.parent.parent / "example-docs" / filename)
-
-
 @pytest.fixture()
-def expected_elements() -> List[Text]:
+def expected_elements() -> list[Text]:
     return [
         Title("These are a few of my favorite things:"),
         ListItem("Parrots"),
@@ -787,12 +633,12 @@ def expected_elements() -> List[Text]:
 
 
 @pytest.fixture()
-def expected_emphasized_text_contents() -> List[str]:
+def expected_emphasized_text_contents() -> list[str]:
     return ["bold", "italic", "bold-italic", "bold-italic"]
 
 
 @pytest.fixture()
-def expected_emphasized_text_tags() -> List[str]:
+def expected_emphasized_text_tags() -> list[str]:
     return ["b", "i", "b", "i"]
 
 
@@ -838,3 +684,622 @@ def mock_document_file_path(mock_document: Document, tmp_path: pathlib.Path) -> 
     filename = str(tmp_path / "mock_document.docx")
     mock_document.save(filename)
     return filename
+
+
+@pytest.fixture()
+def opts_args() -> dict[str, Any]:
+    """All default arguments for `DocxPartitionerOptions`.
+
+    Individual argument values can be changed to suit each test. Makes construction of opts more
+    compact for testing purposes.
+    """
+    return {
+        "date_from_file_object": False,
+        "file": None,
+        "file_path": None,
+        "include_page_breaks": True,
+        "infer_table_structure": True,
+        "metadata_file_path": None,
+        "metadata_last_modified": None,
+    }
+
+
+# ================================================================================================
+# ISOLATED UNIT TESTS
+# ================================================================================================
+# These test components used by `partition_docx()` in isolation such that all edge cases can be
+# exercised.
+# ================================================================================================
+
+
+class DescribeDocxPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.docx.DocxPartitionerOptions` objects."""
+
+    # -- .document -------------------------------
+
+    def it_loads_the_docx_document(
+        self,
+        request: FixtureRequest,
+        opts_args: dict[str, Any],
+    ):
+        document_ = instance_mock(request, Document)
+        docx_Document_ = function_mock(
+            request, "unstructured.partition.docx.docx.Document", return_value=document_
+        )
+        _docx_file_prop_ = property_mock(
+            request, DocxPartitionerOptions, "_docx_file", return_value="abcde.docx"
+        )
+        opts = DocxPartitionerOptions(**opts_args)
+
+        document = opts.document
+
+        _docx_file_prop_.assert_called_once_with()
+        docx_Document_.assert_called_once_with("abcde.docx")
+        assert document is document_
+
+    # -- .include_page_breaks --------------------
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_emit_PageBreak_elements_as_part_of_the_output_element_stream(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["include_page_breaks"] = arg_value
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.include_page_breaks is arg_value
+
+    # -- .infer_table_structure ------------------
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_include_text_as_html_in_Table_metadata(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["infer_table_structure"] = arg_value
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.infer_table_structure is arg_value
+
+    # -- .increment_page_number() ----------------
+
+    def it_generates_a_PageBreak_element_when_the_page_number_is_incremented(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = DocxPartitionerOptions(**opts_args)
+
+        page_break_iter = opts.increment_page_number()
+
+        assert isinstance(next(page_break_iter, None), PageBreak)
+        assert opts.page_number == 2
+        with pytest.raises(StopIteration):
+            next(page_break_iter)
+
+    def but_it_does_not_generate_a_PageBreak_element_when_include_page_breaks_option_is_off(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["include_page_breaks"] = False
+        opts = DocxPartitionerOptions(**opts_args)
+
+        page_break_iter = opts.increment_page_number()
+
+        with pytest.raises(StopIteration):
+            next(page_break_iter)
+        assert opts.page_number == 2
+
+    # -- .last_modified --------------------------
+
+    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.last_modified == "2024-03-05T17:02:53"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_: Mock
+    ):
+        opts_args["file_path"] = "a/b/document.docx"
+        get_last_modified_date_.return_value = "2024-04-02T20:32:35"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_.assert_called_once_with("a/b/document.docx")
+        assert last_modified == "2024-04-02T20:32:35"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = True
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_called_once_with(file)
+        assert last_modified == "2024-04-02T20:42:07"
+
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = False
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_not_called()
+        assert last_modified is None
+
+    # -- .metadata_file_path ---------------------
+
+    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = "x/y/z.docx"
+        opts_args["metadata_file_path"] = "a/b/c.docx"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == "a/b/c.docx"
+
+    @pytest.mark.parametrize("file_path", ["u/v/w.docx", None])
+    def and_it_falls_back_to_the_document_file_path_otherwise(
+        self, file_path: str | None, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = file_path
+        opts_args["metadata_file_path"] = None
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == file_path
+
+    # -- ._metadata_page_number ------------------
+
+    @pytest.mark.parametrize(
+        ("page_count", "document_contains_pagebreaks", "expected_value"),
+        [(7, True, 7), (1, False, None)],
+    )
+    def it_reports_None_when_no_rendered_page_breaks_are_found_in_document(
+        self,
+        request: FixtureRequest,
+        opts_args: dict[str, Any],
+        page_count: int,
+        document_contains_pagebreaks: bool,
+        expected_value: int | None,
+    ):
+        _document_contains_pagebreaks_prop_ = property_mock(
+            request,
+            DocxPartitionerOptions,
+            "_document_contains_pagebreaks",
+            return_value=document_contains_pagebreaks,
+        )
+        opts = DocxPartitionerOptions(**opts_args)
+        opts._page_counter = page_count
+
+        metadata_page_number = opts.metadata_page_number
+
+        _document_contains_pagebreaks_prop_.assert_called_once_with()
+        assert metadata_page_number is expected_value
+
+    # -- .page_number ----------------------------
+
+    def it_keeps_track_of_the_page_number(self, opts_args: dict[str, Any]):
+        """In DOCX, page-number is the slide number."""
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts.page_number == 1
+        list(opts.increment_page_number())
+        assert opts.page_number == 2
+        list(opts.increment_page_number())
+        assert opts.page_number == 3
+
+    def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = DocxPartitionerOptions(**opts_args, starting_page_number=3)
+
+        assert opts.page_number == 3
+        list(opts.increment_page_number())
+        assert opts.page_number == 4
+
+    # -- ._document_contains_pagebreaks ----------
+
+    @pytest.mark.parametrize(
+        ("file_name", "expected_value"), [("page-breaks.docx", True), ("teams_chat.docx", False)]
+    )
+    def it_knows_whether_the_document_contains_page_breaks(
+        self, opts_args: dict[str, Any], file_name: str, expected_value: bool
+    ):
+        opts_args["file_path"] = example_doc_path(file_name)
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts._document_contains_pagebreaks is expected_value
+
+    # -- ._docx_file -----------------------------
+
+    def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = "l/m/n.docx"
+        opts = DocxPartitionerOptions(**opts_args)
+
+        assert opts._docx_file == "l/m/n.docx"
+
+    def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
+        spooled_temp_file.write(b"abcdefg")
+        opts_args["file"] = spooled_temp_file
+        opts = DocxPartitionerOptions(**opts_args)
+
+        docx_file = opts._docx_file
+
+        assert docx_file is not spooled_temp_file
+        assert isinstance(docx_file, io.BytesIO)
+        assert docx_file.getvalue() == b"abcdefg"
+
+    def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
+        self, opts_args: dict[str, Any]
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts = DocxPartitionerOptions(**opts_args)
+
+        docx_file = opts._docx_file
+
+        assert docx_file is file
+        assert isinstance(docx_file, io.BytesIO)
+        assert docx_file.getvalue() == b"abcdefg"
+
+    def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = DocxPartitionerOptions(**opts_args)
+
+        with pytest.raises(ValueError, match="No DOCX document specified, either `filename` or "):
+            opts._docx_file
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
+        return function_mock(request, "unstructured.partition.docx.get_last_modified_date")
+
+    @pytest.fixture()
+    def get_last_modified_date_from_file_(self, request: FixtureRequest):
+        return function_mock(
+            request, "unstructured.partition.docx.get_last_modified_date_from_file"
+        )
+
+
+class Describe_DocxPartitioner:
+    """Unit-test suite for `unstructured.partition.docx._DocxPartitioner`."""
+
+    # -- table behaviors -------------------------------------------------------------------------
+
+    def it_can_convert_a_table_to_html(self, opts_args: dict[str, Any]):
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+
+        assert _DocxPartitioner(opts)._convert_table_to_html(table) == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        )
+
+    def and_it_can_convert_a_nested_table_to_html(self, opts_args: dict[str, Any]):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+
+        # -- re.sub() strips out the extra padding inserted by tabulate --
+        html = re.sub(r" +<", "<", _DocxPartitioner(opts)._convert_table_to_html(table))
+
+        expected_lines = [
+            "<table>",
+            "<thead>",
+            "<tr><th>a</th><th>&gt;b&lt;</th><th>c</th></tr>",
+            "</thead>",
+            "<tbody>",
+            "<tr><td>d</td><td><table>",
+            "<tbody>",
+            "<tr><td>e</td><td>f</td></tr>",
+            "<tr><td>g&amp;t</td><td>h</td></tr>",
+            "</tbody>",
+            "</table></td><td>i</td></tr>",
+            "<tr><td>j</td><td>k</td><td>l</td></tr>",
+            "</tbody>",
+            "</table>",
+        ]
+        actual_lines = html.splitlines()
+        for expected, actual in zip(expected_lines, actual_lines):
+            assert actual == expected, f"\nexpected: {repr(expected)}\nactual:   {repr(actual)}"
+
+    def it_can_convert_a_table_to_plain_text(self, opts_args: dict[str, Any]):
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[0]
+
+        assert " ".join(_DocxPartitioner(opts)._iter_table_texts(table)) == (
+            "Header Col 1 Header Col 2 Lorem ipsum A link example"
+        )
+
+    def and_it_can_convert_a_nested_table_to_plain_text(self, opts_args: dict[str, Any]):
+        """
+        Fixture table is:
+
+            +---+-------------+---+
+            | a |     >b<     | c |
+            +---+-------------+---+
+            |   | +-----+---+ |   |
+            |   | |  e  | f | |   |
+            | d | +-----+---+ | i |
+            |   | | g&t | h | |   |
+            |   | +-----+---+ |   |
+            +---+-------------+---+
+            | j |      k      | l |
+            +---+-------------+---+
+        """
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[1]
+
+        assert " ".join(_DocxPartitioner(opts)._iter_table_texts(table)) == (
+            "a >b< c d e f g&t h i j k l"
+        )
+
+    def but_the_text_of_a_merged_cell_appears_only_once(self, opts_args: dict[str, Any]):
+        """
+        Fixture table is:
+
+            +---+-------+
+            | a | b     |
+            |   +---+---+
+            |   | c | d |
+            +---+---+   |
+            | e     |   |
+            +-------+---+
+        """
+        opts = DocxPartitionerOptions(**opts_args)
+        table = docx.Document(example_doc_path("docx-tables.docx")).tables[2]
+        assert " ".join(_DocxPartitioner(opts)._iter_table_texts(table)) == "a b c d e"
+
+    def it_can_partition_tables_with_incomplete_rows(self):
+        """DOCX permits table rows to start late and end early.
+
+        It is relatively rare in the wild, but DOCX tables are unique (as far as I know) in that
+        they allow rows to start late, like in column 3, and end early, like the last cell is in
+        column 5 of a 7 column table.
+
+        A practical example might look like this:
+
+                       +------+------+
+                       | East | West |
+            +----------+------+------+
+            | Started  |  25  |  32  |
+            +----------+------+------+
+            | Finished |  17  |  21  |
+            +----------+------+------+
+        """
+        elements = iter(partition_docx(example_doc_path("tables-with-incomplete-rows.docx")))
+
+        e = next(elements)
+        assert e.text.startswith("Example of DOCX table ")
+        # --
+        # ┌───┬───┐
+        # │ a │ b │
+        # ├───┼───┤
+        # │ c │ d │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>c  </td><td>d  </td></tr>\n</tbody>\n"
+            "</table>"
+        )
+        # --
+        # ┌───┐
+        # │ a │
+        # ├───┼───┐
+        # │ b │ c │
+        # └───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───────┐
+        # │   a   │
+        # ├───┬───┼───┐
+        # │ b │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>a  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>b  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # ┌───┬───┐
+        # │   │ b │
+        # │ a ├───┼───┐
+        # │   │ c │ d │
+        # └───┴───┴───┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n<tr><th>a  </th><th>b  </th><th>  </th></tr>\n</thead>\n"
+            "<tbody>\n<tr><td>a  </td><td>c  </td><td>d </td></tr>\n</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # -- late-start, early-end, and >2 rows vertical span --
+        # ┌───────┬───┬───┐
+        # │   a   │ b │ c │
+        # └───┬───┴───┼───┘
+        #     │   d   │
+        # ┌───┤       ├───┐
+        # │ e │       │ f │
+        # └───┤       ├───┘
+        #     │       │
+        #     └───────┘
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "a b c d e f", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>a  </th><th>a  </th><th>b  </th><th>c  </th></tr>\n"
+            "</thead>\n<tbody>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "<tr><td>e  </td><td>d  </td><td>d  </td><td>f  </td></tr>\n"
+            "<tr><td>   </td><td>d  </td><td>d  </td><td>   </td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+        # --
+        # -- The table from the specimen file we received with the bug report. --
+        e = next(elements)
+        assert type(e).__name__ == "Table"
+        assert e.text == "Data More Dato WTF? Strange Format", f"actual {e.text=}"
+        assert e.metadata.text_as_html == (
+            "<table>\n"
+            "<thead>\n"
+            "<tr><th>Data   </th><th>Data   </th><th>      </th></tr>\n"
+            "</thead>\n"
+            "<tbody>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>Data   </td><td>Data   </td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>More   </td><td>      </td></tr>\n"
+            "<tr><td>Dato   </td><td>       </td><td>      </td></tr>\n"
+            "<tr><td>WTF?   </td><td>WTF?   </td><td>      </td></tr>\n"
+            "<tr><td>Strange</td><td>Strange</td><td>      </td></tr>\n"
+            "<tr><td>       </td><td>Format </td><td>Format</td></tr>\n"
+            "</tbody>\n"
+            "</table>"
+        ), f"actual {e.metadata.text_as_html=}"
+
+    # -- page-break behaviors --------------------------------------------------------------------
+
+    def it_places_page_breaks_precisely_where_they_occur(self, opts_args: dict[str, Any]):
+        """Page-break behavior has some subtleties.
+
+        * A hard page-break does not generate a PageBreak element (because that would double-count
+          it). Word inserts a rendered page-break for the hard break at the effective location.
+        * A (rendered) page-break mid-paragraph produces two elements, like `Text, PageBreak, Text`,
+          so each Text (subclass) element gets the right page-number.
+        * A rendered page-break mid-hyperlink produces two text elements, but the hyperlink itself
+          is not split; the entire hyperlink goes on the page where the hyperlink starts, even
+          though some of its text appears on the following page. The rest of the paragraph, after
+          the hyperlink, appears on the following page.
+        * Odd and even-page section starts can lead to two page-breaks, like an odd-page section
+          start could go from page 3 to page 5 because 5 is the next odd page.
+        """
+
+        def str_repr(e: Element) -> str:
+            """A more detailed `repr()` to aid debugging when assertion fails."""
+            return f"{e.__class__.__name__}('{e}')"
+
+        opts_args["file_path"] = example_doc_path("page-breaks.docx")
+        opts = DocxPartitionerOptions(**opts_args)
+        expected = [
+            # NOTE(scanny) - -- page 1 --
+            NarrativeText(
+                "First page, tab here:\t"
+                "followed by line-break here:\n"
+                "here:\n"
+                "and here:\n"
+                "no-break hyphen here:-"
+                "and hard page-break here>>"
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 2 --
+            NarrativeText(
+                "<<Text on second page. The font is big so it breaks onto third page--"
+                "------------------here-->> <<but break falls inside link so text stays"
+                " together."
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 3 --
+            NarrativeText("Continuous section break here>>"),
+            NarrativeText("<<followed by text on same page"),
+            NarrativeText("Odd-page section break here>>"),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 4 --
+            PageBreak(""),
+            # NOTE(scanny) - -- page 5 --
+            NarrativeText("<<producing two page-breaks to get from page-3 to page-5."),
+            NarrativeText(
+                'Then text gets big again so a "natural" rendered page break happens again here>> '
+            ),
+            PageBreak(""),
+            # NOTE(scanny) - -- page 6 --
+            Title("<<and then more text proceeds."),
+        ]
+
+        elements = _DocxPartitioner.iter_document_elements(opts)
+
+        for idx, e in enumerate(elements):
+            assert e == expected[idx], (
+                f"\n\nExpected: {str_repr(expected[idx])}"
+                # --
+                f"\n\nGot:      {str_repr(e)}\n"
+            )
+
+    # -- header/footer behaviors -----------------------------------------------------------------
+
+    def it_includes_table_cell_text_in_Header_text(self, opts_args: dict[str, Any]):
+        opts_args["file_path"] = example_doc_path("docx-hdrftr.docx")
+        opts = DocxPartitionerOptions(**opts_args)
+        partitioner = _DocxPartitioner(opts)
+        section = partitioner._document.sections[0]
+
+        header_iter = partitioner._iter_section_headers(section)
+
+        element = next(header_iter)
+        assert element.text == "First header para\nTable cell1 Table cell2\nLast header para"
+
+    def it_includes_table_cell_text_in_Footer_text(self, opts_args: dict[str, Any]):
+        """This case also verifies nested-table and merged-cell behaviors."""
+        opts_args["file_path"] = example_doc_path("docx-hdrftr.docx")
+        opts = DocxPartitionerOptions(**opts_args)
+        partitioner = _DocxPartitioner(opts)
+        section = partitioner._document.sections[0]
+
+        footer_iter = partitioner._iter_section_footers(section)
+
+        element = next(footer_iter)
+        assert element.text == "para1\ncell1 a b c d e f\npara2"

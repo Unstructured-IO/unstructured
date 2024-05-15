@@ -406,10 +406,12 @@ def test_convert_to_iso_8601(time, expected):
     assert iso_time == expected
 
 
-def test_partition_email_still_works_with_no_content():
+def test_partition_email_still_works_with_no_content(caplog):
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "email-no-html-content-1.eml")
     elements = partition_email(filename=filename)
-    assert elements == []
+    assert len(elements) == 1
+    assert elements[0].text.startswith("Hey there")
+    assert "text/html was not found. Falling back to text/plain" in caplog.text
 
 
 def test_partition_email_from_filename_exclude_metadata():
@@ -533,6 +535,26 @@ def test_partition_msg_raises_with_no_partitioner(
         partition_email(filename=filename, process_attachments=True)
 
 
+def test_partition_email_metadata_date_from_header(
+    mocker,
+    filename="example-docs/eml/fake-email-attachment.eml",
+):
+    expected_last_modification_date = "2022-12-23T12:08:48-06:00"
+
+    mocker.patch(
+        "unstructured.partition.email.get_last_modified_date",
+        return_value=None,
+    )
+    mocker.patch(
+        "unstructured.partition.email.get_last_modified_date_from_file",
+        return_value=None,
+    )
+
+    elements = partition_email(filename=filename)
+
+    assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
 def test_partition_email_from_file_custom_metadata_date(
     filename="example-docs/eml/fake-email-attachment.eml",
 ):
@@ -631,3 +653,10 @@ def test_partition_eml_respects_detect_language_per_element():
     langs = {element.metadata.languages[0] for element in elements}
     assert "eng" in langs
     assert "spa" in langs
+
+
+def test_partition_eml_add_signature_to_metadata():
+    elements = partition_email(filename="example-docs/eml/signed-doc.p7s")
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"
