@@ -56,7 +56,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 default=None,
                 type=Dict(),
                 help="The indexing policy to use for the collection."
-                'example: \'{"deny": "metadata"}\' ',
+                'example: \'{"deny": ["metadata"]}\' ',
             ),
         ]
         return options

@@ -56,7 +56,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --api-endpoint "$ASTRA_DB_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \
   --embedding-dimension "$EMBEDDING_DIMENSION" \
-  --requested-indexing-policy '{"deny": "metadata"}'
+  --requested-indexing-policy '{"deny": ["metadata"]}'
 
 python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
   --token "$ASTRA_DB_TOKEN" \
