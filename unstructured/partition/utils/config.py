@@ -26,8 +26,8 @@ class ENVConfig:
     """class for configuring enviorment parameters"""
 
     def __post_init__(self):
-        if self.STORAGE_ENABLED:
-            self._setup_tmpdir(self.STORAGE_TMPDIR)
+        if self.UNSTRUCTURED_CACHE_ENABLED:
+            self._setup_tmpdir(self.UNSTRUCTURED_CACHE_TMPDIR)
 
     def _get_string(self, var: str, default_value: str = "") -> str:
         """attempt to get the value of var from the os environment; if not present return the
@@ -140,25 +140,25 @@ class ENVConfig:
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
     @property
-    def STORAGE_ENABLED(self) -> bool:
-        """Enable usage of STORAGE_DIR and STORAGE_TMPDIR."""
-        return self._get_bool("STORAGE_ENABLED", False)
+    def UNSTRUCTURED_CACHE_ENABLED(self) -> bool:
+        """Enable usage of UNSTRUCTURED_CACHE_DIR and UNSTRUCTURED_CACHE_TMPDIR."""
+        return self._get_bool("UNSTRUCTURED_CACHE_ENABLED", False)
 
     @property
-    def STORAGE_DIR(self) -> str:
-        """Path to Unstructured storage directory."""
-        return self._get_string("STORAGE_DIR", str(Path.home() / ".cache/unstructured"))
+    def UNSTRUCTURED_CACHE_DIR(self) -> str:
+        """Path to Unstructured cache directory."""
+        return self._get_string("UNSTRUCTURED_CACHE_DIR", str(Path.home() / ".cache/unstructured"))
 
     @property
-    def STORAGE_TMPDIR(self) -> str:
-        """Path to Unstructured storage tempdir. Overrides TMPDIR, TEMP and TMP.
-        Defaults to '{STORAGE_DIR}/tmp/{os.getpgid(0)}'.
+    def UNSTRUCTURED_CACHE_TMPDIR(self) -> str:
+        """Path to Unstructured cache tempdir. Overrides TMPDIR, TEMP and TMP.
+        Defaults to '{UNSTRUCTURED_CACHE_DIR}/tmp/{os.getpgid(0)}'.
         """
-        default_tmpdir = get_tempdir(dir=self.STORAGE_DIR)
-        tmpdir = self._get_string("STORAGE_TMPDIR", default_tmpdir)
+        default_tmpdir = get_tempdir(dir=self.UNSTRUCTURED_CACHE_DIR)
+        tmpdir = self._get_string("UNSTRUCTURED_CACHE_TMPDIR", default_tmpdir)
         if tmpdir == "":
             tmpdir = default_tmpdir
-        if self.STORAGE_ENABLED:
+        if self.UNSTRUCTURED_CACHE_ENABLED:
             self._setup_tmpdir(tmpdir)
         return tmpdir
 

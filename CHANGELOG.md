@@ -3,7 +3,7 @@
 ### Enhancements
 
 * **Faster evaluation.** Support for concurrent processing of documents during evaluation.
-* **Add STORAGE_DIR and STORAGE_TMPDIR** configuration parameteres to control temporary storage.
+* **Add UNSTRUCTURED_CACHE_DIR and UNSTRUCTURED_CACHE_TMPDIR** configuration parameteres to control temporary storage.
 
 ### Features
 
