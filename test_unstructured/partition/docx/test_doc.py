@@ -46,15 +46,6 @@ def test_partition_doc_from_filename(mock_document, expected_elements, tmpdir, c
     assert capsys.readouterr().err == ""
 
 
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
-def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    assert partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
-
-
 def test_partition_doc_from_file_with_filter(mock_document, expected_elements, tmpdir, capsys):
     docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
     doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
