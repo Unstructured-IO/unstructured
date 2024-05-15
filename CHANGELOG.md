@@ -1,10 +1,17 @@
-## 0.13.8-dev13
+## 0.13.8
 
 ### Enhancements
 
 * **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
 
 ### Features
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
