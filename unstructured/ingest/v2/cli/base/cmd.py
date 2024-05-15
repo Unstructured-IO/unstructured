@@ -102,12 +102,15 @@ class BaseCmd(ABC):
 
     @staticmethod
     def get_indexer(src: str, options: dict[str, Any]) -> IndexerT:
-        print(f"options: {options}")
         source_entry = source_registry[src]
         indexer_kwargs: dict[str, Any] = {}
         if indexer_config_cls := source_entry.indexer_config:
             indexer_kwargs["index_config"] = extract_config(
                 flat_data=options, config=indexer_config_cls
+            )
+        if connection_config_cls := source_entry.connection_config:
+            indexer_kwargs["connection_config"] = extract_config(
+                flat_data=options, config=connection_config_cls
             )
         indexer_cls = source_entry.indexer
         return indexer_cls(**indexer_kwargs)
