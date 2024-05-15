@@ -12,46 +12,46 @@ from unstructured.staging.base import elements_from_json
 
 @dataclass
 class EmbedderConfig(EnhancedDataClassJsonMixin):
-    provider: str
-    api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
-    model_name: Optional[str] = None
-    aws_access_key_id: Optional[str] = None
-    aws_secret_access_key: Optional[str] = None
-    aws_region: Optional[str] = None
+    embedding_provider: Optional[str] = None
+    embedding_api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
+    embedding_model_name: Optional[str] = None
+    embedding_aws_access_key_id: Optional[str] = None
+    embedding_aws_secret_access_key: Optional[str] = None
+    embedding_aws_region: Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
         kwargs: dict[str, Any] = {}
-        if self.api_key:
-            kwargs["api_key"] = self.api_key
-        if self.model_name:
-            kwargs["model_name"] = self.model_name
+        if self.embedding_api_key:
+            kwargs["api_key"] = self.embedding_api_key
+        if self.embedding_model_name:
+            kwargs["model_name"] = self.embedding_model_name
         # TODO make this more dynamic to map to encoder configs
-        if self.provider == "langchain-openai":
+        if self.embedding_provider == "langchain-openai":
             from unstructured.embed.openai import OpenAIEmbeddingConfig, OpenAIEmbeddingEncoder
 
             return OpenAIEmbeddingEncoder(config=OpenAIEmbeddingConfig(**kwargs))
-        elif self.provider == "langchain-huggingface":
+        elif self.embedding_provider == "langchain-huggingface":
             from unstructured.embed.huggingface import (
                 HuggingFaceEmbeddingConfig,
                 HuggingFaceEmbeddingEncoder,
             )
 
             return HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig(**kwargs))
-        elif self.provider == "octoai":
+        elif self.embedding_provider == "octoai":
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
-        elif self.provider == "langchain-aws-bedrock":
+        elif self.embedding_provider == "langchain-aws-bedrock":
             from unstructured.embed.bedrock import BedrockEmbeddingConfig, BedrockEmbeddingEncoder
 
             return BedrockEmbeddingEncoder(
                 config=BedrockEmbeddingConfig(
-                    aws_access_key_id=self.aws_access_key_id,
-                    aws_secret_access_key=self.aws_secret_access_key,
-                    region_name=self.aws_region,
+                    aws_access_key_id=self.embedding_aws_access_key_id,
+                    aws_secret_access_key=self.embedding_aws_secret_access_key,
+                    region_name=self.embedding_aws_region,
                 )
             )
-        elif self.provider == "langchain-vertexai":
+        elif self.embedding_provider == "langchain-vertexai":
             from unstructured.embed.vertexai import (
                 VertexAIEmbeddingConfig,
                 VertexAIEmbeddingEncoder,
@@ -59,7 +59,7 @@ class EmbedderConfig(EnhancedDataClassJsonMixin):
 
             return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
         else:
-            raise ValueError(f"{self.provider} not a recognized encoder")
+            raise ValueError(f"{self.embedding_provider} not a recognized encoder")
 
 
 @dataclass
@@ -68,7 +68,7 @@ class Embedder(BaseProcess, ABC):
 
     def is_async(self) -> bool:
         # huggingface is run locally rather than via an api call so don't run async
-        return self.config.provider not in ["langchain-huggingface"]
+        return self.config.embedding_provider not in ["langchain-huggingface"]
 
     def run(self, elements_filepath: Path, **kwargs) -> list[Element]:
         embedder = self.config.get_embedder()

@@ -11,12 +11,12 @@ class AccessConfig(EnhancedDataClassJsonMixin):
     and also for access specific configs."""
 
 
-access_config_type = TypeVar("access_config_type", bound=AccessConfig)
+AccessConfigT = TypeVar("AccessConfigT", bound=AccessConfig)
 
 
 @dataclass
-class ConnectionConfig:
-    access_config: Optional[access_config_type] = enhanced_field(sensitive=True, default=None)
+class ConnectionConfig(EnhancedDataClassJsonMixin):
+    access_config: Optional[AccessConfigT] = enhanced_field(sensitive=True, default=None)
 
     def get_access_config(self) -> dict[str, Any]:
         if not self.access_config:
@@ -24,9 +24,9 @@ class ConnectionConfig:
         return self.access_config.to_dict(apply_name_overload=False)
 
 
-config_type = TypeVar("config_type", bound=ConnectionConfig)
+ConnectionConfigT = TypeVar("ConnectionConfigT", bound=ConnectionConfig)
 
 
 @dataclass
 class BaseConnector(ABC):
-    connection_config: Optional[config_type] = None
+    connection_config: Optional[ConnectionConfigT] = None

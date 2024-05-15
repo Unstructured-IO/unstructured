@@ -6,7 +6,8 @@ from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logger import logger
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 from unstructured.ingest.v2.processes.chunker import Chunker
 from unstructured.staging.base import elements_to_dicts
 
@@ -22,6 +23,17 @@ class ChunkStepResponse(TypedDict):
 class ChunkStep(PipelineStep):
     identifier: str = STEP_ID
     process: Chunker
+
+    def __str__(self):
+        return f"{self.identifier} ({self.process.config.chunking_strategy})"
+
+    def __post_init__(self):
+        config = (
+            sterilize_dict(self.process.config.to_dict(redact_sensitive=True))
+            if self.process.config
+            else None
+        )
+        logger.info(f"Created {self.identifier} with configs: {config}")
 
     def should_chunk(self, filepath: Path, file_data: FileData) -> bool:
         if self.context.reprocess or file_data.reprocess:
@@ -41,13 +53,12 @@ class ChunkStep(PipelineStep):
             logger.debug(f"Writing chunker output to: {output_filepath}")
             json.dump(chunked_content, f, indent=2)
 
-    @log_error()
-    def run(self, path: str, file_data_path: str) -> ChunkStepResponse:
+    def _run(self, path: str, file_data_path: str) -> ChunkStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
         if not self.should_chunk(filepath=output_filepath, file_data=file_data):
-            logger.info(f"Skipping chunking, output already exists: {output_filepath}")
+            logger.debug(f"Skipping chunking, output already exists: {output_filepath}")
             return ChunkStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         chunked_content_raw = self.process.run(elements_filepath=path)
         self._save_output(
@@ -56,12 +67,12 @@ class ChunkStep(PipelineStep):
         )
         return ChunkStepResponse(file_data_path=file_data_path, path=str(output_filepath))
 
-    async def run_async(self, path: str, file_data_path: str) -> ChunkStepResponse:
+    async def _run_async(self, path: str, file_data_path: str) -> ChunkStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=path)
         if not self.should_chunk(filepath=output_filepath, file_data=file_data):
-            logger.info(f"Skipping chunking, output already exists: {output_filepath}")
+            logger.debug(f"Skipping chunking, output already exists: {output_filepath}")
             return ChunkStepResponse(file_data_path=file_data_path, path=str(output_filepath))
         chunked_content_raw = await self.process.run_async(elements_filepath=path)
         self._save_output(

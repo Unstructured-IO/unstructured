@@ -74,6 +74,6 @@ class ProcessorCliConfig(CliConfig):
                 help="Uncompress any archived files. Currently supporting zip and tar "
                 "files based on file extension.",
             ),
-            click.Option(["-v", "--verbose"], is_flag=True, default=False),
+            click.Option(["--verbose"], is_flag=True, default=False),
         ]
         return options

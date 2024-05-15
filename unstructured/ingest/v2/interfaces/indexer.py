@@ -2,25 +2,24 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Generator, Optional, TypeVar
 
-from dataclasses_json import DataClassJsonMixin
-
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class IndexerConfig(DataClassJsonMixin):
+class IndexerConfig(EnhancedDataClassJsonMixin):
     pass
 
 
-config_type = TypeVar("config_type", bound=IndexerConfig)
+IndexerConfigT = TypeVar("IndexerConfigT", bound=IndexerConfig)
 
 
 @dataclass(kw_only=True)
 class Indexer(BaseProcess, BaseConnector, ABC):
     connector_type: str
-    index_config: Optional[config_type] = None
+    index_config: Optional[IndexerConfigT] = None
 
     def is_async(self) -> bool:
         return False

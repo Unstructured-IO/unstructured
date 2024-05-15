@@ -39,7 +39,7 @@ if __name__ == "__main__":
     )
     partitioner = Partitioner(config=PartitionerConfig(strategy="fast"))
     chunker = Chunker(config=ChunkerConfig(chunking_strategy="by_title"))
-    embedder = Embedder(config=EmbedderConfig(provider="langchain-huggingface"))
+    embedder = Embedder(config=EmbedderConfig(embedding_provider="langchain-huggingface"))
     destination = LocalDestination(
         uploader=LocalUploader(
             upload_config=LocalUploaderConfig(output_directory=str(output_path.resolve()))

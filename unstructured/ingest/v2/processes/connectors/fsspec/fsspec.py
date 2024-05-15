@@ -1,7 +1,6 @@
 import fnmatch
 import json
 import os
-from abc import ABC
 from contextlib import suppress
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime
@@ -15,13 +14,11 @@ from unstructured.ingest.error import SourceConnectionError, SourceConnectionNet
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
-    Destination,
     Downloader,
     DownloaderConfig,
     FileData,
     Indexer,
     IndexerConfig,
-    Source,
     SourceIdentifiers,
     UploadContent,
     Uploader,
@@ -234,13 +231,6 @@ class FsspecDownloader(Downloader):
         return download_path
 
 
-@dataclass(kw_only=True)
-class FsspecSource(Source):
-    indexer: FsspecIndexer
-    downloader: FsspecDownloader
-    connector_type: str = CONNECTOR_TYPE
-
-
 @dataclass
 class FsspecUploaderConfig(FileConfig, UploaderConfig):
     overwrite: bool = False
@@ -269,13 +259,7 @@ class FsspecUploader(Uploader):
             Path(self.upload_config.path_without_protocol) / file_data.source_identifiers.rel_path
         )
         if self.fs.exists(path=upload_path) and not self.upload_config.overwrite:
-            logger.info(f"Skipping upload of {path} to {upload_path}, file already exists")
+            logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
         logger.info(f"Writing local file {path} to {upload_path}")
         self.fs.upload(lpath=path, rpath=upload_path)
-
-
-@dataclass(kw_only=True)
-class FsspecDestination(Destination, ABC):
-    uploader: FsspecUploader
-    connector_type: str = CONNECTOR_TYPE

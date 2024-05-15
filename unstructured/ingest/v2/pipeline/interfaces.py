@@ -1,22 +1,26 @@
 import asyncio
+import logging
 import multiprocessing as mp
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 
-process_type = TypeVar("process_type", bound=BaseProcess)
+BaseProcessT = TypeVar("BaseProcessT", bound=BaseProcess)
 iterable_input = list[dict[str, Any]]
 
 
 @dataclass
 class PipelineStep(ABC):
     identifier: str
-    process: process_type
+    process: BaseProcessT
     context: ProcessorConfig
+
+    def __str__(self):
+        return self.identifier
 
     def process_serially(self, iterable: iterable_input) -> Any:
         logger.info("processing content serially")
@@ -43,6 +47,8 @@ class PipelineStep(ABC):
                 return [self.run(**iterable[0])]
             with mp.Pool(
                 processes=self.context.num_processes,
+                initializer=self._set_log_level,
+                initargs=(logging.DEBUG if self.context.verbose else logging.INFO,),
             ) as pool:
                 return pool.map(self._wrap_mp, iterable)
         return [self.run()]
@@ -50,6 +56,10 @@ class PipelineStep(ABC):
     def _wrap_mp(self, input_kwargs: dict) -> Any:
         # Allow mapping of kwargs via multiprocessing map()
         return self.run(**input_kwargs)
+
+    def _set_log_level(self, log_level: int):
+        # Set the log level for each spawned process when using multiprocessing pool
+        logger.setLevel(log_level)
 
     def __call__(self, iterable: Optional[iterable_input] = None) -> Any:
         iterable = iterable or []
@@ -63,11 +73,29 @@ class PipelineStep(ABC):
             return self.process_async(iterable=iterable)
         return self.process_multiprocess(iterable=iterable)
 
-    def run(self, *args, **kwargs) -> Optional[Any]:
+    def _run(self, *args, **kwargs) -> Optional[Any]:
         raise NotImplementedError
 
-    async def run_async(self, *args, **kwargs) -> Optional[Any]:
+    async def _run_async(self, *args, **kwargs) -> Optional[Any]:
         raise NotImplementedError
+
+    def run(self, *args, **kwargs) -> Optional[Any]:
+        try:
+            return self._run(*args, **kwargs)
+        except Exception as e:
+            logger.error("Exception raised while running pipeline", exc_info=e)
+            if self.context.raise_on_error:
+                raise e
+            return None
+
+    async def run_async(self, *args, **kwargs) -> Optional[Any]:
+        try:
+            return await self._run_async(*args, **kwargs)
+        except Exception as e:
+            logger.error("Exception raised while running pipeline", exc_info=e)
+            if self.context.raise_on_error:
+                raise e
+            return None
 
     @abstractmethod
     def get_hash(self, extras: Optional[list[str]]) -> str:
@@ -76,22 +104,3 @@ class PipelineStep(ABC):
     @property
     def cache_dir(self) -> Path:
         return Path(self.context.work_dir) / self.identifier
-
-
-def log_error() -> Callable[[Callable], Callable]:
-    # When running functions inside of a multiprocessing Pool, errors can get swallowed.
-    # Use this to make sure the stack trace is appropriately logged
-
-    def error_handler(func: Callable) -> Callable:
-        def wrap_with_logger(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                logger.error(
-                    f"Exception raised while processing {func.__name__}: {e}", exc_info=True
-                )
-                raise e
-
-        return wrap_with_logger
-
-    return error_handler
