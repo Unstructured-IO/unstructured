@@ -212,9 +212,6 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
-# NOTE(robinson) - This test is skipped so that we don't have to put the
-# ingest test fixutres in the docker container
-@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
     original_file_name = "spring-weather.html"
@@ -326,18 +323,16 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy=PartitionStrategy.HI_RES,
     )
 
+    # NOTE(alan): Xfail since new model skips the word Zejiang
+    request.applymarker(pytest.mark.xfail)
+
     idx = 3
-    # NOTE(robison) - outputting as Text and not Title in the chainguard docker image,
-    # but haven't been able to figure out why
-    expected_element = Text if is_in_docker else Title
-    assert isinstance(elements[idx], expected_element)
+    assert isinstance(elements[idx], Title)
     assert elements[idx].text.startswith("LayoutParser")
 
     assert elements[idx].metadata.filename == os.path.basename(filename)
     assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
-    # NOTE(alan): Xfail since new model skips the word Zejiang
-    request.applymarker(pytest.mark.xfail)
 
     idx += 1
     assert isinstance(elements[idx], NarrativeText)
@@ -397,15 +392,13 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy=PartitionStrategy.HI_RES,
         )
 
-    idx = 3
-    # NOTE(robison) - outputting as Text and not Title in the chainguard docker image,
-    # but haven't been able to figure out why
-    expected_element = Text if is_in_docker else Title
-    assert isinstance(elements[idx], expected_element)
-    assert elements[idx].text.startswith("LayoutParser")
 
-    # NOTE(alan): Xfail since new model misses the first word Zejiang
+    # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
+
+    idx = 3
+    assert isinstance(elements[idx], Title)
+    assert elements[idx].text.startswith("LayoutParser")
 
     idx += 1
     assert isinstance(elements[idx], NarrativeText)
