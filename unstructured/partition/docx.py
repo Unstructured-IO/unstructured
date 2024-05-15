@@ -57,6 +57,7 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.utils import (
     dependency_exists,
     is_temp_file_path,
@@ -170,15 +171,17 @@ def convert_and_partition_docx(
 @add_chunking_strategy
 def partition_docx(
     filename: Optional[str] = None,
+    *,
+    date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
     infer_table_structure: bool = True,
+    languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -226,6 +229,7 @@ def partition_docx(
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
+        strategy=strategy,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
@@ -252,6 +256,7 @@ class DocxPartitionerOptions:
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
+        strategy: str | None = None,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -260,6 +265,7 @@ class DocxPartitionerOptions:
         self._infer_table_structure = infer_table_structure
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
+        self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
 
@@ -344,6 +350,15 @@ class DocxPartitionerOptions:
         document.
         """
         return self._page_counter
+
+    @lazyproperty
+    def strategy(self) -> str:
+        """The partitioning strategy for this document.
+
+        One of "hi_res", "fast", and a few others. These are available as class attributes on
+        `unstructured.partition.utils.constants.PartitionStrategy` but resolve to str values.
+        """
+        return PartitionStrategy.HI_RES if self._strategy is None else self._strategy
 
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:

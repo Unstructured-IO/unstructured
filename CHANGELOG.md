@@ -1,8 +1,9 @@
-## 0.13.8-dev10
+## 0.13.8-dev11
 
 ### Enhancements
 
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
 
 ### Features
 
