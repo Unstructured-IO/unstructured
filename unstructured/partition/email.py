@@ -91,7 +91,7 @@ def _parse_received_data(data: str) -> list[Element]:
 def _parse_email_address(data: str) -> tuple[str, str]:
     email_address = extract_email_address(data)
 
-    PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"  # noqa: W605 Note(harrell)
+    PATTERN = r"<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"
     name = re.split(PATTERN, data.lower())[0].title().strip()
 
     return name, email_address[0]
@@ -224,7 +224,7 @@ def extract_attachment_info(
 
 
 def has_embedded_image(element):
-    PATTERN = re.compile("\[image: .+\]")  # noqa: W605 NOTE(harrell)
+    PATTERN = re.compile(r"\[image: .+\]")
     return PATTERN.search(element.text)
 
 
