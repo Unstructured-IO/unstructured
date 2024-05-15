@@ -49,5 +49,6 @@ RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
   python3.11 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 ENV PATH="${PATH}:/home/nonroot/.local/bin"
+ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 
 CMD ["/bin/bash"]
