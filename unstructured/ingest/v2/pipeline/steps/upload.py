@@ -1,7 +1,7 @@
 import asyncio
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, TypedDict
+from typing import TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.uploader import UploadContent, Uploader
@@ -60,9 +60,6 @@ class UploadStep(PipelineStep):
         else:
             self.process_whole(iterable=iterable)
 
-    def get_hash(self, extras: Optional[list[str]]) -> str:
-        pass
-
     def _run(self, contents: list[UploadStepContent]):
         upload_contents = [
             UploadContent(path=Path(c["path"]), file_data=FileData.from_file(c["file_data_path"]))
@@ -71,6 +68,12 @@ class UploadStep(PipelineStep):
         self.process.run(contents=upload_contents)
 
     async def _run_async(self, path: str, file_data_path: str):
-        await self.process.run_async(
-            path=Path(path), file_data=FileData.from_file(path=file_data_path)
-        )
+        if semaphore := self.context.semaphore:
+            with semaphore:
+                await self.process.run_async(
+                    path=Path(path), file_data=FileData.from_file(path=file_data_path)
+                )
+        else:
+            await self.process.run_async(
+                path=Path(path), file_data=FileData.from_file(path=file_data_path)
+            )

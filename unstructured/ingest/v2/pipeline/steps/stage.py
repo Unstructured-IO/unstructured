@@ -41,7 +41,13 @@ class UploadStageStep(PipelineStep):
 
     async def _run_async(self, path: str, file_data_path: str) -> UploadStageStepResponse:
         path = Path(path)
-        staged_output_path = await self.process.run_async(
-            elements_filepath=path, file_data=FileData.from_file(path=file_data_path)
-        )
+        if semaphore := self.context.semaphore:
+            async with semaphore:
+                staged_output_path = await self.process.run_async(
+                    elements_filepath=path, file_data=FileData.from_file(path=file_data_path)
+                )
+        else:
+            staged_output_path = await self.process.run_async(
+                elements_filepath=path, file_data=FileData.from_file(path=file_data_path)
+            )
         return UploadStageStepResponse(file_data_path=file_data_path, path=str(staged_output_path))

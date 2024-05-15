@@ -85,8 +85,11 @@ class DownloadStep(PipelineStep):
         if not self.should_download(file_data=file_data, file_data_path=file_data_path):
             logger.debug(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
-
-        download_path = await self.process.run_async(file_data=file_data)
+        if semaphore := self.context.semaphore:
+            async with semaphore:
+                download_path = await self.process.run_async(file_data=file_data)
+        else:
+            download_path = await self.process.run_async(file_data=file_data)
         return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
     def get_hash(self, extras: Optional[list[str]]) -> str:

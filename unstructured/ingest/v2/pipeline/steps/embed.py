@@ -75,7 +75,12 @@ class EmbedStep(PipelineStep):
         if not self.should_embed(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping embedding, output already exists: {output_filepath}")
             return EmbedStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        embed_content_raw = await self.process.run_async(elements_filepath=path)
+        if semaphore := self.context.semaphore:
+            async with semaphore:
+                embed_content_raw = await self.process.run_async(elements_filepath=path)
+        else:
+            embed_content_raw = await self.process.run_async(elements_filepath=path)
+
         self._save_output(
             output_filepath=str(output_filepath),
             embedded_content=elements_to_dicts(embed_content_raw),
