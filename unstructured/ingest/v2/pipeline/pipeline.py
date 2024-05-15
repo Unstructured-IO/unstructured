@@ -1,5 +1,7 @@
 import logging
+import multiprocessing as mp
 from dataclasses import InitVar, dataclass, field
+from typing import Any, Optional, Union
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logger import logger
@@ -58,14 +60,37 @@ class Pipeline:
     def cleanup(self):
         pass
 
+    def log_statuses(self):
+        if status := self.context.status:
+            logger.error(f"{len(status)} failed documents:")
+            for k, v in status.items():
+                for kk, vv in v.items():
+                    logger.error(f"{k}: [{kk}] {vv}")
+
     def run(self):
         try:
             self._run()
         finally:
+            self.log_statuses()
             self.cleanup()
+
+    def clean_results(self, results: Optional[list[Union[Any, list[Any]]]]) -> Optional[list[Any]]:
+        if not results:
+            return None
+        results = [r for r in results if r]
+        flat = []
+        for r in results:
+            if isinstance(r, list):
+                flat.extend(r)
+            else:
+                flat.append(r)
+        final = [f for f in flat if f]
+        return final or None
 
     def _run(self):
         logger.info(f"Running local pipline: {self}")
+        manager = mp.Manager()
+        self.context.status = manager.dict()
 
         # Index into data source
         indices = self.indexer_step.run()
@@ -75,27 +100,29 @@ class Pipeline:
 
         # Download associated content to local file system
         downloaded_data = self.downloader_step(indices_inputs)
-        # Flatten list of lists
-        downloaded_data = [x for xs in downloaded_data for x in xs]
+        downloaded_data = self.clean_results(results=downloaded_data)
         if not downloaded_data:
             return
+
         # Run uncompress if available
         if self.uncompress_step:
             downloaded_data = self.uncompress_step(downloaded_data)
             # Flatten list of lists
-            downloaded_data = [x for xs in downloaded_data for x in xs]
+            downloaded_data = self.clean_results(results=downloaded_data)
 
         if not downloaded_data:
             return
 
         # Partition content
         elements = self.partitioner_step(downloaded_data)
+        elements = self.clean_results(results=elements)
         if not elements:
             return
 
         # Run element specific modifiers
         for step in [self.chunker_step, self.embedder_step, self.stager_step]:
             elements = step(elements) if step else elements
+            elements = self.clean_results(results=elements)
             if not elements:
                 return
 
