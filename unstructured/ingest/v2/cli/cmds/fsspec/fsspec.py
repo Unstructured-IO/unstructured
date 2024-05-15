@@ -7,6 +7,19 @@ from unstructured.ingest.v2.cli.utils import DelimitedString
 
 
 @dataclass
+class FsspecCliDownloadConfig(CliConfig):
+    @staticmethod
+    def get_cli_options() -> list[click.Option]:
+        return [
+            click.Option(
+                ["--download-dir"],
+                help="Where files are downloaded to, defaults to a location at"
+                "`$HOME/.cache/unstructured/ingest/<connector name>/<SHA256>`.",
+            ),
+        ]
+
+
+@dataclass
 class FsspecCliFileConfig(CliConfig):
     @staticmethod
     def get_cli_options() -> list[click.Option]:

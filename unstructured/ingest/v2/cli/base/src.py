@@ -39,8 +39,7 @@ class SrcCmd(BaseCmd):
         options.get("verbose", False)
         try:
             pipeline = self.get_pipline(src=self.cmd_name, source_options=options)
-            logger.info(f"Running pipeline: {pipeline}")
-            # pipeline.run()
+            pipeline.run()
         except Exception as e:
             logger.error(e, exc_info=True)
             raise click.ClickException(str(e)) from e
