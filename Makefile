@@ -265,6 +265,10 @@ install-unstructured-inference:
 .PHONY: install-local-inference
 install-local-inference: install install-all-docs
 
+.PHONY: install-unstructured-kdbai
+install-unstructured-kdbai:
+	python3 -m pip install -r requirements/ingest/kdbai.txt
+
 .PHONY: install-pandoc
 install-pandoc:
 	ARCH=${ARCH} ./scripts/install-pandoc.sh
