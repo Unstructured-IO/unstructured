@@ -212,6 +212,9 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
+# NOTE(robinson) - skipping this test with docker image to avoid putting the
+# test fixtures into the image
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
     original_file_name = "spring-weather.html"
