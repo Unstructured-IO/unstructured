@@ -286,7 +286,7 @@ def partition_pdf_or_image(
         file.seek(0)
 
     if strategy == PartitionStrategy.HI_RES:
-        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             elements = _partition_pdf_or_image_local(
@@ -309,20 +309,10 @@ def partition_pdf_or_image(
             out_elements = _process_uncategorized_text_elements(elements)
 
     elif strategy == PartitionStrategy.FAST:
-        out_elements = []
-        sort_mode: str = SORT_MODE_XY_CUT
-
-        for page_elements in extracted_elements:
-            # NOTE(crag, christine): always do the basic sort first for deterministic order across
-            # python versions.
-            sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
-            if sort_mode != SORT_MODE_BASIC:
-                sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
-
-            out_elements += sorted_page_elements
-
-            if include_page_breaks:
-                out_elements.append(PageBreak(text=""))
+        out_elements = _partition_pdf_with_pdfparser(
+            extracted_elements=extracted_elements,
+            include_page_breaks=include_page_breaks,
+        )
 
         return out_elements
 
@@ -846,6 +836,29 @@ def _combine_coordinates_into_element1(
         system=coordinate_system,
     )
     return copy.deepcopy(element1)
+
+
+def _partition_pdf_with_pdfparser(
+    extracted_elements: list[list[Element]],
+    include_page_breaks: bool = False,
+    sort_mode: str = SORT_MODE_XY_CUT,
+):
+    """Partitions a PDF using pdfparser."""
+    elements = []
+
+    for page_elements in extracted_elements:
+        # NOTE(crag, christine): always do the basic sort first for deterministic order across
+        # python versions.
+        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
+        if sort_mode != SORT_MODE_BASIC:
+            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+
+        elements += sorted_page_elements
+
+        if include_page_breaks:
+            elements.append(PageBreak(text=""))
+
+    return elements
 
 
 def convert_pdf_to_images(
