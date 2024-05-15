@@ -74,7 +74,11 @@ class ChunkStep(PipelineStep):
         if not self.should_chunk(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping chunking, output already exists: {output_filepath}")
             return ChunkStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        chunked_content_raw = await self.process.run_async(elements_filepath=path)
+        if semaphore := self.context.semaphore:
+            async with semaphore:
+                chunked_content_raw = await self.process.run_async(elements_filepath=path)
+        else:
+            chunked_content_raw = await self.process.run_async(elements_filepath=path)
         self._save_output(
             output_filepath=str(output_filepath),
             chunked_content=elements_to_dicts(chunked_content_raw),

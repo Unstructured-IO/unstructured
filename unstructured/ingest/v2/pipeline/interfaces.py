@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import multiprocessing as mp
-from abc import ABC, abstractmethod
+from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional, TypeVar
@@ -102,10 +102,6 @@ class PipelineStep(ABC):
             if self.context.raise_on_error:
                 raise e
             return None
-
-    @abstractmethod
-    def get_hash(self, extras: Optional[list[str]]) -> str:
-        pass
 
     @property
     def cache_dir(self) -> Path:
