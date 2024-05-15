@@ -333,7 +333,6 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
     assert elements[idx].metadata.filename == os.path.basename(filename)
     assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
 
-
     idx += 1
     assert isinstance(elements[idx], NarrativeText)
     assert elements[idx].text.startswith("Zejiang Shen")
@@ -391,7 +390,6 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             content_type=content_type,
             strategy=PartitionStrategy.HI_RES,
         )
-
 
     # NOTE(alan): Xfail since new model skips the word Zejiang
     request.applymarker(pytest.mark.xfail)
