@@ -43,6 +43,7 @@ class DestCmd(BaseCmd):
         fn = click.pass_context(fn)
         cmd: click.Group = click.command(fn)
         cmd.name = self.cmd_name
+        cmd.short_help = "v2"
         cmd.invoke_without_command = True
         extras = [
             x

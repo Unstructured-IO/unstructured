@@ -51,6 +51,7 @@ class SrcCmd(BaseCmd):
         fn = click.pass_context(fn)
         cmd: click.Group = click.group(fn, cls=Group)
         cmd.name = self.cmd_name
+        cmd.short_help = "v2"
         cmd.invoke_without_command = True
         extras = [
             x for x in [self.indexer_config, self.downloader_config, self.connection_config] if x
