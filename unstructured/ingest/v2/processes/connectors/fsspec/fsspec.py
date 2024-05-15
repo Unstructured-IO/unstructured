@@ -191,7 +191,9 @@ class FsspecDownloader(Downloader):
     protocol: str
     connection_config: FsspecConnectionConfig
     connector_type: str = CONNECTOR_TYPE
-    download_config: Optional[FsspecDownloaderConfig] = field(default_factory=DownloaderConfig)
+    download_config: Optional[FsspecDownloaderConfig] = field(
+        default_factory=FsspecDownloaderConfig
+    )
     fs: "AbstractFileSystem" = field(init=False)
 
     def __post_init__(self):

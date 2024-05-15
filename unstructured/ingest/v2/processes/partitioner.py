@@ -34,12 +34,16 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
         partition_kwargs: dict[str, Any] = {
             "strategy": self.strategy,
             "encoding": self.encoding,
-            "pdf_infer_table_structure": self.pdf_infer_table_structure,
             "languages": self.ocr_languages,
             "hi_res_model_name": self.hi_res_model_name,
         }
+        skip_infer_table_types = None
         if self.skip_infer_table_types:
-            partition_kwargs["skip_infer_table_types"] = self.skip_infer_table_types
+            skip_infer_table_types = self.skip_infer_table_types
+        elif self.pdf_infer_table_structure:
+            skip_infer_table_types = ["pdf"]
+        if self.skip_infer_table_types:
+            partition_kwargs["skip_infer_table_types"] = skip_infer_table_types
         if self.additional_partition_args:
             partition_kwargs.update(self.additional_partition_args)
         return partition_kwargs

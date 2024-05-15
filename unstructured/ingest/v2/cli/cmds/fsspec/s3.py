@@ -4,6 +4,7 @@ import click
 
 from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.cmds.fsspec.fsspec import (
+    FsspecCliDownloadConfig,
     FsspecCliFileConfig,
     FsspecCliIndexerConfig,
 )
@@ -11,6 +12,11 @@ from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.processes.connectors.fsspec.s3 import (
     CONNECTOR_TYPE,
 )
+
+
+@dataclass
+class S3CliDownloadConfig(FsspecCliDownloadConfig):
+    pass
 
 
 @dataclass
@@ -68,6 +74,7 @@ s3_src_cmd = SrcCmd(
     cmd_name=CONNECTOR_TYPE,
     indexer_config=S3CliIndexerConfig,
     connection_config=S3CliConnectionConfig,
+    downloader_config=S3CliDownloadConfig,
 )
 
 s3_dest_cmd = DestCmd(
