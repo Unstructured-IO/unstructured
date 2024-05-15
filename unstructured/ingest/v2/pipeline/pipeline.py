@@ -1,11 +1,12 @@
+import logging
 from dataclasses import InitVar, dataclass, field
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
-from unstructured.ingest.v2.pipeline.steps.download import DownloadStep, download_type
+from unstructured.ingest.v2.pipeline.steps.download import DownloaderT, DownloadStep
 from unstructured.ingest.v2.pipeline.steps.embed import Embedder, EmbedStep
-from unstructured.ingest.v2.pipeline.steps.index import IndexStep, index_type
+from unstructured.ingest.v2.pipeline.steps.index import IndexerT, IndexStep
 from unstructured.ingest.v2.pipeline.steps.partition import Partitioner, PartitionStep
 from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStageStep
 from unstructured.ingest.v2.pipeline.steps.uncompress import Uncompressor, UncompressStep
@@ -16,9 +17,9 @@ from unstructured.ingest.v2.processes.connectors.local import LocalUploader
 @dataclass
 class Pipeline:
     context: ProcessorConfig
-    indexer: InitVar[index_type]
+    indexer: InitVar[IndexerT]
     indexer_step: IndexStep = field(init=False)
-    downloader: InitVar[download_type]
+    downloader: InitVar[DownloaderT]
     downloader_step: DownloadStep = field(init=False)
     partitioner: InitVar[Partitioner]
     partitioner_step: PartitionStep = field(init=False)
@@ -34,14 +35,15 @@ class Pipeline:
 
     def __post_init__(
         self,
-        indexer: index_type,
-        downloader: download_type,
+        indexer: IndexerT,
+        downloader: DownloaderT,
         partitioner: Partitioner,
         chunker: Chunker = None,
         embedder: Embedder = None,
         stager: UploadStager = None,
         uploader: Uploader = None,
     ):
+        logger.setLevel(level=logging.DEBUG if self.context.verbose else logging.INFO)
         self.indexer_step = IndexStep(process=indexer, context=self.context)
         self.downloader_step = DownloadStep(process=downloader, context=self.context)
         self.partitioner_step = PartitionStep(process=partitioner, context=self.context)
@@ -101,28 +103,15 @@ class Pipeline:
         self.uploader_step(iterable=elements)
 
     def __str__(self):
-        s = [
-            f"{self.indexer_step.identifier} ({self.indexer_step.process.__class__.__name__})",
-            f"{self.downloader_step.identifier} "
-            f"({self.downloader_step.process.__class__.__name__})",
-        ]
-        if self.uncompress_step:
-            s.append(f"{self.uncompress_step.identifier}")
-        s.append(f"{self.partitioner_step.identifier}")
-        if self.chunker_step:
-            s.append(
-                f"{self.chunker_step.identifier} "
-                f"({self.chunker_step.process.config.chunking_strategy})"
-            )
-        if self.embedder_step:
-            s.append(
-                f"{self.embedder_step.identifier} ({self.embedder_step.process.config.provider})"
-            )
-        if self.stager_step:
-            s.append(
-                f"{self.stager_step.identifier} ({self.stager_step.process.__class__.__name__})"
-            )
-        s.append(
-            f"{self.uploader_step.identifier} ({self.uploader_step.process.__class__.__name__})"
-        )
+        s = [str(self.indexer_step), str(self.downloader_step)]
+        if uncompress_step := self.uncompress_step:
+            s.append(str(uncompress_step))
+        s.append(str(self.partitioner_step))
+        if chunker_step := self.chunker_step:
+            s.append(str(chunker_step))
+        if embedder_step := self.embedder_step:
+            s.append(str(embedder_step))
+        if stager_step := self.stager_step:
+            s.append(str(stager_step))
+        s.append(str(self.uploader_step))
         return " -> ".join(s)

@@ -3,21 +3,22 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, TypeVar
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class UploadStagerConfig:
+class UploadStagerConfig(EnhancedDataClassJsonMixin):
     pass
 
 
-config_type = TypeVar("config_type", bound=UploadStagerConfig)
+UploadStagerConfigT = TypeVar("UploadStagerConfigT", bound=UploadStagerConfig)
 
 
 @dataclass
 class UploadStager(BaseProcess, ABC):
-    upload_stager_config: Optional[config_type] = None
+    upload_stager_config: Optional[UploadStagerConfigT] = None
 
     @abstractmethod
     def run(self, elements_filepath: Path, file_data: FileData, **kwargs) -> Path:

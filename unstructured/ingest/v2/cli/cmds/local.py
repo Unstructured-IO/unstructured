@@ -36,7 +36,7 @@ class LocalCliUploaderConfig(CliConfig):
     def get_cli_options() -> list[click.Option]:
         options = [
             click.Option(
-                ["--output-directory"],
+                ["--output-dir"],
                 required=True,
                 type=str,
                 help="Local path to write partitioned output to",

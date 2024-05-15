@@ -8,13 +8,11 @@ from typing import Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.v2.interfaces import (
-    Destination,
     Downloader,
     DownloaderConfig,
     FileData,
     Indexer,
     IndexerConfig,
-    Source,
     SourceIdentifiers,
     UploadContent,
     Uploader,
@@ -33,23 +31,24 @@ CONNECTOR_TYPE = "local"
 
 @dataclass
 class LocalIndexerConfig(IndexerConfig):
-    input_filepath: str
+    input_path: str
     recursive: bool = False
     file_glob: Optional[list[str]] = None
 
     @property
-    def input_path(self) -> Path:
-        return Path(self.input_filepath).resolve()
+    def path(self) -> Path:
+        return Path(self.input_path).resolve()
 
 
 @dataclass
 class LocalIndexer(Indexer):
     index_config: LocalIndexerConfig
+    connector_type: str = CONNECTOR_TYPE
 
     def list_files(self) -> list[Path]:
-        input_path = self.index_config.input_path
+        input_path = self.index_config.path
         if input_path.is_file():
-            return [Path(s) for s in glob.glob(f"{self.index_config.input_path}")]
+            return [Path(s) for s in glob.glob(f"{self.index_config.path}")]
         glob_fn = input_path.rglob if self.index_config.recursive else input_path.glob
         if not self.index_config.file_glob:
             return list(glob_fn("*"))
@@ -77,7 +76,7 @@ class LocalIndexer(Indexer):
                     fullpath=str(file_path.resolve()),
                     filename=file_path.name,
                     rel_path=str(file_path.resolve()).replace(
-                        str(self.index_config.input_path.resolve()), ""
+                        str(self.index_config.path.resolve()), ""
                     )[1:],
                 ),
                 metadata=self.get_file_metadata(path=file_path),
@@ -102,24 +101,13 @@ class LocalDownloader(Downloader):
         return Path(file_data.source_identifiers.fullpath)
 
 
-@dataclass(kw_only=True)
-class LocalSource(Source):
-    indexer: LocalIndexer
-    downloader: LocalDownloader = field(default_factory=LocalDownloader)
-    connector_type: str = CONNECTOR_TYPE
-
-    def check_connection(self):
-        if not self.indexer.index_config.input_path.exists():
-            raise ValueError("path to process does not exist")
-
-
 @dataclass
 class LocalUploaderConfig(UploaderConfig):
-    output_directory: str = field(default="structured-output")
+    output_dir: str = field(default="structured-output")
 
     @property
     def output_path(self) -> Path:
-        return Path(self.output_directory).resolve()
+        return Path(self.output_dir).resolve()
 
     def __post_init__(self):
         if self.output_path.exists() and self.output_path.is_file():
@@ -143,18 +131,6 @@ class LocalUploader(Uploader):
             )
             logger.debug(f"copying file from {content.path} to {final_path}")
             shutil.copy(src=str(content.path), dst=str(final_path))
-
-
-@dataclass(kw_only=True)
-class LocalDestination(Destination):
-    uploader: LocalUploader
-    connector_type: str = CONNECTOR_TYPE
-
-    def check_connection(self):
-        if not self.uploader.upload_config.output_path.is_file():
-            raise ValueError(
-                f"input path points to an existing file: {self.uploader.upload_config.output_path}"
-            )
 
 
 add_source_entry(

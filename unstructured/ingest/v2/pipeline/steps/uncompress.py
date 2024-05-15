@@ -3,7 +3,9 @@ from pathlib import Path
 from typing import Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces.file_data import FileData
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, log_error
+from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 from unstructured.ingest.v2.processes.uncompress import Uncompressor
 
 STEP_ID = "uncompress"
@@ -19,11 +21,18 @@ class UncompressStep(PipelineStep):
     identifier: str = STEP_ID
     process: Uncompressor
 
+    def __post_init__(self):
+        config = (
+            sterilize_dict(self.process.config.to_dict(redact_sensitive=True))
+            if self.process.config
+            else None
+        )
+        logger.info(f"Created {self.identifier} with configs: {config}")
+
     def get_hash(self, extras: Optional[list[str]]) -> str:
         pass
 
-    @log_error()
-    def run(self, path: str, file_data_path: str) -> list[UncompressStepResponse]:
+    def _run(self, path: str, file_data_path: str) -> list[UncompressStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         new_file_data = self.process.run(file_data=file_data)
         responses = []
@@ -38,7 +47,7 @@ class UncompressStep(PipelineStep):
             )
         return responses
 
-    async def run_async(self, path: str, file_data_path: str) -> list[UncompressStepResponse]:
+    async def _run_async(self, path: str, file_data_path: str) -> list[UncompressStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         new_file_data = await self.process.run_async(file_data=file_data)
         responses = []

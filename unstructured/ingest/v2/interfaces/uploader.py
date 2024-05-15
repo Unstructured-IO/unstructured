@@ -3,17 +3,18 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TypeVar
 
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 
 
 @dataclass
-class UploaderConfig:
+class UploaderConfig(EnhancedDataClassJsonMixin):
     pass
 
 
-config_type = TypeVar("config_type", bound=UploaderConfig)
+UploaderConfigT = TypeVar("UploaderConfigT", bound=UploaderConfig)
 
 
 @dataclass
@@ -24,7 +25,7 @@ class UploadContent:
 
 @dataclass
 class Uploader(BaseProcess, BaseConnector, ABC):
-    upload_config: config_type = field(default_factory=UploaderConfig)
+    upload_config: UploaderConfigT = field(default_factory=UploaderConfig)
 
     def is_async(self) -> bool:
         return False

@@ -3,13 +3,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
-from dataclasses_json import DataClassJsonMixin
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 
 DEFAULT_WORK_DIR = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pipeline").resolve())
 
 
 @dataclass
-class ProcessorConfig(DataClassJsonMixin):
+class ProcessorConfig(EnhancedDataClassJsonMixin):
     reprocess: bool = False
     verbose: bool = False
     work_dir: str = field(default_factory=lambda: DEFAULT_WORK_DIR)

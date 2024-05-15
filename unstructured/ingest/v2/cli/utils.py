@@ -1,10 +1,9 @@
 import json
 import os.path
-import typing as t
 from dataclasses import fields, is_dataclass
 from gettext import gettext, ngettext
 from pathlib import Path
-from typing import Any, Optional, Type, Union, get_args, get_origin
+from typing import Any, Optional, Type, TypeVar, Union, get_args, get_origin
 
 import click
 
@@ -17,10 +16,10 @@ class Dict(click.ParamType):
 
     def convert(
         self,
-        value: t.Any,
-        param: t.Optional[click.Parameter] = None,
-        ctx: t.Optional[click.Context] = None,
-    ) -> t.Any:
+        value: Any,
+        param: Optional[click.Parameter] = None,
+        ctx: Optional[click.Context] = None,
+    ) -> Any:
         try:
             return json.loads(value)
         except json.JSONDecodeError:
@@ -41,10 +40,10 @@ class FileOrJson(click.ParamType):
 
     def convert(
         self,
-        value: t.Any,
-        param: t.Optional[click.Parameter] = None,
-        ctx: t.Optional[click.Context] = None,
-    ) -> t.Any:
+        value: Any,
+        param: Optional[click.Parameter] = None,
+        ctx: Optional[click.Context] = None,
+    ) -> Any:
         # check if valid file
         full_path = os.path.abspath(os.path.expanduser(value))
         if os.path.isfile(full_path):
@@ -67,7 +66,7 @@ class FileOrJson(click.ParamType):
 class DelimitedString(click.ParamType):
     name = "delimited-string"
 
-    def __init__(self, delimiter: str = ",", choices: t.Optional[t.List[str]] = None):
+    def __init__(self, delimiter: str = ",", choices: Optional[list[str]] = None):
         self.choices = choices if choices else []
         self.delimiter = delimiter
 
@@ -99,9 +98,14 @@ class DelimitedString(click.ParamType):
         return split
 
 
+EnhancedDataClassJsonMixinT = TypeVar(
+    "EnhancedDataClassJsonMixinT", bound=EnhancedDataClassJsonMixin
+)
+
+
 def extract_config(
-    flat_data: dict, config: Type[EnhancedDataClassJsonMixin]
-) -> EnhancedDataClassJsonMixin:
+    flat_data: dict, config: Type[EnhancedDataClassJsonMixinT]
+) -> EnhancedDataClassJsonMixinT:
     """
     To be able to extract a nested dataclass from a flat dictionary (as in one coming
     from a click-based options input), the config class is dynamically looked through for
@@ -113,7 +117,7 @@ def extract_config(
     Not handling more complex edge cases for now such as nested types i.e Union[List[List[...]]]
     """
 
-    def conform_dict(inner_d: dict, inner_config: Type[EnhancedDataClassJsonMixin]):
+    def conform_dict(inner_d: dict, inner_config: Type[EnhancedDataClassJsonMixinT]):
         # Catch edge cases (i.e. Dict[str, ...]) where underlying type is not a concrete Class,
         # causing 'issubclass() arg 1 must be a class' errors, return False
         def is_subclass(instance, class_type) -> bool:
