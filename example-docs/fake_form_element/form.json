@@ -108,7 +108,7 @@
                         "custom_element": {
                             "type": "UncategorizedText",
                             "element_id": "MOCK_KEY_ID_2",
-                            "text": "JUNE 30]\n",
+                            "text": "MOCK KEY 2",
                             "metadata": {
                                 "coordinates": {
                                     "points": [
@@ -143,7 +143,7 @@
                 }
             ],
             "file_directory": "dataset/testing_data/images",
-            "filename": "82253245_3247.png"
+            "filename": "MOCK.png"
         }
     }
 ]
