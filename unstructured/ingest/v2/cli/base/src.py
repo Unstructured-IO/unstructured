@@ -29,7 +29,7 @@ class SrcCmd(BaseCmd):
         ]
     )
 
-    def src(self, ctx: click.Context, **options):
+    def cmd(self, ctx: click.Context, **options) -> None:
         if ctx.invoked_subcommand:
             return
 
@@ -44,11 +44,11 @@ class SrcCmd(BaseCmd):
 
     def get_cmd(self) -> click.Group:
         # Dynamically create the command without the use of click decorators
-        fn = self.src
+        fn = self.cmd
         fn = click.pass_context(fn)
         cmd = click.group(fn, cls=Group)
-        if not isinstance(cmd, click.Group):
-            raise ValueError(f"generated command was not of expected type Group: {type(cmd)}")
+        if not isinstance(cmd, click.core.Group):
+            raise ValueError(f"generated src command was not of expected type Group: {type(cmd)}")
         cmd.name = self.cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True

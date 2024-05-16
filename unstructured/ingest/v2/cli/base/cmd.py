@@ -1,6 +1,6 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Optional, Type
+from typing import Any, Optional, Type, TypeVar
 
 import click
 
@@ -21,6 +21,8 @@ from unstructured.ingest.v2.processes.connectors.local import LocalUploader, Loc
 from unstructured.ingest.v2.processes.embedder import Embedder, EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import Partitioner, PartitionerConfig
 
+CommandT = TypeVar("CommandT", bound=click.Command)
+
 
 @dataclass
 class BaseCmd(ABC):
@@ -31,7 +33,11 @@ class BaseCmd(ABC):
     def cmd_name_key(self):
         return self.cmd_name.replace("-", "_")
 
-    def add_options(self, cmd: click.Command, extras: list[Type[CliConfig]]) -> click.Command:
+    @abstractmethod
+    def cmd(self, ctx: click.Context, **options) -> None:
+        pass
+
+    def add_options(self, cmd: CommandT, extras: list[Type[CliConfig]]) -> CommandT:
         configs = self.default_configs
         # make sure what's unique to this cmd appears first
         extras.extend(configs)
