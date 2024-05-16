@@ -1,5 +1,5 @@
-from contextlib import suppress
 from dataclasses import dataclass, field
+from datetime import datetime
 from time import time
 from typing import Any, Optional
 
@@ -46,7 +46,7 @@ class S3ConnectionConfig(FsspecConnectionConfig):
     connector_type: str = CONNECTOR_TYPE
 
     def get_access_config(self) -> dict[str, Any]:
-        access_configs = {"anon": self.anonymous}
+        access_configs: dict[str, Any] = {"anon": self.anonymous}
         if self.endpoint_url:
             access_configs["endpoint"] = self.endpoint_url
 
@@ -63,17 +63,23 @@ class S3Indexer(FsspecIndexer):
     def get_metadata(self, path) -> DataSourceMetadata:
         date_created = None
         date_modified = None
-        with suppress(NotImplementedError):
-            date_created = self.fs.modified(path).timestamp()
-            date_modified = self.fs.modified(path).timestamp()
+        try:
+            modified: Optional[datetime] = self.fs.modified(path)
+            if modified:
+                date_created = str(modified.timestamp())
+                date_modified = str(modified.timestamp())
+        except NotImplementedError:
+            pass
 
-        etag = self.fs.info(path).get("ETag", None)
-        etag = etag.rstrip('"').lstrip('"')
+        version = None
+        info: dict[str, Any] = self.fs.info(path)
+        if etag := info.get("ETag"):
+            version = str(etag).rstrip('"').lstrip('"')
         return DataSourceMetadata(
             date_created=date_created,
             date_modified=date_modified,
             date_processed=str(time()),
-            version=etag,
+            version=version,
             url=f"{self.index_config.protocol}://{path}",
         )
 

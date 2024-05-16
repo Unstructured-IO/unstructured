@@ -46,7 +46,9 @@ class SrcCmd(BaseCmd):
         # Dynamically create the command without the use of click decorators
         fn = self.src
         fn = click.pass_context(fn)
-        cmd: click.Group = click.group(fn, cls=Group)
+        cmd = click.group(fn, cls=Group)
+        if not isinstance(cmd, click.Group):
+            raise ValueError(f"generated command was not of expected type Group: {type(cmd)}")
         cmd.name = self.cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True
