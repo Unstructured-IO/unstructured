@@ -32,7 +32,7 @@ class DestCmd(BaseCmd):
             )
             pipeline.run()
         except Exception as e:
-            logger.error(e, exc_info=True)
+            logger.error(f"failed to run destination command {self.cmd_name}: {e}", exc_info=True)
             raise click.ClickException(str(e)) from e
 
     def get_cmd(self) -> click.Command:
