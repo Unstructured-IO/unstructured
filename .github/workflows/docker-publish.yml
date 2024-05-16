@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/only-amd-build
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
@@ -97,9 +98,10 @@ jobs:
     - name: Pull AMD image
       run: |
         docker pull $DOCKER_BUILD_REPOSITORY:amd64-$SHORT_SHA
-    - name: Pull ARM image
-      run: |
-        docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
+    # NOTE(robinson) - put this back in when we reenable ARM
+    # - name: Pull ARM image
+    #   run: |
+    #     docker pull $DOCKER_BUILD_REPOSITORY:arm64-$SHORT_SHA
     - name: Push latest build tags for AMD and ARM
       run: |
         # these are used to construct the final manifest but also cache-from in subsequent runs
