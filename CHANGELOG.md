@@ -1,4 +1,4 @@
-## 0.13.8-dev12
+## 0.13.8-dev13
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
 
 ### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
 
 ### Fixes
 
