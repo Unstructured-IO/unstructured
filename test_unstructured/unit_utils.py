@@ -17,13 +17,14 @@ from unittest.mock import (
     patch,
 )
 
-from pytest import FixtureRequest, LogCaptureFixture  # noqa: PT013
+from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture  # noqa: PT013
 
 from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json, elements_to_json
 
 __all__ = (
     "ANY",
+    "CaptureFixture",
     "FixtureRequest",
     "LogCaptureFixture",
     "MagicMock",
