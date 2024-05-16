@@ -1,7 +1,8 @@
-## 0.13.8-dev11
+## 0.13.8-dev12
 
 ### Enhancements
 
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
 
