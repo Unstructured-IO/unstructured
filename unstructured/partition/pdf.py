@@ -12,13 +12,7 @@ import numpy as np
 import pdf2image
 import wrapt
 from pdfminer import psparser
-from pdfminer.layout import (
-    LTChar,
-    LTContainer,
-    LTImage,
-    LTItem,
-    LTTextBox,
-)
+from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
 from pdfminer.pdftypes import PDFObjRef
 from pdfminer.utils import open_filename
 from PIL import Image as PILImage
@@ -42,10 +36,7 @@ from unstructured.documents.elements import (
     Text,
     process_metadata,
 )
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
@@ -57,10 +48,8 @@ from unstructured.partition.common import (
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
-from unstructured.partition.lang import (
-    check_language_args,
-    prepare_languages_for_tesseract,
-)
+from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
@@ -85,10 +74,7 @@ from unstructured.partition.utils.constants import (
     OCRMode,
     PartitionStrategy,
 )
-from unstructured.partition.utils.sorting import (
-    coord_has_valid_points,
-    sort_page_elements,
-)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
@@ -135,6 +121,8 @@ def partition_pdf(
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+    form_extraction_skip_tables: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf document into a list of interpreted elements.
@@ -191,6 +179,11 @@ def partition_pdf(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    extract_forms
+        Whether the form extraction logic should be run
+        (results in adding FormKeysValues elements to output).
+    form_extraction_skip_tables
+        Whether the form extraction logic should ignore regions designated as Tables.
     """
 
     exactly_one(filename=filename, file=file)
@@ -212,6 +205,7 @@ def partition_pdf(
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
+        extract_forms=extract_forms,
         **kwargs,
     )
 
@@ -233,6 +227,8 @@ def partition_pdf_or_image(
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+    form_extraction_skip_tables: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses a pdf or image document into a list of interpreted elements."""
@@ -259,14 +255,15 @@ def partition_pdf_or_image(
             extracted_elements = extractable_elements(
                 filename=filename,
                 file=spooled_to_bytes_io_if_needed(file),
-                include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified or last_modification_date,
                 starting_page_number=starting_page_number,
                 **kwargs,
             )
             pdf_text_extractable = any(
-                isinstance(el, Text) and el.text.strip() for el in extracted_elements
+                isinstance(el, Text) and el.text.strip()
+                for page_elements in extracted_elements
+                for el in page_elements
             )
         except Exception as e:
             logger.error(e)
@@ -285,7 +282,7 @@ def partition_pdf_or_image(
         file.seek(0)
 
     if strategy == PartitionStrategy.HI_RES:
-        # NOTE(robinson): Catches a UserWarning that occurs when detectron is called
+        # NOTE(robinson): Catches a UserWarning that occurs when detection is called
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             elements = _partition_pdf_or_image_local(
@@ -303,12 +300,19 @@ def partition_pdf_or_image(
                 extract_image_block_output_dir=extract_image_block_output_dir,
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 starting_page_number=starting_page_number,
+                extract_forms=extract_forms,
+                form_extraction_skip_tables=form_extraction_skip_tables,
                 **kwargs,
             )
             out_elements = _process_uncategorized_text_elements(elements)
 
     elif strategy == PartitionStrategy.FAST:
-        return extracted_elements
+        out_elements = _partition_pdf_with_pdfparser(
+            extracted_elements=extracted_elements,
+            include_page_breaks=include_page_breaks,
+        )
+
+        return out_elements
 
     elif strategy == PartitionStrategy.OCR_ONLY:
         # NOTE(robinson): Catches file conversion warnings when running with PDFs
@@ -331,18 +335,16 @@ def partition_pdf_or_image(
 def extractable_elements(
     filename: str = "",
     file: Optional[bytes | IO[bytes]] = None,
-    include_page_breaks: bool = False,
     languages: Optional[list[str]] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
     **kwargs: Any,
-):
+) -> list[list[Element]]:
     if isinstance(file, bytes):
         file = io.BytesIO(file)
     return _partition_pdf_with_pdfminer(
         filename=filename,
         file=file,
-        include_page_breaks=include_page_breaks,
         languages=languages,
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
@@ -386,6 +388,8 @@ def _partition_pdf_or_image_local(
     analysis: bool = False,
     analyzed_image_output_dir_path: Optional[str] = None,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+    form_extraction_skip_tables: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition using package installed locally"""
@@ -394,10 +398,7 @@ def _partition_pdf_or_image_local(
         process_file_with_model,
     )
 
-    from unstructured.partition.pdf_image.ocr import (
-        process_data_with_ocr,
-        process_file_with_ocr,
-    )
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
         process_data_with_pdfminer,
         process_file_with_pdfminer,
@@ -577,6 +578,16 @@ def _partition_pdf_or_image_local(
             if el.text or isinstance(el, PageBreak) or hi_res_model_name.startswith("chipper"):
                 out_elements.append(cast(Element, el))
 
+    if extract_forms:
+        forms = run_form_extraction(
+            file=file,
+            filename=filename,
+            model_name=hi_res_model_name,
+            elements=out_elements,
+            skip_table_regions=form_extraction_skip_tables,
+        )
+        out_elements.extend(forms)
+
     return out_elements
 
 
@@ -600,12 +611,11 @@ def _process_uncategorized_text_elements(elements: list[Element]):
 def _partition_pdf_with_pdfminer(
     filename: str,
     file: Optional[IO[bytes]],
-    include_page_breaks: bool,
     languages: list[str],
     metadata_last_modified: Optional[str],
     starting_page_number: int = 1,
     **kwargs: Any,
-) -> list[Element]:
+) -> list[list[Element]]:
     """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
     processing or detectron2 is not available.
 
@@ -624,7 +634,6 @@ def _partition_pdf_with_pdfminer(
             elements = _process_pdfminer_pages(
                 fp=fp,
                 filename=filename,
-                include_page_breaks=include_page_breaks,
                 languages=languages,
                 metadata_last_modified=metadata_last_modified,
                 starting_page_number=starting_page_number,
@@ -635,7 +644,6 @@ def _partition_pdf_with_pdfminer(
         elements = _process_pdfminer_pages(
             fp=file,
             filename=filename,
-            include_page_breaks=include_page_breaks,
             languages=languages,
             metadata_last_modified=metadata_last_modified,
             starting_page_number=starting_page_number,
@@ -681,17 +689,15 @@ def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
 def _process_pdfminer_pages(
     fp: IO[bytes],
     filename: str,
-    include_page_breaks: bool,
     languages: list[str],
     metadata_last_modified: Optional[str],
-    sort_mode: str = SORT_MODE_XY_CUT,
     annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
     starting_page_number: int = 1,
     **kwargs,
-):
+) -> list[list[Element]]:
     """Uses PDFMiner to split a document into pages and process them."""
 
-    elements: list[Element] = []
+    elements = []
 
     for page_number, (page, page_layout) in enumerate(
         open_pdfminer_pages_generator(fp), start=starting_page_number
@@ -758,17 +764,7 @@ def _process_pdfminer_pages(
                     page_elements.append(element)
 
         page_elements = _combine_list_elements(page_elements, coordinate_system)
-
-        # NOTE(crag, christine): always do the basic sort first for determinsitic order across
-        # python versions.
-        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
-        if sort_mode != SORT_MODE_BASIC:
-            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
-
-        elements += sorted_page_elements
-
-        if include_page_breaks:
-            elements.append(PageBreak(text=""))
+        elements.append(page_elements)
 
     return elements
 
@@ -847,6 +843,29 @@ def _combine_coordinates_into_element1(
         system=coordinate_system,
     )
     return copy.deepcopy(element1)
+
+
+def _partition_pdf_with_pdfparser(
+    extracted_elements: list[list[Element]],
+    include_page_breaks: bool = False,
+    sort_mode: str = SORT_MODE_XY_CUT,
+):
+    """Partitions a PDF using pdfparser."""
+    elements = []
+
+    for page_elements in extracted_elements:
+        # NOTE(crag, christine): always do the basic sort first for deterministic order across
+        # python versions.
+        sorted_page_elements = sort_page_elements(page_elements, SORT_MODE_BASIC)
+        if sort_mode != SORT_MODE_BASIC:
+            sorted_page_elements = sort_page_elements(sorted_page_elements, sort_mode)
+
+        elements += sorted_page_elements
+
+        if include_page_breaks:
+            elements.append(PageBreak(text=""))
+
+    return elements
 
 
 def convert_pdf_to_images(
