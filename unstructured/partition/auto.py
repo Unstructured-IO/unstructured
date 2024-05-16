@@ -141,7 +141,7 @@ def partition(
     encoding: Optional[str] = None,
     paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     headers: dict[str, str] = {},
-    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
+    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
