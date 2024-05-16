@@ -33,7 +33,7 @@ To extract the tables from PDF files using the `partition_pdf <https://unstructu
 Method 2: Using Auto Partition or Unstructured API
 --------------------------------------------------
 
-By default, table extraction from ``pdf``, ``jpg``, ``png``, ``xls``, and ``xlsx`` file types is disabled. To enable table extraction from PDFs and other file types using `Auto Partition <https://unstructured-io.github.io/unstructured/core/partition.html#partition>`__ or `Unstructured API parameters <https://unstructured-io.github.io/unstructured/apis/api_parameters.html>`__ , you can set the ``skip_infer_table_types`` parameter to ``'[]'`` and ``strategy`` parameter to ``hi_res``.
+By default, table extraction from all file types is enabled. To extract tables from PDFs and images using `Auto Partition <https://unstructured-io.github.io/unstructured/core/partition.html#partition>`__ or `Unstructured API parameters <https://unstructured-io.github.io/unstructured/apis/api_parameters.html>`__ simply set ``strategy`` parameter to ``hi_res``.
 
 
 **Usage: Auto Partition**
@@ -46,7 +46,6 @@ By default, table extraction from ``pdf``, ``jpg``, ``png``, ``xls``, and ``xlsx
 
     elements = partition(filename=filename,
                          strategy='hi_res',
-                         skip_infer_table_types='[]', # don't forget to include apostrophe around the square bracket
                )
 
     tables = [el for el in elements if el.category == "Table"]
@@ -65,9 +64,4 @@ By default, table extraction from ``pdf``, ``jpg``, ``png``, ``xls``, and ``xlsx
           -H 'Content-Type: multipart/form-data' \
           -F 'files=@sample-docs/layout-parser-paper-with-table.jpg' \
           -F 'strategy=hi_res' \
-          -F 'skip_infer_table_types=[]' \
           | jq -C . | less -R
-
-.. warning::
-
-    You may get a warning when the ``pdf_infer_table_structure`` parameter is set to **True** AND **pdf** is included in the list of ``skip_infer_table_types`` parameter. However, this function will still extract the tables from PDF despite the conflict.

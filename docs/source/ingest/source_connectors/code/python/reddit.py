@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.reddit import RedditAccessConfig, SimpleRedditConfig
 from unstructured.ingest.interfaces import PartitionConfig, ProcessorConfig, ReadConfig
 from unstructured.ingest.runner import RedditRunner
@@ -13,10 +15,10 @@ if __name__ == "__main__":
         partition_config=PartitionConfig(),
         connector_config=SimpleRedditConfig(
             access_config=RedditAccessConfig(
-                client_secret="<client secret here>",
+                client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
             ),
             subreddit_name="machinelearning",
-            client_id="<client id here>",
+            client_id=os.getenv("REDDIT_CLIENT_ID"),
             user_agent=r"Unstructured Ingest Subreddit fetcher by \\u\...",
             search_query="Unstructured",
             num_posts=10,

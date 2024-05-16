@@ -3,6 +3,10 @@ import re
 import pytest
 
 from unstructured.metrics import text_extraction
+from unstructured.metrics.table.table_extraction import (
+    extract_cells_from_table_as_cells,
+    extract_cells_from_text_as_html,
+)
 from unstructured.partition.auto import partition
 
 
@@ -155,7 +159,7 @@ def test_calculate_edit_distance_with_filename(filename, expected_score, expecte
         ),
         (
             """Sometimes sentences have a dash - like this one!
-            A hyphen connects 2 words with no gap: easy-peasy.""",
+                A hyphen connects 2 words with no gap: easy-peasy.""",
             {
                 "sometimes": 1,
                 "sentences": 1,
@@ -216,3 +220,29 @@ def test_calculate_percent_missing_text(output_text, source_text, expected_perce
         text_extraction.calculate_percent_missing_text(output_text, source_text)
         == expected_percentage
     )
+
+
+def test_cells_extraction_from_prediction_when_simple_example():
+    example_element = {
+        "type": "Table",
+        "metadata": {
+            "text_as_html": "<table><thead><th>Month A.</th></thead><tr><td>22</td></tr></table>",
+            "table_as_cells": [
+                {"x": 0, "y": 0, "w": 1, "h": 1, "content": "Month A."},
+                {"x": 0, "y": 1, "w": 1, "h": 1, "content": "22"},
+            ],
+        },
+    }
+    expected_extraction = [
+        {"row_index": 0, "col_index": 0, "content": "Month A."},
+        {"row_index": 1, "col_index": 0, "content": "22"},
+    ]
+
+    assert extract_cells_from_text_as_html(example_element) == expected_extraction
+    assert extract_cells_from_table_as_cells(example_element) == expected_extraction
+
+
+def test_cells_extraction_from_prediction_when_missing_prediction():
+    example_element = {"type": "Table", "metadata": {"text_as_html": "", "table_as_cells": []}}
+    assert extract_cells_from_text_as_html(example_element) is None
+    assert extract_cells_from_table_as_cells(example_element) is None

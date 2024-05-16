@@ -1,10 +1,8 @@
+from __future__ import annotations
+
 import contextlib
 import json
-from typing import (
-    IO,
-    List,
-    Optional,
-)
+from typing import IO, Optional
 
 import requests
 from unstructured_client import UnstructuredClient
@@ -13,7 +11,7 @@ from unstructured_client.models import shared
 from unstructured.documents.elements import Element
 from unstructured.logger import logger
 from unstructured.partition.common import exactly_one
-from unstructured.staging.base import dict_to_elements, elements_from_json
+from unstructured.staging.base import elements_from_dicts, elements_from_json
 
 
 def partition_via_api(
@@ -25,7 +23,7 @@ def partition_via_api(
     api_key: str = "",
     metadata_filename: Optional[str] = None,
     **request_kwargs,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions a document using the Unstructured REST API. This is equivalent to
     running the document through partition.
 
@@ -84,10 +82,7 @@ def partition_via_api(
                 "If file is specified in partition_via_api, "
                 "metadata_filename must be specified as well.",
             )
-        files = shared.Files(
-            content=file,
-            file_name=metadata_filename,
-        )
+        files = shared.Files(content=file, file_name=metadata_filename)
 
     # NOTE(christine): Converts all list type parameters to JSON formatted strings
     # (e.g. ["image", "table"] -> '["image", "table"]')
@@ -96,10 +91,7 @@ def partition_via_api(
         if isinstance(v, list):
             request_kwargs[k] = json.dumps(v)
 
-    req = shared.PartitionParameters(
-        files=files,
-        **request_kwargs,
-    )
+    req = shared.PartitionParameters(files=files, **request_kwargs)
     response = sdk.general.partition(req)
 
     if response.status_code == 200:
@@ -111,15 +103,15 @@ def partition_via_api(
 
 
 def partition_multiple_via_api(
-    filenames: Optional[List[str]] = None,
-    content_types: Optional[List[str]] = None,
-    files: Optional[List[str]] = None,
-    file_filenames: Optional[List[str]] = None,
+    filenames: Optional[list[str]] = None,
+    content_types: Optional[list[str]] = None,
+    files: Optional[list[str]] = None,
+    file_filenames: Optional[list[str]] = None,
     api_url: str = "https://api.unstructured.io/general/v0/general",
     api_key: str = "",
-    metadata_filenames: Optional[List[str]] = None,
+    metadata_filenames: Optional[list[str]] = None,
     **request_kwargs,
-) -> List[List[Element]]:
+) -> list[list[Element]]:
     """Partitions multiple documents using the Unstructured REST API by batching
     the documents into a single HTTP request.
 
@@ -214,7 +206,7 @@ def partition_multiple_via_api(
             response_list = [response_list]
 
         for document in response_list:
-            documents.append(dict_to_elements(document))
+            documents.append(elements_from_dicts(document))
         return documents
     else:
         raise ValueError(

@@ -1,4 +1,6 @@
-from typing import TYPE_CHECKING, List, Optional, Union, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from unstructured_inference.constants import Source
 from unstructured_inference.inference.elements import TextRegion
@@ -14,23 +16,15 @@ if TYPE_CHECKING:
 
 
 def build_text_region_from_coords(
-    x1: Union[int, float],
-    y1: Union[int, float],
-    x2: Union[int, float],
-    y2: Union[int, float],
+    x1: int | float,
+    y1: int | float,
+    x2: int | float,
+    y2: int | float,
     text: Optional[str] = None,
     source: Optional[Source] = None,
 ) -> TextRegion:
     """"""
-
-    return TextRegion.from_coords(
-        x1,
-        y1,
-        x2,
-        y2,
-        text=text,
-        source=source,
-    )
+    return TextRegion.from_coords(x1, y1, x2, y2, text=text, source=source)
 
 
 def build_layout_element(
@@ -45,10 +39,10 @@ def build_layout_element(
 
 
 def build_layout_elements_from_ocr_regions(
-    ocr_regions: List[TextRegion],
+    ocr_regions: list[TextRegion],
     ocr_text: Optional[str] = None,
     group_by_ocr_text: bool = False,
-) -> List[LayoutElement]:
+) -> list[LayoutElement]:
     """
     Get layout elements from OCR regions
     """
@@ -74,10 +68,7 @@ def build_layout_elements_from_ocr_regions(
 
             grouped_regions.append(regions)
     else:
-        grouped_regions = cast(
-            List[List[TextRegion]],
-            partition_groups_from_regions(ocr_regions),
-        )
+        grouped_regions = partition_groups_from_regions(ocr_regions)
 
     merged_regions = [merge_text_regions(group) for group in grouped_regions]
     return [
@@ -88,12 +79,12 @@ def build_layout_elements_from_ocr_regions(
     ]
 
 
-def merge_text_regions(regions: List[TextRegion]) -> TextRegion:
+def merge_text_regions(regions: list[TextRegion]) -> TextRegion:
     """
     Merge a list of TextRegion objects into a single TextRegion.
 
     Parameters:
-    - group (List[TextRegion]): A list of TextRegion objects to be merged.
+    - group (list[TextRegion]): A list of TextRegion objects to be merged.
 
     Returns:
     - TextRegion: A single merged TextRegion object.

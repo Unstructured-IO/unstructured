@@ -447,10 +447,10 @@ class TablePreChunk:
         text_remainder = self._text
         html_remainder = self._table.metadata.text_as_html or ""
 
-        # -- only chunk a table when it's too big to swallow whole --
+        # -- only text-split a table when it's longer than the chunking window --
         if len(text_remainder) <= maxlen and len(html_remainder) <= maxlen:
             # -- but the overlap-prefix must be added to its text --
-            yield Table(text=text_remainder, metadata=copy.deepcopy(self._table.metadata))
+            yield Table(text=text_remainder, metadata=self._metadata)
             return
 
         split = self._opts.split
@@ -459,19 +459,19 @@ class TablePreChunk:
         while text_remainder or html_remainder:
             # -- split off the next chunk-worth of characters into a TableChunk --
             chunk_text, text_remainder = split(text_remainder)
-            table_chunk = TableChunk(text=chunk_text, metadata=copy.deepcopy(self._table.metadata))
+            metadata = self._metadata
 
             # -- Attach maxchars of the html to the chunk. Note no attempt is made to add only the
             # -- HTML elements that *correspond* to the TextChunk.text fragment.
             if html_remainder:
                 chunk_html, html_remainder = html_remainder[:maxlen], html_remainder[maxlen:]
-                table_chunk.metadata.text_as_html = chunk_html
+                metadata.text_as_html = chunk_html
 
             # -- mark second and later chunks as a continuation --
             if is_continuation:
-                table_chunk.metadata.is_continuation = True
+                metadata.is_continuation = True
 
-            yield table_chunk
+            yield TableChunk(text=chunk_text, metadata=metadata)
 
             is_continuation = True
 
@@ -485,6 +485,49 @@ class TablePreChunk:
         """
         overlap = self._opts.inter_chunk_overlap
         return self._text[-overlap:].strip() if overlap else ""
+
+    @property
+    def _metadata(self) -> ElementMetadata:
+        """The base `.metadata` value for chunks formed from this pre-chunk.
+
+        The term "base" here means that other metadata fields will be added, depending on the chunk.
+        In particular, `.metadata.text_as_html` will be different for each text-split chunk and
+        `.metadata.is_continuation` must be added for second-and-later text-split chunks.
+
+        Note this is a fresh copy of the metadata on each call since it will need to be mutated
+        differently for each chunk formed from from this pre-chunk.
+        """
+        CS = ConsolidationStrategy
+        metadata = copy.deepcopy(self._table.metadata)
+
+        # -- drop metadata fields not appropriate for chunks, in particular
+        # -- parent_id's will not reliably point to an existing element
+        drop_field_names = [
+            field_name
+            for field_name, strategy in CS.field_consolidation_strategies().items()
+            if strategy is CS.DROP
+        ]
+        for field_name in drop_field_names:
+            setattr(metadata, field_name, None)
+
+        if self._opts.include_orig_elements:
+            metadata.orig_elements = self._orig_elements
+        return metadata
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk.
+
+        Note this is not just the `Table` element, it must be adjusted to strip out any
+        `.metadata.orig_elements` value it may have when it is itself a chunk and not a direct
+        product of partitioning.
+        """
+        # -- make a copy because we're going to mutate the `Table` element and it doesn't belong to
+        # -- us (the user may have downstream purposes for it).
+        orig_table = copy.deepcopy(self._table)
+        # -- prevent recursive .orig_elements when `Table` element is a chunk --
+        orig_table.metadata.orig_elements = None
+        return [orig_table]
 
     @lazyproperty
     def _text(self) -> str:
@@ -615,7 +658,10 @@ class TextPreChunk:
         to a single-element pre-chunk too, even though metadata for such a pre-chunk is already
         "consolidated".
         """
-        return ElementMetadata(**self._meta_kwargs)
+        consolidated_metadata = ElementMetadata(**self._meta_kwargs)
+        if self._opts.include_orig_elements:
+            consolidated_metadata.orig_elements = self._orig_elements
+        return consolidated_metadata
 
     @lazyproperty
     def _continuation_metadata(self) -> ElementMetadata:
@@ -716,6 +762,25 @@ class TextPreChunk:
                     )
 
         return dict(iter_kwarg_pairs())
+
+    @lazyproperty
+    def _orig_elements(self) -> list[Element]:
+        """The `.metadata.orig_elements` value for chunks formed from this pre-chunk."""
+
+        def iter_orig_elements():
+            for e in self._elements:
+                if e.metadata.orig_elements is None:
+                    yield e
+                    continue
+                # -- make copy of any element we're going to mutate because these elements don't
+                # -- belong to us (the user may have downstream purposes for them).
+                orig_element = copy.copy(e)
+                # -- prevent recursive .orig_elements when element is a chunk (has orig-elements of
+                # -- its own)
+                orig_element.metadata.orig_elements = None
+                yield orig_element
+
+        return list(iter_orig_elements())
 
     @lazyproperty
     def _text(self) -> str:
@@ -955,51 +1020,6 @@ class TextPreChunkAccumulator:
 # is limited to a single element-stream because these retain state (e.g. current page number) to
 # determine when a semantic boundary has been crossed.
 # ================================================================================================
-
-
-def is_in_next_section() -> BoundaryPredicate:
-    """Not a predicate itself, calling this returns a predicate that triggers on each new section.
-
-    The lifetime of the returned callable cannot extend beyond a single element-stream because it
-    stores current state (current section) that is particular to that element stream.
-
-    A "section" of this type is particular to the EPUB format (so far) and not to be confused with
-    a "section" composed of a section-heading (`Title` element) followed by content elements.
-
-    The returned predicate tracks the current section, starting at `None`. Calling with an element
-    with a different value for `metadata.section` returns True, indicating the element starts a new
-    section boundary, and updates the enclosed section name ready for the next transition.
-    """
-    current_section: Optional[str] = None
-    is_first: bool = True
-
-    def section_changed(element: Element) -> bool:
-        nonlocal current_section, is_first
-
-        section = element.metadata.section
-
-        # -- The first element never reports a section break, it starts the first section of the
-        # -- document. That section could be named (section is non-None) or anonymous (section is
-        # -- None). We don't really have to care.
-        if is_first:
-            current_section = section
-            is_first = False
-            return False
-
-        # -- An element with a `None` section is assumed to continue the current section. It never
-        # -- updates the current-section because once set, the current-section is "sticky" until
-        # -- replaced by another explicit section.
-        if section is None:
-            return False
-
-        # -- another element with the same section continues that section --
-        if section == current_section:
-            return False
-
-        current_section = section
-        return True
-
-    return section_changed
 
 
 def is_on_next_page() -> BoundaryPredicate:

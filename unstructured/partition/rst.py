@@ -1,4 +1,6 @@
-from typing import IO, List, Optional
+from __future__ import annotations
+
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -19,10 +21,11 @@ def partition_rst(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
-) -> List[Element]:
+    date_from_file_object: bool = False,
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions an RST document. The document is first converted to HTML and then
     partitioned using partition_html.
 
@@ -43,6 +46,9 @@ def partition_rst(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
 
     return convert_and_partition_html(
@@ -55,4 +61,5 @@ def partition_rst(
         languages=languages,
         detect_language_per_element=detect_language_per_element,
         detection_origin=DETECTION_ORIGIN,
+        date_from_file_object=date_from_file_object,
     )

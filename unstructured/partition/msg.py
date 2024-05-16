@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, Callable, Dict, List, Optional
+from typing import IO, Any, Callable, Optional
 
 import msg_parser
 
@@ -8,7 +10,11 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, ElementMetadata, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger
-from unstructured.partition.common import exactly_one
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.email import convert_to_iso_8601
 from unstructured.partition.html import partition_html
 from unstructured.partition.lang import apply_lang_metadata
@@ -26,13 +32,14 @@ def partition_msg(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable] = None,
+    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
-) -> List[Element]:
+    date_from_file_object: bool = False,
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions a MSFT Outlook .msg file
 
     Parameters
@@ -63,6 +70,10 @@ def partition_msg(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True and inference
+        from message header failed, attempt to infer last_modified metadata from bytes,
+        otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -80,7 +91,7 @@ def partition_msg(
     content_type = msg_obj.header_dict.get("Content-Type", "")
     is_encrypted = "encrypted" in content_type
     text = msg_obj.body
-    elements: List[Element] = []
+    elements: list[Element] = []
     if is_encrypted:
         logger.warning(
             "Encrypted email detected. Partition function will return an empty list.",
@@ -104,12 +115,20 @@ def partition_msg(
             detection_origin="msg",
         )
 
-    metadata = build_msg_metadata(
-        msg_obj,
-        metadata_filename or filename,
-        metadata_last_modified=metadata_last_modified,
-    )
+    last_modification_date = None
+    if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
+    elif file is not None:
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
     for element in elements:
+        metadata = build_msg_metadata(
+            msg_obj,
+            metadata_filename or filename,
+            metadata_last_modified=metadata_last_modified,
+            last_modification_date=last_modification_date,
+        )
         element.metadata = metadata
 
     if process_attachments:
@@ -148,7 +167,8 @@ def build_msg_metadata(
     msg_obj: msg_parser.MsOxMessage,
     filename: Optional[str],
     metadata_last_modified: Optional[str],
-    languages: Optional[List[str]] = ["auto"],
+    last_modification_date: Optional[str],
+    languages: Optional[list[str]] = ["auto"],
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     email_date = getattr(msg_obj, "sent_date", None)
@@ -167,7 +187,7 @@ def build_msg_metadata(
         sent_to=sent_to,
         sent_from=sent_from,
         subject=getattr(msg_obj, "subject", None),
-        last_modified=metadata_last_modified or email_date,
+        last_modified=metadata_last_modified or email_date or last_modification_date,
         filename=filename,
         languages=languages,
     )
@@ -180,7 +200,7 @@ def extract_msg_attachment_info(
     file: Optional[IO[bytes]] = None,
     output_dir: Optional[str] = None,
     msg_obj: Optional[msg_parser.MsOxMessage] = None,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
     """Extracts information from email message attachments and returns a list of dictionaries.
     If 'output_dir' is provided, attachments are also saved to that directory.
     """

@@ -1,282 +1,253 @@
+"""Test suite for `unstructured.partition.doc` module."""
+
+from __future__ import annotations
+
 import os
-from tempfile import SpooledTemporaryFile
+import pathlib
+import tempfile
 
-import docx
 import pytest
+from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON
-from unstructured.chunking.title import chunk_by_title
+from test_unstructured.unit_utils import (
+    CaptureFixture,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+)
+from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import (
     Address,
+    CompositeElement,
+    Element,
     ListItem,
     NarrativeText,
     Table,
+    TableChunk,
     Text,
     Title,
 )
-from unstructured.partition.common import convert_office_doc
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
-
-@pytest.fixture()
-def mock_document():
-    document = docx.Document()
-
-    document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
-    # NOTE(robinson) - this should get picked up as a list item due to the •
-    document.add_paragraph("• Parrots", style="Normal")
-    # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("• ", style="Normal")
-    document.add_paragraph("Hockey", style="List Bullet")
-    # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("", style="List Bullet")
-    # NOTE(robinson) - this should get picked up as a title
-    document.add_paragraph("Analysis", style="Normal")
-    # NOTE(robinson) - this should get dropped because it is empty
-    document.add_paragraph("", style="Normal")
-    # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
-    document.add_paragraph("This is my third thought.", style="Body Text")
-    # NOTE(robinson) - this should just be regular text
-    document.add_paragraph("2023")
-    # NOTE(robinson) - this should be an address
-    document.add_paragraph("DOYLESTOWN, PA 18901")
-
-    return document
+is_in_docker = os.path.exists("/.dockerenv")
 
 
-@pytest.fixture()
-def expected_elements():
-    return [
-        Title("These are a few of my favorite things:"),
-        ListItem("Parrots"),
-        ListItem("Hockey"),
-        Title("Analysis"),
-        NarrativeText("This is my first thought. This is my second thought."),
-        NarrativeText("This is my third thought."),
-        Text("2023"),
-        Address("DOYLESTOWN, PA 18901"),
-    ]
+def test_partition_doc_matches_partition_docx(request):
+    # NOTE(robinson) - was having issues with the tempfile not being found in the docker tests
+    if is_in_docker:
+        request.applymarker(pytest.mark.xfail)
+    doc_file_path = example_doc_path("simple.doc")
+    docx_file_path = example_doc_path("simple.docx")
+
+    assert partition_doc(doc_file_path) == partition_docx(docx_file_path)
 
 
-def test_partition_doc_from_filename(mock_document, expected_elements, tmpdir, capsys):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    elements = partition_doc(filename=doc_filename)
+# -- document-source (file or filename) ----------------------------------------------------------
+
+
+def test_partition_doc_from_filename(expected_elements: list[Element], capsys: CaptureFixture[str]):
+    elements = partition_doc(example_doc_path("simple.doc"))
+
     assert elements == expected_elements
-    assert elements[0].metadata.filename == "mock_document.doc"
-    assert elements[0].metadata.file_directory == tmpdir.dirname
+    assert all(e.metadata.filename == "simple.doc" for e in elements)
+    assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
     assert capsys.readouterr().out == ""
     assert capsys.readouterr().err == ""
 
 
-def test_partition_doc_from_filename_with_metadata_filename(
-    mock_document,
-    expected_elements,
-    tmpdir,
+def test_partition_doc_from_file_with_libre_office_filter(
+    expected_elements: list[Element], capsys: CaptureFixture[str]
 ):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition_doc(file=f, libre_office_filter="MS Word 2007 XML")
 
-    elements = partition_doc(filename=doc_filename, metadata_filename="test")
+    assert elements == expected_elements
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
+    assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_doc_from_file_with_no_libre_office_filter(
+    expected_elements: list[Element], capsys: CaptureFixture[str]
+):
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition_doc(file=f, libre_office_filter=None)
+
+    assert elements == expected_elements
+    assert capsys.readouterr().out == ""
+    assert capsys.readouterr().err == ""
+    assert all(e.metadata.filename is None for e in elements)
+
+
+def test_partition_doc_raises_when_both_a_filename_and_file_are_specified():
+    doc_file_path = example_doc_path("simple.doc")
+
+    with open(doc_file_path, "rb") as f:
+        with pytest.raises(ValueError, match="Exactly one of filename and file must be specified"):
+            partition_doc(filename=doc_file_path, file=f)
+
+
+def test_partition_doc_raises_when_neither_a_file_path_nor_a_file_like_object_are_provided():
+    with pytest.raises(ValueError, match="Exactly one of filename and file must be specified"):
+        partition_doc()
+
+
+def test_partition_raises_with_missing_doc(tmp_path: pathlib.Path):
+    doc_filename = str(tmp_path / "asdf.doc")
+
+    with pytest.raises(ValueError, match="asdf.doc does not exist"):
+        partition_doc(filename=doc_filename)
+
+
+# -- `include_metadata` arg ----------------------------------------------------------------------
+
+
+def test_partition_doc_from_filename_excludes_metadata_when_so_instructed():
+    elements = partition_doc(example_doc_path("simple.doc"), include_metadata=False)
+    assert all(e.metadata.to_dict() == {} for e in elements)
+
+
+def test_partition_doc_from_file_excludes_metadata_when_so_instructed():
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition_doc(file=f, include_metadata=False)
+
+    assert all(e.metadata.to_dict() == {} for e in elements)
+
+
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_doc_from_filename_prefers_metadata_filename_when_provided(
+    expected_elements: list[Element],
+):
+    elements = partition_doc(example_doc_path("simple.doc"), metadata_filename="test")
+
     assert elements == expected_elements
     assert all(element.metadata.filename == "test" for element in elements)
 
 
-def test_partition_doc_matches_partition_docx(mock_document, expected_elements, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    assert partition_doc(filename=doc_filename) == partition_docx(filename=docx_filename)
-
-
-def test_partition_raises_with_missing_doc(mock_document, expected_elements, tmpdir):
-    doc_filename = os.path.join(tmpdir.dirname, "asdf.doc")
-
-    with pytest.raises(ValueError):
-        partition_doc(filename=doc_filename)
-
-
-def test_partition_doc_from_file_with_filter(mock_document, expected_elements, tmpdir, capsys):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    with open(doc_filename, "rb") as f:
-        elements = partition_doc(file=f, libre_office_filter="MS Word 2007 XML")
-    assert elements == expected_elements
-    assert capsys.readouterr().out == ""
-    assert capsys.readouterr().err == ""
-    for element in elements:
-        assert element.metadata.filename is None
-
-
-def test_partition_doc_from_file_with_no_filter(mock_document, expected_elements, tmpdir, capsys):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    with open(doc_filename, "rb") as f:
-        elements = partition_doc(file=f, libre_office_filter=None)
-    assert elements == expected_elements
-    assert capsys.readouterr().out == ""
-    assert capsys.readouterr().err == ""
-    for element in elements:
-        assert element.metadata.filename is None
-
-
-def test_partition_doc_from_file_with_metadata_filename(mock_document, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    with open(doc_filename, "rb") as f:
+def test_partition_doc_from_file_prefers_metadata_filename_when_provided():
+    with open(example_doc_path("simple.doc"), "rb") as f:
         elements = partition_doc(file=f, metadata_filename="test")
-    for element in elements:
-        assert element.metadata.filename == "test"
+
+    assert all(e.metadata.filename == "test" for e in elements)
 
 
-def test_partition_doc_raises_with_both_specified(mock_document, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    with open(doc_filename, "rb") as f, pytest.raises(ValueError):
-        partition_doc(filename=doc_filename, file=f)
+# -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_doc_raises_with_neither():
-    with pytest.raises(ValueError):
-        partition_doc()
-
-
-def test_partition_doc_from_file_exclude_metadata(mock_document, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    with open(doc_filename, "rb") as f:
-        elements = partition_doc(file=f, include_metadata=False)
-
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
-def test_partition_doc_from_filename_exclude_metadata(mock_document, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    elements = partition_doc(filename=doc_filename, include_metadata=False)
-
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
-
-
-def test_partition_doc_metadata_date(
-    mocker,
-    filename="example-docs/fake.doc",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+def test_partition_doc_from_filename_pulls_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.doc.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        return_value=filesystem_last_modified,
     )
 
-    elements = partition_doc(filename=filename)
+    elements = partition_doc(example_doc_path("fake.doc"))
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_doc_metadata_date_with_custom_metadata(
-    mocker,
-    filename="example-docs/fake.doc",
+def test_partition_doc_from_filename_prefers_metadata_last_modified_when_provided(
+    mocker: MockFixture,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modified_date = "2020-07-05T09:24:28"
-
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_doc(
-        filename=filename,
-        metadata_last_modified=expected_last_modified_date,
+        example_doc_path("simple.doc"), metadata_last_modified=metadata_last_modified
     )
 
-    assert elements[0].metadata.last_modified == expected_last_modified_date
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_doc_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake.doc",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+def test_partition_doc_from_file_suppresses_last_modified_from_file_by_default(mocker: MockFixture):
+    modified_date_on_file = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value=modified_date_on_file,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("simple.doc"), "rb") as f:
         elements = partition_doc(file=f)
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert all(e.metadata.last_modified is None for e in elements)
 
 
-def test_partition_doc_from_file_metadata_date_with_custom_metadata(
-    mocker,
-    filename="example-docs/fake.doc",
+def test_partition_doc_from_file_pulls_last_modified_from_file_when_date_from_file_obj_arg_is_True(
+    mocker: MockFixture,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modified_date = "2020-07-05T09:24:28"
-
+    modified_date_on_file = "2024-05-01T09:24:28"
     mocker.patch(
         "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value=modified_date_on_file,
     )
-    with open(filename, "rb") as f:
-        elements = partition_doc(file=f, metadata_last_modified=expected_last_modified_date)
 
-    assert elements[0].metadata.last_modified == expected_last_modified_date
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition_doc(file=f, date_from_file_object=True)
+
+    assert all(e.metadata.last_modified == modified_date_on_file for e in elements)
 
 
-@pytest.mark.xfail(reason="handling of last_modified for file vs. filename to be refined later")
-def test_partition_doc_from_file_without_metadata_date(
-    filename="example-docs/fake.doc",
-):
-    """Test partition_doc() with file that are not possible to get last modified date"""
-
-    with open(filename, "rb") as f:
-        sf = SpooledTemporaryFile()
+def test_partition_doc_from_file_gets_None_last_modified_when_file_has_no_last_modified():
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_doc(file=sf, metadata_date="2020-07-05")
+        elements = partition_doc(file=sf, date_from_file_object=True)
 
-    assert elements[0].metadata.date == "2020-07-05"
+    assert all(e.metadata.last_modified is None for e in elements)
+
+
+def test_partition_doc_from_file_prefers_metadata_last_modified_when_provided(mocker: MockFixture):
+    """Even when `date_from_file_object` arg is `True`."""
+    last_modified_on_file = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date_from_file",
+        return_value=last_modified_on_file,
+    )
+
+    with open(example_doc_path("simple.doc"), "rb") as f:
+        elements = partition_doc(
+            file=f, metadata_last_modified=metadata_last_modified, date_from_file_object=True
+        )
+
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+# -- language-recognition metadata ---------------------------------------------------------------
+
+
+def test_partition_doc_adds_languages_metadata():
+    elements = partition_doc(example_doc_path("simple.doc"))
+    assert all(e.metadata.languages == ["eng"] for e in elements)
+
+
+def test_partition_doc_respects_detect_language_per_element_arg():
+    elements = partition_doc(
+        example_doc_path("language-docs/eng_spa_mult.doc"), detect_language_per_element=True
+    )
+    assert [e.metadata.languages for e in elements] == [
+        ["eng"],
+        ["spa", "eng"],
+        ["eng"],
+        ["eng"],
+        ["spa"],
+    ]
+
+
+# -- miscellaneous -------------------------------------------------------------------------------
 
 
 def test_partition_doc_grabs_emphasized_texts():
     expected_emphasized_text_contents = ["bold", "italic", "bold-italic", "bold-italic"]
     expected_emphasized_text_tags = ["b", "i", "b", "i"]
 
-    elements = partition_doc("example-docs/fake-doc-emphasized-text.doc")
+    elements = partition_doc(example_doc_path("fake-doc-emphasized-text.doc"))
 
     assert isinstance(elements[0], Table)
     assert elements[0].metadata.emphasized_text_contents == expected_emphasized_text_contents
@@ -291,32 +262,46 @@ def test_partition_doc_grabs_emphasized_texts():
     assert elements[2].metadata.emphasized_text_tags is None
 
 
-def test_partition_doc_with_json(mock_document, tmpdir):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-
-    elements = partition_doc(filename=doc_filename)
-    assert_round_trips_through_JSON(elements)
+def test_partition_doc_round_trips_through_json():
+    """Elements produced can be serialized then deserialized without loss."""
+    assert_round_trips_through_JSON(partition_doc(example_doc_path("simple.doc")))
 
 
-def test_add_chunking_strategy_on_partition_doc(filename="example-docs/fake.doc"):
-    chunk_elements = partition_doc(filename, chunking_strategy="by_title")
-    elements = partition_doc(filename)
-    chunks = chunk_by_title(elements)
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
+def test_partition_doc_chunks_elements_when_chunking_strategy_is_specified():
+    document_path = example_doc_path("simple.doc")
+    elements = partition_doc(document_path)
+    chunks = partition_doc(document_path, chunking_strategy="basic")
+
+    # -- all chunks are chunk element-types --
+    assert all(isinstance(c, (CompositeElement, Table, TableChunk)) for c in chunks)
+    # -- chunks from partitioning match those produced by chunking elements in separate step --
+    assert chunks == chunk_elements(elements)
 
 
-def test_partition_doc_element_metadata_has_languages():
-    filename = "example-docs/fake-doc-emphasized-text.doc"
-    elements = partition_doc(filename=filename)
-    assert elements[0].metadata.languages == ["eng"]
+def test_partition_doc_assigns_deterministic_and_unique_element_ids():
+    document_path = example_doc_path("duplicate-paragraphs.doc")
+
+    ids = [element.id for element in partition_doc(document_path)]
+    ids_2 = [element.id for element in partition_doc(document_path)]
+
+    # -- ids should match even though partitioned separately --
+    assert ids == ids_2
+    # -- ids should be unique --
+    assert len(ids) == len(set(ids))
 
 
-def test_partition_doc_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.doc"
-    elements = partition_doc(filename=filename, detect_language_per_element=True)
-    langs = [element.metadata.languages for element in elements]
-    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+# == module-level fixtures =======================================================================
+
+
+@pytest.fixture()
+def expected_elements() -> list[Element]:
+    return [
+        Title("These are a few of my favorite things:"),
+        ListItem("Parrots"),
+        ListItem("Hockey"),
+        Title("Analysis"),
+        NarrativeText("This is my first thought. This is my second thought."),
+        NarrativeText("This is my third thought."),
+        Text("2023"),
+        Address("DOYLESTOWN, PA 18901"),
+    ]

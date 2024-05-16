@@ -74,7 +74,6 @@ Configure and run the S3Runner for processing the data.
             api_key=UNSTRUCTURED_API_KEY,
             strategy="hi_res",
             hi_res_model_name="yolox",
-            pdf_infer_table_structure=True,
         ),
         fsspec_config=FsspecConfig(
             remote_url=S3_URL,

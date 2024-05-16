@@ -9,12 +9,7 @@ from typing import Any, Optional
 import pytest
 
 from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock
-from unstructured.chunking.base import (
-    CHUNK_MULTI_PAGE_DEFAULT,
-    PreChunker,
-    TablePreChunk,
-    TextPreChunk,
-)
+from unstructured.chunking.base import CHUNK_MULTI_PAGE_DEFAULT
 from unstructured.chunking.title import _ByTitleChunkingOptions, chunk_by_title
 from unstructured.documents.coordinates import CoordinateSystem
 from unstructured.documents.elements import (
@@ -57,7 +52,7 @@ def test_it_splits_a_large_element_into_multiple_chunks():
     ]
 
 
-def test_split_elements_by_title_and_table():
+def test_it_splits_elements_by_title_and_table():
     elements: list[Element] = [
         Title("A Great Day"),
         Text("Today is a great day."),
@@ -72,39 +67,38 @@ def test_split_elements_by_title_and_table():
         CheckBox(),
     ]
 
-    pre_chunks = PreChunker.iter_pre_chunks(elements, opts=_ByTitleChunkingOptions.new())
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=True)
 
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    assert len(chunks) == 4
+    # --
+    chunk = chunks[0]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("A Great Day"),
         Text("Today is a great day."),
         Text("It is sunny outside."),
     ]
     # --
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TablePreChunk)
-    assert pre_chunk._table == Table("Heading\nCell text")
+    chunk = chunks[1]
+    assert isinstance(chunk, Table)
+    assert chunk.metadata.orig_elements == [Table("Heading\nCell text")]
     # ==
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    chunk = chunks[2]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("An Okay Day"),
         Text("Today is an okay day."),
         Text("It is rainy outside."),
     ]
     # --
-    pre_chunk = next(pre_chunks)
-    assert isinstance(pre_chunk, TextPreChunk)
-    assert pre_chunk._elements == [
+    chunk = chunks[3]
+    assert isinstance(chunk, CompositeElement)
+    assert chunk.metadata.orig_elements == [
         Title("A Bad Day"),
         Text("Today is a bad day."),
         Text("It is storming outside."),
         CheckBox(),
     ]
-    # --
-    with pytest.raises(StopIteration):
-        next(pre_chunks)
 
 
 def test_chunk_by_title():
@@ -127,7 +121,7 @@ def test_chunk_by_title():
         CheckBox(),
     ]
 
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
+    chunks = chunk_by_title(elements, combine_text_under_n_chars=0, include_orig_elements=False)
 
     assert chunks == [
         CompositeElement(
@@ -143,43 +137,6 @@ def test_chunk_by_title():
     assert chunks[3].metadata == ElementMetadata(
         regex_metadata={"a": [RegexMetadata(text="A", start=11, end=12)]},
     )
-
-
-def test_chunk_by_title_respects_section_change():
-    elements: list[Element] = [
-        Title("A Great Day", metadata=ElementMetadata(section="first")),
-        Text("Today is a great day.", metadata=ElementMetadata(section="second")),
-        Text("It is sunny outside.", metadata=ElementMetadata(section="second")),
-        Table("Heading\nCell text"),
-        Title("An Okay Day"),
-        Text("Today is an okay day."),
-        Text("It is rainy outside."),
-        Title("A Bad Day"),
-        Text(
-            "Today is a bad day.",
-            metadata=ElementMetadata(
-                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
-            ),
-        ),
-        Text("It is storming outside."),
-        CheckBox(),
-    ]
-
-    chunks = chunk_by_title(elements, combine_text_under_n_chars=0)
-
-    assert chunks == [
-        CompositeElement(
-            "A Great Day",
-        ),
-        CompositeElement(
-            "Today is a great day.\n\nIt is sunny outside.",
-        ),
-        Table("Heading\nCell text"),
-        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
-        CompositeElement(
-            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
-        ),
-    ]
 
 
 def test_chunk_by_title_separates_by_page_number():
@@ -209,6 +166,38 @@ def test_chunk_by_title_separates_by_page_number():
         ),
         CompositeElement(
             "Today is a great day.\n\nIt is sunny outside.",
+        ),
+        Table("Heading\nCell text"),
+        CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
+        CompositeElement(
+            "A Bad Day\n\nToday is a bad day.\n\nIt is storming outside.",
+        ),
+    ]
+
+
+def test_chuck_by_title_respects_multipage():
+    elements: list[Element] = [
+        Title("A Great Day", metadata=ElementMetadata(page_number=1)),
+        Text("Today is a great day.", metadata=ElementMetadata(page_number=2)),
+        Text("It is sunny outside.", metadata=ElementMetadata(page_number=2)),
+        Table("Heading\nCell text"),
+        Title("An Okay Day"),
+        Text("Today is an okay day."),
+        Text("It is rainy outside."),
+        Title("A Bad Day"),
+        Text(
+            "Today is a bad day.",
+            metadata=ElementMetadata(
+                regex_metadata={"a": [RegexMetadata(text="A", start=0, end=1)]},
+            ),
+        ),
+        Text("It is storming outside."),
+        CheckBox(),
+    ]
+    chunks = chunk_by_title(elements, multipage_sections=True, combine_text_under_n_chars=0)
+    assert chunks == [
+        CompositeElement(
+            "A Great Day\n\nToday is a great day.\n\nIt is sunny outside.",
         ),
         Table("Heading\nCell text"),
         CompositeElement("An Okay Day\n\nToday is an okay day.\n\nIt is rainy outside."),
@@ -369,52 +358,6 @@ def test_add_chunking_strategy_respects_max_characters():
         assert len(chunk_element.text) <= 100
     assert chunk_elements != elements
     assert chunk_elements == chunks
-
-
-def test_add_chunking_strategy_on_partition_html_respects_multipage():
-    filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition_html(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    partitioned_elements_multipage_true_combine_chars_0 = partition_html(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    elements = partition_html(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    assert (
-        partitioned_elements_multipage_false_combine_chars_0
-        == cleaned_elements_multipage_false_combine_chars_0
-    )
-    assert (
-        partitioned_elements_multipage_true_combine_chars_0
-        == cleaned_elements_multipage_true_combine_chars_0
-    )
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
-        partitioned_elements_multipage_false_combine_chars_0,
-    )
 
 
 def test_chunk_by_title_drops_detection_class_prob():
@@ -648,19 +591,13 @@ class Describe_ByTitleChunkingOptions:
             )
 
     def it_does_not_complain_when_specifying_new_after_n_chars_by_itself(self):
-        """Caller can specify `new_after_n_chars` arg without specifying any other options.
-
-        In particular, `combine_text_under_n_chars` value is adjusted down to the
-        `new_after_n_chars` value when the default for `combine_text_under_n_chars` exceeds the
-        value of `new_after_n_chars`.
-        """
+        """Caller can specify `new_after_n_chars` arg without specifying any other options."""
         try:
-            opts = _ByTitleChunkingOptions(new_after_n_chars=200)
+            opts = _ByTitleChunkingOptions.new(new_after_n_chars=200)
         except ValueError:
             pytest.fail("did not accept `new_after_n_chars` as option by itself")
 
         assert opts.soft_max == 200
-        assert opts.combine_text_under_n_chars == 200
 
     @pytest.mark.parametrize(
         ("multipage_sections", "expected_value"),

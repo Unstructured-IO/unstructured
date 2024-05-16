@@ -6,11 +6,11 @@ import dataclasses as dc
 import enum
 import functools
 import hashlib
-import inspect
 import os
 import pathlib
 import re
 import uuid
+from itertools import groupby
 from types import MappingProxyType
 from typing import Any, Callable, FrozenSet, Optional, Sequence, cast
 
@@ -22,18 +22,10 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.utils import lazyproperty
+from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
-
-
-class NoID(abc.ABC):
-    """Class to indicate that an element do not have an ID."""
-
-
-class UUID(abc.ABC):
-    """Class to indicate that an element should have a UUID."""
 
 
 @dc.dataclass
@@ -151,6 +143,18 @@ class Link(TypedDict):
     start_index: int
 
 
+class FormKeyOrValue(TypedDict):
+    text: str
+    layout_element_id: Optional[str]
+    custom_element: Optional[Text]
+
+
+class FormKeyValuePair(TypedDict):
+    key: FormKeyOrValue
+    value: Optional[FormKeyOrValue]
+    confidence: float
+
+
 class ElementMetadata:
     """Fully-dynamic replacement for dataclass-based ElementMetadata."""
 
@@ -184,10 +188,12 @@ class ElementMetadata:
     header_footer_type: Optional[str]
     # -- used in chunks only, when chunk must be split mid-text to fit window --
     is_continuation: Optional[bool]
+    key_value_pairs: Optional[list[FormKeyValuePair]]
     languages: Optional[list[str]]
     last_modified: Optional[str]
     link_texts: Optional[list[str]]
     link_urls: Optional[list[str]]
+    link_start_indexes: Optional[list[int]]
     links: Optional[list[Link]]
     # -- used in chunks only, allowing access to element(s) chunk was formed from when enabled --
     orig_elements: Optional[list[Element]]
@@ -195,11 +201,9 @@ class ElementMetadata:
     page_name: Optional[str]
     # -- page numbers currently supported for DOCX, HTML, PDF, and PPTX documents --
     page_number: Optional[int]
-    parent_id: Optional[str | uuid.UUID | NoID | UUID]
+    parent_id: Optional[str]
     # -- "fields" e.g. status, dept.no, etc. extracted from text via regex --
     regex_metadata: Optional[dict[str, list[RegexMetadata]]]
-    # -- EPUB document section --
-    section: Optional[str]
 
     # -- e-mail specific metadata fields --
     sent_from: Optional[list[str]]
@@ -209,6 +213,7 @@ class ElementMetadata:
 
     # -- used for Table elements to capture rows/col structure --
     text_as_html: Optional[str]
+    table_as_cells: Optional[dict[str, str | int]]
     url: Optional[str]
 
     # -- debug fields can be assigned and referenced using dotted-notation but are not serialized
@@ -235,18 +240,19 @@ class ElementMetadata:
         last_modified: Optional[str] = None,
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
+        link_start_indexes: Optional[list[int]] = None,
         links: Optional[list[Link]] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
         page_number: Optional[int] = None,
-        parent_id: Optional[str | uuid.UUID | NoID | UUID] = None,
+        parent_id: Optional[str] = None,
         regex_metadata: Optional[dict[str, list[RegexMetadata]]] = None,
-        section: Optional[str] = None,
         sent_from: Optional[list[str]] = None,
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
         subject: Optional[str] = None,
         text_as_html: Optional[str] = None,
+        table_as_cells: Optional[dict[str, str | int]] = None,
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
@@ -274,18 +280,19 @@ class ElementMetadata:
         self.last_modified = last_modified
         self.link_texts = link_texts
         self.link_urls = link_urls
+        self.link_start_indexes = link_start_indexes
         self.links = links
         self.orig_elements = orig_elements
         self.page_name = page_name
         self.page_number = page_number
         self.parent_id = parent_id
         self.regex_metadata = regex_metadata
-        self.section = section
         self.sent_from = sent_from
         self.sent_to = sent_to
         self.signature = signature
         self.subject = subject
         self.text_as_html = text_as_html
+        self.table_as_cells = table_as_cells
         self.url = url
 
     def __eq__(self, other: object) -> bool:
@@ -321,6 +328,8 @@ class ElementMetadata:
         This would generally be a dict formed using the `.to_dict()` method and stored as JSON
         before "rehydrating" it using this method.
         """
+        from unstructured.staging.base import elements_from_base64_gzipped_json
+
         # -- avoid unexpected mutation by working on a copy of provided dict --
         meta_dict = copy.deepcopy(meta_dict)
         self = ElementMetadata()
@@ -329,6 +338,10 @@ class ElementMetadata:
                 self.coordinates = CoordinatesMetadata.from_dict(field_value)
             elif field_name == "data_source":
                 self.data_source = DataSourceMetadata.from_dict(field_value)
+            elif field_name == "orig_elements":
+                self.orig_elements = elements_from_base64_gzipped_json(field_value)
+            elif field_name == "key_value_pairs":
+                self.key_value_pairs = _kvform_rehydrate_internal_elements(field_value)
             else:
                 setattr(self, field_name, field_value)
 
@@ -372,6 +385,8 @@ class ElementMetadata:
         The returned dict is "sparse" in that no key-value pair appears for a field with value
         `None`.
         """
+        from unstructured.staging.base import elements_to_base64_gzipped_json
+
         meta_dict = copy.deepcopy(dict(self.fields))
 
         # -- remove fields that should not be serialized --
@@ -390,6 +405,10 @@ class ElementMetadata:
             meta_dict["coordinates"] = self.coordinates.to_dict()
         if self.data_source is not None:
             meta_dict["data_source"] = self.data_source.to_dict()
+        if self.orig_elements is not None:
+            meta_dict["orig_elements"] = elements_to_base64_gzipped_json(self.orig_elements)
+        if self.key_value_pairs is not None:
+            meta_dict["key_value_pairs"] = _kvform_pairs_to_dict(self.key_value_pairs)
 
         return meta_dict
 
@@ -477,6 +496,7 @@ class ConsolidationStrategy(enum.Enum):
             "last_modified": cls.FIRST,
             "link_texts": cls.LIST_CONCATENATE,
             "link_urls": cls.LIST_CONCATENATE,
+            "link_start_indexes": cls.DROP,
             "links": cls.DROP,  # -- deprecated field --
             "max_characters": cls.DROP,  # -- unused, remove from ElementMetadata --
             "orig_elements": cls.DROP,  # -- not expected, added by chunking, not before --
@@ -484,17 +504,53 @@ class ConsolidationStrategy(enum.Enum):
             "page_number": cls.FIRST,
             "parent_id": cls.DROP,
             "regex_metadata": cls.REGEX,
-            "section": cls.FIRST,
             "sent_from": cls.FIRST,
             "sent_to": cls.FIRST,
             "signature": cls.FIRST,
             "subject": cls.FIRST,
-            "text_as_html": cls.DROP,  # -- not expected, only occurs in _TableSection --
+            "text_as_html": cls.FIRST,  # -- only occurs in Table --
+            "table_as_cells": cls.FIRST,  # -- only occurs in Table --
             "url": cls.FIRST,
+            "key_value_pairs": cls.DROP,  # -- only occurs in FormKeysValues --
         }
 
 
 _P = ParamSpec("_P")
+
+
+def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
+    """Converts `id` and `parent_id` of elements from UUIDs to hashes.
+
+    This function ensures deterministic IDs by:
+    1. Converting each element's UUID into a hash.
+    2. Updating the `parent_id` to match the new hash ID of parent elements.
+
+    Args:
+        elements: A list of Element objects to update.
+
+    Returns:
+        List of updated Element objects with hashes for `id` and `parent_id`.
+    """
+    # -- generate sequence number for each element on a page --
+    page_numbers = [e.metadata.page_number for e in elements]
+    page_seq_pairs = [
+        seq_on_page for page, group in groupby(page_numbers) for seq_on_page, _ in enumerate(group)
+    ]
+
+    # -- assign hash IDs to elements --
+    old_to_new_mapping = {
+        element.id: element.id_to_hash(seq_on_page_counter)
+        for element, seq_on_page_counter in zip(elements, page_seq_pairs)
+    }
+
+    # -- map old parent IDs to new ones --
+    for e in elements:
+        parent_id = e.metadata.parent_id
+        if not parent_id:
+            continue
+        e.metadata.parent_id = old_to_new_mapping[parent_id]
+
+    return elements
 
 
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
@@ -529,22 +585,18 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
+            call_args = get_call_args_applying_defaults(func, *args, **kwargs)
 
-            regex_metadata: dict["str", "str"] = params.get("regex_metadata", {})
+            regex_metadata: dict["str", "str"] = call_args.get("regex_metadata", {})
             # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
             # -- requested, otherwise it will serialize (because it's not None) when it has no
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
-            unique_element_ids: bool = params.get("unique_element_ids", False)
-            if unique_element_ids:
-                for element in elements:
-                    element.id_to_uuid()
+
+            unique_element_ids: bool = call_args.get("unique_element_ids", False)
+            if unique_element_ids is False:
+                elements = assign_and_map_hash_ids(elements)
 
             return elements
 
@@ -589,6 +641,7 @@ class ElementType:
     UNCATEGORIZED_TEXT = "UncategorizedText"
     NARRATIVE_TEXT = "NarrativeText"
     BULLETED_TEXT = "BulletedText"
+    PARAGRAPH = "Paragraph"
     ABSTRACT = "Abstract"
     THREADING = "Threading"
     FORM = "Form"
@@ -606,6 +659,10 @@ class ElementType:
     LIST_ITEM_OTHER = "List-item"
     CHECKED = "Checked"
     UNCHECKED = "Unchecked"
+    CHECK_BOX_CHECKED = "CheckBoxChecked"
+    CHECK_BOX_UNCHECKED = "CheckBoxUnchecked"
+    RADIO_BUTTON_CHECKED = "RadioButtonChecked"
+    RADIO_BUTTON_UNCHECKED = "RadioButtonUnchecked"
     ADDRESS = "Address"
     EMAIL_ADDRESS = "EmailAddress"
     PAGE_BREAK = "PageBreak"
@@ -619,6 +676,9 @@ class ElementType:
     FOOTER = "Footer"
     FOOTNOTE = "Footnote"
     PAGE_FOOTER = "Page-footer"
+    PAGE_NUMBER = "PageNumber"
+    CODE_SNIPPET = "CodeSnippet"
+    FORM_KEYS_VALUES = "FormKeysValues"
 
     @classmethod
     def to_dict(cls):
@@ -636,19 +696,35 @@ class ElementType:
 
 
 class Element(abc.ABC):
-    """An element is a section of a page in the document."""
+    """An element is a semantically-coherent component of a document, often a paragraph.
+
+    There are a few design principles that are followed when creating an element:
+    1. It will always have an ID, which by default is a random UUID.
+    2. Asking for an ID should always return a string, it can never be None.
+    3. ID is lazy, meaning it will be generated when asked for the first time.
+    4. When deterministic behavior is needed, the ID can be converted.
+        to a hash based on its text `element.id_to_hash(position)`
+    4. Even if the `text` attribute is not defined in a subclass, it will default to a blank string.
+    6. Assigning a string ID manually is possible, but is meant to be used
+        only for deserialization purposes.
+    """
 
     text: str
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
         detection_origin: Optional[str] = None,
     ):
-        self.id: str | uuid.UUID | NoID | UUID = element_id
+        if element_id is not None and not isinstance(
+            element_id, str
+        ):  # pyright: ignore[reportUnnecessaryIsInstance]
+            raise ValueError("element_id must be of type str or None.")
+
+        self._element_id = element_id
         self.metadata = ElementMetadata() if metadata is None else metadata
         if coordinates is not None or coordinate_system is not None:
             self.metadata.coordinates = CoordinatesMetadata(
@@ -659,16 +735,8 @@ class Element(abc.ABC):
         # -- defined in a subclass.
         self.text = self.text if hasattr(self, "text") else ""
 
-    def id_to_uuid(self):
-        self.id = str(uuid.uuid4())
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "type": None,
-            "element_id": self.id,
-            "text": self.text,
-            "metadata": self.metadata.to_dict(),
-        }
+    def __str__(self):
+        return self.text
 
     def convert_coordinates_to_new_system(
         self, new_system: CoordinateSystem, in_place: bool = True
@@ -699,6 +767,35 @@ class Element(abc.ABC):
 
         return new_coordinates
 
+    def id_to_hash(self, sequence_number: int) -> str:
+        """Calculates and assigns a deterministic hash as an ID.
+
+        The hash ID is based on element's text, sequence number on page,
+        page number and its filename.
+
+        Args:
+            sequence_number: index on page
+
+        Returns: new ID value
+        """
+        data = f"{self.metadata.filename}{self.text}{self.metadata.page_number}{sequence_number}"
+        self._element_id = hashlib.sha256(data.encode()).hexdigest()[:32]
+        return self.id
+
+    @property
+    def id(self):
+        if self._element_id is None:
+            self._element_id = str(uuid.uuid4())
+        return self._element_id
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "type": None,
+            "element_id": self.id,
+            "text": self.text,
+            "metadata": self.metadata.to_dict(),
+        }
+
 
 class CheckBox(Element):
     """A checkbox with an attribute indicating whether its checked or not.
@@ -708,7 +805,7 @@ class CheckBox(Element):
 
     def __init__(
         self,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         checked: bool = False,
@@ -752,7 +849,7 @@ class Text(Element):
     def __init__(
         self,
         text: str,
-        element_id: str | uuid.UUID | NoID | UUID = NoID(),
+        element_id: Optional[str] = None,
         coordinates: Optional[tuple[tuple[float, float], ...]] = None,
         coordinate_system: Optional[CoordinateSystem] = None,
         metadata: Optional[ElementMetadata] = None,
@@ -762,13 +859,6 @@ class Text(Element):
         metadata = metadata if metadata else ElementMetadata()
         self.text: str = text
         self.embeddings: Optional[list[float]] = embeddings
-
-        if isinstance(element_id, NoID):
-            # NOTE(robinson) - Cut the SHA256 hex in half to get the first 128 bits
-            element_id = hashlib.sha256(text.encode()).hexdigest()[:32]
-
-        elif isinstance(element_id, UUID):
-            element_id = str(uuid.uuid4())
 
         super().__init__(
             element_id=element_id,
@@ -793,16 +883,6 @@ class Text(Element):
     def __str__(self):
         return self.text
 
-    def to_dict(self) -> dict[str, Any]:
-        """Serialize to JSON-compatible (str keys) dict."""
-        out = super().to_dict()
-        out["element_id"] = self.id
-        out["type"] = self.category
-        out["text"] = self.text
-        if self.embeddings:
-            out["embeddings"] = self.embeddings
-        return out
-
     def apply(self, *cleaners: Callable[[str], str]):
         """Applies a cleaning brick to the text element.
 
@@ -818,6 +898,16 @@ class Text(Element):
 
         self.text = cleaned_text
 
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize to JSON-compatible (str keys) dict."""
+        out = super().to_dict()
+        out["element_id"] = self.id
+        out["type"] = self.category
+        out["text"] = self.text
+        if self.embeddings:
+            out["embeddings"] = self.embeddings
+        return out
+
 
 class Formula(Text):
     "An element containing formulas in a document"
@@ -826,7 +916,12 @@ class Formula(Text):
 
 
 class CompositeElement(Text):
-    """A section of text consisting of a combination of elements."""
+    """A chunk formed from text (non-Table) elements.
+
+    Only produced by chunking. An instance may be formed by combining one or more sequential
+    elements produced by partitioning. It it also used when text-splitting an "oversized" element,
+    a single element that by itself is larger than the requested chunk size.
+    """
 
     category = "CompositeElement"
 
@@ -904,6 +999,24 @@ class Footer(Text):
     category = "Footer"
 
 
+class CodeSnippet(Text):
+    """An element for capturing code snippets."""
+
+    category = "CodeSnippet"
+
+
+class PageNumber(Text):
+    """An element for capturing page numbers."""
+
+    category = "PageNumber"
+
+
+class FormKeysValues(Text):
+    """An element for capturing Key-Value dicts (forms)."""
+
+    category = "FormKeysValues"
+
+
 TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.TITLE: Title,
     ElementType.SECTION_HEADER: Title,
@@ -911,9 +1024,10 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.SUB_HEADLINE: Title,
     ElementType.FIELD_NAME: Title,
     ElementType.UNCATEGORIZED_TEXT: Text,
-    ElementType.COMPOSITE_ELEMENT: Text,
+    ElementType.COMPOSITE_ELEMENT: CompositeElement,
     ElementType.TEXT: NarrativeText,
     ElementType.NARRATIVE_TEXT: NarrativeText,
+    ElementType.PARAGRAPH: NarrativeText,
     # this mapping favors ensures yolox produces backward compatible categories
     ElementType.ABSTRACT: NarrativeText,
     ElementType.THREADING: NarrativeText,
@@ -938,4 +1052,45 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.EMAIL_ADDRESS: EmailAddress,
     ElementType.FORMULA: Formula,
     ElementType.PAGE_BREAK: PageBreak,
+    ElementType.CODE_SNIPPET: CodeSnippet,
+    ElementType.PAGE_NUMBER: PageNumber,
+    ElementType.FORM_KEYS_VALUES: FormKeysValues,
 }
+
+
+def _kvform_rehydrate_internal_elements(kv_pairs: list[dict]) -> list[FormKeyValuePair]:
+    """
+    The key_value_pairs metadata field contains (in the vast majority of cases)
+    nested Text elements. Those need to be turned from dicts into Elements explicitly,
+    e.g. when partition_json is used.
+    """
+    from unstructured.staging.base import elements_from_dicts
+
+    # safe to overwrite - deepcopy already happened
+    for kv_pair in kv_pairs:
+        if kv_pair["key"]["custom_element"] is not None:
+            (kv_pair["key"]["custom_element"],) = elements_from_dicts(
+                [kv_pair["key"]["custom_element"]]
+            )
+        if kv_pair["value"] is not None and kv_pair["value"]["custom_element"] is not None:
+            (kv_pair["value"]["custom_element"],) = elements_from_dicts(
+                [kv_pair["value"]["custom_element"]]
+            )
+    return kv_pairs
+
+
+def _kvform_pairs_to_dict(kv_pairs: list[FormKeyValuePair]) -> list[dict]:
+    """
+    The key_value_pairs metadata field contains (in the vast majority of cases)
+    nested Text elements. Those need to be turned from Elements to dicts recursively,
+    e.g. when FormKeysValues.to_dict() is used.
+
+    """
+    kv_pairs: list[dict] = copy.deepcopy(kv_pairs)
+    for kv_pair in kv_pairs:
+        if kv_pair["key"]["custom_element"] is not None:
+            kv_pair["key"]["custom_element"] = kv_pair["key"]["custom_element"].to_dict()
+        if kv_pair["value"] is not None and kv_pair["value"]["custom_element"] is not None:
+            kv_pair["value"]["custom_element"] = kv_pair["value"]["custom_element"].to_dict()
+
+    return kv_pairs

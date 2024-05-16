@@ -2,11 +2,13 @@ from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
 from pdfminer.utils import open_filename
 
+from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
     open_pdfminer_pages_generator,
     rect_to_bbox,
 )
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
@@ -134,3 +136,56 @@ def merge_inferred_with_extracted_layout(
         inferred_page.elements[:] = elements
 
     return inferred_document_layout
+
+
+@requires_dependencies("unstructured_inference")
+def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
+    """Clean pdfminer elements from inside tables.
+
+    This function removes elements sourced from PDFMiner that are subregions within table elements.
+    """
+
+    from unstructured_inference.config import inference_config
+
+    for page in document.pages:
+        tables = [e for e in page.elements if e.type == ElementType.TABLE]
+        for i, element in enumerate(page.elements):
+            if element.source != Source.PDFMINER:
+                continue
+            subregion_threshold = inference_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
+            element_inside_table = [
+                element.bbox.is_almost_subregion_of(t.bbox, subregion_threshold) for t in tables
+            ]
+            if sum(element_inside_table) == 1:
+                page.elements[i] = None
+        page.elements = [e for e in page.elements if e]
+
+    return document
+
+
+def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "DocumentLayout":
+    """Removes duplicate image elements extracted by PDFMiner from a document layout."""
+
+    from unstructured_inference.inference.elements import (
+        region_bounding_boxes_are_almost_the_same,
+    )
+
+    for page in document.pages:
+        image_elements = []
+        for i, element in enumerate(page.elements):
+            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
+                continue
+
+            # check if this element is a duplicate
+            if any(
+                e.text == element.text
+                and region_bounding_boxes_are_almost_the_same(
+                    e.bbox, element.bbox, env_config.EMBEDDED_IMAGE_SAME_REGION_THRESHOLD
+                )
+                for e in image_elements
+            ):
+                page.elements[i] = None
+            image_elements.append(element)
+        page.elements = [e for e in page.elements if e]
+
+    return document

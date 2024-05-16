@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, List, Optional
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -22,14 +24,17 @@ def partition_ppt(
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
+    include_slide_notes: Optional[bool] = None,
     infer_table_structure: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
-    **kwargs,
-) -> List[Element]:
+    date_from_file_object: bool = False,
+    starting_page_number: int = 1,
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft PowerPoint Documents in .ppt format into their document elements.
 
     Parameters
@@ -40,6 +45,8 @@ def partition_ppt(
         A file-like object using "rb" mode --> open(filename, "rb").
     include_page_breaks
         If True, includes a PageBreak element between slides
+    include_slide_notes
+        If True, includes the slide notes as element
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -55,6 +62,13 @@ def partition_ppt(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first slide in the presentation.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     # Verify that only one of the arguments was provided
     if filename is None:
@@ -70,7 +84,9 @@ def partition_ppt(
         last_modification_date = get_last_modified_date(filename)
 
     elif file is not None:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()
@@ -89,11 +105,14 @@ def partition_ppt(
         pptx_filename = os.path.join(tmpdir, f"{base_filename}.pptx")
         elements = partition_pptx(
             filename=pptx_filename,
+            detect_language_per_element=detect_language_per_element,
+            include_page_breaks=include_page_breaks,
+            include_slide_notes=include_slide_notes,
             infer_table_structure=infer_table_structure,
+            languages=languages,
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
         )
 
     # remove tmp.name from filename if parsing file

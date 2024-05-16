@@ -1,30 +1,35 @@
 """Defines Abstract Base Classes (ABC's) core to batch processing documents
 through Unstructured."""
 
+from __future__ import annotations
+
 import functools
 import json
 import os
 import re
-import typing as t
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 from datetime import datetime
 from pathlib import Path
+from typing import Any, Optional, Type, TypeVar
 
 from dataclasses_json import DataClassJsonMixin
 from dataclasses_json.core import Json, _decode_dataclass
 
-from unstructured.chunking.basic import chunk_elements
-from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, Element
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 from unstructured.ingest.error import PartitionError, SourceConnectionError
 from unstructured.ingest.logger import logger
-from unstructured.staging.base import convert_to_dict, flatten_dict
+from unstructured.partition.api import partition_via_api
+from unstructured.staging.base import elements_to_dicts, flatten_dict
 
-A = t.TypeVar("A", bound="DataClassJsonMixin")
+A = TypeVar("A", bound="DataClassJsonMixin")
+
+# -- Needed to resolve TypeError raised by using InitVar and __future__.annotations
+# -- See more here: https://stackoverflow.com/questions/70400639/
+InitVar.__call__ = lambda *args: None  # type: ignore
 
 SUPPORTED_REMOTE_FSSPEC_PROTOCOLS = [
     "s3",
@@ -74,29 +79,29 @@ class RetryStrategyConfig(BaseConfig):
             evaluated at runtime and its return value used.
     """
 
-    max_retries: t.Optional[int] = None
-    max_retry_time: t.Optional[float] = None
+    max_retries: Optional[int] = None
+    max_retry_time: Optional[float] = None
 
 
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = False
+    pdf_infer_table_structure: bool = True
     strategy: str = "auto"
-    ocr_languages: t.Optional[t.List[str]] = None
-    encoding: t.Optional[str] = None
-    additional_partition_args: dict = field(default_factory=dict)
-    skip_infer_table_types: t.Optional[t.List[str]] = None
-    fields_include: t.List[str] = field(
+    ocr_languages: Optional[list[str]] = None
+    encoding: Optional[str] = None
+    additional_partition_args: dict[str, Any] = field(default_factory=dict)
+    skip_infer_table_types: Optional[list[str]] = None
+    fields_include: list[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
     )
     flatten_metadata: bool = False
-    metadata_exclude: t.List[str] = field(default_factory=list)
-    metadata_include: t.List[str] = field(default_factory=list)
-    partition_endpoint: t.Optional[str] = "https://api.unstructured.io/general/v0/general"
+    metadata_exclude: list[str] = field(default_factory=list)
+    metadata_include: list[str] = field(default_factory=list)
+    partition_endpoint: Optional[str] = "https://api.unstructured.io/general/v0/general"
     partition_by_api: bool = False
-    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
-    hi_res_model_name: t.Optional[str] = None
+    api_key: Optional[str] = str(enhanced_field(default=None, sensitive=True)) or None
+    hi_res_model_name: Optional[str] = None
 
 
 @dataclass
@@ -114,18 +119,18 @@ class FileStorageConfig(BaseConfig):
     remote_url: str
     uncompress: bool = False
     recursive: bool = False
-    file_glob: t.Optional[t.List[str]] = None
+    file_glob: Optional[list[str]] = None
 
 
 @dataclass
 class FsspecConfig(FileStorageConfig):
-    access_config: AccessConfig = None
+    access_config: Optional[AccessConfig] = None
     protocol: str = field(init=False)
     path_without_protocol: str = field(init=False)
     dir_path: str = field(init=False)
     file_path: str = field(init=False)
 
-    def get_access_config(self) -> dict:
+    def get_access_config(self) -> dict[str, Any]:
         if self.access_config:
             return self.access_config.to_dict(apply_name_overload=False)
         else:
@@ -174,21 +179,24 @@ class FsspecConfig(FileStorageConfig):
 @dataclass
 class ReadConfig(BaseConfig):
     # where raw documents are stored for processing, and then removed if not preserve_downloads
-    download_dir: t.Optional[str] = ""
+    download_dir: Optional[str] = ""
     re_download: bool = False
     preserve_downloads: bool = False
     download_only: bool = False
-    max_docs: t.Optional[int] = None
+    max_docs: Optional[int] = None
 
 
 @dataclass
 class EmbeddingConfig(BaseConfig):
     provider: str
-    api_key: t.Optional[str] = enhanced_field(default=None, sensitive=True)
-    model_name: t.Optional[str] = None
+    api_key: Optional[str] = str(enhanced_field(default=None, sensitive=True)) or None
+    model_name: Optional[str] = None
+    aws_access_key_id: Optional[str] = None
+    aws_secret_access_key: Optional[str] = None
+    aws_region: Optional[str] = None
 
     def get_embedder(self) -> BaseEmbeddingEncoder:
-        kwargs = {}
+        kwargs: dict[str, Any] = {}
         if self.api_key:
             kwargs["api_key"] = self.api_key
         if self.model_name:
@@ -209,63 +217,60 @@ class EmbeddingConfig(BaseConfig):
             from unstructured.embed.octoai import OctoAiEmbeddingConfig, OctoAIEmbeddingEncoder
 
             return OctoAIEmbeddingEncoder(config=OctoAiEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-aws-bedrock":
+            from unstructured.embed.bedrock import BedrockEmbeddingConfig, BedrockEmbeddingEncoder
+
+            return BedrockEmbeddingEncoder(
+                config=BedrockEmbeddingConfig(
+                    aws_access_key_id=self.aws_access_key_id,
+                    aws_secret_access_key=self.aws_secret_access_key,
+                    region_name=self.aws_region,
+                )
+            )
+        elif self.provider == "langchain-vertexai":
+            from unstructured.embed.vertexai import (
+                VertexAIEmbeddingConfig,
+                VertexAIEmbeddingEncoder,
+            )
+
+            return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
 
 @dataclass
 class ChunkingConfig(BaseConfig):
-    chunk_elements: bool = False
-    chunking_strategy: t.Optional[str] = None
-    combine_text_under_n_chars: t.Optional[int] = None
-    max_characters: t.Optional[int] = None
-    multipage_sections: t.Optional[bool] = None
-    new_after_n_chars: t.Optional[int] = None
-    overlap: t.Optional[int] = None
-    overlap_all: t.Optional[bool] = None
+    chunk_elements: InitVar[bool] = False
+    chunking_strategy: Optional[str] = None
+    combine_text_under_n_chars: Optional[int] = None
+    include_orig_elements: Optional[bool] = None
+    max_characters: Optional[int] = None
+    multipage_sections: Optional[bool] = None
+    new_after_n_chars: Optional[int] = None
+    overlap: Optional[int] = None
+    overlap_all: Optional[bool] = None
 
-    def chunk(self, elements: t.List[Element]) -> t.List[Element]:
-        chunking_strategy = (
-            self.chunking_strategy
-            if self.chunking_strategy in ("basic", "by_title")
-            else "by_title" if self.chunk_elements is True else None
-        )
-        return (
-            chunk_by_title(
-                elements=elements,
-                combine_text_under_n_chars=self.combine_text_under_n_chars,
-                max_characters=self.max_characters,
-                multipage_sections=self.multipage_sections,
-                new_after_n_chars=self.new_after_n_chars,
-                overlap=self.overlap,
-                overlap_all=self.overlap_all,
-            )
-            if chunking_strategy == "by_title"
-            else (
-                chunk_elements(
-                    elements=elements,
-                    max_characters=self.max_characters,
-                    new_after_n_chars=self.new_after_n_chars,
-                    overlap=self.overlap,
-                    overlap_all=self.overlap_all,
-                )
-                if chunking_strategy == "basic"
-                else elements
-            )
-        )
+    def __post_init__(self, chunk_elements: bool) -> None:
+        """Resolve chunking_strategy if chunk_elements is True.
+
+        If chunk_elements is True and chunking_strategy is None, default to 'by_title'. Otherwise,
+        do nothing and keep the defined value of chunking_strategy."
+        """
+        if chunk_elements and self.chunking_strategy is None:
+            self.chunking_strategy = "by_title"
 
 
 @dataclass
 class PermissionsConfig(BaseConfig):
-    application_id: t.Optional[str] = enhanced_field(overload_name="permissions_application_id")
-    tenant: t.Optional[str] = enhanced_field(overload_name="permissions_tenant")
-    client_cred: t.Optional[str] = enhanced_field(
+    application_id: Optional[str] = enhanced_field(overload_name="permissions_application_id")
+    tenant: Optional[str] = enhanced_field(overload_name="permissions_tenant")
+    client_cred: Optional[str] = enhanced_field(
         default=None, sensitive=True, overload_name="permissions_client_cred"
     )
 
 
 # module-level variable to store session handle
-global_write_session_handle: t.Optional[BaseSessionHandle] = None
+global_write_session_handle: Optional[BaseSessionHandle] = None
 
 
 @dataclass
@@ -280,12 +285,12 @@ class BaseConnectorConfig(BaseConfig, ABC):
 
 @dataclass
 class SourceMetadata(EnhancedDataClassJsonMixin, ABC):
-    date_created: t.Optional[str] = None
-    date_modified: t.Optional[str] = None
-    version: t.Optional[str] = None
-    source_url: t.Optional[str] = None
-    exists: t.Optional[bool] = None
-    permissions_data: t.Optional[t.List[t.Dict[str, t.Any]]] = None
+    date_created: Optional[str] = None
+    date_modified: Optional[str] = None
+    version: Optional[str] = None
+    source_url: Optional[str] = None
+    exists: Optional[bool] = None
+    permissions_data: Optional[list[dict[str, Any]]] = None
 
 
 class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
@@ -313,7 +318,7 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
         "unique_id",
     ]
 
-    def add_props(self, as_dict: dict, props: t.List[str]):
+    def add_props(self, as_dict: dict[str, Any], props: list[str]):
         for prop in props:
             val = getattr(self, prop)
             if isinstance(val, Path):
@@ -322,7 +327,7 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
                 val = val.to_dict(encode_json=False)
             as_dict[prop] = val
 
-    def to_dict(self, **kwargs) -> t.Dict[str, Json]:
+    def to_dict(self, **kwargs) -> dict[str, Json]:
         as_dict = _asdict(self, **kwargs)
         if "_session_handle" in as_dict:
             as_dict.pop("_session_handle", None)
@@ -333,7 +338,7 @@ class IngestDocJsonMixin(EnhancedDataClassJsonMixin):
 
     @classmethod
     def from_dict(
-        cls: t.Type[A], kvs: Json, *, infer_missing=False, apply_name_overload: bool = True
+        cls: Type[A], kvs: Json, *, infer_missing=False, apply_name_overload: bool = True
     ) -> A:
         doc = super().from_dict(
             kvs=kvs, infer_missing=infer_missing, apply_name_overload=apply_name_overload
@@ -354,7 +359,7 @@ class BatchIngestDocJsonMixin(EnhancedDataClassJsonMixin):
 
     properties_to_serialize = ["unique_id"]
 
-    def add_props(self, as_dict: dict, props: t.List[str]):
+    def add_props(self, as_dict: dict[str, Any], props: list[str]):
         for prop in props:
             val = getattr(self, prop)
             if isinstance(val, Path):
@@ -363,13 +368,13 @@ class BatchIngestDocJsonMixin(EnhancedDataClassJsonMixin):
                 val = val.to_dict(encode_json=False)
             as_dict[prop] = val
 
-    def to_dict(self, encode_json=False) -> t.Dict[str, Json]:
+    def to_dict(self, encode_json=False) -> dict[str, Json]:
         as_dict = _asdict(self, encode_json=encode_json)
         self.add_props(as_dict=as_dict, props=self.properties_to_serialize)
         return as_dict
 
     @classmethod
-    def from_dict(cls: t.Type[A], kvs: Json, *, infer_missing=False) -> A:
+    def from_dict(cls: Type[A], kvs: Json, *, infer_missing=False) -> A:
         doc = _decode_dataclass(cls, kvs, infer_missing)
         return doc
 
@@ -396,8 +401,8 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
     Crucially, it is not responsible for the actual processing of the raw document.
     """
 
-    _source_metadata: t.Optional[SourceMetadata] = field(init=False, default=None)
-    _date_processed: t.Optional[str] = field(init=False, default=None)
+    _source_metadata: Optional[SourceMetadata] = field(init=False, default=None)
+    _date_processed: Optional[str] = field(init=False, default=None)
 
     @property
     def source_metadata(self) -> SourceMetadata:
@@ -413,25 +418,25 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         self._source_metadata = value
 
     @property
-    def date_created(self) -> t.Optional[str]:
+    def date_created(self) -> Optional[str]:
         """The date the document was created on the source system."""
-        return self.source_metadata.date_created  # type: ignore
+        return self.source_metadata.date_created
 
     @property
-    def date_modified(self) -> t.Optional[str]:
+    def date_modified(self) -> Optional[str]:
         """The date the document was last modified on the source system."""
-        return self.source_metadata.date_modified  # type: ignore
+        return self.source_metadata.date_modified
 
     @property
-    def date_processed(self) -> t.Optional[str]:
+    def date_processed(self) -> Optional[str]:
         """The date the document was last processed by Unstructured.
         self._date_processed is assigned internally in self.partition_file()"""
-        return self._date_processed  # type: ignore
+        return self._date_processed
 
     @property
-    def exists(self) -> t.Optional[bool]:
+    def exists(self) -> Optional[bool]:
         """Whether the document exists on the remote source."""
-        return self.source_metadata.exists  # type: ignore
+        return self.source_metadata.exists
 
     @property
     @abstractmethod
@@ -439,7 +444,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         """The local filename of the document after fetching from remote source."""
 
     @property
-    def base_filename(self) -> t.Optional[str]:
+    def base_filename(self) -> Optional[str]:
         if self.read_config.download_dir and self.filename:
             download_path = str(Path(self.read_config.download_dir).resolve())
             full_path = str(self.filename)
@@ -448,7 +453,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         return None
 
     @property
-    def base_output_filename(self) -> t.Optional[str]:
+    def base_output_filename(self) -> Optional[str]:
         if self.processor_config.output_dir and self._output_filename:
             output_path = str(Path(self.processor_config.output_dir).resolve())
             full_path = str(self._output_filename)
@@ -462,7 +467,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         """Filename of the structured output for this doc."""
 
     @property
-    def record_locator(self) -> t.Optional[t.Dict[str, t.Any]]:  # Values must be JSON-serializable
+    def record_locator(self) -> Optional[dict[str, Any]]:  # Values must be JSON-serializable
         """A dictionary with any data necessary to uniquely identify the document on
         the source system."""
         return None
@@ -472,19 +477,19 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         return self.filename
 
     @property
-    def source_url(self) -> t.Optional[str]:
+    def source_url(self) -> Optional[str]:
         """The url of the source document."""
         return self.source_metadata.source_url  # type: ignore
 
     @property
-    def version(self) -> t.Optional[str]:
+    def version(self) -> Optional[str]:
         """The version of the source document, this could be the last modified date, an
         explicit version number, or anything else that can be used to uniquely identify
         the version of the document."""
         return self.source_metadata.version  # type: ignore
 
     @property
-    def permissions_data(self) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
+    def permissions_data(self) -> Optional[list[dict[str, Any]]]:
         """Access control data, aka permissions or sharing, from the source system."""
         if self.source_metadata is None:
             self.update_source_metadata()
@@ -521,7 +526,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         """Sets the _permissions_data property for the doc.
         This property is later used to fill the corresponding SourceMetadata.permissions_data field,
         and after that carries on to the permissions_data property."""
-        self._permissions_data: t.Optional[t.List[t.Dict]] = None
+        self._permissions_data: Optional[list[dict[str, Any]]] = None
 
     # NOTE(crag): Future BaseIngestDoc classes could define get_file_object() methods
     # in addition to or instead of get_file()
@@ -539,8 +544,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         self,
         partition_config: PartitionConfig,
         **partition_kwargs,
-    ) -> t.List[Element]:
-        from unstructured.partition.api import partition_via_api
+    ) -> list[Element]:
         from unstructured.partition.auto import partition
 
         if not partition_config.partition_by_api:
@@ -580,18 +584,17 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
         self,
         partition_config: PartitionConfig,
         **partition_kwargs,
-    ) -> t.Optional[t.List[t.Dict[str, t.Any]]]:
+    ) -> Optional[list[dict[str, Any]]]:
         self._date_processed = datetime.utcnow().isoformat()
         if self.read_config.download_only:
             return None
         logger.info(f"Processing {self.filename}")
 
-        isd_elems_raw = self.partition_file(partition_config=partition_config, **partition_kwargs)
-        isd_elems = convert_to_dict(isd_elems_raw)
+        elements = self.partition_file(partition_config=partition_config, **partition_kwargs)
+        element_dicts = elements_to_dicts(elements)
 
-        self.isd_elems_no_filename: t.List[t.Dict[str, t.Any]] = []
-        for elem in isd_elems:
-            # type: ignore
+        self.isd_elems_no_filename: list[dict[str, Any]] = []
+        for elem in element_dicts:
             if partition_config.metadata_exclude and partition_config.metadata_include:
                 raise ValueError(
                     "Arguments `--metadata-include` and `--metadata-exclude` are "
@@ -630,7 +633,7 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
 
 @dataclass
 class BaseIngestDocBatch(BaseIngestDoc, BatchIngestDocJsonMixin, ABC):
-    ingest_docs: t.List[BaseSingleIngestDoc] = field(default_factory=list)
+    ingest_docs: list[BaseSingleIngestDoc] = field(default_factory=list)
 
     @abstractmethod
     @SourceConnectionError.wrap
@@ -682,13 +685,13 @@ class BaseDestinationConnector(BaseConnector, ABC):
         self.write_config = write_config
         self.connector_config = connector_config
 
-    def conform_dict(self, data: dict) -> None:
+    def conform_dict(self, data: dict[str, Any]) -> None:
         """
         When the original dictionary needs to be modified in place
         """
         return
 
-    def normalize_dict(self, element_dict: dict) -> dict:
+    def normalize_dict(self, element_dict: dict[str, Any]) -> dict[str, Any]:
         """
         When the original dictionary needs to be mapped to a new one
         """
@@ -699,12 +702,12 @@ class BaseDestinationConnector(BaseConnector, ABC):
         """Initializes the connector. Should also validate the connector is properly
         configured."""
 
-    def write(self, docs: t.List[BaseSingleIngestDoc]) -> None:
+    def write(self, docs: list[BaseSingleIngestDoc]) -> None:
         elements_dict = self.get_elements_dict(docs=docs)
         self.modify_and_write_dict(elements_dict=elements_dict)
 
-    def get_elements_dict(self, docs: t.List[BaseSingleIngestDoc]) -> t.List[t.Dict[str, t.Any]]:
-        dict_list: t.List[t.Dict[str, t.Any]] = []
+    def get_elements_dict(self, docs: list[BaseSingleIngestDoc]) -> list[dict[str, Any]]:
+        dict_list: list[dict[str, Any]] = []
         for doc in docs:
             local_path = doc._output_filename
             with open(local_path) as json_file:
@@ -716,12 +719,10 @@ class BaseDestinationConnector(BaseConnector, ABC):
         return dict_list
 
     @abstractmethod
-    def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
+    def write_dict(self, *args, elements_dict: list[dict[str, Any]], **kwargs) -> None:
         pass
 
-    def modify_and_write_dict(
-        self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs
-    ) -> None:
+    def modify_and_write_dict(self, *args, elements_dict: list[dict[str, Any]], **kwargs) -> None:
         """
         Modify in this instance means this method wraps calls to conform_dict() and
         normalize() before actually processing the content via write_dict()
@@ -731,7 +732,7 @@ class BaseDestinationConnector(BaseConnector, ABC):
         elements_dict_normalized = [self.normalize_dict(element_dict=d) for d in elements_dict]
         return self.write_dict(*args, elements_dict=elements_dict_normalized, **kwargs)
 
-    def write_elements(self, elements: t.List[Element], *args, **kwargs) -> None:
+    def write_elements(self, elements: list[Element], *args, **kwargs) -> None:
         elements_dict = [e.to_dict() for e in elements]
         self.modify_and_write_dict(*args, elements_dict=elements_dict, **kwargs)
 
@@ -819,7 +820,7 @@ class ConfigSessionHandleMixin:
 @dataclass
 class IngestDocSessionHandleMixin:
     connector_config: ConfigSessionHandleMixin
-    _session_handle: t.Optional[BaseSessionHandle] = field(default=None, init=False)
+    _session_handle: Optional[BaseSessionHandle] = field(default=None, init=False)
 
     @property
     def session_handle(self):

@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "a5c9668a6055bca2865ea5e6d16ea1e0",
+    "element_id": "fef5ed2f1b95429f98f47f83b92ce387",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -17,13 +17,14 @@
         "eng"
       ],
       "page_name": "Example Test",
-      "page_number": 1
+      "page_number": 1,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>MC</td>\n      <td>What is 2+2?</td>\n      <td>4</td>\n      <td>correct</td>\n      <td>3</td>\n      <td>incorrect</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>MA</td>\n      <td>What C datatypes are 8 bits? (assume i386)</td>\n      <td>int</td>\n      <td></td>\n      <td>float</td>\n      <td></td>\n      <td>double</td>\n      <td></td>\n      <td>char</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>Bagpipes are awesome.</td>\n      <td>true</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>How have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?</td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Rank the following in their order of operation.</td>\n      <td>Parentheses</td>\n      <td>Exponents</td>\n      <td>Division</td>\n      <td>Addition</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>The student activities fee is</td>\n      <td>95</td>\n      <td>dollars for students enrolled in</td>\n      <td>19</td>\n      <td>units or more,</td>\n      <td></td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Match the lower-case greek letter with its capital form.</td>\n      <td>λ</td>\n      <td>Λ</td>\n      <td>α</td>\n      <td>γ</td>\n      <td>Γ</td>\n      <td>φ</td>\n      <td>Φ</td>\n    </tr>\n  </tbody>\n</table>"
     },
     "text": "\n\n\nMC\nWhat is 2+2?\n4\ncorrect\n3\nincorrect\n\n\n\n\n\nMA\nWhat C datatypes are 8 bits? (assume i386)\nint\n\nfloat\n\ndouble\n\nchar\n\n\nTF\nBagpipes are awesome.\ntrue\n\n\n\n\n\n\n\n\nESS\nHow have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?\n\n\n\n\n\n\n\n\n\nORD\nRank the following in their order of operation.\nParentheses\nExponents\nDivision\nAddition\n\n\n\n\n\nFIB\nThe student activities fee is\n95\ndollars for students enrolled in\n19\nunits or more,\n\n\n\n\n\nMAT\nMatch the lower-case greek letter with its capital form.\nλ\nΛ\nα\nγ\nΓ\nφ\nΦ\n\n\n",
     "type": "Table"
   },
   {
-    "element_id": "1d34c23ff08573afa07b42842b41277a",
+    "element_id": "25b8c43e8e0a43c1875a85bedf73778b",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -46,7 +47,7 @@
     "type": "Title"
   },
   {
-    "element_id": "05440c6ca94cb55f6d185d8bd92ce9d6",
+    "element_id": "5f24833344fd2bd3e41db455ec693e9e",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -69,7 +70,7 @@
     "type": "Title"
   },
   {
-    "element_id": "e39c724f1b09a4c3286b6368538e05fc",
+    "element_id": "dd5cca33b529edcca38130a0a86c3d52",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -86,13 +87,14 @@
         "eng"
       ],
       "page_name": "Format Abbr.",
-      "page_number": 2
+      "page_number": 2,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Abbreviation</td>\n      <td>Question Type</td>\n    </tr>\n    <tr>\n      <td>MC</td>\n      <td>Multiple Choice</td>\n    </tr>\n    <tr>\n      <td>MA</td>\n      <td>Multiple Answer</td>\n    </tr>\n    <tr>\n      <td>TF</td>\n      <td>True/False</td>\n    </tr>\n    <tr>\n      <td>ESS</td>\n      <td>Essay</td>\n    </tr>\n    <tr>\n      <td>ORD</td>\n      <td>Ordering</td>\n    </tr>\n    <tr>\n      <td>MAT</td>\n      <td>Matching</td>\n    </tr>\n    <tr>\n      <td>FIB</td>\n      <td>Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>FIL</td>\n      <td>File response</td>\n    </tr>\n    <tr>\n      <td>NUM</td>\n      <td>Numeric Response</td>\n    </tr>\n    <tr>\n      <td>SR</td>\n      <td>Short response</td>\n    </tr>\n    <tr>\n      <td>OP</td>\n      <td>Opinion</td>\n    </tr>\n    <tr>\n      <td>FIB_PLUS</td>\n      <td>Multiple Fill in the Blank</td>\n    </tr>\n    <tr>\n      <td>JUMBLED_SENTENCE</td>\n      <td>Jumbled Sentence</td>\n    </tr>\n    <tr>\n      <td>QUIZ_BOWL</td>\n      <td>Quiz Bowl</td>\n    </tr>\n  </tbody>\n</table>"
     },
     "text": "\n\n\nAbbreviation\nQuestion Type\n\n\nMC\nMultiple Choice\n\n\nMA\nMultiple Answer\n\n\nTF\nTrue/False\n\n\nESS\nEssay\n\n\nORD\nOrdering\n\n\nMAT\nMatching\n\n\nFIB\nFill in the Blank\n\n\nFIL\nFile response\n\n\nNUM\nNumeric Response\n\n\nSR\nShort response\n\n\nOP\nOpinion\n\n\nFIB_PLUS\nMultiple Fill in the Blank\n\n\nJUMBLED_SENTENCE\nJumbled Sentence\n\n\nQUIZ_BOWL\nQuiz Bowl\n\n\n",
     "type": "Table"
   },
   {
-    "element_id": "1d34c23ff08573afa07b42842b41277a",
+    "element_id": "f7e00d0aa6af3d980c86807e9e3930ef",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -115,7 +117,7 @@
     "type": "Title"
   },
   {
-    "element_id": "85ada878f2345c23b8a74a931d2e20a4",
+    "element_id": "803d650611d71a621296a2c860089a41",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -138,7 +140,7 @@
     "type": "Title"
   },
   {
-    "element_id": "0e570ca6fabe24f94e52c1833f3ffd25",
+    "element_id": "806f60804c4612f7e8bab4e9e1ab2c80",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -161,7 +163,7 @@
     "type": "Title"
   },
   {
-    "element_id": "4cf4ff5597274d0c1ce8ae5a17ead4df",
+    "element_id": "50f7d55f7c1fcb88e4af988071ec257d",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -184,7 +186,7 @@
     "type": "Title"
   },
   {
-    "element_id": "dd167905de0defcaf72de673ee44c074",
+    "element_id": "bbabf2f4c03162938b3baa08aa11a4cf",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -207,7 +209,7 @@
     "type": "Title"
   },
   {
-    "element_id": "5f9d7b40d332fef76efdd0a97bcb8617",
+    "element_id": "93b23e7bd487808d1a809ce164c22d1d",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -230,7 +232,7 @@
     "type": "UncategorizedText"
   },
   {
-    "element_id": "2b5c3d26721ae9c350cf3009318b626f",
+    "element_id": "f2ef71c9f397fd338e4d1b2cdefd3166",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -253,7 +255,7 @@
     "type": "Title"
   },
   {
-    "element_id": "53d2273ac70fc31640cc45af840dbd42",
+    "element_id": "51705b1c1c0ef085b3f26543dc02e945",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -276,7 +278,7 @@
     "type": "Title"
   },
   {
-    "element_id": "4efca0d10c5feb8e9b35eb1d994f2905",
+    "element_id": "8a2122678bdcb858d5d69d752dc38392",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",
@@ -299,7 +301,7 @@
     "type": "Title"
   },
   {
-    "element_id": "4c9720f1540cc84d33e30e09aca8c077",
+    "element_id": "39061b80749d2ef6c7cbe93a0dac33fc",
     "metadata": {
       "data_source": {
         "date_created": "2023-08-24T03:00:43+00:00",

@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.google_drive import (
     GoogleDriveAccessConfig,
     SimpleGoogleDriveConfig,
@@ -16,10 +18,10 @@ if __name__ == "__main__":
         partition_config=PartitionConfig(),
         connector_config=SimpleGoogleDriveConfig(
             access_config=GoogleDriveAccessConfig(
-                service_account_key="POPULATE WITH DRIVE SERVICE ACCOUNT KEY"
+                service_account_key=os.getenv("GOOGLE_DRIVE_ACCOUNT_KEY")
             ),
             recursive=True,
-            drive_id="POPULATE WITH FILE OR FOLDER ID",
+            drive_id=os.getenv("GOOGLE_DRIVE_FOLDER_ID"),
         ),
     )
     runner.run()

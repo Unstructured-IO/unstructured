@@ -17,7 +17,6 @@ from unstructured.chunking.base import (
     TextPreChunk,
     TextPreChunkAccumulator,
     _TextSplitter,
-    is_in_next_section,
     is_on_next_page,
     is_title,
 )
@@ -352,7 +351,30 @@ class DescribeTablePreChunk:
         with pytest.raises(StopIteration):
             next(chunk_iter)
 
-    def but_it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
+    def and_it_includes_the_original_table_element_in_metadata_when_so_instructed(self):
+        table = Table("foo bar", metadata=ElementMetadata(text_as_html="<table>foo bar</table>"))
+        opts = ChunkingOptions(include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, "", opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.text_as_html == "<table>foo bar</table>"
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
+
+    def but_not_when_instructed_not_to(self):
+        pre_chunk = TablePreChunk(Table("foobar"), "", ChunkingOptions(include_orig_elements=False))
+
+        chunk = next(pre_chunk.iter_chunks())
+
+        assert isinstance(chunk, Table)
+        assert chunk.metadata.orig_elements is None
+
+    def it_splits_its_table_into_TableChunks_when_the_table_text_exceeds_the_window(self):
         # fixed-overhead = 8+8+9+8+9+8 = 50
         # per-row overhead = 27
         html_table = (
@@ -398,6 +420,7 @@ class DescribeTablePreChunk:
             "<tbody>\n"
             "<tr><td>Lo"
         )
+        assert not chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -408,6 +431,7 @@ class DescribeTablePreChunk:
             "rem ipsum    </td><td>A Link example</td></tr>\n"
             "<tr><td>Consectetur    </td><td>adipiscing elit</td><"
         )
+        assert chunk.metadata.is_continuation
         # -- note that text runs out but HTML continues because it's significantly longer. So two
         # -- of these chunks have HTML but no text.
         chunk = next(chunk_iter)
@@ -418,6 +442,7 @@ class DescribeTablePreChunk:
             "<tr><td>Nunc aliquam   </td><td>id enim nec molestie</td></tr>\n"
             "<tr><td>Vivamus quis   </td><td>"
         )
+        assert chunk.metadata.is_continuation
         # --
         chunk = next(chunk_iter)
         assert isinstance(chunk, TableChunk)
@@ -425,9 +450,33 @@ class DescribeTablePreChunk:
         assert chunk.metadata.text_as_html == (
             "nunc ipsum donec ac fermentum</td></tr>\n</tbody>\n</table>"
         )
+        assert chunk.metadata.is_continuation
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
+
+    def and_it_includes_the_whole_original_Table_in_each_metadata_when_so_instructed(self):
+        """Even though text and html are split, the orig_elements metadata is not."""
+        table = Table(
+            "Header Col 1   Header Col 2\nLorem ipsum   dolor sit amet",
+            metadata=ElementMetadata(text_as_html="<table/>"),
+        )
+        opts = ChunkingOptions(max_characters=30, include_orig_elements=True)
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=opts)
+
+        chunk_iter = pre_chunk.iter_chunks()
+
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Header Col 1   Header Col 2"
+        assert chunk.metadata.orig_elements == [table]
+        assert not chunk.metadata.is_continuation
+        # --
+        chunk = next(chunk_iter)
+        assert isinstance(chunk, TableChunk)
+        assert chunk.text == "Lorem ipsum   dolor sit amet"
+        assert chunk.metadata.orig_elements == [table]
+        assert chunk.metadata.is_continuation
 
     @pytest.mark.parametrize(
         ("text", "expected_value"),
@@ -468,6 +517,50 @@ class DescribeTablePreChunk:
             Table(text), overlap_prefix=overlap_prefix, opts=ChunkingOptions()
         )
         assert pre_chunk._text == expected_value
+
+    def it_computes_metadata_for_each_chunk_to_help(self):
+        table = Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>"))
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        metadata = pre_chunk._metadata
+
+        assert metadata.text_as_html == "<table/>"
+        # -- opts.include_orig_elements is True by default --
+        assert metadata.orig_elements == [table]
+        # -- it produces a new instance each time it is called so changing one chunk's metadata does
+        # -- not change that of any other chunk.
+        assert pre_chunk._metadata is not metadata
+
+    def but_it_omits_orig_elements_from_metadata_when_so_instructed(self):
+        pre_chunk = TablePreChunk(
+            Table("Lorem ipsum", metadata=ElementMetadata(text_as_html="<table/>")),
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=False),
+        )
+
+        assert pre_chunk._metadata.orig_elements is None
+
+    def it_computes_the_original_elements_list_to_help(self):
+        table = Table(
+            "Lorem ipsum",
+            metadata=ElementMetadata(text_as_html="<table/>", orig_elements=[Table("Lorem Ipsum")]),
+        )
+        pre_chunk = TablePreChunk(table, overlap_prefix="", opts=ChunkingOptions())
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- a TablePreChunk always has exactly one original (Table) element --
+        assert len(orig_elements) == 1
+        orig_element = orig_elements[0]
+        # -- each item in orig_elements is a copy of the original element so we can mutate it
+        # -- without changing user's data.
+        assert orig_element == table
+        assert orig_element is not table
+        # -- it strips any .metadata.orig_elements from each element to prevent a recursive data
+        # -- structure
+        assert orig_element.metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
 
 
 class DescribeTextPreChunk:
@@ -599,17 +692,15 @@ class DescribeTextPreChunk:
         )
 
     def it_generates_a_single_chunk_from_its_elements_if_they_together_fit_in_window(self):
-        pre_chunk = TextPreChunk(
-            [
-                Title("Introduction"),
-                Text(
-                    "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
-                    " lectus porta volutpat.",
-                ),
-            ],
-            overlap_prefix="e feugiat efficitur.",
-            opts=ChunkingOptions(max_characters=200),
-        )
+        elements = [
+            Title("Introduction"),
+            Text(
+                "Lorem ipsum dolor sit amet consectetur adipiscing elit. In rhoncus ipsum sed"
+                " lectus porta volutpat.",
+            ),
+        ]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        pre_chunk = TextPreChunk(elements, overlap_prefix="e feugiat efficitur.", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
@@ -619,25 +710,31 @@ class DescribeTextPreChunk:
             " adipiscing elit. In rhoncus ipsum sed lectus porta volutpat.",
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
+        # --
+        with pytest.raises(StopIteration):
+            next(chunk_iter)
 
     def but_it_generates_split_chunks_when_its_single_element_exceeds_window_size(self):
         # -- Chunk-splitting only occurs when a *single* element is too big to fit in the window.
         # -- The pre-chunker will isolate that element in a pre_chunk of its own.
-        pre_chunk = TextPreChunk(
-            [
-                Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
-                    " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
-                    " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
-                    " commodo consequat."
-                ),
-            ],
-            overlap_prefix="",
-            opts=ChunkingOptions(max_characters=200, text_splitting_separators=("\n", " ")),
-        )
+        elements = [
+            Text(
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+                " tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim"
+                " veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea"
+                " commodo consequat."
+            )
+        ]
+        opts = ChunkingOptions(max_characters=200, include_orig_elements=True)
+        pre_chunk = TextPreChunk(elements, overlap_prefix="", opts=opts)
 
         chunk_iter = pre_chunk.iter_chunks()
 
+        # -- Note that .metadata.orig_elements is the same single original element, "repeated" for
+        # -- each text-split chunk. This behavior emerges without explicit command as a consequence
+        # -- of using `._consolidated_metadata` (and `._continuation_metadata` which extends
+        # -- `._consolidated_metadata)` for each text-split chunk.
         chunk = next(chunk_iter)
         assert chunk == CompositeElement(
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
@@ -645,10 +742,12 @@ class DescribeTextPreChunk:
             " veniam, quis nostrud exercitation ullamco laboris nisi ut"
         )
         assert chunk.metadata is pre_chunk._consolidated_metadata
+        assert chunk.metadata.orig_elements == elements
         # --
         chunk = next(chunk_iter)
         assert chunk == CompositeElement("aliquip ex ea commodo consequat.")
         assert chunk.metadata is pre_chunk._continuation_metadata
+        assert chunk.metadata.orig_elements == elements
         # --
         with pytest.raises(StopIteration):
             next(chunk_iter)
@@ -762,6 +861,23 @@ class DescribeTextPreChunk:
             "parent_id": ["f87731e0"],
         }
 
+    def and_it_adds_the_pre_chunk_elements_to_metadata_when_so_instructed(self):
+        opts = ChunkingOptions(include_orig_elements=True)
+        metadata = ElementMetadata(filename="foo.pdf")
+        element = Title("Lorem Ipsum", metadata=metadata)
+        element_2 = Text("'Lorem ipsum dolor' means 'Thank you very much'.", metadata=metadata)
+        pre_chunk = TextPreChunk([element, element_2], overlap_prefix="", opts=opts)
+
+        consolidated_metadata = pre_chunk._consolidated_metadata
+
+        # -- pre-chunk elements are included as metadata --
+        orig_elements = consolidated_metadata.orig_elements
+        assert orig_elements is not None
+        assert orig_elements == [element, element_2]
+        # -- and they are the exact instances, not copies --
+        assert orig_elements[0] is element
+        assert orig_elements[1] is element_2
+
     def it_consolidates_regex_metadata_in_a_field_specific_way(self):
         """regex_metadata of chunk is combined regex_metadatas of its elements.
 
@@ -867,6 +983,32 @@ class DescribeTextPreChunk:
                 "dolor": [RegexMetadata(text="dolor", start=25, end=30)],
             },
         }
+
+    def it_computes_the_original_elements_list_to_help(self):
+        element = Title("Introduction")
+        element_2 = Text("Lorem ipsum dolor sit amet consectetur adipiscing elit.")
+        element_3 = CompositeElement(
+            "In rhoncus ipsum sed lectus porta volutpat.",
+            metadata=ElementMetadata(orig_elements=[Text("Porta volupat.")]),
+        )
+        pre_chunk = TextPreChunk(
+            [element, element_2, element_3],
+            overlap_prefix="",
+            opts=ChunkingOptions(include_orig_elements=True),
+        )
+
+        orig_elements = pre_chunk._orig_elements
+
+        # -- all elements of pre-chunk are included --
+        assert orig_elements == [element, element_2, element_3]
+        # -- orig_elements that are chunks (having orig-elements of their own) are copied and the
+        # -- copy is stripped of its `.metadata.orig_elements` to prevent a recursive data
+        # -- structure that nests orig_elements within orig_elements.
+        assert orig_elements[0] is element
+        assert orig_elements[2] is not element_3
+        assert orig_elements[2].metadata.orig_elements is None
+        # -- computation is only on first call, all chunks get exactly the same orig-elements --
+        assert pre_chunk._orig_elements is orig_elements
 
     @pytest.mark.parametrize(
         ("elements", "overlap_prefix", "expected_value"),
@@ -1369,68 +1511,6 @@ class DescribeTextPreChunkAccumulator:
 # ================================================================================================
 # (SEMANTIC) BOUNDARY PREDICATES
 # ================================================================================================
-
-
-class Describe_is_in_next_section:
-    """Unit-test suite for `unstructured.chunking.base.is_in_next_section()` function.
-
-    `is_in_next_section()` is not itself a predicate, rather it returns a predicate on Element
-    (`Callable[[Element], bool]`) that can be called repeatedly to detect section changes in an
-    element stream.
-    """
-
-    def it_is_false_for_the_first_element_when_it_has_a_non_None_section(self):
-        """This is an explicit first-section; first-section does not represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_false_for_the_first_element_when_it_has_a_None_section(self):
-        """This is an anonymous first-section; still doesn't represent a section break."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-
-    def it_is_false_for_None_section_elements_that_follow_an_explicit_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def and_it_is_false_for_None_section_elements_that_follow_an_anonymous_first_section(self):
-        """A `None` section element is considered to continue the prior section."""
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert not pred(Text("ijkl"))
-
-    def it_is_false_for_matching_section_elements_that_follow_an_explicit_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def it_is_true_for_an_explicit_section_element_that_follows_an_anonymous_first_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert not pred(Text("efgh"))
-        assert pred(Text("ijkl", metadata=ElementMetadata(section="Introduction")))
-
-    def and_it_is_true_for_a_different_explicit_section_that_follows_an_explicit_section(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd", metadata=ElementMetadata(section="Introduction")))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Summary")))
-
-    def it_is_true_whenever_the_section_explicitly_changes_except_at_the_start(self):
-        pred = is_in_next_section()
-        assert not pred(Text("abcd"))
-        assert pred(Text("efgh", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("ijkl"))
-        assert not pred(Text("mnop", metadata=ElementMetadata(section="Introduction")))
-        assert not pred(Text("qrst"))
-        assert pred(Text("uvwx", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("yzab", metadata=ElementMetadata(section="Summary")))
-        assert not pred(Text("cdef"))
-        assert pred(Text("ghij", metadata=ElementMetadata(section="Appendix")))
 
 
 class Describe_is_on_next_page:
