@@ -312,6 +312,7 @@ def partition_pdf_or_image(
         out_elements = _partition_pdf_with_pdfparser(
             extracted_elements=extracted_elements,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
 
         return out_elements
