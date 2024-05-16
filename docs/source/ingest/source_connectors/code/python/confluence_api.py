@@ -19,9 +19,9 @@ if __name__ == "__main__":
         ),
         connector_config=SimpleConfluenceConfig(
             access_config=ConfluenceAccessConfig(
-                api_token="ABCDE1234ABDE1234ABCDE1234",
+                api_token=os.getenv("CONFLUENCE_API_TOKEN"),
             ),
-            user_email="12345678@unstructured.io",
+            user_email=os.getenv("CONFLUENCE_USER_EMAIL"),
             url="https://unstructured-ingest-test.atlassian.net",
         ),
     )

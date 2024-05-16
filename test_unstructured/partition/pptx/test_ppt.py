@@ -3,10 +3,11 @@ import pathlib
 from tempfile import SpooledTemporaryFile
 
 import pytest
+from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import ListItem, NarrativeText, Title
+from unstructured.documents.elements import ListItem, NarrativeText, PageBreak, Title
 from unstructured.partition.ppt import partition_ppt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
@@ -24,8 +25,7 @@ EXPECTED_PPT_OUTPUT = [
 
 
 def test_partition_ppt_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    elements = partition_ppt(filename=filename)
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
         assert element.metadata.filename == "fake-power-point.ppt"
@@ -34,20 +34,17 @@ def test_partition_ppt_from_filename():
 
 
 def test_partition_ppt_from_filename_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    elements = partition_ppt(filename=filename, metadata_filename="test")
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"), metadata_filename="test")
     assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_ppt_raises_with_missing_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "doesnt-exist.ppt")
     with pytest.raises(ValueError):
-        partition_ppt(filename=filename)
+        partition_ppt(example_doc_path("doesnt-exist.ppt"))
 
 
 def test_partition_ppt_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
         elements = partition_ppt(file=f)
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
@@ -55,8 +52,7 @@ def test_partition_ppt_from_file():
 
 
 def test_partition_ppt_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
         elements = partition_ppt(file=f, metadata_filename="test")
     assert elements == EXPECTED_PPT_OUTPUT
     for element in elements:
@@ -64,128 +60,105 @@ def test_partition_ppt_from_file_with_metadata_filename():
 
 
 def test_partition_ppt_raises_with_both_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    filename = example_doc_path("fake-power-point.ppt")
     with open(filename, "rb") as f, pytest.raises(ValueError):
         partition_ppt(filename=filename, file=f)
 
 
-def test_partition_ppt_raises_with_neither():
+def test_partition_ppt_raises_when_neither_file_path_or_file_is_provided():
     with pytest.raises(ValueError):
         partition_ppt()
 
 
 def test_partition_ppt_from_filename_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    filename = example_doc_path("fake-power-point.ppt")
     elements = partition_ppt(filename=filename, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_ppt_from_file_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
+    filename = example_doc_path("fake-power-point.ppt")
     with open(filename, "rb") as f:
         elements = partition_ppt(file=f, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_ppt_metadata_date(
-    mocker,
-    filename="example-docs/fake-power-point.ppt",
+def test_partition_ppt_pulls_metadata_last_modified_from_disk_when_file_is_a_path(
+    mocker: MockFixture,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+    modified_date_on_disk = "2024-05-01T15:37:28"
     mocker.patch(
-        "unstructured.partition.ppt.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.ppt.get_last_modified_date", return_value=modified_date_on_disk
+    )
+
+    elements = partition_ppt(example_doc_path("fake-power-point.ppt"))
+
+    assert elements[0].metadata.last_modified == modified_date_on_disk
+
+
+def test_partition_ppt_uses_value_in_arg_not_disk_when_metadata_last_modified_arg_provided(
+    mocker: MockFixture,
+):
+    modified_date_on_disk = "2024-05-01T15:37:28"
+    modified_date_in_arg = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.ppt.get_last_modified_date", return_value=modified_date_on_disk
     )
 
     elements = partition_ppt(
-        filename=filename,
+        example_doc_path("fake-power-point.ppt"), metadata_last_modified=modified_date_in_arg
     )
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == modified_date_in_arg
 
 
-def test_partition_ppt_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake-power-point.ppt",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.ppt.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = partition_ppt(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_ppt_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake-power-point.ppt",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+def test_partition_ppt_suppresses_modified_date_from_file_by_default(mocker: MockFixture):
     mocker.patch(
         "unstructured.partition.ppt.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value="2029-07-05T09:24:28",
     )
 
-    with open(filename, "rb") as f:
-        elements = partition_ppt(
-            file=f,
-        )
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
+        elements = partition_ppt(file=f)
 
     assert elements[0].metadata.last_modified is None
 
 
-def test_partition_ppt_from_file_explicit_get_metadata_date(
-    mocker,
-    filename="example-docs/fake-power-point.ppt",
+def test_partition_ppt_pulls_modified_date_from_file_when_date_from_file_object_arg_is_True(
+    mocker: MockFixture,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+    modified_date_on_file = "2029-07-05T09:24:28"
     mocker.patch(
         "unstructured.partition.ppt.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value=modified_date_on_file,
     )
 
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
         elements = partition_ppt(file=f, date_from_file_object=True)
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert elements[0].metadata.last_modified == modified_date_on_file
 
 
-def test_partition_ppt_from_file_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake-power-point.ppt",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
+def test_partition_ppt_from_file_with_custom_metadata_date(mocker: MockFixture):
+    modified_date_on_file = "2029-07-05T09:24:28"
+    modified_date_in_arg = "2020-07-05T09:24:28"
 
     mocker.patch(
         "unstructured.partition.ppt.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
+        return_value=modified_date_on_file,
     )
 
-    with open(filename, "rb") as f:
-        elements = partition_ppt(file=f, metadata_last_modified=expected_last_modification_date)
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
+        elements = partition_ppt(file=f, metadata_last_modified=modified_date_in_arg)
 
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+    assert elements[0].metadata.last_modified == modified_date_in_arg
 
 
-def test_partition_ppt_from_file_without_metadata_date(
-    filename="example-docs/fake-power-point.ppt",
-):
+def test_partition_ppt_from_file_without_metadata_date():
     """Test partition_ppt() with file that are not possible to get last modified date"""
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake-power-point.ppt"), "rb") as f:
         sf = SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
@@ -199,25 +172,32 @@ def test_partition_ppt_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_add_chunking_strategy_by_title_on_partition_ppt(
-    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt"),
-):
-    elements = partition_ppt(filename=filename)
-    chunk_elements = partition_ppt(filename, chunking_strategy="by_title")
+def test_add_chunking_strategy_by_title_on_partition_ppt():
+    file_path = example_doc_path("fake-power-point.ppt")
+    elements = partition_ppt(file_path)
+    chunk_elements = partition_ppt(file_path, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
 
-def test_partition_ppt_element_metadata_has_languages():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
-    elements = partition_ppt(filename=filename)
+def test_partition_ppt_params():
+    """Integration test of params: languages, include_page_break, and include_slide_notes."""
+    elements = partition_ppt(
+        example_doc_path("language-docs/eng_spa_mult.ppt"),
+        include_page_breaks=True,
+        include_slide_notes=True,
+    )
     assert elements[0].metadata.languages == ["eng"]
+    assert any(isinstance(element, PageBreak) for element in elements)
+    # The example doc contains a slide note with the text "This is a slide note."
+    assert any(element.text == "This is a slide note." for element in elements)
 
 
 def test_partition_ppt_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.ppt"
-    elements = partition_ppt(filename=filename, detect_language_per_element=True)
+    elements = partition_ppt(
+        example_doc_path("language-docs/eng_spa_mult.ppt"), detect_language_per_element=True
+    )
     langs = [element.metadata.languages for element in elements]
     # languages other than English and Spanish are detected by this partitioner,
     # so this test is slightly different from the other partition tests

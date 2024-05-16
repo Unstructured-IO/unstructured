@@ -13,7 +13,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -33,5 +33,5 @@ urllib3==1.26.18
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-websocket-client==1.7.0
+websocket-client==1.8.0
     # via praw

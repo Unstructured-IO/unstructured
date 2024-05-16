@@ -17,11 +17,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests

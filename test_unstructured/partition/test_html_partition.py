@@ -725,6 +725,21 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
     assert partitions[0].metadata.text_as_html == expected
 
 
+def test_all_element_ids_are_unique():
+    ids = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
+    assert len(ids) == len(set(ids))
+
+
+def test_element_ids_are_deterministic():
+    ids_first_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
+    ]
+    ids_second_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
+    ]
+    assert ids_first_partition == ids_second_partition
+
+
 def test_partition_html_b_tag_parsing():
     html_text = """
         <!DOCTYPE html>

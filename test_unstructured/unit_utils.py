@@ -17,13 +17,14 @@ from unittest.mock import (
     patch,
 )
 
-from pytest import FixtureRequest, LogCaptureFixture  # noqa: PT013
+from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture  # noqa: PT013
 
 from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json, elements_to_json
 
 __all__ = (
     "ANY",
+    "CaptureFixture",
     "FixtureRequest",
     "LogCaptureFixture",
     "MagicMock",
@@ -60,6 +61,13 @@ def assert_round_trips_through_JSON(elements: List[Element]) -> None:
     assert round_tripped_json == original_json, _diff(
         "JSON differs:", round_tripped_json, original_json
     )
+
+
+def assign_hash_ids(elements: list[Element]) -> list[Element]:
+    """Updates the `id` attribute of each element to a hash."""
+    for idx, element in enumerate(elements):
+        element.id_to_hash(idx)
+    return elements
 
 
 def _diff(heading: str, actual: str, expected: str):

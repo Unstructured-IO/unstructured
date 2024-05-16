@@ -1,3 +1,5 @@
+import os
+
 from unstructured.ingest.connector.fsspec.azure import (
     AzureAccessConfig,
     AzureWriteConfig,
@@ -21,7 +23,7 @@ from unstructured.ingest.runner.writers.fsspec.azure import (
 def get_writer() -> Writer:
     return AzureWriter(
         connector_config=SimpleAzureBlobStorageConfig(
-            access_config=AzureAccessConfig(account_name="azureunstructured1"),
+            access_config=AzureAccessConfig(account_name=os.getenv("AZURE_ACCOUNT_NAME")),
             remote_url="az://unstructured/war-and-peace-output",
         ),
         write_config=AzureWriteConfig(),

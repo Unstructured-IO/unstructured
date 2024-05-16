@@ -35,7 +35,7 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.partition.pptx import (
-    _PptxPartitionerOptions,
+    PptxPartitionerOptions,
     partition_pptx,
     register_picture_partitioner,
 )
@@ -279,9 +279,7 @@ def test_partition_pptx_generates_no_Image_elements_by_default():
 def test_partition_pptx_uses_registered_picture_partitioner():
     class FakePicturePartitioner:
         @classmethod
-        def iter_elements(
-            cls, picture: Picture, opts: _PptxPartitionerOptions
-        ) -> Iterator[Element]:
+        def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
             image_hash = hashlib.sha1(picture.image.blob).hexdigest()
             yield Image(f"Image with hash {image_hash}, strategy: {opts.strategy}")
 
@@ -504,41 +502,41 @@ def test_partition_pptx_hierarchy_sample_document():
     elements = partition_pptx(example_doc_path("sample-presentation.pptx"))
 
     test_cases = [
-        # (expected category depth, parent id, child id)
-        (0, None, "8e924068ead7acb8b7217a9edbea21d4"),
-        (1, "8e924068ead7acb8b7217a9edbea21d4", "32dc828e353aa33bbdf112787389d5dd"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (0, None, "4485990848f79de686029af6e720eed0"),
-        (0, "4485990848f79de686029af6e720eed0", "b4e4ef35880d1f7e82272f7ae8194baa"),
-        (0, "4485990848f79de686029af6e720eed0", "44a398d215d79c2128055d2acfe8ab69"),
-        (1, "44a398d215d79c2128055d2acfe8ab69", "dbbf18a38f846b5790c75ba8ad649704"),
-        (1, "44a398d215d79c2128055d2acfe8ab69", "d75cf41cbf1c4421328729de8e467b02"),
-        (2, "d75cf41cbf1c4421328729de8e467b02", "27597b7305a7b8e066a6378413566d2e"),
-        (0, "4485990848f79de686029af6e720eed0", "1761b6f5d23781670b3c9b870804069f"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (0, None, "4a6dc2d15e7a98e9871a1eb60496059e"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "c4bac691bfd883bff86dce2d7a6b9943"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "61eda8e6c9b22845a1aa3d329cce15ef"),
-        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "ad54bee56405cf3878f91f5c97a2395b"),
-        (1, "61eda8e6c9b22845a1aa3d329cce15ef", "4d85745729954cd77e0f49ceced49f32"),
-        (2, "4d85745729954cd77e0f49ceced49f32", "5cea03d706c6246b120034246b893101"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cdf71e4210241bd78b1032e2f44d104f"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ecb3d1d718b7fd75701a33e56fc131dd"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "cc598a5e8c911a7c5cecedf4959652aa"),
-        (1, "cc598a5e8c911a7c5cecedf4959652aa", "305ae9618b7f8ba84925c9e7e49034c2"),
-        (1, "cc598a5e8c911a7c5cecedf4959652aa", "cce1c1d6646a92ffdc883c573c765da9"),
-        (2, "cce1c1d6646a92ffdc883c573c765da9", "af8beec1131e6df4758e081e878bf775"),
-        (0, "4a6dc2d15e7a98e9871a1eb60496059e", "ddf389d07353b7a3e03aa138f42dfd89"),
-        (None, None, "e3b0c44298fc1c149afbf4c8996fb924"),
-        (None, None, "2332cdaa45717e70444e2de313605e22"),
-        (0, None, "7ba0daa8739310f1b39736b3ffe3dea2"),
+        (0, None, "b2859226ba1f9243fb3f1b2ace889f43"),
+        (1, "b2859226ba1f9243fb3f1b2ace889f43", "d13f8827e94541c8b818b0df8f942526"),
+        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (0, None, "e535f799d1f0e79d6777efa873a16ce1"),
+        (0, "e535f799d1f0e79d6777efa873a16ce1", "f02bbfb417ad60daa2ba35080e96262f"),
+        (0, "e535f799d1f0e79d6777efa873a16ce1", "414dfce72ea53cd4649176af0d62a4c1"),
+        (1, "414dfce72ea53cd4649176af0d62a4c1", "3d45a95c79473a07db4edca5534a7c49"),
+        (1, "414dfce72ea53cd4649176af0d62a4c1", "a33333f527851f700ca175acd04b8a2c"),
+        (2, "a33333f527851f700ca175acd04b8a2c", "6f1b87689e4da2b0fb865bc5f92d5702"),
+        (0, "e535f799d1f0e79d6777efa873a16ce1", "3f58e0be3b8e8b15cba7adc4eae68586"),
+        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (0, None, "8319096532fe2e55f66c491ea8313150"),
+        (0, "8319096532fe2e55f66c491ea8313150", "17a7e78277ab131a627cb4538bab7390"),
+        (0, "8319096532fe2e55f66c491ea8313150", "41a9e1d0390f4edd77181142ceae51bc"),
+        (1, "41a9e1d0390f4edd77181142ceae51bc", "cbbc78ef38a035fd66f7b030dcf12f66"),
+        (1, "41a9e1d0390f4edd77181142ceae51bc", "2a551e3cbe67561debe0da262a294f24"),
+        (2, "2a551e3cbe67561debe0da262a294f24", "7a121a056eedb11ac8804d6fd17afc0c"),
+        (0, "8319096532fe2e55f66c491ea8313150", "a24a3caf9853702cb73daae23020b7b4"),
+        (0, "8319096532fe2e55f66c491ea8313150", "18367f334b5c8c4602ea413ab68ac35b"),
+        (0, "8319096532fe2e55f66c491ea8313150", "7f647b1f0f20c3db40c36ab57d9a5550"),
+        (1, "7f647b1f0f20c3db40c36ab57d9a5550", "591c24b41b53aba873188a0881d10961"),
+        (1, "7f647b1f0f20c3db40c36ab57d9a5550", "6ec455f5f19782facf184886876c9a66"),
+        (2, "6ec455f5f19782facf184886876c9a66", "5614b00c3f6bff23ebba1360e10f6428"),
+        (0, "8319096532fe2e55f66c491ea8313150", "2f57a8d4182e6fd5bd5842b0a2d9841b"),
+        (None, None, "1ffd3151819e594553e6b540e19e6c36"),
+        (None, None, "2ed3bd10daace79ac129cbf8faf22bfc"),
+        (0, None, "fd08cacbaddafee5cbacc02528536ee5"),
     ]
 
     # Zip the test cases with the elements
     for element, test_case in zip(elements, test_cases):
-        assert element.metadata.category_depth == test_case[0]
-        assert element.metadata.parent_id == test_case[1]
-        assert element.id == test_case[2]
+        expected_depth, expected_parent_id, expected_id = test_case
+        assert element.metadata.category_depth == expected_depth
+        assert element.metadata.parent_id == expected_parent_id
+        assert element.id == expected_id
 
 
 # ================================================================================================
@@ -549,15 +547,15 @@ def test_partition_pptx_hierarchy_sample_document():
 # ================================================================================================
 
 
-class Describe_PptxPartitionerOptions:
-    """Unit-test suite for `unstructured.partition.xlsx._PptxPartitionerOptions` objects."""
+class DescribePptxPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.xlsx.PptxPartitionerOptions` objects."""
 
     @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_emit_PageBreak_elements_as_part_of_the_output_element_stream(
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.include_page_breaks is arg_value
 
@@ -566,7 +564,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["include_slide_notes"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.include_slide_notes is arg_value
 
@@ -575,7 +573,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["infer_table_structure"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.infer_table_structure is arg_value
 
@@ -584,7 +582,7 @@ class Describe_PptxPartitionerOptions:
     def it_generates_a_PageBreak_element_when_the_page_number_is_incremented(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -598,7 +596,7 @@ class Describe_PptxPartitionerOptions:
     def but_it_does_not_generate_a_PageBreak_element_for_the_first_slide(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         page_break_iter = opts.increment_page_number()
 
@@ -610,7 +608,7 @@ class Describe_PptxPartitionerOptions:
         self, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = False
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -626,7 +624,7 @@ class Describe_PptxPartitionerOptions:
         self, opts_args: dict[str, Any]
     ):
         opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.last_modified == "2024-03-05T17:02:53"
 
@@ -635,7 +633,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = "a/b/spreadsheet.pptx"
         get_last_modified_date_.return_value = "2024-04-02T20:32:35"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -649,7 +647,7 @@ class Describe_PptxPartitionerOptions:
         opts_args["file"] = file
         opts_args["date_from_file_object"] = True
         get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -663,7 +661,7 @@ class Describe_PptxPartitionerOptions:
         opts_args["file"] = file
         opts_args["date_from_file_object"] = False
         get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         last_modified = opts.last_modified
 
@@ -677,7 +675,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = "x/y/z.pptx"
         opts_args["metadata_file_path"] = "a/b/c.pptx"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == "a/b/c.pptx"
 
@@ -687,7 +685,7 @@ class Describe_PptxPartitionerOptions:
     ):
         opts_args["file_path"] = file_path
         opts_args["metadata_file_path"] = None
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.metadata_file_path == file_path
 
@@ -695,7 +693,7 @@ class Describe_PptxPartitionerOptions:
 
     def it_keeps_track_of_the_page_number(self, opts_args: dict[str, Any]):
         """In PPTX, page-number is the slide number."""
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.page_number == 0
         list(opts.increment_page_number())
@@ -703,13 +701,28 @@ class Describe_PptxPartitionerOptions:
         list(opts.increment_page_number())
         assert opts.page_number == 2
 
+    def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = PptxPartitionerOptions(**opts_args, starting_page_number=3)
+        # -- move to the "first" slide --
+        list(opts.increment_page_number())
+
+        table_metadata = opts.table_metadata(text_as_html="<table><tr/></table>")
+        text_metadata = opts.text_metadata()
+
+        assert isinstance(table_metadata, ElementMetadata)
+        assert isinstance(text_metadata, ElementMetadata)
+        assert text_metadata.page_number == 3
+        assert table_metadata.page_number == 3
+
     # -- .pptx_file ------------------------------
 
     def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
         self, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = "l/m/n.pptx"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.pptx_file == "l/m/n.pptx"
 
@@ -719,7 +732,7 @@ class Describe_PptxPartitionerOptions:
         spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(b"abcdefg")
         opts_args["file"] = spooled_temp_file
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         pptx_file = opts.pptx_file
 
@@ -732,7 +745,7 @@ class Describe_PptxPartitionerOptions:
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         pptx_file = opts.pptx_file
 
@@ -743,7 +756,7 @@ class Describe_PptxPartitionerOptions:
     def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
         self, opts_args: dict[str, Any]
     ):
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         with pytest.raises(ValueError, match="No PPTX document specified, either `filename` or "):
             opts.pptx_file
@@ -755,7 +768,7 @@ class Describe_PptxPartitionerOptions:
         self, arg_value: str, opts_args: dict[str, Any]
     ):
         opts_args["strategy"] = arg_value
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
 
         assert opts.strategy == arg_value
 
@@ -764,7 +777,7 @@ class Describe_PptxPartitionerOptions:
     def it_can_create_table_metadata(self, opts_args: dict[str, Any]):
         opts_args["metadata_file_path"] = "d/e/f.pptx"
         opts_args["metadata_last_modified"] = "2024-04-02T19:51:55"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 
@@ -781,7 +794,7 @@ class Describe_PptxPartitionerOptions:
     def it_can_create_text_metadata(self, opts_args: dict[str, Any]):
         opts_args["metadata_file_path"] = "d/e/f.pptx"
         opts_args["metadata_last_modified"] = "2024-04-02T19:56:40"
-        opts = _PptxPartitionerOptions(**opts_args)
+        opts = PptxPartitionerOptions(**opts_args)
         # -- move to the first slide --
         list(opts.increment_page_number())
 

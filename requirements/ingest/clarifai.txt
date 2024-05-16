@@ -13,17 +13,17 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.2.1
+clarifai==10.3.3
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.2.3
+clarifai-grpc==10.3.4
     # via clarifai
 contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.63.0
     # via clarifai-grpc
-grpcio==1.62.1
+grpcio==1.63.0
     # via clarifai-grpc
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -49,7 +49,7 @@ protobuf==4.23.4
     #   -c ./ingest/../deps/constraints.txt
     #   clarifai-grpc
     #   googleapis-common-protos
-pygments==2.17.2
+pygments==2.18.0
     # via rich
 python-rapidjson==1.16
     # via tritonclient
@@ -67,7 +67,7 @@ tabulate==0.9.0
     # via
     #   -c ./ingest/../base.txt
     #   clarifai
-tqdm==4.66.2
+tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   clarifai

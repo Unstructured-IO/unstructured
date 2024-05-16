@@ -1,3 +1,9 @@
+"""Partitioner for PPTX documents.
+
+PPTX files are PowerPoint 2007+ documents. These are XML-based and "open" (documented ISO standard),
+unlike the `.ppt` format which was binary and proprietary.
+"""
+
 from __future__ import annotations
 
 import io
@@ -41,14 +47,14 @@ from unstructured.partition.text_type import (
     is_possible_title,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.utils import lazyproperty
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN = "pptx"
 
 
 def register_picture_partitioner(picture_partitioner: AbstractPicturePartitioner) -> None:
     """Specify a pluggable sub-partitioner to be used for partitioning PPTX images."""
-    _PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
+    PptxPartitionerOptions.register_picture_partitioner(picture_partitioner)
 
 
 # ================================================================================================
@@ -66,7 +72,7 @@ class AbstractPicturePartitioner(Protocol):
     """
 
     @classmethod
-    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """Generate document elements derived from `picture`, a PPTX Picture shape."""
         ...
 
@@ -86,11 +92,12 @@ def partition_pptx(
     date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
     include_page_breaks: bool = True,
-    include_slide_notes: bool = False,
+    include_slide_notes: Optional[bool] = None,
     infer_table_structure: bool = True,
     languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
+    starting_page_number: int = 1,
     strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
 ) -> list[Element]:
@@ -128,8 +135,12 @@ def partition_pptx(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first slide in the presentation.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
-    opts = _PptxPartitionerOptions(
+    opts = PptxPartitionerOptions(
         date_from_file_object=date_from_file_object,
         file=file,
         file_path=filename,
@@ -139,6 +150,7 @@ def partition_pptx(
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         strategy=strategy,
+        starting_page_number=starting_page_number,
     )
 
     elements = _PptxPartitioner.iter_presentation_elements(opts)
@@ -153,11 +165,11 @@ def partition_pptx(
 class _PptxPartitioner:
     """Provides `.partition()` for PowerPoint 2007+ (.pptx) files."""
 
-    def __init__(self, opts: _PptxPartitionerOptions):
+    def __init__(self, opts: PptxPartitionerOptions):
         self._opts = opts
 
     @classmethod
-    def iter_presentation_elements(cls, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_presentation_elements(cls, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
         return cls(opts)._iter_presentation_elements()
 
@@ -344,7 +356,7 @@ class _PptxPartitioner:
         return bool((shape.top and shape.left) and (shape.top < 0 or shape.left < 0))
 
 
-class _PptxPartitionerOptions:
+class PptxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
     _PicturePartitionerCls = None
@@ -364,11 +376,12 @@ class _PptxPartitionerOptions:
         file: Optional[IO[bytes]],
         file_path: Optional[str],
         include_page_breaks: bool,
-        include_slide_notes: bool,
+        include_slide_notes: Optional[bool],
         infer_table_structure: bool,
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
         strategy: str,
+        starting_page_number: int = 1,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -380,7 +393,7 @@ class _PptxPartitionerOptions:
         self._metadata_last_modified = metadata_last_modified
         self._strategy = strategy
         # -- options object maintains page-number state --
-        self._page_counter = 0
+        self._page_counter = starting_page_number - 1
 
     @classmethod
     def register_picture_partitioner(cls, picture_partitioner: AbstractPicturePartitioner):
@@ -400,7 +413,7 @@ class _PptxPartitionerOptions:
     @lazyproperty
     def include_slide_notes(self) -> bool:
         """When True, also partition any text found in slide notes as part of each slide."""
-        return self._include_slide_notes
+        return False if self._include_slide_notes is None else self._include_slide_notes
 
     def increment_page_number(self) -> Iterator[PageBreak]:
         """Increment page-number by 1 and generate a PageBreak element if enabled."""
@@ -429,7 +442,7 @@ class _PptxPartitionerOptions:
         if self._file_path:
             return (
                 None
-                if self._file_path.startswith("/tmp")
+                if is_temp_file_path(self._file_path)
                 else get_last_modified_date(self._file_path)
             )
 
@@ -538,7 +551,7 @@ class _NullPicturePartitioner:
     """Does not parse the provided Picture element and generates zero elements."""
 
     @classmethod
-    def iter_elements(cls, picture: Picture, opts: _PptxPartitionerOptions) -> Iterator[Element]:
+    def iter_elements(cls, picture: Picture, opts: PptxPartitionerOptions) -> Iterator[Element]:
         """No-op picture partitioner."""
         return
         yield

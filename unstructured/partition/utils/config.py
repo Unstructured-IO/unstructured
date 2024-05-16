@@ -104,5 +104,18 @@ class ENVConfig:
         """
         return self._get_float("OCR_LAYOUT_SUBREGION_THRESHOLD", 0.5)
 
+    @property
+    def EMBEDDED_IMAGE_SAME_REGION_THRESHOLD(self) -> float:
+        """threshold to consider the bounding boxes of two embedded images as the same region"""
+        return self._get_float("EMBEDDED_IMAGE_SAME_REGION_THRESHOLD", 0.6)
+
+    @property
+    def PDF_ANNOTATION_THRESHOLD(self) -> float:
+        """The threshold value (between 0.0 and 1.0) that determines the minimum overlap required
+        for an annotation to be considered within the element.
+        """
+
+        return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
+
 
 env_config = ENVConfig()

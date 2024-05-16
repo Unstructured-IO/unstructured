@@ -152,13 +152,6 @@ following behaviors:
   ``Title`` element would fit in the prior chunk. This implements the first aspect of the "preserve
   section boundaries" contract.
 
-- **Detect metadata.section change.** An element with a new value in ``element.metadata.section`` is
-  considered to start a new section. When a change in this value is encountered a new chunk is
-  started. This implements the second aspect of preserving section boundaries. This metadata is not
-  present in all document formats so is not used alone. An element having ``None`` for this metadata
-  field is considered to be part of the prior section; a section break is only detected on an
-  explicit change in value.
-
 - **Respect page boundaries.** Page boundaries can optionally also be respected using the
   ``multipage_sections`` argument. This defaults to ``True`` meaning that a page break does *not*
   start a new chunk. Setting this to ``False`` will separate elements that occur on different pages

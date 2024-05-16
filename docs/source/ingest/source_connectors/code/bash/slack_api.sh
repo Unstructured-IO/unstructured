@@ -9,4 +9,4 @@ unstructured-ingest \
   --start-date 2023-04-01T01:00:00-08:00 \
   --end-date 2023-04-02 \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

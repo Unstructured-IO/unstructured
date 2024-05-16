@@ -25,18 +25,18 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via authlib
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via anyio
-grpcio==1.62.1
+grpcio==1.63.0
     # via
     #   grpcio-health-checking
     #   grpcio-tools
     #   weaviate-client
-grpcio-health-checking==1.62.1
+grpcio-health-checking==1.62.2
     # via weaviate-client
-grpcio-tools==1.62.1
+grpcio-tools==1.62.2
     # via weaviate-client
 h11==0.14.0
     # via httpcore
@@ -44,7 +44,7 @@ httpcore==1.0.5
     # via httpx
 httpx==0.27.0
     # via weaviate-client
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   anyio
@@ -57,9 +57,9 @@ protobuf==4.23.4
     #   grpcio-tools
 pycparser==2.22
     # via cffi
-pydantic==2.6.4
+pydantic==2.7.1
     # via weaviate-client
-pydantic-core==2.16.3
+pydantic-core==2.18.2
     # via pydantic
 requests==2.31.0
     # via
@@ -79,9 +79,9 @@ urllib3==1.26.18
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-validators==0.22.0
+validators==0.28.1
     # via weaviate-client
-weaviate-client==4.5.5
+weaviate-client==4.6.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in

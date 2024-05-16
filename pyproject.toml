@@ -27,6 +27,7 @@ lint.select = [
     "UP018",    # -- Unnecessary {literal_type} call like `str("abc")`. (rewrite as a literal) --
     "UP032",    # -- Use f-string instead of `.format()` call --
     "UP034",    # -- Avoid extraneous parentheses --
+    "W",        # -- Warnings, including invalid escape-sequence --
 ]
 lint.ignore = [
     "COM812",   # -- over aggressively insists on trailing commas where not desireable --

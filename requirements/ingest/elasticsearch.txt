@@ -11,7 +11,7 @@ certifi==2024.2.2
     #   elastic-transport
 elastic-transport==8.13.0
     # via elasticsearch
-elasticsearch==8.13.0
+elasticsearch==8.13.1
     # via -r ./ingest/elasticsearch.in
 urllib3==1.26.18
     # via

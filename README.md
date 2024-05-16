@@ -85,7 +85,9 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
 docker exec -it unstructured bash
 ```
 
-You can also build your own Docker image.
+You can also build your own Docker image. Note that the base image is `wolfi-base`, which is
+updated regularly. If you are building the image locally, it is possible `docker-build` could
+fail due to upstream changes in `wolfi-base`.
 
 If you only plan on parsing one type of data you can speed up building the image by commenting out some
 of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary
