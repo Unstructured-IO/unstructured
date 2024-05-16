@@ -708,6 +708,7 @@ def _partition_pdf_with_pdfparser(
     extracted_elements: list[list[Element]],
     include_page_breaks: bool = False,
     sort_mode: str = SORT_MODE_XY_CUT,
+    **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
     elements = []
