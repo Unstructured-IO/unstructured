@@ -15,9 +15,9 @@ iterable_input = list[dict[str, Any]]
 
 @dataclass
 class PipelineStep(ABC):
-    identifier: str
     process: BaseProcessT
     context: ProcessorConfig
+    identifier: str
 
     def __str__(self):
         return self.identifier

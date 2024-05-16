@@ -13,10 +13,10 @@ IndexerT = TypeVar("IndexerT", bound=Indexer)
 STEP_ID = "index"
 
 
-@dataclass(kw_only=True)
+@dataclass
 class IndexStep(PipelineStep):
-    identifier: str = STEP_ID
     process: IndexerT
+    identifier: str = STEP_ID
 
     def __str__(self):
         return f"{self.identifier} ({self.process.__class__.__name__})"

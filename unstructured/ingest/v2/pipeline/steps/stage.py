@@ -16,10 +16,10 @@ class UploadStageStepResponse(TypedDict):
     path: str
 
 
-@dataclass(kw_only=True)
+@dataclass
 class UploadStageStep(PipelineStep):
-    identifier: str = STEP_ID
     process: UploadStager
+    identifier: str = STEP_ID
 
     def __str__(self):
         return f"{self.identifier} ({self.process.__class__.__name__})"
