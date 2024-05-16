@@ -129,6 +129,7 @@ class LocalUploader(Uploader):
             final_path = str(new_path).replace(
                 identifiers.filename, f"{identifiers.filename_stem}.json"
             )
+            Path(final_path).parent.mkdir(parents=True, exist_ok=True)
             logger.debug(f"copying file from {content.path} to {final_path}")
             shutil.copy(src=str(content.path), dst=str(final_path))
 
