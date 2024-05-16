@@ -1,4 +1,8 @@
-## 0.13.8-dev12
+## 0.14.0-dev14
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
 
 ### Enhancements
 
