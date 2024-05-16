@@ -15,7 +15,7 @@ class DestCmd(BaseCmd):
     uploader_config: Optional[Type[CliConfig]] = None
     upload_stager_config: Optional[Type[CliConfig]] = None
 
-    def dest(self, ctx: click.Context, **options):
+    def cmd(self, ctx: click.Context, **options) -> None:
         if not ctx.parent:
             raise click.ClickException("destination command called without a parent")
         if not ctx.parent.info_name:
@@ -37,11 +37,11 @@ class DestCmd(BaseCmd):
 
     def get_cmd(self) -> click.Command:
         # Dynamically create the command without the use of click decorators
-        fn = self.dest
+        fn = self.cmd
         fn = click.pass_context(fn)
         cmd = click.command(fn)
-        if not isinstance(cmd, click.Group):
-            raise ValueError(f"generated command was not of expected type Group: {type(cmd)}")
+        if not isinstance(cmd, click.core.Command):
+            raise ValueError(f"generated command was not of expected type Command: {type(cmd)}")
         cmd.name = self.cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True
