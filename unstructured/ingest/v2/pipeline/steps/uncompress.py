@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pathlib import Path
 from typing import TypedDict
 
@@ -16,10 +15,9 @@ class UncompressStepResponse(TypedDict):
     path: str
 
 
-@dataclass(kw_only=True)
 class UncompressStep(PipelineStep):
-    identifier: str = STEP_ID
     process: Uncompressor
+    identifier: str = STEP_ID
 
     def __post_init__(self):
         config = (

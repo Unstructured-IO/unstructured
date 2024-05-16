@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional, Type, TypeVar
+from typing import Optional, Type
 
 import click
 
@@ -8,14 +8,12 @@ from unstructured.ingest.v2.cli.base.cmd import BaseCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.logger import logger
 
-CliConfigT = TypeVar("CliConfigT", bound=CliConfig)
 
-
-@dataclass(kw_only=True)
+@dataclass
 class DestCmd(BaseCmd):
-    connection_config: Optional[Type[CliConfigT]] = None
-    uploader_config: Optional[Type[CliConfigT]] = None
-    upload_stager_config: Optional[Type[CliConfigT]] = None
+    connection_config: Optional[Type[CliConfig]] = None
+    uploader_config: Optional[Type[CliConfig]] = None
+    upload_stager_config: Optional[Type[CliConfig]] = None
 
     def dest(self, ctx: click.Context, **options):
         if not ctx.parent:

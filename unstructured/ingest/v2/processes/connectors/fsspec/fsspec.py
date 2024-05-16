@@ -67,7 +67,6 @@ class FileConfig(Base):
             )
 
 
-@dataclass(kw_only=True)
 class FsspecIndexerConfig(FileConfig, IndexerConfig):
     recursive: bool = False
     file_glob: Optional[list[str]] = None
@@ -78,7 +77,6 @@ class FsspecAccessConfig(AccessConfig):
     pass
 
 
-@dataclass(kw_only=True)
 class FsspecConnectionConfig(ConnectionConfig):
     access_config: FsspecAccessConfig = enhanced_field(sensitive=True, default=None)
     connector_type: str = CONNECTOR_TYPE
@@ -187,12 +185,10 @@ class FsspecIndexer(Indexer):
             )
 
 
-@dataclass(kw_only=True)
 class FsspecDownloaderConfig(DownloaderConfig):
     pass
 
 
-@dataclass(kw_only=True)
 class FsspecDownloader(Downloader):
     protocol: str
     connection_config: FsspecConnectionConfig

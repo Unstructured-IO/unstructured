@@ -19,10 +19,10 @@ class EmbedStepResponse(TypedDict):
     path: str
 
 
-@dataclass(kw_only=True)
+@dataclass
 class EmbedStep(PipelineStep):
-    identifier: str = STEP_ID
     process: Embedder
+    identifier: str = STEP_ID
 
     def __str__(self):
         return f"{self.identifier} ({self.process.config.embedding_provider})"

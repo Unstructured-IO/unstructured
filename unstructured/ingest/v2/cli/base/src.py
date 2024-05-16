@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional, Type, TypeVar
+from typing import Optional, Type
 
 import click
 
@@ -14,14 +14,12 @@ from unstructured.ingest.v2.cli.configs import (
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.logger import logger
 
-CliConfigT = TypeVar("CliConfigT", bound=CliConfig)
 
-
-@dataclass(kw_only=True)
+@dataclass
 class SrcCmd(BaseCmd):
-    indexer_config: Optional[Type[CliConfigT]] = None
-    downloader_config: Optional[Type[CliConfigT]] = None
-    connection_config: Optional[Type[CliConfigT]] = None
+    indexer_config: Optional[Type[CliConfig]] = None
+    downloader_config: Optional[Type[CliConfig]] = None
+    connection_config: Optional[Type[CliConfig]] = None
     default_configs: list[CliConfig] = field(
         default_factory=lambda: [
             ProcessorCliConfig,

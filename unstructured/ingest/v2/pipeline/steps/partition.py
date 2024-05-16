@@ -18,10 +18,10 @@ class PartitionStepResponse(TypedDict):
     path: str
 
 
-@dataclass(kw_only=True)
+@dataclass
 class PartitionStep(PipelineStep):
-    identifier: str = STEP_ID
     process: Partitioner
+    identifier: str = STEP_ID
 
     def __str__(self):
         return f"{self.identifier} ({self.process.config.strategy})"
