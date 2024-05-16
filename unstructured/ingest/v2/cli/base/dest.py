@@ -39,7 +39,9 @@ class DestCmd(BaseCmd):
         # Dynamically create the command without the use of click decorators
         fn = self.dest
         fn = click.pass_context(fn)
-        cmd: click.Group = click.command(fn)
+        cmd = click.command(fn)
+        if not isinstance(cmd, click.Group):
+            raise ValueError(f"generated command was not of expected type Group: {type(cmd)}")
         cmd.name = self.cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True

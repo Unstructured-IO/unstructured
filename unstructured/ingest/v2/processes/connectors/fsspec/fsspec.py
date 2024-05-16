@@ -1,12 +1,11 @@
 import fnmatch
 import json
 import os
-from contextlib import suppress
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from time import time
-from typing import TYPE_CHECKING, Generator, Optional
+from typing import TYPE_CHECKING, Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -152,12 +151,27 @@ class FsspecIndexer(Indexer):
 
     def get_metadata(self, path) -> DataSourceMetadata:
         date_created = None
-        with suppress(NotImplementedError):
-            date_created = self.fs.created(path).timestamp()
-
         date_modified = None
-        with suppress(NotImplementedError):
-            date_modified = self.fs.modified(path).timestamp()
+
+        try:
+            created: Optional[Any] = self.fs.created(path)
+            if created:
+                if isinstance(created, datetime):
+                    date_created = str(created.timestamp())
+                else:
+                    date_created = str(created)
+        except NotImplementedError:
+            pass
+
+        try:
+            modified: Optional[Any] = self.fs.modified(path)
+            if modified:
+                if isinstance(modified, datetime):
+                    date_modified = str(modified.timestamp())
+                else:
+                    date_modified = str(modified)
+        except NotImplementedError:
+            pass
 
         version = self.fs.checksum(path)
         return DataSourceMetadata(
