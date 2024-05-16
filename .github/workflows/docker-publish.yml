@@ -24,7 +24,10 @@ jobs:
   build-images:
     strategy:
       matrix:
-        docker-platform: ["linux/arm64", "linux/amd64"]
+        # NOTE(robinson) - temporarily disabling arm since the libreoffice packages only
+        # works on amd right now
+        docker-platform: ["linux/amd64"]
+        # docker-platform: ["linux/arm64", "linux/amd64"]
     runs-on: ubuntu-latest-m
     needs: set-short-sha
     env:
