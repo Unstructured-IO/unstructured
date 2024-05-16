@@ -750,8 +750,7 @@ def test_id_to_hash_calculates(text, sequence_number, filename, page_number, exp
 
 def test_formskeysvalues_reads_saves():
     filename = example_doc_path("fake_form_element/form.json")
-    with open(filename) as inF:
-        as_read = partition_json(filename=filename)
+    as_read = partition_json(filename=filename)
     tmp_file = io.StringIO()
     json.dump([element.to_dict() for element in as_read], tmp_file)
     tmp_file.seek(0)
