@@ -131,8 +131,8 @@ def save_elements(
     """
 
     if not output_dir_path:
-        if env_config.UNSTRUCTURED_CACHE_ENABLED:
-            output_dir_path = str(Path(env_config.UNSTRUCTURED_CACHE_TMPDIR) / "figures")
+        if env_config.GLOBAL_WORKING_DIR_ENABLED:
+            output_dir_path = str(Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "figures")
         else:
             output_dir_path = str(Path.cwd() / "figures")
     os.makedirs(output_dir_path, exist_ok=True)

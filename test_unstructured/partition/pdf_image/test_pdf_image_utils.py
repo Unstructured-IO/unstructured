@@ -145,7 +145,7 @@ def test_save_elements(
 
 @pytest.mark.parametrize("storage_enabled", [False, True])
 def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
-    monkeypatch.setenv("UNSTRUCTURED_CACHE_ENABLED", storage_enabled)
+    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", storage_enabled)
     with (
         patch("PIL.Image.open"),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
@@ -166,7 +166,7 @@ def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
         if storage_enabled:
             from unstructured.partition.utils.config import env_config
 
-            expected_output_dir = os.path.join(env_config.UNSTRUCTURED_CACHE_TMPDIR, "figures")
+            expected_output_dir = os.path.join(env_config.GLOBAL_WORKING_PROCESS_DIR, "figures")
         else:
             expected_output_dir = os.path.join(tmpdir, "figures")
         assert os.path.exists(expected_output_dir)

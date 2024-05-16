@@ -23,8 +23,8 @@ def _setup_tmpdir():
     from unstructured.partition.utils.config import env_config
 
     _tmpdir = tempfile.tempdir
-    _storage_tmpdir = env_config.UNSTRUCTURED_CACHE_TMPDIR
-    _storage_tmpdir_bak = f"{env_config.UNSTRUCTURED_CACHE_TMPDIR}_bak"
+    _storage_tmpdir = env_config.GLOBAL_WORKING_PROCESS_DIR
+    _storage_tmpdir_bak = f"{env_config.GLOBAL_WORKING_PROCESS_DIR}_bak"
     if Path(_storage_tmpdir).is_dir():
         shutil.move(_storage_tmpdir, _storage_tmpdir_bak)
         tempfile.tempdir = None
@@ -38,21 +38,21 @@ def _setup_tmpdir():
 
 @pytest.mark.usefixtures("_setup_tmpdir")
 def test_env_storage_disabled(monkeypatch):
-    monkeypatch.setenv("UNSTRUCTURED_CACHE_ENABLED", "false")
+    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", "false")
     from unstructured.partition.utils.config import env_config
 
-    assert not env_config.UNSTRUCTURED_CACHE_ENABLED
-    assert str(Path.home() / ".cache/unstructured") == env_config.UNSTRUCTURED_CACHE_DIR
-    assert not Path(env_config.UNSTRUCTURED_CACHE_TMPDIR).is_dir()
-    assert tempfile.gettempdir() != env_config.UNSTRUCTURED_CACHE_TMPDIR
+    assert not env_config.GLOBAL_WORKING_DIR_ENABLED
+    assert str(Path.home() / ".cache/unstructured") == env_config.GLOBAL_WORKING_DIR
+    assert not Path(env_config.GLOBAL_WORKING_PROCESS_DIR).is_dir()
+    assert tempfile.gettempdir() != env_config.GLOBAL_WORKING_PROCESS_DIR
 
 
 @pytest.mark.usefixtures("_setup_tmpdir")
 def test_env_storage_enabled(monkeypatch):
-    monkeypatch.setenv("UNSTRUCTURED_CACHE_ENABLED", "true")
+    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", "true")
     from unstructured.partition.utils.config import env_config
 
-    assert env_config.UNSTRUCTURED_CACHE_ENABLED
-    assert str(Path.home() / ".cache/unstructured") == env_config.UNSTRUCTURED_CACHE_DIR
-    assert Path(env_config.UNSTRUCTURED_CACHE_TMPDIR).is_dir()
-    assert tempfile.gettempdir() == env_config.UNSTRUCTURED_CACHE_TMPDIR
+    assert env_config.GLOBAL_WORKING_DIR_ENABLED
+    assert str(Path.home() / ".cache/unstructured") == env_config.GLOBAL_WORKING_DIR
+    assert Path(env_config.GLOBAL_WORKING_PROCESS_DIR).is_dir()
+    assert tempfile.gettempdir() == env_config.GLOBAL_WORKING_PROCESS_DIR

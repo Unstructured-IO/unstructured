@@ -439,9 +439,9 @@ def _partition_pdf_or_image_local(
 
             if analysis:
                 if not analyzed_image_output_dir_path:
-                    if env_config.UNSTRUCTURED_CACHE_ENABLED:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
                         analyzed_image_output_dir_path = str(
-                            Path(env_config.UNSTRUCTURED_CACHE_TMPDIR) / "annotated"
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
                         )
                     else:
                         analyzed_image_output_dir_path = str(Path.cwd() / "annotated")

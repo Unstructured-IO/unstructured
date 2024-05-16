@@ -26,8 +26,8 @@ class ENVConfig:
     """class for configuring enviorment parameters"""
 
     def __post_init__(self):
-        if self.UNSTRUCTURED_CACHE_ENABLED:
-            self._setup_tmpdir(self.UNSTRUCTURED_CACHE_TMPDIR)
+        if self.GLOBAL_WORKING_DIR_ENABLED:
+            self._setup_tmpdir(self.GLOBAL_WORKING_PROCESS_DIR)
 
     def _get_string(self, var: str, default_value: str = "") -> str:
         """attempt to get the value of var from the os environment; if not present return the
@@ -140,25 +140,25 @@ class ENVConfig:
         return self._get_float("PDF_ANNOTATION_THRESHOLD", 0.9)
 
     @property
-    def UNSTRUCTURED_CACHE_ENABLED(self) -> bool:
-        """Enable usage of UNSTRUCTURED_CACHE_DIR and UNSTRUCTURED_CACHE_TMPDIR."""
-        return self._get_bool("UNSTRUCTURED_CACHE_ENABLED", False)
+    def GLOBAL_WORKING_DIR_ENABLED(self) -> bool:
+        """Enable usage of GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR."""
+        return self._get_bool("GLOBAL_WORKING_DIR_ENABLED", False)
 
     @property
-    def UNSTRUCTURED_CACHE_DIR(self) -> str:
+    def GLOBAL_WORKING_DIR(self) -> str:
         """Path to Unstructured cache directory."""
-        return self._get_string("UNSTRUCTURED_CACHE_DIR", str(Path.home() / ".cache/unstructured"))
+        return self._get_string("GLOBAL_WORKING_DIR", str(Path.home() / ".cache/unstructured"))
 
     @property
-    def UNSTRUCTURED_CACHE_TMPDIR(self) -> str:
+    def GLOBAL_WORKING_PROCESS_DIR(self) -> str:
         """Path to Unstructured cache tempdir. Overrides TMPDIR, TEMP and TMP.
-        Defaults to '{UNSTRUCTURED_CACHE_DIR}/tmp/{os.getpgid(0)}'.
+        Defaults to '{GLOBAL_WORKING_DIR}/tmp/{os.getpgid(0)}'.
         """
-        default_tmpdir = get_tempdir(dir=self.UNSTRUCTURED_CACHE_DIR)
-        tmpdir = self._get_string("UNSTRUCTURED_CACHE_TMPDIR", default_tmpdir)
+        default_tmpdir = get_tempdir(dir=self.GLOBAL_WORKING_DIR)
+        tmpdir = self._get_string("GLOBAL_WORKING_PROCESS_DIR", default_tmpdir)
         if tmpdir == "":
             tmpdir = default_tmpdir
-        if self.UNSTRUCTURED_CACHE_ENABLED:
+        if self.GLOBAL_WORKING_DIR_ENABLED:
             self._setup_tmpdir(tmpdir)
         return tmpdir
 
