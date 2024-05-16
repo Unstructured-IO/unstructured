@@ -17,6 +17,7 @@ exclude_metadata_keys = (
     "links",
     "orig_elements",
     "regex_metadata",
+    "key_value_pairs",
 )
 
 
