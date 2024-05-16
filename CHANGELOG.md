@@ -1,13 +1,24 @@
-## 0.13.8-dev0
+## 0.13.8-dev12
 
 ### Enhancements
+
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
 
 ### Features
 * **Add form extraction basics (document elements and placeholder code in partition)
 
 ### Fixes
 
+* **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
+* **Re-apply: skip accuracy calculation feature** Overwritten by mistake
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
 
 ## 0.13.7
 

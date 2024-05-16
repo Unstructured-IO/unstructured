@@ -85,7 +85,7 @@ kiwisolver==1.4.5
     # via matplotlib
 layoutparser[layoutmodels,tesseract]==0.3.4
     # via unstructured-inference
-lxml==5.2.1
+lxml==5.2.2
     # via
     #   -c ./base.txt
     #   pikepdf
@@ -198,7 +198,7 @@ pyparsing==3.0.9
     #   matplotlib
 pypdf==4.2.0
     # via -r ./extra-pdf-image.in
-pypdfium2==4.29.0
+pypdfium2==4.30.0
     # via pdfplumber
 pytesseract==0.3.10
     # via layoutparser
@@ -222,7 +222,7 @@ rapidfuzz==3.9.0
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.4.28
+regex==2024.5.10
     # via
     #   -c ./base.txt
     #   transformers

@@ -15,7 +15,7 @@ from test_unstructured.unit_utils import assert_round_trips_through_JSON, exampl
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
-from unstructured.partition.csv import partition_csv
+from unstructured.partition.csv import get_delimiter, partition_csv
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
 EXPECTED_FILETYPE = "text/csv"
@@ -270,3 +270,8 @@ def test_partition_csv_header():
         == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     )
     assert "<thead>" in elements[0].metadata.text_as_html
+
+
+def test_partition_csv_detects_the_right_csv_delimiter():
+    # -- Issue #2643: previously raised `_csv.Error: Could not determine delimiter` on this file --
+    assert get_delimiter("example-docs/csv-with-long-lines.csv") == ","

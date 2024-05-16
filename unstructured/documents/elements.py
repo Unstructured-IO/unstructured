@@ -6,7 +6,6 @@ import dataclasses as dc
 import enum
 import functools
 import hashlib
-import inspect
 import os
 import pathlib
 import re
@@ -23,7 +22,7 @@ from unstructured.documents.coordinates import (
     RelativeCoordinateSystem,
 )
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-from unstructured.utils import lazyproperty
+from unstructured.utils import get_call_args_applying_defaults, lazyproperty
 
 Point: TypeAlias = "tuple[float, float]"
 Points: TypeAlias = "tuple[Point, ...]"
@@ -589,20 +588,16 @@ def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, l
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> list[Element]:
             elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
+            call_args = get_call_args_applying_defaults(func, *args, **kwargs)
 
-            regex_metadata: dict["str", "str"] = params.get("regex_metadata", {})
+            regex_metadata: dict["str", "str"] = call_args.get("regex_metadata", {})
             # -- don't write an empty `{}` to metadata.regex_metadata when no regex-metadata was
             # -- requested, otherwise it will serialize (because it's not None) when it has no
             # -- meaning or is even misleading. Also it complicates tests that don't use regex-meta.
             if regex_metadata:
                 elements = _add_regex_metadata(elements, regex_metadata)
 
-            unique_element_ids: bool = params.get("unique_element_ids", False)
+            unique_element_ids: bool = call_args.get("unique_element_ids", False)
             if unique_element_ids is False:
                 elements = assign_and_map_hash_ids(elements)
 

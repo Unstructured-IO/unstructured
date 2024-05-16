@@ -3,6 +3,7 @@ from __future__ import annotations
 import functools
 import html
 import importlib
+import inspect
 import json
 import os
 import platform
@@ -33,7 +34,7 @@ from typing_extensions import ParamSpec, TypeAlias
 from unstructured.__version__ import __version__
 
 if TYPE_CHECKING:
-    from unstructured.documents.elements import Text
+    from unstructured.documents.elements import Element, Text
 
 # Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right]
 Box: TypeAlias = Tuple[float, float, float, float]
@@ -44,6 +45,20 @@ DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
+
+
+def get_call_args_applying_defaults(
+    func: Callable[_P, List[Element]],
+    *args: _P.args,
+    **kwargs: _P.kwargs,
+) -> dict[str, Any]:
+    """Map both explicit and default arguments of decorated func call by param name."""
+    sig = inspect.signature(func)
+    call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+    for arg in sig.parameters.values():
+        if arg.name not in call_args and arg.default is not arg.empty:
+            call_args[arg.name] = arg.default
+    return call_args
 
 
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
