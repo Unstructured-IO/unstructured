@@ -19,10 +19,10 @@ class ChunkStepResponse(TypedDict):
     path: str
 
 
-@dataclass(kw_only=True)
+@dataclass
 class ChunkStep(PipelineStep):
-    identifier: str = STEP_ID
     process: Chunker
+    identifier: str = STEP_ID
 
     def __str__(self):
         return f"{self.identifier} ({self.process.config.chunking_strategy})"

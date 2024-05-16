@@ -16,7 +16,6 @@ class IndexerConfig(EnhancedDataClassJsonMixin):
 IndexerConfigT = TypeVar("IndexerConfigT", bound=IndexerConfig)
 
 
-@dataclass(kw_only=True)
 class Indexer(BaseProcess, BaseConnector, ABC):
     connector_type: str
     index_config: Optional[IndexerConfigT] = None

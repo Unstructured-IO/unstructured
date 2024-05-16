@@ -17,7 +17,6 @@ class DownloaderConfig(EnhancedDataClassJsonMixin):
 DownloaderConfigT = TypeVar("DownloaderConfigT", bound=DownloaderConfig)
 
 
-@dataclass(kw_only=True)
 class Downloader(BaseProcess, BaseConnector, ABC):
     connector_type: str
     download_config: Optional[DownloaderConfigT] = field(default_factory=DownloaderConfig)
