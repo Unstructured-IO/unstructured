@@ -341,8 +341,6 @@ class ElementMetadata:
             elif field_name == "orig_elements":
                 self.orig_elements = elements_from_base64_gzipped_json(field_value)
             elif field_name == "key_value_pairs":
-                from unstructured.documents.form_utils import _kvform_rehydrate_internal_elements
-
                 self.key_value_pairs = _kvform_rehydrate_internal_elements(field_value)
             else:
                 setattr(self, field_name, field_value)
@@ -410,8 +408,6 @@ class ElementMetadata:
         if self.orig_elements is not None:
             meta_dict["orig_elements"] = elements_to_base64_gzipped_json(self.orig_elements)
         if self.key_value_pairs is not None:
-            from unstructured.documents.form_utils import _kvform_pairs_to_dict
-
             meta_dict["key_value_pairs"] = _kvform_pairs_to_dict(self.key_value_pairs)
 
         return meta_dict
@@ -1060,3 +1056,41 @@ TYPE_TO_TEXT_ELEMENT_MAP: dict[str, type[Text]] = {
     ElementType.PAGE_NUMBER: PageNumber,
     ElementType.FORM_KEYS_VALUES: FormKeysValues,
 }
+
+
+def _kvform_rehydrate_internal_elements(kv_pairs: list[dict]) -> list[FormKeyValuePair]:
+    """
+    The key_value_pairs metadata field contains (in the vast majority of cases)
+    nested Text elements. Those need to be turned from dicts into Elements explicitly,
+    e.g. when partition_json is used.
+    """
+    from unstructured.staging.base import elements_from_dicts
+
+    # safe to overwrite - deepcopy already happened
+    for kv_pair in kv_pairs:
+        if kv_pair["key"]["custom_element"] is not None:
+            (kv_pair["key"]["custom_element"],) = elements_from_dicts(
+                [kv_pair["key"]["custom_element"]]
+            )
+        if kv_pair["value"] is not None and kv_pair["value"]["custom_element"] is not None:
+            (kv_pair["value"]["custom_element"],) = elements_from_dicts(
+                [kv_pair["value"]["custom_element"]]
+            )
+    return kv_pairs
+
+
+def _kvform_pairs_to_dict(kv_pairs: list[FormKeyValuePair]) -> list[dict]:
+    """
+    The key_value_pairs metadata field contains (in the vast majority of cases)
+    nested Text elements. Those need to be turned from Elements to dicts recursively,
+    e.g. when FormKeysValues.to_dict() is used.
+
+    """
+    kv_pairs: list[dict] = copy.deepcopy(kv_pairs)
+    for kv_pair in kv_pairs:
+        if kv_pair["key"]["custom_element"] is not None:
+            kv_pair["key"]["custom_element"] = kv_pair["key"]["custom_element"].to_dict()
+        if kv_pair["value"] is not None and kv_pair["value"]["custom_element"] is not None:
+            kv_pair["value"]["custom_element"] = kv_pair["value"]["custom_element"].to_dict()
+
+    return kv_pairs
