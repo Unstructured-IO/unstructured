@@ -21,43 +21,60 @@ from pillow_heif import register_heif_opener
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
     clean_extra_whitespace_with_index_run,
-    index_adjustment_after_clean_extra_whitespace)
+    index_adjustment_after_clean_extra_whitespace,
+)
 from unstructured.documents.coordinates import PixelSpace, PointSpace
-from unstructured.documents.elements import (CoordinatesMetadata, Element,
-                                             ElementMetadata, ElementType,
-                                             Image, Link, ListItem, PageBreak,
-                                             Text, process_metadata)
-from unstructured.file_utils.filetype import (FileType,
-                                              add_metadata_with_filetype)
+from unstructured.documents.elements import (
+    CoordinatesMetadata,
+    Element,
+    ElementMetadata,
+    ElementType,
+    Image,
+    Link,
+    ListItem,
+    PageBreak,
+    Text,
+    process_metadata,
+)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
-from unstructured.partition.common import (convert_to_bytes,
-                                           document_to_element_list,
-                                           exactly_one, get_last_modified_date,
-                                           get_last_modified_date_from_file,
-                                           ocr_data_to_elements,
-                                           spooled_to_bytes_io_if_needed)
-from unstructured.partition.lang import (check_language_args,
-                                         prepare_languages_for_tesseract)
-from unstructured.partition.pdf_image.form_extraction import \
-    run_form_extraction
+from unstructured.partition.common import (
+    convert_to_bytes,
+    document_to_element_list,
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+    ocr_data_to_elements,
+    spooled_to_bytes_io_if_needed,
+)
+from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
-    annotate_layout_elements, check_element_types_to_extract, save_elements)
+    annotate_layout_elements,
+    check_element_types_to_extract,
+    save_elements,
+)
 from unstructured.partition.pdf_image.pdfminer_processing import (
-    clean_pdfminer_duplicate_image_elements, clean_pdfminer_inner_elements,
-    merge_inferred_with_extracted_layout)
+    clean_pdfminer_duplicate_image_elements,
+    clean_pdfminer_inner_elements,
+    merge_inferred_with_extracted_layout,
+)
 from unstructured.partition.pdf_image.pdfminer_utils import (
-    open_pdfminer_pages_generator, rect_to_bbox)
-from unstructured.partition.strategies import (determine_pdf_or_image_strategy,
-                                               validate_strategy)
+    open_pdfminer_pages_generator,
+    rect_to_bbox,
+)
+from unstructured.partition.strategies import determine_pdf_or_image_strategy, validate_strategy
 from unstructured.partition.text import element_from_text
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import (SORT_MODE_BASIC,
-                                                    SORT_MODE_DONT,
-                                                    SORT_MODE_XY_CUT, OCRMode,
-                                                    PartitionStrategy)
-from unstructured.partition.utils.sorting import (coord_has_valid_points,
-                                                  sort_page_elements)
+from unstructured.partition.utils.constants import (
+    SORT_MODE_BASIC,
+    SORT_MODE_DONT,
+    SORT_MODE_XY_CUT,
+    OCRMode,
+    PartitionStrategy,
+)
+from unstructured.partition.utils.sorting import coord_has_valid_points, sort_page_elements
 from unstructured.patches.pdfminer import parse_keyword
 from unstructured.utils import requires_dependencies
 
@@ -377,12 +394,15 @@ def _partition_pdf_or_image_local(
 ) -> list[Element]:
     """Partition using package installed locally"""
     from unstructured_inference.inference.layout import (
-        process_data_with_model, process_file_with_model)
+        process_data_with_model,
+        process_file_with_model,
+    )
 
-    from unstructured.partition.pdf_image.ocr import (process_data_with_ocr,
-                                                      process_file_with_ocr)
+    from unstructured.partition.pdf_image.ocr import process_data_with_ocr, process_file_with_ocr
     from unstructured.partition.pdf_image.pdfminer_processing import (
-        process_data_with_pdfminer, process_file_with_pdfminer)
+        process_data_with_pdfminer,
+        process_file_with_pdfminer,
+    )
 
     if languages is None:
         languages = ["eng"]
