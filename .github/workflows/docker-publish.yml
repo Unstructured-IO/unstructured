@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/only-amd-build
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
