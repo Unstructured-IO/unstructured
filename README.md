@@ -56,7 +56,7 @@ As the Chipper model is in beta version, we welcome feedback and suggestions. Fo
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:
-* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#using-the-library-in-a-container) or
+* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#run-the-library-in-a-container) or
 * Install the library
     1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
     2. [Install for local development](https://github.com/Unstructured-IO/unstructured#installation-instructions-for-local-development)
@@ -85,7 +85,9 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
 docker exec -it unstructured bash
 ```
 
-You can also build your own Docker image.
+You can also build your own Docker image. Note that the base image is `wolfi-base`, which is
+updated regularly. If you are building the image locally, it is possible `docker-build` could
+fail due to upstream changes in `wolfi-base`.
 
 If you only plan on parsing one type of data you can speed up building the image by commenting out some
 of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary

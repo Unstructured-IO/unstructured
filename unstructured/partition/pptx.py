@@ -97,8 +97,8 @@ def partition_pptx(
     languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    strategy: str = PartitionStrategy.FAST,
     starting_page_number: int = 1,
+    strategy: str = PartitionStrategy.FAST,
     **kwargs: Any,
 ) -> list[Element]:
     """Partition PowerPoint document in .pptx format into its document elements.
