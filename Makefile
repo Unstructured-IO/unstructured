@@ -442,7 +442,7 @@ check-coverage:
 ## check-deps:              check consistency of dependencies
 .PHONY: check-deps
 check-deps:
-	/bin/bash -xe scripts/consistent-deps.sh
+	scripts/consistent-deps.sh
 
 .PHONY: check-extras
 check-extras:
