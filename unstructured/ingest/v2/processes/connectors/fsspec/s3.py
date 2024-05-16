@@ -48,7 +48,7 @@ class S3ConnectionConfig(FsspecConnectionConfig):
     def get_access_config(self) -> dict[str, Any]:
         access_configs: dict[str, Any] = {"anon": self.anonymous}
         if self.endpoint_url:
-            access_configs["endpoint"] = self.endpoint_url
+            access_configs["endpoint_url"] = self.endpoint_url
 
         access_configs.update(self.access_config.to_dict())
         return access_configs

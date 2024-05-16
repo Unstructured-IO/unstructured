@@ -39,7 +39,7 @@ class SrcCmd(BaseCmd):
             pipeline = self.get_pipline(src=self.cmd_name, source_options=options)
             pipeline.run()
         except Exception as e:
-            logger.error(e, exc_info=True)
+            logger.error(f"failed to run source command {self.cmd_name}: {e}", exc_info=True)
             raise click.ClickException(str(e)) from e
 
     def get_cmd(self) -> click.Group:
