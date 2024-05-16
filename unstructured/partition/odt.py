@@ -30,6 +30,7 @@ def partition_odt(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
+    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Open Office Documents in .odt format into its document elements.
@@ -76,6 +77,7 @@ def partition_odt(
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modification_date,
             starting_page_number=starting_page_number,
+            strategy=strategy,
         )
 
     return elements

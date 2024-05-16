@@ -5,14 +5,17 @@ from __future__ import annotations
 import os
 import pathlib
 import tempfile
+from typing import Any
 
 import pytest
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import (
     CaptureFixture,
+    FixtureRequest,
     assert_round_trips_through_JSON,
     example_doc_path,
+    function_mock,
 )
 from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import (
@@ -241,6 +244,24 @@ def test_partition_doc_respects_detect_language_per_element_arg():
 
 
 # -- miscellaneous -------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expected_value"),
+    [({}, None), ({"strategy": None}, None), ({"strategy": "hi_res"}, "hi_res")],
+)
+def test_partition_doc_forwards_strategy_arg_to_partition_docx(
+    request: FixtureRequest, kwargs: dict[str, Any], expected_value: str | None
+):
+    partition_docx_ = function_mock(request, "unstructured.partition.doc.partition_docx")
+
+    partition_doc(example_doc_path("simple.doc"), **kwargs)
+
+    call_kwargs = partition_docx_.call_args.kwargs
+    # -- `strategy` keyword-argument appeared in the call --
+    assert "strategy" in call_kwargs
+    # -- `strategy` argument was passed with the expected value --
+    assert call_kwargs["strategy"] == expected_value
 
 
 def test_partition_doc_grabs_emphasized_texts():
