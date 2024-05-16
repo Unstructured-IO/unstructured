@@ -1,12 +1,19 @@
 from __future__ import annotations
 
-from typing import IO, Any, Optional
+import os
+import tempfile
+from typing import IO, Any, Optional, cast
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
-from unstructured.partition.docx import convert_and_partition_docx
+from unstructured.partition.common import (
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
+from unstructured.partition.docx import partition_docx
+from unstructured.utils import requires_dependencies
 
 
 @process_metadata()
@@ -14,15 +21,14 @@ from unstructured.partition.docx import convert_and_partition_docx
 @add_chunking_strategy
 def partition_odt(
     filename: Optional[str] = None,
+    *,
+    date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
     file: Optional[IO[bytes]] = None,
-    include_metadata: bool = True,
     infer_table_structure: bool = True,
+    languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -51,25 +57,79 @@ def partition_odt(
                 Detect language per element instead of at the document level.
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
+        infer last_modified metadata from the file-like object, otherwise set it to None.
     """
 
-    last_modification_date = None
-    if filename:
-        last_modification_date = get_last_modified_date(filename)
-    elif file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
+    last_modification_date = (
+        get_last_modified_date(filename)
+        if filename
+        else get_last_modified_date_from_file(file) if file and date_from_file_object else None
+    )
+
+    with tempfile.TemporaryDirectory() as target_dir:
+        docx_path = _convert_odt_to_docx(target_dir, filename, file)
+        elements = partition_docx(
+            filename=docx_path,
+            detect_language_per_element=detect_language_per_element,
+            infer_table_structure=infer_table_structure,
+            languages=languages,
+            metadata_filename=metadata_filename,
+            metadata_last_modified=metadata_last_modified or last_modification_date,
+            starting_page_number=starting_page_number,
         )
 
-    return convert_and_partition_docx(
-        source_format="odt",
-        filename=filename,
-        file=file,
-        infer_table_structure=infer_table_structure,
-        metadata_filename=metadata_filename,
-        metadata_last_modified=metadata_last_modified or last_modification_date,
-        languages=languages,
-        detect_language_per_element=detect_language_per_element,
-        starting_page_number=starting_page_number,
+    return elements
+
+
+@requires_dependencies("pypandoc")
+def _convert_odt_to_docx(
+    target_dir: str, filename: Optional[str], file: Optional[IO[bytes]]
+) -> str:
+    """Convert ODT document to DOCX returning the new .docx file's path.
+
+    Parameters
+    ----------
+    target_dir
+        The str directory-path to use for conversion purposes. The new DOCX file is written to this
+        directory. When passed as a file-like object, a copy of the source file is written here as
+        well. It is the caller's responsibility to remove this directory and its contents when
+        they are no longer needed.
+    filename
+        A str file-path specifying the location of the source ODT file on the local filesystem.
+    file
+        A file-like object open for reading in binary mode ("rb" mode).
+    """
+    exactly_one(filename=filename, file=file)
+
+    # -- validate file-path when provided so we can provide a more meaningful error than whatever
+    # -- would come from pandoc.
+    if filename is not None and not os.path.exists(filename):
+        raise ValueError(f"The file {filename} does not exist.")
+
+    # -- Pandoc is a command-line program running in its own memory-space. It can therefore only
+    # -- operate on files on the filesystem. If the source document was passed as `file`, write
+    # -- it to `target_dir/document.odt` and use that path as the source-path.
+    source_file_path = f"{target_dir}/document.odt" if file is not None else cast(str, filename)
+    if file is not None:
+        with open(source_file_path, "wb") as f:
+            f.write(file.read())
+
+    # -- Compute the path of the resulting .docx document. We want its file-name to be preserved
+    # -- if the source-document was provided as `filename`.
+    # -- a/b/foo.odt -> foo.odt --
+    file_name = os.path.basename(source_file_path)
+    # -- foo.odt -> foo --
+    base_name, _ = os.path.splitext(file_name)
+    # -- foo -> foo.docx --
+    target_docx_path = os.path.join(target_dir, f"{base_name}.docx")
+
+    import pypandoc
+
+    pypandoc.convert_file(
+        source_file_path,
+        "docx",
+        format="odt",
+        outputfile=target_docx_path,
     )
+
+    return target_docx_path
