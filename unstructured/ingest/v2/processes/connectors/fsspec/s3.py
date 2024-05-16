@@ -50,7 +50,8 @@ class S3ConnectionConfig(FsspecConnectionConfig):
         if self.endpoint_url:
             access_configs["endpoint_url"] = self.endpoint_url
 
-        access_configs.update(self.access_config.to_dict())
+        # Avoid injecting None by filtering out k,v pairs where the value is None
+        access_configs.update({k: v for k, v in self.access_config.to_dict().items() if v})
         return access_configs
 
 
