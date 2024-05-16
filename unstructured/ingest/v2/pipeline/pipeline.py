@@ -13,6 +13,7 @@ from unstructured.ingest.v2.pipeline.steps.partition import Partitioner, Partiti
 from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStageStep
 from unstructured.ingest.v2.pipeline.steps.uncompress import Uncompressor, UncompressStep
 from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
+from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 from unstructured.ingest.v2.processes.connectors.local import LocalUploader
 
 
@@ -25,11 +26,11 @@ class Pipeline:
     downloader_step: DownloadStep = field(init=False)
     partitioner: InitVar[Partitioner]
     partitioner_step: PartitionStep = field(init=False)
-    chunker: InitVar[Chunker] = None
+    chunker: InitVar[Optional[Chunker]] = None
     chunker_step: ChunkStep = field(init=False, default=None)
-    embedder: InitVar[Embedder] = None
+    embedder: InitVar[Optional[Embedder]] = None
     embedder_step: EmbedStep = field(init=False, default=None)
-    stager: InitVar[UploadStager] = None
+    stager: InitVar[Optional[UploadStager]] = None
     stager_step: UploadStageStep = field(init=False, default=None)
     uploader: InitVar[Uploader] = field(default=LocalUploader)
     uploader_step: UploadStep = field(init=False, default=None)
@@ -88,7 +89,10 @@ class Pipeline:
         return final or None
 
     def _run(self):
-        logger.info(f"Running local pipline: {self}")
+        logger.info(
+            f"Running local pipline: {self} with configs: "
+            f"{sterilize_dict(self.context.to_dict(redact_sensitive=True))}"
+        )
         manager = mp.Manager()
         self.context.status = manager.dict()
 

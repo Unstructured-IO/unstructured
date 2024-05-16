@@ -81,6 +81,10 @@ class S3Indexer(FsspecIndexer):
             date_processed=str(time()),
             version=version,
             url=f"{self.index_config.protocol}://{path}",
+            record_locator={
+                "protocol": self.index_config.protocol,
+                "remote_file_path": self.index_config.remote_url,
+            },
         )
 
 
