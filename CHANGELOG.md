@@ -1,4 +1,4 @@
-## 0.13.8-dev12
+## 0.13.8-dev14
 
 ### Enhancements
 
@@ -7,6 +7,7 @@
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
 
 ### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
 
 ### Fixes
 
@@ -18,6 +19,7 @@
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
 * **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
 
 ## 0.13.7
 
