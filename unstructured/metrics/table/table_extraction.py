@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
@@ -72,6 +74,10 @@ def _convert_table_from_deckerd(content: List[Dict[str, Any]]) -> List[Dict[str,
     return table_data
 
 
+def _sort_table_cells(table_data: List[List[Dict[str, Any]]]) -> List[List[Dict[str, Any]]]:
+    return sorted(table_data, key=lambda cell: (cell["row_index"], cell["col_index"]))
+
+
 def extract_and_convert_tables_from_ground_truth(
     file_elements: List[Dict[str, Any]],
 ) -> List[List[Dict[str, Any]]]:
@@ -91,7 +97,7 @@ def extract_and_convert_tables_from_ground_truth(
                 converted_data = _convert_table_from_deckerd(
                     element["text"],
                 )
-                ground_truth_table_data.append(converted_data)
+                ground_truth_table_data.append(_sort_table_cells(converted_data))
             except Exception as e:
                 print(f"Error converting ground truth data: {e}")
                 ground_truth_table_data.append({})
@@ -100,30 +106,110 @@ def extract_and_convert_tables_from_ground_truth(
 
 
 def extract_and_convert_tables_from_prediction(
-    file_elements: List[Dict[str, Any]],
+    file_elements: List[Dict[str, Any]], source_type: str = "html"
 ) -> List[List[Dict[str, Any]]]:
-    """Extracts and converts table data to a structured format based on the specified table type.
+    """Extracts and converts table data to a structured format
 
     Args:
       file_elements: List of elements from the file.
-      table_type: The type of table format.
+      source_type: 'cells' or 'html'. 'cells' refers to reading 'table_as_cells' field while
+        'html' is extracted from 'text_as_html'
 
     Returns:
       A list of tables with each table represented as a list of cell data dictionaries.
 
     """
+    source_type_to_extraction_strategies = {
+        "html": extract_cells_from_text_as_html,
+        "cells": extract_cells_from_table_as_cells,
+    }
+    if source_type not in source_type_to_extraction_strategies:
+        raise ValueError(
+            f'source_type {source_type} is not valid. Allowed source_types are "html" and "cells"'
+        )
+
+    extract_cells_fn = source_type_to_extraction_strategies[source_type]
 
     predicted_table_data = []
     for element in file_elements:
         if element.get("type") == "Table":
-            val = element["metadata"].get("text_as_html")
-            if not val or "<table>" not in val:
-                continue
-            try:
-                converted_data = _convert_table_from_html(val)
-                predicted_table_data.append(converted_data)
-            except Exception as e:
-                print(f"Error converting Unstructured table data: {e}")
-                predicted_table_data.append({})
+            extracted_cells = extract_cells_fn(element)
+            if extracted_cells:
+                sorted_cells = _sort_table_cells(extracted_cells)
+                predicted_table_data.append(sorted_cells)
 
     return predicted_table_data
+
+
+def extract_cells_from_text_as_html(element: Dict[str, Any]) -> List[Dict[str, Any]] | None:
+    """Extracts and parse cells from "text_as_html" field in Element structure
+
+    Args:
+        element: Example element:
+        {
+            "type": "Table",
+            "metadata": {
+                "text_as_html": "<table>
+                                    <thead>
+                                        <th>Month A.</th>
+                                    </thead>
+                                    <tr>
+                                        <td>22</td><
+                                    /tr>
+                                </table>"
+            }
+        }
+
+    Returns:
+        List of extracted cells in a format:
+        [
+            {
+                "row_index": 0,
+                "col_index": 0,
+                "content": "Month A.",
+            },
+            ...,
+        ]
+    """
+    val = element["metadata"].get("text_as_html")
+    if not val or "<table>" not in val:
+        return None
+
+    predicted_cells = None
+    try:
+        predicted_cells = _convert_table_from_html(val)
+    except Exception as e:
+        print(f"Error converting Unstructured table data: {e}")
+
+    return predicted_cells
+
+
+def extract_cells_from_table_as_cells(element: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Extracts and parse cells from "table_as_cells" field in Element structure
+
+    Args:
+        element: Example element:
+        {
+            "type": "Table",
+            "metadata": {
+                "table_as_cells": [{"x": 0, "y": 0, "w": 1, "h": 1, "content": "Month A."},
+                                   {"x": 0, "y": 1, "w": 1, "h": 1, "content": "22"}]
+            }
+        }
+
+    Returns:
+        List of extracted cells in a format:
+        [
+            {
+                "row_index": 0,
+                "col_index": 0,
+                "content": "Month A.",
+            },
+            ...,
+        ]
+    """
+    predicted_cells = element["metadata"].get("table_as_cells")
+    converted_cells = None
+    if predicted_cells:
+        converted_cells = _convert_table_from_deckerd(predicted_cells)
+    return converted_cells

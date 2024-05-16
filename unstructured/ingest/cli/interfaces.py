@@ -434,6 +434,24 @@ class CliEmbeddingConfig(EmbeddingConfig, CliMixin):
                 type=str,
                 default=None,
             ),
+            click.Option(
+                ["--embedding-aws-access-key-id"],
+                help="AWS access key used for AWS-based embedders, such as bedrock",
+                type=str,
+                default=None,
+            ),
+            click.Option(
+                ["--embedding-aws-secret-access-key"],
+                help="AWS secret key used for AWS-based embedders, such as bedrock",
+                type=str,
+                default=None,
+            ),
+            click.Option(
+                ["--embedding-aws-region"],
+                help="AWS region used for AWS-based embedders, such as bedrock",
+                type=str,
+                default="us-west-2",
+            ),
         ]
         return options
 
@@ -470,18 +488,8 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
             ),
             click.Option(
                 ["--chunking-strategy"],
-                type=click.Choice(["basic", "by_title"]),
+                type=str,
                 help="The rule-set to use to form chunks. Omit to disable chunking.",
-            ),
-            click.Option(
-                ["--chunk-multipage-sections"],
-                is_flag=True,
-                default=CHUNK_MULTI_PAGE_DEFAULT,
-                help=(
-                    "Ignore page boundaries when chunking such that elements from two different"
-                    " pages can appear in the same chunk. Only operative for 'by_title'"
-                    " chunking-strategy."
-                ),
             ),
             click.Option(
                 ["--chunk-combine-text-under-n-chars"],
@@ -493,12 +501,12 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 ),
             ),
             click.Option(
-                ["--chunk-new-after-n-chars"],
-                type=int,
+                ["--chunk-include-orig-elements/--chunk-no-include-orig-elements"],
+                is_flag=True,
+                default=True,
                 help=(
-                    "Soft-maximum chunk length. Another element will not be added to a chunk of"
-                    " this length even when it would fit without exceeding the hard-maximum"
-                    " length."
+                    "When chunking, add the original elements consolidated to form each chunk to"
+                    " `.metadata.orig_elements` on that chunk."
                 ),
             ),
             click.Option(
@@ -509,6 +517,25 @@ class CliChunkingConfig(ChunkingConfig, CliMixin):
                 help=(
                     "Hard maximum chunk length. No chunk will exceed this length. An oversized"
                     " element will be divided by text-splitting to fit this window."
+                ),
+            ),
+            click.Option(
+                ["--chunk-multipage-sections/--chunk-no-multipage-sections"],
+                is_flag=True,
+                default=CHUNK_MULTI_PAGE_DEFAULT,
+                help=(
+                    "Ignore page boundaries when chunking such that elements from two different"
+                    " pages can appear in the same chunk. Only operative for 'by_title'"
+                    " chunking-strategy."
+                ),
+            ),
+            click.Option(
+                ["--chunk-new-after-n-chars"],
+                type=int,
+                help=(
+                    "Soft-maximum chunk length. Another element will not be added to a chunk of"
+                    " this length even when it would fit without exceeding the hard-maximum"
+                    " length."
                 ),
             ),
             click.Option(

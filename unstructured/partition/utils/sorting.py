@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import TYPE_CHECKING, Any, List, Tuple
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -12,7 +14,7 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
 
 
-def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int, int]:
+def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> tuple[int, int, int, int]:
     """
     Convert coordinates to a bounding box representation.
 
@@ -20,7 +22,7 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int
         coordinates (CoordinatesMetadata): Metadata containing points to represent the bounding box.
 
     Returns:
-        Tuple[int, int, int, int]: A tuple representing the bounding box in the format
+        tuple[int, int, int, int]: A tuple representing the bounding box in the format
         (left, top, right, bottom).
     """
 
@@ -30,17 +32,17 @@ def coordinates_to_bbox(coordinates: CoordinatesMetadata) -> Tuple[int, int, int
     return int(left), int(top), int(right), int(bottom)
 
 
-def shrink_bbox(bbox: Tuple[int, int, int, int], shrink_factor) -> Tuple[int, int, int, int]:
+def shrink_bbox(bbox: tuple[int, int, int, int], shrink_factor) -> tuple[int, int, int, int]:
     """
     Shrink a bounding box by a given shrink factor while maintaining its top and left.
 
     Parameters:
-        bbox (Tuple[int, int, int, int]): The original bounding box represented by
+        bbox (tuple[int, int, int, int]): The original bounding box represented by
         (left, top, right, bottom).
         shrink_factor (float): The factor by which to shrink the bounding box (0.0 to 1.0).
 
     Returns:
-        Tuple[int, int, int, int]: The shrunken bounding box represented by
+        tuple[int, int, int, int]: The shrunken bounding box represented by
         (left, top, right, bottom).
     """
 
@@ -95,16 +97,16 @@ def bbox_is_valid(bbox: Any) -> bool:
 
 
 def sort_page_elements(
-    page_elements: List[Element],
+    page_elements: list[Element],
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
-) -> List[Element]:
+) -> list[Element]:
     """
     Sorts a list of page elements based on the specified sorting mode.
 
     Parameters:
-    - page_elements (List[Element]): A list of elements representing parts of a page. Each element
+    - page_elements (list[Element]): A list of elements representing parts of a page. Each element
      should have metadata containing coordinates.
     - sort_mode (str, optional): The mode by which the elements will be sorted. Default is
      SORT_MODE_XY_CUT.
@@ -116,7 +118,7 @@ def sort_page_elements(
         - If an unrecognized sort_mode is provided, the function returns the elements as-is.
 
     Returns:
-    - List[Element]: A list of sorted page elements.
+    - list[Element]: A list of sorted page elements.
     """
 
     shrink_factor = float(
@@ -159,7 +161,7 @@ def sort_page_elements(
             shrunken_bbox = shrink_bbox(bbox, shrink_factor)
             shrunken_bboxes.append(shrunken_bbox)
 
-        res: List[int] = []
+        res: list[int] = []
         xy_cut_sorting_func = (
             recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
         )
@@ -198,7 +200,7 @@ def sort_bboxes_by_xy_cut(
         shrunken_bbox = shrink_bbox(bbox, shrink_factor)
         shrunken_bboxes.append(shrunken_bbox)
 
-    res: List[int] = []
+    res: list[int] = []
     xy_cut_sorting_func = (
         recursive_xy_cut_swapped if xy_cut_primary_direction == "x" else recursive_xy_cut
     )
@@ -211,11 +213,11 @@ def sort_bboxes_by_xy_cut(
 
 
 def sort_text_regions(
-    elements: List["TextRegion"],
+    elements: list["TextRegion"],
     sort_mode: str = SORT_MODE_XY_CUT,
     shrink_factor: float = 0.9,
     xy_cut_primary_direction: str = "x",
-) -> List["TextRegion"]:
+) -> list["TextRegion"]:
     """Sort a list of TextRegion elements based on the specified sorting mode."""
 
     if not elements:

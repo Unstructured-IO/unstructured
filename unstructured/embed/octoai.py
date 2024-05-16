@@ -70,7 +70,7 @@ class OctoAIEmbeddingEncoder(BaseEmbeddingEncoder):
     @EmbeddingEncoderConnectionError.wrap
     @requires_dependencies(
         ["openai", "tiktoken"],
-        extras="embed-openai",
+        extras="embed-octoai",
     )
     def create_client(self) -> "OpenAI":
         """Creates an OpenAI python client to embed elements. Uses the OpenAI SDK."""

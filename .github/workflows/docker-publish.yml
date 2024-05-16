@@ -47,6 +47,7 @@ jobs:
         password: ${{ secrets.QUAY_IO_ROBOT_TOKEN }}
     - name: Build images
       run: |
+        make docker-dl-packages
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
           --build-arg PIP_VERSION=$PIP_VERSION \
@@ -54,12 +55,17 @@ jobs:
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
+    - name: Scan image
+      uses: anchore/scan-action@v3
+      with:
+        image: "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
+        severity-cutoff: high
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Test images
       run: |
         echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-        echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" > uns_test_env_file
+        echo "UNSTRUCTURED_HF_TOKEN=${{ secrets.HF_TOKEN }}" >> uns_test_env_file
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         if [ "$ARCH" = "amd64" ]; then
         DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \

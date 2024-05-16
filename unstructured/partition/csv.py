@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import csv
-from tempfile import SpooledTemporaryFile
-from typing import IO, BinaryIO, List, Optional, Union, cast
+from typing import IO, Any, Optional, cast
 
 import pandas as pd
 from lxml.html.soupparser import fromstring as soupparser_fromstring
@@ -26,20 +27,21 @@ DETECTION_ORIGIN: str = "csv"
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.CSV)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_csv(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[IO[bytes]] = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     include_header: bool = False,
     include_metadata: bool = True,
     infer_table_structure: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     # NOTE (jennings) partition_csv generates a single TableElement
     # so detect_language_per_element is not included as a param
-    **kwargs,
-) -> List[Element]:
+    date_from_file_object: bool = False,
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft Excel Documents in .csv format into its document elements.
 
     Parameters
@@ -66,6 +68,9 @@ def partition_csv(
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
         in either language.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file)
 
@@ -77,15 +82,15 @@ def partition_csv(
         last_modification_date = get_last_modified_date(filename)
 
     elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
-        f = spooled_to_bytes_io_if_needed(
-            cast(Union[BinaryIO, SpooledTemporaryFile], file),
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
         )
+        f = spooled_to_bytes_io_if_needed(file)
         delimiter = get_delimiter(file=f)
         table = pd.read_csv(f, header=header, sep=delimiter)
 
     html_text = table.to_html(index=False, header=include_header, na_rep="")
-    text = soupparser_fromstring(html_text).text_content()
+    text = cast(str, soupparser_fromstring(html_text).text_content())
 
     if include_metadata:
         metadata = ElementMetadata(
@@ -106,19 +111,23 @@ def partition_csv(
     return list(elements)
 
 
-def get_delimiter(file_path=None, file=None):
-    """
-    Use the standard csv sniffer to determine the delimiter.
-    Read just a small portion in case the file is large.
+def get_delimiter(file_path: str | None = None, file: IO[bytes] | None = None):
+    """Use the standard csv sniffer to determine the delimiter.
+
+    Reads just a small portion in case the file is large.
     """
     sniffer = csv.Sniffer()
+    num_bytes = 65536
 
-    num_bytes = 8192
+    # -- read whole lines, sniffer can be confused by a trailing partial line --
     if file:
-        data = file.read(num_bytes).decode("utf-8")
+        lines = file.readlines(num_bytes)
         file.seek(0)
-    else:
+        data = "\n".join(ln.decode("utf-8") for ln in lines)
+    elif file_path is not None:
         with open(file_path) as f:
-            data = f.read(num_bytes)
+            data = "\n".join(f.readlines(num_bytes))
+    else:
+        raise ValueError("either `file_path` or `file` argument must be provided")
 
-    return sniffer.sniff(data, delimiters=[",", ";"]).delimiter
+    return sniffer.sniff(data, delimiters=",;").delimiter

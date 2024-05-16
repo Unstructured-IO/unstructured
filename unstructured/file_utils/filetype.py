@@ -2,12 +2,11 @@ from __future__ import annotations
 
 import enum
 import functools
-import inspect
 import json
 import os
 import re
 import zipfile
-from typing import IO, Any, Callable, Dict, List, Optional
+from typing import IO, Callable, List, Optional
 
 from typing_extensions import ParamSpec
 
@@ -15,11 +14,12 @@ from unstructured.documents.elements import Element
 from unstructured.file_utils.encoding import detect_file_encoding, format_encoding_str
 from unstructured.nlp.patterns import LIST_OF_DICTS_PATTERN
 from unstructured.partition.common import (
-    _add_element_metadata,
-    _remove_element_metadata,
+    add_element_metadata,
     exactly_one,
+    remove_element_metadata,
     set_element_hierarchy,
 )
+from unstructured.utils import get_call_args_applying_defaults
 
 try:
     import magic
@@ -580,18 +580,14 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
     @functools.wraps(func)
     def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
         elements = func(*args, **kwargs)
-        sig = inspect.signature(func)
-        params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-        for param in sig.parameters.values():
-            if param.name not in params and param.default is not param.empty:
-                params[param.name] = param.default
-        include_metadata = params.get("include_metadata", True)
+        call_args = get_call_args_applying_defaults(func, *args, **kwargs)
+        include_metadata = call_args.get("include_metadata", True)
         if include_metadata:
-            if params.get("metadata_filename"):
-                params["filename"] = params.get("metadata_filename")
+            if call_args.get("metadata_filename"):
+                call_args["filename"] = call_args.get("metadata_filename")
 
             metadata_kwargs = {
-                kwarg: params.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
+                kwarg: call_args.get(kwarg) for kwarg in ("filename", "url", "text_as_html")
             }
             # NOTE (yao): do not use cast here as cast(None) still is None
             if not str(kwargs.get("model_name", "")).startswith("chipper"):
@@ -602,16 +598,11 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
                 # NOTE(robinson) - Attached files have already run through this logic
                 # in their own partitioning function
                 if element.metadata.attached_to_filename is None:
-                    _add_element_metadata(
-                        element,
-                        **metadata_kwargs,  # type: ignore
-                    )
+                    add_element_metadata(element, **metadata_kwargs)
 
             return elements
         else:
-            return _remove_element_metadata(
-                elements,
-            )
+            return remove_element_metadata(elements)
 
     return wrapper
 
@@ -625,30 +616,18 @@ def add_filetype(
         @functools.wraps(func)
         def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> List[Element]:
             elements = func(*args, **kwargs)
-            sig = inspect.signature(func)
-            params: Dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
-            for param in sig.parameters.values():
-                if param.name not in params and param.default is not param.empty:
-                    params[param.name] = param.default
+            params = get_call_args_applying_defaults(func, *args, **kwargs)
             include_metadata = params.get("include_metadata", True)
             if include_metadata:
-                if params.get("metadata_filename"):
-                    params["filename"] = params.get("metadata_filename")
-
                 for element in elements:
                     # NOTE(robinson) - Attached files have already run through this logic
                     # in their own partitioning function
                     if element.metadata.attached_to_filename is None:
-                        _add_element_metadata(
-                            element,
-                            filetype=FILETYPE_TO_MIMETYPE[filetype],
-                        )
+                        add_element_metadata(element, filetype=FILETYPE_TO_MIMETYPE[filetype])
 
                 return elements
             else:
-                return _remove_element_metadata(
-                    elements,
-                )
+                return remove_element_metadata(elements)
 
         return wrapper
 

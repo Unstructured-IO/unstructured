@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 import tempfile
@@ -341,7 +343,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date(
         "unstructured.partition.pdf.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
-    elements = image.partition_image(filename=filename, stratefy=PartitionStrategy.HI_RES)
+    elements = image.partition_image(filename=filename, strategy=PartitionStrategy.HI_RES)
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -378,7 +380,7 @@ def test_partition_image_with_hi_res_strategy_metadata_date_custom_metadata_date
     )
     elements = image.partition_image(
         filename=filename,
-        stratefy=PartitionStrategy.HI_RES,
+        strategy=PartitionStrategy.HI_RES,
         metadata_last_modified=expected_last_modification_date,
     )
 
@@ -397,6 +399,21 @@ def test_partition_image_from_file_metadata_date(
     with open(filename, "rb") as f:
         elements = image.partition_image(file=f)
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_image_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+    with open(filename, "rb") as f:
+        elements = image.partition_image(file=f, date_from_file_object=True)
+
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -411,7 +428,25 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date(
     )
 
     with open(filename, "rb") as f:
-        elements = image.partition_image(file=f, stratefy=PartitionStrategy.HI_RES)
+        elements = image.partition_image(file=f, strategy=PartitionStrategy.HI_RES)
+
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_image_from_file_with_hi_res_strategy_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/english-and-korean.png",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = image.partition_image(
+            file=f, strategy=PartitionStrategy.HI_RES, date_from_file_object=True
+        )
 
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
@@ -451,10 +486,23 @@ def test_partition_image_from_file_with_hi_res_strategy_metadata_date_custom_met
         elements = image.partition_image(
             file=f,
             metadata_last_modified=expected_last_modification_date,
-            stratefy=PartitionStrategy.HI_RES,
+            strategy=PartitionStrategy.HI_RES,
         )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_image_from_file_without_metadata_date(
+    filename="example-docs/english-and-korean.png",
+):
+    """Test partition_image() with file that are not possible to get last modified date"""
+    with open(filename, "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = image.partition_image(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_msg_with_json():
@@ -691,3 +739,34 @@ def test_partition_image_works_on_heic_file(
     elements = image.partition_image(filename=filename, strategy=PartitionStrategy.AUTO)
     titles = [el.text for el in elements if el.category == ElementType.TITLE]
     assert "CREATURES" in titles
+
+
+@pytest.mark.parametrize(
+    ("strategy"),
+    [PartitionStrategy.HI_RES, PartitionStrategy.OCR_ONLY],
+)
+def test_deterministic_element_ids(strategy: str):
+    elements_1 = image.partition_image(
+        example_doc_path("layout-parser-paper-with-table.jpg"),
+        strategy=strategy,
+        starting_page_number=2,
+    )
+    elements_2 = image.partition_image(
+        example_doc_path("layout-parser-paper-with-table.jpg"),
+        strategy=strategy,
+        starting_page_number=2,
+    )
+    ids_1 = [element.id for element in elements_1]
+    ids_2 = [element.id for element in elements_2]
+
+    assert ids_1 == ids_2
+
+
+def test_multipage_tiff_starts_on_starting_page_number():
+    elements = image.partition_image(
+        example_doc_path("layout-parser-paper-combined.tiff"),
+        starting_page_number=2,
+    )
+    pages = {element.metadata.page_number for element in elements}
+
+    assert pages == {2, 3}

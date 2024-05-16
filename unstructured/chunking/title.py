@@ -7,15 +7,12 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional
 
-from typing_extensions import Self
-
 from unstructured.chunking.base import (
     CHUNK_MULTI_PAGE_DEFAULT,
     BoundaryPredicate,
     ChunkingOptions,
     PreChunkCombiner,
     PreChunker,
-    is_in_next_section,
     is_on_next_page,
     is_title,
 )
@@ -26,9 +23,10 @@ from unstructured.utils import lazyproperty
 def chunk_by_title(
     elements: Iterable[Element],
     *,
+    combine_text_under_n_chars: Optional[int] = None,
+    include_orig_elements: Optional[bool] = None,
     max_characters: Optional[int] = None,
     multipage_sections: Optional[bool] = None,
-    combine_text_under_n_chars: Optional[int] = None,
     new_after_n_chars: Optional[int] = None,
     overlap: Optional[int] = None,
     overlap_all: Optional[bool] = None,
@@ -43,23 +41,28 @@ def chunk_by_title(
     ----------
     elements
         A list of unstructured elements. Usually the output of a partition function.
-    multipage_sections
-        If True, sections can span multiple pages. Defaults to True.
     combine_text_under_n_chars
         Combines elements (for example a series of titles) until a section reaches a length of
         n characters. Defaults to `max_characters` which combines chunks whenever space allows.
         Specifying 0 for this argument suppresses combining of small chunks. Note this value is
         "capped" at the `new_after_n_chars` value since a value higher than that would not change
         this parameter's effect.
+    include_orig_elements
+        When `True` (default), add elements from pre-chunk to the `.metadata.orig_elements` field
+        of the chunk(s) formed from that pre-chunk. Among other things, this allows access to
+        original-element metadata that cannot be consolidated and is dropped in the course of
+        chunking.
+    max_characters
+        Chunks elements text and text_as_html (if present) into chunks of length
+        n characters (hard max)
+    multipage_sections
+        If True, sections can span multiple pages. Defaults to True.
     new_after_n_chars
         Cuts off new sections once they reach a length of n characters (soft max). Defaults to
         `max_characters` when not specified, which effectively disables any soft window.
         Specifying 0 for this argument causes each element to appear in a chunk by itself (although
         an element with text longer than `max_characters` will be still be split into two or more
         chunks).
-    max_characters
-        Chunks elements text and text_as_html (if present) into chunks of length
-        n characters (hard max)
     overlap
         Specifies the length of a string ("tail") to be drawn from each chunk and prefixed to the
         next chunk as a context-preserving mechanism. By default, this only applies to split-chunks
@@ -71,13 +74,20 @@ def chunk_by_title(
     """
     opts = _ByTitleChunkingOptions.new(
         combine_text_under_n_chars=combine_text_under_n_chars,
+        include_orig_elements=include_orig_elements,
         max_characters=max_characters,
         multipage_sections=multipage_sections,
         new_after_n_chars=new_after_n_chars,
         overlap=overlap,
         overlap_all=overlap_all,
     )
+    return _chunk_by_title(elements, opts)
 
+
+def _chunk_by_title(elements: Iterable[Element], opts: _ByTitleChunkingOptions) -> list[Element]:
+    """Implementation of actual "by-title" chunking."""
+    # -- Note(scanny): it might seem like over-abstraction for this to be a separate function but
+    # -- it eases overriding or adding individual chunking options when customizing a stock chunker.
     pre_chunks = PreChunkCombiner(
         PreChunker.iter_pre_chunks(elements, opts), opts=opts
     ).iter_combined_pre_chunks()
@@ -90,52 +100,14 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
     `by_title`-specific options:
 
+    combine_text_under_n_chars
+        A remedy to over-chunking caused by elements mis-identified as Title elements.
+        Every Title element would start a new chunk and this setting mitigates that, at the
+        expense of sometimes violating legitimate semantic boundaries.
     multipage_sections
         Indicates that page-boundaries should not be respected while chunking, i.e. elements
         appearing on two different pages can appear in the same chunk.
     """
-
-    def __init__(
-        self,
-        *,
-        max_characters: Optional[int] = None,
-        combine_text_under_n_chars: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-    ):
-        super().__init__(
-            combine_text_under_n_chars=combine_text_under_n_chars,
-            max_characters=max_characters,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-        )
-        self._multipage_sections_arg = multipage_sections
-
-    @classmethod
-    def new(
-        cls,
-        *,
-        max_characters: Optional[int] = None,
-        combine_text_under_n_chars: Optional[int] = None,
-        multipage_sections: Optional[bool] = None,
-        new_after_n_chars: Optional[int] = None,
-        overlap: Optional[int] = None,
-        overlap_all: Optional[bool] = None,
-    ) -> Self:
-        """Return instance or raises `ValueError` on invalid arguments like overlap > max_chars."""
-        self = cls(
-            max_characters=max_characters,
-            combine_text_under_n_chars=combine_text_under_n_chars,
-            multipage_sections=multipage_sections,
-            new_after_n_chars=new_after_n_chars,
-            overlap=overlap,
-            overlap_all=overlap_all,
-        )
-        self._validate()
-        return self
 
     @lazyproperty
     def boundary_predicates(self) -> tuple[BoundaryPredicate, ...]:
@@ -148,7 +120,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
             yield is_title
-            yield is_in_next_section()
             if not self.multipage_sections:
                 yield is_on_next_page()
 
@@ -164,20 +135,14 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         - Defaults to `max_characters` when not specified.
         - Is reduced to `new_after_n_chars` when it exceeds that value.
         """
-        max_characters = self.hard_max
-        soft_max = self.soft_max
-        arg_value = self._combine_text_under_n_chars_arg
-
         # -- `combine_text_under_n_chars` defaults to `max_characters` when not specified --
-        combine_text_under_n_chars = max_characters if arg_value is None else arg_value
-
-        # -- `new_after_n_chars` takes precendence on conflict with `combine_text_under_n_chars` --
-        return soft_max if combine_text_under_n_chars > soft_max else combine_text_under_n_chars
+        arg_value = self._kwargs.get("combine_text_under_n_chars")
+        return self.hard_max if arg_value is None else arg_value
 
     @lazyproperty
     def multipage_sections(self) -> bool:
         """When False, break pre-chunks on page-boundaries."""
-        arg_value = self._multipage_sections_arg
+        arg_value = self._kwargs.get("multipage_sections")
         return CHUNK_MULTI_PAGE_DEFAULT if arg_value is None else bool(arg_value)
 
     def _validate(self) -> None:
@@ -185,21 +150,20 @@ class _ByTitleChunkingOptions(ChunkingOptions):
         # -- start with base-class validations --
         super()._validate()
 
-        if (combine_text_under_n_chars_arg := self._combine_text_under_n_chars_arg) is not None:
-            # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
-            # -- but a negative value is not
-            if combine_text_under_n_chars_arg < 0:
-                raise ValueError(
-                    f"'combine_text_under_n_chars' argument must be >= 0,"
-                    f" got {combine_text_under_n_chars_arg}"
-                )
+        # -- `combine_text_under_n_chars == 0` is valid (suppresses chunk combination)
+        # -- but a negative value is not
+        if self.combine_text_under_n_chars < 0:
+            raise ValueError(
+                f"'combine_text_under_n_chars' argument must be >= 0,"
+                f" got {self.combine_text_under_n_chars}"
+            )
 
-            # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
-            # -- users. The chunking behavior would be no different than when
-            # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
-            # -- default (500) then it can look like chunk-combining isn't working.
-            if combine_text_under_n_chars_arg > self.hard_max:
-                raise ValueError(
-                    f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
-                    f" value, got {combine_text_under_n_chars_arg} > {self.hard_max}"
-                )
+        # -- `combine_text_under_n_chars` > `max_characters` can produce behavior confusing to
+        # -- users. The chunking behavior would be no different than when
+        # -- `combine_text_under_n_chars == max_characters`, but if `max_characters` is left to
+        # -- default (500) then it can look like chunk-combining isn't working.
+        if self.combine_text_under_n_chars > self.hard_max:
+            raise ValueError(
+                f"'combine_text_under_n_chars' argument must not exceed `max_characters`"
+                f" value, got {self.combine_text_under_n_chars} > {self.hard_max}"
+            )

@@ -1,3 +1,4 @@
+from test_unstructured.unit_utils import assign_hash_ids
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     CoordinatesMetadata,
@@ -18,20 +19,21 @@ def test_stage_for_baseplate():
     system = PixelSpace(width=1700, height=2200)
     coordinates_metadata = CoordinatesMetadata(points=points, system=system)
     metadata = ElementMetadata(filename="fox.pdf", coordinates=coordinates_metadata)
-    elements = [
-        Title("A Wonderful Story About A Fox", metadata=metadata),
-        NarrativeText(
-            "A fox ran into the chicken coop and the chickens flew off!",
-            metadata=metadata,
-        ),
-    ]
+    elements = assign_hash_ids(
+        [
+            Title("A Wonderful Story About A Fox", metadata=metadata),
+            NarrativeText(
+                "A fox ran into the chicken coop and the chickens flew off!", metadata=metadata
+            ),
+        ]
+    )
 
     rows = stage_for_baseplate(elements)
     assert rows == {
         "rows": [
             {
                 "data": {
-                    "element_id": "ad270eefd1cc68d15f4d3e51666d4dc8",
+                    "element_id": "933d9fce18f44b09f4ec6975f470a0d7",
                     "text": "A Wonderful Story About A Fox",
                     "type": "Title",
                 },
@@ -50,7 +52,7 @@ def test_stage_for_baseplate():
             },
             {
                 "data": {
-                    "element_id": "8275769fdd1804f9f2b55ad3c9b0ef1b",
+                    "element_id": "d154ec57da0d7d4439aaed8ec6546f6e",
                     "text": "A fox ran into the chicken coop and the chickens flew off!",
                     "type": "NarrativeText",
                 },

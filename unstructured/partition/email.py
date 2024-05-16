@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import copy
 import datetime
 import email
@@ -6,8 +8,8 @@ import re
 import sys
 from email.message import Message
 from functools import partial
-from tempfile import NamedTemporaryFile, SpooledTemporaryFile, TemporaryDirectory
-from typing import IO, Any, Callable, Dict, List, Optional, Tuple, Union
+from tempfile import NamedTemporaryFile, TemporaryDirectory
+from typing import IO, Any, Callable, Optional
 
 from unstructured.file_utils.encoding import (
     COMMON_ENCODINGS,
@@ -19,6 +21,8 @@ from unstructured.logger import logger
 from unstructured.partition.common import (
     convert_to_bytes,
     exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
 )
 from unstructured.partition.lang import apply_lang_metadata
 
@@ -57,17 +61,17 @@ from unstructured.nlp.patterns import EMAIL_DATETIMETZ_PATTERN_RE
 from unstructured.partition.html import partition_html
 from unstructured.partition.text import partition_text
 
-VALID_CONTENT_SOURCES: Final[List[str]] = ["text/html", "text/plain"]
+VALID_CONTENT_SOURCES: Final[list[str]] = ["text/html", "text/plain"]
 DETECTION_ORIGIN: str = "email"
 
 
-def _parse_received_data(data: str) -> List[Element]:
+def _parse_received_data(data: str) -> list[Element]:
     ip_address_names = extract_ip_address_name(data)
     ip_addresses = extract_ip_address(data)
     mapi_id = extract_mapi_id(data)
     datetimetz = extract_datetimetz(data)
 
-    elements: List[Element] = []
+    elements: list[Element] = []
     if ip_address_names and ip_addresses:
         for name, ip in zip(ip_address_names, ip_addresses):
             elements.append(ReceivedInfo(name=name, text=ip))
@@ -84,7 +88,7 @@ def _parse_received_data(data: str) -> List[Element]:
     return elements
 
 
-def _parse_email_address(data: str) -> Tuple[str, str]:
+def _parse_email_address(data: str) -> tuple[str, str]:
     email_address = extract_email_address(data)
 
     PATTERN = "<[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+>"  # noqa: W605 Note(harrell)
@@ -93,8 +97,8 @@ def _parse_email_address(data: str) -> Tuple[str, str]:
     return name, email_address[0]
 
 
-def partition_email_header(msg: Message) -> List[Element]:
-    elements: List[Element] = []
+def partition_email_header(msg: Message) -> list[Element]:
+    elements: list[Element] = []
     for item in msg.raw_items():
         if item[0] == "To":
             text = _parse_email_address(item[1])
@@ -129,6 +133,7 @@ def build_email_metadata(
     msg: Message,
     filename: Optional[str],
     metadata_last_modified: Optional[str] = None,
+    last_modification_date: Optional[str] = None,
 ) -> ElementMetadata:
     """Creates an ElementMetadata object from the header information in the email."""
     signature = find_signature(msg)
@@ -151,7 +156,7 @@ def build_email_metadata(
         sent_from=sent_from,
         subject=header_dict.get("Subject"),
         signature=signature,
-        last_modified=metadata_last_modified or email_date,
+        last_modified=metadata_last_modified or email_date or last_modification_date,
         filename=filename,
     )
     element_metadata.detection_origin = DETECTION_ORIGIN
@@ -177,7 +182,7 @@ def convert_to_iso_8601(time: str) -> Optional[str]:
 def extract_attachment_info(
     message: Message,
     output_dir: Optional[str] = None,
-) -> List[Dict[str, str]]:
+) -> list[dict[str, str]]:
     list_attachments = []
 
     for part in message.walk():
@@ -224,9 +229,8 @@ def has_embedded_image(element):
 
 
 def find_embedded_image(
-    element: Union[NarrativeText, Title],
-    indices: re.Match,
-) -> Tuple[Element, Element]:
+    element: NarrativeText | Title, indices: re.Match
+) -> tuple[Element, Element]:
     start, end = indices.start(), indices.end()
 
     image_raw_info = element.text[start:end]
@@ -236,9 +240,8 @@ def find_embedded_image(
 
 
 def parse_email(
-    filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
-) -> Tuple[Optional[str], Message]:
+    filename: Optional[str] = None, file: Optional[IO[bytes]] = None
+) -> tuple[Optional[str], Message]:
     if filename is not None:
         with open(filename, "rb") as f:
             msg = email.message_from_binary_file(f)
@@ -262,10 +265,10 @@ def parse_email(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.EML)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_email(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     content_source: str = "text/html",
     encoding: Optional[str] = None,
@@ -275,13 +278,14 @@ def partition_email(
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     process_attachments: bool = False,
-    attachment_partitioner: Optional[Callable[..., List[Element]]] = None,
+    attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions an .eml documents into its constituent elements.
     Parameters
     ----------
@@ -318,6 +322,10 @@ def partition_email(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True and inference
+        from message header failed, attempt to infer last_modified metadata from bytes,
+        otherwise set it to None.
     """
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
@@ -355,7 +363,7 @@ def partition_email(
         encoding = detected_encoding
 
     is_encrypted = False
-    content_map: Dict[str, str] = {}
+    content_map: dict[str, str] = {}
     for part in msg.walk():
         # NOTE(robinson) - content dispostiion is None for the content of the email itself.
         # Other dispositions include "attachment" for attachments
@@ -396,7 +404,7 @@ def partition_email(
                 )
                 break
 
-    elements: List[Element] = []
+    elements: list[Element] = []
 
     if is_encrypted:
         logger.warning(
@@ -468,15 +476,24 @@ def partition_email(
             elements[idx] = clean_element
             elements.insert(idx + 1, image_info)
 
-    header: List[Element] = []
+    header: list[Element] = []
     if include_headers:
         header = partition_email_header(msg)
     all_elements = header + elements
+
+    last_modification_date = None
+    if filename is not None:
+        last_modification_date = get_last_modified_date(filename)
+    elif file is not None:
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
     metadata = build_email_metadata(
         msg,
         filename=metadata_filename or filename,
         metadata_last_modified=metadata_last_modified,
+        last_modification_date=last_modification_date,
     )
     for element in all_elements:
         element.metadata = copy.deepcopy(metadata)

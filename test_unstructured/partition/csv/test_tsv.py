@@ -1,3 +1,5 @@
+from tempfile import SpooledTemporaryFile
+
 import pytest
 
 from test_unstructured.partition.test_constants import (
@@ -8,6 +10,7 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
 )
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import Table
 from unstructured.partition.tsv import partition_tsv
@@ -154,6 +157,27 @@ def test_partition_tsv_from_file_metadata_date(
             include_header=False,
         )
 
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_tsv_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/stanley-cups.tsv",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.tsv.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename, "rb") as f:
+        elements = partition_tsv(
+            file=f,
+            include_header=False,
+            date_from_file_object=True,
+        )
+
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -177,6 +201,20 @@ def test_partition_tsv_from_file_with_custom_metadata_date(
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
+def test_partition_tsv_from_file_without_metadata_date(
+    filename="example-docs/stanley-cups.tsv",
+):
+    """Test partition_tsv() with file that are not possible to get last modified date"""
+
+    with open(filename, "rb") as f:
+        sf = SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_tsv(file=sf, include_header=False, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
+
+
 @pytest.mark.parametrize("filename", ["stanley-cups.tsv", "stanley-cups-with-emoji.tsv"])
 def test_partition_tsv_with_json(filename: str):
     elements = partition_tsv(example_doc_path(filename), include_header=False)
@@ -191,7 +229,7 @@ def test_partition_tsv_element_metadata_has_languages():
     assert elements[0].metadata.languages == ["eng"]
 
 
-def test_partition_csv_header():
+def test_partition_tsv_header():
     filename = "example-docs/stanley-cups.tsv"
     elements = partition_tsv(filename=filename, strategy="fast", include_header=True)
     assert (
@@ -199,3 +237,19 @@ def test_partition_csv_header():
         == "Stanley Cups Unnamed: 1 Unnamed: 2 " + EXPECTED_TEXT_XLSX
     )
     assert "<thead>" in elements[0].metadata.text_as_html
+
+
+def test_partition_tsv_supports_chunking_strategy_while_partitioning():
+    elements = partition_tsv(filename=example_doc_path("stanley-cups.tsv"))
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=0)
+
+    chunk_elements = partition_tsv(
+        example_doc_path("stanley-cups.tsv"),
+        chunking_strategy="by_title",
+        max_characters=9,
+        combine_text_under_n_chars=0,
+        include_header=False,
+    )
+
+    # The same chunks are returned if chunking elements or chunking during partitioning.
+    assert chunk_elements == chunks

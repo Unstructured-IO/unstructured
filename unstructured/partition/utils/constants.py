@@ -6,6 +6,7 @@ class Source(Enum):
     PDFMINER = "pdfminer"
     OCR_TESSERACT = "ocr_tesseract"
     OCR_PADDLE = "ocr_paddle"
+    OCR_GOOGLEVISION = "ocr_googlevision"
 
 
 class OCRMode(Enum):
@@ -29,14 +30,17 @@ OCR_AGENT_PADDLE_OLD = "paddle"
 
 OCR_AGENT_TESSERACT = "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
 OCR_AGENT_PADDLE = "unstructured.partition.utils.ocr_models.paddle_ocr.OCRAgentPaddle"
+OCR_AGENT_GOOGLEVISION = (
+    "unstructured.partition.utils.ocr_models.google_vision_ocr.OCRAgentGoogleVision"
+)
 
 OCR_AGENT_MODULES_WHITELIST = os.getenv(
     "OCR_AGENT_MODULES_WHITELIST",
     "unstructured.partition.utils.ocr_models.tesseract_ocr,"
-    "unstructured.partition.utils.ocr_models.paddle_ocr",
+    "unstructured.partition.utils.ocr_models.paddle_ocr,"
+    "unstructured.partition.utils.ocr_models.google_vision_ocr",
 ).split(",")
 
-SUBREGION_THRESHOLD_FOR_OCR = 0.5
 UNSTRUCTURED_INCLUDE_DEBUG_METADATA = os.getenv("UNSTRUCTURED_INCLUDE_DEBUG_METADATA", False)
 
 # Note(yuming): Default language for paddle OCR
@@ -203,3 +207,5 @@ TESSERACT_MAX_SIZE = 2147483647
 
 # default image colors
 IMAGE_COLOR_DEPTH = 32
+
+HTML_MAX_PREDECESSOR_LEN = 15

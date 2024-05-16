@@ -1,26 +1,205 @@
+## 0.13.8-dev13
+
+### Enhancements
+
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+
+### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
+
+### Fixes
+
+* **Add missing starting_page_num param to partition_image**
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
+* **Re-apply: skip accuracy calculation feature** Overwritten by mistake
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+
+## 0.13.7
+
+### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
+
+### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+* **Remove unnecessary warning log for using default layout model.**
+* **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element, chunking is made available because the Table element is often larger than the desired chunk size and must be divided into smaller chunks.
+
+## 0.13.6
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
+## 0.13.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
+## 0.13.4
+
+### Enhancements
+
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
+  function are now deterministic and unique at the document level by default. Before, hashes were
+  based only on text; however, they now also take into account the element's sequence number on a
+  page, the page's number in the document, and the document's file name.
+* **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
+  previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
+  options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
+
+### Features
+
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
+
+### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
+
+## 0.13.3
+
+### Enhancements
+
+* **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
+* **Add support for `start_index` in `html` links extraction**
+* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
+* **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
+* **Introduce `starting_page_number` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
+* **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
+
+### Features
+
+### Fixes
+
+* **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
+* **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
+
+## 0.13.2
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Brings back missing word list files** that caused `partition` failures in 0.13.1.
+
+## 0.13.1
+
+### Enhancements
+
+* **Drop constraint on pydantic, supporting later versions** All dependencies has pydantic pinned at an old version. This explicit pin was removed, allowing the latest version to be pulled in when requirements are compiled.
+
+### Features
+
+* **Add a set of new `ElementType`s to extend future element types**
+
+### Fixes
+
+* **Fix `partition_html()` swallowing some paragraphs**. The `partition_html()` only considers elements with limited depth to avoid becoming the text representation of a giant div. This fix increases the limit value.
+* **Fix SFTP** Adds flag options to SFTP connector on whether to use ssh keys / agent, with flag values defaulting to False. This is to prevent looking for ssh files when using username and password. Currently, username and password are required, making that always the case.
+
+## 0.13.0
+
+### Enhancements
+
+* **Add `.metadata.is_continuation` to text-split chunks.** `.metadata.is_continuation=True` is added to second-and-later chunks formed by text-splitting an oversized `Table` element but not to their counterpart `Text` element splits. Add this indicator for `CompositeElement` to allow text-split continuation chunks to be identified for downstream processes that may wish to skip intentionally redundant metadata values in continuation chunks.
+* **Add `compound_structure_acc` metric to table eval.** Add a new property to `unstructured.metrics.table_eval.TableEvaluation`: `composite_structure_acc`, which is computed from the element level row and column index and content accuracy scores
+* **Add `.metadata.orig_elements` to chunks.** `.metadata.orig_elements: list[Element]` is added to chunks during the chunking process (when requested) to allow access to information from the elements each chunk was formed from. This is useful for example to recover metadata fields that cannot be consolidated to a single value for a chunk, like `page_number`, `coordinates`, and `image_base64`.
+* **Add `--include_orig_elements` option to Ingest CLI.** By default, when chunking, the original elements used to form each chunk are added to `chunk.metadata.orig_elements` for each chunk. * The `include_orig_elements` parameter allows the user to turn off this behavior to produce a smaller payload when they don't need this metadata.
+* **Add Google VertexAI embedder** Adds VertexAI embeddings to support embedding via Google Vertex AI.
+
+### Features
+
+* **Chunking populates `.metadata.orig_elements` for each chunk.** This behavior allows the text and metadata of the elements combined to make each chunk to be accessed. This can be important for example to recover metadata such as `.coordinates` that cannot be consolidated across elements and so is dropped from chunks. This option is controlled by the `include_orig_elements` parameter to `partition_*()` or to the chunking functions. This option defaults to `True` so original-elements are preserved by default. This behavior is not yet supported via the REST APIs or SDKs but will be in a closely subsequent PR to other `unstructured` repositories. The original elements will also not serialize or deserialize yet; this will also be added in a closely subsequent PR.
+* **Add Clarifai destination connector** Adds support for writing partitioned and chunked documents into Clarifai.
+
+### Fixes
+
+* **Fix `clean_pdfminer_inner_elements()` to remove only pdfminer (embedded) elements merged with inferred elements**. Previously, some embedded elements were removed even if they were not merged with inferred elements. Now, only embedded elements that are already merged with inferred elements are removed.
+* **Clarify IAM Role Requirement for GCS Platform Connectors**. The GCS Source Connector requires Storage Object Viewer and GCS Destination Connector requires Storage Object Creator IAM roles.
+* **Change table extraction defaults** Change table extraction defaults in favor of using `skip_infer_table_types` parameter and reflect these changes in documentation.
+* **Fix OneDrive dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string. See previous fix for SharePoint
+* **Adds tracking for AstraDB** Adds tracking info so AstraDB can see what source called their api.
+* **Support AWS Bedrock Embeddings in ingest CLI** The configs required to instantiate the bedrock embedding class are now exposed in the api and the version of boto being used meets the minimum requirement to introduce the bedrock runtime required to hit the service.
+* **Change MongoDB redacting** Original redact secrets solution is causing issues in platform. This fix uses our standard logging redact solution.
+
+## 0.12.6
+
+### Enhancements
+
+* **Improve ability to capture embedded links in `partition_pdf()` for `fast` strategy** Previously, a threshold value that affects the capture of embedded links was set to a fixed value by default. This allows users to specify the threshold value for better capturing.
+* **Refactor `add_chunking_strategy` decorator to dispatch by name.** Add `chunk()` function to be used by the `add_chunking_strategy` decorator to dispatch chunking call based on a chunking-strategy name (that can be dynamic at runtime). This decouples chunking dispatch from only those chunkers known at "compile" time and enables runtime registration of custom chunkers.
+* **Redefine `table_level_acc` metric for table evaluation.** `table_level_acc` now is an average of individual predicted table's accuracy. A predicted table's accuracy is defined as the sequence matching ratio between itself and its corresponding ground truth table.
+
+### Features
+
+* **Added Unstructured Platform Documentation** The Unstructured Platform is currently in beta. The documentation provides how-to guides for setting up workflow automation, job scheduling, and configuring source and destination connectors.
+
+### Fixes
+
+* **Partitioning raises on file-like object with `.name` not a local file path.** When partitioning a file using the `file=` argument, and `file` is a file-like object (e.g. io.BytesIO) having a `.name` attribute, and the value of `file.name` is not a valid path to a file present on the local filesystem, `FileNotFoundError` is raised. This prevents use of the `file.name` attribute for downstream purposes to, for example, describe the source of a document retrieved from a network location via HTTP.
+* **Fix SharePoint dates with inconsistent formatting** Adds logic to conditionally support dates returned by office365 that may vary in date formatting or may be a datetime rather than a string.
+* **Include warnings** about the potential risk of installing a version of `pandoc` which does not support RTF files + instructions that will help resolve that issue.
+* **Incorporate the `install-pandoc` Makefile recipe** into relevant stages of CI workflow, ensuring it is a version that supports RTF input files.
+* **Fix Google Drive source key** Allow passing string for source connector key.
+* **Fix table structure evaluations calculations** Replaced special value `-1.0` with `np.nan` and corrected rows filtering of files metrics basing on that.
+* **Fix Sharepoint-with-permissions test** Ignore permissions metadata, update test.
+* **Fix table structure evaluations for edge case** Fixes the issue when the prediction does not contain any table - no longer errors in such case.
+
 ## 0.12.5
 
 ### Enhancements
 
 ### Features
+* Add `date_from_file_object` parameter to partition. If True and if file is provided via `file` parameter it will cause partition to infer last modified date from `file`'s content. If False, last modified metadata will be `None`.
 
 * **Header and footer detection for fast strategy** `partition_pdf` with `fast` strategy now
   detects elements that are in the top or bottom 5 percent of the page as headers and footers.
 * **Add parent_element to overlapping case output** Adds parent_element to the output for `identify_overlapping_or_nesting_case` and `catch_overlapping_and_nested_bboxes` functions.
 * **Add table structure evaluation** Adds a new function to evaluate the structure of a table and return a metric that represents the quality of the table structure. This function is used to evaluate the quality of the table structure and the table contents.
 * **Add AstraDB destination connector** Adds support for writing embedded documents into an AstraDB vector database.
+* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 
 ### Fixes
 
 * **Fix passing list type parameters when calling unstructured API via `partition_via_api()`** Update `partition_via_api()` to convert all list type parameters to JSON formatted strings before calling the unstructured client SDK. This will support image block extraction via `partition_via_api()`.
-* **Add OctoAI embedder** Adds support for embeddings via OctoAI.
 * **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
-* **Fix don't treat plain text files with double quotes as JSON ** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
-* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors **
+* **Fix don't treat plain text files with double quotes as JSON** If a file can be deserialized as JSON but it deserializes as a string, treat it as plain text even though it's valid JSON.
+* **Fix `check_connection` in opensearch, databricks, postgres, azure connectors**
 * **Fix cluster of bugs in `partition_xlsx()` that dropped content.** Algorithm for detecting "subtables" within a worksheet dropped table elements for certain patterns of populated cells such as when a trailing single-cell row appeared in a contiguous block of populated cells.
 * **Improved documentation**. Fixed broken links and improved readability on `Key Concepts` page.
-* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.
+* **Rename `OpenAiEmbeddingConfig` to `OpenAIEmbeddingConfig`.**
 * **Fix partition_json() doesn't chunk.** The `@add_chunking_strategy` decorator was missing from `partition_json()` such that pre-partitioned documents serialized to JSON did not chunk when a chunking-strategy was specified.
+
 
 ## 0.12.4
 

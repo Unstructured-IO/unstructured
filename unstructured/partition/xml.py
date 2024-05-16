@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import copy
 from io import BytesIO
-from tempfile import SpooledTemporaryFile
-from typing import IO, Any, BinaryIO, Iterator, List, Optional, Union, cast
+from typing import IO, Any, Iterator, Optional, cast
 
 from lxml import etree
 
@@ -28,7 +29,7 @@ DETECTION_ORIGIN: str = "xml"
 
 def get_leaf_elements(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile]] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     xml_path: Optional[str] = None,
 ) -> Iterator[Optional[str]]:
@@ -37,20 +38,14 @@ def get_leaf_elements(
     if filename:
         return _get_leaf_elements(filename, xml_path=xml_path)
     elif file:
-        f = cast(
-            IO[bytes],
-            spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file),
-            ),
-        )
-        return _get_leaf_elements(f, xml_path=xml_path)
+        return _get_leaf_elements(file=spooled_to_bytes_io_if_needed(file), xml_path=xml_path)
     else:
         b = BytesIO(bytes(cast(str, text), encoding="utf-8"))
         return _get_leaf_elements(b, xml_path=xml_path)
 
 
 def _get_leaf_elements(
-    file: Union[str, IO[bytes]],
+    file: str | IO[bytes],
     xml_path: Optional[str] = None,
 ) -> Iterator[Optional[str]]:
     """Parse the XML tree in a memory efficient manner if possible."""
@@ -81,10 +76,10 @@ def _get_leaf_elements(
 
 @process_metadata()
 @add_metadata_with_filetype(FileType.XML)
-@add_chunking_strategy()
+@add_chunking_strategy
 def partition_xml(
     filename: Optional[str] = None,
-    file: Optional[Union[IO[bytes], SpooledTemporaryFile[bytes]]] = None,
+    file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     xml_keep_tags: bool = False,
     xml_path: Optional[str] = None,
@@ -93,10 +88,11 @@ def partition_xml(
     encoding: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
+    date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions an XML document into its document elements.
 
     Parameters
@@ -126,16 +122,21 @@ def partition_xml(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     """
     exactly_one(filename=filename, file=file, text=text)
 
-    elements: List[Element] = []
+    elements: list[Element] = []
 
     last_modification_date = None
     if filename:
         last_modification_date = get_last_modified_date(filename)
     elif file:
-        last_modification_date = get_last_modified_date_from_file(file)
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
 
     if include_metadata:
         metadata = ElementMetadata(
@@ -148,18 +149,14 @@ def partition_xml(
 
     if xml_keep_tags:
         if filename:
-            _, raw_text = read_txt_file(filename=filename, encoding=encoding)
+            raw_text = read_txt_file(filename=filename, encoding=encoding)[1]
         elif file:
-            f = spooled_to_bytes_io_if_needed(
-                cast(Union[BinaryIO, SpooledTemporaryFile], file),
-            )
-            _, raw_text = read_txt_file(file=f, encoding=encoding)
-        elif text:
+            raw_text = read_txt_file(file=spooled_to_bytes_io_if_needed(file), encoding=encoding)[1]
+        else:
+            assert text is not None
             raw_text = text
 
-        elements = [
-            Text(text=raw_text, metadata=metadata),
-        ]
+        elements = [Text(text=raw_text, metadata=metadata)]
 
     else:
         leaf_elements = get_leaf_elements(

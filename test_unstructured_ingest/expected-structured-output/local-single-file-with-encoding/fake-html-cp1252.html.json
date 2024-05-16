@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "0540311f6c077fe8f797080918b8d74b",
+    "element_id": "a59f117741c76dca0bc8f5ee72e2010b",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -16,14 +16,13 @@
         "cat",
         "eng",
         "vie"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "My First Heading",
     "type": "Title"
   },
   {
-    "element_id": "399af454cb1368b8257ed406b430de84",
+    "element_id": "82eda2671c5ead903683b67b0f8e3f29",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -39,14 +38,13 @@
         "cat",
         "eng",
         "vie"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "My first paragraph.",
     "type": "Title"
   },
   {
-    "element_id": "b4cf0d13edfa976816649971bd640a66",
+    "element_id": "9f76e487d5df3f6c4ce8ea2ece61057f",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -62,14 +60,13 @@
         "cat",
         "eng",
         "vie"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Some CP1252-specific characters:",
     "type": "Title"
   },
   {
-    "element_id": "24dc2ef4b79651e2c0434d2724b48fc1",
+    "element_id": "a7394a14aa8bf2dae179420d96ac755c",
     "metadata": {
       "data_source": {
         "permissions_data": [
@@ -85,8 +82,7 @@
         "cat",
         "eng",
         "vie"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯\n°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿\nÀ\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ\nÐ\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß\nà\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï\nð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ",
     "type": "NarrativeText"

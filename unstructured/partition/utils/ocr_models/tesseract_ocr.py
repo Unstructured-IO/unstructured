@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import os
 from typing import TYPE_CHECKING, List
 
 import cv2
@@ -20,27 +23,25 @@ from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
-    from unstructured_inference.inference.layoutelement import (
-        LayoutElement,
-    )
+    from unstructured_inference.inference.layoutelement import LayoutElement
+
+# -- force tesseract to be single threaded, otherwise we see major performance problems --
+if "OMP_THREAD_LIMIT" not in os.environ:
+    os.environ["OMP_THREAD_LIMIT"] = "1"
 
 
 class OCRAgentTesseract(OCRAgent):
-    def load_agent(self):
-        pass
+    """OCR service implementation for Tesseract."""
 
     def is_text_sorted(self):
         return True
 
-    def get_text_from_image(self, image: PILImage, ocr_languages: str = "eng") -> str:
-        return unstructured_pytesseract.image_to_string(
-            np.array(image),
-            lang=ocr_languages,
-        )
+    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
+        return unstructured_pytesseract.image_to_string(np.array(image), lang=ocr_languages)
 
     def get_layout_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List["TextRegion"]:
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> List[TextRegion]:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
         logger.info("Processing entire page OCR with tesseract...")
@@ -58,7 +59,7 @@ class OCRAgentTesseract(OCRAgent):
         # depend on type of characters (font, language, etc); be careful about this
         # functionality
         text_height = ocr_df[TESSERACT_TEXT_HEIGHT].quantile(
-            env_config.TESSERACT_TEXT_HEIGHT_QUANTILE,
+            env_config.TESSERACT_TEXT_HEIGHT_QUANTILE
         )
         if (
             text_height < env_config.TESSERACT_MIN_TEXT_HEIGHT
@@ -87,7 +88,7 @@ class OCRAgentTesseract(OCRAgent):
 
     @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
+        self, image: PILImage.Image, ocr_languages: str = "eng"
     ) -> List["LayoutElement"]:
         from unstructured.partition.pdf_image.inference_utils import (
             build_layout_elements_from_ocr_regions,
@@ -118,9 +119,7 @@ class OCRAgentTesseract(OCRAgent):
 
     @requires_dependencies("unstructured_inference")
     def parse_data(self, ocr_data: pd.DataFrame, zoom: float = 1) -> List["TextRegion"]:
-        """
-        Parse the OCR result data to extract a list of TextRegion objects from
-        tesseract.
+        """Parse the OCR result data to extract a list of TextRegion objects from tesseract.
 
         The function processes the OCR result data frame, looking for bounding
         box information and associated text to create instances of the TextRegion
@@ -150,7 +149,7 @@ class OCRAgentTesseract(OCRAgent):
         if zoom <= 0:
             zoom = 1
 
-        text_regions = []
+        text_regions: list[TextRegion] = []
         for idtx in ocr_data.itertuples():
             text = idtx.text
             if not text:
@@ -164,19 +163,14 @@ class OCRAgentTesseract(OCRAgent):
                 x2 = (idtx.left + idtx.width) / zoom
                 y2 = (idtx.top + idtx.height) / zoom
                 text_region = build_text_region_from_coords(
-                    x1,
-                    y1,
-                    x2,
-                    y2,
-                    text=cleaned_text,
-                    source=Source.OCR_TESSERACT,
+                    x1, y1, x2, y2, text=cleaned_text, source=Source.OCR_TESSERACT
                 )
                 text_regions.append(text_region)
 
         return text_regions
 
 
-def zoom_image(image: PILImage, zoom: float = 1) -> PILImage:
+def zoom_image(image: PILImage.Image, zoom: float = 1) -> PILImage.Image:
     """scale an image based on the zoom factor using cv2; the scaled image is post processed by
     dilation then erosion to improve edge sharpness for OCR tasks"""
     if zoom <= 0:

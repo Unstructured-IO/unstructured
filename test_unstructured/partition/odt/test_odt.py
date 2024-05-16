@@ -1,225 +1,236 @@
-import os
-import pathlib
+"""Test suite for `unstructured.partition.odt` module."""
+
+from __future__ import annotations
+
+import tempfile
+from typing import Any
 
 import pytest
+from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
-from unstructured.chunking.title import chunk_by_title
-from unstructured.documents.elements import Table, TableChunk, Title
+from unstructured.chunking.basic import chunk_elements
+from unstructured.documents.elements import CompositeElement, Table, TableChunk, Title
+from unstructured.partition.docx import partition_docx
 from unstructured.partition.odt import partition_odt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
+
+def test_partition_odt_matches_partition_docx():
+    odt_file_path = example_doc_path("simple.odt")
+    docx_file_path = example_doc_path("simple.docx")
+
+    assert partition_odt(odt_file_path) == partition_docx(docx_file_path)
+
+
+# -- document-source (file or filename) ----------------------------------------------------------
 
 
 def test_partition_odt_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    elements = partition_odt(filename=filename)
+    elements = partition_odt(example_doc_path("fake.odt"))
+
     assert elements == [
         Title("Lorem ipsum dolor sit amet."),
         Table(
-            text=(
-                "Header row Mon Wed Fri"
-                " Color Blue Red Green"
-                " Time 1pm 2pm 3pm"
-                " Leader Sarah Mark Ryan"
-            )
+            "Header row Mon Wed Fri"
+            " Color Blue Red Green"
+            " Time 1pm 2pm 3pm"
+            " Leader Sarah Mark Ryan"
         ),
     ]
-    for element in elements:
-        assert element.metadata.filename == "fake.odt"
+    assert all(e.metadata.filename == "fake.odt" for e in elements)
     if UNSTRUCTURED_INCLUDE_DEBUG_METADATA:
-        assert {element.metadata.detection_origin for element in elements} == {
-            "docx",
-        }  # this file is processed by docx backend
-
-
-def test_partition_odt_from_filename_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    elements = partition_odt(filename=filename, metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
+        # -- document is ultimately partitioned by partition_docx() --
+        assert {e.metadata.detection_origin for e in elements} == {"docx"}
 
 
 def test_partition_odt_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake.odt"), "rb") as f:
         elements = partition_odt(file=f)
+
     assert elements == [
         Title("Lorem ipsum dolor sit amet."),
         Table(
-            text=(
-                "Header row Mon Wed Fri"
-                " Color Blue Red Green"
-                " Time 1pm 2pm 3pm"
-                " Leader Sarah Mark Ryan"
-            )
+            "Header row Mon Wed Fri"
+            " Color Blue Red Green"
+            " Time 1pm 2pm 3pm"
+            " Leader Sarah Mark Ryan"
         ),
     ]
 
 
-@pytest.mark.parametrize(
-    "infer_table_structure",
-    [
-        True,
-        False,
-    ],
-)
-def test_partition_odt_infer_table_structure(infer_table_structure: bool):
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    with open(filename, "rb") as f:
-        elements = partition_odt(file=f, infer_table_structure=infer_table_structure)
-    table_element_has_text_as_html_field = (
-        hasattr(elements[1].metadata, "text_as_html")
-        and elements[1].metadata.text_as_html is not None
-    )
-    assert table_element_has_text_as_html_field == infer_table_structure
-
-
-def test_partition_odt_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    with open(filename, "rb") as f:
-        elements = partition_odt(file=f, metadata_filename="test")
-
-    assert all(element.metadata.filename == "test" for element in elements)
+# -- `include_metadata` arg ----------------------------------------------------------------------
 
 
 def test_partition_odt_from_filename_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    elements = partition_odt(filename=filename, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
+    elements = partition_odt(example_doc_path("fake.odt"), include_metadata=False)
+    assert all(e.metadata.to_dict() == {} for e in elements)
 
 
 def test_partition_odt_from_file_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    with open(filename, "rb") as f:
+    with open(example_doc_path("fake.odt"), "rb") as f:
         elements = partition_odt(file=f, include_metadata=False)
-
-    for i in range(len(elements)):
-        assert elements[i].metadata.to_dict() == {}
+    assert all(e.metadata.to_dict() == {} for e in elements)
 
 
-def test_partition_odt_metadata_date(
-    mocker,
-    filename="example-docs/fake.odt",
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_odt_from_filename_with_metadata_filename():
+    elements = partition_odt(example_doc_path("fake.odt"), metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+def test_partition_odt_from_file_with_metadata_filename():
+    with open(example_doc_path("fake.odt"), "rb") as f:
+        elements = partition_odt(file=f, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+# -- .metadata.text_as_html ----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("kwargs", [{}, {"infer_table_structure": True}])
+def test_partition_odt_adds_text_as_html_when_infer_table_structure_is_omitted_or_True(
+    kwargs: dict[str, Any]
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
+    with open(example_doc_path("fake.odt"), "rb") as f:
+        elements = partition_odt(file=f, **kwargs)
 
+    table = elements[1]
+    assert isinstance(table, Table)
+    assert table.metadata.text_as_html is not None
+    assert table.metadata.text_as_html.startswith("<table>")
+
+
+def test_partition_odt_suppresses_text_as_html_when_infer_table_structure_is_False():
+    with open(example_doc_path("fake.odt"), "rb") as f:
+        elements = partition_odt(file=f, infer_table_structure=False)
+
+    table = elements[1]
+    assert isinstance(table, Table)
+    assert table.metadata.text_as_html is None
+
+
+# -- .metadata.last_modified ---------------------------------------------------------------------
+
+
+def test_partition_odt_from_filename_pulls_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
+    )
+
+    elements = partition_odt(example_doc_path("fake.odt"))
+
+    assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
+
+
+def test_partition_odt_from_filename_prefers_metadata_last_modified_when_provided(
+    mocker: MockFixture,
+):
+    filesystem_last_modified = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
     )
 
     elements = partition_odt(
-        filename=filename,
+        example_doc_path("simple.odt"), metadata_last_modified=metadata_last_modified
     )
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
-def test_partition_odt_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake.odt",
+def test_partition_odt_from_file_suppresses_last_modified_from_file_by_default(mocker: MockFixture):
+    modified_date_on_file = "2029-07-05T09:24:28"
+    mocker.patch(
+        "unstructured.partition.odt.get_last_modified_date_from_file",
+        return_value=modified_date_on_file,
+    )
+
+    with open(example_doc_path("simple.odt"), "rb") as f:
+        elements = partition_odt(file=f)
+
+    assert all(e.metadata.last_modified is None for e in elements)
+
+
+def test_partition_odt_from_file_pulls_last_modified_from_file_when_date_from_file_obj_arg_is_True(
+    mocker: MockFixture,
 ):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
+    modified_date_on_file = "2024-05-01T09:24:28"
+    mocker.patch(
+        "unstructured.partition.odt.get_last_modified_date_from_file",
+        return_value=modified_date_on_file,
+    )
+
+    with open(example_doc_path("simple.odt"), "rb") as f:
+        elements = partition_odt(file=f, date_from_file_object=True)
+
+    assert all(e.metadata.last_modified == modified_date_on_file for e in elements)
+
+
+def test_partition_odt_from_file_gets_None_last_modified_when_file_has_no_last_modified():
+    with open(example_doc_path("simple.odt"), "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_odt(file=sf, date_from_file_object=True)
+
+    assert all(e.metadata.last_modified is None for e in elements)
+
+
+def test_partition_odt_from_file_prefers_metadata_last_modified_when_provided(mocker: MockFixture):
+    """Even when `date_from_file_object` arg is `True`."""
+    modified_date_on_file = "2029-07-05T09:24:28"
+    metadata_last_modified = "2020-07-05T09:24:28"
 
     mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.odt.get_last_modified_date_from_file",
+        return_value=modified_date_on_file,
     )
 
+    with open(example_doc_path("fake.odt"), "rb") as f:
+        elements = partition_odt(file=f, metadata_last_modified=metadata_last_modified)
+
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+
+
+# -- language-recognition metadata ---------------------------------------------------------------
+
+
+def test_partition_odt_adds_languages_metadata():
+    elements = partition_odt(example_doc_path("simple.odt"))
+    assert all(e.metadata.languages == ["eng"] for e in elements)
+
+
+def test_partition_odt_respects_detect_language_per_element_arg():
     elements = partition_odt(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
+        example_doc_path("language-docs/eng_spa_mult.odt"), detect_language_per_element=True
     )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_odt_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake.odt",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_odt(
-            file=f,
-        )
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
+    assert [e.metadata.languages for e in elements] == [
+        ["eng"],
+        ["spa", "eng"],
+        ["eng"],
+        ["eng"],
+        ["spa"],
+    ]
 
 
-def test_partition_odt_from_file_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake.odt",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_odt(file=f, metadata_last_modified=expected_last_modification_date)
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
+# -- miscellaneous -------------------------------------------------------------------------------
 
 
-def test_partition_odt_with_json():
-    elements = partition_odt(example_doc_path("fake.odt"), include_metadata=True)
-    assert_round_trips_through_JSON(elements)
+def test_partition_odt_round_trips_through_json():
+    """Elements produced can be serialized then deserialized without loss."""
+    assert_round_trips_through_JSON(partition_odt(example_doc_path("simple.odt")))
 
 
-def test_add_chunking_strategy_on_partition_odt(
-    filename="example-docs/fake.odt",
-):
-    elements = partition_odt(filename=filename)
-    chunk_elements = partition_odt(filename, chunking_strategy="by_title")
-    chunks = chunk_by_title(elements)
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
+def test_partition_odt_chunks_elements_when_chunking_strategy_is_specified():
+    document_path = example_doc_path("simple.odt")
+    elements = partition_odt(document_path)
+    chunks = partition_odt(document_path, chunking_strategy="basic")
 
-
-def test_add_chunking_strategy_on_partition_odt_non_default():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
-    elements = partition_odt(filename=filename)
-    chunk_elements = partition_odt(
-        filename,
-        chunking_strategy="by_title",
-        max_characters=7,
-        combine_text_under_n_chars=5,
-    )
-    chunks = chunk_by_title(
-        elements,
-        max_characters=7,
-        combine_text_under_n_chars=5,
-    )
-    for chunk in chunk_elements:
-        if isinstance(chunk, TableChunk):
-            assert len(chunk.text) <= 7
-    assert chunk_elements != elements
-    assert chunk_elements == chunks
-
-
-def test_partition_odt_element_metadata_has_languages():
-    filename = "example-docs/fake.odt"
-    elements = partition_odt(filename=filename)
-    assert elements[0].metadata.languages == ["eng"]
-
-
-def test_partition_odt_respects_detect_language_per_element():
-    filename = "example-docs/language-docs/eng_spa_mult.odt"
-    elements = partition_odt(filename=filename, detect_language_per_element=True)
-    langs = [element.metadata.languages for element in elements]
-    assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
+    # -- all chunks are chunk element-types --
+    assert all(isinstance(c, (CompositeElement, Table, TableChunk)) for c in chunks)
+    # -- chunks from partitioning match those produced by chunking elements in separate step --
+    assert chunks == chunk_elements(elements)

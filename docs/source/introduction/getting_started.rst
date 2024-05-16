@@ -24,7 +24,7 @@ This guide offers concise steps to swiftly install and validate your ``unstructu
    - `poppler-utils` : Needed for images and PDFs.
    - `tesseract-ocr` : Essential for images and PDFs.
    - `libreoffice` : For MS Office documents.
-   - `pandoc` : For EPUBs, RTFs, and Open Office documents.
+   - `pandoc` : For EPUBs, RTFs, and Open Office documents. Please note that to handle RTF files, you need version `2.14.2` or newer. Running `this script <https://github.com/Unstructured-IO/unstructured/blob/main/scripts/install-pandoc.sh>`__ will install the correct version for you.
 
 Validating Installation
 -----------------------

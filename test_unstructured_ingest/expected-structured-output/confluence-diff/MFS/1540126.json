@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "597883fce258148ee227842378ce55c3",
+    "element_id": "87d54efb69679f52b8c22f98f5ee6008",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -16,14 +16,13 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1,
       "text_as_html": "<table><tr><td>Driver</td><td></td></tr><tr><td>Approver</td><td></td></tr><tr><td>Contributors</td><td></td></tr><tr><td>Informed</td><td></td></tr><tr><td>Objective</td><td></td></tr><tr><td>Due date</td><td></td></tr><tr><td>Key outcomes</td><td></td></tr><tr><td>Status</td><td>NOT STARTED / IN PROGRESS / COMPLETE</td></tr></table>"
     },
     "text": "Driver Approver Contributors Informed Objective Due date Key outcomes Status NOT STARTED / IN PROGRESS / COMPLETE",
     "type": "Table"
   },
   {
-    "element_id": "4e2022d4483a407d85060675f64fbe17",
+    "element_id": "c5528cff9dc4266b252f172314e2221c",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -38,14 +37,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "\\uD83E\\uDD14 Problem Statement",
     "type": "Title"
   },
   {
-    "element_id": "81163675915a75217e4116686fdca412",
+    "element_id": "7745f8f335c0d63ac895f39209fa50bf",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -60,14 +58,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "🎯 Scope",
     "type": "Title"
   },
   {
-    "element_id": "f1f364fbde77afa0e99e8ea7ab4f7c3f",
+    "element_id": "a67a84caf3e93f9d3c6ee9462f6ac7bb",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -83,14 +80,13 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1,
       "text_as_html": "<table><tr><td>Must have:</td><td></td></tr><tr><td>Nice to have:</td><td></td></tr><tr><td>Not in scope:</td><td></td></tr></table>"
     },
     "text": "Must have: Nice to have: Not in scope:",
     "type": "Table"
   },
   {
-    "element_id": "e8b61a28d07e977379b42df455a1cde4",
+    "element_id": "eb8b47b67216ffd84479631af63b656a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -105,14 +101,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "\\uD83D\\uDDD3 Timeline",
     "type": "Title"
   },
   {
-    "element_id": "5043f71fbc70e35c0be413d4135be99f",
+    "element_id": "7aa58f6123e145d68b491d3e735060f8",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -127,14 +122,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Lane 1",
     "type": "Title"
   },
   {
-    "element_id": "d5a2e177c588bf0c4f914baa4fae85b6",
+    "element_id": "21354bac4c070eaa9722a971e6bdbfea",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -149,14 +143,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Lane 2",
     "type": "Title"
   },
   {
-    "element_id": "c98ba1acbd22a15ddddfc244cbd8a2db",
+    "element_id": "2fac077cc411e658746e76d86ea1ec37",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -171,14 +164,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Feature 1",
     "type": "Title"
   },
   {
-    "element_id": "e04620c8b3b611b3fefecef89baa63a9",
+    "element_id": "ff8497516144be25a4c0922f14c6ee28",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -193,14 +185,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Feature 2",
     "type": "Title"
   },
   {
-    "element_id": "82e522a86692cc50ee5c020c8e6ce6a0",
+    "element_id": "0f701ee7f075b9b83ca75e844ab8184a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -215,14 +206,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Feature 3",
     "type": "Title"
   },
   {
-    "element_id": "822f7c45ea725c535970aab819a8ff10",
+    "element_id": "edf428e92bdb9e94ac17f876cdf7c058",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -237,14 +227,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Feature 4",
     "type": "Title"
   },
   {
-    "element_id": "6e0f6eca4ff17d3377c1c3e8e1f73457",
+    "element_id": "4d846dbdfa5783f976e41e1852ffb179",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -259,14 +248,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "iOS app",
     "type": "Title"
   },
   {
-    "element_id": "0b60fe04b3c5c3c76371b6eca8b19c8e",
+    "element_id": "4fb022f234174c8dc5df55dd0c677833",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -281,14 +269,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Android app",
     "type": "Title"
   },
   {
-    "element_id": "e1cc184f345d146586fb12527c4fa696",
+    "element_id": "a70dd893a3b6bd5c641812c25763f01a",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -303,14 +290,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "\\uD83D\\uDEA9 Milestones and deadlines",
     "type": "Title"
   },
   {
-    "element_id": "3f4ea3840d79521680c89a91dcd883cf",
+    "element_id": "15b3d2fa95017389c5c47d1c5fc64b4d",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -326,14 +312,13 @@
       "languages": [
         "eng"
       ],
-      "page_number": 1,
       "text_as_html": "<table><tr><td>Milestone</td><td>Owner</td><td>Deadline</td><td>Status</td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td></tr></table>"
     },
     "text": "Milestone Owner Deadline Status",
     "type": "Table"
   },
   {
-    "element_id": "890c9b6d8d69ca1de5fd7a8b83fe78ff",
+    "element_id": "edd10b45a03a9b9dac237354faa55251",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:55:50.911000",
@@ -348,8 +333,7 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "\\uD83D\\uDD17 Reference materials",
     "type": "Title"

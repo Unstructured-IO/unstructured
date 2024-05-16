@@ -4,9 +4,10 @@
 
 from __future__ import annotations
 
+import io
 import sys
 import tempfile
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import pandas.testing as pdt
@@ -18,13 +19,20 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
     EXPECTED_TITLE,
 )
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    FixtureRequest,
+    Mock,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+)
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import ListItem, Table, Text, Title
 from unstructured.partition.xlsx import (
     _CellCoordinate,
     _ConnectedComponent,
     _SubtableParser,
+    _XlsxPartitionerOptions,
     partition_xlsx,
 )
 
@@ -115,13 +123,7 @@ def test_partition_xlsx_from_filename_with_metadata_filename():
     assert elements[0].metadata.filename == "test"
 
 
-@pytest.mark.parametrize(
-    "infer_table_structure",
-    [
-        True,
-        False,
-    ],
-)
+@pytest.mark.parametrize("infer_table_structure", [True, False])
 def test_partition_xlsx_infer_table_structure(infer_table_structure: bool):
     elements = partition_xlsx(
         "example-docs/stanley-cups.xlsx", infer_table_structure=infer_table_structure
@@ -161,6 +163,23 @@ def test_partition_xlsx_from_file():
     assert elements[1].metadata.filetype == EXPECTED_FILETYPE
     assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
     assert elements[1].metadata.filename is None
+
+
+def test_partition_xlsx_from_file_like_object_with_name():
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        file = io.BytesIO(f.read())
+    file.name = "stanley-cups-downloaded-from-network.xlsx"
+
+    elements = partition_xlsx(file=file, include_header=False)
+
+    assert sum(isinstance(element, Table) for element in elements) == 2
+    assert len(elements) == 4
+    assert clean_extra_whitespace(elements[0].text) == EXPECTED_TITLE
+    assert clean_extra_whitespace(elements[1].text) == EXPECTED_TEXT_XLSX
+    assert elements[1].metadata.text_as_html == EXPECTED_TABLE_XLSX
+    assert elements[1].metadata.page_number == 1
+    assert elements[1].metadata.filetype == EXPECTED_FILETYPE
+    assert elements[1].metadata.page_name == EXCEPTED_PAGE_NAME
 
 
 def test_partition_xlsx_from_file_with_metadata_filename():
@@ -244,7 +263,7 @@ def test_partition_xlsx_with_custom_metadata_date(mocker: MockerFixture):
 
 
 def test_partition_xlsx_from_file_metadata_date(mocker: MockerFixture):
-    """File's last-modified date is used when that's the best available source."""
+    """File's last-modified date (from bytes) isn't used unless it's explicitly requested."""
     mocker.patch(
         "unstructured.partition.xlsx.get_last_modified_date_from_file",
         return_value="2029-07-05T09:24:28",
@@ -252,6 +271,19 @@ def test_partition_xlsx_from_file_metadata_date(mocker: MockerFixture):
 
     with open("example-docs/stanley-cups.xlsx", "rb") as f:
         elements = partition_xlsx(file=f)
+
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_xlsx_from_file_explicit_get_metadata_date(mocker: MockerFixture):
+    """File's last-modified date (from bytes) is used only when it's explicitly requested."""
+    mocker.patch(
+        "unstructured.partition.xlsx.get_last_modified_date_from_file",
+        return_value="2029-07-05T09:24:28",
+    )
+
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        elements = partition_xlsx(file=f, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
@@ -267,6 +299,17 @@ def test_partition_xlsx_from_file_with_custom_metadata_date(mocker: MockerFixtur
         elements = partition_xlsx(file=f, metadata_last_modified="2020-07-05T09:24:28")
 
     assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
+
+
+def test_partition_xlsx_from_file_without_metadata_date():
+    """Test partition_xlsx() with file that are not possible to get last modified date"""
+    with open("example-docs/stanley-cups.xlsx", "rb") as f:
+        sf = tempfile.SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_xlsx(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_xlsx_with_json():
@@ -351,6 +394,176 @@ def test_partition_xlsx_with_more_than_1k_cells():
 # These test components used by `partition_xlsx()` in isolation such that all edge cases can be
 # exercised.
 # ------------------------------------------------------------------------------------------------
+
+
+class Describe_XlsxPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.xlsx._XlsxPartitionerOptions` objects."""
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_detect_language_for_each_element_individually(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["detect_language_per_element"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.detect_language_per_element is arg_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_find_subtables_within_each_worksheet_or_return_table_per_worksheet(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["find_subtable"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.find_subtable is arg_value
+
+    @pytest.mark.parametrize(("arg_value", "expected_value"), [(True, 0), (False, None)])
+    def it_knows_the_header_row_index_for_Pandas(
+        self, arg_value: bool, expected_value: int | None, opts_args: dict[str, Any]
+    ):
+        opts_args["include_header"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.header_row_idx == expected_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_include_column_headings_in_Table_text_as_html(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["include_header"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.include_header is arg_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_include_metadata_on_elements(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["include_metadata"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.include_metadata is arg_value
+
+    @pytest.mark.parametrize("arg_value", [True, False])
+    def it_knows_whether_to_include_text_as_html_in_Table_metadata(
+        self, arg_value: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["infer_table_structure"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.infer_table_structure is arg_value
+
+    @pytest.mark.parametrize(
+        ("arg_value", "expected_value"),
+        [(None, None), (["eng"], ["eng"]), (["eng", "spa"], ["eng", "spa"])],
+    )
+    def it_knows_what_languages_the_caller_expects_to_appear_in_the_text(
+        self, arg_value: bool, expected_value: int | None, opts_args: dict[str, Any]
+    ):
+        opts_args["languages"] = arg_value
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.languages == expected_value
+
+    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.last_modified == "2024-03-05T17:02:53"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_: Mock
+    ):
+        opts_args["file_path"] = "a/b/spreadsheet.xlsx"
+        get_last_modified_date_.return_value = "2024-04-02T20:32:35"
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_.assert_called_once_with("a/b/spreadsheet.xlsx")
+        assert last_modified == "2024-04-02T20:32:35"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_open_file_when_a_file_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = True
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_called_once_with(file)
+        assert last_modified == "2024-04-02T20:42:07"
+
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = False
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_not_called()
+        assert last_modified is None
+
+    def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = "x/y/z.xlsx"
+        opts_args["metadata_file_path"] = "a/b/c.xlsx"
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == "a/b/c.xlsx"
+
+    @pytest.mark.parametrize("file_path", ["u/v/w.xlsx", None])
+    def and_it_falls_back_to_the_document_file_path_otherwise(
+        self, file_path: str | None, opts_args: dict[str, Any]
+    ):
+        opts_args["file_path"] = file_path
+        opts_args["metadata_file_path"] = None
+        opts = _XlsxPartitionerOptions(**opts_args)
+
+        assert opts.metadata_file_path == file_path
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def get_last_modified_date_(self, request: FixtureRequest):
+        return function_mock(request, "unstructured.partition.xlsx.get_last_modified_date")
+
+    @pytest.fixture()
+    def get_last_modified_date_from_file_(self, request: FixtureRequest):
+        return function_mock(
+            request, "unstructured.partition.xlsx.get_last_modified_date_from_file"
+        )
+
+    @pytest.fixture()
+    def opts_args(self) -> dict[str, Any]:
+        """All default arguments for `_XlsxPartitionerOptions`.
+
+        Individual argument values can be changed to suit each test. Makes construction of opts more
+        compact for testing purposes.
+        """
+        return {
+            "date_from_file_object": False,
+            "detect_language_per_element": False,
+            "file": None,
+            "file_path": None,
+            "find_subtable": True,
+            "include_header": False,
+            "include_metadata": True,
+            "infer_table_structure": True,
+            "languages": ["auto"],
+            "metadata_file_path": None,
+            "metadata_last_modified": None,
+        }
 
 
 class Describe_ConnectedComponent:

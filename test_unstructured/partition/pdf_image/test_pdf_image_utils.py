@@ -179,6 +179,33 @@ def test_valid_text(text, outcome):
     assert pdf_image_utils.valid_text(text) == outcome
 
 
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("base", 0.0),
+        ("", 0.0),
+        ("(cid:2)", 1.0),
+        ("(cid:1)a", 0.5),
+        ("c(cid:1)ab", 0.25),
+    ],
+)
+def test_cid_ratio(text, expected):
+    assert pdf_image_utils.cid_ratio(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("base", False),
+        ("(cid:2)", True),
+        ("(cid:1234567890)", True),
+        ("jkl;(cid:12)asdf", True),
+    ],
+)
+def test_is_cid_present(text, expected):
+    assert pdf_image_utils.is_cid_present(text) == expected
+
+
 def test_pad_bbox():
     bbox = (100, 100, 200, 200)
     padding = (10, 20)  # Horizontal padding 10, Vertical padding 20

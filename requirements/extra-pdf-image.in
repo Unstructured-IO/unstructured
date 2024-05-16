@@ -1,4 +1,4 @@
--c constraints.in
+-c ./deps/constraints.txt
 -c base.txt
 
 onnx
@@ -9,7 +9,8 @@ pillow_heif
 pypdf
 # Do not move to constraints.in, otherwise unstructured-inference will not be upgraded
 # when unstructured library is.
-unstructured-inference==0.7.23
+unstructured-inference==0.7.31
 # unstructured fork of pytesseract that provides an interface to allow for multiple output formats
 # from one tesseract call
 unstructured.pytesseract>=0.3.12
+google-cloud-vision

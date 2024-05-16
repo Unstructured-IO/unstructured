@@ -24,6 +24,7 @@ from unstructured.ingest.interfaces import (
     SourceMetadata,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.string_and_date_utils import json_to_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -47,7 +48,7 @@ def create_service_account_object(key_path: t.Union[str, dict], id=None):
     Providing a drive id enforces a key validation process.
 
     Args:
-        key_path: Path to Google Drive service account json file.
+        key_path: Path to Google Drive service account json file. (or the actual json)
         id: ID of a file on Google Drive. File has to be either publicly accessible or accessible
             to the service account.
 
@@ -58,6 +59,10 @@ def create_service_account_object(key_path: t.Union[str, dict], id=None):
     from google.oauth2 import service_account
     from googleapiclient.discovery import build
     from googleapiclient.errors import HttpError
+
+    # Service account key can be a dict or a file path(str)
+    # But the dict may come in as a string
+    key_path = json_to_dict(key_path)
 
     try:
         if isinstance(key_path, dict):

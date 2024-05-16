@@ -1,5 +1,6 @@
 import os
 import pathlib
+from tempfile import SpooledTemporaryFile
 from unittest.mock import patch
 
 import pytest
@@ -399,6 +400,24 @@ def test_partition_html_from_file_metadata_date(
         elements = partition_html(file=f)
 
     assert isinstance(elements[0], Title)
+    assert elements[0].metadata.last_modified is None
+
+
+def test_partition_html_from_file_explicit_get_metadata_date(
+    mocker,
+    filename="example-docs/fake-html.html",
+):
+    mocked_last_modification_date = "2029-07-05T09:24:28"
+
+    mocker.patch(
+        "unstructured.partition.html.get_last_modified_date_from_file",
+        return_value=mocked_last_modification_date,
+    )
+
+    with open(filename) as f:
+        elements = partition_html(file=f, date_from_file_object=True)
+
+    assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified == mocked_last_modification_date
 
 
@@ -443,6 +462,19 @@ def test_partition_html_from_file_custom_metadata_date(
 
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified == expected_last_modification_date
+
+
+def test_partition_html_from_file_without_metadata_date(
+    filename="example-docs/fake-html.html",
+):
+    """Test partition_html() with file that are not possible to get last modified date"""
+    with open(filename, "rb") as f:
+        sf = SpooledTemporaryFile()
+        sf.write(f.read())
+        sf.seek(0)
+        elements = partition_html(file=sf, date_from_file_object=True)
+
+    assert elements[0].metadata.last_modified is None
 
 
 def test_partition_html_from_text_metadata_date(filename="example-docs/fake-html.html"):
@@ -691,3 +723,100 @@ def test_partition_html_with_table_without_tbody(tag: str, expected: str):
     )
     partitions = partition_html(text=table_html)
     assert partitions[0].metadata.text_as_html == expected
+
+
+def test_all_element_ids_are_unique():
+    ids = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
+    assert len(ids) == len(set(ids))
+
+
+def test_element_ids_are_deterministic():
+    ids_first_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
+    ]
+    ids_second_partition = [
+        e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")
+    ]
+    assert ids_first_partition == ids_second_partition
+
+
+def test_partition_html_b_tag_parsing():
+    html_text = """
+        <!DOCTYPE html>
+        <html>
+        <body>
+        <div>
+            <h1>Header 1</h1>
+            <p>Text</p>
+            <h2>Header 2</h2>
+            <pre>
+                <b>Param1</b> = Y<br><b>Param2</b> = 1<br><b>Param3</b> = 2<br><b>Param4</b> = A
+                <br><b>Param5</b> = A,B,C,D,E<br><b>Param6</b> = 7<br><b>Param7</b> = Five<br>
+            </pre>
+        </div>
+        </body>
+        </html>
+    """
+
+    elements = partition_html(text=html_text)
+    element_text = "|".join(e.text for e in elements)
+
+    assert element_text == (
+        "Header 1|Text|Header 2|Param1 = Y|Param2 = 1|Param3 = 2|Param4 = A|"
+        "Param5 = A,B,C,D,E|Param6 = 7|Param7 = Five"
+    )
+
+
+def test_partition_html_tag_tail_parsing():
+    html_text = """
+        <html>
+        <body>
+        <div>
+            Head
+            <div><span>Nested</span></div>
+            Tail
+        </div>
+        </body>
+        </html>
+    """
+
+    elements = partition_html(text=html_text)
+    element_text = "|".join([str(el).strip() for el in elements])
+
+    assert element_text == "Head|Nested|Tail"
+
+
+def test_partition_html_links():
+    html_text = """<html>
+        <a href="/loner">A lone link!</a>
+        <p>Hello <a href="/link">link!</a></p>
+        <p>\n    Hello <a href="/link">link!</a></p>
+        <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>
+    </html>"""
+
+    expected_results = [
+        [
+            {"text": "A lone link!", "url": "/loner", "start_index": -1},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "link!", "url": "/link", "start_index": 6},
+        ],
+        [
+            {"text": "Parrots", "url": "/wiki/parrots", "start_index": 0},
+            {"text": "Dogs", "url": "/wiki/dogs", "start_index": 12},
+        ],
+    ]
+
+    elements = partition_html(text=html_text)
+
+    for el_idx, el in enumerate(elements):
+        expected_result = expected_results[el_idx]
+        for link_idx, (text, url, start_index) in enumerate(
+            zip(el.metadata.link_texts, el.metadata.link_urls, el.metadata.link_start_indexes)
+        ):
+            assert text == expected_result[link_idx]["text"]
+            assert url == expected_result[link_idx]["url"]
+            assert start_index == expected_result[link_idx]["start_index"]

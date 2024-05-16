@@ -1,3 +1,7 @@
+import datetime as dt
+import io
+import os
+import pathlib
 from dataclasses import dataclass
 from unittest import mock
 
@@ -5,10 +9,12 @@ import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
 from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
+from unstructured_inference.inference.layout import DocumentLayout, PageLayout
+from unstructured_inference.inference.layoutelement import LayoutElement
 
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
+    TYPE_TO_TEXT_ELEMENT_MAP,
     CheckBox,
     CoordinatesMetadata,
     ElementMetadata,
@@ -28,7 +34,7 @@ from unstructured.partition.utils.constants import SORT_MODE_BASIC, SORT_MODE_DO
 
 
 class MockPageLayout(layout.PageLayout):
-    def __init__(self, number: int, image: Image):
+    def __init__(self, number: int, image: Image.Image):
         self.number = number
         self.image = image
 
@@ -202,30 +208,48 @@ def test_normalize_layout_element_layout_element_narrative_text():
     )
 
 
-def test_normalize_layout_element_checked_box():
+@pytest.mark.parametrize(
+    ("element_type", "expected_element_class"),
+    TYPE_TO_TEXT_ELEMENT_MAP.items(),
+)
+def test_normalize_layout_element_layout_element_maps_to_appropriate_text_element(
+    element_type: str,
+    expected_element_class: type[Text],
+):
     layout_element = LayoutElement.from_coords(
-        type="Checked",
+        type=element_type,
         x1=1,
         y1=2,
         x2=3,
         y2=4,
-        text="",
+        text="Some lovely text",
     )
     coordinate_system = PixelSpace(width=10, height=20)
     element = common.normalize_layout_element(
         layout_element,
         coordinate_system=coordinate_system,
     )
-    assert element == CheckBox(
-        checked=True,
+    assert element == expected_element_class(
+        text="Some lovely text",
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
 
 
-def test_normalize_layout_element_unchecked_box():
+@pytest.mark.parametrize(
+    ("element_type", "expected_checked"),
+    [
+        (ElementType.CHECK_BOX_UNCHECKED, False),
+        (ElementType.CHECK_BOX_CHECKED, True),
+        (ElementType.RADIO_BUTTON_UNCHECKED, False),
+        (ElementType.RADIO_BUTTON_CHECKED, True),
+        (ElementType.CHECKED, True),
+        (ElementType.UNCHECKED, False),
+    ],
+)
+def test_normalize_layout_element_checkable(element_type: str, expected_checked: bool):
     layout_element = LayoutElement.from_coords(
-        type="Unchecked",
+        type=element_type,
         x1=1,
         y1=2,
         x2=3,
@@ -237,8 +261,9 @@ def test_normalize_layout_element_unchecked_box():
         layout_element,
         coordinate_system=coordinate_system,
     )
+    assert isinstance(element, CheckBox)
     assert element == CheckBox(
-        checked=False,
+        checked=expected_checked,
         coordinates=((1, 2), (1, 4), (3, 4), (3, 2)),
         coordinate_system=coordinate_system,
     )
@@ -539,3 +564,64 @@ def test_ocr_data_to_elements(
             points=layout_el.bbox.coordinates,
             system=coordinate_system,
         )
+
+
+class Describe_get_last_modified_date:
+
+    def it_gets_the_modified_time_of_a_file_identified_by_a_path(self, tmp_path: pathlib.Path):
+        modified_timestamp = dt.datetime(
+            year=2024, month=3, day=5, hour=17, minute=43, second=40
+        ).timestamp()
+        file_path = tmp_path / "some_file.txt"
+        file_path.write_text("abcdefg")
+        os.utime(file_path, (modified_timestamp, modified_timestamp))
+
+        last_modified_date = common.get_last_modified_date(str(file_path))
+
+        assert last_modified_date == "2024-03-05T17:43:40"
+
+    def but_it_returns_None_when_there_is_no_file_at_that_path(self, tmp_path: pathlib.Path):
+        file_path = tmp_path / "some_file_that_does_not_exist.txt"
+
+        last_modified_date = common.get_last_modified_date(str(file_path))
+
+        assert last_modified_date is None
+
+
+class Describe_get_last_modified_date_from_file:
+
+    def it_gets_the_modified_time_of_a_file_like_object_corresponding_to_a_filesystem_file(
+        self, tmp_path: pathlib.Path
+    ):
+        modified_timestamp = dt.datetime(
+            year=2024, month=3, day=5, hour=20, minute=48, second=26
+        ).timestamp()
+        file_path = tmp_path / "some_file_2.txt"
+        file_path.write_text("abcdefg")
+        os.utime(file_path, (modified_timestamp, modified_timestamp))
+
+        with open(file_path, "rb") as f:
+            last_modified_date = common.get_last_modified_date_from_file(f)
+
+        assert last_modified_date == "2024-03-05T20:48:26"
+
+    def but_it_returns_None_when_the_argument_is_a_bytes_object(self):
+        assert common.get_last_modified_date_from_file(b"abcdefg") is None
+
+    def and_it_returns_None_when_the_file_like_object_has_no_name_attribute(self):
+        file = io.BytesIO(b"abcdefg")
+        assert hasattr(file, "name") is False
+
+        last_modified_date = common.get_last_modified_date_from_file(file)
+
+        assert last_modified_date is None
+
+    def and_it_returns_None_when_the_file_like_object_name_is_not_a_path_to_a_file(
+        self, tmp_path: pathlib.Path
+    ):
+        file = io.BytesIO(b"abcdefg")
+        file.name = str(tmp_path / "a_file_that_isn't_here.txt")
+
+        last_modified_date = common.get_last_modified_date_from_file(file)
+
+        assert last_modified_date is None

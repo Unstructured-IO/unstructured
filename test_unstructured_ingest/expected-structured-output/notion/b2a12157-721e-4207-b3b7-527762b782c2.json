@@ -320,6 +320,9 @@
       "languages": [
         "eng"
       ],
+      "link_start_indexes": [
+        29
+      ],
       "link_texts": [
         "\n        Notion Editor 101\n      "
       ],
@@ -341,6 +344,9 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_start_indexes": [
+        -1
       ],
       "link_texts": [
         "\n        Notion Editor 101\n      "

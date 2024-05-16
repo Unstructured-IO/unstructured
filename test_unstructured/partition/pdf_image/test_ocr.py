@@ -1,3 +1,4 @@
+from collections import namedtuple
 from unittest.mock import patch
 
 import numpy as np
@@ -15,9 +16,11 @@ from unstructured_inference.inference.layoutelement import (
 from unstructured.documents.elements import ElementType
 from unstructured.partition.pdf_image import ocr
 from unstructured.partition.pdf_image.ocr import pad_element_bboxes
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     Source,
 )
+from unstructured.partition.utils.ocr_models.google_vision_ocr import OCRAgentGoogleVision
 from unstructured.partition.utils.ocr_models.paddle_ocr import OCRAgentPaddle
 from unstructured.partition.utils.ocr_models.tesseract_ocr import (
     OCRAgentTesseract,
@@ -192,6 +195,90 @@ def test_get_ocr_text_from_image_paddle(monkeypatch):
 
 
 @pytest.fixture()
+def google_vision_text_annotation():
+    from google.cloud.vision import (
+        Block,
+        BoundingPoly,
+        Page,
+        Paragraph,
+        Symbol,
+        TextAnnotation,
+        Vertex,
+        Word,
+    )
+
+    breaks = TextAnnotation.DetectedBreak.BreakType
+    symbols_hello = [Symbol(text=c) for c in "Hello"] + [
+        Symbol(
+            property=TextAnnotation.TextProperty(
+                detected_break=TextAnnotation.DetectedBreak(type_=breaks.SPACE)
+            )
+        )
+    ]
+    symbols_world = [Symbol(text=c) for c in "World!"] + [
+        Symbol(
+            property=TextAnnotation.TextProperty(
+                detected_break=TextAnnotation.DetectedBreak(type_=breaks.LINE_BREAK)
+            )
+        )
+    ]
+    words = [Word(symbols=symbols_hello), Word(symbols=symbols_world)]
+    bounding_box = BoundingPoly(
+        vertices=[Vertex(x=0, y=0), Vertex(x=0, y=10), Vertex(x=10, y=10), Vertex(x=10, y=0)]
+    )
+    paragraphs = [Paragraph(words=words, bounding_box=bounding_box)]
+    blocks = [Block(paragraphs=paragraphs)]
+    pages = [Page(blocks=blocks)]
+    return TextAnnotation(text="Hello World!", pages=pages)
+
+
+@pytest.fixture()
+def google_vision_client(google_vision_text_annotation):
+    Response = namedtuple("Response", "full_text_annotation")
+
+    class FakeGoogleVisionClient:
+        def document_text_detection(self, image):
+            return Response(full_text_annotation=google_vision_text_annotation)
+
+    class OCRAgentFakeGoogleVision(OCRAgentGoogleVision):
+        def __init__(self):
+            self.client = FakeGoogleVisionClient()
+
+    return OCRAgentFakeGoogleVision()
+
+
+def test_get_ocr_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    ocr_text = ocr_agent.get_text_from_image(image, ocr_languages="eng")
+
+    assert ocr_text == "Hello World!"
+
+
+def test_get_layout_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    regions = ocr_agent.get_layout_from_image(image, ocr_languages="eng")
+    assert len(regions) == 1
+    assert regions[0].text == "Hello World!"
+    assert regions[0].source == Source.OCR_GOOGLEVISION
+    assert regions[0].bbox.x1 == 0
+    assert regions[0].bbox.y1 == 0
+    assert regions[0].bbox.x2 == 10
+    assert regions[0].bbox.y2 == 10
+
+
+def test_get_layout_elements_from_image_google_vision(google_vision_client):
+    image = Image.new("RGB", (100, 100))
+
+    ocr_agent = google_vision_client
+    layout_elements = ocr_agent.get_layout_elements_from_image(image, ocr_languages="eng")
+    assert len(layout_elements) == 1
+
+
+@pytest.fixture()
 def mock_ocr_regions():
     return [
         EmbeddedTextRegion.from_coords(10, 10, 90, 90, text="0", source=None),
@@ -267,7 +354,7 @@ def test_supplement_layout_with_ocr_elements(mock_layout, mock_ocr_regions):
         for ocr_element in ocr_elements:
             if ocr_element.bbox.is_almost_subregion_of(
                 element.bbox,
-                ocr.SUBREGION_THRESHOLD_FOR_OCR,
+                env_config.OCR_LAYOUT_SUBREGION_THRESHOLD,
             ):
                 assert ocr_element not in final_layout
 

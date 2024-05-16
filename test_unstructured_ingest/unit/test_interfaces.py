@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import pathlib
 from dataclasses import dataclass
@@ -9,12 +11,13 @@ from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
     BaseSingleIngestDoc,
+    ChunkingConfig,
     PartitionConfig,
     ProcessorConfig,
     ReadConfig,
 )
 from unstructured.partition.auto import partition
-from unstructured.staging.base import convert_to_dict
+from unstructured.staging.base import elements_to_dicts
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "../..", "example-docs")
@@ -108,7 +111,7 @@ def partition_test_results():
 @pytest.fixture()
 def partition_file_test_results(partition_test_results):
     # Reusable partition_file test results, calculated only once
-    return convert_to_dict(partition_test_results)
+    return elements_to_dicts(partition_test_results)
 
 
 def test_partition_file():
@@ -120,9 +123,9 @@ def test_partition_file():
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
     test_ingest_doc._date_processed = TEST_DATE_PROCESSSED
-    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
-    isd_elems = convert_to_dict(isd_elems_raw)
-    assert len(isd_elems)
+    elements = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    element_dicts = elements_to_dicts(elements)
+    assert len(element_dicts)
     expected_keys = {
         "element_id",
         "text",
@@ -139,7 +142,7 @@ def test_partition_file():
         "languages",
         "last_modified",
     }
-    for elem in isd_elems:
+    for elem in element_dicts:
         # Parent IDs are non-deterministic - remove them from the test
         elem["metadata"].pop("parent_id", None)
 
@@ -166,11 +169,11 @@ def test_process_file_fields_include_default(mocker, partition_test_results):
         read_config=ReadConfig(download_dir=TEST_DOWNLOAD_DIR),
         processor_config=ProcessorConfig(output_dir=TEST_OUTPUT_DIR),
     )
-    isd_elems_raw = test_ingest_doc.partition_file(partition_config=PartitionConfig())
-    isd_elems = convert_to_dict(isd_elems_raw)
-    assert len(isd_elems)
+    elements = test_ingest_doc.partition_file(partition_config=PartitionConfig())
+    element_dicts = elements_to_dicts(elements)
+    assert len(element_dicts)
     assert mock_partition.call_count == 1
-    for elem in isd_elems:
+    for elem in element_dicts:
         # Parent IDs are non-deterministic - remove them from the test
         elem["metadata"].pop("parent_id", None)
 
@@ -255,3 +258,24 @@ def test_process_file_flatten_metadata(mocker, partition_test_results):
     expected_keys = {"element_id", "text", "type", "filename", "file_directory", "filetype"}
     for elem in isd_elems:
         assert expected_keys == set(elem.keys())
+
+
+class DescribeChunkingConfig:
+    """Unit tests for unstructured.ingest.interfaces.ChunkingConfig"""
+
+    def it_accepts_chunking_strategy_by_itself(self):
+        config = ChunkingConfig(chunking_strategy="basic")
+        assert config.chunking_strategy == "basic"
+
+    def it_defaults_to_chunk_by_title_if_only_chunk_elements_is_True(self):
+        config = ChunkingConfig(chunk_elements=True)
+        assert config.chunking_strategy == "by_title"
+
+    def but_it_defaults_to_chunking_strategy_over_chunk_elements(self):
+        config = ChunkingConfig(chunk_elements=True, chunking_strategy="basic")
+        assert config.chunking_strategy == "basic"
+
+    def it_silently_accepts_unrecognized_chunker(self, caplog: pytest.LogCaptureFixture):
+        config = ChunkingConfig(chunking_strategy="foobar")
+        assert config.chunking_strategy == "foobar"
+        assert caplog.text == ""

@@ -1,4 +1,4 @@
--c constraints.in
+-c ./deps/constraints.txt
 -c base.txt
 
 unstructured.paddleocr==2.6.1.3
