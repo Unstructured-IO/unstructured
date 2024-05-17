@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
 from unstructured.ingest.v2.processes.chunker import ChunkerConfig
 from unstructured.ingest.v2.processes.connectors.fsspec.s3 import (
@@ -21,6 +22,7 @@ output_path = work_dir / "output"
 download_path = work_dir / "download"
 
 if __name__ == "__main__":
+    logger.info(f"Writing all content in: {work_dir.resolve()}")
     Pipeline.from_configs(
         context=ProcessorConfig(work_dir=str(work_dir.resolve())),
         indexer_config=S3IndexerConfig(remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/"),
