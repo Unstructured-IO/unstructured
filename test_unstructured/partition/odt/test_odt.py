@@ -8,7 +8,12 @@ from typing import Any
 import pytest
 from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    FixtureRequest,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+    function_mock,
+)
 from unstructured.chunking.basic import chunk_elements
 from unstructured.documents.elements import CompositeElement, Table, TableChunk, Title
 from unstructured.partition.docx import partition_docx
@@ -218,6 +223,24 @@ def test_partition_odt_respects_detect_language_per_element_arg():
 
 
 # -- miscellaneous -------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expected_value"),
+    [({}, None), ({"strategy": None}, None), ({"strategy": "hi_res"}, "hi_res")],
+)
+def test_partition_odt_forwards_strategy_arg_to_partition_docx(
+    request: FixtureRequest, kwargs: dict[str, Any], expected_value: str | None
+):
+    partition_docx_ = function_mock(request, "unstructured.partition.odt.partition_docx")
+
+    partition_odt(example_doc_path("simple.odt"), **kwargs)
+
+    call_kwargs = partition_docx_.call_args.kwargs
+    # -- `strategy` keyword-argument appeared in the call --
+    assert "strategy" in call_kwargs
+    # -- `strategy` argument was passed with the expected value --
+    assert call_kwargs["strategy"] == expected_value
 
 
 def test_partition_odt_round_trips_through_json():

@@ -134,7 +134,7 @@ def cls_attr_mock(
 
 def function_mock(
     request: FixtureRequest, q_function_name: str, autospec: bool = True, **kwargs: Any
-):
+) -> Mock:
     """Return mock patching function with qualified name `q_function_name`.
 
     Patch is reversed after calling test returns.
