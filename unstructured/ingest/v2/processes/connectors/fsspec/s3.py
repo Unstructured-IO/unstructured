@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
@@ -43,7 +45,9 @@ class S3AccessConfig(FsspecAccessConfig):
 @dataclass
 class S3ConnectionConfig(FsspecConnectionConfig):
     supported_protocols: list[str] = field(default_factory=lambda: ["s3", "s3a"])
-    access_config: S3AccessConfig = enhanced_field(sensitive=True, default_factory=S3AccessConfig)
+    access_config: S3AccessConfig = enhanced_field(
+        sensitive=True, default_factory=lambda: S3AccessConfig()
+    )
     endpoint_url: Optional[str] = None
     anonymous: bool = False
     connector_type: str = CONNECTOR_TYPE
@@ -61,14 +65,14 @@ class S3ConnectionConfig(FsspecConnectionConfig):
 @dataclass
 class S3Indexer(FsspecIndexer):
     connection_config: S3ConnectionConfig
-    index_config: S3IndexerConfig = field(default_factory=S3IndexerConfig)
+    index_config: S3IndexerConfig
     connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def __post_init__(self):
         super().__post_init__()
 
-    def get_metadata(self, path) -> DataSourceMetadata:
+    def get_metadata(self, path: str) -> DataSourceMetadata:
         date_created = None
         date_modified = None
         try:
@@ -96,7 +100,7 @@ class S3Indexer(FsspecIndexer):
         )
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def run(self, **kwargs) -> Generator[FileData, None, None]:
+    def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         return super().run(**kwargs)
 
 
@@ -117,11 +121,11 @@ class S3Downloader(FsspecDownloader):
         super().__post_init__()
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def run(self, file_data: FileData, **kwargs) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> Path:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    async def run_async(self, file_data: FileData, **kwargs) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
         return await super().run_async(file_data=file_data, **kwargs)
 
 
@@ -133,18 +137,18 @@ class S3UploaderConfig(FsspecUploaderConfig):
 @dataclass
 class S3Upload(FsspecUploader):
     connection_config: S3ConnectionConfig
-    upload_config: S3UploaderConfig = field(default_factory=S3UploaderConfig)
+    upload_config: S3UploaderConfig = field(default=None)
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def __post_init__(self):
         super().__post_init__()
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def run(self, contents: list[UploadContent], **kwargs):
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         return super().run(contents=contents, **kwargs)
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    async def run_async(self, path: Path, file_data: FileData, **kwargs):
+    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
         return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 

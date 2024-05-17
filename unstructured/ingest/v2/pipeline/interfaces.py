@@ -75,13 +75,13 @@ class PipelineStep(ABC):
             return self.process_async(iterable=iterable)
         return self.process_multiprocess(iterable=iterable)
 
-    def _run(self, *args, **kwargs) -> Optional[Any]:
+    def _run(self, *args, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError
 
-    async def _run_async(self, *args, **kwargs) -> Optional[Any]:
+    async def _run_async(self, *args, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError
 
-    def run(self, *args, **kwargs) -> Optional[Any]:
+    def run(self, *args, **kwargs: Any) -> Optional[Any]:
         try:
             return self._run(*args, **kwargs)
         except Exception as e:
@@ -92,7 +92,7 @@ class PipelineStep(ABC):
                 raise e
             return None
 
-    async def run_async(self, *args, **kwargs) -> Optional[Any]:
+    async def run_async(self, *args, **kwargs: Any) -> Optional[Any]:
         try:
             return await self._run_async(*args, **kwargs)
         except Exception as e:

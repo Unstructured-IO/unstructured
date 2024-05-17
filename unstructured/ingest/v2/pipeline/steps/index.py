@@ -39,6 +39,7 @@ class IndexStep(PipelineStep):
 
     def run(self) -> Generator[str, None, None]:
         for file_data in self.process.run():
+            logger.debug(f"Generated file data: {file_data}")
             try:
                 record_hash = self.get_hash(extras=[file_data.identifier])
                 filename = f"{record_hash}.json"

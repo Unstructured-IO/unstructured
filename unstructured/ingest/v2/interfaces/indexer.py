@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generator, Optional, TypeVar
+from typing import Any, Generator, Optional, TypeVar
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
@@ -24,5 +24,5 @@ class Indexer(BaseProcess, BaseConnector, ABC):
         return False
 
     @abstractmethod
-    def run(self, **kwargs) -> Generator[FileData, None, None]:
+    def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         pass
