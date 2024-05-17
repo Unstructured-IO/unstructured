@@ -1,4 +1,8 @@
-## 0.13.8-dev13
+## 0.14.0-dev14
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
 
 ### Enhancements
 
@@ -19,6 +23,9 @@
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
 * **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
+* **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
 
 ## 0.13.7
 
