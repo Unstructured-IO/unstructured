@@ -145,7 +145,7 @@ class S3Upload(FsspecUploader):
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     async def run_async(self, path: Path, file_data: FileData, **kwargs):
-        return super().run_async(path=path, file_data=file_data, **kwargs)
+        return await super().run_async(path=path, file_data=file_data, **kwargs)
 
 
 add_source_entry(
