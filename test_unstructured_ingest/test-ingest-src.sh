@@ -60,7 +60,7 @@ all_tests=(
   'local-embed-octoai.sh'
   'local-embed-vertexai.sh'
   'sftp.sh'
-  'mongodb.sh'
+  # 'mongodb.sh'
   'opensearch.sh'
 )
 

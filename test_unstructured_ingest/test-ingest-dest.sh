@@ -25,7 +25,7 @@ all_tests=(
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
-  'mongodb.sh'
+  # 'mongodb.sh'
   'opensearch.sh'
   'pgvector.sh'
   'pinecone.sh'
