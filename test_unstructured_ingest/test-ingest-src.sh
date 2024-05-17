@@ -61,6 +61,10 @@ all_tests=(
   'local-embed-vertexai.sh'
   'sftp.sh'
   'opensearch.sh'
+  # NOTE(robinson) - mongo conflicts with astra because it ships with its
+  # own version of bson, and installing bson from pip causes mongo to fail
+  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
+  # 'mongodb.sh'
 )
 
 full_python_matrix_tests=(
@@ -92,10 +96,6 @@ python_version=$(python --version 2>&1)
 tests_to_ignore=(
   'notion.sh'
   'dropbox.sh'
-  # NOTE(robinson) - mongo conflicts with astra because it ships with its
-  # own version of bson, and installing bson from pip causes mongo to fail
-  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
-  'mongodb.sh'
 )
 
 for test in "${all_tests[@]}"; do
