@@ -31,7 +31,7 @@ contourpy==1.2.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.10.2
+cssutils==2.11.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
@@ -95,6 +95,7 @@ networkx==3.2.1
     # via scikit-image
 numpy==1.26.4
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   imageio
@@ -182,7 +183,7 @@ scikit-image==0.22.0
     # via
     #   imgaug
     #   unstructured-paddleocr
-scipy==1.10.1
+scipy==1.11.3
     # via
     #   -c ././deps/constraints.txt
     #   imgaug

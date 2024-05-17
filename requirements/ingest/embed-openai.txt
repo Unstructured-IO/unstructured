@@ -42,6 +42,8 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
+greenlet==3.0.3
+    # via sqlalchemy
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
@@ -63,7 +65,7 @@ langchain-community==0.0.38
     # via -r ./ingest/embed-openai.in
 langchain-core==0.1.52
     # via langchain-community
-langsmith==0.1.57
+langsmith==0.1.58
     # via
     #   langchain-community
     #   langchain-core
@@ -82,8 +84,9 @@ mypy-extensions==1.0.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain-community
-openai==1.28.1
+openai==1.30.1
     # via -r ./ingest/embed-openai.in
 orjson==3.10.3
     # via langsmith
@@ -104,7 +107,7 @@ pyyaml==6.0.1
     # via
     #   langchain-community
     #   langchain-core
-regex==2024.5.10
+regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
@@ -125,7 +128,7 @@ tenacity==8.3.0
     # via
     #   langchain-community
     #   langchain-core
-tiktoken==0.6.0
+tiktoken==0.7.0
     # via -r ./ingest/embed-openai.in
 tqdm==4.66.4
     # via

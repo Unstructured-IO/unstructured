@@ -36,6 +36,7 @@ mdurl==0.1.2
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   clarifai
     #   tritonclient
 pfzy==0.3.4
