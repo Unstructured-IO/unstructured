@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import os
 import re
@@ -5,7 +7,7 @@ import tempfile
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path, PurePath
-from typing import TYPE_CHECKING, BinaryIO, List, Optional, Tuple, Union, cast
+from typing import IO, TYPE_CHECKING, BinaryIO, Iterator, List, Optional, Tuple, Union, cast
 
 import cv2
 import numpy as np
@@ -14,7 +16,12 @@ from PIL import Image
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.common import convert_to_bytes
+from unstructured.partition.common import (
+    convert_to_bytes,
+    exactly_one,
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.utils.config import env_config
 
 if TYPE_CHECKING:
@@ -364,3 +371,52 @@ def annotate_layout_elements(
             raise e
         else:
             raise FileNotFoundError(f'File "{filename}" not found!') from e
+
+
+def convert_pdf_to_images(
+    filename: str = "",
+    file: Optional[bytes | IO[bytes]] = None,
+    chunk_size: int = 10,
+) -> Iterator[Image.Image]:
+    # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
+    exactly_one(filename=filename, file=file)
+    if file is not None:
+        f_bytes = convert_to_bytes(file)
+        info = pdf2image.pdfinfo_from_bytes(f_bytes)
+    else:
+        f_bytes = None
+        info = pdf2image.pdfinfo_from_path(filename)
+
+    total_pages = info["Pages"]
+    for start_page in range(1, total_pages + 1, chunk_size):
+        end_page = min(start_page + chunk_size - 1, total_pages)
+        if f_bytes is not None:
+            chunk_images = pdf2image.convert_from_bytes(
+                f_bytes,
+                first_page=start_page,
+                last_page=end_page,
+            )
+        else:
+            chunk_images = pdf2image.convert_from_path(
+                filename,
+                first_page=start_page,
+                last_page=end_page,
+            )
+
+        for image in chunk_images:
+            yield image
+
+
+def get_the_last_modification_date_pdf_or_img(
+    file: Optional[bytes | IO[bytes]] = None,
+    filename: Optional[str] = "",
+    date_from_file_object: bool = False,
+) -> str | None:
+    last_modification_date = None
+    if not file and filename:
+        last_modification_date = get_last_modified_date(filename=filename)
+    elif not filename and file:
+        last_modification_date = (
+            get_last_modified_date_from_file(file) if date_from_file_object else None
+        )
+    return last_modification_date

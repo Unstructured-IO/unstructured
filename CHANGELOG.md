@@ -1,4 +1,4 @@
-## 0.14.0-dev15
+## 0.14.0
 
 ### BREAKING CHANGES
 
