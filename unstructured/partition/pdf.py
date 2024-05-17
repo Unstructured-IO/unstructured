@@ -6,6 +6,7 @@ import io
 import os
 import re
 import warnings
+from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
@@ -551,6 +552,14 @@ def _partition_pdf_or_image_local(
             )
 
             if analysis:
+                if not analyzed_image_output_dir_path:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
+                os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
                 annotate_layout_elements(
                     inferred_document_layout=inferred_document_layout,
                     extracted_layout=extracted_layout,
