@@ -1,5 +1,5 @@
 -c ../deps/constraints.txt
 -c ../base.txt
-gcsfs==2024.3.1
+gcsfs
 fsspec
 bs4
