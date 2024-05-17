@@ -33,7 +33,7 @@ function cleanup() {
 
 trap cleanup EXIT
 
-pip uninstall bson
+pip uninstall -y bson
 pip install pymongo
 
 python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \

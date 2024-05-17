@@ -22,7 +22,7 @@ fi
 
 # trap cleanup EXIT
 #
-pip uninstall bson
+pip uninstall -y bson
 pip install pymongo
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
