@@ -49,6 +49,7 @@ if not is_in_docker:
             ),
         ],
     )
+    @pytest.mark.skip(reason="skipping until argilla has python 3.12 support")
     def test_stage_for_argilla(elements, task_name, dataset_type, extra_kwargs):
         argilla_dataset = argilla.stage_for_argilla(elements, task_name, **extra_kwargs)
         assert isinstance(argilla_dataset, dataset_type)
@@ -65,6 +66,7 @@ if not is_in_docker:
             ("text_classification", ValueError, "invalid value", {"metadata": "invalid metadata"}),
         ],
     )
+    @pytest.mark.skip(reason="skipping until argilla has python 3.12 support")
     def test_invalid_stage_for_argilla(elements, task_name, error, error_message, extra_kwargs):
         with pytest.raises(error) as e:
             argilla.stage_for_argilla(elements, task_name, **extra_kwargs)

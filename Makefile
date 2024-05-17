@@ -47,7 +47,7 @@ install-test:
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
 	python3 -m pip install unstructured.pytesseract -c requirements/deps/constraints.txt
-	python3 -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
+	# python3 -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
 	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
