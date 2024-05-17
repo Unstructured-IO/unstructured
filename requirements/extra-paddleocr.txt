@@ -8,7 +8,7 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.15.0
     # via flask-babel
-bce-python-sdk==0.9.9
+bce-python-sdk==0.9.10
     # via visualdl
 blinker==1.8.2
     # via flask
@@ -219,7 +219,7 @@ visualdl==2.5.3
     # via unstructured-paddleocr
 werkzeug==3.0.3
     # via flask
-zipp==3.18.1
+zipp==3.18.2
     # via
     #   importlib-metadata
     #   importlib-resources

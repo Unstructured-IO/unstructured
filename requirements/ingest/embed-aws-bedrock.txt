@@ -38,8 +38,6 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.0.3
-    # via sqlalchemy
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
@@ -57,7 +55,7 @@ langchain-community==0.0.38
     # via -r ./ingest/embed-aws-bedrock.in
 langchain-core==0.1.52
     # via langchain-community
-langsmith==0.1.58
+langsmith==0.1.59
     # via
     #   langchain-community
     #   langchain-core

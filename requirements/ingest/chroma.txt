@@ -232,7 +232,7 @@ wrapt==1.16.0
     #   -c ./ingest/../deps/constraints.txt
     #   deprecated
     #   opentelemetry-instrumentation
-zipp==3.18.1
+zipp==3.18.2
     # via
     #   importlib-metadata
     #   importlib-resources
