@@ -383,7 +383,7 @@ def test_partition_pdf_falls_back_to_fast(
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
-    mock_return = [Text("Hello there!")]
+    mock_return = [[Text("Hello there!")], []]
     with mock.patch.object(
         pdf,
         "extractable_elements",
@@ -405,7 +405,7 @@ def test_partition_pdf_falls_back_to_fast_from_ocr_only(
 
     monkeypatch.setattr(strategies, "dependency_exists", mock_exists)
 
-    mock_return = [Text("Hello there!")]
+    mock_return = [[Text("Hello there!")], []]
     with mock.patch.object(
         pdf,
         "extractable_elements",
