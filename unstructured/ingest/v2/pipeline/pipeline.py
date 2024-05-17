@@ -14,7 +14,19 @@ from unstructured.ingest.v2.pipeline.steps.stage import UploadStager, UploadStag
 from unstructured.ingest.v2.pipeline.steps.uncompress import Uncompressor, UncompressStep
 from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
 from unstructured.ingest.v2.pipeline.utils import sterilize_dict
+from unstructured.ingest.v2.processes.chunker import ChunkerConfig
+from unstructured.ingest.v2.processes.connector_registry import (
+    ConnectionConfigT,
+    DownloaderConfigT,
+    IndexerConfigT,
+    UploaderConfigT,
+    UploadStagerConfigT,
+    destination_registry,
+    source_registry,
+)
 from unstructured.ingest.v2.processes.connectors.local import LocalUploader
+from unstructured.ingest.v2.processes.embedder import EmbedderConfig
+from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
 
 @dataclass
@@ -32,7 +44,7 @@ class Pipeline:
     embedder_step: EmbedStep = field(init=False, default=None)
     stager: InitVar[Optional[UploadStager]] = None
     stager_step: UploadStageStep = field(init=False, default=None)
-    uploader: InitVar[Uploader] = field(default=LocalUploader)
+    uploader: InitVar[Uploader] = field(default=LocalUploader())
     uploader_step: UploadStep = field(init=False, default=None)
     uncompress_step: UncompressStep = field(init=False, default=None)
 
@@ -146,3 +158,94 @@ class Pipeline:
             s.append(str(stager_step))
         s.append(str(self.uploader_step))
         return " -> ".join(s)
+
+    @classmethod
+    def from_configs(
+        cls,
+        context: ProcessorConfig,
+        indexer_config: IndexerConfigT,
+        downloader_config: DownloaderConfigT,
+        source_connection_config: ConnectionConfigT,
+        partitioner_config: PartitionerConfig,
+        chunker_config: Optional[ChunkerConfig] = None,
+        embedder_config: Optional[EmbedderConfig] = None,
+        destination_connection_config: Optional[ConnectionConfigT] = None,
+        stager_config: Optional[UploadStagerConfigT] = None,
+        uploader_config: Optional[UploaderConfigT] = None,
+    ) -> "Pipeline":
+        # Get registry key based on indexer config
+        source_entry = {
+            k: v
+            for k, v in source_registry.items()
+            if isinstance(indexer_config, v.indexer_config)
+            and isinstance(downloader_config, v.downloader_config)
+            and isinstance(source_connection_config, v.connection_config)
+        }
+        if len(source_entry) > 1:
+            raise ValueError(
+                f"multiple entries found matching provided indexer, "
+                f"downloader and connection configs: {source_entry}"
+            )
+        if len(source_entry) != 1:
+            raise ValueError(
+                "no entry found in source registry with matching indexer, "
+                "downloader and connection configs"
+            )
+        source = list(source_entry.values())[0]
+        pipeline_kwargs = {
+            "context": context,
+            "indexer": source.indexer(
+                index_config=indexer_config, connection_config=source_connection_config
+            ),
+            "downloader": source.downloader(
+                download_config=downloader_config, connection_config=source_connection_config
+            ),
+            "partitioner": Partitioner(config=partitioner_config),
+        }
+        if chunker_config:
+            pipeline_kwargs["chunker"] = Chunker(config=chunker_config)
+        if embedder_config:
+            pipeline_kwargs["embedder"] = Embedder(config=embedder_config)
+        if not uploader_config:
+            return Pipeline(**pipeline_kwargs)
+
+        destination_entry = {
+            k: v
+            for k, v in destination_registry.items()
+            if isinstance(uploader_config, v.uploader_config)
+        }
+        if destination_connection_config:
+            destination_entry = {
+                k: v
+                for k, v in destination_entry.items()
+                if isinstance(destination_connection_config, v.connection_config)
+            }
+        if stager_config:
+            destination_entry = {
+                k: v
+                for k, v in destination_entry.items()
+                if isinstance(stager_config, v.upload_stager_config)
+            }
+
+        if len(destination_entry) > 1:
+            raise ValueError(
+                f"multiple entries found matching provided uploader, "
+                f"stager and connection configs: {destination_entry}"
+            )
+        if len(destination_entry) != 1:
+            raise ValueError(
+                "no entry found in source registry with matching uploader, "
+                "stager and connection configs"
+            )
+
+        destination = list(destination_entry.values())[0]
+        if stager_config:
+            pipeline_kwargs["stager"] = destination.upload_stager(
+                upload_stager_config=stager_config
+            )
+        if destination_connection_config and uploader_config:
+            pipeline_kwargs["uploader"] = destination.uploader(
+                upload_config=uploader_config, connection_config=destination_connection_config
+            )
+
+        return cls(**pipeline_kwargs)
