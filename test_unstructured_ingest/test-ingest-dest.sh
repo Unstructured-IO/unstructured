@@ -25,7 +25,6 @@ all_tests=(
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
-  # 'mongodb.sh'
   'opensearch.sh'
   'pgvector.sh'
   'pinecone.sh'
@@ -40,6 +39,10 @@ all_tests=(
 full_python_matrix_tests=(
   'azure.sh'
   'gcs.sh'
+  # NOTE(robinson) - mongo conflicts with astra because it ships with its
+  # own version of bson, and installing bson from pip causes mongo to fail
+  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
+  'mongodb.sh'
   's3.sh'
 )
 
