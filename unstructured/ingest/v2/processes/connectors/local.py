@@ -94,9 +94,13 @@ class LocalIndexer(Indexer):
                 source_identifiers=SourceIdentifiers(
                     fullpath=str(file_path.resolve()),
                     filename=file_path.name,
-                    rel_path=str(file_path.resolve()).replace(
-                        str(self.index_config.path.resolve()), ""
-                    )[1:],
+                    rel_path=(
+                        str(file_path.resolve()).replace(str(self.index_config.path.resolve()), "")[
+                            1:
+                        ]
+                        if not self.index_config.path.is_file()
+                        else self.index_config.path.name
+                    ),
                 ),
                 metadata=self.get_file_metadata(path=file_path),
             )
