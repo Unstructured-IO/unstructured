@@ -59,11 +59,30 @@ class LocalIndexer(Indexer):
         )
 
     def get_file_metadata(self, path: Path) -> DataSourceMetadata:
+        stats = path.stat()
+        try:
+            date_modified = str(stats.st_mtime)
+        except Exception as e:
+            logger.warning(f"Couldn't detect date modified: {e}")
+            date_modified = None
+
+        try:
+            date_created = str(stats.st_birthtime)
+        except Exception as e:
+            logger.warning(f"Couldn't detect date created: {e}")
+            date_created = None
+
+        try:
+            mode = stats.st_mode
+            permissions_data = [{"mode": mode}]
+        except Exception as e:
+            logger.warning(f"Couldn't detect file mode: {e}")
+            permissions_data = None
         return DataSourceMetadata(
-            date_modified=str(path.stat().st_mtime) or None,
-            date_created=str(path.stat().st_birthtime) or None,
+            date_modified=date_modified,
+            date_created=date_created,
             date_processed=str(time()),
-            permissions_data=[{"mode": path.stat().st_mode}],
+            permissions_data=permissions_data,
             record_locator={"path": str(path.resolve())},
         )
 
