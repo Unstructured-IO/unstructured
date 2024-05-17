@@ -21,6 +21,9 @@ if [ -z "$MONGODB_URI" ] && [ -z "$MONGODB_DATABASE_NAME" ]; then
 fi
 
 # trap cleanup EXIT
+#
+pip uninstall bson
+pip install pymongo
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   mongodb \
