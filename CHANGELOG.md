@@ -1,4 +1,4 @@
-## 0.13.8-dev16
+## 0.13.8-dev17
 
 ### Enhancements
 
@@ -21,6 +21,7 @@
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
 * **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
 
 ## 0.13.7
 
