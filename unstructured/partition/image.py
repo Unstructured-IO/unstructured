@@ -6,9 +6,7 @@ from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import add_metadata
 from unstructured.partition.common import exactly_one
-from unstructured.partition.lang import (
-    check_language_args,
-)
+from unstructured.partition.lang import check_language_args
 from unstructured.partition.pdf import partition_pdf_or_image
 from unstructured.partition.utils.constants import PartitionStrategy
 
@@ -33,6 +31,8 @@ def partition_image(
     extract_image_block_to_payload: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    extract_forms: bool = False,
+    form_extraction_skip_tables: bool = True,
     **kwargs: Any,
 ) -> list[Element]:
     """Parses an image into a list of interpreted elements.
@@ -90,6 +90,11 @@ def partition_image(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    extract_forms
+        Whether the form extraction logic should be run
+        (results in adding FormKeysValues elements to output).
+    form_extraction_skip_tables
+        Whether the form extraction logic should ignore regions designated as Tables.
     """
     exactly_one(filename=filename, file=file)
 
@@ -111,5 +116,7 @@ def partition_image(
         extract_image_block_to_payload=extract_image_block_to_payload,
         date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
+        extract_forms=extract_forms,
+        form_extraction_skip_tables=form_extraction_skip_tables,
         **kwargs,
     )
