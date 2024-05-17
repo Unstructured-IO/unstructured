@@ -1,0 +1,611 @@
+[
+  {
+    "type": "CompositeElement",
+    "element_id": "fc5406d4c59a6fcf7bf812e47fb7d71e",
+    "text": "0 2 0 2\n\np e S 0 3 ] L C . s c [\n\n3 v 6 0 9 4 0 . 4 0 0 2 : v i X r a\n\nDense Passage Retrieval for Open-Domain Question Answering\n\nVladimir Karpukhin\u2217, Barlas O\u02d8guz\u2217, Sewon Min\u2020, Patrick Lewis, Ledell Wu, Sergey Edunov, Danqi Chen\u2021, Wen-tau Yih\n\n\u2020University of Washington\n\n\u2021Princeton University\n\nFacebook AI\n\n{vladk, barlaso, plewis, ledell, edunov, scottyih}@fb.com sewon@cs.washington.edu danqic@cs.princeton.edu\n\nAbstract",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJztVk1v3DYQ/SsDnde7pCiKYk5x4xYtmjZpk9QpEmNBkcNdYiVRpaTdOIb/e0frOHELF3Dve9AXOfM4eI98ow83GTbYYjeug8ueQVYJ72vHda0FlwqtZLkqra8tYznzFc8WkLU4GmdGQ/E32fyyHuKULB6/e0xtGIYQu2H9JejDTdZGN08Lwavq9oowEtqY3LqJ1owx3WWacTuXsNrGFldp6jpMq0NMu9XUDWOa7DgldP/8wE+m7Rs8c9EOq3ZqxnBmYzO13VneL3vns9tbWsyHBsfrfq4gM33fBFqUClzNATTdmG4zmQ0Oc60ZdptsrrCnkXU3tTXO5fEZZ8RP44zBIAe65tx72HcdYeImpvAZ3ds5jhL+Ta5VFYq80qi15NZoK3PpiGwpvVfeVidyCaMHhDdEr4AreAkvYAkDWEp9QPaPaBwlPsKwKXKrhEImKlY6zgxKbQvGvUB65erEMGEI2ENJDGso6L483uct/YzGA7yHBOZ/b23PlS/z3KDzXCvkJReiqEzOC2Zz5fMT8YRxgd2A8NoMA8XA7zimgHvTgI8JXvXYnV3E1oQOfptwmBeC8244YAqE/ECPt2Fs8DENWMnIW4q6NLosFbPOlqSJsJ5VQpTlSYMZ44/GuNCGBD+b1E+7beg+TnnO1QK+M6kxA7z6OLHcVZvp8/3EGzyQFr8cI6kLLkhBUs7u4CUewrCgh8OmgctpDk0bvIbv3dTF/QIuTPdXgBdbvEvlC7gklUczwZ9h+yRNC12RkEr6wtc1J1VLp3OUKvfCoTP6pClh3Onyrgt7TEMYryF6uDQDabsZY/cknnXBdFUIxwpJLURLQweG80pQa6aeIk88f+WZvyZDskjEwjfGn7aXna+l44q2shK1E55p52qdl0h72ar6xDFh/GAs1jHu4PynJ5EqqemKmmvtKymE4ayWsqgUU5WvCmL3RCph3OzJ9XcLqI8WHxdAJRytuzla9wLwi2EPNo7jddjePvf10sYWhtn7n9thefjqJ0sKBjc7u50n+vvjMI8/lOxXkxKVvcf/+mdSlShKV0irVe0MFhXPEYWQQlorTG1O0hHGeU0lGDs+chiu/gapHOUi"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "ee897debf0868ab1630051b7cfdcc1c5",
+    "text": "Open-domain question answering relies on ef- \ufb01cient passage retrieval to select candidate contexts, where traditional sparse vector space models, such as TF-IDF or BM25, are the de facto method. In this work, we show that retrieval can be practically implemented us- ing dense representations alone, where em- beddings are learned from a small number of questions and passages by a simple dual- encoder framework. When evaluated on a wide range of open-domain QA datasets, our dense retriever",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxtk9tqHDEMhl9FDORuZ4/ddrd3LSUQ6IFCoBdtWLS2ZsfEh6llZ7OEffdKkwNp6dWMbfnXr0/yz4eGPAWKZeds8x6a+dps1+uFmeNy+fbdqttu5m/W+81W9pcWV7aZQBOooMWCEv/Q6M+OU82GxvVAOThmlyLvnoJ+PjQhWT1erRabzflGNDKZlO3OJ4Ml5cebWHq1MOtToFmuMVKeHVO+ndXIJVdTaib794LuMQyeWpsMz0L1xbUm+Rpiuxymg+2a81mSdc5TOQ3qoMFh8E6SisGZBsixx3ioeCBWrw3FQ6MOB9nZxRr2pPYWqlPovqjGt4GipAzoIvyuxCoGGPlI2cUDZPKOGGSPuhZ+1W4/XxgnjGFAZpGViJId3aGHkoClA6aAwWidECMwKWomnsCxp0xQMlqnOSSeB8xMcCc3UtaVIVC4XqK5mh6Q4fqyvfp0CXL+8ctyPQFUjZ7AEnQo90Aa2Cc7haso+45BIUsyAu7TUbawvHIovmBPMGS5KuC8P4FT5jo0ZKFyC1q0pcha2JCJ5WQEzIA+RXqug0IrStZKOI+mPGGOotHlFACBg6jDI3JI3QtaCY72mR3D/qSxowewFX0LFI0gyKKDgbSYKfzoSfCL/4rqUvsDRycEsjSbVD29auL3D6CzyqTQZZZfqhkhqJtaZLC7lANr8pKTlPy5GorUjpSBT1wowCETFkEkJrcX7WJ7AbhnmUhpq+QppAKSvKShXc7/Mw9oTBXSp8lYc09+4NEQRduW1MpHzT4lEzy49457iHQUV1Jqm7pWet1iLlr0+CQU1D/V7gVZHzDf8nShT+D5dXzFnKV1d3Sto36++QNAg3J8"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "c65370dd6bdf4d3ed979f665912468e3",
+    "text": "outperforms a strong Lucene- BM25 system greatly by 9%-19% absolute in terms of top-20 passage retrieval accuracy, and helps our end-to-end QA system establish new state-of-the-art on multiple open-domain QA benchmarks.1",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxtk9tqHDEMhl9FDORuZ4/ddrd3LSUQ6IFCoBdtWLS2ZsfEh6llZ7OEffdKkwNp6dWMbfnXr0/yz4eGPAWKZeds8x6a+dps1+uFmeNy+fbdqttu5m/W+81W9pcWV7aZQBOooMWCEv/Q6M+OU82GxvVAOThmlyLvnoJ+PjQhWT1erRabzflGNDKZlO3OJ4Ml5cebWHq1MOtToFmuMVKeHVO+ndXIJVdTaib794LuMQyeWpsMz0L1xbUm+Rpiuxymg+2a81mSdc5TOQ3qoMFh8E6SisGZBsixx3ioeCBWrw3FQ6MOB9nZxRr2pPYWqlPovqjGt4GipAzoIvyuxCoGGPlI2cUDZPKOGGSPuhZ+1W4/XxgnjGFAZpGViJId3aGHkoClA6aAwWidECMwKWomnsCxp0xQMlqnOSSeB8xMcCc3UtaVIVC4XqK5mh6Q4fqyvfp0CXL+8ctyPQFUjZ7AEnQo90Aa2Cc7haso+45BIUsyAu7TUbawvHIovmBPMGS5KuC8P4FT5jo0ZKFyC1q0pcha2JCJ5WQEzIA+RXqug0IrStZKOI+mPGGOotHlFACBg6jDI3JI3QtaCY72mR3D/qSxowewFX0LFI0gyKKDgbSYKfzoSfCL/4rqUvsDRycEsjSbVD29auL3D6CzyqTQZZZfqhkhqJtaZLC7lANr8pKTlPy5GorUjpSBT1wowCETFkEkJrcX7WJ7AbhnmUhpq+QppAKSvKShXc7/Mw9oTBXSp8lYc09+4NEQRduW1MpHzT4lEzy49457iHQUV1Jqm7pWet1iLlr0+CQU1D/V7gVZHzDf8nShT+D5dXzFnKV1d3Sto36++QNAg3J8",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4edd1cc01ad5339b3fc211258d615bfe",
+    "text": "Introduction",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxVjkluwzAMRa8ScF1XsIPYTm/QfXdBYDAS5QjVBIlCUxi+e6UOi+44fD6+ywZkyZHnxSh4OcCobvPpfBqH6TwhatVPGod+1KMmOQ9Sw9MBHDEqZKz5DVqx5FCSpO8+UnImZxN8Xn5Dlw1cUG19PPbzvF8rI5EMSS02SOSQfi6R701B3IMjkYr3lMRHSO+i+MypSC6J1P+GHuiipU4FmYUrlk0ngy3Od0N8jkrDvtdn2ljiz9gMAGO0pj6tgqIF6tqiXwuulJsrkF+hGcY6WXxxN2p6feMwPbgxXj2noKpDhTTAH/vNsCXYr1+ginM8"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4e705a421caaeafb1db2ace440a2162d",
+    "text": "Open-domain question answering (QA) (Voorhees, 1999) is a task that answers factoid questions us- ing a large collection of documents. While early QA systems are often complicated and consist of multiple components (Ferrucci (2012); Moldovan et al. (2003), inter alia), the advances of reading comprehension models suggest a much simpli\ufb01ed two-stage framework: (1) a context retriever \ufb01rst selects a small subset of passages where some of them contain the answer to the question, and then (2) a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxVU0tvGjEQ/iujPYEE4ZEmQHqKKvXWVpGq9tBGyNizu1b82HpsCIr4750xUKW3tXf8zfeY+fXWoEOPIW+taR6gUWq+0+vVen6/1Ku7+9aslvpuY5Qyi/YDzttmAo3HrIzKiuvfGvnYUixJYz0PmLwlsjHQ9lL0663x0cjv29vFen16ZoyEOiazdVGrHNP5pcq9UJj10eMslRAwzQ4xvcxKoJyKziWh+f+Ar8oPDqcmapr54rKd6uiKD9PlcDOYtjmduFlrHebjgFXgMDjLTZngTAr4t1OhK6pDEq4Nhq4RhgPfbEPxOxR6C8HJ+JoF49uAgVt6ZQP8KUgCBirQAZMNHYyeHscw+hFj6hFpAovNZjMGS6AgK3qB3Kt8KSdolc7Rmn84BIWmIDAKnEodAgtyqGuP2AIrLZIX3cDPnnUBquSO8PQIdKSMnrsk5MKMgV/6s1g03M/wOZClLDDVK3au1sQggDD6jImd1RZGy/liOf4IX6Izca8CIBN2N3I/vx1PmF7GxDdW8SH3CMpwlUYS6ITKCH9BTthjkGEAmQBHQKVjoxmNGegeyArD36XdzRdMMh/ilDIbD21SHiX8BxgtxlzO3MV+Rs/J4p7bn18lBiMUg8Rf8so5brIjrDIHRSTJwqFHtoV4suSaKfuKKAlW/jUNyLGerllMqmt8E1i5kPBK9zZglcjlWsnrmGLpes5AhlGiwwpyJWqu1KmiWcNe2/ZYa3gHeBGuwwCjT9Lq7PUEOIPV+AYeHbfgBgxoihZj47vx49yZ9HteUlFnjT06ys2UZQe146x5cXgWuiPrgr6wy7ysbUxeogODXZK1lrAsXSYospFJNHCrIfGoWo1Lyd/UHeJWIiMgmho9p5niXq4v6lmIbNh1+b6qxAzsHr/LJp2e/wK54JMR"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2fc384b06246b67d3c6407be5ec286a8",
+    "text": "machine reader can thoroughly exam- ine the retrieved contexts and identify the correct answer (Chen et al., 2017). Although reducing open-domain QA to machine reading is a very rea- sonable strategy, a huge performance degradation is often observed in practice2, indicating the needs of improving retrieval.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxVU0tvGjEQ/iujPYEE4ZEmQHqKKvXWVpGq9tBGyNizu1b82HpsCIr4750xUKW3tXf8zfeY+fXWoEOPIW+taR6gUWq+0+vVen6/1Ku7+9aslvpuY5Qyi/YDzttmAo3HrIzKiuvfGvnYUixJYz0PmLwlsjHQ9lL0663x0cjv29vFen16ZoyEOiazdVGrHNP5pcq9UJj10eMslRAwzQ4xvcxKoJyKziWh+f+Ar8oPDqcmapr54rKd6uiKD9PlcDOYtjmduFlrHebjgFXgMDjLTZngTAr4t1OhK6pDEq4Nhq4RhgPfbEPxOxR6C8HJ+JoF49uAgVt6ZQP8KUgCBirQAZMNHYyeHscw+hFj6hFpAovNZjMGS6AgK3qB3Kt8KSdolc7Rmn84BIWmIDAKnEodAgtyqGuP2AIrLZIX3cDPnnUBquSO8PQIdKSMnrsk5MKMgV/6s1g03M/wOZClLDDVK3au1sQggDD6jImd1RZGy/liOf4IX6Izca8CIBN2N3I/vx1PmF7GxDdW8SH3CMpwlUYS6ITKCH9BTthjkGEAmQBHQKVjoxmNGegeyArD36XdzRdMMh/ilDIbD21SHiX8BxgtxlzO3MV+Rs/J4p7bn18lBiMUg8Rf8so5brIjrDIHRSTJwqFHtoV4suSaKfuKKAlW/jUNyLGerllMqmt8E1i5kPBK9zZglcjlWsnrmGLpes5AhlGiwwpyJWqu1KmiWcNe2/ZYa3gHeBGuwwCjT9Lq7PUEOIPV+AYeHbfgBgxoihZj47vx49yZ9HteUlFnjT06ys2UZQe146x5cXgWuiPrgr6wy7ysbUxeogODXZK1lrAsXSYospFJNHCrIfGoWo1Lyd/UHeJWIiMgmho9p5niXq4v6lmIbNh1+b6qxAzsHr/LJp2e/wK54JMR",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "19d6e114cde1f418962f5bcde5f06191",
+    "text": "\u2217Equal contribution 1The code and trained models have been released at\n\nhttps://github.com/facebookresearch/DPR.\n\n2For instance, the exact match score on SQuAD v1.1 drops\n\nfrom above 80% to less than 40% (Yang et al., 2019a).",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJztlNuKE0EQhl+lGRAUksw5md47YfVSPORG1iVUd9dkhu3D2Ie4EvLuVq8KKiJ4n7vpqpq/vq5/au7OBWo0aONhVsUNK9RW8a1AFF0FAlQreCtEC2PfV03XVFWxYoXBCAoiUP25yA+H4JKX+HRe0Js5hNnZcPhRdHcujFM53bb1MFzuScOjdF4dtJMQnf/+JsQpI5STM1j6ZC368ovzD2WyIfokY/Kofj/gI5hF41o5GUqTdJzX0ulk7LpZNosai8uFmo2zxvh1yQQFLIueqSkBlrmA0hrsMcERQ2Yt0B6LTLhQ5GCTEZjx6qwT8TFmjU+paerdq88JNJPORj+LlAVZvZ+QIgoZWMWih9miYvnyOrAJTshotJZ5mjkEykDM/X+ivQHvCeyE+9yHGv5pTt1sBymHcdvtKlBCdrjtRS+gq5RsJRdXc0hjinEJN2V5nOOUxEY6U44gUTj34DEgeDmVt2/fb/5r8r3gu5YrXldD26AcBHYDoBI7Jeq+lde1yBrNa+fZTBxgJa5YpF0gEBmZgSgnFuhqyGhLPrxLL2/Zqd7UTHm3hF+d2M9R498coC8fO8551w/Am0H0o2r7oYFRjrznoK4OkMbonWEgHP1ohuoZi45pDIGcAMs6Cjz/SIoMIwO9WbGmqjm8+Nci3H8DV78Ndg=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e23130449343b46d18d6e94b959cfa63",
+    "text": "Retrieval in open-domain QA is usually imple- mented using TF-IDF or BM25 (Robertson and Zaragoza, 2009), which matches keywords ef\ufb01- ciently with an inverted index and can be seen as representing the question and context in high- dimensional, sparse vectors (with weighting). Con- versely, the dense, latent semantic encoding is com- plementary to sparse representations by design. For example, synonyms or paraphrases that consist of completely different tokens may still be mapped to vectors close",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxdVF1vGzcQ/CsLPVmATrLk2LLbhyJp4CJAUrR2gABNAmPvuNKx4seV5Em+Gv7vHVI6t+7bHbncnZmd3a9PEzFixaUHrSY/0GTF67q+WN+o+mIpN+v15Xr9prleqqub9dXl8uJyMqOJlcSKEyP+aZI/HqLvQyPlv5NgdYzau/hwCvr6NLFe5euLi+X19fN35AjS+KAejG84+XB8yanNEBatt7IIvXMSFgcfdovexRT6JvVB1OsfeWTbGamUb+LC9ibpqvGmt65adfNObSbPzyi20UbS0GUEE+46o1EUABc5ANeG3bbnrcSMdSJuO8kIO5w8uN7WkuEtc54kjynnuJMUtOzZkHbkO3Gobxnfv78lHamPPRszkC7QKKsrCqfabenzbfXh/S35QO8+rS7p7M4jf4reETtFf3Dgrf+bZ7Q6P7+ZzujQ6qYly6lpJdJOBuihIsnmW7+pz5cVNRrZUeugU4sUALRHPpTTTsljSdrguBaKIigSKUgXJOJVhpNaob96iVmOY7B3mWUm1uptW5HSwJ/byWZGseMQhfbSoGmRzkrVgyAwZ5vO6WfvKlwjyAyzkl3htczIcEJJgLCMyg2Ja7zKCKBX421F3dGGHAZKfiz0grX0K1I9IF/UWzenW0h46j5wDc67wcasK15y1waOECy1nDKlqGMiv8mVEJ8ADrw2GwkZU/I7YITIA0EHY7JYFjaBiEAycm2MByAcCKMjHtRCoRu1kvBax2/96nzZfGl9Jpdvala07YcsqkH/MpJ8HMA//lSi1djqU7PYxQPQKdoEb0vw2Jhj8ns2TO94h9KoUaMw7Zw/ONpkBXxIgYexv3twyua85z747JBy+vE/QO4yEIKnjd8O8yMgeksJo1zVEFJB4JjE0sH3RlHLe8n6HT3YYOoGdKqMRK4Ze/DgEXAhZsDo6IQxELPzKmfmXJsicC0JlY+mP9E9CXhCVlx3vDhxO11kA28kPzsqFiqUa9IIZU7vC4TRe5E4oKyJnoxwcAUALMbqzz6+jIdgA6hi1U3vmuLDsVld8HA7DIBMCEllSqjIspJHXWujU7FzUYwpcdxVsZNGn6T7n8Hn9CVTKxFluVRWrMdE5EVKZe1VlBdfLFTLiBfFsR2sANa/4p58pLyTl20x7orjJrL8qG1vkQV7NlNRWKoYUA5gdvbpw2/3U2iz9QGQMFlnMt/OZ3TfBr3nmHjPBcNHTWfQ/s30R/qlx3AkvJmXo6vpdJ6367h4f+UQwHIvn/MWff7+D8b0Rzk="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "0514dae8756684388e6b9f3ceef2f411",
+    "text": "to each other. Consider the question \u201cWho is the bad guy in lord of the rings?\u201d, which can be answered from the context \u201cSala Baker is best known for portraying the villain Sauron in the Lord of the Rings trilogy.\u201d A term-based system would have dif\ufb01culty retrieving such a context, while a dense retrieval system would be able to better match \u201cbad guy\u201d with \u201cvillain\u201d and fetch the cor- rect context. Dense encodings are also learnable by adjusting the embedding functions, which pro- vides",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxdVF1vGzcQ/CsLPVmATrLk2LLbhyJp4CJAUrR2gABNAmPvuNKx4seV5Em+Gv7vHVI6t+7bHbncnZmd3a9PEzFixaUHrSY/0GTF67q+WN+o+mIpN+v15Xr9prleqqub9dXl8uJyMqOJlcSKEyP+aZI/HqLvQyPlv5NgdYzau/hwCvr6NLFe5euLi+X19fN35AjS+KAejG84+XB8yanNEBatt7IIvXMSFgcfdovexRT6JvVB1OsfeWTbGamUb+LC9ibpqvGmt65adfNObSbPzyi20UbS0GUEE+46o1EUABc5ANeG3bbnrcSMdSJuO8kIO5w8uN7WkuEtc54kjynnuJMUtOzZkHbkO3Gobxnfv78lHamPPRszkC7QKKsrCqfabenzbfXh/S35QO8+rS7p7M4jf4reETtFf3Dgrf+bZ7Q6P7+ZzujQ6qYly6lpJdJOBuihIsnmW7+pz5cVNRrZUeugU4sUALRHPpTTTsljSdrguBaKIigSKUgXJOJVhpNaob96iVmOY7B3mWUm1uptW5HSwJ/byWZGseMQhfbSoGmRzkrVgyAwZ5vO6WfvKlwjyAyzkl3htczIcEJJgLCMyg2Ja7zKCKBX421F3dGGHAZKfiz0grX0K1I9IF/UWzenW0h46j5wDc67wcasK15y1waOECy1nDKlqGMiv8mVEJ8ADrw2GwkZU/I7YITIA0EHY7JYFjaBiEAycm2MByAcCKMjHtRCoRu1kvBax2/96nzZfGl9Jpdvala07YcsqkH/MpJ8HMA//lSi1djqU7PYxQPQKdoEb0vw2Jhj8ns2TO94h9KoUaMw7Zw/ONpkBXxIgYexv3twyua85z747JBy+vE/QO4yEIKnjd8O8yMgeksJo1zVEFJB4JjE0sH3RlHLe8n6HT3YYOoGdKqMRK4Ze/DgEXAhZsDo6IQxELPzKmfmXJsicC0JlY+mP9E9CXhCVlx3vDhxO11kA28kPzsqFiqUa9IIZU7vC4TRe5E4oKyJnoxwcAUALMbqzz6+jIdgA6hi1U3vmuLDsVld8HA7DIBMCEllSqjIspJHXWujU7FzUYwpcdxVsZNGn6T7n8Hn9CVTKxFluVRWrMdE5EVKZe1VlBdfLFTLiBfFsR2sANa/4p58pLyTl20x7orjJrL8qG1vkQV7NlNRWKoYUA5gdvbpw2/3U2iz9QGQMFlnMt/OZ3TfBr3nmHjPBcNHTWfQ/s30R/qlx3AkvJmXo6vpdJ6367h4f+UQwHIvn/MWff7+D8b0Rzk=",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "d12417777d4a829f77bb4bb4b02078d7",
+    "text": "additional \ufb02exibility to have a task-speci\ufb01c representation. With special in-memory data struc- tures and indexing schemes, retrieval can be done ef\ufb01ciently using maximum inner product search (MIPS) algorithms (e.g., Shrivastava and Li (2014); Guo et al. (2016)).",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxdVF1vGzcQ/CsLPVmATrLk2LLbhyJp4CJAUrR2gABNAmPvuNKx4seV5Em+Gv7vHVI6t+7bHbncnZmd3a9PEzFixaUHrSY/0GTF67q+WN+o+mIpN+v15Xr9prleqqub9dXl8uJyMqOJlcSKEyP+aZI/HqLvQyPlv5NgdYzau/hwCvr6NLFe5euLi+X19fN35AjS+KAejG84+XB8yanNEBatt7IIvXMSFgcfdovexRT6JvVB1OsfeWTbGamUb+LC9ibpqvGmt65adfNObSbPzyi20UbS0GUEE+46o1EUABc5ANeG3bbnrcSMdSJuO8kIO5w8uN7WkuEtc54kjynnuJMUtOzZkHbkO3Gobxnfv78lHamPPRszkC7QKKsrCqfabenzbfXh/S35QO8+rS7p7M4jf4reETtFf3Dgrf+bZ7Q6P7+ZzujQ6qYly6lpJdJOBuihIsnmW7+pz5cVNRrZUeugU4sUALRHPpTTTsljSdrguBaKIigSKUgXJOJVhpNaob96iVmOY7B3mWUm1uptW5HSwJ/byWZGseMQhfbSoGmRzkrVgyAwZ5vO6WfvKlwjyAyzkl3htczIcEJJgLCMyg2Ja7zKCKBX421F3dGGHAZKfiz0grX0K1I9IF/UWzenW0h46j5wDc67wcasK15y1waOECy1nDKlqGMiv8mVEJ8ADrw2GwkZU/I7YITIA0EHY7JYFjaBiEAycm2MByAcCKMjHtRCoRu1kvBax2/96nzZfGl9Jpdvala07YcsqkH/MpJ8HMA//lSi1djqU7PYxQPQKdoEb0vw2Jhj8ns2TO94h9KoUaMw7Zw/ONpkBXxIgYexv3twyua85z747JBy+vE/QO4yEIKnjd8O8yMgeksJo1zVEFJB4JjE0sH3RlHLe8n6HT3YYOoGdKqMRK4Ze/DgEXAhZsDo6IQxELPzKmfmXJsicC0JlY+mP9E9CXhCVlx3vDhxO11kA28kPzsqFiqUa9IIZU7vC4TRe5E4oKyJnoxwcAUALMbqzz6+jIdgA6hi1U3vmuLDsVld8HA7DIBMCEllSqjIspJHXWujU7FzUYwpcdxVsZNGn6T7n8Hn9CVTKxFluVRWrMdE5EVKZe1VlBdfLFTLiBfFsR2sANa/4p58pLyTl20x7orjJrL8qG1vkQV7NlNRWKoYUA5gdvbpw2/3U2iz9QGQMFlnMt/OZ3TfBr3nmHjPBcNHTWfQ/s30R/qlx3AkvJmXo6vpdJ6367h4f+UQwHIvn/MWff7+D8b0Rzk=",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e271222c042e3e3917223654512af009",
+    "text": "However, it is generally believed that learn- ing a good dense vector representation needs a large number of labeled pairs of question and con- texts. Dense retrieval methods have thus never be shown to outperform TF-IDF/BM25 for open- domain QA before ORQA (Lee et al., 2019), which proposes a sophisticated inverse cloze task (ICT) objective, predicting the blocks that contain the masked sentence, for additional pretraining. The question encoder and the reader model are then \ufb01ne- tuned using",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxlk1tP3DAQhf/KKE8gbfYGLUvfaBEqUi9qtW8UrWbjSWJwbNeXXSjiv/c4S6te3mJ75sw3ZyY3T5UYGcSmjVbVG6qWspJFs2rnr5dz4VPmU3mtztX2pD0/a0+XZ9WEqkESK06M+KeqfGyiy6GR8ewlDDpG7WzcvATdPFWDU+X55GSxWj3fQiNI44LaGNdwcuGQyakvCLPeDTIL2VoJs70L97NsYwq5STmI+vsgDzx4I7VyTZwN2SRdN87kwdZLP/WqrZ6fUazVRtKjLwQVe280igJwVgLwbNh2mTuJhbUS21WF0ONmY/OwlYK3KDpJHlLReO/2spMwIZ1IR+oEpGzMI23FaLwoSj0nMsLB1qRtR0ydc4qU2Ci0kwY9UxAfJML6EYasiIoINBw6oUNhci3OUIWkZx1iufieJY4ZbBU1DhUKV5zS5ageJAVAsCHMqXfQ7HknIMoRNYANSoq921tKjlxOmFjrwkDrq/r68mr29uPyFeGCnBdoKzewtvTlAmm4Ffr8Fd9HH0RIErGZTmg5X5wfT2jf66YnH5x3UUon0fleAxVug19b1AZfY9wP4HC8p6Prd+tjcts7GKJ3MkGyKI1vOJZ6oS3W4z4ezESjqYCU+wHJUCzeiW2QV3BZKV1sQeO+eIBg6ExpjYTfliEcmxhG64pSEC7Hsp6GOBSbxNK33G7nCytwNlsUyrEQ/TeAOMqwjXs0RndO22Qep3RhYHvu+oNTMTeNxNjmsh9KBlfWF4a8tKX+mVnD9s+ZlGFM0GgaPbGyp4h1kdq1NUhrDgm5EXsPMEvjD4Df4TC6w+TKgv/a/U8cUBpOr8siP9/+BHGHaAQ="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "777143635df08e656b47821c0c8e9131",
+    "text": "pairs of questions and answers jointly. Although ORQA successfully demonstrates that dense retrieval can outperform BM25, setting new state-of-the-art results on multiple open-domain",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJxlk1tP3DAQhf/KKE8gbfYGLUvfaBEqUi9qtW8UrWbjSWJwbNeXXSjiv/c4S6te3mJ75sw3ZyY3T5UYGcSmjVbVG6qWspJFs2rnr5dz4VPmU3mtztX2pD0/a0+XZ9WEqkESK06M+KeqfGyiy6GR8ewlDDpG7WzcvATdPFWDU+X55GSxWj3fQiNI44LaGNdwcuGQyakvCLPeDTIL2VoJs70L97NsYwq5STmI+vsgDzx4I7VyTZwN2SRdN87kwdZLP/WqrZ6fUazVRtKjLwQVe280igJwVgLwbNh2mTuJhbUS21WF0ONmY/OwlYK3KDpJHlLReO/2spMwIZ1IR+oEpGzMI23FaLwoSj0nMsLB1qRtR0ydc4qU2Ci0kwY9UxAfJML6EYasiIoINBw6oUNhci3OUIWkZx1iufieJY4ZbBU1DhUKV5zS5ageJAVAsCHMqXfQ7HknIMoRNYANSoq921tKjlxOmFjrwkDrq/r68mr29uPyFeGCnBdoKzewtvTlAmm4Ffr8Fd9HH0RIErGZTmg5X5wfT2jf66YnH5x3UUon0fleAxVug19b1AZfY9wP4HC8p6Prd+tjcts7GKJ3MkGyKI1vOJZ6oS3W4z4ezESjqYCU+wHJUCzeiW2QV3BZKV1sQeO+eIBg6ExpjYTfliEcmxhG64pSEC7Hsp6GOBSbxNK33G7nCytwNlsUyrEQ/TeAOMqwjXs0RndO22Qep3RhYHvu+oNTMTeNxNjmsh9KBlfWF4a8tKX+mVnD9s+ZlGFM0GgaPbGyp4h1kdq1NUhrDgm5EXsPMEvjD4Df4TC6w+TKgv/a/U8cUBpOr8siP9/+BHGHaAQ=",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "23678228c304f4959aa3bb77d5ee7b76",
+    "text": "QA datasets, it also suffers from two weaknesses. First, ICT pretraining is computationally intensive and it is not completely clear that regular sentences are good surrogates of questions in the objective function. Second, because the context encoder is not \ufb01ne-tuned using pairs of questions and answers, the corresponding representations could be subop- timal.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVUUtvFDEM/ivWnPfB7rSocENISFyQEL2VauVJPLOheWE7bKtq/zvOtj30Ftufv0d89zxQpERZD8EPn2H4hNd4dTW6aU/jdO12NzeT/7ibd+PoaMLdPKxgSKToUdHwz0N/HKQ0dnSpK3EKIqFkObyC7p6HVHwfj6MRnu+Ng8kV9odYHGrhl03UY7ewPZZEW245E29PhR+2LYtyc9qY/PuCHjHVSGtfnGxTixrWrsSW8npfN9XPw/lsYnOIpE+1Oxiw1hhM1AxuO8DGEfPScCHpXgfKy9AdVusccksTdXv7zqP0qJ3j5xfo0YRUVhAUMEoBafNMLDBzSaCnAifCh0wiJBv4Flh0Bd+/3kJlUsaQQ14gCLiSatOLH4zxCUJWyhL+EWD2ndwwuegFZynIIC4SMugRFZiWFq0Q6muOBJAJllK8+WEuC6r1ygx/G0nXEBOwVYIy/SGnXWdu2fXRBn7ZUbJfwUQOm9AFZ50eG4zdbshvdn63efqwy7TWlslDkx6nosV8r9ZDYJaT/czqlY+ZpJpO32Cy7+jm8QXuSove9M39VOoaNCSMm36kt/v9QGbsvm/7Mc73/wHGX/oM"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "e19b0af4d9214c2764f87f786afe2ee6",
+    "text": "In this paper, we address the question: can we train a better dense embedding model using only pairs of questions and passages (or answers), with- out additional pretraining? By leveraging the now standard BERT pretrained model (Devlin et al., 2019) and a dual-encoder architecture (Bromley et al., 1994), we focus on developing the right training scheme using a relatively small number of question and passage pairs. Through a series of careful ablation studies, our \ufb01nal solution is surprisingly",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJyFVdtuGzcQ/ZWBgAA2oJUt2Urt9KGokRYI2ubi+i0NDIqc1bLhklteJKuG/71nuJJiAwH6Imh5OXPmzJnh58cJO+7Z53trJm9oon+YX+rzpeZF2/L5xcJct8v54qo1S746f321mExp0nNWRmWF848T+XOfQoma6/fAsbcp2eDT/f7Q58dJH4xsX1zMr66evgAjsg7R3LugVQ5xvKlyJxTOutDzWSzeczzbhvj1rPiUY9G5RDYvP/hB9YPjxgSdzvrism10cKX3zWKYDaadPD0hWGsd590gDCZqGJxFUBA8kwPYdsqvi1pzEq4T9uuJMBywcu9Lv2KhtxCczA9ZMN55yp1NNChkO6UtkzImckpYZvqncBL4N6SVl80clfWkaMU5cyTDPjExgI2xfk2ijaOS5H/wbgdYGxOF9oiUSHmD5ZSEJZ2EiIW05ZhOEd3mrqFQspCwclw5GiLXqMD8iW525HjDUa0lhFD0YUspA1RFQze/3N4dL7DZ8zl5yxsH2gxcN5vS4nx+fVp5KDJFuYa9xkEwibqzmWtB6OQmht7x7nhtfn19eVolaoMuyMoj/w27MBy4RLvuMh3YUtId/LiXQ1Fkh1rhwo5Sr5yjsSLP1XkuzqjdjO66GMq6A0DiaLmqqVXktjhSK1fLDwWKwd4U4kX6q7Sr87lol2Cguo8KpxKHaIWLELDitTeV9bfy4VQYsu3tv9CuRWl69SBfdU88DG2DgWEriecGqcSRIG+Uz8cMNpAyxDQWFkcorP7GEjQgHfpBxYaqNNDi/4wyuk5l3c3oA3J8W533cR/oFhW34gvU+uPtqSTCD5oHAWoEHxnnGPx6Ru8yLJNHd8JpcD0S7RPd/LFY0mqHKE5FQPb4RdCT18vZ4hVtUIjLxez6lRC5C0OzJKV1iUrvYImVONalAAUSGnfPNpWVGDNbFAJyx7Cp00l8U2X3pskB3jP06ecj2l4Y6J8DfbjFzsnlfLYcGVxczC5enQq6AISBPb1XMCsCfDrKltCaourJ78wvLP8j/ba1Kn8N2/TVvmyGUVMdPGRclb386IG8DW1wZka/ojq5et9wL5pCTpVxoFN5rK4wQo7Q81kDcC7DVMzW0AC998bkJhd/6JnvWn/fkLXH+MGmmtDhZPOiQUZrtyO0tiIwlFtHVvlFhWuBxzy5H2zE4HTHetXipbKG0/KY0/cHEFyxq/ZZYfAwG4Y0f2L8e1O1gQFtu6sA00OVRFTMWrG2FAzjvZcR+ixtmX7AnsIyHQYIBIyjncfY2qbawd6wuCLiApoeLYE0jze+b6aZzEt5JXbjBJJxGD3glUy7cTgCRWjmMBzC8re2Gx8EDEU+tqxqaOVgvnh4Aw4agmN9tTBXhIM8mKh/eu7W5ltie5dOX/g91dHupgDSXd2p7xs20y5l7tNM3rjD8/dexVgH6p28ZU9f/gNHqdRk"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "40cfd9eafa496807650b245983a5882c",
+    "text": "simple: the embedding is optimized for maximizing inner products of the question and relevant passage vectors, with an objective compar- ing all pairs of questions and passages in a batch. Our Dense Passage Retriever (DPR) is exception- ally strong. It not only outperforms BM25 by a large margin (65.2% vs. 42.9% in Top-5 accuracy), but also results in a substantial improvement on the end-to-end QA accuracy compared to ORQA (41.5% vs. 33.3%) in the open Natural Questions setting (Lee et al.,",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJyFVdtuGzcQ/ZWBgAA2oJUt2Urt9KGokRYI2ubi+i0NDIqc1bLhklteJKuG/71nuJJiAwH6Imh5OXPmzJnh58cJO+7Z53trJm9oon+YX+rzpeZF2/L5xcJct8v54qo1S746f321mExp0nNWRmWF848T+XOfQoma6/fAsbcp2eDT/f7Q58dJH4xsX1zMr66evgAjsg7R3LugVQ5xvKlyJxTOutDzWSzeczzbhvj1rPiUY9G5RDYvP/hB9YPjxgSdzvrism10cKX3zWKYDaadPD0hWGsd590gDCZqGJxFUBA8kwPYdsqvi1pzEq4T9uuJMBywcu9Lv2KhtxCczA9ZMN55yp1NNChkO6UtkzImckpYZvqncBL4N6SVl80clfWkaMU5cyTDPjExgI2xfk2ijaOS5H/wbgdYGxOF9oiUSHmD5ZSEJZ2EiIW05ZhOEd3mrqFQspCwclw5GiLXqMD8iW525HjDUa0lhFD0YUspA1RFQze/3N4dL7DZ8zl5yxsH2gxcN5vS4nx+fVp5KDJFuYa9xkEwibqzmWtB6OQmht7x7nhtfn19eVolaoMuyMoj/w27MBy4RLvuMh3YUtId/LiXQ1Fkh1rhwo5Sr5yjsSLP1XkuzqjdjO66GMq6A0DiaLmqqVXktjhSK1fLDwWKwd4U4kX6q7Sr87lol2Cguo8KpxKHaIWLELDitTeV9bfy4VQYsu3tv9CuRWl69SBfdU88DG2DgWEriecGqcSRIG+Uz8cMNpAyxDQWFkcorP7GEjQgHfpBxYaqNNDi/4wyuk5l3c3oA3J8W533cR/oFhW34gvU+uPtqSTCD5oHAWoEHxnnGPx6Ru8yLJNHd8JpcD0S7RPd/LFY0mqHKE5FQPb4RdCT18vZ4hVtUIjLxez6lRC5C0OzJKV1iUrvYImVONalAAUSGnfPNpWVGDNbFAJyx7Cp00l8U2X3pskB3jP06ecj2l4Y6J8DfbjFzsnlfLYcGVxczC5enQq6AISBPb1XMCsCfDrKltCaourJ78wvLP8j/ba1Kn8N2/TVvmyGUVMdPGRclb386IG8DW1wZka/ojq5et9wL5pCTpVxoFN5rK4wQo7Q81kDcC7DVMzW0AC998bkJhd/6JnvWn/fkLXH+MGmmtDhZPOiQUZrtyO0tiIwlFtHVvlFhWuBxzy5H2zE4HTHetXipbKG0/KY0/cHEFyxq/ZZYfAwG4Y0f2L8e1O1gQFtu6sA00OVRFTMWrG2FAzjvZcR+ixtmX7AnsIyHQYIBIyjncfY2qbawd6wuCLiApoeLYE0jze+b6aZzEt5JXbjBJJxGD3glUy7cTgCRWjmMBzC8re2Gx8EDEU+tqxqaOVgvnh4Aw4agmN9tTBXhIM8mKh/eu7W5ltie5dOX/g91dHupgDSXd2p7xs20y5l7tNM3rjD8/dexVgH6p28ZU9f/gNHqdRk",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "d4b2efd7f07e66abdb7d33d02a09032f",
+    "text": "2019; Kwiatkowski et al., 2019). Our contributions are twofold. First, we demon- strate that with the proper training setup, sim- ply \ufb01ne-tuning the question and passage encoders on existing question-passage pairs is suf\ufb01cient to greatly outperform BM25. Our empirical results also suggest that additional pretraining may not be needed. Second, we verify that, in the context of open-domain question answering, a higher retrieval precision indeed translates to a higher end-to-end QA accuracy. By",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJyFVdtuGzcQ/ZWBgAA2oJUt2Urt9KGokRYI2ubi+i0NDIqc1bLhklteJKuG/71nuJJiAwH6Imh5OXPmzJnh58cJO+7Z53trJm9oon+YX+rzpeZF2/L5xcJct8v54qo1S746f321mExp0nNWRmWF848T+XOfQoma6/fAsbcp2eDT/f7Q58dJH4xsX1zMr66evgAjsg7R3LugVQ5xvKlyJxTOutDzWSzeczzbhvj1rPiUY9G5RDYvP/hB9YPjxgSdzvrism10cKX3zWKYDaadPD0hWGsd590gDCZqGJxFUBA8kwPYdsqvi1pzEq4T9uuJMBywcu9Lv2KhtxCczA9ZMN55yp1NNChkO6UtkzImckpYZvqncBL4N6SVl80clfWkaMU5cyTDPjExgI2xfk2ijaOS5H/wbgdYGxOF9oiUSHmD5ZSEJZ2EiIW05ZhOEd3mrqFQspCwclw5GiLXqMD8iW525HjDUa0lhFD0YUspA1RFQze/3N4dL7DZ8zl5yxsH2gxcN5vS4nx+fVp5KDJFuYa9xkEwibqzmWtB6OQmht7x7nhtfn19eVolaoMuyMoj/w27MBy4RLvuMh3YUtId/LiXQ1Fkh1rhwo5Sr5yjsSLP1XkuzqjdjO66GMq6A0DiaLmqqVXktjhSK1fLDwWKwd4U4kX6q7Sr87lol2Cguo8KpxKHaIWLELDitTeV9bfy4VQYsu3tv9CuRWl69SBfdU88DG2DgWEriecGqcSRIG+Uz8cMNpAyxDQWFkcorP7GEjQgHfpBxYaqNNDi/4wyuk5l3c3oA3J8W533cR/oFhW34gvU+uPtqSTCD5oHAWoEHxnnGPx6Ru8yLJNHd8JpcD0S7RPd/LFY0mqHKE5FQPb4RdCT18vZ4hVtUIjLxez6lRC5C0OzJKV1iUrvYImVONalAAUSGnfPNpWVGDNbFAJyx7Cp00l8U2X3pskB3jP06ecj2l4Y6J8DfbjFzsnlfLYcGVxczC5enQq6AISBPb1XMCsCfDrKltCaourJ78wvLP8j/ba1Kn8N2/TVvmyGUVMdPGRclb386IG8DW1wZka/ojq5et9wL5pCTpVxoFN5rK4wQo7Q81kDcC7DVMzW0AC998bkJhd/6JnvWn/fkLXH+MGmmtDhZPOiQUZrtyO0tiIwlFtHVvlFhWuBxzy5H2zE4HTHetXipbKG0/KY0/cHEFyxq/ZZYfAwG4Y0f2L8e1O1gQFtu6sA00OVRFTMWrG2FAzjvZcR+ixtmX7AnsIyHQYIBIyjncfY2qbawd6wuCLiApoeLYE0jze+b6aZzEt5JXbjBJJxGD3glUy7cTgCRWjmMBzC8re2Gx8EDEU+tqxqaOVgvnh4Aw4agmN9tTBXhIM8mKh/eu7W5ltie5dOX/g91dHupgDSXd2p7xs20y5l7tNM3rjD8/dexVgH6p28ZU9f/gNHqdRk",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3b12f6efac209df9c71478075372fd4f",
+    "text": "applying a modern reader model to the top retrieved passages, we achieve compara- ble or better results on multiple QA datasets in the open-retrieval setting, compared to several, much complicated systems.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJyFVdtuGzcQ/ZWBgAA2oJUt2Urt9KGokRYI2ubi+i0NDIqc1bLhklteJKuG/71nuJJiAwH6Imh5OXPmzJnh58cJO+7Z53trJm9oon+YX+rzpeZF2/L5xcJct8v54qo1S746f321mExp0nNWRmWF848T+XOfQoma6/fAsbcp2eDT/f7Q58dJH4xsX1zMr66evgAjsg7R3LugVQ5xvKlyJxTOutDzWSzeczzbhvj1rPiUY9G5RDYvP/hB9YPjxgSdzvrism10cKX3zWKYDaadPD0hWGsd590gDCZqGJxFUBA8kwPYdsqvi1pzEq4T9uuJMBywcu9Lv2KhtxCczA9ZMN55yp1NNChkO6UtkzImckpYZvqncBL4N6SVl80clfWkaMU5cyTDPjExgI2xfk2ijaOS5H/wbgdYGxOF9oiUSHmD5ZSEJZ2EiIW05ZhOEd3mrqFQspCwclw5GiLXqMD8iW525HjDUa0lhFD0YUspA1RFQze/3N4dL7DZ8zl5yxsH2gxcN5vS4nx+fVp5KDJFuYa9xkEwibqzmWtB6OQmht7x7nhtfn19eVolaoMuyMoj/w27MBy4RLvuMh3YUtId/LiXQ1Fkh1rhwo5Sr5yjsSLP1XkuzqjdjO66GMq6A0DiaLmqqVXktjhSK1fLDwWKwd4U4kX6q7Sr87lol2Cguo8KpxKHaIWLELDitTeV9bfy4VQYsu3tv9CuRWl69SBfdU88DG2DgWEriecGqcSRIG+Uz8cMNpAyxDQWFkcorP7GEjQgHfpBxYaqNNDi/4wyuk5l3c3oA3J8W533cR/oFhW34gvU+uPtqSTCD5oHAWoEHxnnGPx6Ru8yLJNHd8JpcD0S7RPd/LFY0mqHKE5FQPb4RdCT18vZ4hVtUIjLxez6lRC5C0OzJKV1iUrvYImVONalAAUSGnfPNpWVGDNbFAJyx7Cp00l8U2X3pskB3jP06ecj2l4Y6J8DfbjFzsnlfLYcGVxczC5enQq6AISBPb1XMCsCfDrKltCaourJ78wvLP8j/ba1Kn8N2/TVvmyGUVMdPGRclb386IG8DW1wZka/ojq5et9wL5pCTpVxoFN5rK4wQo7Q81kDcC7DVMzW0AC998bkJhd/6JnvWn/fkLXH+MGmmtDhZPOiQUZrtyO0tiIwlFtHVvlFhWuBxzy5H2zE4HTHetXipbKG0/KY0/cHEFyxq/ZZYfAwG4Y0f2L8e1O1gQFtu6sA00OVRFTMWrG2FAzjvZcR+ixtmX7AnsIyHQYIBIyjncfY2qbawd6wuCLiApoeLYE0jze+b6aZzEt5JXbjBJJxGD3glUy7cTgCRWjmMBzC8re2Gx8EDEU+tqxqaOVgvnh4Aw4agmN9tTBXhIM8mKh/eu7W5ltie5dOX/g91dHupgDSXd2p7xs20y5l7tNM3rjD8/dexVgH6p28ZU9f/gNHqdRk",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "fd970553b29b070bba6d11f8310628e5",
+    "text": "2 Background\n\nThe problem of open-domain QA studied in this paper can be described as follows. Given a factoid question, such as \u201cWho \ufb01rst voiced Meg on Family Guy?\u201d or \u201cWhere was the 8th Dalai Lama born?\u201d, a system is required to answer it using a large corpus of diversi\ufb01ed topics. More speci\ufb01cally, we assume",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJztkstu2zAQRX9loLUdW5IfcjdFi6LZNAUKBOgiDYwROZKI8BU+7BiG/73DxC3afkN3pObOnTOXejhXpMmQTXslq3dQrVvqNrvVtt0tV5ut7OS6q+sW+3Zbr1c9DtUMKkMJJSZk/bkqh310OQh6vXsKRsWonI37q+jhXBknS7lt6667PLJHIOGC3GsnMLnw1olpKgiLyRlahGwthcXRhadFtjGFLFIOJP++0Asar2kunYgLk3VSc+F0Nnbe+Bsvh+py4WGD0pROvhBU6L1WPJQBF0XAZY12zDhSLKwV2bEqhJ6/7G02PRW8pvgkeknFo4GPKJ7G4LKVxeCX971KmipW/puqbJab9a5rkESPUmy6el0LxO1uM7Qdbfv/qZb0JgIfXM/JgRvAebJMYFBZ+PYBYspSkQS+pUlF8MiZgEALPYGkKILquYwRBqe1O8YbuFUHsoAwoEhOSXjOFAvhDGIWU5H+yM2yFt8nx6ehX9YhJjg4JdjojkZwFj6jUfoEt/n0/lUswYXfbRQIjmyTmLxLE3xCjQq+oEHoXbDXjhkjxFNMvBZzB3rOikOG5ABtPPISKkGOyo6s0xhGAn5En2MJQfIKIao3utcmrwSvdud4dPQkriWBWp9mcCTeKmZDf/6VXzEEfpkD3ZegL48/AcqLVps="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9a8e6eecda80edc51114969be69183f6",
+    "text": "the extractive QA setting, in which the answer is restricted to a span appearing in one or more pas- sages in the corpus. Assume that our collection contains D documents, d,d2,--- ,dp. We first split each of the documents into text passages of equal lengths as the basic retrieval units* and get total passages in our corpus C = {p1,po,--.,pu}. where each passage p; can be viewed as a sequence of tokens wl, w)?, vee wy). Given a question q, the task is to find a span w0?, ww) ttt wo from one of",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVVNtu4zYQ/ZWBnuKFJDtOCqfbGxYu2rcFuiiQh+3CoMmRTZgiGV6seBP/e2coOes86cIZzjlnzszXlwoN9mjTRqvqI1RqIRfbu3u5FfcrKRV93i1u77vlA65Wq59+VlUNVY9JKJEExb9U/LKJLgeJ5dtj6HWM2tm4mYK+vlS9U3x8d3f78HD+RncElC6ojXFSJBfGTJH2DGG+dz3OQ7YWw3xw4TDPNqaQZcoB1fsPfBa9N9goJ+O8zybpRjqTe9ssfetVV53PVKzTBtPJM4JKeG80FSWAcw6gYyPsLosdRsZaod1VjNDTn43N/RYZ3pLvSfic+I60R6DXIGTSR4R/PkHElLTd1aAtDHst98AxwsYBA+gIAQm0lgkVJAcCohcWCAqKQGmc5SyCC9C7gOBFbCAyIj7hm0gsn2MLn2LMPdIvkYA0p//GoGQy9GqT0DbCn0BqZO5prEHValk3TQO18i08InQ6xET1jU6AgoC6rlR4y6GSBJGpMo4RBcXgUxYGDKmT9hFELElbEbUkcsQNj3ScrU7xA/FWsMNEVBP9fLuFWRbMzAXW8Bu8+NvaO8LX1j6fW5IOiX6BNWWB/wUkabVFOGocSD8qTfoRHLQSC3p3QKI9mBqG2R81HBFhOM1a+JuaQyoDhcYi0VNdUCcRD9wUotlpgjq1Y1hQ8jDMIKUEA50F149tGRV640GQSgMY19RiPr+UaeGzS1pOXaIi0h0pRMCgFbGgjpMZ+VLlem5YfdVhiPo7louRpDUnCORNHKH02hgeqzFV5gbGft1gu2treNQH7VFpMeOa20vwdMolHnE7YwsRFPIjDUtN8AmJR9uMWIqVTzFhDxZRFYm0lSYrNjNg12mpqeil5cjd7D2JRP/eNInYALuShe2FMTwdDDrQqjkKjiRzEe0tdux2nsgTTwFjDCgU6+kuA3Y9SDfrPTWULhOGKC0Xt6tZ+wH+coGrnKiLKA5lCsUVwC/wEW6e/suLhVjW6xn8DusykgK6bMfRGRslDliMra3P6do2u6fiaPHDufxJFXKwfE+fya+FKZWjXZPoMVEuTGH9nXLW9WTv13V4Je8f4Fd6fW0ZP2HRz+Ttw3vok/F5tLLg3UEd0tGZsr2AgTvfHK7mT0iZSbRTPS0hPY5pVzYVp3SFVQOpeIPknwLXP9bHNA1Fk1H3+N7evDIv2/SzCEHwEvyXV+P52//6cy/Y"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "899f088eb6824eff14f4f70b711912aa",
+    "text": "the passages p; that can answer the question. Notice that to cover a wide variety of domains, the corpus size can easily range from millions of docu- ments (e.g., Wikipedia) to billions (e.g., the Web). As a result, any open-domain QA system needs to include an efficient retriever component that can se- lect a small set of relevant texts, before applying the reader to extract the answer (Chen et al., 2017).* Formally speaking, a retriever R : (q\u00a2,C) > Cr is a function that takes as input a",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVVNtu4zYQ/ZWBnuKFJDtOCqfbGxYu2rcFuiiQh+3CoMmRTZgiGV6seBP/e2coOes86cIZzjlnzszXlwoN9mjTRqvqI1RqIRfbu3u5FfcrKRV93i1u77vlA65Wq59+VlUNVY9JKJEExb9U/LKJLgeJ5dtj6HWM2tm4mYK+vlS9U3x8d3f78HD+RncElC6ojXFSJBfGTJH2DGG+dz3OQ7YWw3xw4TDPNqaQZcoB1fsPfBa9N9goJ+O8zybpRjqTe9ssfetVV53PVKzTBtPJM4JKeG80FSWAcw6gYyPsLosdRsZaod1VjNDTn43N/RYZ3pLvSfic+I60R6DXIGTSR4R/PkHElLTd1aAtDHst98AxwsYBA+gIAQm0lgkVJAcCohcWCAqKQGmc5SyCC9C7gOBFbCAyIj7hm0gsn2MLn2LMPdIvkYA0p//GoGQy9GqT0DbCn0BqZO5prEHValk3TQO18i08InQ6xET1jU6AgoC6rlR4y6GSBJGpMo4RBcXgUxYGDKmT9hFELElbEbUkcsQNj3ScrU7xA/FWsMNEVBP9fLuFWRbMzAXW8Bu8+NvaO8LX1j6fW5IOiX6BNWWB/wUkabVFOGocSD8qTfoRHLQSC3p3QKI9mBqG2R81HBFhOM1a+JuaQyoDhcYi0VNdUCcRD9wUotlpgjq1Y1hQ8jDMIKUEA50F149tGRV640GQSgMY19RiPr+UaeGzS1pOXaIi0h0pRMCgFbGgjpMZ+VLlem5YfdVhiPo7louRpDUnCORNHKH02hgeqzFV5gbGft1gu2treNQH7VFpMeOa20vwdMolHnE7YwsRFPIjDUtN8AmJR9uMWIqVTzFhDxZRFYm0lSYrNjNg12mpqeil5cjd7D2JRP/eNInYALuShe2FMTwdDDrQqjkKjiRzEe0tdux2nsgTTwFjDCgU6+kuA3Y9SDfrPTWULhOGKC0Xt6tZ+wH+coGrnKiLKA5lCsUVwC/wEW6e/suLhVjW6xn8DusykgK6bMfRGRslDliMra3P6do2u6fiaPHDufxJFXKwfE+fya+FKZWjXZPoMVEuTGH9nXLW9WTv13V4Je8f4Fd6fW0ZP2HRz+Ttw3vok/F5tLLg3UEd0tGZsr2AgTvfHK7mT0iZSbRTPS0hPY5pVzYVp3SFVQOpeIPknwLXP9bHNA1Fk1H3+N7evDIv2/SzCEHwEvyXV+P52//6cy/Y",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9eb33e2f3f05ccf5d2a4ca79ef9928f4",
+    "text": "question gq and a corpus C and returns a much smaller filter set of texts Cz C C, where |Cr| = k < |C|. Fora fixed k, a retriever can be evaluated in isolation on top-k retrieval accuracy, which is the fraction of ques- tions for which C contains a span that answers the question.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVVNtu4zYQ/ZWBnuKFJDtOCqfbGxYu2rcFuiiQh+3CoMmRTZgiGV6seBP/e2coOes86cIZzjlnzszXlwoN9mjTRqvqI1RqIRfbu3u5FfcrKRV93i1u77vlA65Wq59+VlUNVY9JKJEExb9U/LKJLgeJ5dtj6HWM2tm4mYK+vlS9U3x8d3f78HD+RncElC6ojXFSJBfGTJH2DGG+dz3OQ7YWw3xw4TDPNqaQZcoB1fsPfBa9N9goJ+O8zybpRjqTe9ssfetVV53PVKzTBtPJM4JKeG80FSWAcw6gYyPsLosdRsZaod1VjNDTn43N/RYZ3pLvSfic+I60R6DXIGTSR4R/PkHElLTd1aAtDHst98AxwsYBA+gIAQm0lgkVJAcCohcWCAqKQGmc5SyCC9C7gOBFbCAyIj7hm0gsn2MLn2LMPdIvkYA0p//GoGQy9GqT0DbCn0BqZO5prEHValk3TQO18i08InQ6xET1jU6AgoC6rlR4y6GSBJGpMo4RBcXgUxYGDKmT9hFELElbEbUkcsQNj3ScrU7xA/FWsMNEVBP9fLuFWRbMzAXW8Bu8+NvaO8LX1j6fW5IOiX6BNWWB/wUkabVFOGocSD8qTfoRHLQSC3p3QKI9mBqG2R81HBFhOM1a+JuaQyoDhcYi0VNdUCcRD9wUotlpgjq1Y1hQ8jDMIKUEA50F149tGRV640GQSgMY19RiPr+UaeGzS1pOXaIi0h0pRMCgFbGgjpMZ+VLlem5YfdVhiPo7louRpDUnCORNHKH02hgeqzFV5gbGft1gu2treNQH7VFpMeOa20vwdMolHnE7YwsRFPIjDUtN8AmJR9uMWIqVTzFhDxZRFYm0lSYrNjNg12mpqeil5cjd7D2JRP/eNInYALuShe2FMTwdDDrQqjkKjiRzEe0tdux2nsgTTwFjDCgU6+kuA3Y9SDfrPTWULhOGKC0Xt6tZ+wH+coGrnKiLKA5lCsUVwC/wEW6e/suLhVjW6xn8DusykgK6bMfRGRslDliMra3P6do2u6fiaPHDufxJFXKwfE+fya+FKZWjXZPoMVEuTGH9nXLW9WTv13V4Je8f4Fd6fW0ZP2HRz+Ttw3vok/F5tLLg3UEd0tGZsr2AgTvfHK7mT0iZSbRTPS0hPY5pVzYVp3SFVQOpeIPknwLXP9bHNA1Fk1H3+N7evDIv2/SzCEHwEvyXV+P52//6cy/Y",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3b3cb4738cbe12f9981fc6d1d6e703cb",
+    "text": "3 Dense Passage Retriever (DPR)",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVjs1OwzAQhF8l8gkkQmgimpRzH6CquFVV5NiT1MJ/stdQVOXdsfk5cNvdmZ35TjcGDQNLo5LspWID77peTNt+gx4S8yCnJ8zTjk/t7nnqt+yhYgbEJSee/TdWhjG6FAS+d49gVIzK2Tj+mk43ZpwsctdthmE954wA4YIctROcXPj55HQpCM3FGTQhWYvQfLjw1iQbKSRBKUD+X3DlxmvU0onYmKRJ1cLpZGzd+kcvZ7auuWxWGvTpCwHj3muVSzNgUwxZ1twuiS+IhZXBLqwQ+nwZbTITCl5bcghXKhldtYeNqA48xuyqjqCg8I5Q3e0Px/uS+Vf3qkiDrecvxy946A=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "a2a04739ec51cf7849d5c67b5c8f2f03",
+    "text": "We focus our research in this work on improv- ing the retrieval component in open-domain QA. Given a collection of M text passages, the goal of our dense passage retriever (DPR) is to index all the passages in a low-dimensional and continuous space, such that it can retrieve ef\ufb01ciently the top k passages relevant to the input question for the reader at run-time. Note that M can be very large (e.g., 21 million passages in our experiments, de- scribed in Section 4.1) and k is usually small, such",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVkklv20AMhf8KoVMCWLJkt43bW4ECPSXoBvSQBAY9Q9mDzNZZHBuB/3tJxe5ykjTkvPc9ivcvDVly5Mva6OYDNHrQ/WIcxrHXq+Xb1VKt1ECrmw0t1ea9Ht81M2gcFdRYkPtfGnlZ51CTouk7UnImZxN8Xp+b7l8aF7SUl8thtTo9skYiFZJe26CwhPR6E8tOEOa74GieqveU5s8hPc2rzyVVVWoi/f8HHdBFS60OKs9dtcW0KtjqfLuIXdRjczqx2WgslWMUggZjtIZNGXAuDVy26LcVt5SFtSG/bYQw8snaV7chwVuITqFDEY2fBGNQNQPHhkSZMKkdGA9lZzIIMgQPxsUU9i2fb7lA3FiSoT1aUMHF4HnocidE8szvkN+/fuzgs9mTB+Qma0kJJ4QRbkHMIWLOQjqbFLeBxbgoGJp8pkv94kUJrj59+XYNjFUCu2k6AFo73b5oCQSCDc+tNrwJ8utYFr1mBF+Mr4GT5oiKZpArBy07ZPICCv0fI6DxoY6bflCGc9nj5FBChKe/PolXbY+cmlGkbHysBX5VylPKMaTznFAzOHvwDrSFmTq4C4VefW8n2w0BhzuCxcRpr6jbdjNYDOCMtaL1bzaZDh14LyVd4dFpaiGrZDakpf79POU33XA9xX6ScdVceVBHyI4f5+CYYdE/1EU/LIe+72R3Lmt1hynxUu3ph+zI6fE3eWwoOQ=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2f78c5a86cecc77dac91fcadf8479934",
+    "text": "as 20\u2013100.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxVkklv20AMhf8KoVMCWLJkt43bW4ECPSXoBvSQBAY9Q9mDzNZZHBuB/3tJxe5ykjTkvPc9ivcvDVly5Mva6OYDNHrQ/WIcxrHXq+Xb1VKt1ECrmw0t1ea9Ht81M2gcFdRYkPtfGnlZ51CTouk7UnImZxN8Xp+b7l8aF7SUl8thtTo9skYiFZJe26CwhPR6E8tOEOa74GieqveU5s8hPc2rzyVVVWoi/f8HHdBFS60OKs9dtcW0KtjqfLuIXdRjczqx2WgslWMUggZjtIZNGXAuDVy26LcVt5SFtSG/bYQw8snaV7chwVuITqFDEY2fBGNQNQPHhkSZMKkdGA9lZzIIMgQPxsUU9i2fb7lA3FiSoT1aUMHF4HnocidE8szvkN+/fuzgs9mTB+Qma0kJJ4QRbkHMIWLOQjqbFLeBxbgoGJp8pkv94kUJrj59+XYNjFUCu2k6AFo73b5oCQSCDc+tNrwJ8utYFr1mBF+Mr4GT5oiKZpArBy07ZPICCv0fI6DxoY6bflCGc9nj5FBChKe/PolXbY+cmlGkbHysBX5VylPKMaTznFAzOHvwDrSFmTq4C4VefW8n2w0BhzuCxcRpr6jbdjNYDOCMtaL1bzaZDh14LyVd4dFpaiGrZDakpf79POU33XA9xX6ScdVceVBHyI4f5+CYYdE/1EU/LIe+72R3Lmt1hynxUu3ph+zI6fE3eWwoOQ==",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "d3626f9863c0a51a9c2bf5cba19cce01",
+    "text": "3.1 Overview\n\nOur dense passage retriever (DPR) uses a dense encoder EP (\u00b7) which maps any text passage to a d- dimensional real-valued vectors and builds an index for all the M passages that we will use for retrieval.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJztkt1u2zAMhV+F0FULLHUc17Gz6+1yazH0risCWqQTYbJk6CdJEeTdR3XpsO0ZdmOI5uHHo2M/nxVbntilrSH1EVRLq82mafthGGtqxp50t1kjjXS/brnFVn0ANXFCwoSiP6ty2Eafg+a3euYwmRiNd3F7FT2f1eSptJum7vvLizACax9oa73G5MOvSUz7YqHa+4mrkJ3jUB19+FFlF1PIOuXA9HfBJ5xmywvyOlZTtskstLd5covVfDfTqC4XWTYay+l1Lg4UzrM1slQMVkUgbYtul3HHsXhV7HaqOJzlzdblaeBib1U4iU+pMJq7Gh4OHA6GjwXwzn4yybIS5b+pduu67mhgaltqm9Wy3/TdqtbY3a/lgfw/VWE85ADELjLMGKPoIHAKhiVouPn0+O0WcuQIeBWx03L9AJ8f4eZ7Xi6H7haOe6P3MOEsMvcKhfwblnwZXQAZ+TAlSbSyAO3igDYzwYG1ZFYGCYZsLJUjGEd8gtEHQGsh7Rm+vBOjlJjgyHA00hNzb7qrabR3f/4aXzEEiefAT+W2l5efep4slA=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "5ba358a558fa8a6b1e3662f62d3b09d2",
+    "text": "3The ideal size and boundary of a text passage are func- tions of both the retriever and reader. We also experimented with natural paragraphs in our preliminary trials and found that using \ufb01xed-length passages performs better in both retrieval and \ufb01nal QA accuracy, as observed by Wang et al. (2019).\n\n4Exceptions include (Seo et al., 2019) and (Roberts et al., 2020), which retrieves and generates the answers, respectively.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/multi-column-2p.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJztUsuO2zAM/BXCp10gDz+STdJbD70WaLvAHraLgJZoW6gsCXrk0SD/XspJi7aHfkFvpkXODGf4eilI00gm7pUs3kHRrNuGNuUOxa4sqVyRqFe43nRPbdl1ldwUMyhGiigxIvdfivyxDzZ5QVPtyI8qBGVN2N+bXi/FaGV+bppqu72+MYYnYb3cayswWn+bxDhkCcvBjrT0yRjyy6P135bJhOiTiMmT/LOgE45O01xaEZZj0lHNhdVpNPPaLZzsiuuVyTqlKZ5dVlCgc1oxKQtc5gZ+1mj6hD2FrLUg0xdZoeM/e5PGlrK8OuNEOsXJpOeBQElCDUF9J0AjobXJSPRnsB0g5E5wGAKDAHqCLhkxh8wackdr4wCRUTxFr+hAfgLxhJL8Al54SAcLdGI7VY6HJBwVzxjkxZnXocfeoxsCKANsPzhPWo3KZA2MyfMTZJd1MRVGSEGZHr6mri2rE8m55lUZ8i4zAHN11o8BWoqRFTHwpPOukVkz4G3ecPXpPaAQLEecZ4C8VxvIH1hpe4YX9hQo8hoLeKjLave4yFb/TOEjes8ZHOg5W8re/n2HtJNthU2zWjfdVlZ13VTNutqstyt86sqq/H+HjLH6cBLkbkeljNBJEjx8IXs3fgaT8VNqD58tA8Tw21NdPs7gOCjxK2G6nUxPvDFGrvKFoglH8mHGTcGRyKHp87/CfPsB1Lt5jQ=="
+    }
+  }
+]
