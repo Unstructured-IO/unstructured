@@ -46,7 +46,7 @@ class Chunker(BaseProcess, ABC):
     def is_async(self) -> bool:
         return self.config.chunk_by_api
 
-    def run(self, elements_filepath: Path, **kwargs) -> list[Element]:
+    def run(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         elements = elements_from_json(filename=str(elements_filepath))
         local_chunking_strategies = ("basic", "by_title")
         if self.config.chunking_strategy not in local_chunking_strategies:
@@ -60,7 +60,7 @@ class Chunker(BaseProcess, ABC):
         assign_and_map_hash_ids(chunked_elements)
         return chunked_elements
 
-    async def run_async(self, elements_filepath: Path, **kwargs) -> list[Element]:
+    async def run_async(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         from unstructured_client import UnstructuredClient
         from unstructured_client.models.shared import Files, PartitionParameters
 

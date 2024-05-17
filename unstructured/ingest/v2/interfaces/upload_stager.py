@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.file_data import FileData
@@ -21,8 +21,8 @@ class UploadStager(BaseProcess, ABC):
     upload_stager_config: Optional[UploadStagerConfigT] = None
 
     @abstractmethod
-    def run(self, elements_filepath: Path, file_data: FileData, **kwargs) -> Path:
+    def run(self, elements_filepath: Path, file_data: FileData, **kwargs: Any) -> Path:
         pass
 
-    async def run_async(self, elements_filepath: Path, file_data: FileData, **kwargs) -> Path:
+    async def run_async(self, elements_filepath: Path, file_data: FileData, **kwargs: Any) -> Path:
         return self.run(elements_filepath=elements_filepath, file_data=file_data, **kwargs)

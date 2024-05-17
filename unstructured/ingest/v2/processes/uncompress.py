@@ -2,6 +2,7 @@ from abc import ABC
 from copy import copy
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.utils.compression import TAR_FILE_EXT, ZIP_FILE_EXT, uncompress_file
@@ -21,7 +22,7 @@ class Uncompressor(BaseProcess, ABC):
     def is_async(self) -> bool:
         return True
 
-    def run(self, file_data: FileData, **kwargs) -> list[FileData]:
+    def run(self, file_data: FileData, **kwargs: Any) -> list[FileData]:
         local_filepath = Path(file_data.source_identifiers.fullpath)
         if local_filepath.suffix not in TAR_FILE_EXT + ZIP_FILE_EXT:
             return [file_data]
@@ -38,5 +39,5 @@ class Uncompressor(BaseProcess, ABC):
             responses.append(new_file_data)
         return responses
 
-    async def run_async(self, file_data: FileData, **kwargs) -> list[FileData]:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> list[FileData]:
         return self.run(file_data=file_data, **kwargs)

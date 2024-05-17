@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
@@ -42,8 +42,8 @@ class Downloader(BaseProcess, BaseConnector, ABC):
         pass
 
     @abstractmethod
-    def run(self, file_data: FileData, **kwargs) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> Path:
         pass
 
-    async def run_async(self, file_data: FileData, **kwargs) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
         return self.run(file_data=file_data, **kwargs)

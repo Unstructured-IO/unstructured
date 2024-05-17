@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from typing import Any
 
 import click
 from dataclasses_json.core import Json
 
+from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 
 
@@ -10,8 +12,6 @@ from unstructured.ingest.v2.cli.interfaces import CliConfig
 class EmbedderCliConfig(CliConfig):
     @staticmethod
     def get_cli_options() -> list[click.Option]:
-        from unstructured.embed import EMBEDDING_PROVIDER_TO_CLASS_MAP
-
         options = [
             click.Option(
                 ["--embedding-provider"],
@@ -54,7 +54,7 @@ class EmbedderCliConfig(CliConfig):
         return options
 
     @classmethod
-    def from_dict(cls, kvs: Json, **kwargs):
+    def from_dict(cls, kvs: Json, **kwargs: Any):
         """
         Extension of the dataclass from_dict() to avoid a naming conflict with other CLI params.
         This allows CLI arguments to be prepended with embedding_ during CLI invocation but

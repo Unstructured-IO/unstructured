@@ -4,7 +4,7 @@ import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import time
-from typing import Generator, Optional
+from typing import Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.v2.interfaces import (
@@ -86,7 +86,7 @@ class LocalIndexer(Indexer):
             record_locator={"path": str(path.resolve())},
         )
 
-    def run(self, **kwargs) -> Generator[FileData, None, None]:
+    def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         for file_path in self.list_files():
             file_data = FileData(
                 identifier=str(file_path.resolve()),
@@ -120,7 +120,7 @@ class LocalDownloader(Downloader):
     def get_download_path(self, file_data: FileData) -> Path:
         return Path(file_data.source_identifiers.fullpath)
 
-    def run(self, file_data: FileData, **kwargs) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> Path:
         return Path(file_data.source_identifiers.fullpath)
 
 
@@ -144,7 +144,7 @@ class LocalUploader(Uploader):
     def is_async(self) -> bool:
         return False
 
-    def run(self, contents: list[UploadContent], **kwargs):
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         self.upload_config.output_path.mkdir(parents=True, exist_ok=True)
         for content in contents:
             identifiers = content.file_data.source_identifiers

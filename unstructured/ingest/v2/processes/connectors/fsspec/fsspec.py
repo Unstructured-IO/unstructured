@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import fnmatch
 import json
 import os
@@ -5,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from time import time
-from typing import TYPE_CHECKING, Any, Generator, Optional
+from typing import TYPE_CHECKING, Any, Generator, Optional, TypeVar
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
@@ -76,8 +78,11 @@ class FsspecAccessConfig(AccessConfig):
     pass
 
 
+FsspecAccessConfigT = TypeVar("FsspecAccessConfigT", bound=FsspecAccessConfig)
+
+
 class FsspecConnectionConfig(ConnectionConfig):
-    access_config: FsspecAccessConfig = enhanced_field(sensitive=True, default=None)
+    access_config: FsspecAccessConfigT = enhanced_field(sensitive=True, default=None)
     connector_type: str = CONNECTOR_TYPE
 
 
@@ -91,15 +96,19 @@ def convert_datetime(data: dict) -> dict:
     return json.loads(data_s)
 
 
+FsspecIndexerConfigT = TypeVar("FsspecIndexerConfigT", bound=FsspecIndexerConfig)
+FsspecConnectionConfigT = TypeVar("FsspecConnectionConfigT", bound=FsspecConnectionConfig)
+
+
 @dataclass
 class FsspecIndexer(Indexer):
-    connection_config: FsspecConnectionConfig
-    index_config: FsspecIndexerConfig = field(default_factory=FsspecIndexerConfig)
+    connection_config: FsspecConnectionConfigT
+    index_config: FsspecIndexerConfigT
     connector_type: str = CONNECTOR_TYPE
     fs: "AbstractFileSystem" = field(init=False)
 
     def __post_init__(self):
-        from fsspec import AbstractFileSystem, get_filesystem_class
+        from fsspec import get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.index_config.protocol)(
             **self.connection_config.get_access_config(),
@@ -127,29 +136,29 @@ class FsspecIndexer(Indexer):
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
-    def list_files(self):
+    def list_files(self) -> list[str]:
         if not self.index_config.recursive:
             # fs.ls does not walk directories
             # directories that are listed in cloud storage can cause problems
             # because they are seen as 0 byte files
-            return [
-                x.get("name")
-                for x in self.fs.ls(self.index_config.path_without_protocol, detail=True)
-                if x.get("size") > 0
-            ]
+            found = self.fs.ls(self.index_config.path_without_protocol, detail=True)
+            if isinstance(found, list):
+                return [x.get("name") for x in found if x.get("size") > 0]
+            else:
+                raise TypeError(f"unhandled response type from ls: {type(found)}")
         else:
             # fs.find will recursively walk directories
             # "size" is a common key for all the cloud protocols with fs
-            return [
-                k
-                for k, v in self.fs.find(
-                    self.index_config.path_without_protocol,
-                    detail=True,
-                ).items()
-                if v.get("size") > 0
-            ]
+            found = self.fs.find(
+                self.index_config.path_without_protocol,
+                detail=True,
+            )
+            if isinstance(found, dict):
+                return [k for k, v in found.items() if v.get("size") > 0]
+            else:
+                raise TypeError(f"unhandled response type from find: {type(found)}")
 
-    def get_metadata(self, path) -> DataSourceMetadata:
+    def get_metadata(self, path: str) -> DataSourceMetadata:
         date_created = None
         date_modified = None
 
@@ -186,7 +195,7 @@ class FsspecIndexer(Indexer):
             },
         )
 
-    def run(self, **kwargs) -> Generator[FileData, None, None]:
+    def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         raw_files = self.list_files()
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         for file in files:
@@ -207,24 +216,31 @@ class FsspecDownloaderConfig(DownloaderConfig):
     pass
 
 
+FsspecDownloaderConfigT = TypeVar("FsspecDownloaderConfigT", bound=FsspecDownloaderConfig)
+
+
 class FsspecDownloader(Downloader):
     protocol: str
-    connection_config: FsspecConnectionConfig
+    connection_config: FsspecConnectionConfigT
     connector_type: str = CONNECTOR_TYPE
-    download_config: Optional[FsspecDownloaderConfig] = field(
-        default_factory=FsspecDownloaderConfig
+    download_config: Optional[FsspecDownloaderConfigT] = field(
+        default_factory=lambda: FsspecDownloaderConfig()
     )
     fs: "AbstractFileSystem" = field(init=False)
 
     def __post_init__(self):
-        from fsspec import AbstractFileSystem, get_filesystem_class
+        from fsspec import get_filesystem_class
 
         self.fs: AbstractFileSystem = get_filesystem_class(self.protocol)(
             **self.connection_config.get_access_config(),
         )
 
     def get_download_path(self, file_data: FileData) -> Path:
-        return self.download_config.download_dir / Path(file_data.source_identifiers.rel_path)
+        return (
+            self.download_config.download_dir / Path(file_data.source_identifiers.rel_path)
+            if self.download_config
+            else Path(file_data.source_identifiers.rel_path)
+        )
 
     @staticmethod
     def is_float(value: str):
@@ -234,7 +250,7 @@ class FsspecDownloader(Downloader):
         except ValueError:
             return False
 
-    def run(self, file_data: FileData, **kwargs) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> Path:
         download_path = self.get_download_path(file_data=file_data)
         try:
             self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
@@ -258,30 +274,44 @@ class FsspecUploaderConfig(FileConfig, UploaderConfig):
     overwrite: bool = False
 
 
+FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderConfig)
+
+
 @dataclass
 class FsspecUploader(Uploader):
-    upload_config: FsspecUploaderConfig = field(default_factory=FsspecUploaderConfig)
+    upload_config: FsspecUploaderConfigT = field(default=None)
     fs: "AbstractFileSystem" = field(init=False)
 
     def is_async(self) -> bool:
         return True
 
     def __post_init__(self):
-        from fsspec import AbstractFileSystem, get_filesystem_class
+        # TODO once python3.9 no longer supported and kw_only is allowed in dataclasses, remove:
+        if not self.upload_config:
+            raise TypeError(
+                f"{self.__class__.__name__}.__init__() "
+                f"missing 1 required positional argument: 'upload_config'"
+            )
 
+        from fsspec import get_filesystem_class
+
+        fs_kwargs = self.connection_config.get_access_config() if self.connection_config else {}
         self.fs: AbstractFileSystem = get_filesystem_class(self.upload_config.protocol)(
-            **self.connection_config.get_access_config(),
+            **fs_kwargs,
         )
 
-    def run(self, contents: list[UploadContent], **kwargs):
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         raise NotImplementedError
 
-    async def run_async(self, path: Path, file_data: FileData, **kwargs):
+    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
         upload_path = (
-            Path(self.upload_config.path_without_protocol) / file_data.source_identifiers.rel_path
+            Path(self.upload_config.path_without_protocol)
+            / file_data.source_identifiers.relative_path
         )
-        if self.fs.exists(path=upload_path) and not self.upload_config.overwrite:
+        upload_path_str = str(upload_path)
+        path_str = str(path.resolve())
+        if self.fs.exists(path=upload_path_str) and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
-        logger.info(f"Writing local file {path} to {upload_path}")
-        self.fs.upload(lpath=path, rpath=upload_path)
+        logger.info(f"Writing local file {path_str} to {upload_path}")
+        self.fs.upload(lpath=path_str, rpath=upload_path_str)

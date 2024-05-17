@@ -70,10 +70,10 @@ class Embedder(BaseProcess, ABC):
         # huggingface is run locally rather than via an api call so don't run async
         return self.config.embedding_provider not in ["langchain-huggingface"]
 
-    def run(self, elements_filepath: Path, **kwargs) -> list[Element]:
+    def run(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         embedder = self.config.get_embedder()
         elements = elements_from_json(filename=str(elements_filepath))
         return embedder.embed_documents(elements=elements)
 
-    async def run_async(self, elements_filepath: Path, **kwargs) -> list[Element]:
+    async def run_async(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         return self.run(elements_filepath=elements_filepath, **kwargs)
