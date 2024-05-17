@@ -7,6 +7,7 @@ import click
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import extract_config
 from unstructured.ingest.v2.interfaces import ProcessorConfig
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
 from unstructured.ingest.v2.processes.chunker import Chunker, ChunkerConfig
 from unstructured.ingest.v2.processes.connector_registry import (
@@ -55,6 +56,10 @@ class BaseCmd(ABC):
         dest: Optional[str] = None,
         destination_options: Optional[dict[str, Any]] = None,
     ) -> Pipeline:
+        print(f"LOG LEVEL: {logger.level}")
+        logger.debug(
+            f"creating pipeline from cli using source {src} with options: {source_options}"
+        )
         pipeline_kwargs: dict[str, Any] = {
             "context": self.get_processor_config(options=source_options),
             "downloader": self.get_downloader(src=src, options=source_options),
@@ -66,6 +71,9 @@ class BaseCmd(ABC):
         if embedder := self.get_embeder(options=source_options):
             pipeline_kwargs["embedder"] = embedder
         if dest:
+            logger.debug(
+                f"setting destination on pipeline {dest} with options: {destination_options}"
+            )
             if uploader_stager := self.get_upload_stager(dest=dest, options=destination_options):
                 pipeline_kwargs["upload_stager"] = uploader_stager
             pipeline_kwargs["uploader"] = self.get_uploader(dest=dest, options=pipeline_kwargs)

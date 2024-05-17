@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from typing import Optional, Type
 
@@ -16,6 +17,7 @@ class DestCmd(BaseCmd):
     upload_stager_config: Optional[Type[CliConfig]] = None
 
     def cmd(self, ctx: click.Context, **options) -> None:
+        logger.setLevel(logging.DEBUG if options.get("verbose", False) else logging.INFO)
         if not ctx.parent:
             raise click.ClickException("destination command called without a parent")
         if not ctx.parent.info_name:

@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass, field
 from typing import Optional, Type
 
@@ -34,7 +35,7 @@ class SrcCmd(BaseCmd):
             return
 
         conform_click_options(options)
-        options.get("verbose", False)
+        logger.setLevel(logging.DEBUG if options.get("verbose", False) else logging.INFO)
         try:
             pipeline = self.get_pipline(src=self.cmd_name, source_options=options)
             pipeline.run()
