@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 3041/reenable-arm
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
