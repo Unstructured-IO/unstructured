@@ -1,14 +1,12 @@
 ## 0.14.1-dev0
 
-### Enhancements
-
 * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Features
 
 ### Fixes
 
-## 0.14.0-dev14
+## 0.14.0-dev15
 
 ### BREAKING CHANGES
 
@@ -19,6 +17,7 @@
 * **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
 
 ### Features
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
