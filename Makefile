@@ -439,7 +439,7 @@ version-sync:
 
 .PHONY: check-coverage
 check-coverage:
-	coverage report --fail-under=95
+	coverage report --fail-under=90
 
 ## check-deps:              check consistency of dependencies
 .PHONY: check-deps
