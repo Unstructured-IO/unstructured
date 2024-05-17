@@ -99,7 +99,7 @@ In checklist form, the above steps are summarized as:
 
 The ingest flow is similar to an ETL pipeline that gets defined at runtime based on user input:
 
-![unstructured ingest cli diagram](assets/pipeline.png)
+![unstructured ingest diagram](assets/pipeline.png)
 
 
 
@@ -113,6 +113,9 @@ The ingest flow is similar to an ETL pipeline that gets defined at runtime based
 * `Stager`: This is an optional step that won't apply for most pipelines. If the data needs to be modified from the existing structure to better support the upload, such as converting it to a csv for tabular-based destinations (sql dbs).
 * `Uploader`: Write the local content to the destination. If none if provided, the local one will be used which writes the final result to a location on the local filesystem. If batch uploads are needed, this will run in a single process with access to all docs. If batch is not supported, all docs can be uploaded concurrently using the async approach.
 
+
+### Sequence Diagram
+![unstructured ingest sequence diagram](assets/sequence.png)
 
 
 ### Parallel Execution/Concurrency
