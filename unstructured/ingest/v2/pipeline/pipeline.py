@@ -243,9 +243,9 @@ class Pipeline:
             pipeline_kwargs["stager"] = destination.upload_stager(
                 upload_stager_config=stager_config
             )
-        if destination_connection_config and uploader_config:
-            pipeline_kwargs["uploader"] = destination.uploader(
-                upload_config=uploader_config, connection_config=destination_connection_config
-            )
-
+        if uploader_config:
+            uploader_kwargs = {"upload_config": uploader_config}
+            if destination_connection_config:
+                uploader_kwargs["connection_config"] = destination_connection_config
+            pipeline_kwargs["uploader"] = destination.uploader(**uploader_kwargs)
         return cls(**pipeline_kwargs)
