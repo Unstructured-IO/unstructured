@@ -14,7 +14,7 @@ For example, the following command processes all the documents in S3 in the
        --output-dir s3-small-batch-output \
        --num-processes 2
 
-Naturally, --num-processes may be adjusted for better instance utilization with multiprocessing.
+Naturally, --num-processes may be adjusted for better instance utilization with multiprocessing. There is also an optional
 
 Installation note: make sure to install the following extras when installing unstructured, needed for the above command:
 

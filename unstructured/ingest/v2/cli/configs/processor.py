@@ -29,7 +29,15 @@ class ProcessorCliConfig(CliConfig):
                 ["--num-processes"],
                 default=2,
                 show_default=True,
+                type=click.IntRange(min=1),
                 help="Number of parallel processes with which to process docs",
+            ),
+            click.Option(
+                ["--max-connections"],
+                default=None,
+                show_default=True,
+                type=click.IntRange(min=1),
+                help="Max number of connections allowed when running an async step",
             ),
             click.Option(
                 ["--raise-on-error"],
