@@ -35,37 +35,19 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/gcs.in
     #   gcsfs
-gcsfs==2024.3.1
+gcsfs==0.8.0
     # via -r ./ingest/gcs.in
-google-api-core==2.19.0
-    # via
-    #   google-cloud-core
-    #   google-cloud-storage
 google-auth==2.29.0
     # via
     #   gcsfs
-    #   google-api-core
     #   google-auth-oauthlib
-    #   google-cloud-core
-    #   google-cloud-storage
 google-auth-oauthlib==1.2.0
     # via gcsfs
-google-cloud-core==2.4.1
-    # via google-cloud-storage
-google-cloud-storage==2.16.0
-    # via gcsfs
-google-crc32c==1.5.0
-    # via
-    #   google-cloud-storage
-    #   google-resumable-media
-google-resumable-media==2.7.0
-    # via google-cloud-storage
-googleapis-common-protos==1.63.0
-    # via google-api-core
 idna==3.7
     # via
     #   -c ./ingest/../base.txt
@@ -77,14 +59,6 @@ multidict==6.0.5
     #   yarl
 oauthlib==3.2.2
     # via requests-oauthlib
-proto-plus==1.23.0
-    # via google-api-core
-protobuf==4.23.4
-    # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   google-api-core
-    #   googleapis-common-protos
-    #   proto-plus
 pyasn1==0.6.0
     # via
     #   pyasn1-modules
@@ -95,8 +69,6 @@ requests==2.31.0
     # via
     #   -c ./ingest/../base.txt
     #   gcsfs
-    #   google-api-core
-    #   google-cloud-storage
     #   requests-oauthlib
 requests-oauthlib==2.0.0
     # via google-auth-oauthlib
@@ -106,6 +78,8 @@ soupsieve==2.5
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
+ujson==5.10.0
+    # via gcsfs
 urllib3==1.26.18
     # via
     #   -c ./ingest/../base.txt

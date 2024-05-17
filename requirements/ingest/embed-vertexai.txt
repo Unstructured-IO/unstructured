@@ -82,6 +82,8 @@ googleapis-common-protos[grpc]==1.63.0
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
+greenlet==3.0.3
+    # via sqlalchemy
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
 grpcio==1.63.0
@@ -117,7 +119,7 @@ langchain-google-vertexai==1.0.3
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.0.1
     # via langchain
-langsmith==0.1.57
+langsmith==0.1.58
     # via
     #   langchain
     #   langchain-community
@@ -137,6 +139,7 @@ mypy-extensions==1.0.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   shapely
