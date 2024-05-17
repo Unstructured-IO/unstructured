@@ -5,9 +5,8 @@ from __future__ import annotations
 import html
 import io
 import itertools
-import os
 import tempfile
-from typing import IO, Any, Iterator, Optional, Type, cast
+from typing import IO, Any, Iterator, Optional, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -45,7 +44,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
@@ -58,112 +56,11 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import PartitionStrategy
-from unstructured.utils import (
-    dependency_exists,
-    is_temp_file_path,
-    lazyproperty,
-    requires_dependencies,
-)
-
-if dependency_exists("pypandoc"):
-    import pypandoc
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
 BlockItem: TypeAlias = "Paragraph | DocxTable"
-
-
-@requires_dependencies("pypandoc")
-def convert_and_partition_docx(
-    source_format: str,
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    include_metadata: bool = True,
-    infer_table_structure: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    starting_page_number: int = 1,
-) -> list[Element]:
-    """Converts a document to DOCX and then partitions it using partition_docx.
-
-    Works with any file format support by pandoc.
-
-    Parameters
-    ----------
-    source_format
-        The format of the source document, .e.g. odt
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the elements in
-        the output.
-    infer_table_structure
-        If True, any Table elements that are extracted will also have a metadata field
-        named "text_as_html" where the table's text content is rendered into an html string.
-        I.e., rows and cells are preserved.
-        Whether True or False, the "text" field is always present in any Table element
-        and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
-    """
-    exactly_one(filename=filename, file=file)
-
-    def validate_filename(filename: str) -> str:
-        """Return path to a file confirmed to exist on the filesystem."""
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
-        return filename
-
-    def copy_to_tempfile(file: IO[bytes]) -> str:
-        """Return path to temporary copy of file to be converted."""
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp.write(file.read())
-            return tmp.name
-
-    def extract_docx_filename(file_path: str) -> str:
-        """Return a filename like "foo.docx" from a path like "a/b/foo.odt" """
-        # -- a/b/foo.odt -> foo.odt --
-        filename = os.path.basename(file_path)
-        # -- foo.odt -> foo --
-        root_name, _ = os.path.splitext(filename)
-        # -- foo -> foo.docx --
-        return f"{root_name}.docx"
-
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
-        pypandoc.convert_file(  # pyright: ignore
-            file_path,
-            "docx",
-            format=source_format,
-            outputfile=docx_path,
-        )
-        elements = partition_docx(
-            filename=docx_path,
-            metadata_filename=metadata_filename,
-            include_metadata=include_metadata,
-            infer_table_structure=infer_table_structure,
-            metadata_last_modified=metadata_last_modified,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-        )
-
-    return elements
 
 
 @process_metadata()
