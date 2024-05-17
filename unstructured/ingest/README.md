@@ -1,4 +1,5 @@
-# Batch Processing Documents
+# Batch Processing Documents [DEPRECATED]
+For the latest approach, go to: [v2](./v2)
 
 ## The unstructured-ingest CLI
 
