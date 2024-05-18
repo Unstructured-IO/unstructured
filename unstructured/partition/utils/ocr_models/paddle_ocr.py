@@ -1,27 +1,32 @@
-from typing import List
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from PIL import Image as PILImage
-from unstructured_inference.inference.elements import TextRegion
-from unstructured_inference.inference.layoutelement import (
-    LayoutElement,
-)
 
 from unstructured.documents.elements import ElementType
 from unstructured.logger import logger
-from unstructured.partition.utils.constants import (
-    DEFAULT_PADDLE_LANG,
-    Source,
-)
+from unstructured.partition.utils.constants import DEFAULT_PADDLE_LANG, Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
+from unstructured.utils import requires_dependencies
+
+if TYPE_CHECKING:
+    from unstructured_inference.inference.elements import TextRegion
+    from unstructured_inference.inference.layoutelement import LayoutElement
 
 
 class OCRAgentPaddle(OCRAgent):
+    """OCR service implementation for PaddleOCR."""
+
+    def __init__(self):
+        self.agent = self.load_agent()
+
     def load_agent(self, language: str = DEFAULT_PADDLE_LANG):
+        """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
+
         import paddle
         from unstructured_paddleocr import PaddleOCR
-
-        """Loads the PaddleOCR agent as a global variable to ensure that we only load it once."""
 
         # Disable signal handlers at C++ level upon failing
         # ref: https://www.paddlepaddle.org.cn/documentation/docs/en/api/paddle/
@@ -54,7 +59,7 @@ class OCRAgentPaddle(OCRAgent):
             )
         return paddle_ocr
 
-    def get_text_from_image(self, image: PILImage, ocr_languages: str = "eng") -> str:
+    def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
         ocr_regions = self.get_layout_from_image(image)
         return "\n\n".join([r.text for r in ocr_regions])
 
@@ -62,8 +67,8 @@ class OCRAgentPaddle(OCRAgent):
         return False
 
     def get_layout_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[TextRegion]:
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[TextRegion]:
         """Get the OCR regions from image as a list of text regions with paddle."""
 
         logger.info("Processing entire page OCR with paddle...")
@@ -76,9 +81,12 @@ class OCRAgentPaddle(OCRAgent):
 
         return ocr_regions
 
+    @requires_dependencies("unstructured_inference")
     def get_layout_elements_from_image(
-        self, image: PILImage, ocr_languages: str = "eng"
-    ) -> List[LayoutElement]:
+        self, image: PILImage.Image, ocr_languages: str = "eng"
+    ) -> list[LayoutElement]:
+        from unstructured.partition.pdf_image.inference_utils import build_layout_element
+
         ocr_regions = self.get_layout_from_image(
             image,
             ocr_languages=ocr_languages,
@@ -88,16 +96,18 @@ class OCRAgentPaddle(OCRAgent):
         # terms of grouping because we get ocr_text from `ocr_layout, so the first two grouping
         # and merging steps are not necessary.
         return [
-            LayoutElement(
-                bbox=r.bbox, text=r.text, source=r.source, type=ElementType.UNCATEGORIZED_TEXT
+            build_layout_element(
+                bbox=r.bbox,
+                text=r.text,
+                source=r.source,
+                element_type=ElementType.UNCATEGORIZED_TEXT,
             )
             for r in ocr_regions
         ]
 
-    def parse_data(self, ocr_data: list) -> List[TextRegion]:
-        """
-        Parse the OCR result data to extract a list of TextRegion objects from
-        paddle.
+    @requires_dependencies("unstructured_inference")
+    def parse_data(self, ocr_data: list[Any]) -> list[TextRegion]:
+        """Parse the OCR result data to extract a list of TextRegion objects from paddle.
 
         The function processes the OCR result dictionary, looking for bounding
         box information and associated text to create instances of the TextRegion
@@ -107,14 +117,17 @@ class OCRAgentPaddle(OCRAgent):
         - ocr_data (list): A list containing the OCR result data
 
         Returns:
-        - List[TextRegion]: A list of TextRegion objects, each representing a
+        - list[TextRegion]: A list of TextRegion objects, each representing a
                             detected text region within the OCR-ed image.
 
         Note:
         - An empty string or a None value for the 'text' key in the input
           dictionary will result in its associated bounding box being ignored.
         """
-        text_regions = []
+
+        from unstructured.partition.pdf_image.inference_utils import build_text_region_from_coords
+
+        text_regions: list[TextRegion] = []
         for idx in range(len(ocr_data)):
             res = ocr_data[idx]
             if not res:
@@ -130,13 +143,8 @@ class OCRAgentPaddle(OCRAgent):
                     continue
                 cleaned_text = text.strip()
                 if cleaned_text:
-                    text_region = TextRegion.from_coords(
-                        x1,
-                        y1,
-                        x2,
-                        y2,
-                        cleaned_text,
-                        source=Source.OCR_PADDLE,
+                    text_region = build_text_region_from_coords(
+                        x1, y1, x2, y2, text=cleaned_text, source=Source.OCR_PADDLE
                     )
                     text_regions.append(text_region)
 

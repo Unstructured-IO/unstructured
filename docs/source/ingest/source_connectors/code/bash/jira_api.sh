@@ -9,4 +9,4 @@ unstructured-ingest \
   --output-dir jira-ingest-output \
   --num-processes 2 \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

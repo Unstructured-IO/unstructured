@@ -41,6 +41,20 @@ jobs:
     - name: Check for dependency conflicts
       run: make check-deps
 
+  check-extras:
+    strategy:
+      matrix:
+        python-version: [ "3.9","3.10","3.11" ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install all extras
+        run: make check-extras
+
   lint:
     strategy:
       matrix:
@@ -102,14 +116,20 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
+        TESSERACT_VERSION : "5.3.4"
       run: |
         source .venv/bin/activate
         sudo apt-get update
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
+        installed_tesseract_version=$(tesseract --version | grep -oP '(?<=tesseract )\d+\.\d+\.\d+')
+        if [ "$installed_tesseract_version" != "${{env.TESSERACT_VERSION}}" ]; then
+          echo "Tesseract version ${{env.TESSERACT_VERSION}} is required but found version $installed_tesseract_version"
+          exit 1
+        fi
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
         make test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
@@ -143,6 +163,7 @@ jobs:
         sudo apt-get install -y poppler-utils
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
         make test-chipper CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
@@ -211,6 +232,7 @@ jobs:
         sudo apt-get install -y libmagic-dev poppler-utils libreoffice
         make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
         make test-extra-${{ matrix.extra }} CI=true
@@ -218,7 +240,7 @@ jobs:
   setup_ingest:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -232,7 +254,7 @@ jobs:
   test_ingest_unit:
     strategy:
       matrix:
-        python-version: [ "3.9","3.10","3.11" ]
+        python-version: [ "3.9","3.10" ]
     runs-on: ubuntu-latest
     needs: [ setup_ingest, lint ]
     steps:
@@ -258,7 +280,7 @@ jobs:
   test_ingest_src:
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -327,8 +349,10 @@ jobs:
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
@@ -340,7 +364,7 @@ jobs:
     environment: ci
     strategy:
       matrix:
-        python-version: ["3.9","3.10","3.11"]
+        python-version: ["3.9","3.10"]
     runs-on: ubuntu-latest-m
     env:
       NLTK_DATA: ${{ github.workspace }}/nltk_data
@@ -382,14 +406,19 @@ jobs:
         VECTARA_OAUTH_CLIENT_ID: ${{secrets.VECTARA_OAUTH_CLIENT_ID}}
         VECTARA_OAUTH_SECRET: ${{secrets.VECTARA_OAUTH_SECRET}}
         VECTARA_CUSTOMER_ID: ${{secrets.VECTARA_CUSTOMER_ID}}
+        ASTRA_DB_TOKEN: ${{secrets.ASTRA_DB_TOKEN}}
+        ASTRA_DB_ENDPOINT: ${{secrets.ASTRA_DB_ENDPOINT}}
+        CLARIFAI_API_KEY: ${{secrets.CLARIFAI_API_KEY}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
         CI: "true"
       run: |
         source .venv/bin/activate
         sudo apt-get update
-        sudo apt-get install -y libmagic-dev poppler-utils libreoffice pandoc
+        sudo apt-get install -y libmagic-dev poppler-utils libreoffice
+        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr
         sudo apt-get install -y tesseract-ocr-kor
         sudo apt-get install diffstat
@@ -435,8 +464,8 @@ jobs:
         # FIXME (yao): sometimes there is cache but we still miss argilla in the env; so we add make install-ci again
         make install-ci
         sudo apt-get update && sudo apt-get install --yes poppler-utils libreoffice
-        make install-pandoc
         sudo add-apt-repository -y ppa:alex-p/tesseract-ocr5
+        sudo apt-get update
         sudo apt-get install -y tesseract-ocr tesseract-ocr-kor
         tesseract --version
         make install-nltk-models
@@ -468,5 +497,6 @@ jobs:
       - name: Test Dockerfile
         run: |
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
+          make docker-dl-packages
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true

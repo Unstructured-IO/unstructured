@@ -21,10 +21,10 @@ install-base: install-base-pip-packages install-nltk-models
 install: install-base-pip-packages install-dev install-nltk-models install-test install-huggingface install-all-docs
 
 .PHONY: install-ci
-install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test
+install-ci: install-base-pip-packages install-nltk-models install-huggingface install-all-docs install-test install-pandoc
 
 .PHONY: install-base-ci
-install-base-ci: install-base-pip-packages install-nltk-models install-test
+install-base-ci: install-base-pip-packages install-nltk-models install-test install-pandoc
 
 .PHONY: install-base-pip-packages
 install-base-pip-packages:
@@ -46,11 +46,11 @@ install-test:
 	python3 -m pip install -r requirements/test.txt
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
-	python3 -m pip install unstructured.pytesseract -c requirements/constraints.in
-	python3 -m pip install argilla -c requirements/constraints.in
+	python3 -m pip install unstructured.pytesseract -c requirements/deps/constraints.txt
+	python3 -m pip install argilla -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
-	python3 -m pip install weaviate-client -c requirements/constraints.in
+	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
 	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
 	python3 -m pip install argilla
 
@@ -247,6 +247,14 @@ install-ingest-mongodb:
 install-ingest-databricks-volumes:
 	python3 -m pip install -r requirements/ingest/databricks-volumes.txt
 
+.PHONY: install-ingest-astra
+install-ingest-astra:
+	python3 -m pip install -r requirements/ingest/astra.txt
+
+.PHONY: install-ingest-clarifai
+install-ingest-clarifai:
+	python3 -m pip install -r requirements/ingest/clarifai.txt
+
 .PHONY: install-embed-huggingface
 install-embed-huggingface:
 	python3 -m pip install -r requirements/ingest/embed-huggingface.txt
@@ -375,7 +383,7 @@ check-shfmt:
 
 .PHONY: check-black
 check-black:
-	black . --check
+	black . --check --line-length=100
 
 .PHONY: check-flake8
 check-flake8:
@@ -389,7 +397,8 @@ check-flake8-print:
 
 .PHONY: check-ruff
 check-ruff:
-	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --ignore COM812,PT011,PT012,SIM117
+    # -- ruff options are determined by pyproject.toml --
+	ruff check .
 
 .PHONY: check-autoflake
 check-autoflake:
@@ -418,9 +427,9 @@ tidy-shell:
 
 .PHONY: tidy-python
 tidy-python:
-	ruff . --select C4,COM,E,F,I,PLR0402,PT,SIM,UP015,UP018,UP032,UP034 --fix-only --ignore COM812,PT011,PT012,SIM117 || true
+	ruff . --fix-only || true
 	autoflake --in-place .
-	black  .
+	black --line-length=100 .
 
 ## version-sync:            update __version__.py with most recent version from CHANGELOG.md
 .PHONY: version-sync
@@ -437,6 +446,10 @@ check-coverage:
 check-deps:
 	scripts/consistent-deps.sh
 
+.PHONY: check-extras
+check-extras:
+	scripts/check-extras.sh
+
 ##########
 # Docker #
 ##########
@@ -448,6 +461,10 @@ DOCKER_IMAGE ?= unstructured:dev
 .PHONY: docker-build
 docker-build:
 	PIP_VERSION=${PIP_VERSION} DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
+
+.PHONY: docker-dl-packages
+docker-dl-packages:
+	@scripts/docker-dl-packages.sh
 
 .PHONY: docker-start-bash
 docker-start-bash:

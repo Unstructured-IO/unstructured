@@ -212,26 +212,37 @@ def test_auto_partition_html_from_file_rb():
     assert len(elements) > 0
 
 
-def test_auto_partition_json_from_filename():
+# NOTE(robinson) - skipping this test with docker image to avoid putting the
+# test fixtures into the image
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
+def test_auto_partitioned_json_output_maintains_consistency_with_fixture_elements():
     """Test auto-processing an unstructured json output file by filename."""
-    filename = os.path.join(
-        EXAMPLE_DOCS_DIRECTORY,
-        "..",
-        "test_unstructured_ingest",
-        "expected-structured-output",
-        "azure",
-        "spring-weather.html.json",
+    original_file_name = "spring-weather.html"
+    json_file_path = (
+        pathlib.Path(DIRECTORY).parents[1]
+        / "test_unstructured_ingest"
+        / "expected-structured-output"
+        / "azure"
+        / f"{original_file_name}.json"
     )
-    with open(filename) as json_f:
-        json_data = json.load(json_f)
-    json_elems = json.loads(
-        elements_to_json(partition(filename=filename, strategy=PartitionStrategy.HI_RES))
+    with open(json_file_path) as json_f:
+        expected_result = json.load(json_f)
+
+    partitioning_result = json.loads(
+        elements_to_json(
+            partition(
+                filename=json_file_path,
+                # -- use the original file name to get the same element IDs (hashes) --
+                metadata_filename=original_file_name,
+                strategy=PartitionStrategy.HI_RES,
+            )
+        )
     )
-    for elem in json_elems:
+    for elem in partitioning_result:
         elem.pop("metadata")
-    for elem in json_data:
+    for elem in expected_result:
         elem.pop("metadata")
-    assert json_data == json_elems
+    assert expected_result == partitioning_result
 
 
 def test_auto_partition_json_raises_with_unprocessable_json(tmpdir):
@@ -315,15 +326,15 @@ def test_auto_partition_pdf_from_filename(pass_metadata_filename, content_type, 
         strategy=PartitionStrategy.HI_RES,
     )
 
+    # NOTE(alan): Xfail since new model skips the word Zejiang
+    request.applymarker(pytest.mark.xfail)
+
     idx = 3
     assert isinstance(elements[idx], Title)
     assert elements[idx].text.startswith("LayoutParser")
 
     assert elements[idx].metadata.filename == os.path.basename(filename)
     assert elements[idx].metadata.file_directory == os.path.split(filename)[0]
-
-    # NOTE(alan): Xfail since new model skips the word Zejiang
-    request.applymarker(pytest.mark.xfail)
 
     idx += 1
     assert isinstance(elements[idx], NarrativeText)
@@ -336,7 +347,7 @@ def test_auto_partition_pdf_uses_table_extraction():
         "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy=PartitionStrategy.HI_RES)
-        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"] is False
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
@@ -362,6 +373,8 @@ def test_auto_partition_pdf_with_fast_strategy(monkeypatch):
         extract_image_block_output_dir=None,
         extract_image_block_to_payload=False,
         hi_res_model_name=None,
+        date_from_file_object=False,
+        starting_page_number=1,
     )
 
 
@@ -381,12 +394,12 @@ def test_auto_partition_pdf_from_file(pass_metadata_filename, content_type, requ
             strategy=PartitionStrategy.HI_RES,
         )
 
+    # NOTE(alan): Xfail since new model skips the word Zejiang
+    request.applymarker(pytest.mark.xfail)
+
     idx = 3
     assert isinstance(elements[idx], Title)
     assert elements[idx].text.startswith("LayoutParser")
-
-    # NOTE(alan): Xfail since new model misses the first word Zejiang
-    request.applymarker(pytest.mark.xfail)
 
     idx += 1
     assert isinstance(elements[idx], NarrativeText)
@@ -599,6 +612,22 @@ def test_auto_partition_from_url():
     assert elements[0].metadata.url == url
 
 
+def test_auto_partition_from_url_with_rfc9110_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(
+        url=url, content_type="text/plain; charset=utf-8", strategy=PartitionStrategy.HI_RES
+    )
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
+def test_auto_partition_from_url_without_providing_content_type():
+    url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/LICENSE.md"
+    elements = partition(url=url, strategy=PartitionStrategy.HI_RES)
+    assert elements[0] == Title("Apache License")
+    assert elements[0].metadata.url == url
+
+
 def test_partition_md_works_with_embedded_html():
     url = "https://raw.githubusercontent.com/Unstructured-IO/unstructured/main/README.md"
     elements = partition(url=url, content_type="text/markdown", strategy=PartitionStrategy.HI_RES)
@@ -735,9 +764,7 @@ def test_file_specific_produces_correct_filetype(filetype: FileType):
     if filetype in auto.IMAGE_FILETYPES or filetype in (FileType.WAV, FileType.EMPTY):
         pytest.skip()
     extension = filetype.name.lower()
-    filetype_module = (
-        extension if filetype not in FILETYPE_TO_MODULE else FILETYPE_TO_MODULE[filetype]
-    )
+    filetype_module = FILETYPE_TO_MODULE.get(filetype, extension)
     fun_name = "partition_" + filetype_module
     module = import_module(f"unstructured.partition.{filetype_module}")  # noqa
     fun = eval(f"module.{fun_name}")
@@ -841,6 +868,11 @@ def test_auto_partition_xlsx_from_file(filename="example-docs/stanley-cups.xlsx"
     assert elements[1].metadata.filetype == EXPECTED_XLSX_FILETYPE
 
 
+def test_auto_partition_respects_starting_page_number_argument_for_xlsx():
+    elements = partition("example-docs/stanley-cups.xlsx", starting_page_number=3)
+    assert elements[1].metadata.page_number == 3
+
+
 EXPECTED_XLS_TEXT_LEN = 550
 
 
@@ -937,7 +969,7 @@ def test_auto_partition_xls_from_filename(filename="example-docs/tests-example.x
     elements = partition(filename=filename, include_header=False, skip_infer_table_types=[])
 
     assert sum(isinstance(element, Table) for element in elements) == 2
-    assert len(elements) == 18
+    assert len(elements) == 14
 
     assert clean_extra_whitespace(elements[0].text)[:45] == EXPECTED_XLS_INITIAL_45_CLEAN_TEXT
     # NOTE(crag): if the beautifulsoup4 package is installed, some (but not all) additional
@@ -1066,52 +1098,6 @@ def test_add_chunking_strategy_on_partition_auto():
     chunks = chunk_by_title(elements)
     assert chunk_elements != elements
     assert chunk_elements == chunks
-
-
-def test_add_chunking_strategy_title_on_partition_auto_respects_multipage():
-    filename = "example-docs/example-10k-1p.html"
-    partitioned_elements_multipage_false_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    partitioned_elements_multipage_true_combine_chars_0 = partition(
-        filename,
-        chunking_strategy="by_title",
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    elements = partition(filename)
-    cleaned_elements_multipage_false_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=False,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    cleaned_elements_multipage_true_combine_chars_0 = chunk_by_title(
-        elements,
-        multipage_sections=True,
-        combine_text_under_n_chars=0,
-        new_after_n_chars=300,
-        max_characters=400,
-    )
-    assert (
-        partitioned_elements_multipage_false_combine_chars_0
-        == cleaned_elements_multipage_false_combine_chars_0
-    )
-    assert (
-        partitioned_elements_multipage_true_combine_chars_0
-        == cleaned_elements_multipage_true_combine_chars_0
-    )
-    assert len(partitioned_elements_multipage_true_combine_chars_0) != len(
-        partitioned_elements_multipage_false_combine_chars_0,
-    )
 
 
 def test_add_chunking_strategy_on_partition_auto_respects_max_chars():
@@ -1284,3 +1270,10 @@ def test_partition_image_with_bmp_with_auto(
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
     assert "<table><thead><th>" in table[0]
+
+
+def test_auto_partition_eml_add_signature_to_metadata():
+    elements = partition(filename="example-docs/eml/signed-doc.p7s")
+    assert len(elements) == 1
+    assert elements[0].text == "This is a test"
+    assert elements[0].metadata.signature == "<SIGNATURE>\n"

@@ -1,4 +1,4 @@
--c constraints.in
+-c ./deps/constraints.txt
 -c base.txt
 
 pypandoc

@@ -8,10 +8,12 @@ in our community `Slack. <https://short.unstructured.io/pzw05l7>`_
 .. toctree::
    :maxdepth: 1
 
+   destination_connectors/astra
    destination_connectors/azure
    destination_connectors/azure_cognitive_search
    destination_connectors/box
    destination_connectors/chroma
+   destination_connectors/clarifai
    destination_connectors/databricks_volumes
    destination_connectors/delta_table
    destination_connectors/dropbox

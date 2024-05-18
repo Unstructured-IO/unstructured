@@ -15,15 +15,18 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
+  'astra.sh'
   'azure.sh'
   'azure-cognitive-search.sh'
   'box.sh'
   'chroma.sh'
+  'clarifai.sh'
   'delta-table.sh'
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
   'mongodb.sh'
+  'opensearch.sh'
   'pgvector.sh'
   'pinecone.sh'
   'qdrant.sh'
@@ -32,7 +35,6 @@ all_tests=(
   'sqlite.sh'
   'vectara.sh'
   'weaviate.sh'
-  'opensearch.sh'
 )
 
 full_python_matrix_tests=(

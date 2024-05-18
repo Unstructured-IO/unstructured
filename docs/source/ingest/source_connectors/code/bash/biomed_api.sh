@@ -8,4 +8,4 @@ unstructured-ingest \
   --verbose \
   --preserve-downloads \
   --partition-by-api \
-  --api-key "<UNSTRUCTURED-API-KEY>"
+  --api-key "$UNSTRUCTURED_API_KEY"

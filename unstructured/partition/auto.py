@@ -1,9 +1,13 @@
+"""Provides partitioning with automatic file-type detection."""
+
+from __future__ import annotations
+
 import io
-from typing import IO, Callable, Dict, List, Optional, Tuple
+from typing import IO, Any, Callable, Literal, Optional
 
 import requests
 
-from unstructured.documents.elements import DataSourceMetadata
+from unstructured.documents.elements import DataSourceMetadata, Element
 from unstructured.file_utils.filetype import (
     FILETYPE_TO_MIMETYPE,
     STR_TO_FILETYPE,
@@ -16,15 +20,13 @@ from unstructured.partition.common import exactly_one
 from unstructured.partition.email import partition_email
 from unstructured.partition.html import partition_html
 from unstructured.partition.json import partition_json
-from unstructured.partition.lang import (
-    check_language_args,
-)
+from unstructured.partition.lang import check_language_args
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import PartitionStrategy
 from unstructured.partition.xml import partition_xml
 from unstructured.utils import dependency_exists
 
-PARTITION_WITH_EXTRAS_MAP: Dict[str, Callable] = {}
+PARTITION_WITH_EXTRAS_MAP: dict[str, Callable[..., list[Element]]] = {}
 
 if dependency_exists("pandas"):
     from unstructured.partition.csv import partition_csv
@@ -114,7 +116,7 @@ IMAGE_FILETYPES = [
 
 def _get_partition_with_extras(
     doc_type: str,
-    partition_with_extras_map: Optional[Dict[str, Callable]] = None,
+    partition_with_extras_map: Optional[dict[str, Callable[..., list[Element]]]] = None,
 ):
     if partition_with_extras_map is None:
         partition_with_extras_map = PARTITION_WITH_EXTRAS_MAP
@@ -137,16 +139,16 @@ def partition(
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
-    headers: Dict[str, str] = {},
-    skip_infer_table_types: List[str] = ["pdf", "jpg", "png", "xls", "xlsx", "heic"],
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
+    headers: dict[str, str] = {},
+    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
     pdf_infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
-    extract_image_block_types: Optional[List[str]] = None,
+    extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
     extract_image_block_to_payload: bool = False,
     xml_keep_tags: bool = False,
@@ -155,7 +157,9 @@ def partition(
     request_timeout: Optional[int] = None,
     hi_res_model_name: Optional[str] = None,
     model_name: Optional[str] = None,  # to be deprecated
-    **kwargs,
+    date_from_file_object: bool = False,
+    starting_page_number: int = 1,
+    **kwargs: Any,
 ):
     """Partitions a document into its constituent elements. Will use libmagic to determine
     the file's type and route it to the appropriate partitioning function. Applies the default
@@ -199,6 +203,8 @@ def partition(
             detect_language_per_element
                 Detect language per element instead of at the document level.
     pdf_infer_table_structure
+        Deprecated! Use `skip_infer_table_types` to opt out of table extraction for any document
+        type.
         If True and strategy=hi_res, any Table Elements extracted from a PDF will include an
         additional metadata field, "text_as_html," where the value (string) is a just a
         transformation of the data into an HTML <table>.
@@ -236,6 +242,14 @@ def partition(
     model_name
         The layout detection model used when partitioning strategy is set to `hi_res`. To be
         deprecated in favor of `hi_res_model_name`.
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True and inference
+        from message header failed, attempt to infer last_modified metadata from bytes,
+        otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
     exactly_one(file=file, filename=filename, url=url)
 
@@ -252,6 +266,13 @@ def partition(
             "Please use metadata_filename instead.",
         )
     kwargs.setdefault("metadata_filename", metadata_filename)
+    kwargs.setdefault("date_from_file_object", date_from_file_object)
+
+    if pdf_infer_table_structure:
+        logger.warning(
+            "The pdf_infer_table_structure kwarg is deprecated. Please use skip_infer_table_types "
+            "instead."
+        )
 
     languages = check_language_args(languages or [], ocr_languages)
 
@@ -294,6 +315,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.DOCX:
@@ -304,6 +326,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.ODT:
@@ -314,6 +337,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.EML:
@@ -400,8 +424,8 @@ def partition(
     elif filetype == FileType.PDF:
         _partition_pdf = _get_partition_with_extras("pdf")
         elements = _partition_pdf(
-            filename=filename,  # type: ignore
-            file=file,  # type: ignore
+            filename=filename,
+            file=file,
             url=None,
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
@@ -412,12 +436,14 @@ def partition(
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
             extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype in IMAGE_FILETYPES:
-        elements = partition_image(
-            filename=filename,  # type: ignore
-            file=file,  # type: ignore
+        _partition_image = _get_partition_with_extras("image")
+        elements = _partition_image(
+            filename=filename,
+            file=file,
             url=None,
             include_page_breaks=include_page_breaks,
             infer_table_structure=infer_table_structure,
@@ -428,6 +454,7 @@ def partition(
             extract_image_block_types=extract_image_block_types,
             extract_image_block_output_dir=extract_image_block_output_dir,
             extract_image_block_to_payload=extract_image_block_to_payload,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.TXT:
@@ -471,6 +498,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.JSON:
@@ -488,6 +516,7 @@ def partition(
             infer_table_structure=infer_table_structure,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
+            starting_page_number=starting_page_number,
             **kwargs,
         )
     elif filetype == FileType.CSV:
@@ -532,14 +561,16 @@ def partition(
 def file_and_type_from_url(
     url: str,
     content_type: Optional[str] = None,
-    headers: Dict[str, str] = {},
+    headers: dict[str, str] = {},
     ssl_verify: bool = True,
     request_timeout: Optional[int] = None,
-) -> Tuple[io.BytesIO, Optional[FileType]]:
+) -> tuple[io.BytesIO, Optional[FileType]]:
     response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
     file = io.BytesIO(response.content)
 
-    content_type = content_type or response.headers.get("Content-Type")
+    content_type = (
+        content_type or response.headers.get("Content-Type", "").split(";")[0].strip().lower()
+    )
     encoding = response.headers.get("Content-Encoding", "utf-8")
 
     filetype = detect_filetype(file=file, content_type=content_type, encoding=encoding)
@@ -548,18 +579,16 @@ def file_and_type_from_url(
 
 def decide_table_extraction(
     filetype: Optional[FileType],
-    skip_infer_table_types: List[str],
+    skip_infer_table_types: list[str],
     pdf_infer_table_structure: bool,
 ) -> bool:
     doc_type = filetype.name.lower() if filetype else None
 
     if doc_type == "pdf":
-        if doc_type in skip_infer_table_types and pdf_infer_table_structure:
-            logger.warning(
-                f"Conflict between variables skip_infer_table_types: {skip_infer_table_types} "
-                f"and pdf_infer_table_structure: {pdf_infer_table_structure}, "
-                "please reset skip_infer_table_types to turn on table extraction for PDFs.",
-            )
-        return doc_type not in skip_infer_table_types or pdf_infer_table_structure
+        # For backwards compatibility. Ultimately we want to remove pdf_infer_table_structure
+        # completely and rely exclusively on `skip_infer_table_types` for all file types.
+        # Until then for pdf files we first check pdf_infer_table_structure and then update
+        # based on skip_infer_tables.
+        return pdf_infer_table_structure and doc_type not in skip_infer_table_types
 
     return doc_type not in skip_infer_table_types

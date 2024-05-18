@@ -1,12 +1,12 @@
 [
   {
-    "element_id": "0baaf6f25d1c5da82d9e4a3229cd45bd",
+    "element_id": "979a3f2843093d5f62d0c2cb3727eac4",
     "metadata": {
       "data_source": {
         "record_locator": {
           "document_id": "3",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -21,13 +21,13 @@
     "type": "Title"
   },
   {
-    "element_id": "6ead4aca7b509813147c41699dd1a7d4",
+    "element_id": "8bb9c3ff2f00393bf6f0597ed55b9317",
     "metadata": {
       "data_source": {
         "record_locator": {
           "document_id": "3",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },
@@ -42,13 +42,13 @@
     "type": "NarrativeText"
   },
   {
-    "element_id": "9496aba3ea633310e2d669820269ad00",
+    "element_id": "73d963a07cf60de4b1d8f2d0fb5aede6",
     "metadata": {
       "data_source": {
         "record_locator": {
           "document_id": "3",
           "hosts": [
-            "http://localhost:9200"
+            "http://localhost:9247"
           ],
           "index_name": "movies"
         },

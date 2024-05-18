@@ -5,17 +5,19 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 cd "$SCRIPT_DIR"/.. || exit 1
 
+EVAL_NAME="$1"
+
 # List all structured outputs to use in this evaluation
-OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
+OUTPUT_ROOT=${2:-${OUTPUT_ROOT:-$SCRIPT_DIR}}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output-eval
 mkdir -p "$OUTPUT_DIR"
-
-EVAL_NAME="$1"
 
 if [ "$EVAL_NAME" == "text-extraction" ]; then
   METRIC_STRATEGY="measure-text-extraction-accuracy-command"
 elif [ "$EVAL_NAME" == "element-type" ]; then
   METRIC_STRATEGY="measure-element-type-accuracy-command"
+elif [ "$EVAL_NAME" == "table-structure" ]; then
+  METRIC_STRATEGY="measure-table-structure-accuracy-command"
 else
   echo "Wrong metric evaluation strategy given. Expected one of [ text-extraction, element-type ]. Got [ $EVAL_NAME ]."
   exit 1

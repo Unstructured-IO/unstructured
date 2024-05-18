@@ -5,8 +5,6 @@ from datetime import datetime as dt
 from multiprocessing import Process
 from pathlib import Path
 
-import pandas as pd
-
 from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     BaseConnectorConfig,
@@ -19,7 +17,6 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
-from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -101,7 +98,7 @@ class DeltaTableIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         df.to_csv(self.filename)
 
     @SourceConnectionNetworkError.wrap
-    def _get_df(self, filesystem) -> pd.DataFrame:
+    def _get_df(self, filesystem):
         import pyarrow.parquet as pq
 
         return pq.ParquetDataset(self.uri, filesystem=filesystem).read_pandas().to_pandas()
@@ -174,6 +171,8 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
     @requires_dependencies(["deltalake"], extras="delta-table")
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         from deltalake.writer import write_deltalake
+
+        from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 
         df = convert_to_pandas_dataframe(
             elements_dict=elements_dict,

@@ -29,6 +29,22 @@ class SftpCliConfig(SimpleSftpConfig, CliConfig):
                 type=str,
                 help="Password for sftp connection",
             ),
+            click.Option(
+                ["--look-for-keys"],
+                required=False,
+                default=False,
+                is_flag=True,
+                type=bool,
+                help="Whether to search for private key files in ~/.ssh/",
+            ),
+            click.Option(
+                ["--allow-agent"],
+                required=False,
+                default=False,
+                is_flag=True,
+                type=bool,
+                help="Whether to connect to the SSH agent.",
+            ),
         ]
         return options
 
