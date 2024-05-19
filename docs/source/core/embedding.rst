@@ -227,3 +227,54 @@ workload identity, etc…)
     [print(e.embeddings, e) for e in elements]
     print(query_embedding, query)
     print(embedding_encoder.is_unit_vector(), embedding_encoder.num_of_dimensions())
+
+``VoyageAIEmbeddingEncoder``
+--------------------------
+
+The ``VoyageAIEmbeddingEncoder`` class connects to the VoyageAI to obtain embeddings for pieces of text.
+
+``embed_documents`` will receive a list of Elements, and return an updated list which
+includes the ``embeddings`` attribute for each Element.
+
+``embed_query`` will receive a query as a string, and return a list of floats which is the
+embedding vector for the given query string.
+
+``num_of_dimensions`` is a metadata property that denotes the number of dimensions in any
+embedding vector obtained via this class.
+
+``is_unit_vector`` is a metadata property that denotes if embedding vectors obtained via
+this class are unit vectors.
+
+The following code block shows an example of how to use ``VoyageAIEmbeddingEncoder``. You will
+see the updated elements list (with the ``embeddings`` attribute included for each element),
+the embedding vector for the query string, and some metadata properties about the embedding model.
+
+To use Voyage AI tou will need to pass Voyage AI API Key (obtained from https://dash.voyageai.com/)
+as the ``api_key`` parameter.
+
+The ``model_name`` parameter is mandatory, please check the available models
+at https://docs.voyageai.com/docs/embeddings
+
+.. code:: python
+
+    import os
+
+    from unstructured.documents.elements import Text
+    from unstructured.embed.voyageai import VoyageAIEmbeddingConfig, VoyageAIEmbeddingEncoder
+
+    embedding_encoder = VoyageAIEmbeddingEncoder(
+        config=VoyageAIEmbeddingConfig(
+            api_key=os.environ["VOYAGE_API_KEY"],
+            model_name="voyage-law-2"
+        )
+    )
+    elements = embedding_encoder.embed_documents(
+        elements=[Text("This is sentence 1"), Text("This is sentence 2")],
+    )
+
+    query = "This is the query"
+    query_embedding = embedding_encoder.embed_query(query=query)
+
+    [print(e, e.embeddings) for e in elements]
+    print(query, query_embedding)
+    print(embedding_encoder.is_unit_vector, embedding_encoder.num_of_dimensions)
