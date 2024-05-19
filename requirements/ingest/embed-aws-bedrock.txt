@@ -55,7 +55,7 @@ langchain-community==0.0.38
     # via -r ./ingest/embed-aws-bedrock.in
 langchain-core==0.1.52
     # via langchain-community
-langsmith==0.1.57
+langsmith==0.1.59
     # via
     #   langchain-community
     #   langchain-core
@@ -74,6 +74,7 @@ mypy-extensions==1.0.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain-community
 orjson==3.10.3
     # via langsmith
