@@ -56,7 +56,6 @@ class BaseCmd(ABC):
         dest: Optional[str] = None,
         destination_options: Optional[dict[str, Any]] = None,
     ) -> Pipeline:
-        print(f"LOG LEVEL: {logger.level}")
         logger.debug(
             f"creating pipeline from cli using source {src} with options: {source_options}"
         )
