@@ -193,8 +193,8 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
 
 
 def aggregate_embedded_text_by_block(
-    text_region: TextRegion,
-    pdf_objects: list[TextRegion],
+    text_region: "TextRegion",
+    pdf_objects: list["TextRegion"],
 ) -> str:
     """Extracts the text aggregated from the elements of the given layout that lie within the given
     block."""
