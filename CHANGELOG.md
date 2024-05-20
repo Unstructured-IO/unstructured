@@ -1,8 +1,10 @@
-## 0.14.1-dev0
+## 0.14.1-dev1
 
 * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Features
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
 
 ### Fixes
 
