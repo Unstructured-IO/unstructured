@@ -6,10 +6,10 @@ import io
 import os
 import re
 import warnings
-from typing import IO, TYPE_CHECKING, Any, Iterator, Optional, cast
+from pathlib import Path
+from typing import IO, TYPE_CHECKING, Any, Optional, cast
 
 import numpy as np
-import pdf2image
 import wrapt
 from pdfminer import psparser
 from pdfminer.layout import LTChar, LTContainer, LTImage, LTItem, LTTextBox
@@ -40,11 +40,8 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.logger import logger, trace_logger
 from unstructured.nlp.patterns import PARAGRAPH_PATTERN
 from unstructured.partition.common import (
-    convert_to_bytes,
     document_to_element_list,
     exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
     ocr_data_to_elements,
     spooled_to_bytes_io_if_needed,
 )
@@ -53,6 +50,8 @@ from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
     check_element_types_to_extract,
+    convert_pdf_to_images,
+    get_the_last_modification_date_pdf_or_img,
     save_elements,
 )
 from unstructured.partition.pdf_image.pdfminer_processing import (
@@ -310,6 +309,7 @@ def partition_pdf_or_image(
         out_elements = _partition_pdf_with_pdfparser(
             extracted_elements=extracted_elements,
             include_page_breaks=include_page_breaks,
+            **kwargs,
         )
 
         return out_elements
@@ -352,19 +352,133 @@ def extractable_elements(
     )
 
 
-def get_the_last_modification_date_pdf_or_img(
-    file: Optional[bytes | IO[bytes]] = None,
-    filename: Optional[str] = "",
-    date_from_file_object: bool = False,
-) -> str | None:
-    last_modification_date = None
-    if not file and filename:
-        last_modification_date = get_last_modified_date(filename=filename)
-    elif not filename and file:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
+def _partition_pdf_with_pdfminer(
+    filename: str,
+    file: Optional[IO[bytes]],
+    languages: list[str],
+    metadata_last_modified: Optional[str],
+    starting_page_number: int = 1,
+    **kwargs: Any,
+) -> list[list[Element]]:
+    """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
+    processing or detectron2 is not available.
+
+    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
+    modified to support tracking page numbers and working with file-like objects.
+
+    ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
+    """
+    if languages is None:
+        languages = ["eng"]
+
+    exactly_one(filename=filename, file=file)
+    if filename:
+        with open_filename(filename, "rb") as fp:
+            fp = cast(IO[bytes], fp)
+            elements = _process_pdfminer_pages(
+                fp=fp,
+                filename=filename,
+                languages=languages,
+                metadata_last_modified=metadata_last_modified,
+                starting_page_number=starting_page_number,
+                **kwargs,
+            )
+
+    elif file:
+        elements = _process_pdfminer_pages(
+            fp=file,
+            filename=filename,
+            languages=languages,
+            metadata_last_modified=metadata_last_modified,
+            starting_page_number=starting_page_number,
+            **kwargs,
         )
-    return last_modification_date
+
+    return elements
+
+
+@requires_dependencies("pdfminer")
+def _process_pdfminer_pages(
+    fp: IO[bytes],
+    filename: str,
+    languages: list[str],
+    metadata_last_modified: Optional[str],
+    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
+    starting_page_number: int = 1,
+    **kwargs,
+) -> list[list[Element]]:
+    """Uses PDFMiner to split a document into pages and process them."""
+
+    elements = []
+
+    for page_number, (page, page_layout) in enumerate(
+        open_pdfminer_pages_generator(fp), start=starting_page_number
+    ):
+        width, height = page_layout.width, page_layout.height
+
+        page_elements: list[Element] = []
+        annotation_list = []
+
+        coordinate_system = PixelSpace(
+            width=width,
+            height=height,
+        )
+        if page.annots:
+            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
+
+        for obj in page_layout:
+            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            bbox = (x1, y1, x2, y2)
+
+            urls_metadata: list[dict[str, Any]] = []
+
+            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
+                annotations_within_element = check_annotations_within_element(
+                    annotation_list,
+                    bbox,
+                    page_number,
+                    annotation_threshold,
+                )
+                _, words = get_word_bounding_box_from_element(obj, height)
+                for annot in annotations_within_element:
+                    urls_metadata.append(map_bbox_and_index(words, annot))
+
+            if hasattr(obj, "get_text"):
+                _text_snippets: list[str] = [obj.get_text()]
+            else:
+                _text = _extract_text(obj)
+                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
+
+            for _text in _text_snippets:
+                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
+                if _text.strip():
+                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+                    element = element_from_text(
+                        _text,
+                        coordinates=points,
+                        coordinate_system=coordinate_system,
+                    )
+                    coordinates_metadata = CoordinatesMetadata(
+                        points=points,
+                        system=coordinate_system,
+                    )
+                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
+
+                    element.metadata = ElementMetadata(
+                        filename=filename,
+                        page_number=page_number,
+                        coordinates=coordinates_metadata,
+                        last_modified=metadata_last_modified,
+                        links=links,
+                        languages=languages,
+                    )
+                    element.metadata.detection_origin = "pdfminer"
+                    page_elements.append(element)
+
+        page_elements = _combine_list_elements(page_elements, coordinate_system)
+        elements.append(page_elements)
+
+    return elements
 
 
 @requires_dependencies("unstructured_inference")
@@ -438,6 +552,14 @@ def _partition_pdf_or_image_local(
             )
 
             if analysis:
+                if not analyzed_image_output_dir_path:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
+                os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
                 annotate_layout_elements(
                     inferred_document_layout=inferred_document_layout,
                     extracted_layout=extracted_layout,
@@ -591,264 +713,11 @@ def _partition_pdf_or_image_local(
     return out_elements
 
 
-def _process_uncategorized_text_elements(elements: list[Element]):
-    """Processes a list of elements, creating a new list where elements with the
-    category `UncategorizedText` are replaced with corresponding
-    elements created from their text content."""
-
-    out_elements = []
-    for el in elements:
-        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
-            new_el = element_from_text(cast(Text, el).text)
-            new_el.metadata = el.metadata
-        else:
-            new_el = el
-        out_elements.append(new_el)
-
-    return out_elements
-
-
-def _partition_pdf_with_pdfminer(
-    filename: str,
-    file: Optional[IO[bytes]],
-    languages: list[str],
-    metadata_last_modified: Optional[str],
-    starting_page_number: int = 1,
-    **kwargs: Any,
-) -> list[list[Element]]:
-    """Partitions a PDF using PDFMiner instead of using a layoutmodel. Used for faster
-    processing or detectron2 is not available.
-
-    Implementation is based on the `extract_text` implemenation in pdfminer.six, but
-    modified to support tracking page numbers and working with file-like objects.
-
-    ref: https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/high_level.py
-    """
-    if languages is None:
-        languages = ["eng"]
-
-    exactly_one(filename=filename, file=file)
-    if filename:
-        with open_filename(filename, "rb") as fp:
-            fp = cast(IO[bytes], fp)
-            elements = _process_pdfminer_pages(
-                fp=fp,
-                filename=filename,
-                languages=languages,
-                metadata_last_modified=metadata_last_modified,
-                starting_page_number=starting_page_number,
-                **kwargs,
-            )
-
-    elif file:
-        elements = _process_pdfminer_pages(
-            fp=file,
-            filename=filename,
-            languages=languages,
-            metadata_last_modified=metadata_last_modified,
-            starting_page_number=starting_page_number,
-            **kwargs,
-        )
-
-    return elements
-
-
-def _extract_text(item: LTItem) -> str:
-    """Recursively extracts text from PDFMiner objects to account
-    for scenarios where the text is in a sub-container."""
-    if hasattr(item, "get_text"):
-        return item.get_text()
-
-    elif isinstance(item, LTContainer):
-        text = ""
-        for child in item:
-            text += _extract_text(child) or ""
-        return text
-
-    elif isinstance(item, (LTTextBox, LTImage)):
-        # TODO(robinson) - Support pulling text out of images
-        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
-        return "\n"
-    return "\n"
-
-
-# Some pages with a ICC color space do not follow the pdf spec
-# They throw an error when we call interpreter.process_page
-# Since we don't need color info, we can just drop it in the pdfminer code
-# See #2059
-@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
-def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
-    resources = args[0]
-    if "ColorSpace" in resources:
-        del resources["ColorSpace"]
-
-    return wrapped(resources)
-
-
-@requires_dependencies("pdfminer")
-def _process_pdfminer_pages(
-    fp: IO[bytes],
-    filename: str,
-    languages: list[str],
-    metadata_last_modified: Optional[str],
-    annotation_threshold: Optional[float] = env_config.PDF_ANNOTATION_THRESHOLD,
-    starting_page_number: int = 1,
-    **kwargs,
-) -> list[list[Element]]:
-    """Uses PDFMiner to split a document into pages and process them."""
-
-    elements = []
-
-    for page_number, (page, page_layout) in enumerate(
-        open_pdfminer_pages_generator(fp), start=starting_page_number
-    ):
-        width, height = page_layout.width, page_layout.height
-
-        page_elements: list[Element] = []
-        annotation_list = []
-
-        coordinate_system = PixelSpace(
-            width=width,
-            height=height,
-        )
-        if page.annots:
-            annotation_list = get_uris(page.annots, height, coordinate_system, page_number)
-
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
-            bbox = (x1, y1, x2, y2)
-
-            urls_metadata: list[dict[str, Any]] = []
-
-            if len(annotation_list) > 0 and isinstance(obj, LTTextBox):
-                annotations_within_element = check_annotations_within_element(
-                    annotation_list,
-                    bbox,
-                    page_number,
-                    annotation_threshold,
-                )
-                _, words = get_word_bounding_box_from_element(obj, height)
-                for annot in annotations_within_element:
-                    urls_metadata.append(map_bbox_and_index(words, annot))
-
-            if hasattr(obj, "get_text"):
-                _text_snippets: list[str] = [obj.get_text()]
-            else:
-                _text = _extract_text(obj)
-                _text_snippets = re.split(PARAGRAPH_PATTERN, _text)
-
-            for _text in _text_snippets:
-                _text, moved_indices = clean_extra_whitespace_with_index_run(_text)
-                if _text.strip():
-                    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-                    element = element_from_text(
-                        _text,
-                        coordinates=points,
-                        coordinate_system=coordinate_system,
-                    )
-                    coordinates_metadata = CoordinatesMetadata(
-                        points=points,
-                        system=coordinate_system,
-                    )
-                    links = _get_links_from_urls_metadata(urls_metadata, moved_indices)
-
-                    element.metadata = ElementMetadata(
-                        filename=filename,
-                        page_number=page_number,
-                        coordinates=coordinates_metadata,
-                        last_modified=metadata_last_modified,
-                        links=links,
-                        languages=languages,
-                    )
-                    element.metadata.detection_origin = "pdfminer"
-                    page_elements.append(element)
-
-        page_elements = _combine_list_elements(page_elements, coordinate_system)
-        elements.append(page_elements)
-
-    return elements
-
-
-def _combine_list_elements(
-    elements: list[Element], coordinate_system: PixelSpace | PointSpace
-) -> list[Element]:
-    """Combine elements that should be considered a single ListItem element."""
-    tmp_element = None
-    updated_elements: list[Element] = []
-    for element in elements:
-        if isinstance(element, ListItem):
-            tmp_element = element
-            tmp_text = element.text
-            tmp_coords = element.metadata.coordinates
-        elif tmp_element and check_coords_within_boundary(
-            coordinates=element.metadata.coordinates,
-            boundary=tmp_coords,
-        ):
-            tmp_element.text = f"{tmp_text} {element.text}"
-            # replace "element" with the corrected element
-            element = _combine_coordinates_into_element1(
-                element1=tmp_element,
-                element2=element,
-                coordinate_system=coordinate_system,
-            )
-            # remove previously added ListItem element with incomplete text
-            updated_elements.pop()
-        updated_elements.append(element)
-    return updated_elements
-
-
-def _get_links_from_urls_metadata(
-    urls_metadata: list[dict[str, Any]], moved_indices: np.ndarray
-) -> list[Link]:
-    """Extracts links from a list of URL metadata."""
-    links: list[Link] = []
-    for url in urls_metadata:
-        with contextlib.suppress(IndexError):
-            links.append(
-                {
-                    "text": url["text"],
-                    "url": url["uri"],
-                    "start_index": index_adjustment_after_clean_extra_whitespace(
-                        url["start_index"],
-                        moved_indices,
-                    ),
-                },
-            )
-    return links
-
-
-def _combine_coordinates_into_element1(
-    element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
-) -> Element:
-    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
-    x1 = min(
-        element1.metadata.coordinates.points[0][0],
-        element2.metadata.coordinates.points[0][0],
-    )
-    x2 = max(
-        element1.metadata.coordinates.points[2][0],
-        element2.metadata.coordinates.points[2][0],
-    )
-    y1 = min(
-        element1.metadata.coordinates.points[0][1],
-        element2.metadata.coordinates.points[0][1],
-    )
-    y2 = max(
-        element1.metadata.coordinates.points[1][1],
-        element2.metadata.coordinates.points[1][1],
-    )
-    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
-    element1.metadata.coordinates = CoordinatesMetadata(
-        points=points,
-        system=coordinate_system,
-    )
-    return copy.deepcopy(element1)
-
-
 def _partition_pdf_with_pdfparser(
     extracted_elements: list[list[Element]],
     include_page_breaks: bool = False,
     sort_mode: str = SORT_MODE_XY_CUT,
+    **kwargs,
 ):
     """Partitions a PDF using pdfparser."""
     elements = []
@@ -866,40 +735,6 @@ def _partition_pdf_with_pdfparser(
             elements.append(PageBreak(text=""))
 
     return elements
-
-
-def convert_pdf_to_images(
-    filename: str = "",
-    file: Optional[bytes | IO[bytes]] = None,
-    chunk_size: int = 10,
-) -> Iterator[PILImage.Image]:
-    # Convert a PDF in small chunks of pages at a time (e.g. 1-10, 11-20... and so on)
-    exactly_one(filename=filename, file=file)
-    if file is not None:
-        f_bytes = convert_to_bytes(file)
-        info = pdf2image.pdfinfo_from_bytes(f_bytes)
-    else:
-        f_bytes = None
-        info = pdf2image.pdfinfo_from_path(filename)
-
-    total_pages = info["Pages"]
-    for start_page in range(1, total_pages + 1, chunk_size):
-        end_page = min(start_page + chunk_size - 1, total_pages)
-        if f_bytes is not None:
-            chunk_images = pdf2image.convert_from_bytes(
-                f_bytes,
-                first_page=start_page,
-                last_page=end_page,
-            )
-        else:
-            chunk_images = pdf2image.convert_from_path(
-                filename,
-                first_page=start_page,
-                last_page=end_page,
-            )
-
-        for image in chunk_images:
-            yield image
 
 
 def _partition_pdf_or_image_with_ocr(
@@ -994,6 +829,131 @@ def _partition_pdf_or_image_with_ocr_from_image(
         sorted_page_elements.append(PageBreak(text=""))
 
     return page_elements
+
+
+def _process_uncategorized_text_elements(elements: list[Element]):
+    """Processes a list of elements, creating a new list where elements with the
+    category `UncategorizedText` are replaced with corresponding
+    elements created from their text content."""
+
+    out_elements = []
+    for el in elements:
+        if hasattr(el, "category") and el.category == ElementType.UNCATEGORIZED_TEXT:
+            new_el = element_from_text(cast(Text, el).text)
+            new_el.metadata = el.metadata
+        else:
+            new_el = el
+        out_elements.append(new_el)
+
+    return out_elements
+
+
+def _extract_text(item: LTItem) -> str:
+    """Recursively extracts text from PDFMiner objects to account
+    for scenarios where the text is in a sub-container."""
+    if hasattr(item, "get_text"):
+        return item.get_text()
+
+    elif isinstance(item, LTContainer):
+        text = ""
+        for child in item:
+            text += _extract_text(child) or ""
+        return text
+
+    elif isinstance(item, (LTTextBox, LTImage)):
+        # TODO(robinson) - Support pulling text out of images
+        # https://github.com/pdfminer/pdfminer.six/blob/master/pdfminer/image.py#L90
+        return "\n"
+    return "\n"
+
+
+# Some pages with a ICC color space do not follow the pdf spec
+# They throw an error when we call interpreter.process_page
+# Since we don't need color info, we can just drop it in the pdfminer code
+# See #2059
+@wrapt.patch_function_wrapper("pdfminer.pdfinterp", "PDFPageInterpreter.init_resources")
+def pdfminer_interpreter_init_resources(wrapped, instance, args, kwargs):
+    resources = args[0]
+    if "ColorSpace" in resources:
+        del resources["ColorSpace"]
+
+    return wrapped(resources)
+
+
+def _combine_list_elements(
+    elements: list[Element], coordinate_system: PixelSpace | PointSpace
+) -> list[Element]:
+    """Combine elements that should be considered a single ListItem element."""
+    tmp_element = None
+    updated_elements: list[Element] = []
+    for element in elements:
+        if isinstance(element, ListItem):
+            tmp_element = element
+            tmp_text = element.text
+            tmp_coords = element.metadata.coordinates
+        elif tmp_element and check_coords_within_boundary(
+            coordinates=element.metadata.coordinates,
+            boundary=tmp_coords,
+        ):
+            tmp_element.text = f"{tmp_text} {element.text}"
+            # replace "element" with the corrected element
+            element = _combine_coordinates_into_element1(
+                element1=tmp_element,
+                element2=element,
+                coordinate_system=coordinate_system,
+            )
+            # remove previously added ListItem element with incomplete text
+            updated_elements.pop()
+        updated_elements.append(element)
+    return updated_elements
+
+
+def _get_links_from_urls_metadata(
+    urls_metadata: list[dict[str, Any]], moved_indices: np.ndarray
+) -> list[Link]:
+    """Extracts links from a list of URL metadata."""
+    links: list[Link] = []
+    for url in urls_metadata:
+        with contextlib.suppress(IndexError):
+            links.append(
+                {
+                    "text": url["text"],
+                    "url": url["uri"],
+                    "start_index": index_adjustment_after_clean_extra_whitespace(
+                        url["start_index"],
+                        moved_indices,
+                    ),
+                },
+            )
+    return links
+
+
+def _combine_coordinates_into_element1(
+    element1: Element, element2: Element, coordinate_system: PixelSpace | PointSpace
+) -> Element:
+    """Combine the coordiantes of two elements and apply the updated coordiantes to `elements1`"""
+    x1 = min(
+        element1.metadata.coordinates.points[0][0],
+        element2.metadata.coordinates.points[0][0],
+    )
+    x2 = max(
+        element1.metadata.coordinates.points[2][0],
+        element2.metadata.coordinates.points[2][0],
+    )
+    y1 = min(
+        element1.metadata.coordinates.points[0][1],
+        element2.metadata.coordinates.points[0][1],
+    )
+    y2 = max(
+        element1.metadata.coordinates.points[1][1],
+        element2.metadata.coordinates.points[1][1],
+    )
+    points = ((x1, y1), (x1, y2), (x2, y2), (x2, y1))
+    element1.metadata.coordinates = CoordinatesMetadata(
+        points=points,
+        system=coordinate_system,
+    )
+    return copy.deepcopy(element1)
 
 
 def check_coords_within_boundary(
