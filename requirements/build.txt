@@ -120,5 +120,5 @@ urllib3==1.26.18
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   requests
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-metadata

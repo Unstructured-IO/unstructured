@@ -1,3 +1,11 @@
+## 0.14.1-dev0
+
+* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+
+### Features
+
+### Fixes
+
 ## 0.14.0
 
 ### BREAKING CHANGES

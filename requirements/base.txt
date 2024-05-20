@@ -53,7 +53,9 @@ mypy-extensions==1.0.0
 nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
-    # via -r ./base.in
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt
@@ -67,7 +69,7 @@ python-magic==0.4.27
     # via -r ./base.in
 rapidfuzz==3.9.0
     # via -r ./base.in
-regex==2024.5.10
+regex==2024.5.15
     # via nltk
 requests==2.31.0
     # via
@@ -104,4 +106,6 @@ urllib3==1.26.18
     #   requests
     #   unstructured-client
 wrapt==1.16.0
-    # via -r ./base.in
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./base.in

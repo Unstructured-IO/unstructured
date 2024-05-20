@@ -24,6 +24,7 @@ loguru==0.7.2
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   pinecone-client
 pinecone-client==2.2.4
     # via -r ./ingest/pinecone.in
