@@ -96,8 +96,6 @@ python_version=$(python --version 2>&1)
 tests_to_ignore=(
   'notion.sh'
   'dropbox.sh'
-  'confluence-diff.sh'
-  'confluence-large.sh'
 )
 
 for test in "${all_tests[@]}"; do
