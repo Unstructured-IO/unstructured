@@ -7,7 +7,6 @@ SCRIPT_DIR=$(dirname "$DEST_PATH")
 cd "$SCRIPT_DIR"/.. || exit 1
 OUTPUT_FOLDER_NAME=s3-dest
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
-OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 DESTINATION_S3="s3://utic-dev-tech-fixtures/utic-ingest-test-fixtures-output/$(uuidgen)/"
