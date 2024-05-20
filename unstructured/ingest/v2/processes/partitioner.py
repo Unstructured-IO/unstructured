@@ -13,7 +13,6 @@ from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 @dataclass
 class PartitionerConfig(EnhancedDataClassJsonMixin):
-    pdf_infer_table_structure: bool = False
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
@@ -35,16 +34,10 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
             "strategy": self.strategy,
             "languages": self.ocr_languages,
             "hi_res_model_name": self.hi_res_model_name,
+            "skip_infer_table_types": self.skip_infer_table_types,
         }
         # Don't inject information if None and allow default values in method to be used
         partition_kwargs = {k: v for k, v in partition_kwargs.items() if v is not None}
-        skip_infer_table_types = None
-        if self.skip_infer_table_types:
-            skip_infer_table_types = self.skip_infer_table_types
-        elif self.pdf_infer_table_structure:
-            skip_infer_table_types = ["pdf"]
-        if self.skip_infer_table_types:
-            partition_kwargs["skip_infer_table_types"] = skip_infer_table_types
         if self.additional_partition_args:
             partition_kwargs.update(self.additional_partition_args)
         return partition_kwargs

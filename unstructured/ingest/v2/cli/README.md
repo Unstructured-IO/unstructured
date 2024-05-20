@@ -17,7 +17,7 @@ All source commands are added as sub commands to the parent ingest Click group. 
 different connectors with shared and unique parameters.
 
 ### Destination Commands
-A;; destination commands are added as sub commands to each parent source command. This allows each invocation of the source
+All destination commands are added as sub commands to each parent source command. This allows each invocation of the source
 sub command to display all possible destination subcommands. The code un [utils.py](./utils.py) helps structure the
 generated text from the Click library to be more intuitive on this approach (i.e. list sub commands as  `Destinations`).
 
