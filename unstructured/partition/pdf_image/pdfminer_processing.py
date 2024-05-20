@@ -128,31 +128,31 @@ def merge_inferred_with_extracted_layout(
             **threshold_kwargs,
         )
 
-        elements = inferred_page.get_elements_from_layout(
-            layout=cast(List["TextRegion"], merged_layout),
-            pdf_objects=extracted_page_layout,
-        )
+        elements = [
+            aggregate_embedded_text_by_block(
+                text_region=cast("TextRegion", layout_el),
+                pdf_objects=extracted_page_layout,
+            )
+            for layout_el in merged_layout
+        ]
 
         inferred_page.elements[:] = elements
 
     return inferred_document_layout
 
 
-@requires_dependencies("unstructured_inference")
 def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout":
     """Clean pdfminer elements from inside tables.
 
     This function removes elements sourced from PDFMiner that are subregions within table elements.
     """
 
-    from unstructured_inference.config import inference_config
-
     for page in document.pages:
         tables = [e for e in page.elements if e.type == ElementType.TABLE]
         for i, element in enumerate(page.elements):
             if element.source != Source.PDFMINER:
                 continue
-            subregion_threshold = inference_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
+            subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
             element_inside_table = [
                 element.bbox.is_almost_subregion_of(t.bbox, subregion_threshold) for t in tables
             ]
@@ -189,3 +189,20 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
         page.elements = [e for e in page.elements if e]
 
     return document
+
+
+def aggregate_embedded_text_by_block(
+    text_region: TextRegion,
+    pdf_objects: list[TextRegion],
+) -> str:
+    """Extracts the text aggregated from the elements of the given layout that lie within the given
+    block."""
+
+    subregion_threshold = env_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
+    filtered_blocks = [
+        obj
+        for obj in pdf_objects
+        if obj.bbox.is_almost_subregion_of(text_region.bbox, subregion_threshold)
+    ]
+    text = " ".join([x.text for x in filtered_blocks if x.text])
+    return text
