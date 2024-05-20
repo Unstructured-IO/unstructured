@@ -710,6 +710,7 @@ class Element(abc.ABC):
     """
 
     text: str
+    category = "UncategorizedText"
 
     def __init__(
         self,
@@ -843,8 +844,6 @@ class CheckBox(Element):
 
 class Text(Element):
     """Base element for capturing free text from within document."""
-
-    category = "UncategorizedText"
 
     def __init__(
         self,
