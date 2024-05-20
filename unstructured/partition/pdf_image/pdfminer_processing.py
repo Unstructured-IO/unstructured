@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 from pdfminer.utils import open_filename
 
 from unstructured.documents.elements import ElementType
+from unstructured.partition.pdf_image.pdf_image_utils import remove_control_characters
 from unstructured.partition.pdf_image.pdfminer_utils import (
     get_images_from_pdf_element,
     open_pdfminer_pages_generator,
@@ -205,4 +206,6 @@ def aggregate_embedded_text_by_block(
         if obj.bbox.is_almost_subregion_of(text_region.bbox, subregion_threshold)
     ]
     text = " ".join([x.text for x in filtered_blocks if x.text])
-    return text
+    cleaned_text = remove_control_characters(text)
+
+    return cleaned_text
