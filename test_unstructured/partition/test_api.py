@@ -170,7 +170,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch):
 # even thogu hte element text on the expected and actual output match
 # @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
 # @pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
-@pytest.mark.skip
+@pytest.mark.skip()
 def test_partition_via_api_with_no_strategy():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf")
 
