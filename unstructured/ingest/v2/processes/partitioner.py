@@ -13,7 +13,7 @@ from unstructured.staging.base import elements_to_dicts, flatten_dict
 
 @dataclass
 class PartitionerConfig(EnhancedDataClassJsonMixin):
-    pdf_infer_table_structure: bool = True
+    pdf_infer_table_structure: bool = False
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
@@ -33,10 +33,11 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
     def to_partition_kwargs(self) -> dict[str, Any]:
         partition_kwargs: dict[str, Any] = {
             "strategy": self.strategy,
-            "encoding": self.encoding,
             "languages": self.ocr_languages,
             "hi_res_model_name": self.hi_res_model_name,
         }
+        # Don't inject information if None and allow default values in method to be used
+        partition_kwargs = {k: v for k, v in partition_kwargs.items() if v is not None}
         skip_infer_table_types = None
         if self.skip_infer_table_types:
             skip_infer_table_types = self.skip_infer_table_types
@@ -96,7 +97,7 @@ class Partitioner(BaseProcess, ABC):
     ) -> list[dict]:
         from unstructured.partition.auto import partition
 
-        logger.debug("Using local partition")
+        logger.debug(f"Using local partition with kwargs: {self.config.to_partition_kwargs()}")
         elements = partition(
             filename=str(filename.resolve()),
             data_source_metadata=metadata,
