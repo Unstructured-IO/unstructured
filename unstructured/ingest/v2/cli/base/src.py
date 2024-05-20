@@ -62,7 +62,7 @@ class SrcCmd(BaseCmd):
         cmd.params.append(
             click.Option(
                 ["--output-dir"],
-                required=True,
+                required=False,
                 type=str,
                 help="Local path to write partitioned output to",
             )

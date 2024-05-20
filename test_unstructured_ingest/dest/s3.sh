@@ -16,7 +16,6 @@ CI=${CI:-"false"}
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
-  cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 
   if aws s3 ls "$DESTINATION_S3" --region us-east-2; then
@@ -31,7 +30,6 @@ RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --num-processes "$max_processes" \
-  --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
   --reprocess \
