@@ -36,7 +36,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --strategy hi_res \
   --chunking-strategy by_page \
   --chunk-max-characters 10000 \
-  --pdf-infer-table-structure \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \

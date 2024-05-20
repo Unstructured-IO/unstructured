@@ -12,12 +12,6 @@ class PartitionerCliConfig(CliConfig):
     def get_cli_options() -> list[click.Option]:
         options = [
             click.Option(
-                ["--pdf-infer-table-structure"],
-                is_flag=True,
-                default=False,
-                help="Partition will include the table's text_as_html " "in the response metadata.",
-            ),
-            click.Option(
                 ["--strategy"],
                 default="auto",
                 help="The method that will be used to process the documents. "
