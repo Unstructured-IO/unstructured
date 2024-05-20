@@ -57,7 +57,7 @@ google-auth==2.29.0
     #   google-cloud-storage
 google-cloud-aiplatform==1.51.0
     # via langchain-google-vertexai
-google-cloud-bigquery==3.22.0
+google-cloud-bigquery==3.23.0
     # via google-cloud-aiplatform
 google-cloud-core==2.4.1
     # via
@@ -113,11 +113,11 @@ langchain-core==0.1.52
     #   langchain-community
     #   langchain-google-vertexai
     #   langchain-text-splitters
-langchain-google-vertexai==1.0.3
+langchain-google-vertexai==1.0.4
     # via -r ./ingest/embed-vertexai.in
-langchain-text-splitters==0.0.1
+langchain-text-splitters==0.0.2
     # via langchain
-langsmith==0.1.57
+langsmith==0.1.59
     # via
     #   langchain
     #   langchain-community
@@ -137,6 +137,7 @@ mypy-extensions==1.0.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   shapely
@@ -214,12 +215,6 @@ tenacity==8.3.0
     #   langchain
     #   langchain-community
     #   langchain-core
-types-protobuf==4.25.0.20240417
-    # via langchain-google-vertexai
-types-requests==2.31.0.6
-    # via langchain-google-vertexai
-types-urllib3==1.26.25.14
-    # via types-requests
 typing-extensions==4.11.0
     # via
     #   -c ./ingest/../base.txt

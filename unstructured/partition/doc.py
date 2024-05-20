@@ -32,6 +32,7 @@ def partition_doc(
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
@@ -112,6 +113,7 @@ def partition_doc(
             metadata_filename=metadata_filename,
             metadata_last_modified=metadata_last_modified or last_modified,
             starting_page_number=starting_page_number,
+            strategy=strategy,
         )
 
     # -- Remove temporary document.docx path from metadata when necessary. Note `metadata_filename`
