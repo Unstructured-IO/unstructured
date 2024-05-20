@@ -129,13 +129,14 @@ def merge_inferred_with_extracted_layout(
             **threshold_kwargs,
         )
 
-        elements = [
-            aggregate_embedded_text_by_block(
-                text_region=cast("TextRegion", layout_el),
-                pdf_objects=extracted_page_layout,
-            )
-            for layout_el in merged_layout
-        ]
+        elements = []
+        for layout_el in merged_layout:
+            if not layout_el.text:
+                layout_el.text = aggregate_embedded_text_by_block(
+                    text_region=cast("TextRegion", layout_el),
+                    pdf_objects=extracted_page_layout,
+                )
+            elements.append(layout_el)
 
         inferred_page.elements[:] = elements
 

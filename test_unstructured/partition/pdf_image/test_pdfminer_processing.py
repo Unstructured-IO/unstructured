@@ -5,9 +5,9 @@ from unstructured_inference.inference.elements import Rectangle, TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    aggregate_embedded_text_by_block,
     clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
-    aggregate_embedded_text_by_block,
 )
 from unstructured.partition.utils.constants import Source
 
