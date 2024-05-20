@@ -39,7 +39,7 @@ def partition_html(
     include_metadata: bool = True,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
-    request_timeout: int = None,
+    request_timeout: Optional[int] = None,
     parser: VALID_PARSERS = None,
     source_format: Optional[str] = None,
     html_assemble_articles: bool = False,
@@ -77,9 +77,6 @@ def partition_html(
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
-    request_timeout
-        The timeout for the HTTP request if URL is set. Defaults to None meaning no timeout and
-        requests will block indefinitely.
     parser
         The parser to use for parsing the HTML document. If None, default parser will be used.
     source_format

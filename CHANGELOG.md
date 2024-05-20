@@ -1,3 +1,10 @@
+## 0.14.1-dev1
+
+### Features
+
+### Fixes
+* **Adds ability to pass timeout for a request when partitioning via a `url` in `partition_html`.** `partition_html` accepts a new optional parameter `request_timeout` which if set will prevent `requests.get` from hanging indefinitely and instead will raise a timeout error. 
+
 ## 0.14.1-dev0
 
 * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
