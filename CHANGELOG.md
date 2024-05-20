@@ -2,6 +2,11 @@
 
 * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
+### Enhancements
+
+* **Move `category` field from Text class to Element class.**
+
+
 ### Features
 
 ### Fixes
