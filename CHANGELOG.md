@@ -35,7 +35,8 @@
 * **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
 * **AstraDB: option to prevent indexing metadata**
-
+* **Fix Missing py.typed**
+  
 ## 0.13.7
 
 ### Enhancements
