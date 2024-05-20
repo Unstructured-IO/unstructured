@@ -21,7 +21,16 @@ class S3CliDownloadConfig(FsspecCliDownloadConfig):
 
 @dataclass
 class S3CliIndexerConfig(FsspecCliIndexerConfig):
-    pass
+    @staticmethod
+    def get_cli_options() -> list[click.Option]:
+        options = [
+            click.Option(
+                ["--remote-url"],
+                required=True,
+                help="Remote fsspec URL formatted as `protocol://dir/path`",
+            ),
+        ]
+        return options
 
 
 @dataclass
