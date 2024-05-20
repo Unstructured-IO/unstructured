@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-databricks-sdk==0.27.0
+databricks-sdk==0.27.1
     # via -r ./ingest/databricks-volumes.in
 google-auth==2.29.0
     # via databricks-sdk

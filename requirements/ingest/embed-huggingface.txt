@@ -36,8 +36,9 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
     #   torch
 huggingface==0.0.1
@@ -66,7 +67,7 @@ langchain-community==0.0.38
     # via -r ./ingest/embed-huggingface.in
 langchain-core==0.1.52
     # via langchain-community
-langsmith==0.1.57
+langsmith==0.1.59
     # via
     #   langchain-community
     #   langchain-core
@@ -91,6 +92,7 @@ networkx==3.2.1
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain-community
     #   scikit-learn
     #   scipy
@@ -120,7 +122,7 @@ pyyaml==6.0.1
     #   langchain-community
     #   langchain-core
     #   transformers
-regex==2024.5.10
+regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   transformers
@@ -135,7 +137,7 @@ safetensors==0.4.3
     # via transformers
 scikit-learn==1.4.2
     # via sentence-transformers
-scipy==1.10.1
+scipy==1.11.3
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   scikit-learn
@@ -164,7 +166,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.40.2
+transformers==4.41.0
     # via sentence-transformers
 typing-extensions==4.11.0
     # via

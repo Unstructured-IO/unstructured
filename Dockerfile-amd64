@@ -5,7 +5,7 @@ WORKDIR /app
 USER root
 
 COPY ./docker-packages/*.apk packages/
-COPY ./requirements/*.txt requirements/
+COPY ./requirements requirements/
 COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
@@ -30,19 +30,8 @@ RUN chown -R nonroot:nonroot /app
 
 USER nonroot
 
-RUN pip3.11 install --no-cache-dir --user -r requirements/base.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/test.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-csv.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-docx.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-epub.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-markdown.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-msg.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-odt.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-pdf-image.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-pptx.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/extra-xlsx.txt && \
-  pip3.11 install --no-cache-dir --user -r requirements/huggingface.txt && \
-  pip3.11 install unstructured.paddlepaddle
+RUN find requirements/ -type f -name "*.txt" -exec pip3.11 install --no-cache-dir --user -r '{}' ';'
+RUN pip3.11 install unstructured.paddlepaddle
 
 RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
   python3.11 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \

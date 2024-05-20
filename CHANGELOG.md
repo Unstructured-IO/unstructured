@@ -1,10 +1,23 @@
-## 0.13.8-dev13
+## 0.14.1-dev0
+
+* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+
+### Features
+
+### Fixes
+
+## 0.14.0
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
 
 ### Enhancements
 
 * **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
 
 ### Features
 * **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
@@ -19,7 +32,11 @@
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
 * **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
-
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
+* **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
+* **Fix Missing py.typed**
+  
 ## 0.13.7
 
 ### Enhancements

@@ -715,11 +715,11 @@ def test_partition_pdf_metadata_date(
         expected_last_modification_date = None
 
     mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date_from_file",
+        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date_from_file",
         return_value=mocked_last_modification_date,
     )
     mocker.patch(
-        "unstructured.partition.pdf.get_last_modified_date",
+        "unstructured.partition.pdf_image.pdf_image_utils.get_last_modified_date",
         return_value=mocked_last_modification_date,
     )
 
