@@ -75,7 +75,7 @@ class BaseCmd(ABC):
             )
             if uploader_stager := self.get_upload_stager(dest=dest, options=destination_options):
                 pipeline_kwargs["upload_stager"] = uploader_stager
-            pipeline_kwargs["uploader"] = self.get_uploader(dest=dest, options=pipeline_kwargs)
+            pipeline_kwargs["uploader"] = self.get_uploader(dest=dest, options=destination_options)
         else:
             # Default to local uploader
             # TODO remove after v1 no longer supported
