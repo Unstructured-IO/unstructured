@@ -59,6 +59,7 @@ html_static_path = ["_static"]
 html_favicon = "_static/images/unstructured_small.png"
 html_js_files = ["js/githubStargazers.js", "js/sidebarScrollPosition.js", "custom.js"]
 html_css_files = ["unstructured.css", "custom.css"]
+html_additional_pages = {'404': '404.html'}
 
 html_theme_options = {
     "sidebar_hide_name": True,
