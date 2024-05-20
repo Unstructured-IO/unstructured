@@ -41,8 +41,9 @@ flatbuffers==24.3.25
     # via onnxruntime
 fonttools==4.51.0
     # via matplotlib
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via
+    #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
 google-api-core[grpc]==2.19.0
@@ -101,6 +102,7 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   layoutparser
@@ -119,7 +121,7 @@ onnx==1.16.0
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.17.3
+onnxruntime==1.18.0
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
@@ -222,7 +224,7 @@ rapidfuzz==3.9.0
     # via
     #   -c ./base.txt
     #   unstructured-inference
-regex==2024.5.10
+regex==2024.5.15
     # via
     #   -c ./base.txt
     #   transformers
@@ -238,7 +240,7 @@ safetensors==0.4.3
     # via
     #   timm
     #   transformers
-scipy==1.10.1
+scipy==1.11.3
     # via
     #   -c ././deps/constraints.txt
     #   layoutparser
@@ -250,7 +252,7 @@ sympy==1.12
     # via
     #   onnxruntime
     #   torch
-timm==0.9.16
+timm==1.0.3
     # via effdet
 tokenizers==0.19.1
     # via transformers
@@ -272,7 +274,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.40.2
+transformers==4.41.0
     # via unstructured-inference
 typing-extensions==4.11.0
     # via
@@ -296,7 +298,8 @@ urllib3==1.26.18
     #   requests
 wrapt==1.16.0
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-resources
