@@ -10,9 +10,10 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import Source
+from unstructured.partition.utils.constants import Source, SORT_MODE_BASIC
 from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
+
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -44,7 +45,6 @@ def process_data_with_pdfminer(
         EmbeddedTextRegion,
         ImageTextRegion,
     )
-    from unstructured_inference.inference.ordering import order_layout
 
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
@@ -81,7 +81,7 @@ def process_data_with_pdfminer(
 
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
-        layout = order_layout(layout)
+        layout = sort_text_regions(layout, SORT_MODE_BASIC)
 
         # apply the current default sorting to the layout elements extracted by pdfminer
         layout = sort_text_regions(layout)
@@ -95,6 +95,7 @@ def process_data_with_pdfminer(
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
+    hi_res_model_name: Optional[str] = None,
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
@@ -102,6 +103,10 @@ def merge_inferred_with_extracted_layout(
         merge_inferred_layout_with_extracted_layout as merge_inferred_with_extracted_page,
     )
     from unstructured_inference.models.detectron2onnx import UnstructuredDetectronONNXModel
+
+    # If the model is a chipper model, we don't want to order the
+    # elements, as they are already ordered
+    order_elements = not hi_res_model_name.startswith("chipper")
 
     inferred_pages = inferred_document_layout.pages
     for i, (inferred_page, extracted_page_layout) in enumerate(
@@ -128,6 +133,9 @@ def merge_inferred_with_extracted_layout(
             page_image_size=image_size,
             **threshold_kwargs,
         )
+
+        if order_elements:
+            merged_layout = sort_text_regions(cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC)
 
         elements = []
         for layout_el in merged_layout:
