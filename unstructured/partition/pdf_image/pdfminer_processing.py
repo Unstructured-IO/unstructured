@@ -94,7 +94,7 @@ def process_data_with_pdfminer(
 def merge_inferred_with_extracted_layout(
     inferred_document_layout: "DocumentLayout",
     extracted_layout: List[List["TextRegion"]],
-    hi_res_model_name: Optional[str] = None,
+    hi_res_model_name: str,
 ) -> "DocumentLayout":
     """Merge an inferred layout with an extracted layout"""
 
