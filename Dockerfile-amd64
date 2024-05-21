@@ -20,11 +20,11 @@ RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
   apk add libmagic && \
   mv /share/tessdata/configs /usr/local/share/tessdata/ && \
   mv /share/tessdata/tessconfigs /usr/local/share/tessdata/ && \
-  ln -s /usr/local/lib/libreoffice/program/soffice.bin /usr/local/bin/libreoffice && \
-  ln -s /usr/local/lib/libreoffice/program/soffice.bin /usr/local/bin/soffice && \
-  chmod +x /usr/local/lib/libreoffice/program/soffice.bin && \
-  chmod +x /usr/local/bin/libreoffice && \
-  chmod +x /usr/local/bin/soffice
+  ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/libreoffice && \
+  ln -s /usr/lib/libreoffice/program/soffice.bin /usr/bin/soffice && \
+  chmod +x /usr/lib/libreoffice/program/soffice.bin && \
+  chmod +x /usr/bin/libreoffice && \
+  chmod +x /usr/bin/soffice
 
 RUN chown -R nonroot:nonroot /app
 
