@@ -29,6 +29,13 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
     api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
     hi_res_model_name: Optional[str] = None
 
+    def __post_init__(self):
+        if self.metadata_exclude and self.metadata_include:
+            raise ValueError(
+                "metadata_exclude and metadata_include are "
+                "mutually exclusive with each other. Cannot specify both."
+            )
+
     def to_partition_kwargs(self) -> dict[str, Any]:
         partition_kwargs: dict[str, Any] = {
             "strategy": self.strategy,
@@ -53,12 +60,7 @@ class Partitioner(BaseProcess, ABC):
     def postprocess(self, elements: list[dict]) -> list[dict]:
         element_dicts = [e.copy() for e in elements]
         for elem in element_dicts:
-            if self.config.metadata_exclude and self.config.metadata_include:
-                raise ValueError(
-                    "Arguments `--metadata-include` and `--metadata-exclude` are "
-                    "mutually exclusive with each other.",
-                )
-            elif self.config.metadata_exclude:
+            if self.config.metadata_exclude:
                 ex_list = self.config.metadata_exclude
                 for ex in ex_list:
                     if "." in ex:  # handle nested fields
