@@ -1,0 +1,22 @@
+[
+  {
+    "element_id": "087bf46fb6864a7a3f3ebd7560205656",
+    "metadata": {
+      "data_source": {
+        "date_created": "2023-04-23T12:56:26.101000+00:00",
+        "date_modified": "2023-04-23T13:01:24.441000+00:00",
+        "record_locator": {
+          "channel": "1099601456321003600"
+        },
+        "url": "https://discord.com/channels/1099414370531950602/1099601456321003600"
+      },
+      "filename": "1099601456321003600.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "Why did the bot go on a diet? Because it had too many mega-bytes! This is a bot",
+    "type": "NarrativeText"
+  }
+]
