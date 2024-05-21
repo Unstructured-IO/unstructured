@@ -5,7 +5,7 @@ unstructured-ingest \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir local-to-chroma \
   --strategy fast \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --embedding-provider "<unstructured embedding provider, ie. langchain-huggingface>" \
   --num-processes 2 \
   --verbose \

@@ -7,7 +7,7 @@ unstructured-ingest \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir local-output-to-astra \
   --strategy fast \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --embedding-provider "$EMBEDDING_PROVIDER" \
   --num-processes 2 \
   --verbose \

@@ -15,7 +15,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --output-dir local-to-elasticsearch \
   --strategy fast \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --embedding-provider "<an unstructured embedding provider, ie. langchain-huggingface>" \
   --num-processes 2 \
   --verbose \

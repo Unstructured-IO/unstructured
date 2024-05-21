@@ -70,7 +70,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --num-processes "$max_processes" \
   --work-dir "$WORK_DIR" \
   --verbose \

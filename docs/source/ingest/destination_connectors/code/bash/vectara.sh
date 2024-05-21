@@ -5,7 +5,7 @@ unstructured-ingest \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --output-dir local-output-to-vectara \
   --strategy fast \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --num-processes 2 \
   --verbose \
   vectara \

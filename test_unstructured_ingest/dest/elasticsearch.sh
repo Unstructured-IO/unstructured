@@ -45,7 +45,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir "$WORK_DIR" \
-  --chunk-elements \
+  --chunk-strategy by_title \
   --chunk-combine-text-under-n-chars 200 \
   --chunk-new-after-n-chars 2500 \
   --chunk-max-characters 38000 \
