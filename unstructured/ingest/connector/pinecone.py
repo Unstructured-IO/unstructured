@@ -74,11 +74,9 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
     def create_index(self) -> "PineconeIndex":
         import pinecone
 
-        pinecone.init(
-            api_key=self.connector_config.access_config.api_key,
-            environment=self.connector_config.environment,
-        )
-        index = pinecone.Index(self.connector_config.index_name)
+        pc = Pinecone(api_key=self.connector_config.access_config.api_key)
+
+        index = pc.Index(self.connector_config.index_name)
         logger.debug(
             f"Connected to index: {pinecone.describe_index(self.connector_config.index_name)}"
         )

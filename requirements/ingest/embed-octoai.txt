@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/embed-octoai.in
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
     # via
@@ -48,7 +48,7 @@ regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken

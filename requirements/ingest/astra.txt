@@ -69,7 +69,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   bson
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   cassio

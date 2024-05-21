@@ -41,14 +41,14 @@ pyjwt[crypto]==2.8.0
     # via simple-salesforce
 pytz==2024.1
     # via zeep
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   requests-file
     #   requests-toolbelt
     #   simple-salesforce
     #   zeep
-requests-file==2.0.0
+requests-file==2.1.0
     # via zeep
 requests-toolbelt==1.0.0
     # via zeep
