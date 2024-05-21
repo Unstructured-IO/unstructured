@@ -10,10 +10,9 @@ from unstructured.partition.pdf_image.pdfminer_utils import (
     rect_to_bbox,
 )
 from unstructured.partition.utils.config import env_config
-from unstructured.partition.utils.constants import Source, SORT_MODE_BASIC
+from unstructured.partition.utils.constants import SORT_MODE_BASIC, Source
 from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
-
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -135,7 +134,9 @@ def merge_inferred_with_extracted_layout(
         )
 
         if order_elements:
-            merged_layout = sort_text_regions(cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC)
+            merged_layout = sort_text_regions(
+                cast(List["TextRegion"], merged_layout), SORT_MODE_BASIC
+            )
 
         elements = []
         for layout_el in merged_layout:
