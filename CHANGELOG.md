@@ -1,8 +1,9 @@
-## 0.14.3-dev1
+## 0.14.3-dev2
 
 ### Enhancements
 
 * **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
 
 ### Features
 
