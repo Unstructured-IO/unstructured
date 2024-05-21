@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - build/apk-libreoffice
 
 env:
   DOCKER_REPOSITORY: quay.io/unstructured-io/unstructured
