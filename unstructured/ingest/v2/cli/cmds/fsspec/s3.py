@@ -5,8 +5,8 @@ import click
 from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.cmds.fsspec.fsspec import (
     FsspecCliDownloadConfig,
-    FsspecCliFileConfig,
     FsspecCliIndexerConfig,
+    FsspecCliUploaderConfig,
 )
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.processes.connectors.fsspec.s3 import (
@@ -66,7 +66,7 @@ class S3CliConnectionConfig(CliConfig):
 
 
 @dataclass
-class S3UploaderConfig(FsspecCliFileConfig):
+class S3UploaderConfig(FsspecCliUploaderConfig):
     pass
 
 

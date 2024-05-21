@@ -5,8 +5,8 @@ import click
 from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.cmds.fsspec.fsspec import (
     FsspecCliDownloadConfig,
-    FsspecCliFileConfig,
     FsspecCliIndexerConfig,
+    FsspecCliUploaderConfig,
 )
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.processes.connectors.fsspec.azure import (
@@ -66,7 +66,7 @@ class AzureCliConnectionConfig(CliConfig):
 
 
 @dataclass
-class AzureUploaderConfig(FsspecCliFileConfig):
+class AzureUploaderConfig(FsspecCliUploaderConfig):
     pass
 
 

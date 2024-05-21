@@ -121,7 +121,7 @@ class AzureUploaderConfig(FsspecUploaderConfig):
 
 
 @dataclass
-class AzureUpload(FsspecUploader):
+class AzureUploader(FsspecUploader):
     connection_config: AzureConnectionConfig
     upload_config: AzureUploaderConfig = field(default=None)
 
@@ -151,5 +151,9 @@ add_source_entry(
 
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(uploader=AzureUpload, uploader_config=AzureUploaderConfig),
+    entry=DestinationRegistryEntry(
+        uploader=AzureUploader,
+        uploader_config=AzureUploaderConfig,
+        connection_config=AzureConnectionConfig,
+    ),
 )
