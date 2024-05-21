@@ -131,7 +131,7 @@ def merge_inferred_with_extracted_layout(
 
         elements = []
         for layout_el in merged_layout:
-            if not layout_el.text:
+            if layout_el.text is None:
                 layout_el.text = aggregate_embedded_text_by_block(
                     text_region=cast("TextRegion", layout_el),
                     pdf_objects=extracted_page_layout,
