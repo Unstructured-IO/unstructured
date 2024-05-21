@@ -5,8 +5,8 @@ import click
 from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.cmds.fsspec.fsspec import (
     FsspecCliDownloadConfig,
-    FsspecCliFileConfig,
     FsspecCliIndexerConfig,
+    FsspecCliUploaderConfig,
 )
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.processes.connectors.fsspec.box import (
@@ -40,7 +40,7 @@ class BoxCliConnectionConfig(CliConfig):
 
 
 @dataclass
-class BoxUploaderConfig(FsspecCliFileConfig):
+class BoxUploaderConfig(FsspecCliUploaderConfig):
     pass
 
 

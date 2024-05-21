@@ -138,5 +138,7 @@ add_source_entry(
 
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
-    entry=DestinationRegistryEntry(uploader=BoxUpload, uploader_config=BoxUploaderConfig),
+    entry=DestinationRegistryEntry(
+        uploader=BoxUpload, uploader_config=BoxUploaderConfig, connection_config=BoxConnectionConfig
+    ),
 )
