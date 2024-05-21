@@ -4,6 +4,7 @@ from enum import Enum
 
 class Source(Enum):
     PDFMINER = "pdfminer"
+    OCR_GPT4O = "ocr_gpt4o"
     OCR_TESSERACT = "ocr_tesseract"
     OCR_PADDLE = "ocr_paddle"
     OCR_GOOGLEVISION = "ocr_googlevision"
@@ -28,6 +29,7 @@ SORT_MODE_DONT = "dont"
 OCR_AGENT_TESSERACT_OLD = "tesseract"
 OCR_AGENT_PADDLE_OLD = "paddle"
 
+OCR_AGENT_GPT4O = "unstructured.partition.utils.ocr_models.gpt4o_ocr.OCRAgentGPT4O"
 OCR_AGENT_TESSERACT = "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
 OCR_AGENT_PADDLE = "unstructured.partition.utils.ocr_models.paddle_ocr.OCRAgentPaddle"
 OCR_AGENT_GOOGLEVISION = (
@@ -36,6 +38,7 @@ OCR_AGENT_GOOGLEVISION = (
 
 OCR_AGENT_MODULES_WHITELIST = os.getenv(
     "OCR_AGENT_MODULES_WHITELIST",
+    "unstructured.partition.utils.ocr_models.gpt4o_ocr,"
     "unstructured.partition.utils.ocr_models.tesseract_ocr,"
     "unstructured.partition.utils.ocr_models.paddle_ocr,"
     "unstructured.partition.utils.ocr_models.google_vision_ocr",
