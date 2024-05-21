@@ -21,16 +21,7 @@ class BoxCliDownloadConfig(FsspecCliDownloadConfig):
 
 @dataclass
 class BoxCliIndexerConfig(FsspecCliIndexerConfig):
-    @staticmethod
-    def get_cli_options() -> list[click.Option]:
-        options = [
-            click.Option(
-                ["--remote-url"],
-                required=True,
-                help="Remote fsspec URL formatted as `protocol://dir/path`",
-            ),
-        ]
-        return options
+    pass
 
 
 @dataclass
