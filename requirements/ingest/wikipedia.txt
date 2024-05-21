@@ -21,7 +21,7 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   wikipedia

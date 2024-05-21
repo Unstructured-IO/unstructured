@@ -82,7 +82,7 @@ pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
