@@ -3,7 +3,7 @@ import os
 from unstructured.documents.elements import Text
 from unstructured.embed.voyageai import VoyageAIEmbeddingConfig, VoyageAIEmbeddingEncoder
 
-# To use Voyage AI tou will need to pass Voyage AI API Key (obtained from https://dash.voyageai.com/)
+# To use Voyage AI you will need to pass Voyage AI API Key (obtained from https://dash.voyageai.com/)
 # as the ``api_key`` parameter.
 #
 # The ``model_name`` parameter is mandatory, please check the available models

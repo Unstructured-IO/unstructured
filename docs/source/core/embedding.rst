@@ -249,7 +249,7 @@ The following code block shows an example of how to use ``VoyageAIEmbeddingEncod
 see the updated elements list (with the ``embeddings`` attribute included for each element),
 the embedding vector for the query string, and some metadata properties about the embedding model.
 
-To use Voyage AI tou will need to pass Voyage AI API Key (obtained from https://dash.voyageai.com/)
+To use Voyage AI you will need to pass Voyage AI API Key (obtained from https://dash.voyageai.com/)
 as the ``api_key`` parameter.
 
 The ``model_name`` parameter is mandatory, please check the available models
