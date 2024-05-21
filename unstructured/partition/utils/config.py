@@ -132,6 +132,16 @@ class ENVConfig:
         return self._get_float("EMBEDDED_IMAGE_SAME_REGION_THRESHOLD", 0.6)
 
     @property
+    def EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD(self) -> float:
+        """threshold to determine if an embedded region is a sub-region of a given block
+        when aggregating the text from embedded elements that lie within the given block
+
+        When the intersection region area divided by self area is larger than this threshold self is
+        considered a subregion of the other
+        """
+        return self._get_float("EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD", 0.99)
+
+    @property
     def PDF_ANNOTATION_THRESHOLD(self) -> float:
         """The threshold value (between 0.0 and 1.0) that determines the minimum overlap required
         for an annotation to be considered within the element.
