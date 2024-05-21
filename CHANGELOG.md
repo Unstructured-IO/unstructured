@@ -1,3 +1,13 @@
+## 0.14.2-dev0
+
+### Enhancements
+
+### Features
+
+  * Add attribution to the `pinecone` connector
+
+### Fixes
+
 ## 0.14.1
 
 ### Enhancements
@@ -13,7 +23,8 @@
   * Use the python client when calling the unstructured api for partitioning or chunking
   * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
   * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
-* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Fixes
 
@@ -47,7 +58,7 @@
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
 * **AstraDB: option to prevent indexing metadata**
 * **Fix Missing py.typed**
-  
+
 ## 0.13.7
 
 ### Enhancements

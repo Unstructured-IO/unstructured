@@ -152,7 +152,7 @@ requests==2.32.1
     #   transformers
 safetensors==0.4.3
     # via transformers
-scikit-learn==1.4.2
+scikit-learn==1.5.0
     # via sentence-transformers
 scipy==1.11.3
     # via

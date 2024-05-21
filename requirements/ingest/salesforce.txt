@@ -48,7 +48,7 @@ requests==2.32.1
     #   requests-toolbelt
     #   simple-salesforce
     #   zeep
-requests-file==2.0.0
+requests-file==2.1.0
     # via zeep
 requests-toolbelt==1.0.0
     # via zeep
