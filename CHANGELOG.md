@@ -1,8 +1,21 @@
-## 0.14.1-dev2
+## 0.14.2-dev0
 
-* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+### Enhancements
 
 ### Features
+
+  * Add attribution to the `pinecone` connector
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
 * **Large improvements to the ingest process:**
   * Support for multiprocessing and async, with limits for both.
   * Streamlined to process when mapping CLI invocations to the underlying code
@@ -11,6 +24,7 @@
   * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
   * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
   * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Fixes
 

@@ -4,6 +4,7 @@ import base64
 import os
 import re
 import tempfile
+import unicodedata
 from copy import deepcopy
 from io import BytesIO
 from pathlib import Path, PurePath
@@ -420,3 +421,13 @@ def get_the_last_modification_date_pdf_or_img(
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
     return last_modification_date
+
+
+def remove_control_characters(text: str) -> str:
+    """Removes control characters from text."""
+
+    # Replace newline character with a space
+    text = text.replace("\n", " ")
+    # Remove other control characters
+    out_text = "".join(c for c in text if unicodedata.category(c)[0] != "C")
+    return out_text
