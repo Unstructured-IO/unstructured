@@ -206,7 +206,7 @@ def test_text_extraction_takes_list():
     TextExtractionMetricsCalculator(
         documents_dir=output_dir,
         ground_truths_dir=source_dir,
-    ).on_files(document_paths=output_list).calculate(export_dir=export_dir)
+    ).on_files(relative_document_paths=output_list).calculate(export_dir=export_dir)
 
     # check that only the listed files are included
     assert os.path.isfile(os.path.join(export_dir, "all-docs-cct.tsv"))

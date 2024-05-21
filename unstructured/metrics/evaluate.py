@@ -66,24 +66,25 @@ class BaseMetricsCalculator(ABC):
         self.ground_truths_dir = Path(self.ground_truths_dir).resolve()
 
         # -- auto-discover all files in the directories --
-        self._document_paths = [
+        self._rel_doc_paths = [
             path.relative_to(self.documents_dir) for path in self.documents_dir.rglob("*")
         ]
-        self._ground_truth_paths = [
+        self._rel_ground_truth_paths = [
             path.relative_to(self.ground_truths_dir) for path in self.ground_truths_dir.rglob("*")
         ]
 
     def on_files(
         self,
-        document_paths: Optional[list[str | Path]] = None,
-        ground_truth_paths: Optional[list[str | Path]] = None,
+        relative_document_paths: Optional[list[str | Path]] = None,
+        relative_ground_truth_paths: Optional[list[str | Path]] = None,
     ) -> BaseMetricsCalculator:
         """Overrides the default list of files to process."""
-        if document_paths:
-            self._document_paths = [Path(p) for p in document_paths]
 
-        if ground_truth_paths:
-            self._ground_truth_paths = [Path(p) for p in ground_truth_paths]
+        if relative_document_paths:
+            self._rel_doc_paths = [Path(p) for p in relative_document_paths]
+
+        if relative_ground_truth_paths:
+            self._rel_ground_truth_paths = [Path(p) for p in relative_ground_truth_paths]
 
         return self
 
@@ -140,25 +141,25 @@ class BaseMetricsCalculator(ABC):
             return [
                 row
                 for row in tqdm(
-                    executor.map(self._try_process_document, self._document_paths),
-                    total=len(self._document_paths),
+                    executor.map(self._try_process_document, self._rel_doc_paths),
+                    total=len(self._rel_doc_paths),
                     leave=False,
                     disable=not visualize_progress,
                 )
                 if row is not None
             ]
 
-    def _try_process_document(self, doc: Path) -> Optional[list]:
+    def _try_process_document(self, path: Path) -> Optional[list]:
         """Safe wrapper around the document processing method."""
-        logger.info(f"Processing {doc}")
+        logger.info(f"Processing {path}")
         try:
-            return self._process_document(doc)
+            return self._process_document(path)
         except Exception as e:
-            logger.error(f"Failed to process document {doc}: {e}")
+            logger.error(f"Failed to process document {path}: {e}")
             return None
 
     @abstractmethod
-    def _process_document(self, doc: Path) -> list:
+    def _process_document(self, path: Path) -> list:
         """Should return all metadata and metrics for a single document."""
 
 
@@ -199,17 +200,16 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-table-structure-accuracy.tsv"
 
-    def _process_document(self, doc: Path) -> list:
-        doc_path = Path(doc)
-        out_filename = doc_path.stem
-        doctype = Path(out_filename).suffix[1:]
-        src_gt_filename = out_filename + ".json"
-        connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
+    def _process_document(self, path: Path) -> list:
+        filename = path.stem
+        doctype = get_document_type(path)
+        src_gt_filename = filename + ".json"
+        connector = path.parts[-2] if len(path.parts) > 1 else None
 
-        if src_gt_filename in self._ground_truth_paths:  # type: ignore
+        if src_gt_filename in self._rel_ground_truth_paths:  # type: ignore
             return None
 
-        prediction_file = self.documents_dir / doc
+        prediction_file = self.documents_dir / path
         if not prediction_file.exists():
             logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
             return None
@@ -235,11 +235,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         )
         report_from_cells = processor_from_table_as_cells.process_file()
         return (
-            [
-                out_filename,
-                doctype,
-                connector,
-            ]
+            [filename, doctype, connector]
             + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
             + [getattr(report_from_cells, metric) for metric in self.supported_metric_names]
         )
@@ -322,7 +318,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
         return df
 
     def _validate_inputs(self):
-        if not self._document_paths:
+        if not self._rel_doc_paths:
             logger.info("No output files to calculate to edit distances for, exiting")
             sys.exit(0)
         if self.document_type not in OUTPUT_TYPE_OPTIONS:
@@ -330,18 +326,18 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
                 "Specified file type under `documents_dir` or `output_list` should be one of "
                 f"`json` or `txt`. The given file type is {self.document_type}, exiting."
             )
-        if not all(path.suffixes[-1] == f".{self.document_type}" for path in self._document_paths):
+        if not all(path.suffixes[-1] == f".{self.document_type}" for path in self._rel_doc_paths):
             logger.warning(
                 "The directory contains file type inconsistent with the given input. "
                 "Please note that some files will be skipped."
             )
 
-    def _process_document(self, doc: Path) -> list:
-        filename = doc.stem
-        doctype = doc.suffixes[0]
-        connector = doc.parts[0] if len(doc.parts) > 1 else None
+    def _process_document(self, path: Path) -> list:
+        filename = path.stem
+        connector = path.parts[0] if len(path.parts) > 1 else None
+        doctype = get_document_type(path)
 
-        output_cct, source_cct = self._get_ccts(doc)
+        output_cct, source_cct = self._get_ccts(path)
         # NOTE(amadeusz): Levenshtein distance calculation takes too long
         # skip it if file sizes differ wildly
         if 0.5 < len(output_cct.encode()) / len(source_cct.encode()) < 2.0:
@@ -411,14 +407,14 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self) -> str:
         return "aggregate-scores-element-type.tsv"
 
-    def _process_document(self, doc: Path) -> list:
-        filename = doc.stem
-        doctype = doc.suffixes[0]
-        connector = doc.parts[0] if len(doc.parts) > 1 else None
+    def _process_document(self, path: Path) -> list:
+        filename = path.stem
+        doctype = get_document_type(path)
+        connector = path.parts[0] if len(path.parts) > 1 else None
 
-        output = get_element_type_frequency(_read_text_file(self.documents_dir / doc))
+        output = get_element_type_frequency(_read_text_file(self.documents_dir / path))
         source = get_element_type_frequency(
-            _read_text_file(self.ground_truths_dir / doc.with_suffix(".json"))
+            _read_text_file(self.ground_truths_dir / path.with_suffix(".json"))
         )
         accuracy = round(calculate_element_type_percent_match(output, source), 3)
         return [filename, doctype, connector, accuracy]
