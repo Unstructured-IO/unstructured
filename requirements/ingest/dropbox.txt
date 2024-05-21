@@ -28,7 +28,7 @@ idna==3.7
     #   requests
 ply==3.11
     # via stone
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   dropbox

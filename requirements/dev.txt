@@ -189,7 +189,7 @@ jupyterlab==4.2.0
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
-jupyterlab-server==2.27.1
+jupyterlab-server==2.27.2
     # via
     #   jupyterlab
     #   notebook
@@ -315,7 +315,7 @@ referencing==0.35.1
     #   jsonschema
     #   jsonschema-specifications
     #   jupyter-events
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt

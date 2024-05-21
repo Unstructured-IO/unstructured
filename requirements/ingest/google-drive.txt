@@ -54,7 +54,7 @@ pyparsing==3.0.9
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httplib2
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   google-api-core
