@@ -140,10 +140,13 @@ def merge_inferred_with_extracted_layout(
         elements = []
         for layout_el in merged_layout:
             if layout_el.text is None:
-                layout_el.text = aggregate_embedded_text_by_block(
+                text = aggregate_embedded_text_by_block(
                     text_region=cast("TextRegion", layout_el),
                     pdf_objects=extracted_page_layout,
                 )
+            else:
+                text = layout_el.text
+            layout_el.text = remove_control_characters(text)
             elements.append(layout_el)
 
         inferred_page.elements[:] = elements
@@ -215,6 +218,4 @@ def aggregate_embedded_text_by_block(
         if obj.bbox.is_almost_subregion_of(text_region.bbox, subregion_threshold)
     ]
     text = " ".join([x.text for x in filtered_blocks if x.text])
-    cleaned_text = remove_control_characters(text)
-
-    return cleaned_text
+    return text
