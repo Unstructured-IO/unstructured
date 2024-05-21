@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import fnmatch
-import json
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -26,6 +25,7 @@ from unstructured.ingest.v2.interfaces import (
     UploaderConfig,
 )
 from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.processes.connectors.fsspec.utils import sterilize_dict
 
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem
@@ -84,16 +84,6 @@ FsspecAccessConfigT = TypeVar("FsspecAccessConfigT", bound=FsspecAccessConfig)
 class FsspecConnectionConfig(ConnectionConfig):
     access_config: FsspecAccessConfigT = enhanced_field(sensitive=True, default=None)
     connector_type: str = CONNECTOR_TYPE
-
-
-def convert_datetime(data: dict) -> dict:
-    def json_serial(obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        raise TypeError("Type %s not serializable" % type(obj))
-
-    data_s = json.dumps(data, default=json_serial)
-    return json.loads(data_s)
 
 
 FsspecIndexerConfigT = TypeVar("FsspecIndexerConfigT", bound=FsspecIndexerConfig)
@@ -195,6 +185,10 @@ class FsspecIndexer(Indexer):
             },
         )
 
+    def sterilize_info(self, path) -> dict:
+        info = self.fs.info(path=path)
+        return sterilize_dict(data=info)
+
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         raw_files = self.list_files()
         files = [f for f in raw_files if self.does_path_match_glob(f)]
@@ -206,7 +200,7 @@ class FsspecIndexer(Indexer):
                     filename=Path(file).name,
                     rel_path=file.replace(self.index_config.path_without_protocol, ""),
                     fullpath=file,
-                    additional_metadata=convert_datetime(self.fs.info(path=file)),
+                    additional_metadata=self.sterilize_info(path=file),
                 ),
                 metadata=self.get_metadata(path=file),
             )

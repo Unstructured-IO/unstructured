@@ -3,7 +3,7 @@ import os.path
 from dataclasses import fields, is_dataclass
 from gettext import gettext, ngettext
 from pathlib import Path
-from typing import Any, Optional, Type, TypeVar, Union, get_args, get_origin
+from typing import Any, Optional, Type, TypeVar, Union, get_args, get_origin, get_type_hints
 
 import click
 
@@ -127,8 +127,9 @@ def extract_config(
                 return False
 
         dd = inner_d.copy()
+        resolved_type_hints = get_type_hints(inner_config)
         for field in fields(inner_config):
-            f_type = field.type
+            f_type = resolved_type_hints[field.name]
             # Handle the case where the type of a value if a Union (possibly optional)
             if get_origin(f_type) is Union:
                 union_values = get_args(f_type)
