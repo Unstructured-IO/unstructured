@@ -77,9 +77,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
         pc = Pinecone(api_key=self.connector_config.access_config.api_key)
 
         index = pc.Index(self.connector_config.index_name)
-        logger.debug(
-            f"Connected to index: {pc.describe_index(self.connector_config.index_name)}"
-        )
+        logger.debug(f"Connected to index: {pc.describe_index(self.connector_config.index_name)}")
         return index
 
     @DestinationConnectionError.wrap
