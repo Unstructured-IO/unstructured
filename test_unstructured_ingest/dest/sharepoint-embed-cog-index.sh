@@ -98,7 +98,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --path "Shared Documents" \
   --recursive \
   --embedding-provider "langchain-huggingface" \
-  --chunk-strategy by_title \
+  --chunking-strategy by_title \
   --chunk-multipage-sections \
   --work-dir "$WORK_DIR" \
   azure-cognitive-search \

@@ -10,7 +10,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --output-dir local-output-to-clarifai \
   --strategy fast \
-  --chunk-strategy by_title \
+  --chunking-strategy by_title \
   --num-processes 2 \
   --verbose \
   clarifai \

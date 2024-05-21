@@ -45,7 +45,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --verbose \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --chunk-strategy by_title \
+  --chunking-strategy by_title \
   --chunk-max-characters 1500 \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \

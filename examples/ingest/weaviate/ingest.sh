@@ -16,7 +16,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --reprocess \
   --input-path example-docs/book-war-and-peace-1225p.txt \
   --work-dir weaviate-work-dir \
-  --chunk-strategy by_title \
+  --chunking-strategy by_title \
   --chunk-new-after-n-chars 2500 --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
   weaviate \
