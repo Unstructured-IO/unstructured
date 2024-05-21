@@ -72,6 +72,7 @@ class PineconeDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationC
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def create_index(self) -> "PineconeIndex":
+        import pinecone
         from pinecone import Pinecone
 
         pc = Pinecone(api_key=self.connector_config.access_config.api_key)
