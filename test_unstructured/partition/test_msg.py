@@ -1,5 +1,4 @@
 import os
-import pathlib
 
 import msg_parser
 import pytest
@@ -15,9 +14,6 @@ from unstructured.documents.elements import (
 from unstructured.partition.msg import extract_msg_attachment_info, partition_msg
 from unstructured.partition.text import partition_text
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
-
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_DIRECTORY = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
@@ -37,7 +33,7 @@ ATTACH_EXPECTED_OUTPUT = [
 
 
 def test_partition_msg_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename)
     parent_id = elements[0].metadata.parent_id
 
@@ -65,13 +61,13 @@ def test_partition_msg_from_filename():
 
 
 def test_partition_msg_from_filename_returns_uns_elements():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename)
     assert isinstance(elements[0], NarrativeText)
 
 
 def test_partition_msg_from_filename_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename, metadata_filename="test")
     assert all(element.metadata.filename == "test" for element in elements)
 
@@ -84,21 +80,21 @@ class MockMsOxMessage:
 
 def test_partition_msg_from_filename_with_text_content(monkeypatch):
     monkeypatch.setattr(msg_parser, "MsOxMessage", MockMsOxMessage)
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename)
     assert str(elements[0]) == "Here is an email with plain text."
     assert elements[0].metadata.filename == "fake-email.msg"
-    assert elements[0].metadata.file_directory == EXAMPLE_DOCS_DIRECTORY
+    assert elements[0].metadata.file_directory == example_doc_path("")
 
 
 def test_partition_msg_raises_with_missing_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "doesnt-exist.msg")
+    filename = example_doc_path("doesnt-exist.msg")
     with pytest.raises(FileNotFoundError):
         partition_msg(filename=filename)
 
 
 def test_partition_msg_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     with open(filename, "rb") as f:
         elements = partition_msg(file=f)
     assert elements == EXPECTED_MSG_OUTPUT
@@ -107,7 +103,7 @@ def test_partition_msg_from_file():
 
 
 def test_partition_msg_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     with open(filename, "rb") as f:
         elements = partition_msg(file=f, metadata_filename="test")
     assert elements == EXPECTED_MSG_OUTPUT
@@ -116,21 +112,14 @@ def test_partition_msg_from_file_with_metadata_filename():
 
 
 def test_extract_attachment_info():
-    filename = os.path.join(
-        DIRECTORY,
-        "..",
-        "..",
-        "..",
-        "example-docs",
-        "fake-email-attachment.msg",
-    )
+    filename = example_doc_path("fake-email-attachment.msg")
     attachment_info = extract_msg_attachment_info(filename)
     assert len(attachment_info) > 0
     assert attachment_info == ATTACH_EXPECTED_OUTPUT
 
 
 def test_partition_msg_raises_with_both_specified():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     with open(filename, "rb") as f, pytest.raises(ValueError):
         partition_msg(filename=filename, file=f)
 
@@ -141,7 +130,7 @@ def test_partition_msg_raises_with_neither():
 
 
 def test_partition_msg_from_filename_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename, include_metadata=False)
 
     for i in range(len(elements)):
@@ -149,7 +138,7 @@ def test_partition_msg_from_filename_exclude_metadata():
 
 
 def test_partition_msg_from_file_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg")
+    filename = example_doc_path("fake-email.msg")
     with open(filename, "rb") as f:
         elements = partition_msg(file=f, include_metadata=False)
 
@@ -291,11 +280,8 @@ def test_partition_msg_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_partition_msg_with_pgp_encrypted_message(
-    caplog,
-    filename="example-docs/fake-encrypted.msg",
-):
-    elements = partition_msg(filename=filename)
+def test_partition_msg_with_pgp_encrypted_message(caplog):
+    elements = partition_msg(example_doc_path("fake-encrypted.msg"))
 
     assert elements == []
     assert "WARNING" in caplog.text
@@ -303,7 +289,7 @@ def test_partition_msg_with_pgp_encrypted_message(
 
 
 def test_add_chunking_strategy_by_title_on_partition_msg(
-    filename=os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-email.msg"),
+    filename=example_doc_path("fake-email.msg"),
 ):
     elements = partition_msg(filename=filename)
     chunk_elements = partition_msg(filename, chunking_strategy="by_title")
