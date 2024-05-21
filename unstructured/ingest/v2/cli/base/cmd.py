@@ -132,6 +132,7 @@ class BaseCmd(ABC):
     def get_downloader(src: str, options: dict[str, Any]) -> DownloaderT:
         source_entry = source_registry[src]
         downloader_kwargs: dict[str, Any] = {}
+        print(f"MAPPING FLAT CONFIGS: {options}")
         if downloader_config_cls := source_entry.downloader_config:
             downloader_kwargs["download_config"] = extract_config(
                 flat_data=options, config=downloader_config_cls

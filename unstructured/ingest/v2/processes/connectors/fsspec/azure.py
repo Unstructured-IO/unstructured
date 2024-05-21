@@ -22,9 +22,20 @@ from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecUploader,
     FsspecUploaderConfig,
 )
+from unstructured.ingest.v2.processes.connectors.fsspec.utils import json_serial, sterilize_dict
 from unstructured.utils import requires_dependencies
 
 CONNECTOR_TYPE = "azure"
+
+
+def azure_json_serial(obj):
+    from azure.storage.blob._models import ContentSettings
+
+    if isinstance(obj, ContentSettings):
+        return dict(obj)
+    if isinstance(obj, bytearray):
+        return str(obj)
+    return json_serial(obj)
 
 
 @dataclass
@@ -39,6 +50,10 @@ class AzureAccessConfig(FsspecAccessConfig):
     connection_string: Optional[str] = None
     sas_token: Optional[str] = None
 
+    def __post_init__(self):
+        if self.connection_string is None and self.account_name is None:
+            raise ValueError("either connection_string or account_name must be set")
+
 
 @dataclass
 class AzureConnectionConfig(FsspecConnectionConfig):
@@ -49,7 +64,7 @@ class AzureConnectionConfig(FsspecConnectionConfig):
     connector_type: str = CONNECTOR_TYPE
 
     def get_access_config(self) -> dict[str, Any]:
-        access_configs: dict[str, Any] = self.access_config.to_dict()
+        access_configs: dict[str, Any] = {}
 
         # Avoid injecting None by filtering out k,v pairs where the value is None
         access_configs.update({k: v for k, v in self.access_config.to_dict().items() if v})
@@ -65,6 +80,10 @@ class AzureIndexer(FsspecIndexer):
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def __post_init__(self):
         super().__post_init__()
+
+    def sterilize_info(self, path) -> dict:
+        info = self.fs.info(path=path)
+        return sterilize_dict(data=info, default=azure_json_serial)
 
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
