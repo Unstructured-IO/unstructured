@@ -10,7 +10,7 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
-RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
+RUN apk update && apk add py3.12-pip mesa-gl glib cmake && \
   apk add --allow-untrusted packages/pandoc-3.1.8-r0.apk && \
   apk add --allow-untrusted packages/poppler-23.09.0-r0.apk && \
   apk add --allow-untrusted packages/leptonica-1.83.0-r0.apk && \
@@ -30,13 +30,13 @@ RUN chown -R nonroot:nonroot /app
 
 USER nonroot
 
-RUN find requirements/ -type f -name "*.txt" -exec pip3.11 install --no-cache-dir --user -r '{}' ';'
-RUN pip3.11 install unstructured.paddlepaddle
+RUN find requirements/ -type f -name "*.txt" -exec pip3.12 install --no-cache-dir --user -r '{}' ';'
+RUN pip3.12 install unstructured.paddlepaddle
 
-RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
-  python3.11 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
-  python3.11 -c "from unstructured.partition.model_init import initialize; initialize()" && \
-  python3.11 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
+RUN python3.12 -c "import nltk; nltk.download('punkt')" && \
+  python3.12 -c "import nltk; nltk.download('averaged_perceptron_tagger')" && \
+  python3.12 -c "from unstructured.partition.model_init import initialize; initialize()" && \
+  python3.12 -c "from unstructured_inference.models.tables import UnstructuredTableTransformerModel; model = UnstructuredTableTransformerModel(); model.initialize('microsoft/table-transformer-structure-recognition')"
 
 ENV PATH="${PATH}:/home/nonroot/.local/bin"
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
