@@ -1,27 +1,6 @@
 [
   {
-    "element_id": "614b7a52d42e8e3b66edf4943093c85c",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:09:32+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
-        "version": "306475068461766865312866697521104206816"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "WORLD ASSOCIATION",
-    "type": "Title"
-  },
-  {
-    "element_id": "4ab4d4df6aeb3d4fb6d8102edd876ab8",
+    "element_id": "0847d10886864d40ed825e449a46fa93",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -42,7 +21,7 @@
     "type": "Image"
   },
   {
-    "element_id": "7137c1e14141fad3ad306fe68918a967",
+    "element_id": "cafeff0cc099587f9e7c39ddfd83770c",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:09:32+00:00",
@@ -61,6 +40,27 @@
     },
     "text": "Recalibrating risk",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "d68dd30ef32b681ff404eb9956e608a9",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:09:32+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/recalibrating-risk-report.pdf",
+        "version": "306475068461766865312866697521104206816"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "WORLD ASSOCIATION",
+    "type": "Title"
   },
   {
     "element_id": "dbdc2d6c6381e4fa1c7b8058bf86abef",

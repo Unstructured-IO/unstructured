@@ -1,27 +1,6 @@
 [
   {
-    "element_id": "0128236cd54e6931c27ccea98ad6fc92",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-12T10:10:36+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
-        "version": "177372694731575984083482917563244941766"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 1
-    },
-    "text": "WORLD NUCLEAR",
-    "type": "Title"
-  },
-  {
-    "element_id": "b0e17666072949c5c63fdec1d0e85d97",
+    "element_id": "4d658fc3b2f10a7f0e200c9d40111f97",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36+00:00",
@@ -42,7 +21,7 @@
     "type": "Image"
   },
   {
-    "element_id": "618fa7e35cfb6cbe4ea708a3f9d12c65",
+    "element_id": "d03d2fb61a04669eb2449a7b496c139f",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-12T10:10:36+00:00",
@@ -60,6 +39,27 @@
       "page_number": 1
     },
     "text": "The Silent Giant",
+    "type": "Title"
+  },
+  {
+    "element_id": "8f43a8b5e85b7259cac186d9a3b22a55",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-12T10:10:36+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/Silent-Giant-(1).pdf",
+        "version": "177372694731575984083482917563244941766"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1
+    },
+    "text": "WORLD NUCLEAR",
     "type": "Title"
   },
   {

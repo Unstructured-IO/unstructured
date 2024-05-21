@@ -126,7 +126,7 @@
     "type": "Title"
   },
   {
-    "element_id": "dd334d49b207f297d7d16d33537c8a2a",
+    "element_id": "613e7ef2e4a8ec1aafc1447431b75ae9",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28+00:00",
@@ -143,7 +143,7 @@
       ],
       "page_number": 2
     },
-    "text": "Global growth is projected to fall from an estimated 3.4 percent in 2022 to 2.9 percent in 2023, then rise to 3.1 percent in 2024. The forecast for 2023 is 0.2 percentage point higher than predicted in the October 2022 World Economic Outlook (WEO) but below the historical (2000–19) average of 3.8 percent. The rise in central bank rates to fight inflation and Russia’s war in Ukraine continue to weigh on economic activity. The rapid spread of COVID-19 in China dampened growth in 2022, but the recent reopening has paved the way for a faster-than-expected recovery. Global inflation is expected to fall from 8.8 percent in 2022 to 6.6 percent in 2023 and 4.3 percent in 2024, still above pre-pandemic (2017–19) levels of about 3.5 percent.",
+    "text": " Global growth is projected to fall from an estimated 3.4 percent in 2022 to 2.9 percent in 2023, then rise to 3.1 percent in 2024. The forecast for 2023 is 0.2 percentage point higher than predicted in the October 2022 World Economic Outlook (WEO) but below the historical (2000–19) average of 3.8 percent. The rise in central bank rates to fight inflation and Russia’s war in Ukraine continue to weigh on economic activity. The rapid spread of COVID-19 in China dampened growth in 2022, but the recent reopening has paved the way for a faster-than-expected recovery. Global inflation is expected to fall from 8.8 percent in 2022 to 6.6 percent in 2023 and 4.3 percent in 2024, still above pre-pandemic (2017–19) levels of about 3.5 percent.",
     "type": "ListItem"
   },
   {
@@ -879,7 +879,7 @@
       "page_number": 5
     },
     "text": "Growth in emerging and developing Europe is projected to have bottomed out in 2022 at 0.7 percent and, since the October forecast, has been revised up for 2023 by 0.9 percentage point to 1.5 percent. This reflects a smaller economic contraction in Russia in 2022 (estimated at –2.2 percent compared with a predicted –3.4 percent) followed by modestly positive growth in 2023. At the current oil price cap level of the Group of Seven, Russian crude oil export volumes are not expected to be significantly affected, with Russian trade continuing to be redirected from sanctioning to non-sanctioning countries. In Latin America and the Caribbean, growth is projected to decline from 3.9 percent in 2022 to 1.8 percent in 2023, with an upward revision for 2023 of 0.1 percentage point since October. The forecast revision reflects upgrades of 0.2 percentage point for Brazil and 0.5 percentage point for Mexico due to unexpected domestic demand resilience, higher-than-expected growth in",
-    "type": "NarrativeText"
+    "type": "ListItem"
   },
   {
     "element_id": "e2f761e5fbfa887c5c4654959178dd0e",
@@ -963,7 +963,7 @@
       "page_number": 6
     },
     "text": "Growth in the Middle East and Central Asia is projected to decline from 5.3 percent in 2022 to 3.2 percent in 2023, with a downward revision of 0.4 percentage point since October, mainly attributable to a steeper-than-expected growth slowdown in Saudi Arabia, from 8.7 percent in 2022 (which was stronger than expected by 1.1 percentage points) to 2.6 percent in 2023, with a negative revision of 1.1 percentage points. The downgrade for 2023 reflects mainly lower oil production in line with an agreement through OPEC+ (Organization of the Petroleum Exporting Countries, including Russia and other non-OPEC oil exporters), while non-oil growth is expected to remain robust. In sub-Saharan Africa, growth is projected to remain moderate at 3.8 percent in 2023 amid prolonged fallout from the COVID-19 pandemic, although with a modest upward revision since October, before picking up to 4.1 percent in 2024. The small upward revision for 2023 (0.1 percentage point) reflects Nigeria’s rising growth in 2023 due to measures to address insecurity issues in the oil sector. In South Africa, by contrast, after a COVID-19 reopening rebound in 2022, projected growth more than halves in 2023, to 1.2 percent, reflecting weaker external demand, power shortages, and structural constraints.",
-    "type": "NarrativeText"
+    "type": "ListItem"
   },
   {
     "element_id": "c4ed38259052e804c28ab9511fb83709",
@@ -1635,31 +1635,10 @@
       "page_number": 8
     },
     "text": "Debt distress: Since October, sovereign spreads for emerging market and developing economies have modestly declined on the back of an easing in global financial conditions (Box 1) and dollar depreciation. About 15 percent of low-income countries are estimated to be in debt distress, with an additional 45 percent at high risk of debt distress and about 25 percent of emerging market economies also at high risk. The combination of high debt levels from the pandemic, lower growth, and higher borrowing costs exacerbates the vulnerability of these economies, especially those with significant near-term dollar financing needs. Inflation persisting: Persistent labor market tightness could translate into stronger-than-expected wage growth. Higher-than-expected oil, gas, and food prices from the war in Ukraine or from a faster rebound in China’s growth could again raise headline inflation and pass through into underlying inflation. Such developments could cause inflation expectations to de-anchor and require an even tighter monetary policy.",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "5c53b2d3f514a92cc6c099fd9a46b49a",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2023-02-14T07:31:28+00:00",
-        "record_locator": {
-          "protocol": "s3",
-          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
-        },
-        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
-        "version": "265756457651539296174748931590365722430"
-      },
-      "filetype": "application/pdf",
-      "languages": [
-        "eng"
-      ],
-      "page_number": 8
-    },
-    "text": "Sudden financial market repricing: A premature easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy.",
     "type": "ListItem"
   },
   {
-    "element_id": "e3c931f10a12b33fb9aeb6427a16c7ae",
+    "element_id": "73e8555a2d0768782c4c94c36221bbf9",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28+00:00",
@@ -1676,8 +1655,29 @@
       ],
       "page_number": 8
     },
-    "text": "Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing",
-    "type": "NarrativeText"
+    "text": " Sudden financial market repricing: A premature easing in financial conditions in response to lower headline inflation data could complicate anti-inflation policies and necessitate additional monetary tightening. For the same reason, unfavorable inflation data releases could trigger sudden repricing of assets and increase volatility in financial markets. Such movements could strain liquidity and the functioning of critical markets, with ripple effects on the real economy.",
+    "type": "ListItem"
+  },
+  {
+    "element_id": "255232a37bda4674ceb009a3fc7ca911",
+    "metadata": {
+      "data_source": {
+        "date_modified": "2023-02-14T07:31:28+00:00",
+        "record_locator": {
+          "protocol": "s3",
+          "remote_file_path": "utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf"
+        },
+        "url": "s3://utic-dev-tech-fixtures/small-pdf-set/2023-Jan-economic-outlook.pdf",
+        "version": "265756457651539296174748931590365722430"
+      },
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 8
+    },
+    "text": "Geopolitical fragmentation: The war in Ukraine and the related international sanctions aimed at  pressuring Russia to end hostilities are splitting the world economy into blocs and reinforcing",
+    "type": "ListItem"
   },
   {
     "element_id": "84d70cebf2068479ad03b1f4fca89141",
@@ -2037,7 +2037,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "2ae3be4a3aa90a31eea5a5a306d3837c",
+    "element_id": "24de91eb31f39fc478cf4157b0df2f89",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28+00:00",
@@ -2054,7 +2054,7 @@
       ],
       "page_number": 10
     },
-    "text": "distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential. Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non– Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes.",
+    "text": "distribution of vaccines and treatments. Public support for the development of new vaccine technologies and the design of systematic responses to future epidemics also remains essential.  Addressing debt distress: Progress has been made for countries that requested debt treatment under the Group of Twenty’s Common Framework initiative, and more will be needed to strengthen it. It is also necessary to agree on mechanisms to resolve debt in a broader set of economies, including middle-income countries that are not eligible under the Common Framework. Non– Paris Club and private creditors have a crucial role to play in ensuring coordinated, effective, and timely debt resolution processes.",
     "type": "NarrativeText"
   },
   {
@@ -2079,7 +2079,7 @@
     "type": "ListItem"
   },
   {
-    "element_id": "366056038aacb60e1ce242fff64e54ba",
+    "element_id": "1d57759d5884a2e517c80fd3a5542db3",
     "metadata": {
       "data_source": {
         "date_modified": "2023-02-14T07:31:28+00:00",
@@ -2096,7 +2096,7 @@
       ],
       "page_number": 10
     },
-    "text": "Using the global financial safety net: With the cascading of shocks to the global economy, using the global financial safety net to its fullest extent is appropriate, including by proactively utilizing the IMF’s precautionary financial arrangements and channeling aid from the international community to low-income countries facing shocks.",
+    "text": " Using the global financial safety net: With the cascading of shocks to the global economy, using the global financial safety net to its fullest extent is appropriate, including by proactively utilizing the IMF’s precautionary financial arrangements and channeling aid from the international community to low-income countries facing shocks.",
     "type": "ListItem"
   },
   {
