@@ -61,11 +61,6 @@ def test_partition_docx_from_filename(
         assert {element.metadata.detection_origin for element in elements} == {"docx"}
 
 
-def test_partition_docx_from_filename_with_metadata_filename(mock_document_file_path: str):
-    elements = partition_docx(mock_document_file_path, metadata_filename="test")
-    assert all(element.metadata.filename == "test" for element in elements)
-
-
 def test_partition_docx_with_spooled_file(
     mock_document_file_path: str, expected_elements: list[Text]
 ):
@@ -90,16 +85,6 @@ def test_partition_docx_from_file(mock_document_file_path: str, expected_element
     assert elements == expected_elements
     for element in elements:
         assert element.metadata.filename is None
-
-
-def test_partition_docx_from_file_with_metadata_filename(
-    mock_document_file_path: str, expected_elements: list[Text]
-):
-    with open(mock_document_file_path, "rb") as f:
-        elements = partition_docx(file=f, metadata_filename="test")
-    assert elements == expected_elements
-    for element in elements:
-        assert element.metadata.filename == "test"
 
 
 def test_partition_docx_uses_file_path_when_both_are_specified(
@@ -221,21 +206,37 @@ def test_partition_docx_detects_lists():
     assert sum(1 for e in elements if isinstance(e, ListItem)) == 10
 
 
-def test_partition_docx_from_filename_exclude_metadata():
+# -- `include_metadata` arg ----------------------------------------------------------------------
+
+
+def test_partition_docx_from_filename_excludes_metadata_when_so_instructed():
     elements = partition_docx(example_doc_path("handbook-1p.docx"), include_metadata=False)
-
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
+    assert all(e.metadata.to_dict() == {} for e in elements)
 
 
-def test_partition_docx_from_file_exclude_metadata(mock_document_file_path: str):
-    with open(mock_document_file_path, "rb") as f:
-        elements = partition_docx(file=f, include_metadata=False)
+def test_partition_docx_from_file_excludes_metadata_when_so_instructed():
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        assert all(
+            element.metadata.to_dict() == {}
+            for element in partition_docx(file=f, include_metadata=False)
+        )
 
-    assert elements[0].metadata.filetype is None
-    assert elements[0].metadata.page_name is None
-    assert elements[0].metadata.filename is None
+
+# -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_docx_from_filename_prefers_metadata_filename_when_provided():
+    elements = partition_docx(example_doc_path("simple.docx"), metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        elements = partition_docx(file=f, metadata_filename="test")
+    assert all(element.metadata.filename == "test" for element in elements)
+
+
+# -- .metadata.last_modified ---------------------------------------------------------------------
 
 
 def test_partition_docx_metadata_date(mocker: MockFixture):
@@ -305,6 +306,9 @@ def test_partition_docx_from_file_without_metadata_date():
         elements = partition_docx(file=sf, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified is None
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def test_get_emphasized_texts_from_paragraph(
