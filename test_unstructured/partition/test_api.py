@@ -175,8 +175,11 @@ def test_partition_via_api_with_no_strategy():
         filename=filename,
         strategy="auto",
         api_key=get_api_key(),
+        skip_infer_table_types=["pdf"],
     )
-    elements_hi_res = partition_via_api(filename=filename, strategy="hi_res", api_key=get_api_key())
+    elements_hi_res = partition_via_api(
+        filename=filename, strategy="hi_res", api_key=get_api_key(), skip_infer_table_types=["pdf"]
+    )
 
     # confirm that hi_res strategy was not passed as default to partition by comparing outputs
     # elements_hi_res[3].text =
