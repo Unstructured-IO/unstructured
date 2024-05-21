@@ -58,13 +58,13 @@ googleapis-common-protos==1.63.0
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.63.0
+grpcio==1.64.0
     # via
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.0
+huggingface-hub==0.23.1
     # via
     #   timm
     #   tokenizers
@@ -220,7 +220,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.0
+rapidfuzz==3.9.1
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -228,7 +228,7 @@ regex==2024.5.15
     # via
     #   -c ./base.txt
     #   transformers
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./base.txt
     #   google-api-core

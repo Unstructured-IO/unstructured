@@ -34,7 +34,7 @@ python-dateutil==2.9.0.post0
     #   pinecone-client
 pyyaml==6.0.1
     # via pinecone-client
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client

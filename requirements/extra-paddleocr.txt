@@ -168,13 +168,13 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.9.0
+rapidfuzz==3.9.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
 rarfile==4.2
     # via visualdl
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./base.txt
     #   premailer
