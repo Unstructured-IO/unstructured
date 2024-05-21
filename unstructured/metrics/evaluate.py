@@ -49,6 +49,27 @@ AGG_HEADERS = ["metric", "average", "sample_sd", "population_sd", "count"]
 OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
+def get_document_type(path: Path) -> str:
+    """Extracts the document type from the filename.
+
+    The document type is assumed to be the second-to-last suffix in the filename.
+    This is because of two reasons:
+    1. Evaluated document names are expected to always have two extensions.
+        Partitioned files are supposed to have the ".json" extension and
+        ground truth files can have either ".txt" or ".json".
+    2. The filename can theoretically have multiple dots in their base name
+        (which should not be treated as extensions).
+
+    Args:
+        path: Path to the document file
+
+    Returns:
+        The document type extracted from the filename
+    """
+    extension = path.suffixes[-2]
+    return extension[1:] if extension.startswith(".") else extension
+
+
 @dataclass
 class BaseMetricsCalculator(ABC):
     """Foundation class for specialized metrics calculators.
