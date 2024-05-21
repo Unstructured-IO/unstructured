@@ -1,0 +1,242 @@
+[
+  {
+    "type": "CompositeElement",
+    "element_id": "36385872440a208d3521a8a885d5f873",
+    "text": "US Trustee Handbook\n\nCHAPTER 1\n\nINTRODUCTION\n\nCHAPTER 1 \u2013 INTRODUCTION\n\nA.\tPURPOSE",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "emphasized_text_contents": [
+        "CHAPTER 1",
+        "INTRODUCTION"
+      ],
+      "emphasized_text_tags": [
+        "b",
+        "b"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJztlU1v2jAYx79K5PMgifNm71Z1leilIAqnFkWO/RiiJnbkOBsd4rvPhtK1E4dt0qQx7RQ/74//P1l52CFooAVly1qgjwFKODBKuIRIZAXJc8oqwDxNMkllFgmGPgSoBcsEs8zl75A/lL0eDIeD3YFp676vterLl6SHHWq18OEkiQnZr1wPA1wbUTaaM6vNsZLZjV8h3OgWQjMoBSb8os1TOKjemoHbwYB4b8CWtV0DI6F5H26YEpXWT6O4GzvHFu33bpKsG7DPnR+PWNc1tZvotgs/KzHWHaht20htWmb7kZay5uBKB6/I2M0WndEc3HXUum3Gp4gXYQNMgCml1tZ9TgM6U7fMPPuEhqn1wNbQewUQqDVa+XUsbK3PXN4HCzP0FiCYvOztq06NJof2yFX8SEgKSgkTaSogo1lW0IRgUeTuUFQVJvzyCEHbbVhffwVRenVKrpV19z0Kdz25mi1u5kGMVmdSLVsf06pD+A+xPoPSeTvnKdXQVuDVid/C/b70G6SL2jZwjmhFRERFlnIBmJBIFEwkNM8hYhHnVVX9Y0Rv7xbz6afl9eJ2endJUN/t/VNckyzPCEtlgYXDWUkc5RyqnCcYA5X48rj+LShe31fwOOAoToJfZsNzwAWN3W8uTomgKc6KIk5S8GYS0/Q/m99lczV+tLPlfDa9vzlDYvUNQ4PhWg=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "4b484865316731b8db65bd89fae5107a",
+    "text": "The United States Trustee appoints and supervises standing trustees and monitors and supervises cases under chapter 13 of title 11 of the United States Code.  28 U.S.C. \u00a7 586(b).  The Handbook, issued as part of our duties under 28 U.S.C. \u00a7 586, establishes or clarifies the position of the United States Trustee Program (Program) on the duties owed by a standing trustee to the debtors, creditors, other parties in interest, and the United States Trustee.  The Handbook does not present a full and",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJx1VNtu2zAM/RXCTymQOnHTdtn2tgLFnoail6etCGSJjoXKkiFRuaDov490krVdWiCIbfF2eHio388FOuzQ08Ka4hsUyjSzy+qinmE9PTPTaXN2oefn83M01Vx/xaYYQ9EhKaNIsf9zIS+LFHLUOHz3GDubkg0+LfZOv5+LLhgxz2bVfP7yyDki6hDNwgWtKMRdpKJWIEza0OEkZu8xTtYhPk2yTxSzphzRvP/Ajep6h6cm6DRplTd1CE+nVV/ywaZ4eeFKjXVI2x6H7vreWa7I6CYrb8rQo990rgmxU5ROQ9NYjRyahZGSa5s+Bo3cjl92rjxYhASn/DKrJSZpsEC/LKStnk8WPnc1Sk+V1CfckNS+bxEevCU0cEeKMMF9zIkQgVEF6ykB44eUmcGVTWxPxAdcGWjnuHPoAicJ8chbK/nP3mAE3aqe+FnNIDRAlhxCVQ3vRyiueDQlwNkcHsq78qqEP3k6VV/gYn45qk/YIsB/7qkdA882c7BK0KtIkpJnDyaT/Vf9o1RjQG6ndja17BcYolPRNhIkkPqQrEzlY4gHom5iWEbVwWj/cgIcIe778mHNMfUW1BF1QGHniLVwNwbN6rG718CGOHQjOaznH3PHcMcDxZ/C+Y8aMIFtPhD0HMwqYRhNdm5IooPIlFCA0bBvh06dWn8HS5DakJ0Z4muEnHYccye5TjzAzLEsU3C4VA6kgIq6HXIrr9w22bTHc9R6xw/J2ajOOqsirC21nMLhSnlBG1hAsq8HSD+Uf4q5J70dxDGGa+Sxctnb7HDweuNxIwtieBlhNJhPhLUtyGI7qF/9ohh3jIpSpW8GzKJ8L5XZWTX+REB8elVel7dvTsvLkToZzUSld8fLwpjQa5YnL6URBTTBubBmyEoTLzrc254HbngaokQjs6fWpteR1pmEEYYryWQ2mnniCFYPdOwll9e2lPvgcMX8UjHyBbPCe9n7l8e/SDHcqA=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "3730ef4e66125803e3f525f35cc85a4d",
+    "text": "complete statement of the law; it should not be used as a substitute for legal research and analysis.  The standing trustee must be familiar with relevant provisions of the Bankruptcy Code, Federal Rules of Bankruptcy Procedure (Rules), any local bankruptcy rules, and case law.  11 U.S.C. \u00a7 321, 28 U.S.C. \u00a7 586, 28 C.F.R. \u00a7 58.6(a)(3).  Standing trustees are encouraged to follow Practice Tips identified in this Handbook but these are not considered mandatory.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJx1VNtu2zAM/RXCTymQOnHTdtn2tgLFnoail6etCGSJjoXKkiFRuaDov490krVdWiCIbfF2eHio388FOuzQ08Ka4hsUyjSzy+qinmE9PTPTaXN2oefn83M01Vx/xaYYQ9EhKaNIsf9zIS+LFHLUOHz3GDubkg0+LfZOv5+LLhgxz2bVfP7yyDki6hDNwgWtKMRdpKJWIEza0OEkZu8xTtYhPk2yTxSzphzRvP/Ajep6h6cm6DRplTd1CE+nVV/ywaZ4eeFKjXVI2x6H7vreWa7I6CYrb8rQo990rgmxU5ROQ9NYjRyahZGSa5s+Bo3cjl92rjxYhASn/DKrJSZpsEC/LKStnk8WPnc1Sk+V1CfckNS+bxEevCU0cEeKMMF9zIkQgVEF6ykB44eUmcGVTWxPxAdcGWjnuHPoAicJ8chbK/nP3mAE3aqe+FnNIDRAlhxCVQ3vRyiueDQlwNkcHsq78qqEP3k6VV/gYn45qk/YIsB/7qkdA882c7BK0KtIkpJnDyaT/Vf9o1RjQG6ndja17BcYolPRNhIkkPqQrEzlY4gHom5iWEbVwWj/cgIcIe778mHNMfUW1BF1QGHniLVwNwbN6rG718CGOHQjOaznH3PHcMcDxZ/C+Y8aMIFtPhD0HMwqYRhNdm5IooPIlFCA0bBvh06dWn8HS5DakJ0Z4muEnHYccye5TjzAzLEsU3C4VA6kgIq6HXIrr9w22bTHc9R6xw/J2ajOOqsirC21nMLhSnlBG1hAsq8HSD+Uf4q5J70dxDGGa+Sxctnb7HDweuNxIwtieBlhNJhPhLUtyGI7qF/9ohh3jIpSpW8GzKJ8L5XZWTX+REB8elVel7dvTsvLkToZzUSld8fLwpjQa5YnL6URBTTBubBmyEoTLzrc254HbngaokQjs6fWpteR1pmEEYYryWQ2mnniCFYPdOwll9e2lPvgcMX8UjHyBbPCe9n7l8e/SDHcqA==",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9eeea30e62f966adc8623756fde370c7",
+    "text": "Nothing in this Handbook should be construed to excuse the standing trustee from complying with all duties imposed by the Bankruptcy Code and Rules, local rules, and orders of the court.  The standing trustee should notify the United States Trustee whenever the provision of the Handbook conflicts with the local rules or orders of the court.  The standing trustee is accountable for all duties set forth in this Handbook, but need not personally perform any duty unless otherwise indicated.  All",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJyVUk1v2zAM/SuEz4kTN82S7Lb1slMPa3vqikCW6FioLHkSlcQo8t9HOmnRFcWA3SR+vffI9/hSoMMOPW2tKb5CsVrUmy96szArtVk3G1NfXS+XV2p53SyWq3o9LyZQdEjKKFJc/1LIY5tCjhrHf4+xsynZ4NP2UvT4UnTBSHqxqNbr0xPPiKhDNFsXtKIQz52KWqEwa0OHs5i9xzg7hPg8yz5RzJpyRPP3B4+q6x1OTdBp1ipv6hCep1VfcuBYnE6M1FiHNPQCX6i+d5YRmd1s700ZevTHzjUhdorSNDSN1citWTZSMrbpY9DIcvyuc+VrRpbglN9ltcMkAgv0u0Jk9RzZ+tzVKJoqwSc8kmDfBmp5DFgP/Ejw48IWUhuyM1Aj6DBqQwMUAI86J+RahERcK72cTIQITQwdV7P0QcIHSy0o58BkspjAdn1IPKUexvbvyj/H3JMe4IbvADwMfmaHaQKyfwfx/JE4S8aYIDRjp+a7Uglw/xmJC28fyDZnoAdviWHvSBGzuL/UHVr0uMc4lvA+91bc8QrxtgYW3/BxKJ3lSO4dOyb2P9x4v0pzhSdVO94Xd7/bT0KSEKN8PMYE6kzgEUddwGZOwXPnIE+xCS9pkDEDZM+0mA1ziQfLl7JMgb2Fhkl9YzAmRZnNPUDEBiN6Laf5eP0xJ/f+5FITqCp4KO/KmxJ+5flcraCaV8DsE/4uJ/+iIBZ9df2tipE9v8d7seLp6Q+7i2fd"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6f3826b74e8ceab42c39004920df9d73",
+    "text": "statutory references in this Handbook refer to the Bankruptcy Code, 11 U.S.C. \u00a7 101 et seq., unless otherwise indicated.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJyVUk1v2zAM/SuEz4kTN82S7Lb1slMPa3vqikCW6FioLHkSlcQo8t9HOmnRFcWA3SR+vffI9/hSoMMOPW2tKb5CsVrUmy96szArtVk3G1NfXS+XV2p53SyWq3o9LyZQdEjKKFJc/1LIY5tCjhrHf4+xsynZ4NP2UvT4UnTBSHqxqNbr0xPPiKhDNFsXtKIQz52KWqEwa0OHs5i9xzg7hPg8yz5RzJpyRPP3B4+q6x1OTdBp1ipv6hCep1VfcuBYnE6M1FiHNPQCX6i+d5YRmd1s700ZevTHzjUhdorSNDSN1citWTZSMrbpY9DIcvyuc+VrRpbglN9ltcMkAgv0u0Jk9RzZ+tzVKJoqwSc8kmDfBmp5DFgP/Ejw48IWUhuyM1Aj6DBqQwMUAI86J+RahERcK72cTIQITQwdV7P0QcIHSy0o58BkspjAdn1IPKUexvbvyj/H3JMe4IbvADwMfmaHaQKyfwfx/JE4S8aYIDRjp+a7Uglw/xmJC28fyDZnoAdviWHvSBGzuL/UHVr0uMc4lvA+91bc8QrxtgYW3/BxKJ3lSO4dOyb2P9x4v0pzhSdVO94Xd7/bT0KSEKN8PMYE6kzgEUddwGZOwXPnIE+xCS9pkDEDZM+0mA1ziQfLl7JMgb2Fhkl9YzAmRZnNPUDEBiN6Laf5eP0xJ/f+5FITqCp4KO/KmxJ+5flcraCaV8DsE/4uJ/+iIBZ9df2tipE9v8d7seLp6Q+7i2fd",
+      "is_continuation": true
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "2eda2c36d153971dee6732c17841847a",
+    "text": "This Handbook does not create additional rights against the standing trustee or United States Trustee in favor of other parties.\n\nB.\tROLE OF THE UNITED STATES TRUSTEE",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "orig_elements": "eJztU0uP0zAQ/isjn2neaRNurAhaJLSLtulpWVWOPU6sJnZkO6Vo1f+OvXSlguDAfW+xZ758jxk/PhMccULl9pKT90AQN2my7mjCsyLZ1EmRiERgXdapoDntCvIOyISOcuqo738m4WNv9WIYvpxnNJO0Vmpl95emx2cyaR7KeZ5W1fnJ/8Mg04bvR82o0+YXkrohSIgHPWFsFqXQxN+1OcSLss4szC0G+e8HPNFpHnHFNbPxQBXvtD6s0jnyFydyPnsmIUd0P+ZAT+g8j9IzenXxUfFIz6hO0yi0maizKy2EZOihS0gk8tx8Npqht6P6aYxeKyGEkap+oT3aYJCg6kmwNfubvVqmDoOnNPA7PLnA3Q7Swu1FInCNFpR2wAxSh0A5l0EWHcHIfnAWaE+ltwpuQLDO47wG8M6tQwRtYKekQw5b5+EW2ktBKhD06MtagPZQAzM1TqKNgujXHO6oMT6FI7ZBnFf55xrUdcLXVVJuumxdCV6IIis6XtCSdWXJ6/xtDf69BtdDvw79q2+78dM+/C3wImfc70Dd5VnH67RgWc5F3VV1VZUsKd8C/593l12P4Cb65h7uvzRw/wna2wZ2d5/b5iNs2w9ts4X2Ybdtm+Z6Tq10I5Lz009QrsIj"
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "d915c544c4c9e87377963581aa113103",
+    "text": "The Bankruptcy Reform Act of 1978 removed the bankruptcy judge from the responsibilities for daytoday administration of cases.  Debtors, creditors, and third parties with adverse interests to the trustee were concerned that the court, which previously appointed and supervised the trustee, would not impartially adjudicate their rights as adversaries of that trustee. To address these concerns, judicial and administrative functions within the bankruptcy system were bifurcated.",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJxdUkuP2jAQ/iujnCEQKIXtrVXPPVTcVivk2BPiEnussc1DiP/eccL2sZfI8cx8L8/rvcIBHfp0sKb6AlXT7Zpd15hta5abpVo2643qupfPq+W2+4SrTTWDymFSRiUl/feqHA6RMmsc/wOyszFa8vHwbHq9V45MKa/XzW73eBMMRk1sDgNplYinSZX6ImHRk8MFZ++RFxfi0yL7mDjrlBnN/z94VS4MODek46JX3rREp3kTarm4Vo+HMHV2wHQLhb5SIQxWGEXd4uxNTQH91Q0dsVMpzqnrrEYZzSWRWrhNYNIodvzRDfV7pYQwKH/M6oixGKzQH6tiK8jNwWfXYvG0KvwJr6lw73uEb8qfOIekb/ATCyt81Qmog+ZluwNGR2c0kKSz/dv5K5sjQsfkxgpjDBKube1gk8UIggNG3RLJB5Rx1ltJaDRZoLWKGGuA79hK0nEGWoKz01ECE0zLBoLiEexiUy8gZ+SIYH1CoUsREo3cEnxMiHCRa9DkNbIfBas01rXsQZrBpbe6h8B4tpTjIKpCoAJmRsaYZUnONj6tPkFljPJgwFMC60Y9aiizRgIoj4al2zKwPfYiScWnTsVFuDidZExoNexJ6kbkxzIX/+gV2yOgoI9q/k3sLDlnr0t0UxTWf3yNeBN4NyXQ2k72XpSZuqzE+5b9UDyB7cvTP95+AzyBOSk="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "36e1997b0c7d7f4bb271f757bf0165c0",
+    "text": "Many administrative functions formerly performed by the court were placed within the Department of Justice through the creation of the Program.  Among the administrative functions assigned to the United States Trustee were the appointment and supervision of chapter 13 trustees./  This Handbook is issued under the authority of the Program\u2019s enabling statutes. \n\nC.\tSTATUTORY DUTIES OF A STANDING TRUSTEE\t",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJztUk1P3DAQ/SujnEuy2WUD6Q0V2lKpULHZQwVo5cSTxCKxLXsMu0L73zvOLlKL1EvPvXm+/N6bN/evCQ44oqaNkslHSOpiLk7zZdGUhWjP5stZWcxlWS5KOUNZLE6TD5CMSEIKEtz/msTHxpvgGpxii25U3iuj/ebYdP+ajEbG8mKRn5/vH/kPh41xcjOYRpBxh0lBfaSQ9WbEzAWt0WUvxj1lQXtyoaHgUP4Z4FaMdsATaRqf9ULL2pink9ymnNgm+z0jtWpA2tkInwhrB8WIzC571jI1FvV2HFrjRkH+xLStapBHQ9xIytjSOtMgy9HdOKRvlbiEQeguiA59FJig7pIoy3Jmo8NYY9Q0j/iEW4rY34XegZCj0ooFMIdnhDboJpLxECmgG3bA+5veEuodUI/Q8G4JXtAh2EEwPXhR1Cs9FS/RCkeRE5gWvgVPLIArzoSuP4w7nPTGeox/ONM5MaYAF6PR3ZT7KyvByjvNkGSmxrVWxNGKBKGHyjEe4oHb9I+1RukDHfYCfGA1z8of4ZteWEIH+QLoMOrTDKDqlYevR++A33w+gVGCltw8/RuoN07R7p2IhzCf5aUH1KIe2CLwTCwwtRSiRW+u3wh3UFZFK9iT90d/Wpb5PC+XizNRlzXOlohLgSXmQspCnBX/j/5fj/5T+kCr6qJaV7d3P+FyXV1freD2M1wAZ28ur2++QHW3XlVXVw/0u2WVogGT/eMv4ASdHw=="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "6af0314792236b9c87f69fadd2c49ebf",
+    "text": "The standing trustee has a fiduciary responsibility to the bankruptcy estate.  The standing trustee is more than a mere disbursing agent.  The standing trustee must be personally involved in the trustee operation.  If the standing trustee is or becomes unable to perform the duties and responsibilities of a standing trustee, the standing trustee must immediately advise the United States Trustee.  28 U.S.C. \u00a7 586(b), 28 C.F.R. \u00a7 58.4(b) referencing 28 C.F.R. \u00a7 58.3(b).",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJx1Ustu2zAQ/JWFTi1gU/IjttprgAK99NA4pzQwVuTKJsyHwIdrw/C/d6nUQFK4Jz52Z3ZmyJdLRYYsubTVqvoK1bz9slbLvuuWs4VcN/jQrtu2b5oW16uVbOfVBCpLCRUm5P5LVTbb6HOQNJ4HClbHqL2L279NL5fKelXKi8Wsba+vzBFI+qC2xktMPrwhMe2LhHrvLdUhO0eh/u3Doc4uppBlyoHUxwOd0A6GpsrLWO/Rqc77w3Q2CL44VdcrT+q1oXQeyvgKh8Fonsjq6qNTwg/kTtb0PlhMcer7XktiaC6JCJ6thuAlsR23s0bcKiUEg26XcUexGKzI7apia+Cbrcu2o+JpXuYnOqUye7MniIklMhewg5iIYI8REHqtstQYzhAoDpyc7rTR6QzJQ2JYh+4Q8pDkGYgpEgmAu3Q6gvWBGISOeS3xXunY5VAcAItjW//BWl6gI+AHjN6hMWfQ7ujNkRRvRh23Vo4tjCEy1/d+LN2T4gPzSX7MCNlhZ6j4YWiJewSpnDQXGfnReLn0PRv4l3Vyf9YoXVtLSnM4LBzVUUcam5+dTuzgqcQWYfOGYN3zFp7Fk3gU8Cs3Da7hoV196j5PSuFRfBM/3xXEkisssec8nSyT7zUtuEmUr3H7bT8wlJiOtClf4Pr6B/mZL3k="
+    }
+  },
+  {
+    "type": "CompositeElement",
+    "element_id": "9db06205c9d90fede41d1b77d56d26d8",
+    "text": "Although this Handbook is not intended to be a complete statutory reference, the standing trustee\u2019s primary statutory duties are set forth in 11 U.S.C. \u00a7 1302, which incorporates by reference some of the duties of chapter 7 trustees found in 11 U.S.C. \u00a7 704.  These duties include, but are not limited to, the following:\n\nCopyright",
+    "metadata": {
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/handbook-1p.docx"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      },
+      "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "orig_elements": "eJztUs1u2zAMfhXB59axnXZ2ehsKDDvtsu7UFoYsUbFQWRQkqk1R5N1HpcmWDtsb7CaKP98Pef9WgYMFPI1WVzei2nwy3VU3NRPIaehgbXRj+s0a+mEaho3pqgtRLUBSS5Jc/1aVx5gwRwWHOEBcbEoWfRqPRfdv1YK6pNfrdhj2jzwjgsKoR4dKEsb3TklzobCacYFVzN5DXL1gfFplnyhmRTmC/hjATi7BwaVGlVaz9HpCfLpsQ80fu2q/ZyRjHdBrKPCVDMFZRmR2q2evawzgd4szGBdJ6RKNsQq4NRdHasbWIaICluO3i6tPmWKCk36b5RZSEViB31ZFVuCf0edlgqKpK/gEOyrYnx3NmLezoNkm8fXIVfDbIwnrCbwGLQjFBEIKhUUYgUgkKbNHryKCgQhewQXPOCS8ZmKC7UgE8JC7pt0kEaJdJJf/btSZLCQhIzcBCZZLMyOKthU/6u/1bS0ectPIXrTrprsQL7NVJc8bChglcet0hi4S70egOZA4juZIzTIQRNGf+CQGyl7/Fahvrmoh7mZIv0YwnsuatU2ZDlSLLc4ulg6uvGs26By+sOibsoPTWr/JyDTtM9wVr9n0P6/6Sm+G5lpuejVMCpTqu3a6buXQGuiaaa3/X/XxqmeQGuJoEHmV4wngeFH/OPvzI7/F8Brtdqbz9Xw5TKv2jz8BszGI3w=="
+    }
+  }
+]
