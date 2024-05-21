@@ -59,6 +59,7 @@ all_tests=(
   'local-embed-bedrock.sh'
   'local-embed-octoai.sh'
   'local-embed-vertexai.sh'
+  'local-embed-voyageai.sh'
   'sftp.sh'
   'mongodb.sh'
   'opensearch.sh'

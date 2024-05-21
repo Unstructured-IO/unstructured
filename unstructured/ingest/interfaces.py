@@ -234,6 +234,13 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-voyageai":
+            from unstructured.embed.voyageai import (
+                VoyageAIEmbeddingConfig,
+                VoyageAIEmbeddingEncoder,
+            )
+
+            return VoyageAIEmbeddingEncoder(config=VoyageAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
