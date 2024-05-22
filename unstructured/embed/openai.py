@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class OpenAIEmbeddingConfig(EmbeddingConfig):
     api_key: str
     model_name: str = "text-embedding-ada-002"
-    openai_api_base: Optional[str] = "https://api.openai.com/v1"
+    openai_api_base: Optional[str] = None 
     openai_api_type: Optional[str] = None 
 
 
@@ -74,10 +74,15 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         """Creates a langchain OpenAI python client to embed elements."""
         from langchain_community.embeddings import OpenAIEmbeddings
 
-        openai_client = OpenAIEmbeddings(
-            openai_api_key=self.config.api_key,
-            model=self.config.model_name,  # type:ignore
-            openai_api_base=self.config.openai_api_base,
-            openai_api_type=self.config.openai_api_type,
-        )
+        client_params = {
+            "openai_api_key": self.api_key,
+            "model": self.model_name,
+        }
+        
+        if self.openai_api_base is not None:
+            client_params["openai_api_base"] = self.openai_api_base
+        if self.openai_api_type is not None:
+            client_params["openai_api_type"] = self.openai_api_type
+
+        openai_client = OpenAIEmbeddings(**client_params)
         return openai_client
