@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Generator, Optional
@@ -30,7 +31,14 @@ CONNECTOR_TYPE = "sftp"
 
 @dataclass
 class SftpIndexerConfig(FsspecIndexerConfig):
-    pass
+    def __post_init__(self):
+        super().__post_init__()
+        _, ext = os.path.splitext(self.remote_url)
+        parsed_url = urlparse(self.remote_url)
+        if ext:
+            self.path_without_protocol = Path(parsed_url.path).parent.as_posix().lstrip("/")
+        else:
+            self.path_without_protocol = parsed_url.path.lstrip("/")
 
 
 @dataclass
