@@ -569,7 +569,6 @@ def test_ocr_data_to_elements(
 
 
 class Describe_get_last_modified_date:
-
     def it_gets_the_modified_time_of_a_file_identified_by_a_path(self, tmp_path: pathlib.Path):
         modified_timestamp = dt.datetime(
             year=2024, month=3, day=5, hour=17, minute=43, second=40
@@ -591,7 +590,6 @@ class Describe_get_last_modified_date:
 
 
 class Describe_get_last_modified_date_from_file:
-
     def it_gets_the_modified_time_of_a_file_like_object_corresponding_to_a_filesystem_file(
         self, tmp_path: pathlib.Path
     ):

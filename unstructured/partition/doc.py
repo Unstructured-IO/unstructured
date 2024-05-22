@@ -77,7 +77,6 @@ def partition_doc(
     # -- transient files in a temporary directory that is automatically removed so they don't
     # -- pile up.
     with tempfile.TemporaryDirectory() as target_dir:
-
         source_file_path = f"{target_dir}/document.doc" if file is not None else filename
         assert source_file_path is not None
 
