@@ -2,7 +2,7 @@
 # unstructured-the-library requirements
 
 -c base.txt
--c ./deps/constraints.txt
+-c constraints.in
 
 # NOTE(crag): pinning for consistency with CI, compat with below pins
 sphinx==6.2.1
