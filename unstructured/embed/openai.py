@@ -79,9 +79,9 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
             "model": self.config.model_name,
         }
         
-        if self.openai_api_base is not None:
+        if self.config.openai_api_base is not None:
             client_params["openai_api_base"] = self.config.openai_api_base
-        if self.openai_api_type is not None:
+        if self.config.openai_api_type is not None:
             client_params["openai_api_type"] = self.config.openai_api_type
 
         openai_client = OpenAIEmbeddings(**client_params)
