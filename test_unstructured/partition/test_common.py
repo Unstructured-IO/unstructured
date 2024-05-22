@@ -415,8 +415,8 @@ def test_set_element_hierarchy():
     assert elements[4].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
     assert elements[5].metadata.parent_id == elements[3].id, "ListItem should be child of Title"
     assert elements[6].metadata.parent_id == elements[0].id, "ListItem should be child of Title"
-    # NOTE(Hubert): moving the category field to Element, caused this to fail. Checkboxes will soon be deprecated,
-    # then we can remove the test.
+    # NOTE(Hubert): moving the category field to Element, caused this to fail.
+    # Checkboxes will soon be deprecated, then we can remove the test.
     # assert (
     #         elements[7].metadata.parent_id is None
     # ), "CheckBox should be None, as it's not a Text based element"
