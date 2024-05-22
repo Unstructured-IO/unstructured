@@ -34,7 +34,7 @@ class DropboxIndexerConfig(FsspecIndexerConfig):
 
 @dataclass
 class DropboxAccessConfig(FsspecAccessConfig):
-    token: str = enhanced_field(sensitive=True)
+    token: Optional[str] = None
 
 
 @dataclass
