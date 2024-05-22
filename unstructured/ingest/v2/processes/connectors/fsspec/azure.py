@@ -64,10 +64,10 @@ class AzureConnectionConfig(FsspecConnectionConfig):
     connector_type: str = CONNECTOR_TYPE
 
     def get_access_config(self) -> dict[str, Any]:
-        access_configs: dict[str, Any] = {}
-
         # Avoid injecting None by filtering out k,v pairs where the value is None
-        access_configs.update({k: v for k, v in self.access_config.to_dict().items() if v})
+        access_configs: dict[str, Any] = {
+            k: v for k, v in self.access_config.to_dict().items() if v
+        }
         return access_configs
 
 
