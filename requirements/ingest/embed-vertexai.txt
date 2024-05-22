@@ -55,9 +55,9 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.51.0
+google-cloud-aiplatform==1.52.0
     # via langchain-google-vertexai
-google-cloud-bigquery==3.23.0
+google-cloud-bigquery==3.23.1
     # via google-cloud-aiplatform
 google-cloud-core==2.4.1
     # via
@@ -107,7 +107,7 @@ langchain==0.2.0
     #   langchain-community
 langchain-community==0.2.0
     # via -r ./ingest/embed-vertexai.in
-langchain-core==0.2.0
+langchain-core==0.2.1
     # via
     #   langchain
     #   langchain-community
@@ -117,7 +117,7 @@ langchain-google-vertexai==1.0.4
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.0
     # via langchain
-langsmith==0.1.60
+langsmith==0.1.61
     # via
     #   langchain
     #   langchain-community
@@ -189,7 +189,7 @@ pyyaml==6.0.1
     #   langchain
     #   langchain-community
     #   langchain-core
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   google-api-core

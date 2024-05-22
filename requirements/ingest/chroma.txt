@@ -161,7 +161,7 @@ pyyaml==6.0.1
     #   huggingface-hub
     #   kubernetes
     #   uvicorn
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   chromadb

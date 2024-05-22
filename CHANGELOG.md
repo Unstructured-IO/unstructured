@@ -1,10 +1,12 @@
-## 0.14.2-dev1
+## 0.14.2
 
 ### Enhancements
 
+* **Bump unstructured-inference==0.7.33**.
+
 ### Features
 
-  * Add attribution to the `pinecone` connector
+* **Add attribution to the `pinecone` connector**.
 
 ### Fixes
 
