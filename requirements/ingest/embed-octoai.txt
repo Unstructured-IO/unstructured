@@ -48,7 +48,7 @@ regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken

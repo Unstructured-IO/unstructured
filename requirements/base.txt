@@ -71,7 +71,7 @@ rapidfuzz==3.9.1
     # via -r ./base.in
 regex==2024.5.15
     # via nltk
-requests==2.32.1
+requests==2.32.2
     # via
     #   -r ./base.in
     #   unstructured-client

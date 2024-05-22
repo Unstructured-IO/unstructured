@@ -71,7 +71,7 @@ regex==2024.5.15
     #   -c ./base.txt
     #   sacremoses
     #   transformers
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./base.txt
     #   huggingface-hub

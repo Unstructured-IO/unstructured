@@ -8,7 +8,7 @@ anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-astrapy==1.1.0
+astrapy==1.2.0
     # via -r ./ingest/astra.in
 bson==0.5.10
     # via astrapy
@@ -69,7 +69,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   bson
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   cassio

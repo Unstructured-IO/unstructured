@@ -60,7 +60,7 @@ langchain==0.2.0
     # via langchain-community
 langchain-community==0.2.0
     # via -r ./ingest/embed-aws-bedrock.in
-langchain-core==0.2.0
+langchain-core==0.2.1
     # via
     #   langchain
     #   langchain-community
@@ -114,7 +114,7 @@ pyyaml==6.0.1
     #   langchain
     #   langchain-community
     #   langchain-core
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   langchain

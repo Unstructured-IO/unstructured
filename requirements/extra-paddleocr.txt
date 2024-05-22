@@ -174,7 +174,7 @@ rapidfuzz==3.9.1
     #   unstructured-paddleocr
 rarfile==4.2
     # via visualdl
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./base.txt
     #   premailer

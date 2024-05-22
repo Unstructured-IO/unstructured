@@ -21,7 +21,7 @@ praw==7.7.1
     # via -r ./ingest/reddit.in
 prawcore==2.4.0
     # via praw
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   prawcore
