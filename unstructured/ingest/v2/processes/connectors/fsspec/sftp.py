@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Generator, Optional
+from urllib.parse import urlparse
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.v2.interfaces import FileData, UploadContent
@@ -42,13 +43,15 @@ class SftpConnectionConfig(FsspecConnectionConfig):
     supported_protocols: list[str] = field(default_factory=lambda: ["sftp"])
     access_config: SftpAccessConfig = enhanced_field(sensitive=True)
     connector_type: str = CONNECTOR_TYPE
-    host: str = ""
+    username: Optional[str] = None
+    host: Optional[str] = None
     port: int = 22
     look_for_keys: bool = False
     allow_agent: bool = False
 
     def get_access_config(self) -> dict[str, Any]:
         access_config = {
+            "username": self.username,
             "host": self.host,
             "port": self.port,
             "look_for_keys": self.look_for_keys,
@@ -66,6 +69,9 @@ class SftpIndexer(FsspecIndexer):
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def __post_init__(self):
+        parsed_url = urlparse(self.index_config.remote_url)
+        self.connection_config.host = parsed_url.hostname or self.connection_config.host
+        self.connection_config.port = parsed_url.port or self.connection_config.port
         super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
@@ -75,7 +81,15 @@ class SftpIndexer(FsspecIndexer):
 
 @dataclass
 class SftpDownloaderConfig(FsspecDownloaderConfig):
-    pass
+    remote_url: Optional[str] = None
+
+    def __post_init__(self):
+        # TODO once python3.9 no longer supported and kw_only is allowed in dataclasses, remove:
+        if not self.remote_url:
+            raise TypeError(
+                f"{self.__class__.__name__}.__init__() "
+                f"missing 1 required positional argument: 'remote_url'"
+            )
 
 
 @dataclass
@@ -87,6 +101,9 @@ class SftpDownloader(FsspecDownloader):
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def __post_init__(self):
+        parsed_url = urlparse(self.download_config.remote_url)
+        self.connection_config.host = parsed_url.hostname or self.connection_config.host
+        self.connection_config.port = parsed_url.port or self.connection_config.port
         super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
