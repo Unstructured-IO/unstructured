@@ -1,13 +1,15 @@
+from __future__ import annotations
+
 import json
-import typing as t
-from dataclasses import fields
+from dataclasses import InitVar, fields
+from typing import Any, Callable, Optional, Type, TypeVar, Union, get_type_hints
 
 import dataclasses_json.core as dataclasses_json_core
 from dataclasses_json import DataClassJsonMixin
 
 from unstructured.ingest.enhanced_dataclass.core import _asdict
 
-A = t.TypeVar("A", bound="EnhancedDataClassJsonMixin")
+A = TypeVar("A", bound="EnhancedDataClassJsonMixin")
 
 # Monkey-patch _decode_dataclass class to support name override
 og_decode_dataclass = dataclasses_json_core._decode_dataclass
@@ -47,6 +49,18 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         schema: Generate a schema for validating and parsing JSON data based on this class.
     """
 
+    @classmethod
+    def check_init_var(cls):
+        resolved_types = get_type_hints(cls)
+        init_vars = {k: v for k, v in resolved_types.items() if isinstance(v, InitVar)}
+        if init_vars:
+            raise TypeError(
+                "Class {} has the following fields defined with an InitVar which "
+                "cannot be used with EnhancedDataClassJsonMixin: {}".format(
+                    cls.__name__, ", ".join(init_vars.keys())
+                )
+            )
+
     def to_json(
         self,
         *,
@@ -54,15 +68,16 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         ensure_ascii: bool = True,
         check_circular: bool = True,
         allow_nan: bool = True,
-        indent: t.Optional[t.Union[int, str]] = None,
-        separators: t.Optional[t.Tuple[str, str]] = None,
-        default: t.Optional[t.Callable[..., t.Any]] = None,
+        indent: Optional[Union[int, str]] = None,
+        separators: Optional[tuple[str, str]] = None,
+        default: Optional[Callable[..., Any]] = None,
         sort_keys: bool = False,
         redact_sensitive: bool = False,
         redacted_text: str = "***REDACTED***",
         apply_name_overload: bool = True,
-        **kw: t.Any,
+        **kw: Any,
     ) -> str:
+        self.check_init_var()
         return json.dumps(
             self.to_dict(
                 encode_json=False,
@@ -84,12 +99,13 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
 
     @classmethod
     def from_dict(
-        cls: t.Type[A],
+        cls: Type[A],
         kvs: dataclasses_json_core.Json,
         *,
         infer_missing=False,
         apply_name_overload=False,
     ) -> A:
+        cls.check_init_var()
         return dataclasses_json_core._decode_dataclass(cls, kvs, infer_missing)
 
     def to_dict(
@@ -98,7 +114,8 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
         redact_sensitive: bool = False,
         redacted_text: str = "***REDACTED***",
         apply_name_overload: bool = True,
-    ) -> t.Dict[str, dataclasses_json_core.Json]:
+    ) -> dict[str, dataclasses_json_core.Json]:
+        self.check_init_var()
         return _asdict(
             self,
             encode_json=encode_json,

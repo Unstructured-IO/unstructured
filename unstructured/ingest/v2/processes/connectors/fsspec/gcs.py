@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Generator, Optional
+from typing import Any, Generator, Optional, Union
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.utils.string_and_date_utils import json_to_dict
@@ -36,23 +36,28 @@ class GcsIndexerConfig(FsspecIndexerConfig):
 @dataclass
 class GcsAccessConfig(FsspecAccessConfig):
     service_account_key: Optional[str] = None
-    token: str | dict | None = field(init=False, default=None)
+    token: Union[str, dict, None] = field(init=False, default=None)
 
     def __post_init__(self):
         ALLOWED_AUTH_VALUES = "google_default", "cache", "anon", "browser", "cloud"
 
         # Case: null value
-        if not self.token:
+        if not self.service_account_key:
             return
+
         # Case: one of auth constants
-        if self.token in ALLOWED_AUTH_VALUES:
+        if self.service_account_key in ALLOWED_AUTH_VALUES:
+            self.token = self.service_account_key
             return
+
         # Case: token as json
-        if isinstance(json_to_dict(self.token), dict):
-            self.token = json_to_dict(self.token)
+        if isinstance(json_to_dict(self.service_account_key), dict):
+            self.token = json_to_dict(self.service_account_key)
             return
+
         # Case: path to token
-        if Path(self.token).is_file():
+        if Path(self.service_account_key).is_file():
+            self.token = self.service_account_key
             return
 
         raise ValueError("Invalid auth token value")
@@ -65,12 +70,6 @@ class GcsConnectionConfig(FsspecConnectionConfig):
         sensitive=True, default_factory=lambda: GcsAccessConfig()
     )
     connector_type: str = CONNECTOR_TYPE
-
-    def get_access_config(self) -> dict[str, Any]:
-        access_configs: dict[str, Any] = {
-            "token": self.access_config.token,
-        }
-        return access_configs
 
 
 @dataclass
