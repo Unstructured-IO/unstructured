@@ -75,14 +75,14 @@ class OpenAIEmbeddingEncoder(BaseEmbeddingEncoder):
         from langchain_community.embeddings import OpenAIEmbeddings
 
         client_params = {
-            "openai_api_key": self.api_key,
-            "model": self.model_name,
+            "openai_api_key": self.config.api_key,
+            "model": self.config.model_name,
         }
         
         if self.openai_api_base is not None:
-            client_params["openai_api_base"] = self.openai_api_base
+            client_params["openai_api_base"] = self.config.openai_api_base
         if self.openai_api_type is not None:
-            client_params["openai_api_type"] = self.openai_api_type
+            client_params["openai_api_type"] = self.config.openai_api_type
 
         openai_client = OpenAIEmbeddings(**client_params)
         return openai_client
