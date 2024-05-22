@@ -3,7 +3,7 @@ line-length = 100
 
 [tool.pyright]
 pythonPlatform = "Linux"
-pythonVersion = "3.8"
+pythonVersion = "3.9"
 reportUnnecessaryCast = true
 reportUnnecessaryTypeIgnoreComment = true
 stubPath = "./typings"

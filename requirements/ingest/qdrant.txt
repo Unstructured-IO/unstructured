@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/qdrant.in
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
     # via
@@ -18,7 +18,7 @@ certifi==2024.2.2
     #   httpx
 exceptiongroup==1.2.1
     # via anyio
-grpcio==1.63.0
+grpcio==1.64.0
     # via
     #   grpcio-tools
     #   qdrant-client

@@ -1,6 +1,6 @@
-## 0.14.1-dev0
+## 0.14.2-dev1
 
-* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+### Enhancements
 
 ### Enhancements
 
@@ -8,6 +8,28 @@
 
 
 ### Features
+
+  * Add attribution to the `pinecone` connector
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Fixes
 
@@ -41,7 +63,7 @@
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
 * **AstraDB: option to prevent indexing metadata**
 * **Fix Missing py.typed**
-  
+
 ## 0.13.7
 
 ### Enhancements

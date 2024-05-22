@@ -19,7 +19,7 @@ idna==3.7
     #   requests
 python-gitlab==4.5.0
     # via -r ./ingest/gitlab.in
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   python-gitlab

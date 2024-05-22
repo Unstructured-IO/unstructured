@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/confluence.in
 #
-atlassian-python-api==3.41.11
+atlassian-python-api==3.41.13
     # via -r ./ingest/confluence.in
 beautifulsoup4==4.12.3
     # via
@@ -31,7 +31,7 @@ oauthlib==3.2.2
     # via
     #   atlassian-python-api
     #   requests-oauthlib
-requests==2.31.0
+requests==2.32.1
     # via
     #   -c ./ingest/../base.txt
     #   atlassian-python-api
