@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import InitVar, fields
-from typing import Any, Callable, Optional, Type, TypeVar, Union, get_type_hints
+from typing import Any, Callable, Optional, Type, TypeVar, Union
 
 import dataclasses_json.core as dataclasses_json_core
 from dataclasses_json import DataClassJsonMixin
@@ -51,8 +51,8 @@ class EnhancedDataClassJsonMixin(DataClassJsonMixin):
 
     @classmethod
     def check_init_var(cls):
-        resolved_types = get_type_hints(cls)
-        init_vars = {k: v for k, v in resolved_types.items() if isinstance(v, InitVar)}
+        ann = cls.__dict__.get("__annotations__", {})
+        init_vars = {k: v for k, v in ann.items() if isinstance(v, InitVar)}
         if init_vars:
             raise TypeError(
                 "Class {} has the following fields defined with an InitVar which "
