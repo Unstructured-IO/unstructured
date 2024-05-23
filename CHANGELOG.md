@@ -1,10 +1,12 @@
-## 0.14.3-dev0
+## 0.14.3-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
 
 ## 0.14.2
 
