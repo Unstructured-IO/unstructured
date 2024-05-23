@@ -1,4 +1,4 @@
-## 0.14.3-dev3
+## 0.14.3-dev4
 
 ### Enhancements
 
@@ -11,7 +11,9 @@
 
 * **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
   to avoid text being dynamically injected into the XML document.
-* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+  to avoid text being dynamically injected into the XML document.
 * **Chromadb change from Add to Upsert using element_id to make idempotent**
 * **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
 
