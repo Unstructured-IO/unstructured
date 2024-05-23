@@ -1,0 +1,25 @@
+# TODO(crag): This requirements should instead live in docs/ and be co-mingled with
+# unstructured-the-library requirements
+
+-c base.txt
+-c constraints.in
+
+# NOTE(crag): pinning for consistency with CI, compat with below pins
+sphinx==6.2.1
+sphinx-tabs
+# NOTE(alan) - Pinning to resolve a conflict with sphinx. We can unpin on next sphinx_rtd_theme release.
+sphinx_rtd_theme==1.2.2
+# NOTE(crag): the following are pinned due to later versions not being available in CI for some reason
+sphinxcontrib-htmlhelp==2.0.1
+sphinxcontrib-devhelp==1.0.2
+sphinxcontrib-applehelp==1.0.4
+sphinxcontrib-qthelp==1.0.3
+sphinxcontrib-serializinghtml==1.1.5
+
+furo==2023.7.26
+
+# NOTE(robinson) - The following dependencies are pinned to address security scans
+certifi>=2022.12.07
+
+# NOTE(ronny) - Added to suppress Sphinx warnings
+myst-parser

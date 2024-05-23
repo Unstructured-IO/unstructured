@@ -19,13 +19,13 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
 isodate==0.6.1
     # via azure-search-documents
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core

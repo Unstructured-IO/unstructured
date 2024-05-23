@@ -1,4 +1,99 @@
-## 0.13.3-dev2
+## 0.14.3-dev1
+
+### Enhancements
+
+* **Move `category` field from Text class to Element class.**
+
+### Features
+
+### Fixes
+
+* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
+
+## 0.14.2
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.33**.
+
+### Features
+
+* **Add attribution to the `pinecone` connector**.
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+
+### Fixes
+
+## 0.14.0
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
+
+### Enhancements
+
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
+
+### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
+
+### Fixes
+
+* **Add missing starting_page_num param to partition_image**
+* **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
+* **Re-apply: skip accuracy calculation feature** Overwritten by mistake
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
+* **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
+* **Fix Missing py.typed**
+
+## 0.13.7
+
+### Enhancements
+
+* **Remove `page_number` metadata fields** for HTML partition until we have a better strategy to decide page counting.
+* **Extract OCRAgent.get_agent().** Generalize access to the configured OCRAgent instance beyond its use for PDFs.
+* **Add calculation of table related metrics which take into account colspans and rowspans**
+* **Evaluation: skip accuracy calculation** for files for which output and ground truth sizes differ greatly
+
+### Features
+
+* **add ability to get ratio of `cid` characters in embedded text extracted by `pdfminer`**.
+
+### Fixes
+
+* **`partition_docx()` handles short table rows.** The DOCX format allows a table row to start late and/or end early, meaning cells at the beginning or end of a row can be omitted. While there are legitimate uses for this capability, using it in practice is relatively rare. However, it can happen unintentionally when adjusting cell borders with the mouse. Accommodate this case and generate accurate `.text` and `.metadata.text_as_html` for these tables.
+* **Remedy macOS test failure not triggered by CI.** Generalize temp-file detection beyond hard-coded Linux-specific prefix.
+* **Remove unnecessary warning log for using default layout model.**
+* **Add chunking to partition_tsv** Even though partition_tsv() produces a single Table element, chunking is made available because the Table element is often larger than the desired chunk size and must be divided into smaller chunks.
+
+## 0.13.6
 
 ### Enhancements
 
@@ -6,8 +101,59 @@
 
 ### Fixes
 
+- **ValueError: Invalid file (FileType.UNK) when parsing Content-Type header with charset directive** URL response Content-Type headers are now parsed according to RFC 9110.
+
+## 0.13.5
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **KeyError raised when updating parent_id** In the past, combining `ListItem` elements could result in reusing the same memory location which then led to unexpected side effects when updating element IDs.
+* **Bump unstructured-inference==0.7.29**: table transformer predictions are now removed if confidence is below threshold
+
+## 0.13.4
+
+### Enhancements
+
+* **Unique and deterministic hash IDs for elements** Element IDs produced by any partitioning
+  function are now deterministic and unique at the document level by default. Before, hashes were
+  based only on text; however, they now also take into account the element's sequence number on a
+  page, the page's number in the document, and the document's file name.
+* **Enable remote chunking via unstructured-ingest** Chunking using unstructured-ingest was
+  previously limited to local chunking using the strategies `basic` and `by_title`. Remote chunking
+  options via the API are now accessible.
+* **Save table in cells format**. `UnstructuredTableTransformerModel` is able to return predicted table in cells format
+
+### Features
+
+* **Add a `PDF_ANNOTATION_THRESHOLD` environment variable to control the capture of embedded links in `partition_pdf()` for `fast` strategy**.
+* **Add integration with the Google Cloud Vision API**. Adds a third OCR provider, alongside Tesseract and Paddle: the Google Cloud Vision API.
+
+### Fixes
+
+* **Remove ElementMetadata.section field.**. This field was unused, not populated by any partitioners.
+
+## 0.13.3
+
+### Enhancements
+
+* **Remove duplicate image elements**. Remove image elements identified by PDFMiner that have similar bounding boxes and the same text.
+* **Add support for `start_index` in `html` links extraction**
+* **Add `strategy` arg value to `_PptxPartitionerOptions`.** This makes this paritioning option available for sub-partitioners to come that may optionally use inference or other expensive operations to improve the partitioning.
+* **Support pluggable sub-partitioner for PPTX Picture shapes.** Use a distinct sub-partitioner for partitioning PPTX Picture (image) shapes and allow the default picture sub-partitioner to be replaced at run-time by one of the user's choosing.
+* **Introduce `starting_page_number` parameter to partitioning functions** It applies to those partitioners which support `page_number` in element's metadata: PDF, TIFF, XLSX, DOC, DOCX, PPT, PPTX.
+* **Redesign the internal mechanism of assigning element IDs** This allows for further enhancements related to element IDs such as deterministic and document-unique hashes. The way partitioning functions operate hasn't changed, which means `unique_element_ids` continues to be `False` by default, utilizing text hashes.
+
+### Features
+
+### Fixes
+
 * **Add support for extracting text from tag tails in HTML**. This fix adds ability to generate separate elements using tag tails.
 * **Add support for extracting text from `<b>` tags in HTML** Now `partition_html()` can extract text from `<b>` tags inside container tags (like `<div>`, `<pre>`).
+* **Fix pip-compile make target** Missing base.in dependency missing from requirments make file added
 
 ## 0.13.2
 

@@ -3,10 +3,12 @@ from __future__ import annotations
 import functools
 import html
 import importlib
+import inspect
 import json
 import os
 import platform
 import subprocess
+import tempfile
 import threading
 from datetime import datetime
 from functools import wraps
@@ -32,7 +34,7 @@ from typing_extensions import ParamSpec, TypeAlias
 from unstructured.__version__ import __version__
 
 if TYPE_CHECKING:
-    from unstructured.documents.elements import Text
+    from unstructured.documents.elements import Element, Text
 
 # Box format: [x_bottom_left, y_bottom_left, x_top_right, y_top_right]
 Box: TypeAlias = Tuple[float, float, float, float]
@@ -43,6 +45,20 @@ DATE_FORMATS = ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d+%H:%M:%S", "%Y-%m-%dT
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
+
+
+def get_call_args_applying_defaults(
+    func: Callable[_P, List[Element]],
+    *args: _P.args,
+    **kwargs: _P.kwargs,
+) -> dict[str, Any]:
+    """Map both explicit and default arguments of decorated func call by param name."""
+    sig = inspect.signature(func)
+    call_args: dict[str, Any] = dict(**dict(zip(sig.parameters, args)), **kwargs)
+    for arg in sig.parameters.values():
+        if arg.name not in call_args and arg.default is not arg.empty:
+            call_args[arg.name] = arg.default
+    return call_args
 
 
 def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
@@ -73,6 +89,15 @@ def htmlify_matrix_of_cell_texts(matrix: Sequence[Sequence[str]]) -> str:
             yield f"<td>{s.strip()}</td>"
 
     return f"<table>{''.join(iter_trs(matrix))}</table>" if matrix else ""
+
+
+def is_temp_file_path(file_path: str) -> bool:
+    """True when file_path is in the Python-defined tempdir.
+
+    The Python-defined temp directory is platform dependent (macOS != Linux != Windows)
+    and can also be determined by an environment variable (TMPDIR, TEMP, or TMP).
+    """
+    return file_path.startswith(tempfile.gettempdir())
 
 
 class lazyproperty(Generic[_T]):

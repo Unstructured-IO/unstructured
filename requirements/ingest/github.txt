@@ -17,11 +17,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.5
+cryptography==42.0.7
     # via pyjwt
 deprecated==1.2.14
     # via pygithub
-idna==3.6
+idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
@@ -33,7 +33,7 @@ pyjwt[crypto]==2.8.0
     # via pygithub
 pynacl==1.5.0
     # via pygithub
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   pygithub
@@ -50,4 +50,5 @@ urllib3==1.26.18
 wrapt==1.16.0
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   deprecated

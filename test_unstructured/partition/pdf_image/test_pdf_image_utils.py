@@ -143,7 +143,9 @@ def test_save_elements(
                 assert not el.metadata.image_mime_type
 
 
-def test_save_elements_with_output_dir_path_none():
+@pytest.mark.parametrize("storage_enabled", [False, True])
+def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
+    monkeypatch.setenv("GLOBAL_WORKING_DIR_ENABLED", storage_enabled)
     with (
         patch("PIL.Image.open"),
         patch("unstructured.partition.pdf_image.pdf_image_utils.write_image"),
@@ -161,7 +163,12 @@ def test_save_elements_with_output_dir_path_none():
         )
 
         # Verify that the images are saved in the expected directory
-        expected_output_dir = os.path.join(tmpdir, "figures")
+        if storage_enabled:
+            from unstructured.partition.utils.config import env_config
+
+            expected_output_dir = os.path.join(env_config.GLOBAL_WORKING_PROCESS_DIR, "figures")
+        else:
+            expected_output_dir = os.path.join(tmpdir, "figures")
         assert os.path.exists(expected_output_dir)
         assert os.path.isdir(expected_output_dir)
         os.chdir(original_cwd)
@@ -177,6 +184,33 @@ def test_write_image_raises_error():
 )
 def test_valid_text(text, outcome):
     assert pdf_image_utils.valid_text(text) == outcome
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("base", 0.0),
+        ("", 0.0),
+        ("(cid:2)", 1.0),
+        ("(cid:1)a", 0.5),
+        ("c(cid:1)ab", 0.25),
+    ],
+)
+def test_cid_ratio(text, expected):
+    assert pdf_image_utils.cid_ratio(text) == expected
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        ("base", False),
+        ("(cid:2)", True),
+        ("(cid:1234567890)", True),
+        ("jkl;(cid:12)asdf", True),
+    ],
+)
+def test_is_cid_present(text, expected):
+    assert pdf_image_utils.is_cid_present(text) == expected
 
 
 def test_pad_bbox():
@@ -309,3 +343,11 @@ def test_annotate_layout_elements_file_not_found_error():
             pdf_image_dpi=200,
             is_image=True,
         )
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("c\to\x0cn\ftrol\ncharacter\rs\b", "control characters"), ("\"'\\", "\"'\\")],
+)
+def test_remove_control_characters(text, expected):
+    assert pdf_image_utils.remove_control_characters(text) == expected

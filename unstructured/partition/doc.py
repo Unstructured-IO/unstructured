@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import os
 import tempfile
-from typing import IO, Any, List, Optional
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -26,11 +28,13 @@ def partition_doc(
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
     chunking_strategy: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
+    starting_page_number: int = 1,
+    strategy: Optional[str] = None,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions Microsoft Word Documents in .doc format into its document elements.
 
     Parameters
@@ -55,52 +59,79 @@ def partition_doc(
     date_from_file_object
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
+    starting_page_number
+        Indicates what page number should be assigned to the first page in the document.
+        This information will be reflected in elements' metadata and can be be especially
+        useful when partitioning a document that is part of a larger document.
     """
-    # Verify that only one of the arguments was provided
-    if filename is None:
-        filename = ""
     exactly_one(filename=filename, file=file)
 
-    if len(filename) > 0:
-        _, filename_no_path = os.path.split(os.path.abspath(filename))
-        base_filename, _ = os.path.splitext(filename_no_path)
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
+    last_modified = get_last_modified(filename, file, date_from_file_object)
 
-        last_modification_date = get_last_modified_date(filename)
+    # -- validate file-path when provided so we can provide a more meaningful error --
+    if filename is not None and not os.path.exists(filename):
+        raise ValueError(f"The file {filename} does not exist.")
 
-    elif file is not None:
-        tmp = tempfile.NamedTemporaryFile(delete=False)
-        tmp.write(file.read())
-        tmp.close()
-        filename = tmp.name
-        _, filename_no_path = os.path.split(os.path.abspath(tmp.name))
-        base_filename, _ = os.path.splitext(filename_no_path)
+    # -- `convert_office_doc` uses a command-line program that ships with LibreOffice to convert
+    # -- from DOC -> DOCX. So both the source and the target need to be file-system files. Put
+    # -- transient files in a temporary directory that is automatically removed so they don't
+    # -- pile up.
+    with tempfile.TemporaryDirectory() as target_dir:
+        source_file_path = f"{target_dir}/document.doc" if file is not None else filename
+        assert source_file_path is not None
 
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
+        # -- when source is a file-like object, write it to the filesystem so the command-line
+        # -- process can access it (CLI executes in different memory-space).
+        if file is not None:
+            with open(source_file_path, "wb") as f:
+                f.write(file.read())
 
-    with tempfile.TemporaryDirectory() as tmpdir:
+        # -- convert the .doc file to .docx. The resulting file takes the same base-name as the
+        # -- source file and is written to `target_dir`.
         convert_office_doc(
-            filename,
-            tmpdir,
+            source_file_path,
+            target_dir,
             target_format="docx",
             target_filter=libre_office_filter,
         )
-        docx_filename = os.path.join(tmpdir, f"{base_filename}.docx")
+
+        # -- compute the path of the resulting .docx document --
+        _, filename_no_path = os.path.split(os.path.abspath(source_file_path))
+        base_filename, _ = os.path.splitext(filename_no_path)
+        target_file_path = os.path.join(target_dir, f"{base_filename}.docx")
+
+        # -- and partition it. Note that `kwargs` is not passed which is a sketchy way to partially
+        # -- disable post-partitioning processing (what the decorators do) so for example the
+        # -- resulting elements are not double-chunked.
         elements = partition_docx(
-            filename=docx_filename,
-            metadata_filename=metadata_filename,
-            include_page_breaks=include_page_breaks,
-            include_metadata=include_metadata,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
-            languages=languages,
+            filename=target_file_path,
             detect_language_per_element=detect_language_per_element,
+            include_metadata=include_metadata,
+            include_page_breaks=include_page_breaks,
+            languages=languages,
+            metadata_filename=metadata_filename,
+            metadata_last_modified=metadata_last_modified or last_modified,
+            starting_page_number=starting_page_number,
+            strategy=strategy,
         )
-        # remove tmp.name from filename if parsing file
-        if file:
-            for element in elements:
-                element.metadata.filename = metadata_filename
+
+    # -- Remove temporary document.docx path from metadata when necessary. Note `metadata_filename`
+    # -- defaults to `None` but that's better than a meaningless temporary filename.
+    if file:
+        for element in elements:
+            element.metadata.filename = metadata_filename
 
     return elements
+
+
+def get_last_modified(
+    filename: str | None, file: IO[bytes] | None, date_from_file_object: bool
+) -> str | None:
+    """Determine best available last-modified date from partitioner document-source."""
+    if filename is not None:
+        return get_last_modified_date(filename)
+
+    if file is not None:
+        return get_last_modified_date_from_file(file) if date_from_file_object else None
+
+    return None

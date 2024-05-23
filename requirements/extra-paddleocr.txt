@@ -6,11 +6,11 @@
 #
 attrdict==2.0.1
     # via unstructured-paddleocr
-babel==2.14.0
+babel==2.15.0
     # via flask-babel
-bce-python-sdk==0.9.6
+bce-python-sdk==0.9.10
     # via visualdl
-blinker==1.7.0
+blinker==1.8.2
     # via flask
 cachetools==5.3.3
     # via premailer
@@ -31,7 +31,7 @@ contourpy==1.2.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.10.2
+cssutils==2.11.0
     # via premailer
 cycler==0.12.1
     # via matplotlib
@@ -39,7 +39,7 @@ cython==3.0.10
     # via unstructured-paddleocr
 et-xmlfile==1.1.0
     # via openpyxl
-flask==3.0.2
+flask==3.0.3
     # via
     #   flask-babel
     #   visualdl
@@ -49,11 +49,11 @@ fonttools==4.51.0
     # via matplotlib
 future==1.0.0
     # via bce-python-sdk
-idna==3.6
+idna==3.7
     # via
     #   -c ./base.txt
     #   requests
-imageio==2.34.0
+imageio==2.34.1
     # via
     #   imgaug
     #   scikit-image
@@ -63,9 +63,9 @@ importlib-metadata==7.1.0
     # via flask
 importlib-resources==6.4.0
     # via matplotlib
-itsdangerous==2.1.2
+itsdangerous==2.2.0
     # via flask
-jinja2==3.1.3
+jinja2==3.1.4
     # via
     #   flask
     #   flask-babel
@@ -77,9 +77,8 @@ lazy-loader==0.4
     # via scikit-image
 lmdb==1.4.1
     # via unstructured-paddleocr
-lxml==4.9.4
+lxml==5.2.2
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   premailer
     #   unstructured-paddleocr
@@ -96,6 +95,7 @@ networkx==3.2.1
     # via scikit-image
 numpy==1.26.4
     # via
+    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   imageio
@@ -129,7 +129,7 @@ packaging==23.2
     #   matplotlib
     #   scikit-image
     #   visualdl
-pandas==2.2.1
+pandas==2.2.2
     # via visualdl
 pdf2image==1.17.0
     # via unstructured-paddleocr
@@ -168,13 +168,13 @@ pytz==2024.1
     # via
     #   flask-babel
     #   pandas
-rapidfuzz==3.7.0
+rapidfuzz==3.9.1
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
 rarfile==4.2
     # via visualdl
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./base.txt
     #   premailer
@@ -183,12 +183,12 @@ scikit-image==0.22.0
     # via
     #   imgaug
     #   unstructured-paddleocr
-scipy==1.10.1
+scipy==1.11.3
     # via
     #   -c ././deps/constraints.txt
     #   imgaug
     #   scikit-image
-shapely==2.0.3
+shapely==2.0.4
     # via
     #   imgaug
     #   unstructured-paddleocr
@@ -200,9 +200,9 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.2.12
+tifffile==2024.5.10
     # via scikit-image
-tqdm==4.66.2
+tqdm==4.66.4
     # via
     #   -c ./base.txt
     #   unstructured-paddleocr
@@ -217,9 +217,9 @@ urllib3==1.26.18
     #   requests
 visualdl==2.5.3
     # via unstructured-paddleocr
-werkzeug==3.0.2
+werkzeug==3.0.3
     # via flask
-zipp==3.18.1
+zipp==3.18.2
     # via
     #   importlib-metadata
     #   importlib-resources

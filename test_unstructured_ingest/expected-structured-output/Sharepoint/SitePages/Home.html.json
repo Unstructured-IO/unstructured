@@ -1,6 +1,6 @@
 [
   {
-    "element_id": "b4e929d8bcfe04189801a8ed61496d17",
+    "element_id": "f346c0d677012f9d4265678f9626c829",
     "metadata": {
       "data_source": {
         "date_created": "0001-01-01T08:00:00Z",
@@ -16,14 +16,13 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Documents",
     "type": "Title"
   },
   {
-    "element_id": "8d14f6e72de8f18ab1ee5c5330f00653",
+    "element_id": "fea3bac751e7273dfe57b271fe9dd22b",
     "metadata": {
       "data_source": {
         "date_created": "0001-01-01T08:00:00Z",
@@ -39,8 +38,7 @@
       "filetype": "text/html",
       "languages": [
         "eng"
-      ],
-      "page_number": 1
+      ]
     },
     "text": "Events",
     "type": "Title"

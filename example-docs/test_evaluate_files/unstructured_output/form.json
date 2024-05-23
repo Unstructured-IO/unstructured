@@ -1,0 +1,149 @@
+[
+    {
+        "type": "FormKeysValues",
+        "element_id": "MOCK_FORM_ID",
+        "text": "",
+        "metadata": {
+            "coordinates": {
+                "points": [
+                    [
+                        35.15625,
+                        95.556640625
+                    ],
+                    [
+                        710.357666015625,
+                        95.556640625
+                    ],
+                    [
+                        710.357666015625,
+                        887.890625
+                    ],
+                    [
+                        35.15625,
+                        887.890625
+                    ]
+                ],
+                "system": "PixelSpace",
+                "layout_width": 754,
+                "layout_height": 1000
+            },
+            "page_number": 1,
+            "key_value_pairs": [
+                {
+                    "key": {
+                        "text": "MOCK KEY",
+                        "custom_element": {
+                            "type": "UncategorizedText",
+                            "element_id": "MOCK_KEY_ID_1",
+                            "text": "MOCK KEY",
+                            "metadata": {
+                                "coordinates": {
+                                    "points": [
+                                        [
+                                            503.271484375,
+                                            96.3897705078125
+                                        ],
+                                        [
+                                            503.271484375,
+                                            107.5164794921875
+                                        ],
+                                        [
+                                            606.103515625,
+                                            107.5164794921875
+                                        ],
+                                        [
+                                            606.103515625,
+                                            96.3897705078125
+                                        ]
+                                    ],
+                                    "system": "PixelSpace",
+                                    "layout_width": 754,
+                                    "layout_height": 1000
+                                },
+                                "page_number": 1
+                            }
+                        },
+                        "layout_element_id": null
+                    },
+                    "value": {
+                        "text": "MOCK VALUE",
+                        "custom_element": {
+                            "type": "UncategorizedText",
+                            "element_id": "MOCK_VALUE_ID",
+                            "text": "MOCK VALUE",
+                            "metadata": {
+                                "coordinates": {
+                                    "points": [
+                                        [
+                                            557.568359375,
+                                            124.8626708984375
+                                        ],
+                                        [
+                                            557.568359375,
+                                            136.6607666015625
+                                        ],
+                                        [
+                                            595.556640625,
+                                            136.6607666015625
+                                        ],
+                                        [
+                                            595.556640625,
+                                            124.8626708984375
+                                        ]
+                                    ],
+                                    "system": "PixelSpace",
+                                    "layout_width": 754,
+                                    "layout_height": 1000
+                                },
+                                "page_number": 1
+                            }
+                        },
+                        "layout_element_id": null
+                    },
+                    "confidence": 0.0
+                },
+                {
+                    "key": {
+                        "text": "MOCK KEY 2",
+                        "custom_element": {
+                            "type": "UncategorizedText",
+                            "element_id": "MOCK_KEY_ID_2",
+                            "text": "MOCK KEY 2",
+                            "metadata": {
+                                "coordinates": {
+                                    "points": [
+                                        [
+                                            428.52783203125,
+                                            124.0478515625
+                                        ],
+                                        [
+                                            428.52783203125,
+                                            136.6943359375
+                                        ],
+                                        [
+                                            473.81591796875,
+                                            136.6943359375
+                                        ],
+                                        [
+                                            473.81591796875,
+                                            124.0478515625
+                                        ]
+                                    ],
+                                    "system": "PixelSpace",
+                                    "layout_width": 754,
+                                    "layout_height": 1000
+                                },
+                                "page_number": 1
+                            }
+                        },
+                        "layout_element_id": null
+                    },
+                    "value": null,
+                    "confidence": 0.0
+                }
+            ],
+            "file_directory": "dataset/testing_data/images",
+            "filename": "MOCK.png"
+        }
+    }
+]

@@ -84,7 +84,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords="NLP PDF HTML CV XML parsing preprocessing",
     url="https://github.com/Unstructured-IO/unstructured",
-    python_requires=">=3.9.0,<3.12",
+    python_requires=">=3.9.0,<3.13",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -176,5 +176,5 @@ setup(
         "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
     },
     package_dir={"unstructured": "unstructured"},
-    package_data={"unstructured": ["nlp/*.txt"]},
+    package_data={"unstructured": ["nlp/*.txt", "py.typed"]},
 )

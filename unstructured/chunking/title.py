@@ -13,7 +13,6 @@ from unstructured.chunking.base import (
     ChunkingOptions,
     PreChunkCombiner,
     PreChunker,
-    is_in_next_section,
     is_on_next_page,
     is_title,
 )
@@ -121,7 +120,6 @@ class _ByTitleChunkingOptions(ChunkingOptions):
 
         def iter_boundary_predicates() -> Iterator[BoundaryPredicate]:
             yield is_title
-            yield is_in_next_section()
             if not self.multipage_sections:
                 yield is_on_next_page()
 

@@ -6,7 +6,7 @@ import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
-from typing import IO, TYPE_CHECKING, Any, BinaryIO, List, Optional
+from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
 from tabulate import tabulate
@@ -191,14 +191,14 @@ def layout_list_to_list_items(
     coordinate_system: Optional[CoordinateSystem],
     metadata: Optional[ElementMetadata],
     detection_origin: Optional[str],
-) -> List[Element]:
+) -> list[Element]:
     """Converts a list LayoutElement to a list of ListItem elements."""
     split_items = ENUMERATED_BULLETS_RE.split(text) if text else []
     # NOTE(robinson) - this means there wasn't a match for the enumerated bullets
     if len(split_items) == 1:
         split_items = UNICODE_BULLETS_RE.split(text) if text else []
 
-    list_items: List[Element] = []
+    list_items: list[Element] = []
     for text_segment in split_items:
         if len(text_segment.strip()) > 0:
             # Both `coordinates` and `coordinate_system` must be present
@@ -216,13 +216,13 @@ def layout_list_to_list_items(
 
 
 def set_element_hierarchy(
-    elements: List[Element], ruleset: dict[str, list[str]] = HIERARCHY_RULE_SET
+    elements: list[Element], ruleset: dict[str, list[str]] = HIERARCHY_RULE_SET
 ) -> list[Element]:
     """Sets the parent_id for each element in the list of elements
     based on the element's category, depth and a ruleset
 
     """
-    stack: List[Element] = []
+    stack: list[Element] = []
     for element in elements:
         if element.metadata.parent_id is not None:
             continue
@@ -272,10 +272,9 @@ def add_element_metadata(
     text_as_html: Optional[str] = None,
     coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
-    section: Optional[str] = None,
     image_path: Optional[str] = None,
     detection_origin: Optional[str] = None,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> Element:
     """Adds document metadata to the document element.
@@ -294,6 +293,7 @@ def add_element_metadata(
     links = element.links if hasattr(element, "links") and len(element.links) > 0 else None
     link_urls = [link.get("url") for link in links] if links else None
     link_texts = [link.get("text") for link in links] if links else None
+    link_start_indexes = [link.get("start_index") for link in links] if links else None
     emphasized_texts = (
         element.emphasized_texts
         if hasattr(element, "emphasized_texts") and len(element.emphasized_texts) > 0
@@ -320,9 +320,9 @@ def add_element_metadata(
         text_as_html=text_as_html,
         link_urls=link_urls,
         link_texts=link_texts,
+        link_start_indexes=link_start_indexes,
         emphasized_text_contents=emphasized_text_contents,
         emphasized_text_tags=emphasized_text_tags,
-        section=section,
         category_depth=depth,
         image_path=image_path,
         languages=languages,
@@ -338,7 +338,7 @@ def remove_element_metadata(layout_elements) -> list[Element]:
 
     Document metadata includes information like the filename, source url, and page number.
     """
-    elements: List[Element] = []
+    elements: list[Element] = []
     metadata = ElementMetadata()
     for layout_element in layout_elements:
         element = normalize_layout_element(layout_element)
@@ -431,16 +431,25 @@ def exactly_one(**kwargs: Any) -> None:
         raise ValueError(message)
 
 
-def spooled_to_bytes_io_if_needed(
-    file_obj: bytes | BinaryIO | SpooledTemporaryFile[bytes] | None,
-) -> bytes | BinaryIO | None:
-    if isinstance(file_obj, SpooledTemporaryFile):
-        file_obj.seek(0)
-        contents = file_obj.read()
-        return BytesIO(contents)
-    else:
-        # Return the original file object if it's not a SpooledTemporaryFile
-        return file_obj
+_T = TypeVar("_T")
+
+
+def spooled_to_bytes_io_if_needed(file: _T | SpooledTemporaryFile[bytes]) -> _T | BytesIO:
+    """Convert `file` to `BytesIO` when it is a `SpooledTemporaryFile`.
+
+    Note that `file` does not need to be IO[bytes]. It can be `None` or `bytes` and this function
+    will not complain.
+
+    In Python <3.11, `SpooledTemporaryFile` does not implement `.readable()` or `.seekable()` which
+    triggers an exception when the file is loaded by certain packages. In particular, the stdlib
+    `zipfile.Zipfile` raises on opening a `SpooledTemporaryFile` as does `Pandas.read_csv()`.
+    """
+    if isinstance(file, SpooledTemporaryFile):
+        file.seek(0)
+        return BytesIO(cast(bytes, file.read()))
+
+    # -- return `file` unchanged otherwise --
+    return file
 
 
 def convert_to_bytes(file: bytes | IO[bytes]) -> bytes:
@@ -537,15 +546,16 @@ def document_to_element_list(
     source_format: Optional[str] = None,
     detection_origin: Optional[str] = None,
     sort_mode: str = SORT_MODE_XY_CUT,
-    languages: Optional[List[str]] = None,
+    languages: Optional[list[str]] = None,
+    starting_page_number: int = 1,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Converts a DocumentLayout object to a list of unstructured elements."""
-    elements: List[Element] = []
+    elements: list[Element] = []
 
     num_pages = len(document.pages)
-    for i, page in enumerate(document.pages):
-        page_elements: List[Element] = []
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
+        page_elements: list[Element] = []
 
         page_image_metadata = _get_page_image_metadata(page)
         image_format = page_image_metadata.get("format")
@@ -565,20 +575,19 @@ def document_to_element_list(
                 infer_list_items=infer_list_items,
                 source_format=source_format if source_format else "html",
             )
-            if isinstance(element, List):
+            if isinstance(element, list):
                 for el in element:
                     if last_modification_date:
                         el.metadata.last_modified = last_modification_date
-                    el.metadata.page_number = i + 1
+                    el.metadata.page_number = page_number
                 page_elements.extend(element)
                 translation_mapping.extend([(layout_element, el) for el in element])
                 continue
             else:
                 if last_modification_date:
                     element.metadata.last_modified = last_modification_date
-                element.metadata.text_as_html = (
-                    layout_element.text_as_html if hasattr(layout_element, "text_as_html") else None
-                )
+                element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
+                element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
                 try:
                     if (
                         isinstance(element, Title) and element.metadata.category_depth is None
@@ -599,7 +608,7 @@ def document_to_element_list(
 
             add_element_metadata(
                 element,
-                page_number=i + 1,
+                page_number=page_number,
                 filetype=image_format,
                 coordinates=coordinates,
                 coordinate_system=coordinate_system,
@@ -620,7 +629,7 @@ def document_to_element_list(
         if sortable and sort_mode != SORT_MODE_DONT:
             sorted_page_elements = sort_page_elements(page_elements, sort_mode)
 
-        if include_page_breaks and i < num_pages - 1:
+        if include_page_breaks and page_number < num_pages + starting_page_number:
             sorted_page_elements.append(PageBreak(text=""))
         elements.extend(sorted_page_elements)
 
@@ -628,7 +637,7 @@ def document_to_element_list(
 
 
 def ocr_data_to_elements(
-    ocr_data: List["LayoutElement"],
+    ocr_data: list["LayoutElement"],
     image_size: tuple[int | float, int | float],
     common_metadata: Optional[ElementMetadata] = None,
     infer_list_items: bool = True,

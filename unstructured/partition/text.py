@@ -1,7 +1,9 @@
+from __future__ import annotations
+
 import copy
 import re
 import textwrap
-from typing import IO, Any, Callable, List, Optional, Tuple
+from typing import IO, Any, Callable, Literal, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import (
@@ -47,10 +49,10 @@ def partition_text(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -59,7 +61,7 @@ def partition_text(
     detection_origin: Optional[str] = "text",
     date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """Partitions an .txt documents into its constituent paragraph elements.
     If paragraphs are below "min_partition" or above "max_partition" boundaries,
     they are combined or split.
@@ -124,10 +126,10 @@ def _partition_text(
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     metadata_filename: Optional[str] = None,
     include_metadata: bool = True,
-    languages: Optional[List[str]] = ["auto"],
+    languages: Optional[list[str]] = ["auto"],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
     metadata_last_modified: Optional[str] = None,
@@ -136,7 +138,7 @@ def _partition_text(
     detection_origin: Optional[str] = "text",
     date_from_file_object: bool = False,
     **kwargs: Any,
-) -> List[Element]:
+) -> list[Element]:
     """internal API for `partition_text`"""
     if text is not None and text.strip() == "" and not file and not filename:
         return []
@@ -181,7 +183,7 @@ def _partition_text(
         max_partition=max_partition,
     )
 
-    elements: List[Element] = []
+    elements: list[Element] = []
     if include_metadata:
         metadata = ElementMetadata(
             filename=metadata_filename or filename,
@@ -216,7 +218,7 @@ def is_empty_bullet(text: str) -> bool:
 
 
 def _get_height_percentage(
-    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> float:
     avg_y = sum([coordinate[1] for coordinate in coordinates]) / len(coordinates)
@@ -224,7 +226,7 @@ def _get_height_percentage(
 
 
 def is_in_header_position(
-    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     threshold: float = 0.07,
 ) -> bool:
@@ -238,7 +240,7 @@ def is_in_header_position(
 
 
 def is_in_footer_position(
-    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
     threshold: float = 0.93,
 ) -> bool:
@@ -253,7 +255,7 @@ def is_in_footer_position(
 
 def element_from_text(
     text: str,
-    coordinates: Optional[Tuple[Tuple[float, float], ...]] = None,
+    coordinates: Optional[tuple[tuple[float, float], ...]] = None,
     coordinate_system: Optional[CoordinateSystem] = None,
 ) -> Element:
     if is_in_header_position(coordinates, coordinate_system):
@@ -310,17 +312,17 @@ def element_from_text(
 
 
 def _combine_paragraphs_less_than_min(
-    split_paragraphs: List[str],
+    split_paragraphs: list[str],
     max_partition: Optional[int] = 1500,
     min_partition: Optional[int] = 0,
-) -> List[str]:
+) -> list[str]:
     """Combine paragraphs less than `min_partition` while not exceeding `max_partition`."""
     min_partition = min_partition or 0
     max_possible_partition = len(" ".join(split_paragraphs))
     max_partition = max_partition or max_possible_partition
 
-    combined_paras: List[str] = []
-    combined_idxs: List[int] = []
+    combined_paras: list[str] = []
+    combined_idxs: list[int] = []
     for i, para in enumerate(split_paragraphs):
         if i in combined_idxs:
             continue
@@ -348,11 +350,11 @@ def _split_by_paragraph(
     file_text: str,
     min_partition: Optional[int] = 0,
     max_partition: Optional[int] = 1500,
-) -> List[str]:
+) -> list[str]:
     """Split text into paragraphs that fit within the `min_` and `max_partition` window."""
     paragraphs = re.split(PARAGRAPH_PATTERN, file_text.strip())
 
-    split_paragraphs: List[str] = []
+    split_paragraphs: list[str] = []
     for paragraph in paragraphs:
         split_paragraphs.extend(
             _split_content_to_fit_max(
@@ -370,7 +372,7 @@ def _split_by_paragraph(
     return combined_paragraphs
 
 
-def _split_content_size_n(content: str, n: int) -> List[str]:
+def _split_content_size_n(content: str, n: int) -> list[str]:
     """Splits a section of content into chunks that are at most
     size n without breaking apart words."""
     segments = []
@@ -384,11 +386,11 @@ def _split_content_size_n(content: str, n: int) -> List[str]:
 def _split_content_to_fit_max(
     content: str,
     max_partition: Optional[int] = 1500,
-) -> List[str]:
+) -> list[str]:
     """Splits a paragraph or section of content so that all of the elements fit into the
     max partition window."""
     sentences = sent_tokenize(content)
-    chunks: List[str] = []
+    chunks: list[str] = []
     tmp_chunk = ""
     # Initialize an empty string to collect sentence segments (`tmp_chunk`).
     for sentence in sentences:
@@ -425,7 +427,7 @@ def _split_content_to_fit_max(
 def _split_in_half_at_breakpoint(
     content: str,
     breakpoint: str = " ",
-) -> List[str]:
+) -> list[str]:
     """Splits a segment of content at the breakpoint closest to the middle"""
     mid = len(content) // 2
     for i in range(len(content) // 2):

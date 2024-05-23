@@ -4,13 +4,14 @@
 #
 #    pip-compile ./extra-docx.in
 #
-lxml==4.9.4
+lxml==5.2.2
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   python-docx
-python-docx==1.1.0
-    # via -r ./extra-docx.in
+python-docx==1.1.2
+    # via
+    #   -c ././deps/constraints.txt
+    #   -r ./extra-docx.in
 typing-extensions==4.11.0
     # via
     #   -c ./base.txt

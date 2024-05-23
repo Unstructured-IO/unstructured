@@ -30,6 +30,11 @@ source "$SCRIPT_DIR"/cleanup.sh
 function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
+
+  python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+    --token "$ASTRA_DB_TOKEN" \
+    --api-endpoint "$ASTRA_DB_ENDPOINT" \
+    --collection-name "$COLLECTION_NAME" down
 }
 
 trap cleanup EXIT
@@ -42,7 +47,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --verbose \
   --input-path example-docs/book-war-and-peace-1p.txt \
   --work-dir "$WORK_DIR" \
-  --chunk-elements \
+  --chunking-strategy by_title \
   --chunk-max-characters 1500 \
   --chunk-multipage-sections \
   --embedding-provider "langchain-huggingface" \
@@ -50,6 +55,10 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --token "$ASTRA_DB_TOKEN" \
   --api-endpoint "$ASTRA_DB_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" \
-  --embedding-dimension "$EMBEDDING_DIMENSION"
+  --embedding-dimension "$EMBEDDING_DIMENSION" \
+  --requested-indexing-policy '{"deny": ["metadata"]}'
 
-python "$SCRIPT_DIR"/python/test-ingest-astra-output.py --token "$ASTRA_DB_TOKEN" --api-endpoint "$ASTRA_DB_ENDPOINT" --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
+  --token "$ASTRA_DB_TOKEN" \
+  --api-endpoint "$ASTRA_DB_ENDPOINT" \
+  --collection-name "$COLLECTION_NAME" check
