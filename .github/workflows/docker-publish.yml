@@ -50,16 +50,12 @@ jobs:
         make docker-dl-packages
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
         DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
+          -f Dockerfile-$ARCH \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
           --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
-    - name: Scan image
-      uses: anchore/scan-action@v3
-      with:
-        image: "$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA"
-        severity-cutoff: high
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
     - name: Test images

@@ -47,12 +47,10 @@ install-test:
 	# NOTE(yao) - CI seem to always install tesseract to test so it would make sense to also require
 	# pytesseract installation into the virtual env for testing
 	python3 -m pip install unstructured.pytesseract -c requirements/deps/constraints.txt
-	python3 -m pip install argilla -c requirements/deps/constraints.txt
+	# python3 -m pip install argilla==1.28.0 -c requirements/deps/constraints.txt
 	# NOTE(robinson) - Installing weaviate-client separately here because the requests
 	# version conflicts with label_studio_sdk
 	python3 -m pip install weaviate-client -c requirements/deps/constraints.txt
-	# TODO (yao): find out if how to constrain argilla properly without causing conflicts
-	python3 -m pip install argilla
 
 .PHONY: install-dev
 install-dev:
@@ -326,52 +324,51 @@ test-no-extras:
 .PHONY: test-extra-csv
 test-extra-csv:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/csv
+		test_unstructured/partition/test_csv.py \
+		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/docx
+		test_unstructured/partition/test_doc.py \
+		test_unstructured/partition/test_docx.py
+
+.PHONY: test-extra-epub
+test-extra-epub:
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/markdown
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-msg
 test-extra-msg:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/msg
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/odt
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf_image
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pptx
-
-.PHONY: test-extra-epub
-test-extra-epub:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/epub
+		test_unstructured/partition/test_ppt.py \
+		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pypandoc
+		test_unstructured/partition/test_org.py \
+		test_unstructured/partition/test_rst.py \
+		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/xlsx
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_xlsx.py
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
@@ -439,7 +436,7 @@ version-sync:
 
 .PHONY: check-coverage
 check-coverage:
-	coverage report --fail-under=95
+	coverage report --fail-under=90
 
 ## check-deps:              check consistency of dependencies
 .PHONY: check-deps

@@ -86,7 +86,7 @@ class RetryStrategyConfig(BaseConfig):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = True
+    pdf_infer_table_structure: bool = False
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
