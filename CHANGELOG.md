@@ -2,11 +2,14 @@
 
 ### Enhancements
 
+* **Move `category` field from Text class to Element class.**
+
 ### Features
 
 ### Fixes
 
 * **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
 ## 0.14.2
 
