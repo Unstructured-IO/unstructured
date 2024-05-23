@@ -1,5 +1,3 @@
-import os
-import pathlib
 from tempfile import SpooledTemporaryFile
 from unittest.mock import patch
 
@@ -12,11 +10,9 @@ from unstructured.documents.elements import ElementType, Title
 from unstructured.partition.md import partition_md
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-
 
 def test_partition_md_from_filename():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     elements = partition_md(filename=filename)
     assert "PageBreak" not in [elem.category for elem in elements]
     assert len(elements) > 0
@@ -27,14 +23,14 @@ def test_partition_md_from_filename():
 
 
 def test_partition_md_from_filename_returns_uns_elements():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     elements = partition_md(filename=filename)
     assert len(elements) > 0
     assert isinstance(elements[0], Title)
 
 
 def test_partition_md_from_filename_with_metadata_filename():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     elements = partition_md(filename=filename, metadata_filename="test")
     assert "PageBreak" not in [elem.category for elem in elements]
     assert len(elements) > 0
@@ -43,7 +39,7 @@ def test_partition_md_from_filename_with_metadata_filename():
 
 
 def test_partition_md_from_file():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         elements = partition_md(file=f)
     assert len(elements) > 0
@@ -52,7 +48,7 @@ def test_partition_md_from_file():
 
 
 def test_partition_md_from_file_with_metadata_filename():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         elements = partition_md(file=f, metadata_filename="test")
     assert len(elements) > 0
@@ -60,7 +56,7 @@ def test_partition_md_from_file_with_metadata_filename():
 
 
 def test_partition_md_from_text():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
     elements = partition_md(text=text)
@@ -78,7 +74,7 @@ class MockResponse:
 
 
 def test_partition_md_from_url():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
 
@@ -96,7 +92,7 @@ def test_partition_md_from_url():
 
 
 def test_partition_md_from_url_raises_with_bad_status_code():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
 
@@ -110,7 +106,7 @@ def test_partition_md_from_url_raises_with_bad_status_code():
 
 
 def test_partition_md_from_url_raises_with_bad_content_type():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
 
@@ -129,7 +125,7 @@ def test_partition_md_raises_with_none_specified():
 
 
 def test_partition_md_raises_with_too_many_specified():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
 
@@ -138,14 +134,14 @@ def test_partition_md_raises_with_too_many_specified():
 
 
 def test_partition_md_from_filename_exclude_metadata():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     elements = partition_md(filename=filename, include_metadata=False)
     for i in range(len(elements)):
         assert elements[i].metadata.to_dict() == {}
 
 
 def test_partition_md_from_file_exclude_metadata():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         elements = partition_md(file=f, include_metadata=False)
     for i in range(len(elements)):
@@ -153,7 +149,7 @@ def test_partition_md_from_file_exclude_metadata():
 
 
 def test_partition_md_from_text_exclude_metadata():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "README.md")
+    filename = example_doc_path("README.md")
     with open(filename) as f:
         text = f.read()
     elements = partition_md(text=text, include_metadata=False)
@@ -323,7 +319,7 @@ def test_partition_md_respects_detect_language_per_element():
 
 
 def test_partition_md_parse_table():
-    filename = os.path.join(DIRECTORY, "..", "..", "..", "example-docs", "simple-table.md")
+    filename = example_doc_path("simple-table.md")
     elements = partition_md(filename=filename)
     assert len(elements) > 0
     assert elements[0].category == ElementType.TABLE

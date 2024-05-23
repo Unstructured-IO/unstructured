@@ -1,19 +1,14 @@
-import os
-import pathlib
 from tempfile import SpooledTemporaryFile
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON
+from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import Table, Text
 from unstructured.partition.epub import partition_epub
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA
 
-DIRECTORY = pathlib.Path(__file__).parent.resolve()
-EXAMPLE_DOCS_PATH = os.path.join(DIRECTORY, "..", "..", "..", "example-docs")
-
 
 def test_partition_epub_from_filename():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
     assert elements[0].text.startswith("The Project Gutenberg eBook of Winter Sports")
@@ -24,7 +19,7 @@ def test_partition_epub_from_filename():
 
 
 def test_partition_epub_from_filename_returns_table_in_elements():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
     assert (
@@ -39,21 +34,21 @@ def test_partition_epub_from_filename_returns_table_in_elements():
 
 
 def test_partition_epub_from_filename_returns_uns_elements():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert len(elements) > 0
     assert isinstance(elements[0], Text)
 
 
 def test_partition_epub_from_filename_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename, metadata_filename="test")
     assert len(elements) > 0
     assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_epub_from_file():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     with open(filename, "rb") as f:
         elements = partition_epub(file=f)
     assert len(elements) > 0
@@ -63,7 +58,7 @@ def test_partition_epub_from_file():
 
 
 def test_partition_epub_from_file_with_metadata_filename():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     with open(filename, "rb") as f:
         elements = partition_epub(file=f, metadata_filename="test")
     assert len(elements) > 0
@@ -72,7 +67,7 @@ def test_partition_epub_from_file_with_metadata_filename():
 
 
 def test_partition_epub_from_filename_exclude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename, include_metadata=False)
     assert elements[0].metadata.filetype is None
     assert elements[0].metadata.page_name is None
@@ -80,7 +75,7 @@ def test_partition_epub_from_filename_exclude_metadata():
 
 
 def test_partition_epub_from_file_exlcude_metadata():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     with open(filename, "rb") as f:
         elements = partition_epub(file=f, include_metadata=False)
     assert elements[0].metadata.filetype is None
@@ -196,7 +191,7 @@ def test_partition_epub_with_json():
 
 
 def test_add_chunking_strategy_on_partition_epub(
-    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub"),
+    filename=example_doc_path("winter-sports.epub"),
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(filename, chunking_strategy="by_title")
@@ -206,7 +201,7 @@ def test_add_chunking_strategy_on_partition_epub(
 
 
 def test_add_chunking_strategy_on_partition_epub_non_default(
-    filename=os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub"),
+    filename=example_doc_path("winter-sports.epub"),
 ):
     elements = partition_epub(filename=filename)
     chunk_elements = partition_epub(
@@ -227,7 +222,7 @@ def test_add_chunking_strategy_on_partition_epub_non_default(
 
 
 def test_partition_epub_element_metadata_has_languages():
-    filename = os.path.join(EXAMPLE_DOCS_PATH, "winter-sports.epub")
+    filename = example_doc_path("winter-sports.epub")
     elements = partition_epub(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
 

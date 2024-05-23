@@ -324,52 +324,51 @@ test-no-extras:
 .PHONY: test-extra-csv
 test-extra-csv:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/csv
+		test_unstructured/partition/test_csv.py \
+		test_unstructured/partition/test_tsv.py
 
 .PHONY: test-extra-docx
 test-extra-docx:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/docx
+		test_unstructured/partition/test_doc.py \
+		test_unstructured/partition/test_docx.py
+
+.PHONY: test-extra-epub
+test-extra-epub:
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_epub.py
 
 .PHONY: test-extra-markdown
 test-extra-markdown:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/markdown
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_md.py
 
 .PHONY: test-extra-msg
 test-extra-msg:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/msg
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py
 
 .PHONY: test-extra-odt
 test-extra-odt:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/odt
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_odt.py
 
 .PHONY: test-extra-pdf-image
 test-extra-pdf-image:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pdf_image
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/pdf_image
 
 .PHONY: test-extra-pptx
 test-extra-pptx:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pptx
-
-.PHONY: test-extra-epub
-test-extra-epub:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/epub
+		test_unstructured/partition/test_ppt.py \
+		test_unstructured/partition/test_pptx.py
 
 .PHONY: test-extra-pypandoc
 test-extra-pypandoc:
 	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/pypandoc
+		test_unstructured/partition/test_org.py \
+		test_unstructured/partition/test_rst.py \
+		test_unstructured/partition/test_rtf.py
 
 .PHONY: test-extra-xlsx
 test-extra-xlsx:
-	PYTHONPATH=. CI=$(CI) pytest \
-		test_${PACKAGE_NAME}/partition/xlsx
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_xlsx.py
 
 ## check:                   runs linters (includes tests)
 .PHONY: check
