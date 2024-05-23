@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Move `category` field from Text class to Element class.**
+
 ### Features
 
 ### Fixes
