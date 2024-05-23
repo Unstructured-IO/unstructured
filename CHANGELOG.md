@@ -1,13 +1,22 @@
-## 0.14.2-dev2
+## 0.14.3-dev0
 
 ### Enhancements
 
 * **Move `category` field from Text class to Element class.**
 
+### Features
+
+### Fixes
+
+## 0.14.2
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.33**.
 
 ### Features
 
-  * Add attribution to the `pinecone` connector
+* **Add attribution to the `pinecone` connector**.
 
 ### Fixes
 

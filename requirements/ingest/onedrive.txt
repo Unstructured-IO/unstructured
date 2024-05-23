@@ -43,7 +43,7 @@ pyjwt[crypto]==2.8.0
     # via msal
 pytz==2024.1
     # via office365-rest-python-client
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   msal

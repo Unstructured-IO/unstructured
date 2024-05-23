@@ -27,7 +27,7 @@ pydantic==2.7.1
     # via pyairtable
 pydantic-core==2.18.2
     # via pydantic
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   pyairtable

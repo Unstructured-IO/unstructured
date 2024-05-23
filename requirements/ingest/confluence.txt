@@ -31,7 +31,7 @@ oauthlib==3.2.2
     # via
     #   atlassian-python-api
     #   requests-oauthlib
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   atlassian-python-api

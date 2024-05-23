@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import os
 import pathlib
@@ -129,6 +131,7 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
     assert elements == expected_docx_elements
 
 
+@pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 @pytest.mark.parametrize(
     ("pass_metadata_filename", "content_type"),
     [(False, None), (False, "application/msword"), (True, "application/msword"), (True, None)],
@@ -136,24 +139,24 @@ def test_auto_partition_docx_with_file(mock_docx_document, expected_docx_element
 def test_auto_partition_doc_with_filename(
     mock_docx_document,
     expected_docx_elements,
-    tmpdir,
+    tmp_path: pathlib.Path,
     pass_metadata_filename,
     content_type,
 ):
-    docx_filename = os.path.join(tmpdir.dirname, "mock_document.docx")
-    doc_filename = os.path.join(tmpdir.dirname, "mock_document.doc")
-    mock_docx_document.save(docx_filename)
-    convert_office_doc(docx_filename, tmpdir.dirname, "doc")
-    metadata_filename = doc_filename if pass_metadata_filename else None
+    docx_file_path = str(tmp_path / "mock_document.docx")
+    doc_file_path = str(tmp_path / "mock_document.doc")
+    mock_docx_document.save(docx_file_path)
+    convert_office_doc(docx_file_path, str(tmp_path), "doc")
+    metadata_filename = doc_file_path if pass_metadata_filename else None
     elements = partition(
-        filename=doc_filename,
+        filename=doc_file_path,
         metadata_filename=metadata_filename,
         content_type=content_type,
         strategy=PartitionStrategy.HI_RES,
     )
     assert elements == expected_docx_elements
     assert elements[0].metadata.filename == "mock_document.doc"
-    assert elements[0].metadata.file_directory == tmpdir.dirname
+    assert elements[0].metadata.file_directory == str(tmp_path)
 
 
 # NOTE(robinson) - the application/x-ole-storage mime type is not specific enough to

@@ -68,14 +68,14 @@ langchain==0.2.0
     # via langchain-community
 langchain-community==0.2.0
     # via -r ./ingest/embed-openai.in
-langchain-core==0.2.0
+langchain-core==0.2.1
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
 langchain-text-splitters==0.2.0
     # via langchain
-langsmith==0.1.60
+langsmith==0.1.61
     # via
     #   langchain
     #   langchain-community
@@ -125,7 +125,7 @@ regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
-requests==2.32.1
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   langchain
