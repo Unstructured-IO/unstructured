@@ -5,21 +5,8 @@ from __future__ import annotations
 import html
 import io
 import itertools
-import os
 import tempfile
-from tempfile import SpooledTemporaryFile
-from typing import (
-    IO,
-    Any,
-    Dict,
-    Iterator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-    cast,
-)
+from typing import IO, Any, Iterator, Optional, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -57,7 +44,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
@@ -69,112 +55,12 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import (
-    dependency_exists,
-    is_temp_file_path,
-    lazyproperty,
-    requires_dependencies,
-)
-
-if dependency_exists("pypandoc"):
-    import pypandoc
+from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "docx"
-BlockElement: TypeAlias = Union[CT_P, CT_Tbl]
-BlockItem: TypeAlias = Union[Paragraph, DocxTable]
-
-
-@requires_dependencies("pypandoc")
-def convert_and_partition_docx(
-    source_format: str,
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    include_metadata: bool = True,
-    infer_table_structure: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
-    languages: Optional[List[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    starting_page_number: int = 1,
-) -> List[Element]:
-    """Converts a document to DOCX and then partitions it using partition_docx.
-
-    Works with any file format support by pandoc.
-
-    Parameters
-    ----------
-    source_format
-        The format of the source document, .e.g. odt
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the elements in
-        the output.
-    infer_table_structure
-        If True, any Table elements that are extracted will also have a metadata field
-        named "text_as_html" where the table's text content is rendered into an html string.
-        I.e., rows and cells are preserved.
-        Whether True or False, the "text" field is always present in any Table element
-        and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
-    """
-    exactly_one(filename=filename, file=file)
-
-    def validate_filename(filename: str) -> str:
-        """Return path to a file confirmed to exist on the filesystem."""
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
-        return filename
-
-    def copy_to_tempfile(file: IO[bytes]) -> str:
-        """Return path to temporary copy of file to be converted."""
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp.write(file.read())
-            return tmp.name
-
-    def extract_docx_filename(file_path: str) -> str:
-        """Return a filename like "foo.docx" from a path like "a/b/foo.odt" """
-        # -- a/b/foo.odt -> foo.odt --
-        filename = os.path.basename(file_path)
-        # -- foo.odt -> foo --
-        root_name, _ = os.path.splitext(filename)
-        # -- foo -> foo.docx --
-        return f"{root_name}.docx"
-
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
-        pypandoc.convert_file(  # pyright: ignore
-            file_path,
-            "docx",
-            format=source_format,
-            outputfile=docx_path,
-        )
-        elements = partition_docx(
-            filename=docx_path,
-            metadata_filename=metadata_filename,
-            include_metadata=include_metadata,
-            infer_table_structure=infer_table_structure,
-            metadata_last_modified=metadata_last_modified,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-        )
-
-    return elements
+BlockElement: TypeAlias = "CT_P | CT_Tbl"
+BlockItem: TypeAlias = "Paragraph | DocxTable"
 
 
 @process_metadata()
@@ -182,19 +68,19 @@ def convert_and_partition_docx(
 @add_chunking_strategy
 def partition_docx(
     filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    metadata_filename: Optional[str] = None,
-    include_page_breaks: bool = True,
-    include_metadata: bool = True,  # used by decorator
-    infer_table_structure: bool = True,
-    metadata_last_modified: Optional[str] = None,
-    chunking_strategy: Optional[str] = None,  # used by decorator
-    languages: Optional[List[str]] = ["auto"],
-    detect_language_per_element: bool = False,
+    *,
     date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
+    file: Optional[IO[bytes]] = None,
+    include_page_breaks: bool = True,
+    infer_table_structure: bool = True,
+    languages: Optional[list[str]] = ["auto"],
+    metadata_filename: Optional[str] = None,
+    metadata_last_modified: Optional[str] = None,
     starting_page_number: int = 1,
-    **kwargs: Any,  # used by decorator
-) -> List[Element]:
+    strategy: Optional[str] = None,
+    **kwargs: Any,
+) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
 
     Parameters
@@ -203,6 +89,9 @@ def partition_docx(
         A string defining the target filename path.
     file
         A file-like object using "rb" mode --> open(filename, "rb").
+    include_page_breaks
+        When True, add a `PageBreak` element to the element-stream when a page-break is detected in
+        the document. Note that not all DOCX files include page-break information.
     infer_table_structure
         If True, any Table elements that are extracted will also have a metadata field
         named "text_as_html" where the table's text content is rendered into an html string.
@@ -225,23 +114,23 @@ def partition_docx(
         Applies only when providing file via `file` parameter. If this option is True, attempt
         infer last_modified metadata from bytes, otherwise set it to None.
     starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
+        Assign this number to the first page of this document and increment the page number from
+        there.
     """
-    # -- verify that only one file-specifier argument was provided --
-    exactly_one(filename=filename, file=file)
-
-    elements = _DocxPartitioner.iter_document_elements(
-        filename,
-        file,
-        metadata_filename,
-        include_page_breaks,
-        infer_table_structure,
-        metadata_last_modified,
-        date_from_file_object,
+    opts = DocxPartitionerOptions(
+        date_from_file_object=date_from_file_object,
+        file=file,
+        file_path=filename,
+        include_page_breaks=include_page_breaks,
+        infer_table_structure=infer_table_structure,
+        metadata_file_path=metadata_filename,
+        metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
+        strategy=strategy,
     )
+
+    elements = _DocxPartitioner.iter_document_elements(opts)
+
     elements = apply_lang_metadata(
         elements=elements,
         languages=languages,
@@ -250,56 +139,180 @@ def partition_docx(
     return list(elements)
 
 
-class _DocxPartitioner:
-    """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
+class DocxPartitionerOptions:
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
 
     def __init__(
         self,
-        # -- NOTE(scanny): default values here are unnecessary for production use because
-        # -- `.iter_document_elements()` is the only interface method and always calls with all
-        # -- args. However, providing defaults eases unit-testing and decouples unit-tests from
-        # -- future changes to args.
-        filename: Optional[str] = None,
-        file: Optional[IO[bytes]] = None,
-        metadata_filename: Optional[str] = None,
-        include_page_breaks: bool = True,
-        infer_table_structure: bool = True,
-        metadata_last_modified: Optional[str] = None,
-        date_from_file_object: bool = False,
+        *,
+        date_from_file_object: bool,
+        file: IO[bytes] | None,
+        file_path: str | None,
+        include_page_breaks: bool,
+        infer_table_structure: bool,
+        metadata_file_path: Optional[str],
+        metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
-    ) -> None:
-        self._filename = filename
+        strategy: str | None = None,
+    ):
+        self._date_from_file_object = date_from_file_object
         self._file = file
-        self._metadata_filename = metadata_filename
+        self._file_path = file_path
         self._include_page_breaks = include_page_breaks
         self._infer_table_structure = infer_table_structure
+        self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
+        self._strategy = strategy
+        # -- options object maintains page-number state --
         self._page_counter = starting_page_number
-        self._date_from_file_object = date_from_file_object
+
+    @lazyproperty
+    def document(self) -> Document:
+        """The python-docx `Document` object loaded from file or filename."""
+        return docx.Document(self._docx_file)
+
+    @lazyproperty
+    def include_page_breaks(self) -> bool:
+        """When True, include `PageBreak` elements in element-stream.
+
+        Note that regardless of this setting, page-breaks are detected, and page-number is tracked
+        and included in element metadata. Only the presence of distinct `PageBreak` elements (which
+        contain no text) in the element stream is affected.
+        """
+        return self._include_page_breaks
+
+    def increment_page_number(self) -> Iterator[PageBreak]:
+        """Increment page-number by 1 and generate a PageBreak element if enabled."""
+        self._page_counter += 1
+        # -- only emit page-breaks when enabled --
+        if self._include_page_breaks:
+            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
+
+    @lazyproperty
+    def infer_table_structure(self) -> bool:
+        """True when partitioner should compute and apply `text_as_html` metadata for tables."""
+        return self._infer_table_structure
+
+    @lazyproperty
+    def last_modified(self) -> Optional[str]:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format, and any last-modified date for the file
+        # -- would be just now.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
+
+        if self._file_path:
+            return (
+                None
+                if is_temp_file_path(self._file_path)
+                else get_last_modified_date(self._file_path)
+            )
+
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
+
+        return None
+
+    @lazyproperty
+    def metadata_file_path(self) -> str | None:
+        """The best available file-path for this document or `None` if unavailable."""
+        return self._metadata_file_path or self._file_path
+
+    @property
+    def metadata_page_number(self) -> Optional[int]:
+        """The current page number to report in metadata, or None if we can't really tell.
+
+        Page numbers are not added to element metadata if we can't find any page-breaks in the
+        document (which may be a common case).
+
+        In the DOCX format, determining page numbers is strictly a best-efforts attempt since
+        actual page-breaks are determined at rendering time (e.g. printing) based on the
+        font-metrics of the target device. Explicit (hard) page-breaks are always recorded in the
+        docx file but the rendered page-breaks are only added optionally.
+        """
+        return self._page_counter if self._document_contains_pagebreaks else None
+
+    @property
+    def page_number(self) -> int:
+        """The current page number.
+
+        Note this value may not represent the actual rendered page number when rendered page-break
+        indicators are not present in the document (not uncommon). Use `.metadata_page_number` for
+        metadata purposes, which is `None` when rendered page-breaks are not present in this
+        document.
+        """
+        return self._page_counter
+
+    @lazyproperty
+    def strategy(self) -> str:
+        """The partitioning strategy for this document.
+
+        One of "hi_res", "fast", and a few others. These are available as class attributes on
+        `unstructured.partition.utils.constants.PartitionStrategy` but resolve to str values.
+        """
+        return PartitionStrategy.HI_RES if self._strategy is None else self._strategy
+
+    @lazyproperty
+    def _document_contains_pagebreaks(self) -> bool:
+        """True when there is at least one page-break detected in the document.
+
+        Only `w:lastRenderedPageBreak` elements reliably indicate a page-break. These are reliably
+        inserted by Microsoft Word, but probably don't appear in documents converted into .docx
+        format from for example .odt format.
+        """
+        xpath = (
+            # NOTE(scanny) - w:lastRenderedPageBreak (lrpb) is run (w:r) inner content. `w:r` can
+            # appear in a paragraph (w:p). w:r can also appear in a hyperlink (w:hyperlink), which
+            # is w:p inner-content and both of these can occur inside a table-cell as well as the
+            # document body
+            "./w:body/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:r/w:lastRenderedPageBreak"
+            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
+        )
+
+        return bool(self.document.element.xpath(xpath))
+
+    @lazyproperty
+    def _docx_file(self) -> str | IO[bytes]:
+        """The Word 2007+ document file to be partitioned.
+
+        This is either a `str` path or a file-like object. `python-docx` accepts either for opening
+        a document file.
+        """
+        if self._file_path:
+            return self._file_path
+
+        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
+        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
+        # -- to work around that bug here.
+        if isinstance(self._file, tempfile.SpooledTemporaryFile):
+            self._file.seek(0)
+            return io.BytesIO(self._file.read())
+
+        if self._file:
+            return self._file
+
+        raise ValueError(
+            "No DOCX document specified, either `filename` or `file` argument must be provided"
+        )
+
+
+class _DocxPartitioner:
+    """Provides `.partition()` for MS-Word 2007+ (.docx) files."""
+
+    def __init__(self, opts: DocxPartitionerOptions) -> None:
+        self._opts = opts
 
     @classmethod
-    def iter_document_elements(
-        cls,
-        filename: Optional[str] = None,
-        file: Optional[IO[bytes]] = None,
-        metadata_filename: Optional[str] = None,
-        include_page_breaks: bool = True,
-        infer_table_structure: bool = True,
-        metadata_last_modified: Optional[str] = None,
-        date_from_file_object: bool = False,
-        starting_page_number: int = 1,
-    ) -> Iterator[Element]:
+    def iter_document_elements(cls, opts: DocxPartitionerOptions) -> Iterator[Element]:
         """Partition MS Word documents (.docx format) into its document elements."""
-        self = cls(
-            filename=filename,
-            file=file,
-            metadata_filename=metadata_filename,
-            include_page_breaks=include_page_breaks,
-            infer_table_structure=infer_table_structure,
-            metadata_last_modified=metadata_last_modified,
-            date_from_file_object=date_from_file_object,
-            starting_page_number=starting_page_number,
-        )
+        self = cls(opts)
         # NOTE(scanny): It's possible for a Word document to have no sections. In particular, a
         # Microsoft Teams chat transcript exported to DOCX contains no sections. Such a
         # "section-less" document has to be interated differently and has no headers or footers and
@@ -315,7 +328,7 @@ class _DocxPartitioner:
         # -- This implementation composes a collection of iterators into a "combined" iterator
         # -- return value using `yield from`. You can think of the return value as an Element
         # -- stream and each `yield from` as "add elements found by this function to the stream".
-        # -- This is functionally analogous to declaring `elements: List[Element] = []` at the top
+        # -- This is functionally analogous to declaring `elements: list[Element] = []` at the top
         # -- and using `elements.extend()` for the results of each of the function calls, but is
         # -- more perfomant, uses less memory (avoids producing and then garbage-collecting all
         # -- those small lists), is more flexible for later iterator operations like filter,
@@ -464,37 +477,7 @@ class _DocxPartitioner:
     @lazyproperty
     def _document(self) -> Document:
         """The python-docx `Document` object loaded from file or filename."""
-        filename, file = self._filename, self._file
-
-        if filename is not None:
-            return docx.Document(filename)
-
-        assert file is not None
-        if isinstance(file, SpooledTemporaryFile):
-            file.seek(0)
-            file = io.BytesIO(file.read())
-        return docx.Document(file)
-
-    @lazyproperty
-    def _document_contains_pagebreaks(self) -> bool:
-        """True when there is at least one page-break detected in the document.
-
-        Only `w:lastRenderedPageBreak` elements reliably indicate a page-break. These are reliably
-        inserted by Microsoft Word, but probably don't appear in documents converted into .docx
-        format from for example .odt format.
-        """
-        xpath = (
-            # NOTE(scanny) - w:lastRenderedPageBreak (lrpb) is run (w:r) inner content. `w:r` can
-            # appear in a paragraph (w:p). w:r can also appear in a hyperlink (w:hyperlink), which
-            # is w:p inner-content and both of these can occur inside a table-cell as well as the
-            # document body
-            "./w:body/w:p/w:r/w:lastRenderedPageBreak"
-            " | ./w:body/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
-            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:r/w:lastRenderedPageBreak"
-            " | ./w:body/w:tbl/w:tr/w:tc/w:p/w:hyperlink/w:r/w:lastRenderedPageBreak"
-        )
-
-        return bool(self._document.element.xpath(xpath))
+        return self._opts.document
 
     @lazyproperty
     def _document_contains_sections(self) -> bool:
@@ -535,12 +518,6 @@ class _DocxPartitioner:
                     yield " ".join(self._iter_table_texts(block_item))
 
         return "\n".join(text for text in iter_hdrftr_texts(hdrftr) if text)
-
-    def _increment_page_number(self) -> Iterator[PageBreak]:
-        """Increment page-number by 1 and generate a PageBreak element if enabled."""
-        self._page_counter += 1
-        if self._include_page_breaks:
-            yield PageBreak("", detection_origin=DETECTION_ORIGIN)
 
     def _is_list_item(self, paragraph: Paragraph) -> bool:
         """True when `paragraph` can be identified as a list-item."""
@@ -593,9 +570,9 @@ class _DocxPartitioner:
             if isinstance(item, Paragraph):
                 yield from self._classify_paragraph_to_element(item)
             else:
-                yield from self._increment_page_number()
+                yield from self._opts.increment_page_number()
 
-    def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[Dict[str, str]]:
+    def _iter_paragraph_emphasis(self, paragraph: Paragraph) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "MUST", "tag": "b"} for each emphasis in `paragraph`."""
         for run in paragraph.runs:
             text = run.text.strip() if run.text else ""
@@ -628,7 +605,7 @@ class _DocxPartitioner:
                 text=text,
                 detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
-                    filename=self._metadata_filename,
+                    filename=self._opts.metadata_file_path,
                     header_footer_type=header_footer_type,
                     category_depth=0,
                 ),
@@ -657,7 +634,7 @@ class _DocxPartitioner:
                 text=text,
                 detection_origin=DETECTION_ORIGIN,
                 metadata=ElementMetadata(
-                    filename=self._metadata_filename,
+                    filename=self._opts.metadata_file_path,
                     header_footer_type=header_footer_type,
                     category_depth=0,  # -- headers are always at the root level}
                 ),
@@ -680,7 +657,7 @@ class _DocxPartitioner:
         """
 
         def page_is_odd() -> bool:
-            return self._page_counter % 2 == 1
+            return self._opts.page_number % 2 == 1
 
         start_type = section.start_type
 
@@ -694,14 +671,14 @@ class _DocxPartitioner:
             # -- on an even page we need two total, add one to supplement the rendered page break
             # -- to follow. There is no "first-document-page" special case because 1 is odd.
             if not page_is_odd():
-                yield from self._increment_page_number()
+                yield from self._opts.increment_page_number()
 
         elif start_type == WD_SECTION_START.ODD_PAGE:
             # -- the first page of the document is an implicit "new" odd-page, so no page-break --
             if section_idx == 0:
                 return
             if page_is_odd():
-                yield from self._increment_page_number()
+                yield from self._opts.increment_page_number()
 
         # -- otherwise, start-type is one of "continuous", "new-column", or "next-page", none of
         # -- which need our help to get the page-breaks right.
@@ -711,7 +688,9 @@ class _DocxPartitioner:
         """Generate zero-or-one Table element for a DOCX `w:tbl` XML element."""
         # -- at present, we always generate exactly one Table element, but we might want
         # -- to skip, for example, an empty table.
-        html_table = self._convert_table_to_html(table) if self._infer_table_structure else None
+        html_table = (
+            self._convert_table_to_html(table) if self._opts.infer_table_structure else None
+        )
         text_table = " ".join(self._iter_table_texts(table))
         emphasized_text_contents, emphasized_text_tags = self._table_emphasis(table)
 
@@ -720,15 +699,15 @@ class _DocxPartitioner:
             detection_origin=DETECTION_ORIGIN,
             metadata=ElementMetadata(
                 text_as_html=html_table,
-                filename=self._metadata_filename,
-                page_number=self._page_number,
-                last_modified=self._last_modified,
+                filename=self._opts.metadata_file_path,
+                page_number=self._opts.metadata_page_number,
+                last_modified=self._opts.last_modified,
                 emphasized_text_contents=emphasized_text_contents or None,
                 emphasized_text_tags=emphasized_text_tags or None,
             ),
         )
 
-    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[Dict[str, str]]:
+    def _iter_table_emphasis(self, table: DocxTable) -> Iterator[dict[str, str]]:
         """Generate e.g. {"text": "word", "tag": "b"} for each emphasis in `table`."""
         for row in table.rows:
             for cell in row.cells:
@@ -765,47 +744,12 @@ class _DocxPartitioner:
                 # -- do not generate empty strings --
                 yield from (text for text in iter_cell_texts(_Cell(tc, table)) if text)
 
-    @lazyproperty
-    def _last_modified(self) -> Optional[str]:
-        """Last-modified date suitable for use in element metadata."""
-        # -- if this file was converted from another format, any last-modified date for the file
-        # -- will be today, so we get it from the conversion step in `._metadata_last_modified`.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        file_path, file = self._filename, self._file
-
-        # -- if the file is on the filesystem, get its date from there --
-        if file_path is not None:
-            return None if is_temp_file_path(file_path) else get_last_modified_date(file_path)
-
-        # -- otherwise, as long as user explicitly requested it, try getting it from the file-like
-        # -- object (unlikely since BytesIO and its brethren have no such metadata).
-        assert file is not None
-        if self._date_from_file_object:
-            return get_last_modified_date_from_file(file)
-        return None
-
-    @property
-    def _page_number(self) -> Optional[int]:
-        """The current page number, or None if we can't really tell.
-
-        Page numbers are not added to element metadata if we can't find any page-breaks in the
-        document (which may be a common case).
-
-        In the DOCX format, determining page numbers is strictly a best-efforts attempt since actual
-        page-breaks are determined at rendering time (e.g. printing) based on the fontmetrics of the
-        target device. Explicit (hard) page-breaks are always recorded in the docx file but the
-        rendered page-breaks are only added optionally.
-        """
-        return self._page_counter if self._document_contains_pagebreaks else None
-
-    def _paragraph_emphasis(self, paragraph: Paragraph) -> Tuple[List[str], List[str]]:
+    def _paragraph_emphasis(self, paragraph: Paragraph) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `paragraph`."""
         iter_p_emph, iter_p_emph_2 = itertools.tee(self._iter_paragraph_emphasis(paragraph))
         return ([e["text"] for e in iter_p_emph], [e["tag"] for e in iter_p_emph_2])
 
-    def _paragraph_link_meta(self, paragraph: Paragraph) -> Tuple[List[str], List[str], List[Link]]:
+    def _paragraph_link_meta(self, paragraph: Paragraph) -> tuple[list[str], list[str], list[Link]]:
         """Describes hyperlinks in `paragraph`, if any."""
         if not paragraph.hyperlinks:
             return [], [], []
@@ -854,12 +798,12 @@ class _DocxPartitioner:
             category_depth=category_depth,
             emphasized_text_contents=emphasized_text_contents or None,
             emphasized_text_tags=emphasized_text_tags or None,
-            filename=self._metadata_filename,
-            last_modified=self._last_modified,
+            filename=self._opts.metadata_file_path,
+            last_modified=self._opts.last_modified,
             link_texts=link_texts or None,
             link_urls=link_urls or None,
             links=links or None,
-            page_number=self._page_number,
+            page_number=self._opts.metadata_page_number,
         )
         element_metadata.detection_origin = "docx"
         return element_metadata
@@ -977,7 +921,7 @@ class _DocxPartitioner:
         # in the mapping. Unknown style names will also return None.
         return STYLE_TO_ELEMENT_MAPPING.get(style_name)
 
-    def _table_emphasis(self, table: DocxTable) -> Tuple[List[str], List[str]]:
+    def _table_emphasis(self, table: DocxTable) -> tuple[list[str], list[str]]:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])

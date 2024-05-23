@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import io
-from typing import IO, Any, Callable, Optional
+from typing import IO, Any, Callable, Literal, Optional
 
 import requests
 
@@ -139,14 +139,14 @@ def partition(
     include_page_breaks: bool = False,
     strategy: str = PartitionStrategy.AUTO,
     encoding: Optional[str] = None,
-    paragraph_grouper: Optional[Callable[[str], str]] = None,
+    paragraph_grouper: Optional[Callable[[str], str]] | Literal[False] = None,
     headers: dict[str, str] = {},
-    skip_infer_table_types: list[str] = [],
+    skip_infer_table_types: list[str] = ["pdf", "jpg", "png", "heic"],
     ssl_verify: bool = True,
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
-    pdf_infer_table_structure: bool = True,
+    pdf_infer_table_structure: bool = False,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
@@ -268,7 +268,7 @@ def partition(
     kwargs.setdefault("metadata_filename", metadata_filename)
     kwargs.setdefault("date_from_file_object", date_from_file_object)
 
-    if not pdf_infer_table_structure:
+    if pdf_infer_table_structure:
         logger.warning(
             "The pdf_infer_table_structure kwarg is deprecated. Please use skip_infer_table_types "
             "instead."

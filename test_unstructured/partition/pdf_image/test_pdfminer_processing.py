@@ -1,10 +1,11 @@
 import pytest
 from PIL import Image
 from unstructured_inference.constants import Source as InferenceSource
-from unstructured_inference.inference.elements import Rectangle
+from unstructured_inference.inference.elements import Rectangle, TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, LayoutElement, PageLayout
 
 from unstructured.partition.pdf_image.pdfminer_processing import (
+    aggregate_embedded_text_by_block,
     clean_pdfminer_duplicate_image_elements,
     clean_pdfminer_inner_elements,
 )
@@ -139,3 +140,16 @@ def test_clean_pdfminer_duplicate_image_elements(elements, expected_document_len
     cleaned_doc = clean_pdfminer_duplicate_image_elements(document)
 
     assert len(cleaned_doc.pages[0].elements) == expected_document_length
+
+
+def test_aggregate_by_block():
+    expected = "Inside region1 Inside region2"
+    embedded_regions = [
+        TextRegion.from_coords(0, 0, 20, 20, "Inside region1"),
+        TextRegion.from_coords(50, 50, 150, 150, "Inside region2"),
+        TextRegion.from_coords(250, 250, 350, 350, "Outside region"),
+    ]
+    target_region = TextRegion.from_coords(0, 0, 300, 300)
+
+    text = aggregate_embedded_text_by_block(target_region, embedded_regions)
+    assert text == expected

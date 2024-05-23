@@ -49,12 +49,16 @@ def check(ctx):
 
     # Grab an embedding from the collection and search against itself
     # Should get the same document back as the most similar
-    find_one = astra_db_collection.find_one()
+    find_one = astra_db_collection.find_one(projection={"*": 1})
     random_vector = find_one["data"]["document"]["$vector"]
     random_text = find_one["data"]["document"]["content"]
 
     # Perform a similarity search
-    find_result = astra_db_collection.vector_find(random_vector, limit=1)
+    find_result = astra_db_collection.vector_find(
+        random_vector,
+        limit=1,
+        fields=["*"],
+    )
 
     # Check that we retrieved the coded cleats copy data
     assert find_result[0]["content"] == random_text

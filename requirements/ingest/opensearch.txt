@@ -24,7 +24,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   opensearch-py
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   opensearch-py

@@ -1,0 +1,2514 @@
+[
+  {
+    "type": "Header",
+    "element_id": "d25e5f46b5be5f4c8a6573d0688dae93",
+    "text": "Data in Brief 22 (2019) 484\u2013487",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "DatainBrief22 ( 2019 ) 484 \u2013",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 0
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ffd4c08fe1f13ed4b1c1c523ead5510b",
+    "text": "Contents lists available at ScienceDirect",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "",
+          "url": "www.sciencedirect.com/science/journal/23523409",
+          "start_index": -1
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "ab45cdb29d177758321b79d0e5430958",
+    "text": "Data in Brief",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b6ed6a9bb542e0891cebca3fa85e6bcd",
+    "text": "journal homepage: www.elsevier.com/locate/dib",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "www . elsevier . com / locate /",
+          "url": "www.elsevier.com/locate/dib",
+          "start_index": 18
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1acc2228e407a58c34b39c30aed641fe",
+    "text": "Data Article",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "798dd79fdd2f8266cf92f28200198e08",
+    "text": "A benchmark dataset for the multiple depot vehicle scheduling problem",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8edd00e1188d7cb75051b1998ee494a9",
+    "text": "Sarang Kulkarni a,b,c,n, Mohan Krishnamoorthy d,e, Abhiram Ranade f, Andreas T. Ernst c, Rahul Patil b",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7d3eb41c30b752ac6026851e8119f642",
+    "text": "a IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India b SJM School of Management, IIT Bombay, Powai, Mumbai 400076, India c School of Mathematical Sciences, Monash University, Clayton, VIC 3800, Australia d Department of Mechanical and Aerospace Engineering, Monash University, Clayton, VIC 3800, Australia e School of Information Technology and Electrical Engineering, The University of Queensland, QLD 4072, Australia f Department of Computer Science and Engineering, IIT Bombay, Powai, Mumbai 400076, India",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3f086bae7b6270727b6fca8ba4563fd7",
+    "text": "a r t i c l e i n f o",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a951e8fba28630797a561ae24142f1b9",
+    "text": "a b s t r a c t",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "90549df65b3824f67f0290bc96644155",
+    "text": "Article history: Received 21 November 2018 Received in revised form 13 December 2018 Accepted 15 December 2018 Available online 18 December 2018",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3e158fd01d34697ac14890732b84a1fc",
+    "text": "This data article presents a description of a benchmark dataset for the multiple depot vehicle scheduling problem (MDVSP). The MDVSP is to assign vehicles from different depots to timetabled trips to minimize the total cost of empty travel and waiting. The dataset has been developed to evaluate the heuristics of the MDVSP that are presented in \u201cA new formulation and a column generation-based heuristic for the multiple depot vehicle sche- duling problem\u201d (Kulkarni et al., 2018). The dataset contains 60 problem instances of varying size. Researchers can use the dataset to evaluate the future algorithms for the MDVSP and compare the performance with the existing algorithms. The dataset includes a program that can be used to generate new problem instances of the MDVSP.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "298de5d25d4db319d8cb1c4da4e14411",
+    "text": "& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "25ce21c9671271c1639f549d88644f16",
+    "text": "DOI of original article: https://doi.org/10.1016/j.trb.2018.11.007 n Corresponding author at: IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai 400076, India.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 . nCorrespondingauthorat",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007",
+          "start_index": 25
+        },
+        {
+          "text": "https",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007",
+          "start_index": 25
+        },
+        {
+          "text": "https :// doi . org / 10 . 1016 / j . trb . 2018 . 11 .",
+          "url": "http://dx.doi.org/10.1016/j.trb.2018.11.007",
+          "start_index": 25
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b4b1b0bb1bf27aa4de6d404b9304fb02",
+    "text": "E-mail address: sarangkulkarni@iitb.ac.in (S. Kulkarni).",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "sarangkulkarni @ iitb . ac . in",
+          "url": "mailto:sarangkulkarni@iitb.ac.in",
+          "start_index": 16
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3bf8a8c86295c8d68682ff1c4594b485",
+    "text": "https://doi.org/10.1016/j.dib.2018.12.055 2352-3409/& 2018 Published by Elsevier Inc. This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "https",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 0
+        },
+        {
+          "text": "https",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 0
+        },
+        {
+          "text": "https :// doi . org / 10 . 1016 / j . dib . 2018 . 12 .",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 0
+        }
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Header",
+    "element_id": "690f7bab68c635029827f497e6c2b218",
+    "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484\u2013487",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e93f43b23b30a616389e12f193fdf212",
+    "text": "485",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8b5f19753e010793be1dd03a4efe1876",
+    "text": "Speci\ufb01cations table",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b592fc872f2d852ad0242b2353e61673",
+    "text": "Subject area Operations research More speci\ufb01c subject area Vehicle scheduling Type of data How data were acquired",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d21722fd648aed04c8119948bf24b400",
+    "text": "Tables, text \ufb01les Arti\ufb01cially generated by a C \u00fe \u00fe program on Intels Xeons CPU E5\u2013 2670 v2 with Linux operating system. Raw Sixty randomly generated instances of the MDVSP with the number of depots in (8, 12, 16) and the number of trips in (1500, 2000, 2500, 3000) Randomly generated instances IITB-Monash Research Academy, IIT Bombay, Powai, Mumbai, India. Data can be downloaded from https://orlib.uqcloud.net/ Kulkarni, S., Krishnamoorthy, M., Ranade, A., Ernst, A.T. and Patil, R., 2018. A new formulation and a column generation-based heuristic for the multiple depot vehicle scheduling problem. Transportation Research Part B: Methodological, 118, pp. 457\u2013487 [3].",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": ".,",
+          "url": "https://orlib.uqcloud.net/",
+          "start_index": 444
+        }
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "156810b54dfdfa06606b2ab9c20e5936",
+    "text": "Data format Experimental factors",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f10143ddfaeadcb83593edbd06f6dae5",
+    "text": "Experimental features Data source location Data accessibility Related research article",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "61e613d4cdb2f24fcb40060db45431c0",
+    "text": "Value of the data",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d0dfba5954b055b335476e9249b9a73c",
+    "text": "(cid:2) The dataset contains 60 different problem instances of the MDVSP that can be used to evaluate the",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "2956461e611848aeaccd16b99fc03400",
+    "text": "performance of the algorithms for the MDVSP.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2f732a3a72336ba52b0b0de6d0008640",
+    "text": "(cid:2) The data provide all the information that is required to model the MDVSP by using the existing",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "5bd31208ba63e7a44aeea1fd4d721d54",
+    "text": "mathematical formulations.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "038f53e4bdc8c6ea7b1c63f1b9a73e2f",
+    "text": "(cid:2) All the problem instances are available for use without any restrictions. (cid:2) The benchmark solutions and solution time for the problem instances are presented in [3] and can",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "15906f62459fa76ddadb7a7ef1ce556b",
+    "text": "be used for the comparison.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4a39c62bb4f7476ec42fd81325ea6f19",
+    "text": "(cid:2) The dataset includes a program that can generate similar problem instances of different sizes.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "414bd3131cd65d5c68e1c7a140297506",
+    "text": "1. Data",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "96589dd8025c674caf26c856ea689d4e",
+    "text": "The dataset contains 60 different problem instances of the multiple depot vehicle scheduling pro- blem (MDVSP). Each problem instance is provided in a separate \ufb01le. Each \ufb01le is named as \u2018RN-m-n-k.dat\u2019, where \u2018m\u2019, \u2018n\u2019, and \u2018k\u2019 denote the number of depots, the number of trips, and the instance number \u2018RN-8\u20131500-01.dat\u2019, for is the \ufb01rst problem instance with 8 depots and 1500 trips. For the number of depots, m, we used three values, 8, 12, and 16. The four values for the number of trips, n, are 1500, 2000, 2500, and 3000. For each size, \u00f0m; n\u00de, \ufb01ve instances are provided. The dataset can be downloaded from https://orlib.uqcloud.net.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "2500 , and3000 . size , \u00f0m ; n\u00de , \ufb01veinstancesareprovided . Thedatasetcanbedownloadedfromhttps :// orlib . uqcloud . net",
+          "url": "https://orlib.uqcloud.net",
+          "start_index": 509
+        }
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "97686fd4b810190336f3a3f4debb4c5d",
+    "text": "\u2018\u00f0m; n\u00de\u2019,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a1d0fff4ecc99ed0b3792f63af7ac732",
+    "text": "the size,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "18ddc61212b977693c3ab4a9e2a98213",
+    "text": "respectively. For example,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f5af2f4ccedef8e9c9222943207ddce1",
+    "text": "the problem instance,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "275e61db64667898a0ec65d6cbbff69b",
+    "text": "For each problem instance, the following information is provided: The number of depots m\u00f0 The number of trips \u00f0n\u00de, The number of locations \u00f0l\u00de, The number of vehicles at each depot, For each trip i A 1; 2; \u2026; n, a start time, ts",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "f1d7de16fe466b5c9f0396600da6d3ef",
+    "text": "\u00de,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "d07db900a92fbc399e2eac5e0fc704ee",
+    "text": "i , a start location, ls",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "3c0009859c6faa133b3e59b1b5c42c5b",
+    "text": "i , an end time, te",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4f3baeb46b82b7cb0acec9e6b9ac9787",
+    "text": "i , and an end location, le i ,",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "84e91ae08f7e4ae8996bb4cdbbfb9e32",
+    "text": "and",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9e7301ebb3fd5cbe1410901ea78c02db",
+    "text": "(cid:2) The travel time, \u03b4ij, between any two locations i; j A 1; \u2026; l.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5e73cd663ab2449350114f86e23f6bbb",
+    "text": "All times are in minutes and integers. The planning duration is from 5 a.m. to around midnight. Each instance has two classes of trips, short trips and long trips, with 40% short trips and 60% long trips. The duration of a short trip is less than a total of 45 min and the travel time between the start",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "87149858e00c98f10a2b08be1b8d584a",
+    "text": "486",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Header",
+    "element_id": "5fc26c03275c46c5eb2ae66c0c288d2b",
+    "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484\u2013487",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "a3a97226d270316d06712c89f7ff489d",
+    "text": "and end location of the trip. A long trip is about 3\u20135 h in duration and has the same start and end location. For all instances, m r l and the locations 1; \u2026; m correspond to depots, while the remaining locations only appear as trip start and end locations.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "36bb62577b390f929d88ed7d004c1e3e",
+    "text": "i \u00fe\u03b4",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "51071653fbb405a5c84831cbacc6c618",
+    "text": ". If le i ls le i j , otherwise, the vehicle may require waiting at le i for the duration of \u00f0ts",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "edff69ec864e554eb9aee86908ecac9c",
+    "text": "Z te",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f038d089ae51f445f96217852ae9c670",
+    "text": "a ls",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5066fe5d8ca5d5f91f7312ec35a9a7e8",
+    "text": "A trip j can be covered after trip i by the same vehicle, if ts j",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d3b130ec44c8f5b0865012570fe82fd0",
+    "text": "j , the vehicle must travel empty from le j (cid:3)te i \u00de. A schedule is given by the sequence in which a vehicle can cover the trips. The MDVSP is to determine the minimum number of schedules to cover all trips that minimizes total time in waiting and empty travel. The following requirements must be satis\ufb01ed:",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "871530d7bbaa529bbc177fc2a041720e",
+    "text": "j",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "bfd40d52e047822b7bc341a4741f1f73",
+    "text": "i to ls",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a8f50afa154ed8c4545362eeb8ca5799",
+    "text": "1. Each schedule should start and end at the same depot. 2. Each trip should be covered by only one vehicle. 3. The number of schedules that start from a depot should not exceed the number of vehicles at the depot.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "80d7ee3f1337fffbcb42c78e218d8aad",
+    "text": "A suf\ufb01cient number of vehicles are provided to maintain the feasibility of an instance. For each instance size \u00f0m; n\u00de, Table 1 provides the average of the number of locations, the number of times, the number of vehicles, and the number of possible empty travels, over \ufb01ve instances. The number of locations includes m distinct locations for depots and the number of locations at which various trips start or end. The number of times includes the start and the end time of the planning horizon and the start/end times for the trips. The number of vehicles is the total number of vehicles from all the depots. The number of possible empty travels is the number of possible connections between trips that require a vehicle travelling empty between two consecutive trips in a schedule.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "2c71b28268ae79e366c8190e28761e31",
+    "text": "The description of the \ufb01le for each problem instance is presented in Table 2. The \ufb01rst line in the \ufb01le provides the number of depots \u00f0m\u00de, the number of trips, \u00f0n\u00de, and the number of locations \u00f0l\u00de, in the problem instance. The next n lines present the information for n trips. Each line corresponds to a trip, i A 1; \u2026; n g, and provides the start location, the start time, the end location, and the end time of trip i. The next l lines present the travel times between any two locations, i; jA 1; \u2026; l",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "924fc12bebb375f9c74313489cf16217",
+    "text": "f",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "028c5c64e9591944e620e8308f516b5a",
+    "text": "(cid:1)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ce73daceb6d992f6af62cceb4a3d424f",
+    "text": "(cid:3)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "4c3e98e95e0007df7a9e116f5df403c8",
+    "text": ".",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "7c74ad0f1b0edb685ba951da2a788af8",
+    "text": "The dataset also includes a program \u2018GenerateInstance.cpp\u2019 that can be used to generate new instances. The program takes three inputs, the number of depots \u00f0m\u00de, the number of trips \u00f0n\u00de, and the number of instances for each size \u00f0m; n\u00de.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "155c4752aa12e6b82164f5ac49103a19",
+    "text": "Table 1 Average number of locations, times, vehicles and empty travels for each instance size.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "6d92abd137f1e1a6f7d9ecfa1edb0cf4",
+    "text": "Instance size (m, n)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "bcd163c5719297fd86b9eebacf8a9c24",
+    "text": "Average number of",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "204a9747099a8efd4aa0b05c9e5c38d2",
+    "text": "Locations",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "327cb3d0fb60857fee3d8f0c2c78d613",
+    "text": "Times",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "6592bb72dcd3912aa6fabc3df525aeda",
+    "text": "Vehicles",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "80ce4476651a7ac735c554343aeb749f",
+    "text": "Possible empty travels",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "71a7492ba9c12eef52065aabaebc3a7c",
+    "text": "(8, 1500) (8, 2000) (8, 2500) (8, 3000) (12, 1500) (12, 2000) (12, 2500) (12, 3000) (16, 1500) (16, 2000) (16, 2500) (16, 3000)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "7701857f59bdba5844b24edc32749d05",
+    "text": "568.40 672.80 923.40 977.00 566.00 732.60 875.00 1119.60 581.80 778.00 879.00 1087.20",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "2bf95679e315fbbd9f0ceb0ce36d9197",
+    "text": "975.20 1048.00 1078.00 1113.20 994.00 1040.60 1081.00 1107.40 985.40 1040.60 1083.20 1101.60",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "da4ae500af3e46e7446a28cddd32679c",
+    "text": "652.20 857.20 1082.40 1272.80 642.00 861.20 1096.00 1286.20 667.80 872.40 1076.40 1284.60",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e21d6005188c8a7bfcb95e42868b986c",
+    "text": "668,279.40 1,195,844.80 1,866,175.20 2,705,617.00 674,191.00 1,199,659.80 1,878,745.20 2,711,180.40 673,585.80 1,200,560.80 1,879,387.00 2,684,983.60",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 3,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Header",
+    "element_id": "fa23407a7c3c99ae3b6fb79034698807",
+    "text": "S. Kulkarni et al. / Data in Brief 22 (2019) 484\u2013487",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "0a4152d3ee312a3d28cc2b63d6f59a6e",
+    "text": "Table 2 Description of \ufb01le format for each problem instance.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "d66486bdc6e5b4d6e2018f7da6d0b0d0",
+    "text": "Number of lines",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "6c56043a98b068693db3cd6ded0bc020",
+    "text": "Number of columns in each line",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "2fc6800b1896d3d2779ee6e98794bdb1",
+    "text": "Description",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "a5efd069cfcb8d3c983dfab2b9336b0e",
+    "text": "1 1 n",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1d96bbba9ffa9a12e81da0426f80a9fc",
+    "text": "l",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "25f80b4c6652f9af1a6883a6e4b8c0bb",
+    "text": "3 m 4",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "516ec572955aa07f031d27cc89008615",
+    "text": "l",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ebd5a6aeac91e0f42fecb980ef4a648a",
+    "text": "The number of depots, the number of trips, and the number of locations. The number of vehicles rd at each depot d. One line for each trip, i \u00bc 1; 2; \u2026; n. Each line provides the start location ls time ts i and the end time te i for the corresponding trip. Each element, \u03b4ij; where i; j A 1; 2; \u2026; l, refers to the travel time between location i and location j.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "50fb8c466c52d5ae755055ffc24a418d",
+    "text": "i , the start",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "44a4c21af61b74e9f30be3112d9eb1e7",
+    "text": "i , the end location le",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0f605e650a81abc6b5a30423d60d0975",
+    "text": "2. Experimental design, materials, and methods",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "37200c447b8f7e1443b707c1e76e66b0",
+    "text": "The procedure presented by Carpaneto et al. in [1] is used to generate the problem instances. The same procedure has been used by Pepin et al. in [4] to generate the benchmark dataset of the MDVSP. A detailed description of the procedure is presented in [3].",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "92e466c917445c0d473eea592acc3b72",
+    "text": "Our dataset provides start/end location and time of trips as well as the travel time between any two locations. The location and time information is required to model the MDVSP on a time-space network. The feasible connections and the cost of connections between the trips can be obtained as discussed in [3]. Thus, the dataset has all the information that is required to model the MDVSP on the time-space network (see [2]) as well as the connection-network (see [5]). The benchmark solutions for all the problem instances are presented in [3].",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d89dfb5247b731abfe90aedc46c09806",
+    "text": "Transparency document. Supporting information",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9a157bb2a3ee3ac55ecf743df0020ce9",
+    "text": "Transparency document associated with this article can be found in the online version at https://doi.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": ":// doi",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 94
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fb1ccb68103598fae7cc8128c97711d9",
+    "text": "org/10.1016/j.dib.2018.12.055.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "org / 10 . 1016 / j . dib . 2018 . 12 . 055",
+          "url": "https://doi.org/10.1016/j.dib.2018.12.055",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a63064fd9987765c33c9d20047dc2f15",
+    "text": "References",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "909007a841d32eb20886f7fc2d923911",
+    "text": "[1] G. Carpaneto, M. Dell'Amico, M. Fischetti, P. Toth, A branch and bound algorithm for the multiple depot vehicle scheduling",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "G . Carpaneto , M . Dell ' Amico , M . Fischetti , P . Toth ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
+          "start_index": 4
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "b1902a32b19337484e93efd9509a07c1",
+    "text": "problem, Networks 19 (5) (1989) 531\u2013548.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "problem , Networks19 ( 5 )( 1989 ) 531 \u2013",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
+          "start_index": 0
+        },
+        {
+          "text": "problem , Networks19 ( 5 )( 1989 ) 531 \u2013 548",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref1",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5a7cc4a5afb4c97c546a3b64cb4f593f",
+    "text": "[2] N. Kliewer, T. Mellouli, L. Suhl, A time\u2013space network based exact optimization model for multi-depot bus scheduling, Eur.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "N . Kliewer , T . Mellouli , L . Suhl , Atime \u2013 spacenetworkbasedexactoptimizationmodelformulti - depotbusscheduling , Eur",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
+          "start_index": 4
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "6a1cb7145ede91c5d2e6bb53b4d59f65",
+    "text": "J. Oper. Res. 175 (3) (2006) 1616\u20131627.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 \u2013",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
+          "start_index": 0
+        },
+        {
+          "text": "J . Oper . Res . 175 ( 3 )( 2006 ) 1616 \u2013 1627",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref2",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "439a02aad982d445100cc246cd066b53",
+    "text": "[3] S. Kulkarni, M. Krishnamoorthy, A. Ranade, A.T. Ernst, R. Patil, A new formulation and a column generation-based heuristic",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "S . Kulkarni , M . Krishnamoorthy , A . Ranade , A . T . Ernst , R . Patil , Anewformulationandacolumngeneration -",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
+          "start_index": 4
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "46a8bd54aa6c1bd32118f4a681faaec9",
+    "text": "for the multiple depot vehicle scheduling problem, Transp. Res. Part B Methodol. 118 (2018) 457\u2013487.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 \u2013",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
+          "start_index": 0
+        },
+        {
+          "text": "forthemultipledepotvehicleschedulingproblem , Transp . Res . PartBMethodol . 118 ( 2018 ) 457 \u2013 487",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref3",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f60e59177f5f0e53e3f285fa68a8e3ef",
+    "text": "[4] A.S. Pepin, G. Desaulniers, A. Hertz, D. Huisman, A comparison of \ufb01ve heuristics for the multiple depot vehicle scheduling",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "A . S . Pepin , G . Desaulniers , A . Hertz , D . Huisman ,",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4",
+          "start_index": 4
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0f8229a10050ec65ae5b6f9f66c6ca47",
+    "text": "problem, J. Sched. 12 (1) (2009) 17.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "problem , J . Sched . 12 ( 1 )( 2009 ) 17",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref4",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "9f411677c0a8ddb06047e600b348e282",
+    "text": "[5] C.C. Ribeiro, F. Soumis, A column generation approach to the multiple-depot vehicle scheduling problem, Oper. Res. 42 (1)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "C . C . Ribeiro , F . Soumis , Acolumngenerationapproachtothemultiple - depotvehicleschedulingproblem , Oper . Res . 42 ( 1",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5",
+          "start_index": 4
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "e37f78c7271830eb805f560368fec7cc",
+    "text": "(1994) 41\u201352.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "links": [
+        {
+          "text": "( 1994 ) 41 \u2013",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5",
+          "start_index": 0
+        },
+        {
+          "text": "( 1994 ) 41 \u2013 52",
+          "url": "http://refhub.elsevier.com/S2352-3409(18)31594-4/sbref5",
+          "start_index": 0
+        }
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "94e316e08a4a19eed59d29d5d58703ce",
+    "text": "487",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 4,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/biomed-api/75/29/main.PMC6312793.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

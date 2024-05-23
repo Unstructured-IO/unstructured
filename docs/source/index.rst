@@ -1,54 +1,6 @@
-Unstructured Core Library
-=========================
+Unstructured Documentation
+==========================
 
-The ``unstructured`` library is designed to help preprocess and structure unstructured text documents for use in downstream machine learning tasks. Examples of documents that can be processed
-using the ``unstructured`` library include PDFs, XML and HTML documents.
-
-Library Documentation
----------------------
-
-:doc:`installing`
-  Instructions on how to install the ``unstructured`` library on your system.
-
-:doc:`api`
-  Access all the power of ``unstructured`` through the ``unstructured-api`` or learn to host it locally.
-
-:doc:`platform`
-  Explore the enterprise-grade platform for enterprises and high-growth companies with large data volume looking to automatically retrieve, transform, and stage their data for LLMs.
-
-:doc:`core`
-  Learn more about the core partitioning, chunking, cleaning, and staging functionality within the
-  Unstructured library.
-
-:doc:`ingest/index`
-  Connect to your favorite data storage platforms for an effortless batch processing of your files.
-
-:doc:`metadata`
-  Learn more about how metadata is tracked in the ``unstructured`` library.
-
-:doc:`examples`
-  Examples of other types of workflows within the ``unstructured`` package.
-
-:doc:`integrations`
-  We make it easy for you to connect your output with other popular ML services.
-
-:doc:`best_practices`
-  Learn best practices to optimize document information extraction using ``unstructured`` library.
-
-.. Hidden TOCs
-
-.. toctree::
-   :caption: Documentation
-   :maxdepth: 2
-   :hidden:
-
-   introduction
-   installing
-   api
-   platform
-   core
-   ingest/index
-   metadata
-   examples
-   integrations
-   best_practices
+The Unstructured documentation page has moved! Check out our new and improved docs page at
+`https://docs.unstructured.io <https://docs.unstructured.io>`_ to learn more about our
+products and tools.

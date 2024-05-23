@@ -23,7 +23,7 @@ azure-datalake-store==0.0.53
     # via adlfs
 azure-identity==1.16.0
     # via adlfs
-azure-storage-blob==12.19.1
+azure-storage-blob==12.20.0
     # via adlfs
 certifi==2024.2.2
     # via
@@ -48,8 +48,9 @@ frozenlist==1.4.1
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.3.1
+fsspec==2024.5.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/azure.in
     #   adlfs
 idna==3.7
@@ -81,7 +82,7 @@ pycparser==2.22
     # via cffi
 pyjwt[crypto]==2.8.0
     # via msal
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
