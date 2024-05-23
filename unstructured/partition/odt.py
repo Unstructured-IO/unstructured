@@ -64,9 +64,7 @@ def partition_odt(
     last_modification_date = (
         get_last_modified_date(filename)
         if filename
-        else get_last_modified_date_from_file(file)
-        if file and date_from_file_object
-        else None
+        else get_last_modified_date_from_file(file) if file and date_from_file_object else None
     )
 
     with tempfile.TemporaryDirectory() as target_dir:
