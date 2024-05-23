@@ -1,4 +1,4 @@
-## 0.14.3-dev1
+## 0.14.3-dev2
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 
 ### Fixes
 
+**Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
 * Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
 ## 0.14.2
