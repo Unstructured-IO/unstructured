@@ -1,0 +1,552 @@
+[
+  {
+    "type": "Title",
+    "element_id": "1e41f20785644cdea2f017cfb67bb359",
+    "text": "Core Skills for Biomedical Data Scientists",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "c915a2a57c901810a698491ca2393669",
+    "text": "Maryam Zaringhalam, PhD, AAAS Science & Technology Policy Fellow",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b24c3f8d268b2f834a00966d8faef975",
+    "text": "Lisa Federer, MLIS, Data Science Training Coordinator",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "fcff333f886b39cee0a7084a9ff9204d",
+    "text": "Michael F. Huerta, PhD, Associate Director of NLM for Program Development and NLM Coordinator of Data Science and Open Science Initiatives",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1b86fad341db35208d75a543bcf819ae",
+    "text": "Executive Summary",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fee71d4f7ef7a5f253a44f6df648d12a",
+    "text": "This report provides recommendations for a minimal set of core skills for biomedical data scientists based on analysis that draws on opinions of data scientists, curricula for existing biomedical data science programs, and requirements for biomedical data science jobs. Suggested high-level core skills include:",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "caa3c2eba90fedb7c8923ae8cd8de961",
+    "text": "1. General biomedical subject matter knowledge: biomedical data scientists should have a general working knowledge of the principles of biology, bioinformatics, and basic clinical science;",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f2ecce91323f01402aa06611385262ef",
+    "text": "2. Programming language expertise: biomedical data scientists should be fluent in at",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "6b6645c408540ac22f4fd4be06820271",
+    "text": "least one programming language (typically R and/or Python);",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "eb7d0e257b4f0178cdce46cd57b33dc2",
+    "text": "3. Predictive analytics, modeling, and machine learning: while a range of statistical methods may be useful, predictive analytics, modeling, and machine learning emerged as especially important skills in biomedical data science;",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "1a174e104169cb41cf69393a9cdc0872",
+    "text": "4. Team science and scientific communication: \u201csoft\u201d skills, like the ability to work well on teams and communicate effectively in both verbal and written venues, may be as important as the more technical skills typically associated with data science.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "57314792fe7a371933b2116bc8242622",
+    "text": "5. Responsible data stewardship: a successful data scientist must be able to implement best practices for data management and stewardship, as well as conduct research in an ethical manner that maintains data security and privacy.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "26c704088ae82677871f8f8abd78459c",
+    "text": "The report further details specific skills and expertise relevant to biomedical data scientists.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "ce78773a1364f6be706f3a5b11d50179",
+    "text": "Motivation",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "690b79e1d449426afb07ed40866a6bb6",
+    "text": "Training a biomedical data science (BDS) workforce is a central theme in NLM\u2019s Strategic Plan for the coming decade. That commitment is echoed in the NIH-wide Big Data to Knowledge (BD2K) initiative, which invested $61 million between FY2014 and FY2017 in training programs for the development and use of biomedical big data science methods and tools. In line with",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Header",
+    "element_id": "b810a8721369c3551c942aab9011b7d1",
+    "text": "Core Skills for Biomedical Data Scientists _____________________________________________________________________________________________",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c8fdefac1ae82fa42caeceff04853415",
+    "text": "this commitment, a recent report to the NLM Director recommended working across NIH to identify and develop core skills required of a biomedical data scientist to consistency across the cohort of NIH-trained data scientists. This report provides a set of recommended core skills based on analysis of current BD2K-funded training programs, biomedical data science job ads, and practicing members of the current data science workforce.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "b5b7392d0a946f5016bfa8ad0c248a9b",
+    "text": "Methodology",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "d9d8e38d221ae621c0ddbcabaa4a28b4",
+    "text": "The Workforce Excellence team took a three-pronged approach to identifying core skills required of a biomedical data scientist (BDS), drawing from:",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ba70aa3bc3ad0dec6a62939c94c5a20c",
+    "text": "a) Responses to a 2017 Kaggle1 survey2 of over 16,000 self-identified data scientists working across many industries. Analysis of the Kaggle survey responses from the current data science workforce provided insights into the current generation of data scientists, including how they were trained and what programming and analysis skills they use.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "24724b1f0d20a6575f2782fd525c562f",
+    "text": "b) Data science skills taught in BD2K-funded training programs. A qualitative content analysis was applied to the descriptions of required courses offered under the 12 BD2K-funded training programs. Each course was coded using qualitative data analysis software, with each skill that was present in the description counted once. The coding schema of data science-related skills was inductively developed and was organized into four major categories: (1) statistics and math skills; (2) computer science; (3) subject knowledge; (4) general skills, like communication and teamwork. The coding schema is detailed in Appendix A.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5e6c73154a1e5f74780c69afbc9bc084",
+    "text": "c) Desired skills identified from data science-related job ads. 59 job ads from government (8.5%), academia (42.4%), industry (33.9%), and the nonprofit sector (15.3%) were sampled from websites like Glassdoor, Linkedin, and Ziprecruiter. The content analysis methodology and coding schema utilized in analyzing the training programs were applied to the job descriptions. Because many job ads mentioned the same skill more than once, each occurrence of the skill was coded, therefore weighting important skills that were mentioned multiple times in a single ad.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "249f6c76b2c99dadbefb8b8811b0d4cd",
+    "text": "Analysis of the above data provided insights into the current state of biomedical data science training, as well as a view into data science-related skills likely to be needed to prepare the BDS workforce to succeed in the future. Together, these analyses informed recommendations for core skills necessary for a competitive biomedical data scientist.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6543ce4e447de8fb3db98ceb06a50c28",
+    "text": "1 Kaggle is an online community for data scientists, serving as a platform for collaboration, competition, and learning: http://kaggle.com 2 In August 2017, Kaggle conducted an industry-wide survey to gain a clearer picture of the state of data science and machine learning. A standard set of questions were asked of all respondents, with more specific questions related to work for employed data scientists and questions related to learning for data scientists in training. Methodology and results: https://www.kaggle.com/kaggle/kaggle-survey-2017",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Footer",
+    "element_id": "1a6ff96d028f18331a9d9c9748b49321",
+    "text": "2",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "filetype": "application/pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/test_unstructured_ingest/download/azure/Core-Skills-for-Biomedical-Data-Scientists-2-pages.pdf"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

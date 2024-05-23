@@ -2,6 +2,7 @@ import os
 
 import pytest
 
+from unstructured.documents.elements import Text
 from unstructured.partition import pdf, strategies
 from unstructured.partition.utils.constants import PartitionStrategy
 
@@ -46,11 +47,17 @@ def test_is_pdf_text_extractable(filename, from_file, expected):
 
     if from_file:
         with open(filename, "rb") as f:
-            extractable = pdf.extractable_elements(file=f)
+            extracted_elements = pdf.extractable_elements(file=f)
     else:
-        extractable = pdf.extractable_elements(filename=filename)
+        extracted_elements = pdf.extractable_elements(filename=filename)
 
-    assert bool(extractable) is expected
+    pdf_text_extractable = any(
+        isinstance(el, Text) and el.text.strip()
+        for page_elements in extracted_elements
+        for el in page_elements
+    )
+
+    assert pdf_text_extractable is expected
 
 
 @pytest.mark.parametrize(

@@ -1,16 +1,77 @@
-## 0.13.8-dev2
+## 0.14.3-dev1
 
 ### Enhancements
 
-**Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Move `category` field from Text class to Element class.**
 
 ### Features
 
 ### Fixes
 
+* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
+
+## 0.14.2
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.33**.
+
+### Features
+
+* **Add attribution to the `pinecone` connector**.
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+
+### Fixes
+
+## 0.14.0
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
+
+### Enhancements
+
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
+
+### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
+
+### Fixes
+
 * **Add missing starting_page_num param to partition_image**
 * **Make the filename and file params for partition_image and partition_pdf match the other partitioners**
+* **Fix include_slide_notes and include_page_breaks params in partition_ppt**
 * **Re-apply: skip accuracy calculation feature** Overwritten by mistake
+* **Fix type hint for paragraph_grouper param** `paragraph_grouper` can be set to `False`, but the type hint did not not reflect this previously.
+* **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
+* **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
+* **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
+* **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
+* **Fix Missing py.typed**
 
 ## 0.13.7
 
