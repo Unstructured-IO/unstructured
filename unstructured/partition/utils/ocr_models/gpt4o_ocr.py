@@ -29,7 +29,9 @@ class OCRAgentGPT4O(OCRAgent):
 
     def __init__(self) -> None:
         self.model = "gpt-4o"
-        assert "OPENAI_API_KEY" in os.environ, "Please set the OPENAI_API_KEY environment variable."
+        assert "OPENAI_API_KEY" in os.environ and os.environ["OPENAI_API_KEY"] != "", (
+            "Please set the OPENAI_API_KEY environment variable to use the OpenAI API."
+        )
         self.client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     def is_text_sorted(self) -> bool:
