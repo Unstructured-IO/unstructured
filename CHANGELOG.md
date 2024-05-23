@@ -1,4 +1,4 @@
-## 0.14.3-dev0
+## 0.14.3-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
 ## 0.14.2
 
