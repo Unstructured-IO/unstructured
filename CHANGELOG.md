@@ -1,10 +1,12 @@
-## 0.14.3-dev0
+## 0.14.3-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* Fix document type deduction during evaluation
 
 ## 0.14.2
 
