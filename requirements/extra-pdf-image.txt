@@ -20,6 +20,8 @@ charset-normalizer==3.3.2
     #   -c ./base.txt
     #   pdfminer-six
     #   requests
+pdftext==0.3.6
+pypdfium2==4.29.0
 coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.2.1

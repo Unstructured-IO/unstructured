@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
+from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast, Any
 
 from pdfminer.utils import open_filename
 
@@ -17,18 +17,34 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
     from unstructured_inference.inference.layout import DocumentLayout
 
+from pdftext.extraction import dictionary_output
+import pypdfium2 as pdfium
+
 
 def process_file_with_pdfminer(
     filename: str = "",
     dpi: int = 200,
 ) -> List[List["TextRegion"]]:
-    with open_filename(filename, "rb") as fp:
+    # Only reason to change this is to not use PDFminer functions
+    with open(filename, "rb") as fp:
         fp = cast(BinaryIO, fp)
         extracted_layout = process_data_with_pdfminer(
             file=fp,
             dpi=dpi,
         )
         return extracted_layout
+
+
+# Simple implementation, combines blocks into one singe text element
+# Each line ends with \n so it's possible to easily split them if needed
+def _extract_text_pdftext(lines: list[dict[str, Any]]) -> str:
+    text = ""
+
+    for line in lines:
+        for span in line["spans"]:
+            text += span["text"]
+
+    return text
 
 
 @requires_dependencies("unstructured_inference")
@@ -46,37 +62,52 @@ def process_data_with_pdfminer(
     from unstructured_inference.inference.ordering import order_layout
 
     layouts = []
+
+    # Open the PDF file using pypdfium2
+    pdf = pdfium.PdfDocument(file)
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page, page_layout in open_pdfminer_pages_generator(file):
-        height = page_layout.height
+
+    for page_index, page in enumerate(dictionary_output(pdf, sort=False)):
+        height = page["height"]
 
         layout: List["TextRegion"] = []
-        for obj in page_layout:
-            x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
 
-            if hasattr(obj, "get_text"):
-                _text = obj.get_text()
-                element_class = EmbeddedTextRegion  # type: ignore
-            else:
-                embedded_images = get_images_from_pdf_element(obj)
-                if len(embedded_images) > 0:
-                    _text = None
-                    element_class = ImageTextRegion  # type: ignore
-                else:
-                    continue
+        # Since PdfText doesn't contain images we extract text only first
+        for obj in page["blocks"]:
+            # Not sure if rect_to_bbox function shouldn't be used here
+            # x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            x1, y1, x2, y2 = obj["bbox"]
 
-            text_region = element_class.from_coords(
+            _text = _extract_text_pdftext(obj["lines"])
+
+            text_region = EmbeddedTextRegion.from_coords(
                 x1 * coef,
                 y1 * coef,
                 x2 * coef,
                 y2 * coef,
                 text=_text,
-                source=Source.PDFMINER,
+                source=Source.PDFTEXT,
             )
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
+
+        for obj in pdf[page_index].get_objects():
+            if isinstance(obj, pdfium.PdfImage) and obj.type == 3:
+                # Not sure if rect_to_bbox function shouldn't be used here
+                # x1, y1, x2, y2 = rect_to_bbox(obj.get_pos(), height)
+                x1, y1, x2, y2 = obj.get_pos()
+                image_region = ImageTextRegion.from_coords(
+                    x1 * coef,
+                    y1 * coef,
+                    x2 * coef,
+                    y2 * coef,
+                    text=None,
+                    source=Source.PDFTEXT,
+                )
+                if image_region.bbox is not None and image_region.bbox.area > 0:
+                    layout.append(image_region)
 
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
