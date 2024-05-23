@@ -9,6 +9,7 @@ from openai import OpenAI
 import os
 
 from unstructured.documents.elements import ElementType
+from unstructured.logger import logger
 
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
@@ -28,6 +29,7 @@ class OCRAgentGPT4O(OCRAgent):
 
     def __init__(self) -> None:
         self.model = "gpt-4o"
+        assert "OPENAI_API_KEY" in os.environ, "Please set the OPENAI_API_KEY environment variable."
         self.client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
     def is_text_sorted(self) -> bool:
@@ -55,6 +57,8 @@ class OCRAgentGPT4O(OCRAgent):
                 temperature=0.0,
             )
 
+            logger.info(f"OpenAI Response: {response}")
+
         return (
             "" if not response.choices[0].message.content else response.choices[0].message.content
         )
@@ -65,9 +69,9 @@ class OCRAgentGPT4O(OCRAgent):
         # return document.text
 
     def get_layout_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
+            self, image: PILImage.Image, ocr_languages: str = "eng"
     ) -> list[TextRegion]:
-        
+
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
@@ -90,25 +94,39 @@ class OCRAgentGPT4O(OCRAgent):
                 response_format={"type": "json_object"},
             )
 
+            logger.info(f"OpenAI Response: {response}")
+
         paragraph_list = (
             [] if not response.choices[0].message.content else json.loads(response.choices[0].message.content)
         )
-        
 
-        #with open("gpt4o_response.content.json") as f:
+        if not isinstance(paragraph_list, dict):
+            logger.error(f"Expected a dictionary object for the response content. Got: {paragraph_list}")
+            raise ValueError("Expected a dictionary object for the response content.")
+        if len(paragraph_list) > 1:
+            logger.error(f"Expected a dictionary object with one key-value pair. Got: {paragraph_list}")
+            raise ValueError("Expected a dictionary object with one key-value pair.")
+        try:
+            paragraph_list = list(paragraph_list.values())[0]
+        except Exception as e:
+            logger.error(f"Error while extracting the paragraph list from the response content: {e}")
+            logger.error(f"Response content: {paragraph_list}")
+            raise ValueError("Error while extracting the paragraph list from the response content.")
+
+        # with open("gpt4o_response.content.json") as f:
         #    paragraph_list = json.load(f)
 
         return [
             TextRegion(
-                bbox=Rectangle(x1=1, y1=1, x2=2, y2=2),
+                bbox=Rectangle(x1=i, y1=i, x2=i + 1, y2=i + 1),
                 text=paragraph,
                 source=Source.OCR_GPT4O,
             )
-            for paragraph in paragraph_list["paragraphs"]
+            for i, paragraph in enumerate(paragraph_list)
         ]
 
     def get_layout_elements_from_image(
-        self, image: PILImage.Image, ocr_languages: str = "eng"
+            self, image: PILImage.Image, ocr_languages: str = "eng"
     ) -> list[LayoutElement]:
 
         ocr_regions = self.get_layout_from_image(
