@@ -117,6 +117,11 @@ class ENVConfig:
         return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", 0)
 
     @property
+    def EXTRACT_TABLE_AS_CELLS(self) -> bool:
+        """adds `table_as_cells` to a Table element's metadata when it is True"""
+        return self._get_bool("EXTRACT_TABLE_AS_CELLS", False)
+
+    @property
     def OCR_LAYOUT_SUBREGION_THRESHOLD(self) -> float:
         """threshold to determine if an OCR region is a sub-region of a given block
         when aggregating the text from OCR'd elements that lie within the given block
