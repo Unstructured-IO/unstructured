@@ -1,11 +1,7 @@
-import os
-
 from unstructured.documents.elements import Text
 from unstructured.embed.huggingface import HuggingFaceEmbeddingConfig, HuggingFaceEmbeddingEncoder
 
-embedding_encoder = HuggingFaceEmbeddingEncoder(
-    config=HuggingFaceEmbeddingConfig()
-)
+embedding_encoder = HuggingFaceEmbeddingEncoder(config=HuggingFaceEmbeddingConfig())
 elements = embedding_encoder.embed_documents(
     elements=[Text("This is sentence 1"), Text("This is sentence 2")],
 )

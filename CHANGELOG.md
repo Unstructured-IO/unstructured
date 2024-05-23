@@ -1,4 +1,4 @@
-## 0.14.3-dev0
+## 0.14.3-dev1
 
 ### Enhancements
 
@@ -7,6 +7,8 @@
 ### Features
 
 ### Fixes
+
+* **Chromadb change from Add to Upsert to make idempotent**
 
 ## 0.14.2
 
