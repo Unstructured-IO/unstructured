@@ -55,7 +55,7 @@ class TableAlignment:
         #     columns="col_index",
         #     values="content",
         # )
-        df=pd.DataFrame(table_data,columns=["row_index","col_index","content"])
+        df=pd.DataFrame(table_data,columns=["q!row_index","col_index","content"])
         df=df.set_index('row_index')
         df['col_index']=df['col_index'].astype(str)
         return df
