@@ -1,13 +1,16 @@
-## 0.14.3-dev1
+## 0.14.3-dev2
 
 ### Enhancements
 
 * **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
 
 ### Features
 
 ### Fixes
 
+**Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
 * Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
 ## 0.14.2
