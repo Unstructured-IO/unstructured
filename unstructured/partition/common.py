@@ -24,6 +24,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+from unstructured.documents.html import HTMLDocument
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
@@ -538,7 +539,7 @@ def _get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
 
 
 def document_to_element_list(
-    document: "DocumentLayout",
+    document: "DocumentLayout | HTMLDocument",
     sortable: bool = False,
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
@@ -550,7 +551,7 @@ def document_to_element_list(
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
-    """Converts a DocumentLayout object to a list of unstructured elements."""
+    """Converts a DocumentLayout or HTMLDocument object to a list of unstructured elements."""
     elements: list[Element] = []
 
     num_pages = len(document.pages)
@@ -588,13 +589,16 @@ def document_to_element_list(
                     element.metadata.last_modified = last_modification_date
                 element.metadata.text_as_html = getattr(layout_element, "text_as_html", None)
                 element.metadata.table_as_cells = getattr(layout_element, "table_as_cells", None)
-                try:
-                    if (
-                        isinstance(element, Title) and element.metadata.category_depth is None
-                    ) and any(el.type in ["Headline", "Subheadline"] for el in page.elements):
-                        element.metadata.category_depth = 0
-                except AttributeError:
-                    logger.info("HTML element instance has no attribute type")
+                # FIXME: here the elements in a page can be either:
+                # 1. LayoutElement if the document is LayoutDocument (if the partition is on a
+                #   pdf/image);
+                # 2. Element if the document is HTMLDocument (if the partition is on an html file)
+                # this discrepency is due to Element class defined in unstructured and LayoutElement
+                # class defined in unstructured_inference do not have the same list of attributes
+                if (isinstance(element, Title) and element.metadata.category_depth is None) and any(
+                    getattr(el, "type", "") in ["Headline", "Subheadline"] for el in page.elements
+                ):
+                    element.metadata.category_depth = 0
 
                 page_elements.append(element)
                 translation_mapping.append((layout_element, element))
