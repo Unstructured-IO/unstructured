@@ -1,4 +1,4 @@
-## 0.14.3-dev2
+## 0.14.3-dev3
 
 ### Enhancements
 
@@ -9,9 +9,10 @@
 
 ### Fixes
 
-**Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+* **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
   to avoid text being dynamically injected into the XML document.
-* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
 * **Chromadb change from Add to Upsert using element_id to make idempotent**
 
