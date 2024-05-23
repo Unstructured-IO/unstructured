@@ -8,7 +8,7 @@
 
 ### Fixes
 
-* **Chromadb change from Add to Upsert to make idempotent**
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
 
 ## 0.14.2
 
