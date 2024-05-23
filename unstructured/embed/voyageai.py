@@ -78,5 +78,5 @@ class VoyageAIEmbeddingEncoder(BaseEmbeddingEncoder):
             voyage_api_key=self.config.api_key,
             model=self.config.model_name,
             batch_size=self.config.batch_size,
-            truncation=self.config.truncation
+            truncation=self.config.truncation,
         )

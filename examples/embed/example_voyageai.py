@@ -10,10 +10,7 @@ from unstructured.embed.voyageai import VoyageAIEmbeddingConfig, VoyageAIEmbeddi
 # at https://docs.voyageai.com/docs/embeddings
 
 embedding_encoder = VoyageAIEmbeddingEncoder(
-    config=VoyageAIEmbeddingConfig(
-        api_key=os.environ["VOYAGE_API_KEY"],
-        model_name="voyage-law-2"
-    )
+    config=VoyageAIEmbeddingConfig(api_key=os.environ["VOYAGE_API_KEY"], model_name="voyage-law-2")
 )
 elements = embedding_encoder.embed_documents(
     elements=[Text("This is sentence 1"), Text("This is sentence 2")],
