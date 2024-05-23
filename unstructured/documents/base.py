@@ -9,9 +9,10 @@ from unstructured.documents.elements import Element, NarrativeText
 class Document(ABC):
     """The base class for all document types. A document consists of an ordered list of pages."""
 
-    def __init__(self):
+    def __init__(self, languages: Optional[list[str]] = None):
         self._pages: Optional[List[Page]] = None
         self._elements: Optional[List[Element]] = None
+        self._language: list[str] = languages or ["auto"]
 
     def __str__(self) -> str:
         return "\n\n".join([str(page) for page in self.pages])

@@ -34,7 +34,7 @@ def is_possible_narrative_text(
     text: str,
     cap_threshold: float = 0.5,
     non_alpha_threshold: float = 0.5,
-    languages: List[str] = ["eng"],
+    languages: Optional[list[str]] = None,
     language_checks: bool = False,
 ) -> bool:
     """Checks to see if the text passes all of the checks for a narrative text section.
@@ -57,6 +57,8 @@ def is_possible_narrative_text(
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
     """
+    if languages is None:
+        languages = ["eng"]
     _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
     if _language_checks is not None:
         language_checks = _language_checks.lower() == "true"
@@ -77,7 +79,11 @@ def is_possible_narrative_text(
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
-    if exceeds_cap_ratio(text, threshold=cap_threshold):
+    # NOTE: exceeds_cap_ratio is designed for english text, so we only use it if the language is english.
+    # For caution's sake, we will temporarily use "eng" in languages for judgment, that is, as long as English appears,
+    # we will make a judgment. In the future, we may need to modify it to where only pure English is needed for
+    # exceeds_cap_ratio judgment.
+    if "eng" in languages and exceeds_cap_ratio(text, threshold=cap_threshold):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
         return False
 
