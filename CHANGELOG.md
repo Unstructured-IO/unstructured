@@ -13,6 +13,8 @@
   to avoid text being dynamically injected into the XML document.
 * Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
 
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
+
 ## 0.14.2
 
 ### Enhancements
