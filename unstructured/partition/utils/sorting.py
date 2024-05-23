@@ -261,6 +261,11 @@ def sort_text_regions(
             xy_cut_primary_direction=xy_cut_primary_direction,
         )
         sorted_elements = [elements[i] for i in res]
+    elif sort_mode == SORT_MODE_BASIC:
+        sorted_elements = sorted(
+            elements,
+            key=lambda el: (el.bbox.y1, el.bbox.x1, el.bbox.y2, el.bbox.x2),
+        )
     else:
         sorted_elements = elements
 

@@ -17,6 +17,7 @@ include requirements/huggingface.in
 
 # Ingest extras
 include requirements/ingest/airtable.in
+include requirements/ingest/astra.in
 include requirements/ingest/azure-cognitive-search.in
 include requirements/ingest/azure.in
 include requirements/ingest/biomed.in

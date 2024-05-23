@@ -17,13 +17,14 @@ from unittest.mock import (
     patch,
 )
 
-from pytest import FixtureRequest, LogCaptureFixture  # noqa: PT013
+from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture  # noqa: PT013
 
 from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json, elements_to_json
 
 __all__ = (
     "ANY",
+    "CaptureFixture",
     "FixtureRequest",
     "LogCaptureFixture",
     "MagicMock",
@@ -133,7 +134,7 @@ def cls_attr_mock(
 
 def function_mock(
     request: FixtureRequest, q_function_name: str, autospec: bool = True, **kwargs: Any
-):
+) -> Mock:
     """Return mock patching function with qualified name `q_function_name`.
 
     Patch is reversed after calling test returns.

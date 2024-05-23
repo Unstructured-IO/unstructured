@@ -4,15 +4,18 @@
 #
 #    pip-compile ./ingest/delta-table.in
 #
-deltalake==0.17.3
+deltalake==0.17.4
     # via -r ./ingest/delta-table.in
-fsspec==2024.3.1
-    # via -r ./ingest/delta-table.in
+fsspec==2024.5.0
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/delta-table.in
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   pyarrow
-pyarrow==16.0.0
+pyarrow==16.1.0
     # via deltalake
 pyarrow-hotfix==0.6
     # via deltalake
