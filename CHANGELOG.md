@@ -1,4 +1,4 @@
-## 0.14.3-dev1
+## 0.14.3-dev2
 
 ### Enhancements
 
@@ -9,7 +9,7 @@
 ### Fixes
 
 * **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
-* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
 
 ## 0.14.2
 
