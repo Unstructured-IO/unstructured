@@ -471,11 +471,14 @@ docker-start-bash:
 docker-start-dev:
 	docker run --rm \
 	-v ${CURRENT_DIR}:/mnt/local_unstructued \
-	-ti ${DOCKER_IMAGE}
+	-ti --entrypoint /bin/bash ${DOCKER_IMAGE}
 
 .PHONY: docker-test
 docker-test:
-	docker run --rm $(DOCKER_IMAGE) /home/nonroot/.local/bin/pytest -m 'not chipper' test_unstructured
+	docker run --rm \
+		$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
+		$(DOCKER_IMAGE) \
+		/home/nonroot/.local/bin/pytest -m 'not chipper' test_unstructured
 	# docker run --rm \
 	# -v ${CURRENT_DIR}/test_unstructured:/home/notebook-user/test_unstructured \
 	# -v ${CURRENT_DIR}/test_unstructured_ingest:/home/notebook-user/test_unstructured_ingest \
