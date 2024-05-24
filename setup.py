@@ -171,6 +171,7 @@ setup(
         "embed-huggingface": load_requirements("requirements/ingest/embed-huggingface.in"),
         "embed-octoai": load_requirements("requirements/ingest/embed-octoai.in"),
         "embed-vertexai": load_requirements("requirements/ingest/embed-vertexai.in"),
+        "embed-voyageai": load_requirements("requirements/ingest/embed-voyageai.in"),
         "openai": load_requirements("requirements/ingest/embed-openai.in"),
         "bedrock": load_requirements("requirements/ingest/embed-aws-bedrock.in"),
         "databricks-volumes": load_requirements("requirements/ingest/databricks-volumes.in"),
