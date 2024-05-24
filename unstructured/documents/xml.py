@@ -122,4 +122,6 @@ class XMLDocument(Document):
     ) -> Self:
         _, content = read_txt_file(filename=filename, encoding=encoding)
 
-        return cls.from_string(content, parser=parser, stylesheet=stylesheet, languages=languages, **kwargs)
+        return cls.from_string(
+            content, parser=parser, stylesheet=stylesheet, languages=languages, **kwargs
+        )

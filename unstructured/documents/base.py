@@ -14,9 +14,10 @@ class Document(ABC):
         self._elements: Optional[List[Element]] = None
         self._language: list[str]
         if not languages or languages == [""]:
-            # As [""] is a valid input, it's used to avoid duplicate language detection during partitioning. However, I
-            # believe this design could be improved. Due to the complexity involved in altering the architecture, we
-            # have chosen to keep it as it is for now. In order to maintain compatibility with past designs, maybe
+            # As [""] is a valid input, it's used to avoid duplicate language detection during
+            # partitioning. However, I believe this design could be improved. Due to the
+            # complexity involved in altering the architecture, we have chosen to keep it as
+            # it is for now. In order to maintain compatibility with past designs, maybe
             # discuss better solutions with the core team in the future.
             self._language: list[str] = ["auto"]
         else:

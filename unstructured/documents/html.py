@@ -167,22 +167,28 @@ class HTMLDocument(XMLDocument):
         for article in articles:
             descendanttag_elems: Tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
-                elem_languages = self.languages \
-                    if "auto" not in self.languages or not tag_elem.text \
+                elem_languages = (
+                    self.languages
+                    if "auto" not in self.languages or not tag_elem.text
                     else detect_languages(tag_elem.text)
+                )
                 if tag_elem in descendanttag_elems:
                     # Prevent repeating something that's been flagged as text as we chase it
                     # down a chain
                     continue
 
                 if _is_text_tag(tag_elem):
-                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem, languages=elem_languages)
+                    _page_elements, descendanttag_elems = _process_text_tag(
+                        tag_elem, languages=elem_languages
+                    )
                     page.elements.extend(_page_elements)
 
                 elif _is_container_with_text(tag_elem):
                     tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
                     if tag_elem_tail:
-                        _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False, languages=elem_languages)
+                        _page_elements, descendanttag_elems = _process_text_tag(
+                            tag_elem, False, languages=elem_languages
+                        )
                         page.elements.extend(_page_elements)
 
                         # NOTE(christine): generate a separate element using a tag tail

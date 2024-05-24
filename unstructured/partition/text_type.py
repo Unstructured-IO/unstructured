@@ -83,15 +83,36 @@ def is_possible_narrative_text(
     cap_threshold = float(
         os.environ.get("UNSTRUCTURED_NARRATIVE_TEXT_CAP_THRESHOLD", cap_threshold),
     )
-    # NOTE: exceeds_cap_ratio is designed for english text, so we only use it if the language is english.
-    # For caution's sake, we will temporarily use "eng" in languages for judgment, that is, as long as English appears,
-    # we will make a judgment. In the future, we may need to modify it to where only pure English is needed for
-    # exceeds_cap_ratio judgment.
+    # NOTE: exceeds_cap_ratio is designed for english text, so we only use it if the
+    # language is english. For caution's sake, we will temporarily use "eng" in
+    # languages for judgment, that is, as long as English appears, we will make
+    # a judgment. In the future, we may need to modify it to where only pure English
+    # is needed for exceeds_cap_ratio judgment.
     capitalizable_languages = {
-        "eng", "spa", "rus", "fra", "deu", "ita", "por", "nld", "swe", "nor",
-        "dan", "fin", "ell", "pol", "ces", "slk", "hun", "ron", "bul", "hrv"
+        "eng",
+        "spa",
+        "rus",
+        "fra",
+        "deu",
+        "ita",
+        "por",
+        "nld",
+        "swe",
+        "nor",
+        "dan",
+        "fin",
+        "ell",
+        "pol",
+        "ces",
+        "slk",
+        "hun",
+        "ron",
+        "bul",
+        "hrv",
     }
-    if not capitalizable_languages.isdisjoint(set(languages)) and exceeds_cap_ratio(text, threshold=cap_threshold):
+    if not capitalizable_languages.isdisjoint(set(languages)) and exceeds_cap_ratio(
+        text, threshold=cap_threshold
+    ):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501
         return False
 

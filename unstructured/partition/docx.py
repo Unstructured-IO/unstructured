@@ -875,17 +875,21 @@ class _DocxPartitioner:
         if is_email_address(text):
             return EmailAddress
         if is_possible_narrative_text(
-                text,
-                languages=self._opts.languages
+            text,
+            languages=(
+                self._opts.languages
                 if "auto" not in self._opts.languages
                 else detect_languages(text, self._opts.languages)
+            ),
         ):
             return NarrativeText
         if is_possible_title(
-                text,
-                languages=self._opts.languages
+            text,
+            languages=(
+                self._opts.languages
                 if "auto" not in self._opts.languages
                 else detect_languages(text, self._opts.languages)
+            ),
         ):
             return Title
 

@@ -45,12 +45,11 @@ from unstructured.partition.utils.constants import (
     PartitionStrategy,
 )
 
-
 # -- docx-file loading behaviors -----------------------------------------------------------------
 
 
 def test_partition_docx_from_filename(
-        mock_document_file_path: str, expected_elements: list[Element]
+    mock_document_file_path: str, expected_elements: list[Element]
 ):
     elements = partition_docx(mock_document_file_path)
 
@@ -63,7 +62,7 @@ def test_partition_docx_from_filename(
 
 
 def test_partition_docx_with_spooled_file(
-        mock_document_file_path: str, expected_elements: list[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     """`partition_docx()` accepts a SpooledTemporaryFile as its `file` argument.
 
@@ -74,7 +73,7 @@ def test_partition_docx_with_spooled_file(
         spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(test_file.read())
         spooled_temp_file.seek(0)
-        elements = partition_docx(file = spooled_temp_file)
+        elements = partition_docx(file=spooled_temp_file)
         assert elements == expected_elements
         for element in elements:
             assert element.metadata.filename is None
@@ -82,22 +81,22 @@ def test_partition_docx_with_spooled_file(
 
 def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
     with open(mock_document_file_path, "rb") as f:
-        elements = partition_docx(file = f)
+        elements = partition_docx(file=f)
     assert elements == expected_elements
     for element in elements:
         assert element.metadata.filename is None
 
 
 def test_partition_docx_uses_file_path_when_both_are_specified(
-        mock_document_file_path: str, expected_elements: list[Text]
+    mock_document_file_path: str, expected_elements: list[Text]
 ):
     f = io.BytesIO(b"abcde")
-    elements = partition_docx(filename = mock_document_file_path, file = f)
+    elements = partition_docx(filename=mock_document_file_path, file=f)
     assert elements == expected_elements
 
 
 def test_partition_docx_raises_with_neither():
-    with pytest.raises(ValueError, match = "either `filename` or `file` argument must be provided"):
+    with pytest.raises(ValueError, match="either `filename` or `file` argument must be provided"):
         partition_docx()
 
 
@@ -118,11 +117,11 @@ def test_parition_docx_from_team_chat():
 @pytest.mark.parametrize("infer_table_structure", [True, False])
 def test_partition_docx_infer_table_structure(infer_table_structure: bool):
     elements = partition_docx(
-        example_doc_path("fake_table.docx"), infer_table_structure = infer_table_structure
+        example_doc_path("fake_table.docx"), infer_table_structure=infer_table_structure
     )
     table_element_has_text_as_html_field = (
-            hasattr(elements[0].metadata, "text_as_html")
-            and elements[0].metadata.text_as_html is not None
+        hasattr(elements[0].metadata, "text_as_html")
+        and elements[0].metadata.text_as_html is not None
     )
     assert table_element_has_text_as_html_field == infer_table_structure
 
@@ -166,7 +165,7 @@ def test_partition_docx_includes_neither_page_breaks_nor_numbers_when_rendered_b
     breaks are a false-positive and will generally produce incorrect page numbers.
     """
     elements = partition_docx(
-        example_doc_path("handbook-1p-no-rendered-page-breaks.docx"), include_page_breaks = True
+        example_doc_path("handbook-1p-no-rendered-page-breaks.docx"), include_page_breaks=True
     )
 
     assert "PageBreak" not in [type(e).__name__ for e in elements]
@@ -178,7 +177,7 @@ def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppr
 
     Only inclusion of PageBreak elements is affected by that option.
     """
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks = False)
+    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_page_breaks=False)
 
     assert "PageBreak" not in [type(e).__name__ for e in elements]
     assert elements[1].metadata.page_number == 1
@@ -187,7 +186,7 @@ def test_partition_docx_includes_page_numbers_when_page_break_elements_are_suppr
 
 def test_partition_docx_includes_page_break_elements_when_so_instructed():
     elements = partition_docx(
-        example_doc_path("handbook-1p.docx"), include_page_breaks = True, starting_page_number = 3
+        example_doc_path("handbook-1p.docx"), include_page_breaks=True, starting_page_number=3
     )
 
     assert "PageBreak" in [type(e).__name__ for e in elements]
@@ -211,7 +210,7 @@ def test_partition_docx_detects_lists():
 
 
 def test_partition_docx_from_filename_excludes_metadata_when_so_instructed():
-    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_metadata = False)
+    elements = partition_docx(example_doc_path("handbook-1p.docx"), include_metadata=False)
     assert all(e.metadata.to_dict() == {} for e in elements)
 
 
@@ -219,7 +218,7 @@ def test_partition_docx_from_file_excludes_metadata_when_so_instructed():
     with open(example_doc_path("simple.docx"), "rb") as f:
         assert all(
             element.metadata.to_dict() == {}
-            for element in partition_docx(file = f, include_metadata = False)
+            for element in partition_docx(file=f, include_metadata=False)
         )
 
 
@@ -227,13 +226,13 @@ def test_partition_docx_from_file_excludes_metadata_when_so_instructed():
 
 
 def test_partition_docx_from_filename_prefers_metadata_filename_when_provided():
-    elements = partition_docx(example_doc_path("simple.docx"), metadata_filename = "test")
+    elements = partition_docx(example_doc_path("simple.docx"), metadata_filename="test")
     assert all(element.metadata.filename == "test" for element in elements)
 
 
 def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
     with open(example_doc_path("simple.docx"), "rb") as f:
-        elements = partition_docx(file = f, metadata_filename = "test")
+        elements = partition_docx(file=f, metadata_filename="test")
     assert all(element.metadata.filename == "test" for element in elements)
 
 
@@ -242,7 +241,7 @@ def test_partition_docx_from_file_prefers_metadata_filename_when_provided():
 
 def test_partition_docx_metadata_date(mocker: MockFixture):
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value = "2029-07-05T09:24:28"
+        "unstructured.partition.docx.get_last_modified_date", return_value="2029-07-05T09:24:28"
     )
 
     elements = partition_docx(example_doc_path("fake.docx"))
@@ -252,11 +251,11 @@ def test_partition_docx_metadata_date(mocker: MockFixture):
 
 def test_partition_docx_metadata_date_with_custom_metadata(mocker: MockFixture):
     mocker.patch(
-        "unstructured.partition.docx.get_last_modified_date", return_value = "2023-11-01T14:13:07"
+        "unstructured.partition.docx.get_last_modified_date", return_value="2023-11-01T14:13:07"
     )
 
     elements = partition_docx(
-        example_doc_path("fake.docx"), metadata_last_modified = "2020-07-05T09:24:28"
+        example_doc_path("fake.docx"), metadata_last_modified="2020-07-05T09:24:28"
     )
 
     assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
@@ -265,11 +264,11 @@ def test_partition_docx_metadata_date_with_custom_metadata(mocker: MockFixture):
 def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
     mocker.patch(
         "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value = "2029-07-05T09:24:28",
+        return_value="2029-07-05T09:24:28",
     )
 
     with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file = f)
+        elements = partition_docx(file=f)
 
     assert elements[0].metadata.last_modified is None
 
@@ -277,11 +276,11 @@ def test_partition_docx_from_file_metadata_date(mocker: MockFixture):
 def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture):
     mocker.patch(
         "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value = "2029-07-05T09:24:28",
+        return_value="2029-07-05T09:24:28",
     )
 
     with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file = f, date_from_file_object = True)
+        elements = partition_docx(file=f, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified == "2029-07-05T09:24:28"
 
@@ -289,11 +288,11 @@ def test_partition_docx_from_file_explicit_get_metadata_date(mocker: MockFixture
 def test_partition_docx_from_file_metadata_date_with_custom_metadata(mocker: MockFixture):
     mocker.patch(
         "unstructured.partition.docx.get_last_modified_date_from_file",
-        return_value = "2023-11-01T14:13:07",
+        return_value="2023-11-01T14:13:07",
     )
 
     with open(example_doc_path("fake.docx"), "rb") as f:
-        elements = partition_docx(file = f, metadata_last_modified = "2020-07-05T09:24:28")
+        elements = partition_docx(file=f, metadata_last_modified="2020-07-05T09:24:28")
 
     assert elements[0].metadata.last_modified == "2020-07-05T09:24:28"
 
@@ -304,7 +303,7 @@ def test_partition_docx_from_file_without_metadata_date():
         sf = tempfile.SpooledTemporaryFile()
         sf.write(f.read())
         sf.seek(0)
-        elements = partition_docx(file = sf, date_from_file_object = True)
+        elements = partition_docx(file=sf, date_from_file_object=True)
 
     assert elements[0].metadata.last_modified is None
 
@@ -313,7 +312,7 @@ def test_partition_docx_from_file_without_metadata_date():
 
 
 def test_get_emphasized_texts_from_paragraph(
-        opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
+    opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
 ):
     opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
     opts = DocxPartitionerOptions(**opts_args)
@@ -336,7 +335,7 @@ def test_get_emphasized_texts_from_paragraph(
 
 
 def test_iter_table_emphasis(
-        opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
+    opts_args: dict[str, Any], expected_emphasized_texts: list[dict[str, str]]
 ):
     opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
     opts = DocxPartitionerOptions(**opts_args)
@@ -349,9 +348,9 @@ def test_iter_table_emphasis(
 
 
 def test_table_emphasis(
-        opts_args: dict[str, Any],
-        expected_emphasized_text_contents: list[str],
-        expected_emphasized_text_tags: list[str],
+    opts_args: dict[str, Any],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
     opts_args["file_path"] = example_doc_path("fake-doc-emphasized-text.docx")
     opts = DocxPartitionerOptions(**opts_args)
@@ -365,8 +364,8 @@ def test_table_emphasis(
 
 
 def test_partition_docx_grabs_emphasized_texts(
-        expected_emphasized_text_contents: list[str],
-        expected_emphasized_text_tags: list[str],
+    expected_emphasized_text_contents: list[str],
+    expected_emphasized_text_tags: list[str],
 ):
     elements = partition_docx(example_doc_path("fake-doc-emphasized-text.docx"))
 
@@ -417,7 +416,7 @@ def test_parse_category_depth_by_style(opts_args: dict[str, Any]):
         actual_depth = partitioner._parse_category_depth_by_style(paragraph)
         assert text in paragraph.text, f"paragraph[{[idx]}].text does not contain {text}"
         assert (
-                actual_depth == depth
+            actual_depth == depth
         ), f"expected paragraph[{idx}] to have depth=={depth}, got {actual_depth}"
 
 
@@ -442,7 +441,7 @@ def test_parse_category_depth_by_style_name(opts_args: dict[str, Any]):
 
     for idx, (depth, text) in enumerate(test_cases):
         assert (
-                partitioner._parse_category_depth_by_style_name(text) == depth
+            partitioner._parse_category_depth_by_style_name(text) == depth
         ), f"test case {test_cases[idx]} failed"
 
 
@@ -454,7 +453,7 @@ def test_parse_category_depth_by_style_ilvl(opts_args: dict[str, Any]):
 
 def test_add_chunking_strategy_on_partition_docx_default_args():
     chunk_elements = partition_docx(
-        example_doc_path("handbook-1p.docx"), chunking_strategy = "by_title"
+        example_doc_path("handbook-1p.docx"), chunking_strategy="by_title"
     )
     elements = partition_docx(example_doc_path("handbook-1p.docx"))
     chunks = chunk_by_title(elements)
@@ -467,10 +466,10 @@ def test_add_chunking_strategy_on_partition_docx():
     docx_path = example_doc_path("fake-doc-emphasized-text.docx")
 
     chunk_elements = partition_docx(
-        docx_path, chunking_strategy = "by_title", max_characters = 9, combine_text_under_n_chars = 5
+        docx_path, chunking_strategy="by_title", max_characters=9, combine_text_under_n_chars=5
     )
     elements = partition_docx(docx_path)
-    chunks = chunk_by_title(elements, max_characters = 9, combine_text_under_n_chars = 5)
+    chunks = chunk_by_title(elements, max_characters=9, combine_text_under_n_chars=5)
 
     assert chunk_elements == chunks
     assert elements != chunk_elements
@@ -484,20 +483,20 @@ def test_add_chunking_strategy_on_partition_docx():
 
 def test_partition_docx_element_metadata_has_languages():
     filename = example_doc_path("handbook-1p.docx")
-    elements = partition_docx(filename = filename)
+    elements = partition_docx(filename=filename)
     assert elements[0].metadata.languages == ["eng"]
 
 
 def test_partition_docx_respects_detect_language_per_element():
     filename = example_doc_path("language-docs/eng_spa_mult.docx")
-    elements = partition_docx(filename = filename, detect_language_per_element = True)
+    elements = partition_docx(filename=filename, detect_language_per_element=True)
     langs = [element.metadata.languages for element in elements]
     assert langs == [["eng"], ["spa", "eng"], ["eng"], ["eng"], ["spa"]]
 
 
 def test_partition_docx_respects_languages_arg():
     filename = example_doc_path("handbook-1p.docx")
-    elements = partition_docx(filename = filename, languages = ["deu"])
+    elements = partition_docx(filename=filename, languages=["deu"])
     assert elements[0].metadata.languages == ["deu"]
 
 
@@ -505,8 +504,8 @@ def test_partition_docx_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = example_doc_path("handbook-1p.docx")
         partition_docx(
-            filename = filename,
-            languages = "eng",  # pyright: ignore[reportArgumentType]
+            filename=filename,
+            languages="eng",  # pyright: ignore[reportArgumentType]
         )
 
 
@@ -664,21 +663,21 @@ def expected_emphasized_texts():
 def mock_document():
     document = docx.Document()
 
-    document.add_paragraph("These are a few of my favorite things:", style = "Heading 1")
+    document.add_paragraph("These are a few of my favorite things:", style="Heading 1")
     # NOTE(robinson) - this should get picked up as a list item due to the •
-    document.add_paragraph("• Parrots", style = "Normal")
+    document.add_paragraph("• Parrots", style="Normal")
     # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("• ", style = "Normal")
-    document.add_paragraph("Hockey", style = "List Bullet")
+    document.add_paragraph("• ", style="Normal")
+    document.add_paragraph("Hockey", style="List Bullet")
     # NOTE(robinson) - this should get dropped because it's empty
-    document.add_paragraph("", style = "List Bullet")
+    document.add_paragraph("", style="List Bullet")
     # NOTE(robinson) - this should get picked up as a title
-    document.add_paragraph("Analysis", style = "Normal")
+    document.add_paragraph("Analysis", style="Normal")
     # NOTE(robinson) - this should get dropped because it is empty
-    document.add_paragraph("", style = "Normal")
+    document.add_paragraph("", style="Normal")
     # NOTE(robinson) - this should get picked up as a narrative text
-    document.add_paragraph("This is my first thought. This is my second thought.", style = "Normal")
-    document.add_paragraph("This is my third thought.", style = "Body Text")
+    document.add_paragraph("This is my first thought. This is my second thought.", style="Normal")
+    document.add_paragraph("This is my third thought.", style="Body Text")
     # NOTE(robinson) - this should just be regular text
     document.add_paragraph("2023")
     # NOTE(robinson) - this should be an address
@@ -727,16 +726,16 @@ class DescribeDocxPartitionerOptions:
     # -- .document -------------------------------
 
     def it_loads_the_docx_document(
-            self,
-            request: FixtureRequest,
-            opts_args: dict[str, Any],
+        self,
+        request: FixtureRequest,
+        opts_args: dict[str, Any],
     ):
         document_ = instance_mock(request, Document)
         docx_Document_ = function_mock(
-            request, "unstructured.partition.docx.docx.Document", return_value = document_
+            request, "unstructured.partition.docx.docx.Document", return_value=document_
         )
         _docx_file_prop_ = property_mock(
-            request, DocxPartitionerOptions, "_docx_file", return_value = "abcde.docx"
+            request, DocxPartitionerOptions, "_docx_file", return_value="abcde.docx"
         )
         opts = DocxPartitionerOptions(**opts_args)
 
@@ -750,7 +749,7 @@ class DescribeDocxPartitionerOptions:
 
     @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_emit_PageBreak_elements_as_part_of_the_output_element_stream(
-            self, arg_value: bool, opts_args: dict[str, Any]
+        self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = arg_value
         opts = DocxPartitionerOptions(**opts_args)
@@ -761,7 +760,7 @@ class DescribeDocxPartitionerOptions:
 
     @pytest.mark.parametrize("arg_value", [True, False])
     def it_knows_whether_to_include_text_as_html_in_Table_metadata(
-            self, arg_value: bool, opts_args: dict[str, Any]
+        self, arg_value: bool, opts_args: dict[str, Any]
     ):
         opts_args["infer_table_structure"] = arg_value
         opts = DocxPartitionerOptions(**opts_args)
@@ -771,7 +770,7 @@ class DescribeDocxPartitionerOptions:
     # -- .increment_page_number() ----------------
 
     def it_generates_a_PageBreak_element_when_the_page_number_is_incremented(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts = DocxPartitionerOptions(**opts_args)
 
@@ -783,7 +782,7 @@ class DescribeDocxPartitionerOptions:
             next(page_break_iter)
 
     def but_it_does_not_generate_a_PageBreak_element_when_include_page_breaks_option_is_off(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts_args["include_page_breaks"] = False
         opts = DocxPartitionerOptions(**opts_args)
@@ -797,7 +796,7 @@ class DescribeDocxPartitionerOptions:
     # -- .last_modified --------------------------
 
     def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
         opts = DocxPartitionerOptions(**opts_args)
@@ -805,7 +804,7 @@ class DescribeDocxPartitionerOptions:
         assert opts.last_modified == "2024-03-05T17:02:53"
 
     def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
-            self, opts_args: dict[str, Any], get_last_modified_date_: Mock
+        self, opts_args: dict[str, Any], get_last_modified_date_: Mock
     ):
         opts_args["file_path"] = "a/b/document.docx"
         get_last_modified_date_.return_value = "2024-04-02T20:32:35"
@@ -817,7 +816,7 @@ class DescribeDocxPartitionerOptions:
         assert last_modified == "2024-04-02T20:32:35"
 
     def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
-            self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
@@ -831,7 +830,7 @@ class DescribeDocxPartitionerOptions:
         assert last_modified == "2024-04-02T20:42:07"
 
     def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
-            self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
@@ -847,7 +846,7 @@ class DescribeDocxPartitionerOptions:
     # -- .metadata_file_path ---------------------
 
     def it_uses_the_user_provided_file_path_in_the_metadata_when_provided(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = "x/y/z.docx"
         opts_args["metadata_file_path"] = "a/b/c.docx"
@@ -857,7 +856,7 @@ class DescribeDocxPartitionerOptions:
 
     @pytest.mark.parametrize("file_path", ["u/v/w.docx", None])
     def and_it_falls_back_to_the_document_file_path_otherwise(
-            self, file_path: str | None, opts_args: dict[str, Any]
+        self, file_path: str | None, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = file_path
         opts_args["metadata_file_path"] = None
@@ -872,18 +871,18 @@ class DescribeDocxPartitionerOptions:
         [(7, True, 7), (1, False, None)],
     )
     def it_reports_None_when_no_rendered_page_breaks_are_found_in_document(
-            self,
-            request: FixtureRequest,
-            opts_args: dict[str, Any],
-            page_count: int,
-            document_contains_pagebreaks: bool,
-            expected_value: int | None,
+        self,
+        request: FixtureRequest,
+        opts_args: dict[str, Any],
+        page_count: int,
+        document_contains_pagebreaks: bool,
+        expected_value: int | None,
     ):
         _document_contains_pagebreaks_prop_ = property_mock(
             request,
             DocxPartitionerOptions,
             "_document_contains_pagebreaks",
-            return_value = document_contains_pagebreaks,
+            return_value=document_contains_pagebreaks,
         )
         opts = DocxPartitionerOptions(**opts_args)
         opts._page_counter = page_count
@@ -906,9 +905,9 @@ class DescribeDocxPartitionerOptions:
         assert opts.page_number == 3
 
     def it_assigns_the_correct_page_number_when_starting_page_number_is_given(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
-        opts = DocxPartitionerOptions(**opts_args, starting_page_number = 3)
+        opts = DocxPartitionerOptions(**opts_args, starting_page_number=3)
 
         assert opts.page_number == 3
         list(opts.increment_page_number())
@@ -921,7 +920,7 @@ class DescribeDocxPartitionerOptions:
         [(None, "hi_res"), (PartitionStrategy.FAST, "fast"), (PartitionStrategy.HI_RES, "hi_res")],
     )
     def it_knows_which_partitioning_strategy_to_use(
-            self, opts_args: dict[str, Any], arg_value: str, expected_value: str
+        self, opts_args: dict[str, Any], arg_value: str, expected_value: str
     ):
         opts_args["strategy"] = arg_value
         opts = DocxPartitionerOptions(**opts_args)
@@ -934,7 +933,7 @@ class DescribeDocxPartitionerOptions:
         ("file_name", "expected_value"), [("page-breaks.docx", True), ("teams_chat.docx", False)]
     )
     def it_knows_whether_the_document_contains_page_breaks(
-            self, opts_args: dict[str, Any], file_name: str, expected_value: bool
+        self, opts_args: dict[str, Any], file_name: str, expected_value: bool
     ):
         opts_args["file_path"] = example_doc_path(file_name)
         opts = DocxPartitionerOptions(**opts_args)
@@ -944,7 +943,7 @@ class DescribeDocxPartitionerOptions:
     # -- ._docx_file -----------------------------
 
     def it_uses_the_path_to_open_the_presentation_when_file_path_is_provided(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts_args["file_path"] = "l/m/n.docx"
         opts = DocxPartitionerOptions(**opts_args)
@@ -952,7 +951,7 @@ class DescribeDocxPartitionerOptions:
         assert opts._docx_file == "l/m/n.docx"
 
     def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         spooled_temp_file = tempfile.SpooledTemporaryFile()
         spooled_temp_file.write(b"abcdefg")
@@ -966,7 +965,7 @@ class DescribeDocxPartitionerOptions:
         assert docx_file.getvalue() == b"abcdefg"
 
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         file = io.BytesIO(b"abcdefg")
         opts_args["file"] = file
@@ -979,11 +978,11 @@ class DescribeDocxPartitionerOptions:
         assert docx_file.getvalue() == b"abcdefg"
 
     def but_it_raises_ValueError_when_neither_a_file_path_or_file_is_provided(
-            self, opts_args: dict[str, Any]
+        self, opts_args: dict[str, Any]
     ):
         opts = DocxPartitionerOptions(**opts_args)
 
-        with pytest.raises(ValueError, match = "No DOCX document specified, either `filename` or "):
+        with pytest.raises(ValueError, match="No DOCX document specified, either `filename` or "):
             opts._docx_file
 
     # -- fixtures --------------------------------------------------------------------------------
@@ -1334,22 +1333,22 @@ def create_test_docx(file_path):
     doc = DocxDocument()
 
     # 添加标题和文本内容
-    doc.add_heading('春节放假通知', level = 1)
-    doc.add_paragraph('\n')
-    doc.add_paragraph('春节放假从大年 30 开始\n共计放假一个月\n比法定假期长三周\n')
+    doc.add_heading("春节放假通知", level=1)
+    doc.add_paragraph("\n")
+    doc.add_paragraph("春节放假从大年 30 开始\n共计放假一个月\n比法定假期长三周\n")
 
-    doc.add_heading('标题 2', level = 2)
-    doc.add_heading('标题 3', level = 3)
-    doc.add_heading('又一个标题 2', level = 2)
+    doc.add_heading("标题 2", level=2)
+    doc.add_heading("标题 3", level=3)
+    doc.add_heading("又一个标题 2", level=2)
 
-    doc.add_paragraph('正文普通\n')
+    doc.add_paragraph("正文普通\n")
 
     # 添加列表
-    doc.add_paragraph('一组\n', style = 'ListBullet')
-    doc.add_paragraph('二组\n', style = 'ListBullet')
-    doc.add_paragraph('三组\n', style = 'ListBullet')
+    doc.add_paragraph("一组\n", style="ListBullet")
+    doc.add_paragraph("二组\n", style="ListBullet")
+    doc.add_paragraph("三组\n", style="ListBullet")
 
-    doc.add_paragraph('继续正文\n')
+    doc.add_paragraph("继续正文\n")
 
     # 保存文档
     doc.save(file_path)
@@ -1357,9 +1356,10 @@ def create_test_docx(file_path):
 
 def test_partition_zh_docs() -> None:
     """
-    Fix the issue of erroneously recognizing NarrativeText as Title when splitting Chinese DOCX documents
+    Fix the issue of erroneously recognizing NarrativeText as Title when splitting
+    Chinese DOCX documents
     """
-    with tempfile.NamedTemporaryFile(suffix = ".docx", delete = False) as tmp:
+    with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
         create_test_docx(tmp.name)
         elements = partition_docx(tmp.name)
 
@@ -1368,29 +1368,30 @@ def test_partition_zh_docs() -> None:
             print(element)
 
         # 进行断言检查
-        assert any('春节放假通知' in element.text for element in elements)
-        assert any('春节放假从大年 30 开始' in element.text for element in elements)
-        assert any('标题 2' in element.text for element in elements)
-        assert any('标题 3' in element.text for element in elements)
-        assert any('又一个标题 2' in element.text for element in elements)
-        assert any('正文普通' in element.text for element in elements)
-        assert any('一组' in element.text for element in elements)
-        assert any('二组' in element.text for element in elements)
-        assert any('三组' in element.text for element in elements)
-        assert any('继续正文' in element.text for element in elements)
-        assert list(filter(lambda x: '正文普通' in x.text, elements))[0].category == 'NarrativeText'
-        assert list(filter(lambda x: '一组' in x.text, elements))[0].category == 'ListItem'
-        assert list(filter(lambda x: '继续正文' in x.text, elements))[0].category == 'NarrativeText'
+        assert any("春节放假通知" in element.text for element in elements)
+        assert any("春节放假从大年 30 开始" in element.text for element in elements)
+        assert any("标题 2" in element.text for element in elements)
+        assert any("标题 3" in element.text for element in elements)
+        assert any("又一个标题 2" in element.text for element in elements)
+        assert any("正文普通" in element.text for element in elements)
+        assert any("一组" in element.text for element in elements)
+        assert any("二组" in element.text for element in elements)
+        assert any("三组" in element.text for element in elements)
+        assert any("继续正文" in element.text for element in elements)
+        assert list(filter(lambda x: "正文普通" in x.text, elements))[0].category == "NarrativeText"
+        assert list(filter(lambda x: "一组" in x.text, elements))[0].category == "ListItem"
+        assert list(filter(lambda x: "继续正文" in x.text, elements))[0].category == "NarrativeText"
 
 
 def test_partition_zh_docs_as_eng() -> None:
     """
-    Fix the issue of erroneously recognizing NarrativeText as Title when splitting Chinese DOCX documents
+    Fix the issue of erroneously recognizing NarrativeText as Title when splitting
+    Chinese DOCX documents
 
-    When specifying the language as English, the partitioning result should be deceived, it will be recognized
-    incorrectly.
+    When specifying the language as English, the partitioning result should be
+    deceived, it will be recognized incorrectly.
     """
-    with tempfile.NamedTemporaryFile(suffix = ".docx", delete = False) as tmp:
+    with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
         create_test_docx(tmp.name)
         elements = partition_docx(tmp.name, languages=["eng"])
 
@@ -1399,16 +1400,16 @@ def test_partition_zh_docs_as_eng() -> None:
             print(element)
 
         # 进行断言检查
-        assert any('春节放假通知' in element.text for element in elements)
-        assert any('春节放假从大年 30 开始' in element.text for element in elements)
-        assert any('标题 2' in element.text for element in elements)
-        assert any('标题 3' in element.text for element in elements)
-        assert any('又一个标题 2' in element.text for element in elements)
-        assert any('正文普通' in element.text for element in elements)
-        assert any('一组' in element.text for element in elements)
-        assert any('二组' in element.text for element in elements)
-        assert any('三组' in element.text for element in elements)
-        assert any('继续正文' in element.text for element in elements)
-        assert list(filter(lambda x: '正文普通' in x.text, elements))[0].category == 'Title'
-        assert list(filter(lambda x: '一组' in x.text, elements))[0].category == 'ListItem'
-        assert list(filter(lambda x: '继续正文' in x.text, elements))[0].category == 'Title'
+        assert any("春节放假通知" in element.text for element in elements)
+        assert any("春节放假从大年 30 开始" in element.text for element in elements)
+        assert any("标题 2" in element.text for element in elements)
+        assert any("标题 3" in element.text for element in elements)
+        assert any("又一个标题 2" in element.text for element in elements)
+        assert any("正文普通" in element.text for element in elements)
+        assert any("一组" in element.text for element in elements)
+        assert any("二组" in element.text for element in elements)
+        assert any("三组" in element.text for element in elements)
+        assert any("继续正文" in element.text for element in elements)
+        assert list(filter(lambda x: "正文普通" in x.text, elements))[0].category == "Title"
+        assert list(filter(lambda x: "一组" in x.text, elements))[0].category == "ListItem"
+        assert list(filter(lambda x: "继续正文" in x.text, elements))[0].category == "Title"

@@ -667,7 +667,8 @@ def test_auto_partition_works_with_unstructured_jsons_from_file():
 def test_auto_partition_odt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake.odt")
     elements = partition(filename=filename, strategy=PartitionStrategy.HI_RES)
-    # TODO "Lorem ipsum dolor sit amet." looks not like English, so it will be inferred as Narrative Text. Maybe need to Fix it
+    # TODO "Lorem ipsum dolor sit amet." looks not like English, so it will be inferred as
+    #  Narrative Text. Maybe needto Fix it
     assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
@@ -676,7 +677,8 @@ def test_auto_partition_odt_from_file():
     with open(filename, "rb") as f:
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
 
-    # TODO "Lorem ipsum dolor sit amet." looks not like English, so it will be inferred as Narrative Text. Maybe need to Fix it
+    # TODO "Lorem ipsum dolor sit amet." looks not like English, so it will be inferred as
+    #  Narrative Text. Maybe need to Fix it
     assert elements[0] == Title("Lorem ipsum dolor sit amet.")
 
 
