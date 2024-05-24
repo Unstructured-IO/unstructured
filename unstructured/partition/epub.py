@@ -61,6 +61,7 @@ def partition_epub(
         source_format="epub",
         detection_origin=DETECTION_ORIGIN,
         date_from_file_object=date_from_file_object,
+        languages=[""],
     )
 
     elements = list(

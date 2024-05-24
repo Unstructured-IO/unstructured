@@ -144,8 +144,7 @@ class HTMLDocument(XMLDocument):
         **kwargs: Any,
     ):
         self.assembled_articles = assemble_articles
-        super().__init__(stylesheet=stylesheet, parser=parser, **kwargs)
-        self._languages: list[str] = languages or ["auto"]
+        super().__init__(stylesheet=stylesheet, parser=parser, languages=languages, **kwargs)
 
     def _parse_pages_from_element_tree(self) -> List[Page]:
         """Parse HTML elements into pages.
@@ -168,8 +167,8 @@ class HTMLDocument(XMLDocument):
         for article in articles:
             descendanttag_elems: Tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
-                elem_languages = self._languages \
-                    if "auto" not in self._languages or not tag_elem.text \
+                elem_languages = self.languages \
+                    if "auto" not in self.languages or not tag_elem.text \
                     else detect_languages(tag_elem.text)
                 if tag_elem in descendanttag_elems:
                     # Prevent repeating something that's been flagged as text as we chase it

@@ -12,7 +12,19 @@ class Document(ABC):
     def __init__(self, languages: Optional[list[str]] = None):
         self._pages: Optional[List[Page]] = None
         self._elements: Optional[List[Element]] = None
-        self._language: list[str] = languages or ["auto"]
+        self._language: list[str]
+        if not languages or languages == [""]:
+            # As [""] is a valid input, it's used to avoid duplicate language detection during partitioning. However, I
+            # believe this design could be improved. Due to the complexity involved in altering the architecture, we
+            # have chosen to keep it as it is for now. In order to maintain compatibility with past designs, maybe
+            # discuss better solutions with the core team in the future.
+            self._language: list[str] = ["auto"]
+        else:
+            self._language = languages
+
+    @property
+    def languages(self) -> list[str]:
+        return self._language
 
     def __str__(self) -> str:
         return "\n\n".join([str(page) for page in self.pages])
