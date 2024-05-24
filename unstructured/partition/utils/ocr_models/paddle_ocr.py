@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image as PILImage
 
 from unstructured.documents.elements import ElementType
-from unstructured.logger import logger
+from unstructured.logger import logger, trace_logger
 from unstructured.partition.utils.constants import DEFAULT_PADDLE_LANG, Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 from unstructured.utils import requires_dependencies
@@ -71,7 +71,7 @@ class OCRAgentPaddle(OCRAgent):
     ) -> list[TextRegion]:
         """Get the OCR regions from image as a list of text regions with paddle."""
 
-        logger.info("Processing entire page OCR with paddle...")
+        trace_logger.detail("Processing entire page OCR with paddle...")
 
         # TODO(yuming): pass in language parameter once we
         # have the mapping for paddle lang code
