@@ -78,12 +78,15 @@ class OCRAgentGPT4O(OCRAgent):
             image.save(buffer, format="PNG")
             encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
+            # log size of the image in MBs
+            logger.info(f"Image size: {len(encoded_image) / 1024 / 1024:.2f} MB")
+
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are a helpful assistant that performs OCR tasks. Transcribe the text of the following image into a list of paragraphs in a json list. The list should contain the transcription of text that appear in any direction.",
+                        "content": "You are a helpful assistant tasked with performing OCR tasks. Please transcribe the text from the image provided into a list of paragraphs. Each paragraph should be a string in a JSON array. Ensure that the output is a valid JSON object with a key 'paragraphs' containing the array of transcribed text. The text can appear in any direction in the image."
                     },
                     {
                         "role": "user",
