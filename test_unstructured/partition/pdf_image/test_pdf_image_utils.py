@@ -343,3 +343,11 @@ def test_annotate_layout_elements_file_not_found_error():
             pdf_image_dpi=200,
             is_image=True,
         )
+
+
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [("c\to\x0cn\ftrol\ncharacter\rs\b", "control characters"), ("\"'\\", "\"'\\")],
+)
+def test_remove_control_characters(text, expected):
+    assert pdf_image_utils.remove_control_characters(text) == expected

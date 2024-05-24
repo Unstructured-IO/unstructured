@@ -117,6 +117,11 @@ class ENVConfig:
         return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", 0)
 
     @property
+    def EXTRACT_TABLE_AS_CELLS(self) -> bool:
+        """adds `table_as_cells` to a Table element's metadata when it is True"""
+        return self._get_bool("EXTRACT_TABLE_AS_CELLS", False)
+
+    @property
     def OCR_LAYOUT_SUBREGION_THRESHOLD(self) -> float:
         """threshold to determine if an OCR region is a sub-region of a given block
         when aggregating the text from OCR'd elements that lie within the given block
@@ -130,6 +135,16 @@ class ENVConfig:
     def EMBEDDED_IMAGE_SAME_REGION_THRESHOLD(self) -> float:
         """threshold to consider the bounding boxes of two embedded images as the same region"""
         return self._get_float("EMBEDDED_IMAGE_SAME_REGION_THRESHOLD", 0.6)
+
+    @property
+    def EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD(self) -> float:
+        """threshold to determine if an embedded region is a sub-region of a given block
+        when aggregating the text from embedded elements that lie within the given block
+
+        When the intersection region area divided by self area is larger than this threshold self is
+        considered a subregion of the other
+        """
+        return self._get_float("EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD", 0.99)
 
     @property
     def PDF_ANNOTATION_THRESHOLD(self) -> float:

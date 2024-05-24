@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/chroma.in
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
 anyio==3.7.1
     # via
@@ -60,7 +60,7 @@ google-auth==2.29.0
     # via kubernetes
 googleapis-common-protos==1.63.0
     # via opentelemetry-exporter-otlp-proto-grpc
-grpcio==1.63.0
+grpcio==1.64.0
     # via
     #   chromadb
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -68,7 +68,7 @@ h11==0.14.0
     # via uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.23.0
+huggingface-hub==0.23.1
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -161,7 +161,7 @@ pyyaml==6.0.1
     #   huggingface-hub
     #   kubernetes
     #   uvicorn
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   chromadb

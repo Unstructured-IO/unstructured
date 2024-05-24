@@ -1,15 +1,58 @@
-## 0.14.1-dev1
+## 0.14.3-dev5
 
 ### Features
 
 ### Fixes
 * **Adds ability to pass timeout for a request when partitioning via a `url` in `partition_html`.** `partition_html` accepts a new optional parameter `request_timeout` which if set will prevent `requests.get` from hanging indefinitely and instead will raise a timeout error. 
 
-## 0.14.1-dev0
+### Enhancements
 
-* **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+* **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
 
 ### Features
+
+### Fixes
+
+* **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+  to avoid text being dynamically injected into the XML document.
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
+* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
+* **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
+
+## 0.14.2
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.33**.
+
+### Features
+
+* **Add attribution to the `pinecone` connector**.
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
 
 ### Fixes
 
@@ -43,7 +86,7 @@
 * **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
 * **AstraDB: option to prevent indexing metadata**
 * **Fix Missing py.typed**
-  
+
 ## 0.13.7
 
 ### Enhancements

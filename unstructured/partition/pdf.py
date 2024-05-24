@@ -205,6 +205,7 @@ def partition_pdf(
         date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
+        form_extraction_skip_tables=form_extraction_skip_tables,
         **kwargs,
     )
 
@@ -573,6 +574,7 @@ def _partition_pdf_or_image_local(
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
                 extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
             )
 
             final_document_layout = process_file_with_ocr(
@@ -611,6 +613,7 @@ def _partition_pdf_or_image_local(
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
                 extracted_layout=extracted_layout,
+                hi_res_model_name=hi_res_model_name,
             )
 
             if hasattr(file, "seek"):

@@ -8,7 +8,7 @@ attrs==23.2.0
     # via boxsdk
 boxfs==0.3.0
     # via -r ./ingest/box.in
-boxsdk[jwt]==3.9.2
+boxsdk[jwt]==3.10.0
     # via boxfs
 certifi==2024.2.2
     # via
@@ -40,7 +40,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   boxsdk
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   boxsdk
