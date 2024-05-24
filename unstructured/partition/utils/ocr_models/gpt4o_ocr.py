@@ -109,7 +109,7 @@ class OCRAgentGPT4O(OCRAgent):
                 ],
                 temperature=0.0,
                 response_format={"type": "json_object"},
-                max_tokens=8192
+                max_tokens=4096
             )
 
             logger.info(f"OpenAI Response: {response}")
