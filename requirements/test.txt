@@ -130,7 +130,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-ruff==0.4.4
+ruff==0.4.5
     # via -r ./test.in
 six==1.16.0
     # via
@@ -153,7 +153,7 @@ types-tabulate==0.9.0.20240106
     # via -r ./test.in
 types-urllib3==1.26.25.14
     # via types-requests
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./base.txt
     #   black

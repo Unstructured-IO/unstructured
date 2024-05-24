@@ -37,7 +37,6 @@ charset-normalizer==3.3.2
 dataclasses-json==0.6.6
     # via
     #   -c ./ingest/../base.txt
-    #   langchain
     #   langchain-community
 distro==1.9.0
     # via openai
@@ -64,9 +63,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.2.0
+langchain==0.2.1
     # via langchain-community
-langchain-community==0.2.0
+langchain-community==0.2.1
     # via -r ./ingest/embed-openai.in
 langchain-core==0.2.1
     # via
@@ -75,7 +74,7 @@ langchain-core==0.2.1
     #   langchain-text-splitters
 langchain-text-splitters==0.2.0
     # via langchain
-langsmith==0.1.61
+langsmith==0.1.63
     # via
     #   langchain
     #   langchain-community
@@ -98,7 +97,7 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-openai==1.30.1
+openai==1.30.3
     # via -r ./ingest/embed-openai.in
 orjson==3.10.3
     # via langsmith
@@ -152,7 +151,7 @@ tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   openai
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   openai

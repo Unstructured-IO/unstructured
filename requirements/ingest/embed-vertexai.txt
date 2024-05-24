@@ -32,7 +32,6 @@ charset-normalizer==3.3.2
 dataclasses-json==0.6.6
     # via
     #   -c ./ingest/../base.txt
-    #   langchain
     #   langchain-community
 docstring-parser==0.16
     # via google-cloud-aiplatform
@@ -101,11 +100,11 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.2.0
+langchain==0.2.1
     # via
     #   -r ./ingest/embed-vertexai.in
     #   langchain-community
-langchain-community==0.2.0
+langchain-community==0.2.1
     # via -r ./ingest/embed-vertexai.in
 langchain-core==0.2.1
     # via
@@ -117,7 +116,7 @@ langchain-google-vertexai==1.0.4
     # via -r ./ingest/embed-vertexai.in
 langchain-text-splitters==0.2.0
     # via langchain
-langsmith==0.1.61
+langsmith==0.1.63
     # via
     #   langchain
     #   langchain-community
@@ -215,7 +214,7 @@ tenacity==8.3.0
     #   langchain
     #   langchain-community
     #   langchain-core
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
