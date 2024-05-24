@@ -42,6 +42,8 @@ class OCRAgentGPT4O(OCRAgent):
             image.save(buffer, format="PNG")
             encoded_image = base64.b64encode(buffer.getvalue())
 
+            image.info
+
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
@@ -77,6 +79,16 @@ class OCRAgentGPT4O(OCRAgent):
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+            img_size_mb = len(encoded_image) / 1024 / 1024
+
+            while img_size_mb > 20:
+                logger.info(f"Image size: {img_size_mb:.2f} MB")
+                logger.info(f"Image size too large for GPT-4 OCR. Resizing image to 75%.")
+                image = image.resize((int(image.width * 0.75), int(image.height * 0.75)))
+                buffer = BytesIO()
+                image.save(buffer, format="PNG")
+                encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
+                img_size_mb = len(encoded_image) / 1024 / 1024
 
             # log size of the image in MBs
             logger.info(f"Image size: {len(encoded_image) / 1024 / 1024:.2f} MB")
