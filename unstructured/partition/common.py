@@ -24,7 +24,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import HTMLDocument
 from unstructured.logger import logger
 from unstructured.nlp.patterns import ENUMERATED_BULLETS_RE, UNICODE_BULLETS_RE
 from unstructured.partition.utils.constants import SORT_MODE_DONT, SORT_MODE_XY_CUT
@@ -538,8 +537,11 @@ def _get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
     }
 
 
+# FIXME: document here can be either DocumentLayout or HTMLDocument; HTMLDocument is defined in
+# unstructured.documents.html, which imports this module so we can't import the class for type
+# hints. Moreover, those two types of documents have different lists of attributes
 def document_to_element_list(
-    document: "DocumentLayout | HTMLDocument",
+    document: "DocumentLayout",
     sortable: bool = False,
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
