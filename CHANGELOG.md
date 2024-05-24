@@ -1,9 +1,10 @@
-## 0.14.3-dev4
+## 0.14.3-dev5
 
 ### Enhancements
 
 * **Move `category` field from Text class to Element class.**
 * **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
+* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
 
 ### Features
 
@@ -57,14 +58,11 @@
 
 * **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
 
-## 0.13.8-dev13
-
 ### Enhancements
 
 * **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
 * **Faster evaluation** Support for concurrent processing of documents during evaluation
 * **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
-* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
 * **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
 
 ### Features
