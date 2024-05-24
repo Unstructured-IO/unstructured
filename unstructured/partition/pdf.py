@@ -205,6 +205,7 @@ def partition_pdf(
         date_from_file_object=date_from_file_object,
         starting_page_number=starting_page_number,
         extract_forms=extract_forms,
+        form_extraction_skip_tables=form_extraction_skip_tables,
         **kwargs,
     )
 

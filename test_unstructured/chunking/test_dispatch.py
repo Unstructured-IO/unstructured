@@ -35,7 +35,6 @@ class Describe_chunk:
     """Unit-test suite for `unstructured.chunking.dispatch.chunk()` function."""
 
     def it_dispatches_to_the_chunker_registered_for_the_chunking_strategy(self):
-
         register_chunking_strategy("by_something_else", chunk_by_something_else)
         kwargs = {
             "max_characters": 750,
