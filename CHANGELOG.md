@@ -4,6 +4,7 @@
 
 * **Move `category` field from Text class to Element class.**
 * **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
+* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
 
 ### Features
 

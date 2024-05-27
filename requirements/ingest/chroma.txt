@@ -198,7 +198,7 @@ typer==0.9.0
     # via
     #   -r ./ingest/chroma.in
     #   chromadb
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   chromadb
