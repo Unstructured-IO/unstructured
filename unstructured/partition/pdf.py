@@ -63,7 +63,7 @@ from unstructured.partition.lang import (
     check_language_args,
     prepare_languages_for_tesseract,
 )
-from unstructured.partition.pdf_image.analysis import PdfminerLayoutDrawer, ODModelLayoutDrawer, OCRLayoutDrawer, \
+from unstructured.partition.pdf_image.analysis import PdfminerLayoutDrawer, PdftextLayoutDrawer, ODModelLayoutDrawer, OCRLayoutDrawer, \
     FinalLayoutDrawer, AnalysisDrawer
 from unstructured.partition.pdf_image.pdf_image_utils import (
     annotate_layout_elements,
@@ -447,7 +447,7 @@ def _partition_pdf_or_image_local(
             )
 
             if analysis:
-                pdfminer_drawer = PdfminerLayoutDrawer(
+                pdfminer_drawer = PdftextLayoutDrawer(
                     layout=extracted_layout,
                 )
                 od_model_drawer = ODModelLayoutDrawer(
@@ -503,7 +503,7 @@ def _partition_pdf_or_image_local(
                 if pdf_text_extractable
                 else []
             )
-
+            
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,

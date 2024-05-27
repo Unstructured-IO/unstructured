@@ -348,6 +348,13 @@ class PdfminerLayoutDrawer(SimpleLayoutDrawer):
         self.color = color
         self.show_order = True
 
+class PdftextLayoutDrawer(SimpleLayoutDrawer):
+    layout_source = "pdftext"
+
+    def __init__(self, layout: List[List[TextRegion]], color: tuple[int, int, int] = (255, 0, 0)):
+        self.layout = copy.deepcopy(layout)
+        self.color = color
+        self.show_order = True
 
 class ODModelLayoutDrawer(LayoutDrawer):
     layout_source = "od_model"

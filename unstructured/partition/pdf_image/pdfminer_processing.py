@@ -76,7 +76,7 @@ def process_data_with_pdfminer(
         # Since PdfText doesn't contain images we extract text only first
         for obj in page["blocks"]:
             # Not sure if rect_to_bbox function shouldn't be used here
-            # x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
+            # x1, y1, x2, y2 = rect_to_bbox(obj["bbox"], height)
             x1, y1, x2, y2 = obj["bbox"]
 
             _text = _extract_text_pdftext(obj["lines"])
@@ -96,8 +96,8 @@ def process_data_with_pdfminer(
         for obj in pdf[page_index].get_objects():
             if isinstance(obj, pdfium.PdfImage) and obj.type == 3:
                 # Not sure if rect_to_bbox function shouldn't be used here
-                # x1, y1, x2, y2 = rect_to_bbox(obj.get_pos(), height)
-                x1, y1, x2, y2 = obj.get_pos()
+                x1, y1, x2, y2 = rect_to_bbox(obj.get_pos(), height)
+                # x1, y1, x2, y2 = obj.get_pos()
                 image_region = ImageTextRegion.from_coords(
                     x1 * coef,
                     y1 * coef,
