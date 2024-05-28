@@ -589,6 +589,6 @@ def decide_table_extraction(
         # completely and rely exclusively on `skip_infer_table_types` for all file types.
         # Until then for pdf files we first check pdf_infer_table_structure and then update
         # based on skip_infer_tables.
-        return pdf_infer_table_structure and doc_type not in skip_infer_table_types
+        return pdf_infer_table_structure or doc_type not in skip_infer_table_types
 
     return doc_type not in skip_infer_table_types

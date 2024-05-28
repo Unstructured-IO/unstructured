@@ -6,7 +6,7 @@ import html
 import io
 import itertools
 import tempfile
-from typing import IO, Any, Iterator, Optional, Type
+from typing import IO, Any, Iterator, Optional, Protocol, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -33,6 +33,7 @@ from unstructured.documents.elements import (
     EmailAddress,
     Footer,
     Header,
+    Image,
     Link,
     ListItem,
     NarrativeText,
@@ -61,6 +62,43 @@ from unstructured.utils import is_temp_file_path, lazyproperty
 DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
 BlockItem: TypeAlias = "Paragraph | DocxTable"
+
+
+def register_picture_partitioner(picture_partitioner: PicturePartitionerT) -> None:
+    """Specify a pluggable sub-partitioner to be used for partitioning DOCX images."""
+    DocxPartitionerOptions.register_picture_partitioner(picture_partitioner)
+
+
+# ================================================================================================
+# DOCX DOMAIN MODEL DEFINITIONS
+# ================================================================================================
+
+
+class PicturePartitionerT(Protocol):
+    """Defines the interface for a pluggable sub-partitioner for DOCX Picture objects.
+
+    In Microsoft Word parlance, an image is a "picture". We use that term here for an image in a
+    DOCX file both for domain consistency and because it conveniently avoids confusion with an
+    `unstructured` `Image` element.
+
+    A picture can be either *inline* or *floating*. An inline picture is treated like a big
+    character in the text of a paragraph, moving with the text. A floating picture can be moved
+    freely and text flows around it.
+
+    Both inline and floating pictures are defined inside a paragraph in the DOCX file. A paragraph
+    can have zero or more pictures. A DOCX picture partitioner takes a `docx` `Paragraph` object
+    and generates an `Image` element for each picture found in that paragraph.
+    """
+
+    @classmethod
+    def iter_elements(cls, paragraph: Paragraph, opts: DocxPartitionerOptions) -> Iterator[Image]:
+        """Generate an `Image` element for each picture in `paragraph`."""
+        ...
+
+
+# ================================================================================================
+# PARTITIONER
+# ================================================================================================
 
 
 @process_metadata()
@@ -142,6 +180,16 @@ def partition_docx(
 class DocxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
+    _PicturePartitionerCls = None
+    """Sub-partitioner used to extract pictures from a paragraph as `Image` elements.
+
+    This value has module lifetime and is updated by calling the `register_picture_partitioner()`
+    function defined in this module. The value sent to `register_picture_partitioner()` must be a
+    pluggable sub-partitioner implementing the `PicturePartitionerT` interface. After
+    registration, all paragraphs in subsequently partitioned DOCX documents will be sent to this
+    sub-partitioner to extract images when so configured.
+    """
+
     def __init__(
         self,
         *,
@@ -165,6 +213,11 @@ class DocxPartitionerOptions:
         self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
+
+    @classmethod
+    def register_picture_partitioner(cls, picture_partitioner: PicturePartitionerT):
+        """Specify a pluggable sub-partitioner to extract images from DOCX paragraphs."""
+        cls._PicturePartitionerCls = picture_partitioner
 
     @lazyproperty
     def document(self) -> Document:
@@ -247,6 +300,16 @@ class DocxPartitionerOptions:
         document.
         """
         return self._page_counter
+
+    @lazyproperty
+    def picture_partitioner(self) -> PicturePartitionerT:
+        """The sub-partitioner to use for DOCX image extraction."""
+        # -- Note this value has partitioning-run scope. An instance of this options class is
+        # -- instantiated once per partitioning run (each document can have different options).
+        # -- Because this is a lazyproperty, it is computed only on the first reference. All
+        # -- subsequent references during the same partitioning run will get the same value. This
+        # -- ensures image extraction is processed consistently within a single document.
+        return self._PicturePartitionerCls or _NullPicturePartitioner
 
     @lazyproperty
     def strategy(self) -> str:
@@ -569,6 +632,7 @@ class _DocxPartitioner:
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
                 yield from self._classify_paragraph_to_element(item)
+                yield from self._iter_paragraph_images(item)
             else:
                 yield from self._opts.increment_page_number()
 
@@ -582,6 +646,13 @@ class _DocxPartitioner:
                 yield {"text": text, "tag": "b"}
             if run.italic:
                 yield {"text": text, "tag": "i"}
+
+    def _iter_paragraph_images(self, paragraph: Paragraph) -> Iterator[Image]:
+        """Generate `Image` element for each picture shape in `paragraph` when so configured."""
+        # -- Delegate this job to the pluggable Picture partitioner. Note the default picture
+        # -- partitioner does not extract images.
+        PicturePartitionerCls = self._opts.picture_partitioner
+        yield from PicturePartitionerCls.iter_elements(paragraph, self._opts)
 
     def _iter_section_footers(self, section: Section) -> Iterator[Footer]:
         """Generate any `Footer` elements defined for this section.
@@ -925,3 +996,18 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+
+# ================================================================================================
+# SUB-PARTITIONERS
+# ================================================================================================
+
+
+class _NullPicturePartitioner:
+    """Does not parse the provided paragraph for pictures and generates zero `Image` elements."""
+
+    @classmethod
+    def iter_elements(cls, paragraph: Paragraph, opts: DocxPartitionerOptions) -> Iterator[Image]:
+        """No-op picture partitioner."""
+        return
+        yield
