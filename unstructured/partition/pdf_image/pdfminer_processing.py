@@ -181,7 +181,7 @@ def clean_pdfminer_inner_elements(document: "DocumentLayout") -> "DocumentLayout
     for page in document.pages:
         tables = [e for e in page.elements if e.type == ElementType.TABLE]
         for i, element in enumerate(page.elements):
-            if element.source != Source.PDFMINER:
+            if element.source != Source.PDFTEXT:
                 continue
             subregion_threshold = inference_config.EMBEDDED_TEXT_AGGREGATION_SUBREGION_THRESHOLD
             element_inside_table = [
@@ -204,7 +204,7 @@ def clean_pdfminer_duplicate_image_elements(document: "DocumentLayout") -> "Docu
     for page in document.pages:
         image_elements = []
         for i, element in enumerate(page.elements):
-            if element.source != Source.PDFMINER or element.type != ElementType.IMAGE:
+            if element.source != Source.PDFTEXT or element.type != ElementType.IMAGE:
                 continue
 
             # check if this element is a duplicate
