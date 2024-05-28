@@ -33,6 +33,9 @@ function cleanup() {
 
 trap cleanup EXIT
 
+pip uninstall -y bson
+make install-ingest-mongodb
+
 python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
   --uri "$MONGODB_URI" \
   --database "$MONGODB_DATABASE_NAME" \
