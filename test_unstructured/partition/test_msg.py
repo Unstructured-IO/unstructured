@@ -1,9 +1,19 @@
-import os
+"""Test suite for `unstructured.partition.msg` module."""
+
+from __future__ import annotations
+
+import pathlib
 
 import msg_parser
 import pytest
+from pytest_mock import MockFixture
 
-from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
+from test_unstructured.unit_utils import (
+    LogCaptureFixture,
+    MonkeyPatch,
+    assert_round_trips_through_JSON,
+    example_doc_path,
+)
 from unstructured.chunking.title import chunk_by_title
 from unstructured.documents.elements import (
     ElementMetadata,
@@ -73,12 +83,12 @@ def test_partition_msg_from_filename_with_metadata_filename():
 
 
 class MockMsOxMessage:
-    def __init__(self, filename):
+    def __init__(self, filename: str):
         self.body = "Here is an email with plain text."
         self.header_dict = {"Content-Type": "text/plain"}
 
 
-def test_partition_msg_from_filename_with_text_content(monkeypatch):
+def test_partition_msg_from_filename_with_text_content(monkeypatch: MonkeyPatch):
     monkeypatch.setattr(msg_parser, "MsOxMessage", MockMsOxMessage)
     filename = example_doc_path("fake-email.msg")
     elements = partition_msg(filename=filename)
@@ -146,15 +156,11 @@ def test_partition_msg_from_file_exclude_metadata():
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_msg_can_process_attachments(
-    tmpdir,
-    filename="example-docs/fake-email-attachment.msg",
-):
-    extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
-    attachment_filename = os.path.join(
-        tmpdir.dirname,
-        ATTACH_EXPECTED_OUTPUT[0]["filename"],
-    )
+def test_partition_msg_can_process_attachments(tmp_path: pathlib.Path):
+    file_path = example_doc_path("fake-email-attachment.msg")
+    tmp_dir_path = str(tmp_path)
+    extract_msg_attachment_info(filename=file_path, output_dir=tmp_dir_path)
+    attachment_filename = str(tmp_path / str(ATTACH_EXPECTED_OUTPUT[0]["filename"]))
 
     mocked_last_modification_date = "2029-07-05T09:24:28"
 
@@ -165,10 +171,10 @@ def test_partition_msg_can_process_attachments(
     )
     expected_metadata = attachment_elements[0].metadata
     expected_metadata.file_directory = None
-    expected_metadata.attached_to_filename = filename
+    expected_metadata.attached_to_filename = file_path
 
     elements = partition_msg(
-        filename=filename,
+        filename=file_path,
         attachment_partitioner=partition_text,
         process_attachments=True,
         metadata_last_modified=mocked_last_modification_date,
@@ -187,15 +193,11 @@ def test_partition_msg_can_process_attachments(
     assert elements[-1].metadata == expected_metadata
 
 
-def test_partition_msg_can_process_min_max_wtih_attachments(
-    tmpdir,
-    filename="example-docs/fake-email-attachment.msg",
-):
-    extract_msg_attachment_info(filename=filename, output_dir=tmpdir.dirname)
-    attachment_filename = os.path.join(
-        tmpdir.dirname,
-        ATTACH_EXPECTED_OUTPUT[0]["filename"],
-    )
+def test_partition_msg_can_process_min_max_wtih_attachments(tmp_path: pathlib.Path):
+    file_path = example_doc_path("fake-email-attachment.msg")
+    tmp_dir_path = str(tmp_path)
+    extract_msg_attachment_info(filename=file_path, output_dir=tmp_dir_path)
+    attachment_filename = str(tmp_path / str(ATTACH_EXPECTED_OUTPUT[0]["filename"]))
 
     attachment_elements = partition_text(
         filename=attachment_filename,
@@ -205,7 +207,7 @@ def test_partition_msg_can_process_min_max_wtih_attachments(
     )
 
     elements = partition_msg(
-        filename=filename,
+        filename=file_path,
         attachment_partitioner=partition_text,
         process_attachments=True,
         min_partition=6,
@@ -221,17 +223,12 @@ def test_partition_msg_can_process_min_max_wtih_attachments(
             assert len(element.text) >= 6
 
 
-def test_partition_msg_raises_with_no_partitioner(
-    filename="example-docs/fake-email-attachment.msg",
-):
+def test_partition_msg_raises_with_no_partitioner():
     with pytest.raises(ValueError):
-        partition_msg(filename=filename, process_attachments=True)
+        partition_msg(example_doc_path("fake-email-attachment.msg"), process_attachments=True)
 
 
-def test_partition_msg_metadata_date_from_header(
-    mocker,
-    filename="example-docs/fake-email.msg",
-):
+def test_partition_msg_metadata_date_from_header(mocker: MockFixture):
     expected_last_modification_date = "2022-12-16T17:04:16-05:00"
 
     mocker.patch(
@@ -243,33 +240,25 @@ def test_partition_msg_metadata_date_from_header(
         return_value=None,
     )
 
-    elements = partition_msg(filename=filename)
+    elements = partition_msg(example_doc_path("fake-email.msg"))
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_msg_from_file_custom_metadata_date(
-    filename="example-docs/fake-email.msg",
-):
+def test_partition_msg_from_file_custom_metadata_date():
     expected_last_modification_date = "2020-07-05T09:24:28"
 
-    with open(filename, "rb") as f:
-        elements = partition_msg(
-            file=f,
-            metadata_last_modified=expected_last_modification_date,
-        )
+    with open(example_doc_path("fake-email.msg"), "rb") as f:
+        elements = partition_msg(file=f, metadata_last_modified=expected_last_modification_date)
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
 
 
-def test_partition_msg_custom_metadata_date(
-    filename="example-docs/fake-email.msg",
-):
+def test_partition_msg_custom_metadata_date():
     expected_last_modification_date = "2020-07-05T09:24:28"
 
     elements = partition_msg(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
+        example_doc_path("fake-email.msg"), metadata_last_modified=expected_last_modification_date
     )
 
     assert elements[0].metadata.last_modified == expected_last_modification_date
@@ -280,7 +269,7 @@ def test_partition_msg_with_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_partition_msg_with_pgp_encrypted_message(caplog):
+def test_partition_msg_with_pgp_encrypted_message(caplog: LogCaptureFixture):
     elements = partition_msg(example_doc_path("fake-encrypted.msg"))
 
     assert elements == []
@@ -288,12 +277,13 @@ def test_partition_msg_with_pgp_encrypted_message(caplog):
     assert "Encrypted email detected" in caplog.text
 
 
-def test_add_chunking_strategy_by_title_on_partition_msg(
-    filename=example_doc_path("fake-email.msg"),
-):
+def test_add_chunking_strategy_by_title_on_partition_msg():
+    filename = example_doc_path("fake-email.msg")
+
     elements = partition_msg(filename=filename)
     chunk_elements = partition_msg(filename, chunking_strategy="by_title")
     chunks = chunk_by_title(elements)
+
     assert chunk_elements != elements
     assert chunk_elements == chunks
 
@@ -313,4 +303,4 @@ def test_partition_msg_respects_languages_arg():
 def test_partition_msg_raises_TypeError_for_invalid_languages():
     with pytest.raises(TypeError):
         filename = "example-docs/fake-email.msg"
-        partition_msg(filename=filename, languages="eng")
+        partition_msg(filename=filename, languages="eng")  # pyright: ignore[reportArgumentType]
