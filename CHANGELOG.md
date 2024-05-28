@@ -10,6 +10,7 @@
 
 ### Fixes
 
+* **Fix `partition_pdf()` to keep spaces in the text**. The control character `\t` is now replaced with a space instead of being removed when merging inferred elements with embedded elements.
 * **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
   to avoid text being dynamically injected into the XML document.
 * **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
