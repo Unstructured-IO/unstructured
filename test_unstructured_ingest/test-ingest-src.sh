@@ -17,51 +17,51 @@ EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  # 's3.sh'
-  # 's3-minio.sh'
-  # 'azure.sh'
-  # 'biomed-api.sh'
-  # 'biomed-path.sh'
-  # # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
-  # 'pdf-fast-reprocess.sh'
-  # 'salesforce.sh'
-  # 'box.sh'
-  # 'discord.sh'
-  # 'dropbox.sh'
-  # 'github.sh'
-  # 'gitlab.sh'
-  # 'google-drive.sh'
-  # 'wikipedia.sh'
-  # 'local.sh'
-  # 'slack.sh'
-  # 'against-api.sh'
-  # 'gcs.sh'
-  # 'onedrive.sh'
-  # 'outlook.sh'
-  # 'elasticsearch.sh'
-  # 'confluence-diff.sh'
-  # 'confluence-large.sh'
-  # 'airtable-diff.sh'
-  # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
-  # # 'airtable-large.sh'
-  # 'local-single-file.sh'
-  # 'local-single-file-basic-chunking.sh'
-  # 'local-single-file-chunk-no-orig-elements.sh'
-  # 'local-single-file-with-encoding.sh'
-  # 'local-single-file-with-pdf-infer-table-structure.sh'
-  # 'notion.sh'
-  # 'delta-table.sh'
-  # 'jira.sh'
-  # 'sharepoint.sh'
-  # 'sharepoint-with-permissions.sh'
-  # 'hubspot.sh'
-  # 'local-embed.sh'
-  # 'local-embed-bedrock.sh'
-  # 'local-embed-octoai.sh'
-  # 'local-embed-vertexai.sh'
-  # 'local-embed-voyageai.sh'
-  # 'sftp.sh'
-  # 'opensearch.sh'
+  's3.sh'
+  's3-minio.sh'
+  'azure.sh'
+  'biomed-api.sh'
+  'biomed-path.sh'
+  # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
+  'pdf-fast-reprocess.sh'
+  'salesforce.sh'
+  'box.sh'
+  'discord.sh'
+  'dropbox.sh'
+  'github.sh'
+  'gitlab.sh'
+  'google-drive.sh'
+  'wikipedia.sh'
+  'local.sh'
+  'slack.sh'
+  'against-api.sh'
+  'gcs.sh'
+  'onedrive.sh'
+  'outlook.sh'
+  'elasticsearch.sh'
+  'confluence-diff.sh'
+  'confluence-large.sh'
+  'airtable-diff.sh'
+  # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
+  'airtable-large.sh'
+  'local-single-file.sh'
+  'local-single-file-basic-chunking.sh'
+  'local-single-file-chunk-no-orig-elements.sh'
+  'local-single-file-with-encoding.sh'
+  'local-single-file-with-pdf-infer-table-structure.sh'
+  'notion.sh'
+  'delta-table.sh'
+  'jira.sh'
+  'sharepoint.sh'
+  'sharepoint-with-permissions.sh'
+  'hubspot.sh'
+  'local-embed.sh'
+  'local-embed-bedrock.sh'
+  'local-embed-octoai.sh'
+  'local-embed-vertexai.sh'
+  'local-embed-voyageai.sh'
+  'sftp.sh'
+  'opensearch.sh'
   'mongodb.sh'
 )
 
@@ -106,7 +106,7 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
-  ./test_unstructured_ingest/src/"$test"
+  # ./test_unstructured_ingest/src/"$test"
   rc=$?
   if [[ $rc -eq 8 ]]; then
     echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
@@ -118,6 +118,10 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- FINISHED SCRIPT $test ---------"
 done
+
+pip uninstall -y bson
+make install-ingest-mongodb
+./test_unstructured_ingest/src/mongo.sh
 
 set +e
 

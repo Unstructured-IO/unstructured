@@ -239,9 +239,6 @@ install-ingest-postgres:
 
 .PHONY: install-ingest-mongodb
 install-ingest-mongodb:
-	# NOTE(robinson) - per this comment in the mongo docs, mongo ships with its own
-	# bson version that's incompatible with the bson from pip
-	python3 -m pip uninstall -y bson
 	python3 -m pip install -r requirements/ingest/mongodb.txt
 
 .PHONY: install-ingest-databricks-volumes
