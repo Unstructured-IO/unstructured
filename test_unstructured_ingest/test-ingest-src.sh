@@ -107,7 +107,7 @@ for test in "${all_tests[@]}"; do
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
   # ./test_unstructured_ingest/src/"$test"
-  rc=$?
+  # rc=$?
   if [[ $rc -eq 8 ]]; then
     echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
   elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
