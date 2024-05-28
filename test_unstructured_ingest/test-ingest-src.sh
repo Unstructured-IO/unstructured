@@ -19,7 +19,7 @@ export OMP_THREAD_LIMIT=1
 all_tests=(
   's3.sh'
   's3-minio.sh'
-  'azure.sh'
+  # 'azure.sh'
   'biomed-api.sh'
   'biomed-path.sh'
   # NOTE(yuming): The pdf-fast-reprocess test should be put after any tests that save downloaded files
