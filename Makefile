@@ -482,7 +482,7 @@ docker-test:
 	$(DOCKER_IMAGE) \
 	bash -c "CI=$(CI) \
 	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	/home/nonroot/.local/bin/pytest -m 'not chipper' test_unstructured"
+	/home/nonroot/.local/bin/pytest -m 'not chipper' $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
