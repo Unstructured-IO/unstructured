@@ -7,7 +7,6 @@ USER root
 COPY ./docker-packages/*.apk packages/
 COPY ./requirements requirements/
 COPY unstructured unstructured
-COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
 RUN apk update && apk add mesa-gl glib cmake && \
