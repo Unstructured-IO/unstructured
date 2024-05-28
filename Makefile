@@ -471,7 +471,7 @@ docker-start-bash:
 docker-start-dev:
 	docker run --rm \
 	-v ${CURRENT_DIR}:/mnt/local_unstructued \
-	-ti --entrypoint /bin/bash ${DOCKER_IMAGE}
+	-ti ${DOCKER_IMAGE}
 
 .PHONY: docker-test
 docker-test:
@@ -480,7 +480,9 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/nonroot/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	CI=$(CI) UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest -m 'not chipper' $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)
+	bash -c "CI=$(CI) \
+	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
+	/home/nonroot/.local/bin/pytest -m 'not chipper' $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
