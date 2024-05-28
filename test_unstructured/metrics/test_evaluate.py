@@ -143,10 +143,10 @@ def test_process_document_returns_the_correct_amount_of_values(
 @pytest.mark.parametrize(
     ("filename", "expected"),
     [
-        ("document.pdf.json", "pdf"),
-        ("report.docx.json", "docx"),
-        ("file.txt.json", "txt"),
-        ("file.with.multiple.dots.pdf.json", "pdf"),
+        ("document.pdf", "pdf"),
+        ("report.docx", "docx"),
+        ("file.txt", "txt"),
+        ("file.with.multiple.dots.pdf", "pdf"),
     ],
 )
 def test_get_document_type_from_filename_returns_correct_document_type(filename, expected):
