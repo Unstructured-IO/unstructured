@@ -15,25 +15,26 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  'astra.sh'
-  'azure.sh'
-  'azure-cognitive-search.sh'
-  'box.sh'
-  'chroma.sh'
-  'clarifai.sh'
-  'delta-table.sh'
-  'dropbox.sh'
-  'elasticsearch.sh'
-  'gcs.sh'
-  'opensearch.sh'
-  'pgvector.sh'
-  'pinecone.sh'
-  'qdrant.sh'
-  's3.sh'
-  'sharepoint-embed-cog-index.sh'
-  'sqlite.sh'
-  'vectara.sh'
-  'weaviate.sh'
+  # 'astra.sh'
+  # 'azure.sh'
+  # 'azure-cognitive-search.sh'
+  # 'box.sh'
+  # 'chroma.sh'
+  # 'clarifai.sh'
+  # 'delta-table.sh'
+  # 'dropbox.sh'
+  # 'elasticsearch.sh'
+  # 'gcs.sh'
+  # 'opensearch.sh'
+  # 'pgvector.sh'
+  # 'pinecone.sh'
+  # 'qdrant.sh'
+  # 's3.sh'
+  # 'sharepoint-embed-cog-index.sh'
+  # 'sqlite.sh'
+  # 'vectara.sh'
+  # 'weaviate.sh'
+  'mongo.sh'
 )
 
 full_python_matrix_tests=(
@@ -72,19 +73,22 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
-  # ./test_unstructured_ingest/dest/"$test"
-  # rc=$?
-  # if [[ $rc -eq 8 ]]; then
-  #   echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
-  # elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
-  #   echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
-  #   continue
-  # elif [[ $rc -ne 0 ]]; then
-  #   exit $rc
-  # fi
+  if [[ $test = "mongo.sh" ]]; then
+    pip uninstall -y bson
+    make install-ingest-mongodb
+    ./test_unstructured_ingest/dest/mongo.sh
+  else
+    ./test_unstructured_ingest/dest/"$test"
+  fi
+  rc=$?
+  if [[ $rc -eq 8 ]]; then
+    echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
+  elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
+    echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
+    continue
+  elif [[ $rc -ne 0 ]]; then
+    exit $rc
+  fi
   echo "--------- FINISHED SCRIPT $test ---------"
 done
 
-pip uninstall -y bson
-make install-ingest-mongodb
-./test_unstructured_ingest/dest/mongo.sh
