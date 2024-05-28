@@ -49,25 +49,9 @@ AGG_HEADERS = ["metric", "average", "sample_sd", "population_sd", "count"]
 OUTPUT_TYPE_OPTIONS = ["json", "txt"]
 
 
-def get_document_type(path: Path) -> str:
-    """Extracts the document type from the filename.
-
-    The document type is assumed to be the second-to-last suffix in the filename.
-    This is because of two reasons:
-    1. Evaluated document names are expected to always have two extensions.
-        Partitioned files are supposed to have the ".json" extension and
-        ground truth files can have either ".txt" or ".json".
-    2. The filename can theoretically have multiple dots in their base name
-        (which should not be treated as extensions).
-
-    Args:
-        path: Path to the document file
-
-    Returns:
-        The document type extracted from the filename
-    """
-    extension = path.suffixes[-2]
-    return extension[1:] if extension.startswith(".") else extension
+def get_document_type(filename: str) -> str:
+    """Extracts the last extenion from a filename (without leading dot)"""
+    return Path(filename).suffix.removeprefix(".")
 
 
 @dataclass
@@ -223,7 +207,6 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, path: Path) -> list:
         filename = path.stem
-        doctype = get_document_type(path)
         src_gt_filename = filename + ".json"
         connector = path.parts[-2] if len(path.parts) > 1 else None
 
@@ -256,7 +239,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
         )
         report_from_cells = processor_from_table_as_cells.process_file()
         return (
-            [filename, doctype, connector]
+            [filename, get_document_type(filename), connector]
             + [getattr(report_from_html, metric) for metric in self.supported_metric_names]
             + [getattr(report_from_cells, metric) for metric in self.supported_metric_names]
         )
@@ -356,7 +339,6 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
     def _process_document(self, path: Path) -> list:
         filename = path.stem
         connector = path.parts[0] if len(path.parts) > 1 else None
-        doctype = get_document_type(path)
 
         output_cct, source_cct = self._get_ccts(path)
         # NOTE(amadeusz): Levenshtein distance calculation takes too long
@@ -367,7 +349,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
             # 0.01 to distinguish it was set manually
             accuracy = 0.01
         percent_missing = round(calculate_percent_missing_text(output_cct, source_cct), 3)
-        return [filename, doctype, connector, accuracy, percent_missing]
+        return [filename, get_document_type(filename), connector, accuracy, percent_missing]
 
     def _get_ccts(self, doc: Path) -> tuple[str, str]:
         output_cct = _prepare_output_cct(
@@ -430,7 +412,6 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, path: Path) -> list:
         filename = path.stem
-        doctype = get_document_type(path)
         connector = path.parts[0] if len(path.parts) > 1 else None
 
         output = get_element_type_frequency(_read_text_file(self.documents_dir / path))
@@ -438,7 +419,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
             _read_text_file(self.ground_truths_dir / path.with_suffix(".json"))
         )
         accuracy = round(calculate_element_type_percent_match(output, source), 3)
-        return [filename, doctype, connector, accuracy]
+        return [filename, get_document_type(filename), connector, accuracy]
 
     def _generate_dataframes(self, rows):
         headers = ["filename", "doctype", "connector", "element-type-accuracy"]
