@@ -30,7 +30,6 @@ charset-normalizer==3.3.2
 dataclasses-json==0.6.6
     # via
     #   -c ./ingest/../base.txt
-    #   langchain
     #   langchain-community
 filelock==3.14.0
     # via
@@ -68,9 +67,9 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.2.0
+langchain==0.2.1
     # via langchain-community
-langchain-community==0.2.0
+langchain-community==0.2.1
     # via -r ./ingest/embed-huggingface.in
 langchain-core==0.2.1
     # via
@@ -79,8 +78,9 @@ langchain-core==0.2.1
     #   langchain-text-splitters
 langchain-text-splitters==0.2.0
     # via langchain
-langsmith==0.1.61
+langsmith==0.1.62
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -188,7 +188,7 @@ tqdm==4.66.4
     #   transformers
 transformers==4.41.1
     # via sentence-transformers
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub

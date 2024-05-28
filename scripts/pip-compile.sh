@@ -12,5 +12,3 @@ pushd ./requirements || exit
 make clean
 make all
 popd || exit
-
-cp requirements/build.txt docs/requirements.txt
