@@ -184,8 +184,10 @@ def supplement_page_layout_with_ocr(
     If mode is "individual_blocks", we find the elements from PageLayout
     with no text and add text from OCR to each element.
     """
-
-    ocr_agent = OCRAgent.get_agent()
+    if extracted_regions is None:
+        ocr_agent = OCRAgent.get_agent()
+    else:
+        ocr_agent = OCRAgent.get_instance(OCR_AGENT_TESSERACT)
     if ocr_mode == OCRMode.FULL_PAGE.value:
         ocr_layout = ocr_agent.get_layout_from_image(
             image,
