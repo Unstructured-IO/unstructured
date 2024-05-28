@@ -33,6 +33,13 @@ function cleanup() {
 
 trap cleanup EXIT
 
+# NOTE(robinson) - per pymongo docs, pymongo ships with its own version of the bson library,
+# which is incompatible with the bson installed from pypi. bson is installed as part of the
+# astra dependencies.
+# ref: https://pymongo.readthedocs.io/en/stable/installation.html
+pip uninstall -y bson pymongo
+make install-ingest-mongodb
+
 python "$SCRIPT_DIR"/python/test-ingest-mongodb.py \
   --uri "$MONGODB_URI" \
   --database "$MONGODB_DATABASE_NAME" \
