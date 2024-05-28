@@ -480,9 +480,7 @@ docker-test:
 	-v ${CURRENT_DIR}/test_unstructured_ingest:/app/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
-	/bin/bash -c "CI=$(CI) \
-	UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) \
-	/home/nonroot/.local/bin/pytest -m 'not chipper' $(if $(TEST_FILE),$(TEST_FILE),test_unstructured)"
+	/home/nonroot/.local/bin/pytest -m 'not chipper' test_unstructured
 
 .PHONY: docker-smoke-test
 docker-smoke-test:
