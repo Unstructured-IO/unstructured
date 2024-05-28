@@ -43,7 +43,7 @@ all_tests=(
   'confluence-large.sh'
   'airtable-diff.sh'
   # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
-  'airtable-large.sh'
+  # 'airtable-large.sh'
   'local-single-file.sh'
   'local-single-file-basic-chunking.sh'
   'local-single-file-chunk-no-orig-elements.sh'
