@@ -125,7 +125,6 @@ for test in "${all_tests[@]}"; do
   echo "--------- FINISHED SCRIPT $test ---------"
 done
 
-
 set +e
 
 all_eval=(

@@ -91,4 +91,3 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- FINISHED SCRIPT $test ---------"
 done
-
