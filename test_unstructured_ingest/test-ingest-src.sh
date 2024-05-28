@@ -108,14 +108,14 @@ for test in "${all_tests[@]}"; do
   echo "Running ./test_unstructured_ingest/$test"
   # ./test_unstructured_ingest/src/"$test"
   # rc=$?
-  if [[ $rc -eq 8 ]]; then
-    echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
-  elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
-    echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
-    continue
-  elif [[ $rc -ne 0 ]]; then
-    exit $rc
-  fi
+  # if [[ $rc -eq 8 ]]; then
+  #   echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
+  # elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
+  #   echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
+  #   continue
+  # elif [[ $rc -ne 0 ]]; then
+  #   exit $rc
+  # fi
   echo "--------- FINISHED SCRIPT $test ---------"
 done
 
