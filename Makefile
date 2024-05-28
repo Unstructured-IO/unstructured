@@ -476,8 +476,8 @@ docker-start-dev:
 .PHONY: docker-test
 docker-test:
 	docker run --rm \
-	-v ${CURRENT_DIR}/test_unstructured:/home/nonroot/test_unstructured \
-	-v ${CURRENT_DIR}/test_unstructured_ingest:/home/nonroot/test_unstructured_ingest \
+	-v ${CURRENT_DIR}/test_unstructured:/app/test_unstructured \
+	-v ${CURRENT_DIR}/test_unstructured_ingest:/app/test_unstructured_ingest \
 	$(if $(wildcard uns_test_env_file),--env-file uns_test_env_file,) \
 	$(DOCKER_IMAGE) \
 	/home/nonroot/.local/bin/pytest -m 'not chipper' test_unstructured
