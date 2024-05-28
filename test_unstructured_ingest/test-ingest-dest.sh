@@ -15,28 +15,25 @@ cd "$SCRIPT_DIR"/.. || exit 1
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  # 'astra.sh'
-  # 'azure.sh'
-  # 'azure-cognitive-search.sh'
-  # 'box.sh'
-  # 'chroma.sh'
-  # 'clarifai.sh'
-  # 'delta-table.sh'
-  # 'dropbox.sh'
-  # 'elasticsearch.sh'
-  # 'gcs.sh'
-  # 'opensearch.sh'
-  # 'pgvector.sh'
-  # 'pinecone.sh'
-  # 'qdrant.sh'
-  # 's3.sh'
-  # 'sharepoint-embed-cog-index.sh'
-  # 'sqlite.sh'
-  # 'vectara.sh'
-  # 'weaviate.sh'
-  # NOTE(robinson) - mongo conflicts with astra because it ships with its
-  # own version of bson, and installing bson from pip causes mongo to fail
-  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
+  'astra.sh'
+  'azure.sh'
+  'azure-cognitive-search.sh'
+  'box.sh'
+  'chroma.sh'
+  'clarifai.sh'
+  'delta-table.sh'
+  'dropbox.sh'
+  'elasticsearch.sh'
+  'gcs.sh'
+  'opensearch.sh'
+  'pgvector.sh'
+  'pinecone.sh'
+  'qdrant.sh'
+  's3.sh'
+  'sharepoint-embed-cog-index.sh'
+  'sqlite.sh'
+  'vectara.sh'
+  'weaviate.sh'
   'mongodb.sh'
 )
 
