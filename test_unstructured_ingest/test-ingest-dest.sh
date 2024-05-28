@@ -34,7 +34,10 @@ all_tests=(
   # 'sqlite.sh'
   # 'vectara.sh'
   # 'weaviate.sh'
-  'mongo.sh'
+  # NOTE(robinson) - mongo conflicts with astra because it ships with its
+  # own version of bson, and installing bson from pip causes mongo to fail
+  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
+  'mongodb.sh'
 )
 
 full_python_matrix_tests=(
@@ -73,13 +76,7 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
-  if [[ $test = "mongo.sh" ]]; then
-    pip uninstall -y bson
-    make install-ingest-mongodb
-    ./test_unstructured_ingest/dest/mongo.sh
-  else
-    ./test_unstructured_ingest/dest/"$test"
-  fi
+  ./test_unstructured_ingest/dest/"$test"
   rc=$?
   if [[ $rc -eq 8 ]]; then
     echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"

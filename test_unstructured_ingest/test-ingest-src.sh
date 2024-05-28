@@ -17,8 +17,8 @@ EVAL_OUTPUT_ROOT=${EVAL_OUTPUT_ROOT:-$SCRIPT_DIR}
 export OMP_THREAD_LIMIT=1
 
 all_tests=(
-  # 's3.sh'
-  # 's3-minio.sh'
+  's3.sh'
+  's3-minio.sh'
   # 'azure.sh'
   # 'biomed-api.sh'
   # 'biomed-path.sh'
@@ -43,7 +43,7 @@ all_tests=(
   # 'confluence-large.sh'
   # 'airtable-diff.sh'
   # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
-  # 'airtable-large.sh'
+  # # 'airtable-large.sh'
   # 'local-single-file.sh'
   # 'local-single-file-basic-chunking.sh'
   # 'local-single-file-chunk-no-orig-elements.sh'
@@ -62,6 +62,9 @@ all_tests=(
   # 'local-embed-voyageai.sh'
   # 'sftp.sh'
   # 'opensearch.sh'
+  # NOTE(robinson) - mongo conflicts with astra because it ships with its
+  # own version of bson, and installing bson from pip causes mongo to fail
+  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
   'mongodb.sh'
 )
 
@@ -106,13 +109,7 @@ for test in "${all_tests[@]}"; do
   fi
   echo "--------- RUNNING SCRIPT $test ---------"
   echo "Running ./test_unstructured_ingest/$test"
-  if [[ $test = "mongo.sh" ]]; then
-    pip uninstall -y bson
-    make install-ingest-mongodb
-    ./test_unstructured_ingest/src/mongo.sh
-  else
-    ./test_unstructured_ingest/src/"$test"
-  fi
+  ./test_unstructured_ingest/src/"$test"
   rc=$?
   if [[ $rc -eq 8 ]]; then
     echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
