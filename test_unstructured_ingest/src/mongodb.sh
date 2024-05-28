@@ -21,7 +21,7 @@ if [ -z "$MONGODB_URI" ] && [ -z "$MONGODB_DATABASE_NAME" ]; then
 fi
 
 # trap cleanup EXIT
-
+pip uninstall -y bson
 PYTHONPATH=. ./unstructured/ingest/main.py \
   mongodb \
   --metadata-exclude file_directory,metadata.data_source.date_processed,metadata.last_modified,metadata.date_created,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth \
