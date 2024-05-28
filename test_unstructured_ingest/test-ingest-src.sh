@@ -62,10 +62,7 @@ all_tests=(
   'local-embed-voyageai.sh'
   'sftp.sh'
   'opensearch.sh'
-  # NOTE(robinson) - mongo conflicts with astra because it ships with its
-  # own version of bson, and installing bson from pip causes mongo to fail
-  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
-  # 'mongodb.sh'
+  'mongodb.sh'
 )
 
 full_python_matrix_tests=(
