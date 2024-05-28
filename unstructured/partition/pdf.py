@@ -250,24 +250,24 @@ def partition_pdf_or_image(
 
     extracted_elements = []
     pdf_text_extractable = False
-    # if not is_image:
-    #     try:
-    #         extracted_elements = extractable_elements(
-    #             filename=filename,
-    #             file=spooled_to_bytes_io_if_needed(file),
-    #             languages=languages,
-    #             metadata_last_modified=metadata_last_modified or last_modification_date,
-    #             starting_page_number=starting_page_number,
-    #             **kwargs,
-    #         )
-    #         pdf_text_extractable = any(
-    #             isinstance(el, Text) and el.text.strip()
-    #             for page_elements in extracted_elements
-    #             for el in page_elements
-    #         )
-    #     except Exception as e:
-    #         logger.error(e)
-    #         logger.warning("PDF text extraction failed, skip text extraction...")
+    if not is_image:
+        try:
+            extracted_elements = extractable_elements(
+                filename=filename,
+                file=spooled_to_bytes_io_if_needed(file),
+                languages=languages,
+                metadata_last_modified=metadata_last_modified or last_modification_date,
+                starting_page_number=starting_page_number,
+                **kwargs,
+            )
+            pdf_text_extractable = any(
+                isinstance(el, Text) and el.text.strip()
+                for page_elements in extracted_elements
+                for el in page_elements
+            )
+        except Exception as e:
+            logger.error(e)
+            logger.warning("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
         strategy,
