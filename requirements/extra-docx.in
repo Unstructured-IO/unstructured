@@ -1,4 +1,5 @@
 -c ./deps/constraints.txt
 -c base.txt
 
+# Note(scanny): partition_docx() uses table features added in python-docx v1.1.2.
 python-docx>=1.1.2
