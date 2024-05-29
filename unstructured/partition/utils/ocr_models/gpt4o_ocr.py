@@ -40,7 +40,7 @@ class OCRAgentGPT4O(OCRAgent):
     def get_text_from_image(self, image: PILImage.Image, ocr_languages: str = "eng") -> str:
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
-            encoded_image = base64.b64encode(buffer.getvalue())
+            encoded_image = base64.b64encode(buffer.getvalue()).decode("utf-8")
 
             image.info
 
