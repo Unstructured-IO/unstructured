@@ -96,7 +96,7 @@ def test_text_extraction_evaluation():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
-    assert df.iloc[0].filename == "Bank Good Credit Loan.pptx.json"
+    assert df.iloc[0].filename == "Bank Good Credit Loan.pptx"
 
 
 @pytest.mark.parametrize(
@@ -153,7 +153,7 @@ def test_text_extraction_evaluation_type_txt():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-cct.tsv"), sep="\t")
     assert len(df) == 3
     assert len(df.columns) == 5
-    assert df.iloc[0].filename == "Bank Good Credit Loan.pptx.txt"
+    assert df.iloc[0].filename == "Bank Good Credit Loan.pptx"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -172,7 +172,7 @@ def test_element_type_evaluation():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-element-type-frequency.tsv"), sep="\t")
     assert len(df) == 1
     assert len(df.columns) == 4
-    assert df.iloc[0].filename == "IRS-form-1987.pdf.json"
+    assert df.iloc[0].filename == "IRS-form-1987.pdf"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
@@ -192,7 +192,7 @@ def test_table_structure_evaluation():
     df = pd.read_csv(os.path.join(export_dir, "all-docs-table-structure-accuracy.tsv"), sep="\t")
     assert len(df) == 1
     assert len(df.columns) == 17
-    assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf.json"
+    assert df.iloc[0].filename == "IRS-2023-Form-1095-A.pdf"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")

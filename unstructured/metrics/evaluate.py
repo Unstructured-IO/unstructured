@@ -201,7 +201,7 @@ class TableStructureMetricsCalculator(BaseMetricsCalculator):
 
     def _process_document(self, doc: Path) -> list:
         doc_path = Path(doc)
-        out_filename = doc_path.name
+        out_filename = doc_path.stem
         doctype = Path(out_filename).suffix[1:]
         src_gt_filename = out_filename + ".json"
         connector = doc_path.parts[-2] if len(doc_path.parts) > 1 else None
@@ -337,7 +337,7 @@ class TextExtractionMetricsCalculator(BaseMetricsCalculator):
             )
 
     def _process_document(self, doc: Path) -> list:
-        filename = doc.name
+        filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
@@ -412,7 +412,7 @@ class ElementTypeMetricsCalculator(BaseMetricsCalculator):
         return "aggregate-scores-element-type.tsv"
 
     def _process_document(self, doc: Path) -> list:
-        filename = doc.name
+        filename = doc.stem
         doctype = doc.suffixes[0]
         connector = doc.parts[0] if len(doc.parts) > 1 else None
 
