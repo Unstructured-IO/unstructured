@@ -1,4 +1,14 @@
-## 0.14.3-dev6
+## 0.14.4-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
+
+## 0.14.3
 
 ### Enhancements
 
@@ -10,6 +20,7 @@
 
 ### Fixes
 
+* **Fix `partition_pdf()` to keep spaces in the text**. The control character `\t` is now replaced with a space instead of being removed when merging inferred elements with embedded elements.
 * **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
   to avoid text being dynamically injected into the XML document.
 * **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
@@ -19,7 +30,6 @@
 * **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
 * **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
 * **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
-* **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
 
 ## 0.14.2
 
