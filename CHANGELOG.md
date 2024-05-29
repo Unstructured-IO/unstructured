@@ -1,3 +1,13 @@
+## 0.14.4-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+
 ## 0.14.3
 
 ### Enhancements
