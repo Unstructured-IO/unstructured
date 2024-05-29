@@ -4,15 +4,17 @@
 
 from __future__ import annotations
 
+import hashlib
 import io
 import pathlib
 import re
 import tempfile
-from typing import Any
+from typing import Any, Iterator
 
 import docx
 import pytest
 from docx.document import Document
+from docx.text.paragraph import Paragraph
 from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import (
@@ -31,6 +33,7 @@ from unstructured.documents.elements import (
     Element,
     Footer,
     Header,
+    Image,
     ListItem,
     NarrativeText,
     PageBreak,
@@ -39,7 +42,12 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.partition.docx import DocxPartitionerOptions, _DocxPartitioner, partition_docx
+from unstructured.partition.docx import (
+    DocxPartitionerOptions,
+    _DocxPartitioner,
+    partition_docx,
+    register_picture_partitioner,
+)
 from unstructured.partition.utils.constants import (
     UNSTRUCTURED_INCLUDE_DEBUG_METADATA,
     PartitionStrategy,
@@ -619,6 +627,45 @@ def test_it_considers_text_inside_shapes():
         "Paragraph with <inline-image1> and <inline-image2> within.",
         # -- text "<floating-shape>" in floating shape is ignored --
         "Paragraph with floating shape attached.",
+    ]
+
+
+# -- image sub-partitioning behaviors ------------------------------------------------------------
+
+
+def test_partition_docx_generates_no_Image_elements_by_default():
+    assert not any(
+        isinstance(e, Image) for e in partition_docx(example_doc_path("contains-pictures.docx"))
+    )
+
+
+def test_partition_docx_uses_registered_picture_partitioner():
+    class FakeParagraphPicturePartitioner:
+        @classmethod
+        def iter_elements(
+            cls, paragraph: Paragraph, opts: DocxPartitionerOptions
+        ) -> Iterator[Image]:
+            call_hash = hashlib.sha1(f"{paragraph.text}{opts.strategy}".encode()).hexdigest()
+            yield Image(f"Image with hash {call_hash}, strategy: {opts.strategy}")
+
+    register_picture_partitioner(FakeParagraphPicturePartitioner)
+
+    elements = partition_docx(example_doc_path("contains-pictures.docx"))
+
+    # -- picture-partitioner registration has module-lifetime, so need to de-register this fake
+    # -- so other tests in same test-run don't use it
+    DocxPartitionerOptions._PicturePartitionerCls = None
+
+    assert len(elements) == 11
+    image_elements = [e for e in elements if isinstance(e, Image)]
+    assert len(image_elements) == 6
+    assert [e.text for e in image_elements] == [
+        "Image with hash 429de54e71f1f0fb395b6f6191961a3ea1b64dc0, strategy: hi_res",
+        "Image with hash 5e0cd2c62809377d8ce7422d8ca6b0cf5f4453bc, strategy: hi_res",
+        "Image with hash 429de54e71f1f0fb395b6f6191961a3ea1b64dc0, strategy: hi_res",
+        "Image with hash ccbd34be6096544babc391890cb0849c24cc046c, strategy: hi_res",
+        "Image with hash a41b819c7b4a9750ec0f9198c59c2057d39c653c, strategy: hi_res",
+        "Image with hash ba0dc2a1205af8f6d9e06c8d415df096b0a9c428, strategy: hi_res",
     ]
 
 

@@ -20,7 +20,12 @@ if [ -z "$MONGODB_URI" ] && [ -z "$MONGODB_DATABASE_NAME" ]; then
   exit 8
 fi
 
-# trap cleanup EXIT
+# NOTE(robinson) - per pymongo docs, pymongo ships with its own version of the bson library,
+# which is incompatible with the bson installed from pypi. bson is installed as part of the
+# astra dependencies.
+# ref: https://pymongo.readthedocs.io/en/stable/installation.html
+pip uninstall -y bson pymongo
+make install-ingest-mongodb
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   mongodb \

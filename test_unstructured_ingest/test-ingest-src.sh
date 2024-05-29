@@ -42,7 +42,7 @@ all_tests=(
   'confluence-diff.sh'
   'confluence-large.sh'
   'airtable-diff.sh'
-  # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
+  # # NOTE(ryan): This test is disabled because it is triggering too many requests to the API
   # 'airtable-large.sh'
   'local-single-file.sh'
   'local-single-file-basic-chunking.sh'
@@ -59,12 +59,10 @@ all_tests=(
   'local-embed-bedrock.sh'
   'local-embed-octoai.sh'
   'local-embed-vertexai.sh'
+  'local-embed-voyageai.sh'
   'sftp.sh'
   'opensearch.sh'
-  # NOTE(robinson) - mongo conflicts with astra because it ships with its
-  # own version of bson, and installing bson from pip causes mongo to fail
-  # ref: https://pymongo.readthedocs.io/en/stable/installation.html
-  # 'mongodb.sh'
+  'mongodb.sh'
 )
 
 full_python_matrix_tests=(

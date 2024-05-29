@@ -1,10 +1,24 @@
-## 0.14.3-dev0
+## 0.14.3-dev5
 
 ### Enhancements
+
+* **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
+* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
 
 ### Features
 
 ### Fixes
+
+* **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+  to avoid text being dynamically injected into the XML document.
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
+* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
+* **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
 
 ## 0.14.2
 
