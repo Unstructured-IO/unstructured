@@ -1,3 +1,13 @@
+## 0.14.4-dev
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+
 ## 0.14.3
 
 ### Enhancements
