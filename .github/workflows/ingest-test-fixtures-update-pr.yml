@@ -138,6 +138,7 @@ jobs:
           branch: ${{ env.BRANCH_NAME }}
           title: "${{ env.PR_NAME }} <- Ingest test fixtures update"
           assignees: ${{ github.actor }}
+          reviewers: ${{ github.actor }}
           delete-branch: true
           body: |
             This pull request includes updated ingest test fixtures.
