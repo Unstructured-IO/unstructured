@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
 
 ## 0.14.3
 
