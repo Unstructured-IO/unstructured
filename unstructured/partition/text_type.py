@@ -88,29 +88,13 @@ def is_possible_narrative_text(
     # languages for judgment, that is, as long as English appears, we will make
     # a judgment. In the future, we may need to modify it to where only pure English
     # is needed for exceeds_cap_ratio judgment.
-    capitalizable_languages = {
-        "eng",
-        "spa",
-        "rus",
-        "fra",
-        "deu",
-        "ita",
-        "por",
-        "nld",
-        "swe",
-        "nor",
-        "dan",
-        "fin",
-        "ell",
-        "pol",
-        "ces",
-        "slk",
-        "hun",
-        "ron",
-        "bul",
-        "hrv",
+    # List of languages that can't be capitalized
+    non_capitalizable_languages = {
+        "zho",  # Chinese
+        "jpn",  # Japanese
+        "kor",  # Korean
     }
-    if not capitalizable_languages.isdisjoint(set(languages)) and exceeds_cap_ratio(
+    if non_capitalizable_languages.isdisjoint(set(languages)) and exceeds_cap_ratio(
         text, threshold=cap_threshold
     ):
         trace_logger.detail(f"Not narrative. Text exceeds cap ratio {cap_threshold}:\n\n{text}")  # type: ignore # noqa: E501

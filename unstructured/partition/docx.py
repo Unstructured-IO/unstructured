@@ -157,7 +157,7 @@ class DocxPartitionerOptions:
         metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
         strategy: str | None = None,
-        languages: Optional[list[str]] = None,
+        **kwargs: Any,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -170,7 +170,7 @@ class DocxPartitionerOptions:
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
         # -- languages is a list of languages to use for category detection --
-        self._languages: list[str] = languages or ["auto"]
+        self._languages: list[str] = kwargs.get("languages", ["auto"])
 
     @lazyproperty
     def document(self) -> Document:
