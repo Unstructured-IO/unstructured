@@ -13,7 +13,7 @@ from unstructured.utils import requires_dependencies
 
 def init_pdfminer():
     rsrcmgr = PDFResourceManager()
-    laparams = LAParams()
+    laparams = LAParams(detect_vertical=True)
     device = PDFPageAggregator(rsrcmgr, laparams=laparams)
     interpreter = PDFPageInterpreter(rsrcmgr, device)
 
