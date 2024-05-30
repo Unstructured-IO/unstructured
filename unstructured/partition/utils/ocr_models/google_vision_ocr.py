@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from google.cloud.vision import Image, ImageAnnotatorClient, Paragraph, TextAnnotation
 
+from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
 
@@ -18,7 +19,11 @@ class OCRAgentGoogleVision(OCRAgent):
     """OCR service implementation for Google Vision API."""
 
     def __init__(self) -> None:
-        self.client = ImageAnnotatorClient()
+        client_options = {}
+        api_endpoint = env_config.GOOGLEVISION_API_ENDPOINT
+        if api_endpoint:
+            client_options["api_endpoint"] = api_endpoint
+        self.client = ImageAnnotatorClient(client_options=client_options)
 
     def is_text_sorted(self) -> bool:
         return True
