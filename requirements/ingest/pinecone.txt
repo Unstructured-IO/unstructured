@@ -15,7 +15,7 @@ tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client

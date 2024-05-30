@@ -57,7 +57,10 @@ unstructured-client<=0.18.0
 
 fsspec==2024.5.0
 
-# python 3.12 support 
+# python 3.12 support
 numpy>=1.26.0
 wrapt>=1.14.0
 
+
+# NOTE(robinson): for compatiblity with voyage embeddings
+langsmith==0.1.62
