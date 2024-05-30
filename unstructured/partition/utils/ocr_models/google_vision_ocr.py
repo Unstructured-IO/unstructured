@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from google.cloud.vision import Image, ImageAnnotatorClient, Paragraph, TextAnnotation
 
+from unstructured.logger import logger, trace_logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.ocr_models.ocr_interface import OCRAgent
@@ -22,7 +23,10 @@ class OCRAgentGoogleVision(OCRAgent):
         client_options = {}
         api_endpoint = env_config.GOOGLEVISION_API_ENDPOINT
         if api_endpoint:
+            logger.info(f"Using Google Vision OCR with endpoint {api_endpoint}")
             client_options["api_endpoint"] = api_endpoint
+        else:
+            logger.info("Using Google Vision OCR with default endpoint")
         self.client = ImageAnnotatorClient(client_options=client_options)
 
     def is_text_sorted(self) -> bool:
@@ -39,6 +43,7 @@ class OCRAgentGoogleVision(OCRAgent):
     def get_layout_from_image(
         self, image: PILImage.Image, ocr_languages: str = "eng"
     ) -> list[TextRegion]:
+        trace_logger.detail("Processing entire page OCR with Google Vision API...")
         with BytesIO() as buffer:
             image.save(buffer, format="PNG")
             response = self.client.document_text_detection(image=Image(content=buffer.getvalue()))
