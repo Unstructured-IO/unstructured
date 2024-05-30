@@ -182,9 +182,7 @@ that are helpful for new users to review:
 
 
 ### PDF Document Parsing Example
-The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
-
-The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
+The following examples show how to get started with the `unstructured` library. The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
 For example, to install docx dependencies you need to run `pip install "unstructured[docx]"`.
 See our  [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
 
