@@ -1,0 +1,145 @@
+{
+   "properties": {
+      "element_id": {
+         "type": "keyword"
+      },
+      "text": {
+         "type": "text",
+         "analyzer": "english"
+      },
+      "type": {
+         "type": "text"
+      },
+      "embeddings": {
+         "type": "dense_vector",
+         "dims": 384
+      },
+      "metadata": {
+         "type": "object",
+         "properties": {
+            "category_depth": {
+               "type": "integer"
+            },
+            "parent_id": {
+               "type": "keyword"
+            },
+            "attached_to_filename": {
+               "type": "keyword"
+            },
+            "filetype": {
+               "type": "keyword"
+            },
+            "last_modified": {
+               "type": "date"
+            },
+            "file_directory": {
+               "type": "keyword"
+            },
+            "filename": {
+               "type": "keyword"
+            },
+            "data_source": {
+               "type": "object",
+               "properties": {
+                  "url": {
+                     "type": "text",
+                     "analyzer": "standard"
+                  },
+                  "version": {
+                     "type": "keyword"
+                  },
+                  "date_created": {
+                     "type": "date"
+                  },
+                  "date_modified": {
+                     "type": "date"
+                  },
+                  "date_processed": {
+                     "type": "date"
+                  },
+                  "record_locator": {
+                     "type": "keyword"
+                  },
+                  "permissions_data": {
+                     "type": "object"
+                  }
+               }
+            },
+            "coordinates": {
+               "type": "object",
+               "properties": {
+                  "system": {
+                     "type": "keyword"
+                  },
+                  "layout_width": {
+                     "type": "float"
+                  },
+                  "layout_height": {
+                     "type": "float"
+                  },
+                  "points": {
+                     "type": "float"
+                  }
+               }
+            },
+            "languages": {
+               "type": "keyword"
+            },
+            "page_number": {
+               "type": "integer"
+            },
+            "page_name": {
+               "type": "keyword"
+            },
+            "url": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "links": {
+               "type": "object"
+            },
+            "link_urls": {
+               "type": "text"
+            },
+            "link_texts": {
+               "type": "text"
+            },
+            "sent_from": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "sent_to": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "subject": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "section": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "header_footer_type": {
+               "type": "keyword"
+            },
+            "emphasized_text_contents": {
+               "type": "text"
+            },
+            "emphasized_text_tags": {
+               "type": "keyword"
+            },
+            "text_as_html": {
+               "type": "text",
+               "analyzer": "standard"
+            },
+            "regex_metadata": {
+               "type": "object"
+            },
+            "detection_class_prob": {
+               "type": "float"
+            }
+         }
+      }
+   }
+}
