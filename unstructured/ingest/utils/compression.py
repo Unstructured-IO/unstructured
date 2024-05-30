@@ -68,7 +68,7 @@ def uncompress_tar_file(tar_filename: str, path: Optional[str] = None) -> str:
         # This was added in Python 3.12
         # Ref: https://docs.python.org/3/library/tarfile.html#extraction-filters
         if sys.version_info >= (3, 12):
-            tfile.extraction_filter = tar_file.tar_filter
+            tfile.extraction_filter = tarfile.tar_filter
         tfile.extractall(path=path)
     return path
 
