@@ -161,7 +161,7 @@ class BaseMetricsCalculator(ABC):
     def _process_document(self, doc: Path) -> list:
         """Should return all metadata and metrics for a single document."""
 
-
+        pass
 @dataclass
 class TableStructureMetricsCalculator(BaseMetricsCalculator):
     """Calculates the following metrics for tables:
