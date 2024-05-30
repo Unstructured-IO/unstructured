@@ -35,7 +35,7 @@ from unstructured.partition.docx import partition_docx
 is_in_docker = os.path.exists("/.dockerenv")
 
 
-def test_partition_doc_matches_partition_docx(request):
+def test_partition_doc_matches_partition_docx(request: FixtureRequest):
     # NOTE(robinson) - was having issues with the tempfile not being found in the docker tests
     if is_in_docker:
         request.applymarker(pytest.mark.xfail)
