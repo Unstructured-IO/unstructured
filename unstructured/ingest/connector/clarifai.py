@@ -90,7 +90,6 @@ class ClarifaiDestinationConnector(BaseDestinationConnector):
         }
 
     def write_dict(self, *args, elements_dict: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
-
         from google.protobuf.struct_pb2 import Struct
 
         logger.info(

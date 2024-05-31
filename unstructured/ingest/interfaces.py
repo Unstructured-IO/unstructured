@@ -86,7 +86,7 @@ class RetryStrategyConfig(BaseConfig):
 @dataclass
 class PartitionConfig(BaseConfig):
     # where to write structured data outputs
-    pdf_infer_table_structure: bool = True
+    pdf_infer_table_structure: bool = False
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
@@ -234,6 +234,13 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return VertexAIEmbeddingEncoder(config=VertexAIEmbeddingConfig(**kwargs))
+        elif self.provider == "langchain-voyageai":
+            from unstructured.embed.voyageai import (
+                VoyageAIEmbeddingConfig,
+                VoyageAIEmbeddingEncoder,
+            )
+
+            return VoyageAIEmbeddingEncoder(config=VoyageAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 

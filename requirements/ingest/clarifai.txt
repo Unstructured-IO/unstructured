@@ -21,7 +21,7 @@ contextlib2==21.6.0
     # via schema
 googleapis-common-protos==1.63.0
     # via clarifai-grpc
-grpcio==1.63.0
+grpcio==1.64.0
     # via clarifai-grpc
 idna==3.7
     # via
@@ -36,6 +36,7 @@ mdurl==0.1.2
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
+    #   -c ./ingest/../deps/constraints.txt
     #   clarifai
     #   tritonclient
 pfzy==0.3.4
@@ -51,11 +52,11 @@ protobuf==4.23.4
     #   googleapis-common-protos
 pygments==2.18.0
     # via rich
-python-rapidjson==1.16
+python-rapidjson==1.17
     # via tritonclient
 pyyaml==6.0.1
     # via clarifai
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   clarifai-grpc

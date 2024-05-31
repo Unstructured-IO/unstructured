@@ -1,10 +1,6 @@
-Permissions Configuration
-=========================
+Unstructured Documentation
+==========================
 
-A common permissions configuration is leveraged to extract user access data associated with the content from the source data provider.  Currently supported for the Sharepoint connector.
-
-Configs
----------------------
-* ``application_id``
-* ``client_cred``
-* ``tenant``
+The Unstructured documentation page has moved! Check out our new and improved docs page at
+`https://docs.unstructured.io <https://docs.unstructured.io>`_ to learn more about our
+products and tools.

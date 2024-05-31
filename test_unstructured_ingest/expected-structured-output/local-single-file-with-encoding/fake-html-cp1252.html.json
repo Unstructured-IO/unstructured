@@ -1,90 +1,98 @@
 [
   {
+    "type": "Title",
     "element_id": "a59f117741c76dca0bc8f5ee72e2010b",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "example-docs/fake-html-cp1252.html"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "por",
-        "cat",
-        "eng",
-        "vie"
-      ]
-    },
     "text": "My First Heading",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/fake-html-cp1252.html"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "82eda2671c5ead903683b67b0f8e3f29",
-    "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "example-docs/fake-html-cp1252.html"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "por",
-        "cat",
-        "eng",
-        "vie"
-      ]
-    },
     "text": "My first paragraph.",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "por",
+        "cat",
+        "eng",
+        "vie"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/fake-html-cp1252.html"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "9f76e487d5df3f6c4ce8ea2ece61057f",
+    "text": "Some CP1252-specific characters:",
     "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "example-docs/fake-html-cp1252.html"
-      },
-      "filetype": "text/html",
       "languages": [
         "por",
         "cat",
         "eng",
         "vie"
-      ]
-    },
-    "text": "Some CP1252-specific characters:",
-    "type": "Title"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/fake-html-cp1252.html"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "a7394a14aa8bf2dae179420d96ac755c",
+    "text": "\u00a1\t\u00a2\t\u00a3\t\u00a4\t\u00a5\t\u00a6\t\u00a7\t\u00a8\t\u00a9\t\u00aa\t\u00ab\t\u00ac\tSHY\t\u00ae\t\u00af\n\u00b0\t\u00b1\t\u00b2\t\u00b3\t\u00b4\t\u00b5\t\u00b6\t\u00b7\t\u00b8\t\u00b9\t\u00ba\t\u00bb\t\u00bc\t\u00bd\t\u00be\t\u00bf\n\u00c0\t\u00c1\t\u00c2\t\u00c3\t\u00c4\t\u00c5\t\u00c6\t\u00c7\t\u00c8\t\u00c9\t\u00ca\t\u00cb\t\u00cc\t\u00cd\t\u00ce\t\u00cf\n\u00d0\t\u00d1\t\u00d2\t\u00d3\t\u00d4\t\u00d5\t\u00d6\t\u00d7\t\u00d8\t\u00d9\t\u00da\t\u00db\t\u00dc\t\u00dd\t\u00de\t\u00df\n\u00e0\t\u00e1\t\u00e2\t\u00e3\t\u00e4\t\u00e5\t\u00e6\t\u00e7\t\u00e8\t\u00e9\t\u00ea\t\u00eb\t\u00ec\t\u00ed\t\u00ee\t\u00ef\n\u00f0\t\u00f1\t\u00f2\t\u00f3\t\u00f4\t\u00f5\t\u00f6\t\u00f7\t\u00f8\t\u00f9\t\u00fa\t\u00fb\t\u00fc\t\u00fd\t\u00fe\t\u00ff",
     "metadata": {
-      "data_source": {
-        "permissions_data": [
-          {
-            "mode": 33188
-          }
-        ],
-        "url": "example-docs/fake-html-cp1252.html"
-      },
-      "filetype": "text/html",
       "languages": [
         "por",
         "cat",
         "eng",
         "vie"
-      ]
-    },
-    "text": "¡\t¢\t£\t¤\t¥\t¦\t§\t¨\t©\tª\t«\t¬\tSHY\t®\t¯\n°\t±\t²\t³\t´\tµ\t¶\t·\t¸\t¹\tº\t»\t¼\t½\t¾\t¿\nÀ\tÁ\tÂ\tÃ\tÄ\tÅ\tÆ\tÇ\tÈ\tÉ\tÊ\tË\tÌ\tÍ\tÎ\tÏ\nÐ\tÑ\tÒ\tÓ\tÔ\tÕ\tÖ\t×\tØ\tÙ\tÚ\tÛ\tÜ\tÝ\tÞ\tß\nà\tá\tâ\tã\tä\tå\tæ\tç\tè\té\tê\të\tì\tí\tî\tï\nð\tñ\tò\tó\tô\tõ\tö\t÷\tø\tù\tú\tû\tü\tý\tþ\tÿ",
-    "type": "NarrativeText"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/home/runner/work/unstructured/unstructured/example-docs/fake-html-cp1252.html"
+        },
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
   }
 ]

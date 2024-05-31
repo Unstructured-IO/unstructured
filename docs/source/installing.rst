@@ -1,10 +1,6 @@
-Installation
-============
+Unstructured Documentation
+==========================
 
-Unstructured's library requires a lot of installation. For the full installation please follow the link below.
-
-.. toctree::
-   :maxdepth: 1
-
-   installation/full_installation
-   installation/docker
+The Unstructured documentation page has moved! Check out our new and improved docs page at
+`https://docs.unstructured.io <https://docs.unstructured.io>`_ to learn more about our
+products and tools.

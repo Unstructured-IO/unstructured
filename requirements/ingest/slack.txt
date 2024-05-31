@@ -4,5 +4,5 @@
 #
 #    pip-compile ./ingest/slack.in
 #
-slack-sdk==3.27.1
+slack-sdk==3.27.2
     # via -r ./ingest/slack.in

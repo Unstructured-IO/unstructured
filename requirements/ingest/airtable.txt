@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/airtable.in
 #
-annotated-types==0.6.0
+annotated-types==0.7.0
     # via pydantic
 certifi==2024.2.2
     # via
@@ -27,11 +27,11 @@ pydantic==2.7.1
     # via pyairtable
 pydantic-core==2.18.2
     # via pydantic
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./ingest/../base.txt
     #   pyairtable
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./ingest/../base.txt
     #   pyairtable

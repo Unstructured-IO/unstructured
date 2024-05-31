@@ -1,10 +1,87 @@
-## 0.13.8-dev11
+## 0.14.4-dev4
 
 ### Enhancements
 
-* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
 
 ### Features
+
+### Fixes
+
+* **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+
+## 0.14.3
+
+### Enhancements
+
+* **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
+* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
+
+### Features
+
+### Fixes
+
+* **Fix `partition_pdf()` to keep spaces in the text**. The control character `\t` is now replaced with a space instead of being removed when merging inferred elements with embedded elements.
+* **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+  to avoid text being dynamically injected into the XML document.
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
+* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
+* **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
+
+## 0.14.2
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.33**.
+
+### Features
+
+* **Add attribution to the `pinecone` connector**.
+
+### Fixes
+
+## 0.14.1
+
+### Enhancements
+
+* **Refactor code related to embedded text extraction**. The embedded text extraction code is moved from `unstructured-inference` to `unstructured`.
+
+### Features
+
+* **Large improvements to the ingest process:**
+  * Support for multiprocessing and async, with limits for both.
+  * Streamlined to process when mapping CLI invocations to the underlying code
+  * More granular steps introduced to give better control over process (i.e. dedicated step to uncompress files already in the local filesystem, new optional staging step before upload)
+  * Use the python client when calling the unstructured api for partitioning or chunking
+  * Saving the final content is now a dedicated destination connector (local) set as the default if none are provided. Avoids adding new files locally if uploading elsewhere.
+  * Leverage last modified date when deciding if new files should be downloaded and reprocessed.
+  * Add attribution to the `pinecone` connector
+  * **Add support for Python 3.12**. `unstructured` now works with Python 3.12!
+
+### Fixes
+
+## 0.14.0
+
+### BREAKING CHANGES
+
+* **Turn table extraction for PDFs and images off by default**. Reverting the default behavior for table extraction to "off" for PDFs and images. A number of users didn't realize we made the change and were impacted by slower processing times due to the extra model call for table extraction.
+
+### Enhancements
+
+* **Skip unnecessary element sorting in `partition_pdf()`**. Skip element sorting when determining whether embedded text can be extracted.
+* **Faster evaluation** Support for concurrent processing of documents during evaluation
+* **Add strategy parameter to `partition_docx()`.** Behavior of future enhancements may be sensitive the partitioning strategy. Add this parameter so `partition_docx()` is aware of the requested strategy.
+* **Add GLOBAL_WORKING_DIR and GLOBAL_WORKING_PROCESS_DIR** configuration parameteres to control temporary storage.
+
+### Features
+* **Add form extraction basics (document elements and placeholder code in partition)**. This is to lay the ground work for the future. Form extraction models are not currently available in the library. An attempt to use this functionality will end in a `NotImplementedError`.
 
 ### Fixes
 
@@ -16,7 +93,10 @@
 * **Remove links param from partition_pdf** `links` is extracted during partitioning and is not needed as a paramter in partition_pdf.
 * **Improve CSV delimeter detection.** `partition_csv()` would raise on CSV files with very long lines.
 * **Fix disk-space leak in `partition_doc()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_doc()`.
-* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
+* **Fix possible `SyntaxError` or `SyntaxWarning` on regex patterns.** Change regex patterns to raw strings to avoid these warnings/errors in Python 3.11+.
+* **Fix disk-space leak in `partition_odt()`.** Remove temporary file created but not removed when `file` argument is passed to `partition_odt()`.
+* **AstraDB: option to prevent indexing metadata**
+* **Fix Missing py.typed**
 
 ## 0.13.7
 

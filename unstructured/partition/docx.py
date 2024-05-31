@@ -5,9 +5,8 @@ from __future__ import annotations
 import html
 import io
 import itertools
-import os
 import tempfile
-from typing import IO, Any, Iterator, Optional, Type, cast
+from typing import IO, Any, Iterator, Optional, Protocol, Type
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -34,6 +33,7 @@ from unstructured.documents.elements import (
     EmailAddress,
     Footer,
     Header,
+    Image,
     Link,
     ListItem,
     NarrativeText,
@@ -45,7 +45,6 @@ from unstructured.documents.elements import (
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
 )
@@ -57,112 +56,49 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
-from unstructured.utils import (
-    dependency_exists,
-    is_temp_file_path,
-    lazyproperty,
-    requires_dependencies,
-)
-
-if dependency_exists("pypandoc"):
-    import pypandoc
+from unstructured.partition.utils.constants import PartitionStrategy
+from unstructured.utils import is_temp_file_path, lazyproperty
 
 DETECTION_ORIGIN: str = "docx"
 BlockElement: TypeAlias = "CT_P | CT_Tbl"
 BlockItem: TypeAlias = "Paragraph | DocxTable"
 
 
-@requires_dependencies("pypandoc")
-def convert_and_partition_docx(
-    source_format: str,
-    filename: Optional[str] = None,
-    file: Optional[IO[bytes]] = None,
-    include_metadata: bool = True,
-    infer_table_structure: bool = True,
-    metadata_filename: Optional[str] = None,
-    metadata_last_modified: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    starting_page_number: int = 1,
-) -> list[Element]:
-    """Converts a document to DOCX and then partitions it using partition_docx.
+def register_picture_partitioner(picture_partitioner: PicturePartitionerT) -> None:
+    """Specify a pluggable sub-partitioner to be used for partitioning DOCX images."""
+    DocxPartitionerOptions.register_picture_partitioner(picture_partitioner)
 
-    Works with any file format support by pandoc.
 
-    Parameters
-    ----------
-    source_format
-        The format of the source document, .e.g. odt
-    filename
-        A string defining the target filename path.
-    file
-        A file-like object using "rb" mode --> open(filename, "rb").
-    include_metadata
-        Determines whether or not metadata is included in the metadata attribute on the elements in
-        the output.
-    infer_table_structure
-        If True, any Table elements that are extracted will also have a metadata field
-        named "text_as_html" where the table's text content is rendered into an html string.
-        I.e., rows and cells are preserved.
-        Whether True or False, the "text" field is always present in any Table element
-        and is the text content of the table (no structure).
-    languages
-        User defined value for `metadata.languages` if provided. Otherwise language is detected
-        using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
-        in either language.
-        Additional Parameters:
-            detect_language_per_element
-                Detect language per element instead of at the document level.
-    starting_page_number
-        Indicates what page number should be assigned to the first page in the document.
-        This information will be reflected in elements' metadata and can be be especially
-        useful when partitioning a document that is part of a larger document.
+# ================================================================================================
+# DOCX DOMAIN MODEL DEFINITIONS
+# ================================================================================================
+
+
+class PicturePartitionerT(Protocol):
+    """Defines the interface for a pluggable sub-partitioner for DOCX Picture objects.
+
+    In Microsoft Word parlance, an image is a "picture". We use that term here for an image in a
+    DOCX file both for domain consistency and because it conveniently avoids confusion with an
+    `unstructured` `Image` element.
+
+    A picture can be either *inline* or *floating*. An inline picture is treated like a big
+    character in the text of a paragraph, moving with the text. A floating picture can be moved
+    freely and text flows around it.
+
+    Both inline and floating pictures are defined inside a paragraph in the DOCX file. A paragraph
+    can have zero or more pictures. A DOCX picture partitioner takes a `docx` `Paragraph` object
+    and generates an `Image` element for each picture found in that paragraph.
     """
-    exactly_one(filename=filename, file=file)
 
-    def validate_filename(filename: str) -> str:
-        """Return path to a file confirmed to exist on the filesystem."""
-        if not os.path.exists(filename):
-            raise ValueError(f"The file {filename} does not exist.")
-        return filename
+    @classmethod
+    def iter_elements(cls, paragraph: Paragraph, opts: DocxPartitionerOptions) -> Iterator[Image]:
+        """Generate an `Image` element for each picture in `paragraph`."""
+        ...
 
-    def copy_to_tempfile(file: IO[bytes]) -> str:
-        """Return path to temporary copy of file to be converted."""
-        with tempfile.NamedTemporaryFile(delete=False) as tmp:
-            tmp.write(file.read())
-            return tmp.name
 
-    def extract_docx_filename(file_path: str) -> str:
-        """Return a filename like "foo.docx" from a path like "a/b/foo.odt" """
-        # -- a/b/foo.odt -> foo.odt --
-        filename = os.path.basename(file_path)
-        # -- foo.odt -> foo --
-        root_name, _ = os.path.splitext(filename)
-        # -- foo -> foo.docx --
-        return f"{root_name}.docx"
-
-    file_path = validate_filename(filename) if filename else copy_to_tempfile(cast(IO[bytes], file))
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        docx_path = os.path.join(tmpdir, extract_docx_filename(file_path))
-        pypandoc.convert_file(  # pyright: ignore
-            file_path,
-            "docx",
-            format=source_format,
-            outputfile=docx_path,
-        )
-        elements = partition_docx(
-            filename=docx_path,
-            metadata_filename=metadata_filename,
-            include_metadata=include_metadata,
-            infer_table_structure=infer_table_structure,
-            metadata_last_modified=metadata_last_modified,
-            languages=languages,
-            detect_language_per_element=detect_language_per_element,
-            starting_page_number=starting_page_number,
-        )
-
-    return elements
+# ================================================================================================
+# PARTITIONER
+# ================================================================================================
 
 
 @process_metadata()
@@ -170,15 +106,17 @@ def convert_and_partition_docx(
 @add_chunking_strategy
 def partition_docx(
     filename: Optional[str] = None,
+    *,
+    date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
     infer_table_structure: bool = True,
+    languages: Optional[list[str]] = ["auto"],
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    date_from_file_object: bool = False,
     starting_page_number: int = 1,
+    strategy: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions Microsoft Word Documents in .docx format into its document elements.
@@ -226,6 +164,7 @@ def partition_docx(
         metadata_file_path=metadata_filename,
         metadata_last_modified=metadata_last_modified,
         starting_page_number=starting_page_number,
+        strategy=strategy,
     )
 
     elements = _DocxPartitioner.iter_document_elements(opts)
@@ -241,6 +180,16 @@ def partition_docx(
 class DocxPartitionerOptions:
     """Encapsulates partitioning option validation, computation, and application of defaults."""
 
+    _PicturePartitionerCls = None
+    """Sub-partitioner used to extract pictures from a paragraph as `Image` elements.
+
+    This value has module lifetime and is updated by calling the `register_picture_partitioner()`
+    function defined in this module. The value sent to `register_picture_partitioner()` must be a
+    pluggable sub-partitioner implementing the `PicturePartitionerT` interface. After
+    registration, all paragraphs in subsequently partitioned DOCX documents will be sent to this
+    sub-partitioner to extract images when so configured.
+    """
+
     def __init__(
         self,
         *,
@@ -252,6 +201,7 @@ class DocxPartitionerOptions:
         metadata_file_path: Optional[str],
         metadata_last_modified: Optional[str],
         starting_page_number: int = 1,
+        strategy: str | None = None,
     ):
         self._date_from_file_object = date_from_file_object
         self._file = file
@@ -260,8 +210,14 @@ class DocxPartitionerOptions:
         self._infer_table_structure = infer_table_structure
         self._metadata_file_path = metadata_file_path
         self._metadata_last_modified = metadata_last_modified
+        self._strategy = strategy
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
+
+    @classmethod
+    def register_picture_partitioner(cls, picture_partitioner: PicturePartitionerT):
+        """Specify a pluggable sub-partitioner to extract images from DOCX paragraphs."""
+        cls._PicturePartitionerCls = picture_partitioner
 
     @lazyproperty
     def document(self) -> Document:
@@ -344,6 +300,25 @@ class DocxPartitionerOptions:
         document.
         """
         return self._page_counter
+
+    @lazyproperty
+    def picture_partitioner(self) -> PicturePartitionerT:
+        """The sub-partitioner to use for DOCX image extraction."""
+        # -- Note this value has partitioning-run scope. An instance of this options class is
+        # -- instantiated once per partitioning run (each document can have different options).
+        # -- Because this is a lazyproperty, it is computed only on the first reference. All
+        # -- subsequent references during the same partitioning run will get the same value. This
+        # -- ensures image extraction is processed consistently within a single document.
+        return self._PicturePartitionerCls or _NullPicturePartitioner
+
+    @lazyproperty
+    def strategy(self) -> str:
+        """The partitioning strategy for this document.
+
+        One of "hi_res", "fast", and a few others. These are available as class attributes on
+        `unstructured.partition.utils.constants.PartitionStrategy` but resolve to str values.
+        """
+        return PartitionStrategy.HI_RES if self._strategy is None else self._strategy
 
     @lazyproperty
     def _document_contains_pagebreaks(self) -> bool:
@@ -657,6 +632,7 @@ class _DocxPartitioner:
         for item in iter_paragraph_items(paragraph):
             if isinstance(item, Paragraph):
                 yield from self._classify_paragraph_to_element(item)
+                yield from self._iter_paragraph_images(item)
             else:
                 yield from self._opts.increment_page_number()
 
@@ -670,6 +646,13 @@ class _DocxPartitioner:
                 yield {"text": text, "tag": "b"}
             if run.italic:
                 yield {"text": text, "tag": "i"}
+
+    def _iter_paragraph_images(self, paragraph: Paragraph) -> Iterator[Image]:
+        """Generate `Image` element for each picture shape in `paragraph` when so configured."""
+        # -- Delegate this job to the pluggable Picture partitioner. Note the default picture
+        # -- partitioner does not extract images.
+        PicturePartitionerCls = self._opts.picture_partitioner
+        yield from PicturePartitionerCls.iter_elements(paragraph, self._opts)
 
     def _iter_section_footers(self, section: Section) -> Iterator[Footer]:
         """Generate any `Footer` elements defined for this section.
@@ -1013,3 +996,18 @@ class _DocxPartitioner:
         """[contents, tags] pair describing emphasized text in `table`."""
         iter_tbl_emph, iter_tbl_emph_2 = itertools.tee(self._iter_table_emphasis(table))
         return ([e["text"] for e in iter_tbl_emph], [e["tag"] for e in iter_tbl_emph_2])
+
+
+# ================================================================================================
+# SUB-PARTITIONERS
+# ================================================================================================
+
+
+class _NullPicturePartitioner:
+    """Does not parse the provided paragraph for pictures and generates zero `Image` elements."""
+
+    @classmethod
+    def iter_elements(cls, paragraph: Paragraph, opts: DocxPartitionerOptions) -> Iterator[Image]:
+        """No-op picture partitioner."""
+        return
+        yield

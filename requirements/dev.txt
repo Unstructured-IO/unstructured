@@ -25,6 +25,7 @@ async-lru==2.0.4
     # via jupyterlab
 attrs==23.2.0
     # via
+    #   -c ./test.txt
     #   jsonschema
     #   referencing
 babel==2.15.0
@@ -140,14 +141,17 @@ jsonpointer==2.4
     # via jsonschema
 jsonschema[format-nongpl]==4.22.0
     # via
+    #   -c ./test.txt
     #   jupyter-events
     #   jupyterlab-server
     #   nbformat
 jsonschema-specifications==2023.12.1
-    # via jsonschema
+    # via
+    #   -c ./test.txt
+    #   jsonschema
 jupyter==1.0.0
     # via -r ./dev.in
-jupyter-client==8.6.1
+jupyter-client==8.6.2
     # via
     #   ipykernel
     #   jupyter-console
@@ -181,11 +185,11 @@ jupyter-server==2.14.0
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.1.8
+jupyterlab==4.2.1
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
-jupyterlab-server==2.27.1
+jupyterlab-server==2.27.2
     # via
     #   jupyterlab
     #   notebook
@@ -216,7 +220,7 @@ nest-asyncio==1.6.0
     # via ipykernel
 nodeenv==1.8.0
     # via pre-commit
-notebook==7.1.3
+notebook==7.2.0
     # via jupyter
 notebook-shim==0.2.4
     # via
@@ -307,10 +311,11 @@ qtpy==2.4.1
     # via qtconsole
 referencing==0.35.1
     # via
+    #   -c ./test.txt
     #   jsonschema
     #   jsonschema-specifications
     #   jupyter-events
-requests==2.31.0
+requests==2.32.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -325,6 +330,7 @@ rfc3986-validator==0.1.1
     #   jupyter-events
 rpds-py==0.18.1
     # via
+    #   -c ./test.txt
     #   jsonschema
     #   referencing
 send2trash==1.8.3
@@ -386,7 +392,7 @@ traitlets==5.14.3
     #   qtconsole
 types-python-dateutil==2.9.0.20240316
     # via arrow
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -400,7 +406,7 @@ urllib3==1.26.18
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.26.1
+virtualenv==20.26.2
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
@@ -418,7 +424,7 @@ wheel==0.43.0
     #   pip-tools
 widgetsnbextension==4.0.10
     # via ipywidgets
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

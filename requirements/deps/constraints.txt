@@ -13,7 +13,7 @@ wheel>=0.38.1
 certifi>=2023.7.22
 # From pycocotools in local-inference
 pyparsing<3.1.0
-scipy<1.11.0
+scipy<1.11.4
 IPython<8.13
 # NOTE(alan) Pinned to avoid error that occurs with 2.4.3:
 # AttributeError: 'ResourcePath' object has no attribute 'collection'
@@ -38,10 +38,6 @@ opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
 platformdirs==3.10.0
 
-# Note(scanny): partition_docx() uses table features added in python-docx v1.1.2. Added here since
-# multiple formats have a python-docx dependency (docx, odt)
-python-docx>=1.1.2
-
 # TODO: Constraint due to langchain, remove when that gets updated:
 packaging<24.0
 
@@ -54,3 +50,13 @@ botocore<1.34.52
 
 # NOTE(jennings): pinned due to later versions not supporting api_key_auth in UnstructuredClient
 unstructured-client<=0.18.0
+
+fsspec==2024.5.0
+
+# python 3.12 support
+numpy>=1.26.0
+wrapt>=1.14.0
+
+
+# NOTE(robinson): for compatiblity with voyage embeddings
+langsmith==0.1.62

@@ -37,26 +37,12 @@
   <p>Open-Source Pre-Processing Tools for Unstructured Data</p>
 </h2>
 
-The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://unstructured-io.github.io/unstructured/core.html#partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
-
-<h3 align="center">
-  <p>API Announcement!</p>
-</h3>
-
-We are thrilled to announce our newly launched [Unstructured API](https://unstructured-io.github.io/unstructured/api.html), providing the Unstructured capabilities from `unstructured` as an API. Check out the [`unstructured-api` GitHub repository](https://github.com/Unstructured-IO/unstructured-api) to start making API calls. You’ll also find instructions about how to host your own API version.
-
-While access to the hosted Unstructured API will remain free, API Keys are required to make requests. To prevent disruption, get yours [here](https://unstructured.io/api-key) and start using it today! Check out the [`unstructured-api` README](https://github.com/Unstructured-IO/unstructured-api#--) to start making API calls.</p>
-
-#### :rocket: Beta Feature: Chipper Model
-
-We are releasing the beta version of our Chipper model to deliver superior performance when processing high-resolution, complex documents. To start using the Chipper model in your API request, you can utilize the `hi_res_model_name=chipper` parameter. Please refer to the documentation [here](https://unstructured-io.github.io/unstructured/api.html#beta-version-hi-res-strategy-with-chipper-model).
-
-As the Chipper model is in beta version, we welcome feedback and suggestions. For those interested in testing the Chipper model, we encourage you to connect with us on [Slack community](https://short.unstructured.io/pzw05l7).
+The `unstructured` library provides open-source components for ingesting and pre-processing images and text documents, such as PDFs, HTML, Word docs, and [many more](https://docs.unstructured.io/open-source/core-functionality/partitioning). The use cases of `unstructured` revolve around streamlining and optimizing the data processing workflow for LLMs. `unstructured` modular functions and connectors form a cohesive system that simplifies data ingestion and pre-processing, making it adaptable to different platforms and efficient in transforming unstructured data into structured outputs.
 
 ## :eight_pointed_black_star: Quick Start
 
 There are several ways to use the `unstructured` library:
-* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#using-the-library-in-a-container) or
+* [Run the library in a container](https://github.com/Unstructured-IO/unstructured#run-the-library-in-a-container) or
 * Install the library
     1. [Install from PyPI](https://github.com/Unstructured-IO/unstructured#installing-the-library)
     2. [Install for local development](https://github.com/Unstructured-IO/unstructured#installation-instructions-for-local-development)
@@ -85,7 +71,9 @@ docker run -dt --name unstructured downloads.unstructured.io/unstructured-io/uns
 docker exec -it unstructured bash
 ```
 
-You can also build your own Docker image.
+You can also build your own Docker image. Note that the base image is `wolfi-base`, which is
+updated regularly. If you are building the image locally, it is possible `docker-build` could
+fail due to upstream changes in `wolfi-base`.
 
 If you only plan on parsing one type of data you can speed up building the image by commenting out some
 of the packages/requirements necessary for other data types. See Dockerfile to know which lines are necessary
@@ -180,29 +168,23 @@ This starts a docker container with your local repo mounted to `/mnt/local_unstr
 ## :clap: Quick Tour
 
 ### Documentation
-This README overviews how to install, use and develop the library. For more comprehensive documentation, visit https://unstructured-io.github.io/unstructured/ .
+For more comprehensive documentation, visit https://docs.unstructured.io . You can also learn
+more about our other products on the documentation page, including our SaaS API.
 
-### Concepts Guide
+Here are a few pages from the [Open Source documentation page](https://docs.unstructured.io/open-source/introduction/overview)
+that are helpful for new users to review:
 
-The `unstructured` library includes core functionality for partitioning, chunking, cleaning, and
-staging raw documents for NLP tasks.
-You can see a complete list of available functions and how to use them from the [Core Functionality documentation](https://unstructured-io.github.io/unstructured/core.html).
+- [Quick Start](https://docs.unstructured.io/open-source/introduction/quick-start)
+- [Using the `unstructured` open source package](https://docs.unstructured.io/open-source/core-functionality/overview)
+- [Connectors](https://docs.unstructured.io/open-source/ingest/overview)
+- [Concepts](https://docs.unstructured.io/open-source/concepts/document-elements)
+- [Integrations](https://docs.unstructured.io/open-source/integrations)
 
-In general, these functions fall into several categories:
-- *Partitioning* functions break raw documents into standard, structured elements.
-- *Cleaning* functions remove unwanted text from documents, such as boilerplate and sentence fragments.
-- *Staging* functions format data for downstream tasks, such as ML inference and data labeling.
-- *Chunking* functions split documents into smaller sections for use in RAG apps and similarity
-  search.
-- *Embedding* encoder classes provide an interfaces for easily converting preprocessed text to
-  vectors.
-
-The **Connectors** 🔗 in `unstructured` serve as vital links between the pre-processing pipeline and various data storage platforms. They allow for the batch processing of documents across various sources, including cloud services, repositories, and local directories. Each connector is tailored to a specific platform, such as Azure, Google Drive, or Github, and comes with unique commands and dependencies. To see the list of Connectors available in `unstructured` library, please check out the [Connectors GitHub folder](https://github.com/Unstructured-IO/unstructured/tree/main/unstructured/ingest/connector) and [documentation](https://unstructured-io.github.io/unstructured/ingest/index.html)
 
 ### PDF Document Parsing Example
-The following examples show how to get started with the `unstructured` library. You can parse over a dozen document types with one line of code! Use this [Colab notebook](https://colab.research.google.com/drive/1U8VCjY2-x8c6y5TYMbSFtQGlQVFHCVIW) to run the example below.
-
-The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional parameters via `pip install unstructured[local-inference]`. Ensure you first install `libmagic` using the instructions outlined [here](https://unstructured-io.github.io/unstructured/installing.html#filetype-detection) `partition` will always apply the default arguments. If you need advanced features, use a document-specific partitioning function.
+The following examples show how to get started with the `unstructured` library. The easiest way to parse a document in unstructured is to use the `partition` function. If you use `partition` function, `unstructured` will detect the file type and route it to the appropriate file-specific partitioning function. If you are using the `partition` function, you may need to install additional dependencies per doc type.
+For example, to install docx dependencies you need to run `pip install "unstructured[docx]"`.
+See our  [installation guide](https://docs.unstructured.io/open-source/installation/full-installation) for more details.
 
 ```python
 from unstructured.partition.auto import partition
@@ -243,7 +225,7 @@ Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of 
 including document image classiﬁcation [11,
 ```
 
-See the [partitioning](https://unstructured-io.github.io/unstructured/core.html#partitioning)
+See the [partitioning](https://docs.unstructured.io/open-source/core-functionality/partitioning)
 section in our documentation for a full list of options and instructions on how to use
 file-specific partitioning functions.
 
@@ -261,7 +243,7 @@ Encountered a bug? Please create a new [GitHub issue](https://github.com/Unstruc
 | Section | Description |
 |-|-|
 | [Company Website](https://unstructured.io) | Unstructured.io product and company info |
-| [Documentation](https://unstructured-io.github.io/unstructured) | Full API documentation |
+| [Documentation](https://docs.unstructured.io/) | Full API documentation |
 | [Batch Processing](unstructured/ingest/README.md) | Ingesting batches of documents through Unstructured |
 
 ## :chart_with_upwards_trend: Analytics
