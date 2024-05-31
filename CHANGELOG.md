@@ -1,4 +1,16 @@
-## 0.14.3-dev5
+## 0.14.4-dev3
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+* **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+
+## 0.14.3
 
 ### Features
 
@@ -15,6 +27,7 @@
 
 ### Fixes
 
+* **Fix `partition_pdf()` to keep spaces in the text**. The control character `\t` is now replaced with a space instead of being removed when merging inferred elements with embedded elements.
 * **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
   to avoid text being dynamically injected into the XML document.
 * **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.

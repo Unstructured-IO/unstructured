@@ -308,7 +308,7 @@ class FsspecUploader(Uploader):
             Path(self.upload_config.path_without_protocol)
             / file_data.source_identifiers.relative_path
         )
-        updated_upload_path = upload_path.parent / f"{upload_path.stem}.json"
+        updated_upload_path = upload_path.parent / f"{upload_path.name}.json"
         upload_path_str = str(updated_upload_path)
         path_str = str(path.resolve())
         if self.fs.exists(path=upload_path_str) and not self.upload_config.overwrite:
