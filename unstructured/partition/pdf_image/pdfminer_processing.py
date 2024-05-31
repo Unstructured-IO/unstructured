@@ -12,6 +12,7 @@ from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import Source
 from unstructured.partition.utils.sorting import sort_text_regions
 from unstructured.utils import requires_dependencies
+import pdfplumber
 
 if TYPE_CHECKING:
     from unstructured_inference.inference.elements import TextRegion
@@ -48,7 +49,10 @@ def process_data_with_pdfminer(
     layouts = []
     # Coefficient to rescale bounding box to be compatible with images
     coef = dpi / 72
-    for page, page_layout in open_pdfminer_pages_generator(file):
+
+    pdf = pdfplumber.open(file)
+
+    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
         height = page_layout.height
 
         layout: List["TextRegion"] = []
@@ -77,7 +81,21 @@ def process_data_with_pdfminer(
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
+        try:
+            for word in pdf.pages[i].extract_words():
+                text_region = EmbeddedTextRegion.from_coords(
+                    word['x0'] * coef,
+                    word['top'] * coef,
+                    word['x1'] * coef,
+                    word['bottom'] * coef,
+                    text=word['text'],
+                    source=Source.PDFPLUMBER,
+                )
 
+                if text_region.bbox is not None and text_region.bbox.area > 0 and text_region.text and text_region.text != '\n':
+                    layout.append(text_region)
+        except Exception:
+            pass
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
         layout = order_layout(layout)

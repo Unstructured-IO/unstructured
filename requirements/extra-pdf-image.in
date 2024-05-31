@@ -4,6 +4,7 @@
 onnx
 pdf2image
 pdfminer.six
+pdfplumber==0.11.0
 pikepdf
 pillow_heif
 pypdf

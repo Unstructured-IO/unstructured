@@ -4,6 +4,7 @@ from enum import Enum
 
 class Source(Enum):
     PDFMINER = "pdfminer"
+    PDFPLUMBER = "pdfplumber"
     OCR_TESSERACT = "ocr_tesseract"
     OCR_PADDLE = "ocr_paddle"
     OCR_GOOGLEVISION = "ocr_googlevision"
