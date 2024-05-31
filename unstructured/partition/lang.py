@@ -293,12 +293,15 @@ def _get_all_tesseract_langcodes_with_prefix(prefix: str) -> list[str]:
 
 def detect_languages(
     text: str,
-    languages: Optional[list[str]] = ["auto"],
+    languages: Optional[list[str]] = None,
 ) -> Optional[list[str]]:
     """
     Detects the list of languages present in the text (in the default "auto" mode),
     or formats and passes through the user inputted document languages if provided.
     """
+    if languages is None:
+        languages = ["auto"]
+
     if not isinstance(languages, list):
         raise TypeError(
             'The language parameter must be a list of language codes as strings, ex. ["eng"]',

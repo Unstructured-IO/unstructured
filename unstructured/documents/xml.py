@@ -18,6 +18,8 @@ class XMLDocument(Document):
         self,
         stylesheet: Optional[str] = None,
         parser: VALID_PARSERS = None,
+        languages: Optional[list[str]] = None,
+        **kwargs: Any,
     ):
         """Class for parsing XML documents. XML documents are parsed using lxml.
 
@@ -42,7 +44,7 @@ class XMLDocument(Document):
         self.stylesheet = stylesheet
         self.parser = parser
         self.document_tree = None
-        super().__init__()
+        super().__init__(languages=languages)
 
     def _parse_pages_from_element_tree(self) -> List[Page]:
         raise NotImplementedError
@@ -99,11 +101,12 @@ class XMLDocument(Document):
         text: str,
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
+        languages: Optional[list[str]] = None,
         **kwargs: Any,
     ) -> Self:
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
-        doc = cls(parser=parser, stylesheet=stylesheet, **kwargs)
+        doc = cls(parser=parser, stylesheet=stylesheet, languages=languages, **kwargs)
         doc._read_xml(text)
         return doc
 
@@ -114,8 +117,11 @@ class XMLDocument(Document):
         parser: VALID_PARSERS = None,
         stylesheet: Optional[str] = None,
         encoding: Optional[str] = None,
+        languages: Optional[list[str]] = None,
         **kwargs: Any,
     ) -> Self:
         _, content = read_txt_file(filename=filename, encoding=encoding)
 
-        return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
+        return cls.from_string(
+            content, parser=parser, stylesheet=stylesheet, languages=languages, **kwargs
+        )

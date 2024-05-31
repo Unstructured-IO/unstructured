@@ -109,6 +109,7 @@ def partition_html(
             parser=parser,
             encoding=encoding,
             assemble_articles=html_assemble_articles,
+            languages=languages,
         )
 
     elif file is not None:
@@ -120,6 +121,7 @@ def partition_html(
             file_text,
             parser=parser,
             assemble_articles=html_assemble_articles,
+            languages=languages,
         )
 
     elif text is not None:
@@ -128,6 +130,7 @@ def partition_html(
             _text,
             parser=parser,
             assemble_articles=html_assemble_articles,
+            languages=languages,
         )
 
     elif url is not None:
@@ -139,7 +142,7 @@ def partition_html(
         if not content_type.startswith("text/html"):
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
-        document = HTMLDocument.from_string(response.text, parser=parser)
+        document = HTMLDocument.from_string(response.text, parser=parser, languages=languages)
 
     if skip_headers_and_footers:
         document = filter_footer_and_header(document)
@@ -153,6 +156,7 @@ def partition_html(
                 last_modification_date=metadata_last_modified or last_modification_date,
                 source_format=source_format if source_format else None,
                 detection_origin=detection_origin,
+                languages=languages,
                 **kwargs,
             ),
             languages=languages,

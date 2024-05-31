@@ -33,7 +33,7 @@ def test_partition_odt_matches_partition_docx():
 
 def test_partition_odt_from_filename():
     elements = partition_odt(example_doc_path("fake.odt"))
-
+    # TODO Lorem ipsum dolor sit amet. look like not English, how to detect Category?
     assert elements == [
         Title("Lorem ipsum dolor sit amet."),
         Table(
@@ -54,6 +54,7 @@ def test_partition_odt_from_file():
         elements = partition_odt(file=f)
 
     assert elements == [
+        # TODO Lorem ipsum dolor sit amet. look like not English, how to detect Category?
         Title("Lorem ipsum dolor sit amet."),
         Table(
             "Header row Mon Wed Fri"

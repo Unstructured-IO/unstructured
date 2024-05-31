@@ -5,6 +5,7 @@ from __future__ import annotations
 import sys
 from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Tuple, cast
 
+from unstructured.partition.lang import detect_languages
 from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
 
 if sys.version_info < (3, 8):
@@ -139,9 +140,11 @@ class HTMLDocument(XMLDocument):
         stylesheet: Optional[str] = None,
         parser: VALID_PARSERS = None,
         assemble_articles: bool = True,
+        languages: Optional[list[str]] = None,
+        **kwargs: Any,
     ):
         self.assembled_articles = assemble_articles
-        super().__init__(stylesheet=stylesheet, parser=parser)
+        super().__init__(stylesheet=stylesheet, parser=parser, languages=languages, **kwargs)
 
     def _parse_pages_from_element_tree(self) -> List[Page]:
         """Parse HTML elements into pages.
@@ -164,19 +167,28 @@ class HTMLDocument(XMLDocument):
         for article in articles:
             descendanttag_elems: Tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
+                elem_languages = (
+                    self.languages
+                    if "auto" not in self.languages or not tag_elem.text
+                    else detect_languages(tag_elem.text)
+                )
                 if tag_elem in descendanttag_elems:
                     # Prevent repeating something that's been flagged as text as we chase it
                     # down a chain
                     continue
 
                 if _is_text_tag(tag_elem):
-                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
+                    _page_elements, descendanttag_elems = _process_text_tag(
+                        tag_elem, languages=elem_languages
+                    )
                     page.elements.extend(_page_elements)
 
                 elif _is_container_with_text(tag_elem):
                     tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
                     if tag_elem_tail:
-                        _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
+                        _page_elements, descendanttag_elems = _process_text_tag(
+                            tag_elem, False, languages=elem_languages
+                        )
                         page.elements.extend(_page_elements)
 
                         # NOTE(christine): generate a separate element using a tag tail
@@ -185,6 +197,7 @@ class HTMLDocument(XMLDocument):
                             tag_elem.tag,
                             (),
                             depth=0,
+                            languages=elem_languages,
                         )
                     else:
                         links = _get_links_from_tag(tag_elem)
@@ -196,6 +209,7 @@ class HTMLDocument(XMLDocument):
                             depth=0,
                             links=links,
                             emphasized_texts=emphasized_texts,
+                            languages=elem_languages,
                         )
                     if element is not None:
                         page.elements.append(element)
@@ -407,6 +421,7 @@ def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, s
 def _parse_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
+    languages: Optional[list[str]] = None,
 ) -> Optional[Element]:
     """Parses `tag_elem` to a Text element if it contains qualifying text.
 
@@ -442,6 +457,7 @@ def _parse_tag(
         links=links,
         emphasized_texts=emphasized_texts,
         depth=depth,
+        languages=languages,
     )
 
 
@@ -450,6 +466,7 @@ def _text_to_element(
     tag: str,
     ancestortags: Tuple[str, ...],
     depth: int,
+    languages: list[str],
     links: List[Link] = [],
     emphasized_texts: List[Dict[str, str]] = [],
 ) -> Optional[Element]:
@@ -483,7 +500,7 @@ def _text_to_element(
 
     if len(text) < 2:
         return None
-    elif is_narrative_tag(text, tag):
+    elif is_narrative_tag(text, tag, languages=languages):
         return HTMLNarrativeText(
             text,
             tag=tag,
@@ -491,7 +508,7 @@ def _text_to_element(
             links=links,
             emphasized_texts=emphasized_texts,
         )
-    elif is_heading_tag(tag) or is_possible_title(text):
+    elif is_heading_tag(tag) or is_possible_title(text, languages=languages):
         return HTMLTitle(
             text,
             tag=tag,
@@ -531,9 +548,9 @@ def _is_container_with_text(tag_elem: etree._Element) -> bool:
     return True
 
 
-def is_narrative_tag(text: str, tag: str) -> bool:
+def is_narrative_tag(text: str, tag: str, languages: Optional[list[str]] = None) -> bool:
     """Uses tag information to infer whether text is narrative."""
-    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
+    return tag not in HEADING_TAGS and is_possible_narrative_text(text, languages=languages)
 
 
 def is_heading_tag(tag: str) -> bool:
@@ -615,6 +632,7 @@ def _is_text_tag(
 def _process_text_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
+    languages: Optional[list[str]] = None,
 ) -> tuple[list[Element], tuple[etree._Element]]:
     """Produces a document element from `tag_elem`."""
 
@@ -622,12 +640,12 @@ def _process_text_tag(
     if _has_break_tags(tag_elem):
         flattened_elems = _unfurl_break_tags(tag_elem)
         for _tag_elem in flattened_elems:
-            element = _parse_tag(_tag_elem, include_tail_text)
+            element = _parse_tag(_tag_elem, include_tail_text, languages=languages)
             if element is not None:
                 page_elements.append(element)
 
     else:
-        element = _parse_tag(tag_elem, include_tail_text)
+        element = _parse_tag(tag_elem, include_tail_text, languages=languages)
         if element is not None:
             page_elements.append(element)
     descendant_tag_elems = tuple(tag_elem.iterdescendants())
