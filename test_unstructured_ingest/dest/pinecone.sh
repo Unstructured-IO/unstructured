@@ -74,6 +74,7 @@ response_code=$(curl \
     "serverless": {
       "cloud": "aws",
       "region": "us-east-1"
+    }
   }
 }
 ')
