@@ -39,6 +39,7 @@ def partition_html(
     include_metadata: bool = True,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
+    request_timeout: Optional[int] = None,
     parser: VALID_PARSERS = None,
     source_format: Optional[str] = None,
     html_assemble_articles: bool = False,
@@ -131,7 +132,7 @@ def partition_html(
         )
 
     elif url is not None:
-        response = requests.get(url, headers=headers, verify=ssl_verify)
+        response = requests.get(url, headers=headers, verify=ssl_verify, timeout=request_timeout)
         if not response.ok:
             raise ValueError(f"URL return an error: {response.status_code}")
 
