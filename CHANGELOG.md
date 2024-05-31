@@ -1,4 +1,4 @@
-## 0.14.4-dev5
+## 0.14.4
 
 ### Enhancements
 
@@ -12,6 +12,7 @@
 
 ### Fixes
 
+* **Address the issue of unrecognized tables in `UnstructuredTableTransformerModel`** When a table is not recognized, the `element.metadata.text_as_html` attribute is set to an empty string.
 * **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
 * **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
 * **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
