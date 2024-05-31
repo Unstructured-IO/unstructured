@@ -9,7 +9,7 @@ OUTPUT_FOLDER_NAME=s3-dest
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-DESTINATION_S3="s3://utic-ingest-test-destination/$(uuidgen)/"
+DESTINATION_S3="s3://utic-ingest-test-fixtures/destination/$(uuidgen)/"
 CI=${CI:-"false"}
 
 if [ -z "$S3_INGEST_TEST_ACCESS_KEY" ] || [ -z "$S3_INGEST_TEST_SECRET_KEY" ]; then
