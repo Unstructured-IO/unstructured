@@ -4,6 +4,8 @@
 
 ### Features
 
+- **Allow configuration of the Google Vision API endpoint** Add an environment variable to select the Google Vision API in the US or the EU.
+
 ### Fixes
 
 * **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
