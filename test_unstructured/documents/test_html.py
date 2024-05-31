@@ -411,8 +411,8 @@ def test_read_with_existing_pages():
 
 
 def test_parse_not_anything(monkeypatch):
-    monkeypatch.setattr(html, "is_narrative_tag", lambda *args, **kwargs: False)
-    monkeypatch.setattr(html, "is_possible_title", lambda *args, **kwargs: False)
+    monkeypatch.setattr(html, "is_narrative_tag", lambda *args: False)
+    monkeypatch.setattr(html, "is_possible_title", lambda *args: False)
     doc = """<p>This is nothing</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
