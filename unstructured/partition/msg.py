@@ -79,7 +79,9 @@ def partition_msg(
 
     if filename is not None:
         msg_obj = msg_parser.MsOxMessage(filename)
-    elif file is not None:
+    # -- `exactly_one()` call above guarantees `file` is present when `filename` is None --
+    else:
+        assert file is not None
         tmp = tempfile.NamedTemporaryFile(delete=False)
         tmp.write(file.read())
         tmp.close()
@@ -213,13 +215,14 @@ def extract_msg_attachment_info(
         tmp.write(file.read())
         tmp.close()
         msg_obj = msg_parser.MsOxMessage(tmp.name)
-    elif msg_obj is not None:
+    else:
+        assert msg_obj is not None
         msg_obj = msg_obj
 
-    list_attachments = []
+    list_attachments: list[dict[str, Any]] = []
 
     for attachment in msg_obj.attachments:
-        attachment_info = {}
+        attachment_info: dict[str, Any] = {}
 
         attachment_info["filename"] = attachment.AttachLongFilename
         attachment_info["extension"] = attachment.AttachExtension
@@ -229,7 +232,7 @@ def extract_msg_attachment_info(
         list_attachments.append(attachment_info)
 
         if output_dir is not None:
-            output_filename = output_dir + "/" + attachment_info["filename"]
+            output_filename = output_dir + "/" + (attachment_info["filename"] or "unknown")
             with open(output_filename, "wb") as f:
                 f.write(attachment.data)
 

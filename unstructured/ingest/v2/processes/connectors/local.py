@@ -149,9 +149,7 @@ class LocalUploader(Uploader):
         for content in contents:
             identifiers = content.file_data.source_identifiers
             new_path = self.upload_config.output_path / identifiers.relative_path
-            final_path = str(new_path).replace(
-                identifiers.filename, f"{identifiers.filename_stem}.json"
-            )
+            final_path = str(new_path).replace(identifiers.filename, f"{identifiers.filename}.json")
             Path(final_path).parent.mkdir(parents=True, exist_ok=True)
             logger.debug(f"copying file from {content.path} to {final_path}")
             shutil.copy(src=str(content.path), dst=str(final_path))
