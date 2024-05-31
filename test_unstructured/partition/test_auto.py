@@ -350,7 +350,7 @@ def test_auto_partition_pdf_uses_table_extraction():
         "unstructured.partition.pdf_image.ocr.process_file_with_ocr",
     ) as mock_process_file_with_model:
         partition(filename, pdf_infer_table_structure=True, strategy=PartitionStrategy.HI_RES)
-        assert mock_process_file_with_model.call_args[1]["infer_table_structure"] is False
+        assert mock_process_file_with_model.call_args[1]["infer_table_structure"]
 
 
 def test_auto_partition_pdf_with_fast_strategy(monkeypatch):

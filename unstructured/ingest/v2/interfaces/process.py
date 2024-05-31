@@ -5,7 +5,6 @@ from typing import Any
 
 @dataclass
 class BaseProcess(ABC):
-
     def is_async(self) -> bool:
         return False
 

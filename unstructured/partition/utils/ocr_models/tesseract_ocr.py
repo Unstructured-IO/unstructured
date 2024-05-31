@@ -10,7 +10,7 @@ import unstructured_pytesseract
 from PIL import Image as PILImage
 from unstructured_pytesseract import Output
 
-from unstructured.logger import logger
+from unstructured.logger import trace_logger
 from unstructured.partition.utils.config import env_config
 from unstructured.partition.utils.constants import (
     IMAGE_COLOR_DEPTH,
@@ -44,7 +44,7 @@ class OCRAgentTesseract(OCRAgent):
     ) -> List[TextRegion]:
         """Get the OCR regions from image as a list of text regions with tesseract."""
 
-        logger.info("Processing entire page OCR with tesseract...")
+        trace_logger.detail("Processing entire page OCR with tesseract...")
         zoom = 1
         ocr_df: pd.DataFrame = unstructured_pytesseract.image_to_data(
             np.array(image),

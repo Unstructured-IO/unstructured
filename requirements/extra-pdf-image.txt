@@ -39,7 +39,7 @@ filelock==3.14.0
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.51.0
+fonttools==4.52.1
     # via matplotlib
 fsspec==2024.5.0
     # via
@@ -118,7 +118,7 @@ numpy==1.26.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnx==1.16.0
+onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
@@ -278,7 +278,7 @@ tqdm==4.66.4
     #   transformers
 transformers==4.41.1
     # via unstructured-inference
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./base.txt
     #   huggingface-hub

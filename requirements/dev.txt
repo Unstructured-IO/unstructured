@@ -151,7 +151,7 @@ jsonschema-specifications==2023.12.1
     #   jsonschema
 jupyter==1.0.0
     # via -r ./dev.in
-jupyter-client==8.6.1
+jupyter-client==8.6.2
     # via
     #   ipykernel
     #   jupyter-console
@@ -185,7 +185,7 @@ jupyter-server==2.14.0
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.0
+jupyterlab==4.2.1
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -392,7 +392,7 @@ traitlets==5.14.3
     #   qtconsole
 types-python-dateutil==2.9.0.20240316
     # via arrow
-typing-extensions==4.11.0
+typing-extensions==4.12.0
     # via
     #   -c ./base.txt
     #   -c ./test.txt
