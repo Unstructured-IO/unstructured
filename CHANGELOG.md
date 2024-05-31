@@ -1,8 +1,10 @@
-## 0.14.4-dev3
+## 0.14.4-dev4
 
 ### Enhancements
 
 * **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
 
 ### Features
 
