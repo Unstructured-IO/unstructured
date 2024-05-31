@@ -1,6 +1,9 @@
-## 0.14.4-dev3
+## 0.14.4-dev4
 
 ### Enhancements
+
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
 
 ### Features
 
