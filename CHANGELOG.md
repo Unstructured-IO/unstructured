@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* Compatibility Issue with Chinese Text in Document Parsing
+
 ## 0.14.2
 
 ### Enhancements
