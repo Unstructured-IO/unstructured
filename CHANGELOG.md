@@ -1,8 +1,10 @@
-## 0.14.4-dev4
+## 0.14.4-dev5
 
 ### Enhancements
 
 * **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
 
 ### Features
 
