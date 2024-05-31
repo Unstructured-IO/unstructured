@@ -32,7 +32,7 @@ function cleanup {
     -s -o /dev/null \
     -w "%{http_code}" \
     --request GET \
-    --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
+    --url "https://api.pinecone.io/indexes/$PINECONE_INDEX" \
     --header 'accept: application/json' \
     --header "Api-Key: $PINECONE_API_KEY")
 
@@ -41,7 +41,7 @@ function cleanup {
     echo ""
     echo "deleting index $PINECONE_INDEX"
     curl --request DELETE \
-      "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases/$PINECONE_INDEX" \
+      "https://api.pinecone.io/indexes/$PINECONE_INDEX" \
       --header "Api-Key: $PINECONE_API_KEY" \
       --header 'content-type: application/json'
 
@@ -61,8 +61,8 @@ response_code=$(curl \
   -s -o /dev/null \
   -w "%{http_code}" \
   --request POST \
-  --url "https://controller.$PINECONE_ENVIRONMENT.pinecone.io/databases" \
-  --header "accept: text/plain" \
+  --url "https://api.pinecone.io/indexes" \
+  --header "accept: application/json" \
   --header "content-type: application/json" \
   --header "Api-Key: $PINECONE_API_KEY" \
   --data '
@@ -70,8 +70,12 @@ response_code=$(curl \
   "name": "'"$PINECONE_INDEX"'",
   "dimension": 384,
   "metric": "cosine",
-  "pods": 1,
-  "pod_type": "p1.x1"
+  "spec": {
+    "serverless": {
+      "cloud": "aws",
+      "region": "us-east-1"
+    }
+  }
 }
 ')
 
