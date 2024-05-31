@@ -8,6 +8,8 @@
 
 ### Features
 
+- **Allow configuration of the Google Vision API endpoint** Add an environment variable to select the Google Vision API in the US or the EU.
+
 ### Fixes
 
 * **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.

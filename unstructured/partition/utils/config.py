@@ -96,10 +96,13 @@ class ENVConfig:
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
 
     @property
+    def GOOGLEVISION_API_ENDPOINT(self) -> str:
+        """API endpoint to use for Google Vision"""
+        return self._get_string("GOOGLEVISION_API_ENDPOINT", "")
+
+    @property
     def OCR_AGENT(self) -> str:
-        """error margin when comparing if a ocr region is within the table element when preparing
-        table tokens
-        """
+        """OCR Agent to use"""
         return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
 
     @property
