@@ -103,7 +103,6 @@ def remove_root_handlers(logger: logging.Logger) -> None:
             logger.root.removeHandler(handler)
 
 
-
 def ingest_log_streaming_init(level: int) -> None:
     handler = logging.StreamHandler()
     handler.name = "ingest_log_handler"
