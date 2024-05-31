@@ -62,7 +62,7 @@ response_code=$(curl \
   -w "%{http_code}" \
   --request POST \
   --url "https://api.pinecone.io/indexes" \
-  --header "accept: text/plain" \
+  --header "accept: application/json" \
   --header "content-type: application/json" \
   --header "Api-Key: $PINECONE_API_KEY" \
   --data '
