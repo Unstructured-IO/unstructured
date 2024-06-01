@@ -6,42 +6,42 @@
 #
 certifi==2024.2.2
     # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
+    #   -c ingest/../base.txt
+    #   -c ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   requests
 dropbox==11.36.2
     # via dropboxdrivefs
-dropboxdrivefs==1.4.0
-    # via -r ./ingest/dropbox.in
+dropboxdrivefs==1.4.1
+    # via -r ingest/dropbox.in
 fsspec==2024.5.0
     # via
-    #   -c ./ingest/../deps/constraints.txt
-    #   -r ./ingest/dropbox.in
+    #   -c ingest/../deps/constraints.txt
+    #   -r ingest/dropbox.in
     #   dropboxdrivefs
 idna==3.7
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   requests
 ply==3.11
     # via stone
 requests==2.32.2
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   dropbox
     #   dropboxdrivefs
 six==1.16.0
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   dropbox
     #   stone
 stone==3.3.6
     # via dropbox
 urllib3==1.26.18
     # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
+    #   -c ingest/../base.txt
+    #   -c ingest/../deps/constraints.txt
     #   requests
