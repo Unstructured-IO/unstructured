@@ -49,7 +49,7 @@ jobs:
       - name: Restore Message from Cache
         if: env.SKIP_STEPS != 'true'
         id: restore-cache
-        uses: actions/cache/restore@v3
+        uses: actions/cache/restore@v4
         with: 
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH  }}
@@ -69,7 +69,7 @@ jobs:
           cat message_cache.txt
       - name: Store Message in Cache
         if: env.SKIP_STEPS != 'true'
-        uses: actions/cache/save@v3
+        uses: actions/cache/save@v4
         with:
           path: message_cache.txt
           key: message-cache-${{ env.MESSAGE_HASH }}
