@@ -6,28 +6,28 @@
 #
 certifi==2024.2.2
     # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
+    #   -c ingest/../base.txt
+    #   -c ingest/../deps/constraints.txt
     #   requests
 charset-normalizer==3.3.2
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   requests
 idna==3.7
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   requests
-python-gitlab==4.5.0
-    # via -r ./ingest/gitlab.in
+python-gitlab==4.6.0
+    # via -r ingest/gitlab.in
 requests==2.32.2
     # via
-    #   -c ./ingest/../base.txt
+    #   -c ingest/../base.txt
     #   python-gitlab
     #   requests-toolbelt
 requests-toolbelt==1.0.0
     # via python-gitlab
 urllib3==1.26.18
     # via
-    #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
+    #   -c ingest/../base.txt
+    #   -c ingest/../deps/constraints.txt
     #   requests
