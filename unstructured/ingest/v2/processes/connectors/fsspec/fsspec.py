@@ -68,6 +68,7 @@ class FileConfig(Base):
             )
 
 
+@dataclass
 class FsspecIndexerConfig(FileConfig, IndexerConfig):
     recursive: bool = False
     file_glob: Optional[list[str]] = None
@@ -133,7 +134,9 @@ class FsspecIndexer(Indexer):
             # because they are seen as 0 byte files
             found = self.fs.ls(self.index_config.path_without_protocol, detail=True)
             if isinstance(found, list):
-                return [x.get("name") for x in found if x.get("size") > 0]
+                return [
+                    x.get("name") for x in found if x.get("size") > 0 and x.get("type") == "file"
+                ]
             else:
                 raise TypeError(f"unhandled response type from ls: {type(found)}")
         else:
@@ -144,7 +147,9 @@ class FsspecIndexer(Indexer):
                 detail=True,
             )
             if isinstance(found, dict):
-                return [k for k, v in found.items() if v.get("size") > 0]
+                return [
+                    k for k, v in found.items() if v.get("size") > 0 and v.get("type") == "file"
+                ]
             else:
                 raise TypeError(f"unhandled response type from find: {type(found)}")
 
@@ -246,6 +251,7 @@ class FsspecDownloader(Downloader):
 
     def run(self, file_data: FileData, **kwargs: Any) -> Path:
         download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
         try:
             self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
         except Exception as e:
