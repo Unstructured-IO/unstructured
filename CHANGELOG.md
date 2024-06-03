@@ -1,12 +1,22 @@
-## 0.14.4-dev0
+## 0.14.4-dev7
 
 ### Enhancements
 
+* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
+
 ### Features
+
+- **Allow configuration of the Google Vision API endpoint** Add an environment variable to select the Google Vision API in the US or the EU.
 
 ### Fixes
 
-* **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
+* **Remove root handlers in ingest logger**. Removes root handlers in ingest loggers to ensure secrets aren't accidentally exposed in Colab notebooks.
+* **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+* * **Fix document type deduction during evaluation** There was a bug that caused the document type for file with more than 2 extensions (or dot symbols) to be inferred incorrectly.
 
 ## 0.14.3
 
