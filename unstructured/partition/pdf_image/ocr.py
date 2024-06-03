@@ -220,7 +220,7 @@ def supplement_page_layout_with_ocr(
             "Invalid OCR mode. Parameter `ocr_mode` "
             "must be set to `entire_page` or `individual_blocks`.",
         )
-
+    print("INFER TABLE", infer_table_structure)
     # Note(yuming): use the OCR data from entire page OCR for table extraction
     if infer_table_structure:
         from unstructured_inference.models import tables
@@ -258,6 +258,8 @@ def supplement_element_with_table_extraction(
     from unstructured_inference.models.tables import cells_to_html
 
     table_elements = [el for el in elements if el.type == ElementType.TABLE]
+    print("*0*"*100)
+    print("TABLE ELEMENTS")
     for element in table_elements:
         padding = env_config.TABLE_IMAGE_CROP_PAD
         padded_element = pad_element_bboxes(element, padding=padding)
@@ -280,6 +282,7 @@ def supplement_element_with_table_extraction(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
         )
         text_as_html = cells_to_html(tatr_cells)
+        print(text_as_html)
         simple_table_cells = [
             SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
         ]

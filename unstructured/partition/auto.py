@@ -146,7 +146,7 @@ def partition(
     ocr_languages: Optional[str] = None,  # changing to optional for deprecation
     languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
-    pdf_infer_table_structure: bool = False,
+    pdf_infer_table_structure: bool = True,
     extract_images_in_pdf: bool = False,
     extract_image_block_types: Optional[list[str]] = None,
     extract_image_block_output_dir: Optional[str] = None,
