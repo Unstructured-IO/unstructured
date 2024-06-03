@@ -9,14 +9,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   },
@@ -30,14 +30,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   },
@@ -51,14 +51,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   },
@@ -72,14 +72,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   },
@@ -93,14 +93,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   },
@@ -114,14 +114,14 @@
       ],
       "filetype": "text/plain",
       "data_source": {
-        "url": "gs://utic-test-ingest-fixtures/nested-2/fake-text.txt",
-        "version": "198731266903969902154134165613731741332",
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
         "record_locator": {
           "protocol": "gs",
           "remote_file_path": "gs://utic-test-ingest-fixtures/"
         },
-        "date_created": "1687304904.192",
-        "date_modified": "1687304904.192"
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
       }
     }
   }
