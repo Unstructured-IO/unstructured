@@ -53,7 +53,7 @@ def process_data_with_pdfminer(
 
     pdf = pdfplumber.open(file)
 
-    def is_valid_text_region(text_region: TextRegion) -> bool:
+    def is_valid_text_region(text_region: "TextRegion") -> bool:
         return (text_region.bbox is not None and
                 text_region.bbox.area > 0 and
                 text_region.text and
