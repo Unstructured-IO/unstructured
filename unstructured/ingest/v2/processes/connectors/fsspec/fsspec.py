@@ -198,12 +198,13 @@ class FsspecIndexer(Indexer):
         raw_files = self.list_files()
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         for file in files:
+            rel_path = file.replace(self.index_config.path_without_protocol, "")
             yield FileData(
                 identifier=file,
                 connector_type=self.connector_type,
                 source_identifiers=SourceIdentifiers(
                     filename=Path(file).name,
-                    rel_path=file.replace(self.index_config.path_without_protocol, ""),
+                    rel_path=rel_path or None,
                     fullpath=file,
                     additional_metadata=self.sterilize_info(path=file),
                 ),
@@ -236,7 +237,7 @@ class FsspecDownloader(Downloader):
 
     def get_download_path(self, file_data: FileData) -> Path:
         return (
-            self.download_config.download_dir / Path(file_data.source_identifiers.rel_path)
+            self.download_config.download_dir / Path(file_data.source_identifiers.relative_path)
             if self.download_config
             else Path(file_data.source_identifiers.rel_path)
         )
