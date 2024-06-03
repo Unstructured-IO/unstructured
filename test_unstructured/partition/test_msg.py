@@ -23,8 +23,7 @@ from unstructured.documents.elements import (
     NarrativeText,
     Title,
 )
-from unstructured.partition.msg import partition_msg
-from unstructured.partition.new_msg import MsgPartitionerOptions
+from unstructured.partition.msg import MsgPartitionerOptions, partition_msg
 
 EXPECTED_MSG_OUTPUT = [
     NarrativeText(text="This is a test email to use for unit tests."),
