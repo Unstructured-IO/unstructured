@@ -1,128 +1,128 @@
 [
   {
+    "type": "NarrativeText",
     "element_id": "fc01503614e0f12f585427cccf81cf86",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "This is a test document to use for unit tests.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   },
   {
+    "type": "Address",
     "element_id": "d06d10c0722ac08a2488076a48e858d5",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Doylestown, PA 18901",
-    "type": "Address"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "a190164de573571375ecf759a5027a3a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Important points:",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "64c58eb106608ad05424e47bbcdef7dc",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Hamburgers are delicious",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "9210d7882755a60fc82272a0e93df94f",
+    "text": "Dogs are the best",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Dogs are the best",
-    "type": "ListItem"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "970dd4ac687529e2d2126e0a51cb7c27",
+    "text": "I love fuzzy blankets",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:13.303000+00:00",
-        "date_modified": "2023-06-20T23:48:13.303000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-1/fake-text.txt"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
-        "version": "CKyIrMaE0/8CEAE="
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "I love fuzzy blankets",
-    "type": "ListItem"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-1/fake-text.txt",
+        "version": "180263070579038859328651626981788275889",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304893.303",
+        "date_modified": "1687304893.303"
+      }
+    }
   }
 ]
