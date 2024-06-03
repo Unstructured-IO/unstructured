@@ -1,3 +1,4 @@
+from itertools import zip_longest
 from typing import TYPE_CHECKING, BinaryIO, List, Optional, Union, cast
 
 from pdfminer.utils import open_filename
@@ -52,10 +53,32 @@ def process_data_with_pdfminer(
 
     pdf = pdfplumber.open(file)
 
-    for i, (page, page_layout) in enumerate(open_pdfminer_pages_generator(file)):
+    def is_valid_text_region(text_region: TextRegion) -> bool:
+        return (text_region.bbox is not None and
+                text_region.bbox.area > 0 and
+                text_region.text and
+                text_region.text != '\n')
+
+    for (page, page_layout), plumber_page in zip_longest(open_pdfminer_pages_generator(file), pdf.pages):
         height = page_layout.height
 
         layout: List["TextRegion"] = []
+        is_plumber_word_extraction_successful = False
+
+        for word in plumber_page.extract_words():
+            text_region = EmbeddedTextRegion.from_coords(
+                word['x0'] * coef,
+                word['top'] * coef,
+                word['x1'] * coef,
+                word['bottom'] * coef,
+                text=word['text'],
+                source=Source.PDFPLUMBER,
+            )
+
+            if is_valid_text_region(text_region):
+                is_plumber_word_extraction_successful = True
+                layout.append(text_region)
+
         for obj in page_layout:
             x1, y1, x2, y2 = rect_to_bbox(obj.bbox, height)
 
@@ -70,6 +93,9 @@ def process_data_with_pdfminer(
                 else:
                     continue
 
+            if element_class is EmbeddedTextRegion and is_plumber_word_extraction_successful:
+                continue
+
             text_region = element_class.from_coords(
                 x1 * coef,
                 y1 * coef,
@@ -81,21 +107,7 @@ def process_data_with_pdfminer(
 
             if text_region.bbox is not None and text_region.bbox.area > 0:
                 layout.append(text_region)
-        try:
-            for word in pdf.pages[i].extract_words():
-                text_region = EmbeddedTextRegion.from_coords(
-                    word['x0'] * coef,
-                    word['top'] * coef,
-                    word['x1'] * coef,
-                    word['bottom'] * coef,
-                    text=word['text'],
-                    source=Source.PDFPLUMBER,
-                )
 
-                if text_region.bbox is not None and text_region.bbox.area > 0 and text_region.text and text_region.text != '\n':
-                    layout.append(text_region)
-        except Exception:
-            pass
         # NOTE(christine): always do the basic sort first for deterministic order across
         # python versions.
         layout = order_layout(layout)
@@ -106,6 +118,7 @@ def process_data_with_pdfminer(
         layouts.append(layout)
 
     return layouts
+
 
 
 @requires_dependencies("unstructured_inference")
