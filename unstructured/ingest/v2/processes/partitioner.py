@@ -93,6 +93,7 @@ class Partitioner(BaseProcess, ABC):
         from unstructured.partition.auto import partition
 
         logger.debug(f"Using local partition with kwargs: {self.config.to_partition_kwargs()}")
+        logger.info(f"partitioning file {filename}")
         elements = partition(
             filename=str(filename.resolve()),
             data_source_metadata=metadata,
@@ -106,10 +107,12 @@ class Partitioner(BaseProcess, ABC):
         from unstructured_client import UnstructuredClient
         from unstructured_client.models.shared import Files, PartitionParameters
 
+        logger.info(f"partitioning file {filename}")
         client = UnstructuredClient(
             server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
         )
         partition_request = self.config.to_partition_kwargs()
+        logger.debug(f"Using hosted partitioner with kwargs: {partition_request}")
         with open(filename, "rb") as f:
             files = Files(
                 content=f.read(),
