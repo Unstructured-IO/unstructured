@@ -84,7 +84,15 @@ class SftpIndexer(FsspecIndexer):
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
-        return super().run(**kwargs)
+        for file in super().run(**kwargs):
+            new_identifier = (
+                f"sftp://"
+                f"{self.connection_config.host}:"
+                f"{self.connection_config.port}/"
+                f"{file.identifier}"
+            )
+            file.identifier = new_identifier
+            yield file
 
 
 @dataclass
