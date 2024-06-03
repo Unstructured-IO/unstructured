@@ -1,4 +1,4 @@
 -c ./deps/constraints.txt
 -c base.txt
 
-msg_parser
+python-oxmsg

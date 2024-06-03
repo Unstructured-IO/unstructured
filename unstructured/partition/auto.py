@@ -72,7 +72,7 @@ if dependency_exists("markdown"):
     PARTITION_WITH_EXTRAS_MAP["md"] = partition_md
 
 
-if dependency_exists("msg_parser"):
+if dependency_exists("oxmsg"):
     from unstructured.partition.msg import partition_msg
 
     PARTITION_WITH_EXTRAS_MAP["msg"] = partition_msg

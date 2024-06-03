@@ -1,12 +1,16 @@
-## 0.14.5-dev1
+## 0.14.5-dev2
 
 ### Enhancements
 
 * **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+* **Use `python-oxmsg` for `partition_msg()`.** Outlook MSG emails are now partitioned using the `python-oxmsg` package which resolves some shortcomings of the prior MSG parser.
 
 ### Features
 
 ### Fixes
+
+* **8-bit string Outlook MSG files are parsed.** `partition_msg()` is now able to parse non-unicode Outlook MSG emails.
+* **Attachments to Outlook MSG files are extracted intact.** `partition_msg()` is now able to extract attachments without corruption.
 
 ## 0.14.4
 
