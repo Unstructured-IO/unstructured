@@ -6,7 +6,7 @@
 #
 attrs==23.2.0
     # via zeep
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -41,7 +41,7 @@ pyjwt[crypto]==2.8.0
     # via simple-salesforce
 pytz==2024.1
     # via zeep
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   requests-file
@@ -58,7 +58,7 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   isodate
-typing-extensions==4.12.0
+typing-extensions==4.12.1
     # via
     #   -c ./ingest/../base.txt
     #   simple-salesforce
