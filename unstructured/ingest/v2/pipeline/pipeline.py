@@ -131,7 +131,6 @@ class Pipeline:
 
         # Partition content
         elements = self.partitioner_step(downloaded_data)
-        print("DEBUGGING: {}")
         elements = self.clean_results(results=elements)
         if not elements:
             return
