@@ -1,14 +1,14 @@
 version: '3.4'
 services:
   weaviate:
-    image: cr.weaviate.io/semitechnologies/weaviate:1.19.6
+    image: cr.weaviate.io/semitechnologies/weaviate:1.25.2
     restart: on-failure:0
     ports:
      - "8080:8080"
+     - "50051:50051"
     environment:
       QUERY_DEFAULTS_LIMIT: 20
       AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
-      PERSISTENCE_DATA_PATH: "./data"
       DEFAULT_VECTORIZER_MODULE: text2vec-transformers
       ENABLE_MODULES: text2vec-transformers
       TRANSFORMERS_INFERENCE_API: http://t2v-transformers:8080
