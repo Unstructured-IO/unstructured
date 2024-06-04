@@ -96,6 +96,15 @@ class SensitiveFormatter(Formatter):
         return redact_jsons(s)
 
 
+def remove_root_handlers(logger: Logger) -> None:
+    # NOTE(robinson) - in some environments such as Google Colab, there is a root handler
+    # that doesn't not mask secrets, meaning sensitive info such as api keys appear in logs.
+    # Removing these when they exist prevents this behavior
+    if logger.root.hasHandlers():
+        for handler in logger.root.handlers:
+            logger.root.removeHandler(handler)
+
+
 def make_default_logger(level: int) -> Logger:
     """Return a custom logger."""
     logger = getLogger(LOGGER_NAME)
@@ -105,6 +114,7 @@ def make_default_logger(level: int) -> Logger:
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     logger.setLevel(level)
+    remove_root_handlers(logger)
     return logger
 
 
