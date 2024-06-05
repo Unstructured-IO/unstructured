@@ -41,7 +41,7 @@ class XMLDocument(Document):
 
         self.stylesheet = stylesheet
         self.parser = parser
-        self.document_tree = None
+        self.document_tree: etree._Element = None
         super().__init__()
 
     def _parse_pages_from_element_tree(self) -> List[Page]:

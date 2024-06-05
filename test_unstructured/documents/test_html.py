@@ -1,13 +1,18 @@
 # pyright: reportPrivateUsage=false
 
+"""Test suite for `unstructured.documents.html` module."""
+
+from __future__ import annotations
+
 import os
 import pathlib
-from typing import Dict, List
+from typing import cast
 
 import pytest
 from lxml import etree
 from lxml import html as lxml_html
 
+from test_unstructured.unit_utils import FixtureRequest, Mock, function_mock, property_mock
 from unstructured.documents import html
 from unstructured.documents.base import Page
 from unstructured.documents.elements import (
@@ -256,8 +261,9 @@ def test_parses_tags_correctly():
     </body>
 </html>"""
     doc = HTMLDocument.from_string(raw_html)
-    el = doc.elements[0]
-    assert el.ancestortags + (el.tag,) == ("html", "body", "table")
+    element = cast(TagsMixin, doc.elements[0])
+    assert element.ancestortags == ("html", "body")
+    assert element.tag == "table"
 
 
 # -- has_table_ancestor() ------------------------------------------------------------------------
@@ -284,8 +290,8 @@ def test_has_no_table_ancestor():
 # -- HTMLDocument.doc_after_cleaners() -----------------------------------------------------------
 
 
-def test_read_without_skipping_table(monkeypatch):
-    monkeypatch.setattr(html, "is_possible_narrative_text", lambda *args: True)
+def test_read_without_skipping_table(is_possible_narrative_text_: Mock):
+    is_possible_narrative_text_.return_value = True
     doc = """<html>
     <body>
         <table>
@@ -314,9 +320,10 @@ def test_read_without_skipping_table(monkeypatch):
         ("<p>I have a</p> tail", "I have a tail"),
     ],
 )
-def test_construct_text(doc, expected):
+def test_construct_text(doc: str, expected: str):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     para = document_tree.find(".//p")
+    assert para is not None
     text = html._construct_text(para)
     assert text == expected
 
@@ -355,7 +362,7 @@ def test_construct_text(doc, expected):
         ("<p>Text with no emphasized runs</p> ", "p", []),
     ],
 )
-def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[str, str]]):
+def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: list[dict[str, str]]):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(f".//{root}")
     assert el is not None
@@ -401,7 +408,7 @@ def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[
         ),
     ],
 )
-def test_get_links_from_tag(doc: str, root: str, expected: List[Dict[str, str]]):
+def test_get_links_from_tag(doc: str, root: str, expected: list[dict[str, str]]):
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(f".//{root}")
     assert el is not None
@@ -418,6 +425,7 @@ def test_parse_nothing():
     doc = """<p></p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
+    assert el is not None
     parsed_el = html._parse_tag(el)
     assert parsed_el is None
 
@@ -434,20 +442,22 @@ def test_read_with_existing_pages():
 # -- _parse_tag() --------------------------------------------------------------------------------
 
 
-def test_parse_not_anything(monkeypatch):
-    monkeypatch.setattr(html, "is_narrative_tag", lambda *args: False)
-    monkeypatch.setattr(html, "is_possible_title", lambda *args: False)
+def test_parse_not_anything(is_narrative_tag_: Mock, is_possible_title_: Mock):
+    is_narrative_tag_.return_value = False
+    is_possible_title_.return_value = False
     doc = """<p>This is nothing</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
+    assert el is not None
     parsed_el = html._parse_tag(el)
     assert parsed_el == Text(text="This is nothing")
 
 
-def test_parse_bullets(monkeypatch):
+def test_parse_bullets():
     doc = """<p>● An excellent point!</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
+    assert el is not None
     parsed_el = html._parse_tag(el)
     assert parsed_el == ListItem("An excellent point!")
 
@@ -456,6 +466,7 @@ def test_parse_tag_ignores_lonely_bullets():
     doc = """<p>●</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
+    assert el is not None
     parsed_el = html._parse_tag(el)
     assert parsed_el is None
 
@@ -464,6 +475,7 @@ def test_parse_tag_ignores_stubs():
     doc = """<p>$</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//p")
+    assert el is not None
     parsed_el = html._parse_tag(el)
     assert parsed_el is None
 
@@ -475,6 +487,7 @@ def test_adjacent_spans_are_text_tags():
     doc = """<div><span>&#8226;</span><span>A bullet!</span></div>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
+    assert el is not None
     assert html._is_text_tag(el) is True
 
 
@@ -494,6 +507,7 @@ def test_process_list_item_gets_next_section():
     """
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
+    assert el is not None
     parsed_el, _ = html._process_list_item(el, max_predecessor_len=10)
     assert parsed_el == ListItem(text="An excellent point!")
 
@@ -527,6 +541,7 @@ def test_process_list_item_returns_none_if_next_blank():
     """
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
+    assert el is not None
     parsed_el, _ = html._process_list_item(el)
     assert parsed_el is None
 
@@ -542,6 +557,7 @@ def test_process_list_item_returns_none_if_next_has_no_text():
     """
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
+    assert el is not None
     assert html.is_list_item_tag(el) is True
     parsed_el, _ = html._process_list_item(el)
     assert parsed_el is None
@@ -563,6 +579,7 @@ def test_process_list_item_ignores_deep_divs():
     """
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
+    assert el is not None
     parsed_el, _ = html._process_list_item(el, max_predecessor_len=2)
     assert parsed_el is None
 
@@ -570,7 +587,7 @@ def test_process_list_item_ignores_deep_divs():
 # -- HTMLDocument.from_file() --------------------------------------------------------------------
 
 
-def test_read_html_doc(tmpdir, monkeypatch):
+def test_read_html_doc(tmp_path: pathlib.Path):
     TITLE1 = "A Great and Glorious Section"
     SECTION1 = "Dear Leader is the best. He is such a wonderful engineer!"
     TITLE2 = "Another Magnificent Title"
@@ -607,7 +624,7 @@ def test_read_html_doc(tmpdir, monkeypatch):
         </div>
     </body>
 </html>"""
-    filename = os.path.join(tmpdir.dirname, "sample-doc.html")
+    filename = str(tmp_path / "sample-doc.html")
     with open(filename, "w") as f:
         f.write(doc)
 
@@ -732,7 +749,7 @@ def test_find_articles_returns_doc_when_none_present():
 # -- `skip_headers_and_footers` arg --------------------------------------------------------------
 
 
-def test_include_headers_and_footers(sample_doc):
+def test_include_headers_and_footers(sample_doc: HTMLDocument):
     html_document = sample_doc.doc_after_cleaners(skip_headers_and_footers=False)
     assert len(html_document.pages[1].elements) == 3
 
@@ -740,7 +757,7 @@ def test_include_headers_and_footers(sample_doc):
 # -- `skip_table` arg ----------------------------------------------------------------------------
 
 
-def test_include_table_text(sample_doc):
+def test_include_table_text(sample_doc: HTMLDocument):
     html_document = sample_doc.doc_after_cleaners(skip_table=False)
     assert len(html_document.pages[0].elements) == 2
 
@@ -749,7 +766,7 @@ def test_include_table_text(sample_doc):
 
 
 @pytest.mark.parametrize("tag", [tag for tag in TEXT_TAGS if tag not in TABLE_TAGS])
-def test_tag_types(tag):
+def test_tag_types(tag: str):
     html_str = f"""
     <body>
         <{tag}>
@@ -762,7 +779,7 @@ def test_tag_types(tag):
 
 
 @pytest.mark.parametrize("tag", EXCLUDED_TAGS)
-def test_exclude_tag_types(tag):
+def test_exclude_tag_types(tag: str):
     html_str = f"""
     <body>
         <{tag}>
@@ -777,7 +794,7 @@ def test_exclude_tag_types(tag):
 # -- HTMLDocument.doc_after_cleaners -------------------------------------------------------------
 
 
-def test_tag_types_table(sample_doc):
+def test_tag_types_table(sample_doc: HTMLDocument):
     html_document = sample_doc.doc_after_cleaners(skip_table=True)
     assert len(html_document.pages[0].elements) == 2
 
@@ -888,6 +905,7 @@ def test_bulletized_bulleted_text_from_table():
 </html>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     table = document_tree.find(".//table")
+    assert table is not None
     bulleted_text = html._bulleted_text_from_table(table)
     assert bulleted_text == [
         ListItem(text="Happy Groundhog's day!"),
@@ -936,10 +954,12 @@ def test_raises_error_no_tag():
 # -- HTMLDocument.doc_after_cleaners() -----------------------------------------------------------
 
 
-def test_raises_error_wrong_elements(monkeypatch, sample_doc):
+def test_raises_error_wrong_elements(sample_doc: HTMLDocument, pages_prop_: Mock):
     page = Page(0)
-    page.elements = ["this should def not be a string"]
-    monkeypatch.setattr(sample_doc, "_pages", [page])
+    page.elements = [
+        "this should def not be a string"  # pyright: ignore[reportAttributeAccessIssue]
+    ]
+    pages_prop_.return_value = [page]
     with pytest.raises(ValueError):
         sample_doc.doc_after_cleaners()
 
@@ -998,7 +1018,7 @@ def test_line_break_in_container():
 
 
 @pytest.mark.parametrize("tag", TEXT_TAGS)
-def test_line_break_in_text_tag(tag):
+def test_line_break_in_text_tag(tag: str):
     raw_html = f"<{tag}>Hello<br/>World</{tag}>"
     doc = HTMLDocument.from_string(raw_html)
     assert doc.elements[0].text == "Hello"
@@ -1021,7 +1041,7 @@ class Describe_parse_HTMLTable_from_table_elem:
             "  </tr>\n"
             "</table>"
         )
-        table_elem = lxml_html.fromstring(table_html)  # pyright: ignore[reportUnknownMemberType]
+        table_elem = lxml_html.fromstring(table_html)
 
         html_table = _parse_HTMLTable_from_table_elem(table_elem)
 
@@ -1058,7 +1078,7 @@ class Describe_parse_HTMLTable_from_table_elem:
             " </tr>\n"
             "</table>\n"
         )
-        table_elem = lxml_html.fromstring(table_html)  # pyright: ignore[reportUnknownMemberType]
+        table_elem = lxml_html.fromstring(table_html)
 
         html_table = _parse_HTMLTable_from_table_elem(table_elem)
 
@@ -1094,9 +1114,7 @@ class Describe_parse_HTMLTable_from_table_elem:
             " </tr>\n"
             "</table>"
         )
-        table_elem = lxml_html.fromstring(  # pyright: ignore[reportUnknownMemberType]
-            nested_table_html
-        )
+        table_elem = lxml_html.fromstring(nested_table_html)
 
         html_table = _parse_HTMLTable_from_table_elem(table_elem)
 
@@ -1110,7 +1128,27 @@ class Describe_parse_HTMLTable_from_table_elem:
 # -- module-level fixtures -----------------------------------------------------------------------
 
 
-@pytest.fixture()
+@pytest.fixture
+def is_narrative_tag_(request: FixtureRequest):
+    return function_mock(request, "unstructured.documents.html.is_narrative_tag")
+
+
+@pytest.fixture
+def is_possible_narrative_text_(request: FixtureRequest):
+    return function_mock(request, "unstructured.documents.html.is_possible_narrative_text")
+
+
+@pytest.fixture
+def is_possible_title_(request: FixtureRequest):
+    return function_mock(request, "unstructured.documents.html.is_possible_title")
+
+
+@pytest.fixture
+def pages_prop_(request: FixtureRequest):
+    return property_mock(request, HTMLDocument, "pages")
+
+
+@pytest.fixture
 def sample_doc():
     table_element = HTMLTitle(
         "I'm a title in a table.",

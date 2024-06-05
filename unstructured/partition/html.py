@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Any, Optional
+from typing import IO, Any, Optional, cast
 
 import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument
+from unstructured.documents.html import HTMLDocument, TagsMixin
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
@@ -21,9 +21,6 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.lang import apply_lang_metadata
-
-if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
 
 
 @process_metadata()
@@ -130,7 +127,8 @@ def partition_html(
             assemble_articles=html_assemble_articles,
         )
 
-    elif url is not None:
+    else:
+        assert url is not None
         response = requests.get(url, headers=headers, verify=ssl_verify)
         if not response.ok:
             raise ValueError(f"Error status code on GET of provided URL: {response.status_code}")
@@ -142,7 +140,7 @@ def partition_html(
         document = HTMLDocument.from_string(response.text, parser=parser)
 
     if skip_headers_and_footers:
-        document = filter_footer_and_header(document)
+        document = _filter_footer_and_header(document)
 
     elements = list(
         apply_lang_metadata(
@@ -236,12 +234,12 @@ def convert_and_partition_html(
     )
 
 
-def filter_footer_and_header(document: "DocumentLayout") -> "DocumentLayout":
+def _filter_footer_and_header(document: HTMLDocument) -> HTMLDocument:
     for page in document.pages:
-        page.elements = list(
-            filter(
-                lambda el: "footer" not in el.ancestortags and "header" not in el.ancestortags,
-                page.elements,
-            ),
-        )
+        page.elements = [
+            e
+            for e in page.elements
+            if "header" not in cast(TagsMixin, e).ancestortags
+            and "footer" not in cast(TagsMixin, e).ancestortags
+        ]
     return document
