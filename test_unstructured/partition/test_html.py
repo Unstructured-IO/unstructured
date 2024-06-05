@@ -36,6 +36,7 @@ from unstructured.partition.html import partition_html
 
 def test_partition_html_accepts_a_file_path():
     elements = partition_html(example_doc_path("example-10k-1p.html"))
+
     assert len(elements) > 0
     assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
     assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
@@ -44,6 +45,7 @@ def test_partition_html_accepts_a_file_path():
 def test_partition_html_accepts_a_file_like_object():
     with open(example_doc_path("example-10k-1p.html"), "rb") as f:
         elements = partition_html(file=f)
+
     assert len(elements) > 0
     assert all(e.metadata.filename is None for e in elements)
 
@@ -59,7 +61,9 @@ def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
         status_code=200,
         headers={"Content-Type": "text/html"},
     )
+
     elements = partition_html(url="https://fake.url")
+
     requests_get_.assert_called_once_with("https://fake.url", headers={}, verify=True)
     assert len(elements) > 0
 
@@ -85,6 +89,7 @@ def test_partition_html_from_url_raises_on_failure_response_status_code(requests
         status_code=500,
         headers={"Content-Type": "text/html"},
     )
+
     with pytest.raises(ValueError, match="Error status code on GET of provided URL: 500"):
         partition_html(url="https://fake.url")
 
@@ -95,6 +100,7 @@ def test_partition_html_from_url_raises_on_response_of_wrong_content_type(reques
         status_code=200,
         headers={"Content-Type": "application/json"},
     )
+
     with pytest.raises(ValueError, match="Expected content type text/html. Got application/json."):
         partition_html(url="https://fake.url")
 
@@ -105,7 +111,9 @@ def test_partition_from_url_includes_provided_headers_in_request(requests_get_: 
         status_code=200,
         headers={"Content-Type": "text/html"},
     )
+
     partition_html(url="https://example.com", headers={"User-Agent": "test"})
+
     requests_get_.assert_called_once_with(
         "https://example.com", headers={"User-Agent": "test"}, verify=True
     )
@@ -138,6 +146,7 @@ def test_partition_html_recognizes_h1_to_h3_as_Title_except_in_edge_cases():
 
 def test_partition_html_with_pre_tag():
     elements = partition_html(example_doc_path("fake-html-pre.htm"))
+
     assert len(elements) > 0
     assert all(e.category != "PageBreak" for e in elements)
     assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
@@ -253,6 +262,7 @@ def test_partition_html_from_filename_raises_when_explicit_encoding_is_wrong(fil
 )
 def test_partition_html_from_filename_default_encoding(filename: str):
     elements = partition_html(example_doc_path(filename))
+
     assert len(elements) > 0
     assert all(e.metadata.filename == filename for e in elements)
     if filename == "fake-html-lang-de.html":
@@ -265,6 +275,7 @@ def test_partition_html_from_filename_default_encoding(filename: str):
 def test_partition_html_from_file_raises_encoding_error(filename: str):
     with open(example_doc_path(filename), "rb") as f:
         file = io.BytesIO(f.read())
+
     with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
         partition_html(file=file, encoding="utf-8")
 
@@ -276,6 +287,7 @@ def test_partition_html_from_file_raises_encoding_error(filename: str):
 def test_partition_html_from_file_default_encoding(filename: str):
     with open(example_doc_path(filename), "rb") as f:
         elements = partition_html(file=f)
+
     assert len(elements) > 0
     if filename == "fake-html-lang-de.html":
         assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
@@ -297,6 +309,7 @@ def test_partition_html_from_file_rb_raises_encoding_error(filename: str):
 def test_partition_html_from_file_rb_default_encoding(filename: str):
     with open(example_doc_path(filename), "rb") as f:
         elements = partition_html(file=f)
+
     assert len(elements) > 0
     if filename == "fake-html-lang-de.html":
         assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
@@ -332,6 +345,7 @@ def test_partition_html_generates_no_page_breaks_by_default():
 
 def test_partition_html_generates_page_breaks_when_so_instructed():
     elements = partition_html(example_doc_path("example-10k-1p.html"), include_page_breaks=True)
+
     assert any(e.category == "PageBreak" for e in elements)
     assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
 
@@ -365,6 +379,7 @@ def test_partition_html_from_filename_can_skip_headers_and_footers():
             skip_headers_and_footers=True,
         ),
     )
+
     assert all("header" not in e.ancestortags for e in elements)
     assert all("footer" not in e.ancestortags for e in elements)
 
@@ -372,6 +387,7 @@ def test_partition_html_from_filename_can_skip_headers_and_footers():
 def test_partition_html_from_file_can_skip_headers_and_footers():
     with open(example_doc_path("fake-html-with-footer-and-header.html"), "rb") as f:
         elements = cast(list[TagsMixin], partition_html(file=f, skip_headers_and_footers=True))
+
     assert all("header" not in e.ancestortags for e in elements)
     assert all("footer" not in e.ancestortags for e in elements)
 
@@ -422,6 +438,7 @@ def test_partition_html_from_url_can_skip_headers_and_footers(requests_get_: Moc
         status_code=200,
         headers={"Content-Type": "text/html"},
     )
+
     elements = cast(
         list[TagsMixin],
         partition_html(
@@ -494,6 +511,7 @@ def test_partition_html_grabs_emphasized_texts():
 
 def test_partition_html_from_filename_prefers_metadata_filename():
     elements = partition_html(example_doc_path("example-10k-1p.html"), metadata_filename="test")
+
     assert len(elements) > 0
     assert all(element.metadata.filename == "test" for element in elements)
 
@@ -501,6 +519,7 @@ def test_partition_html_from_filename_prefers_metadata_filename():
 def test_partition_html_from_file_prefers_metadata_filename():
     with open(example_doc_path("example-10k-1p.html"), "rb") as f:
         elements = partition_html(file=f, metadata_filename="test")
+
     assert len(elements) > 0
     assert all(e.metadata.filename == "test" for e in elements)
 
@@ -517,6 +536,7 @@ def test_partition_html_respects_detect_language_per_element():
     elements = partition_html(
         example_doc_path("language-docs/eng_spa_mult.html"), detect_language_per_element=True
     )
+
     assert [e.metadata.languages for e in elements] == [
         ["eng"],
         ["spa", "eng"],
@@ -534,7 +554,9 @@ def test_partition_html_from_filename_pulls_last_modified_from_filesystem(
 ):
     last_modified_on_filesystem = "2023-07-05T09:24:28"
     get_last_modified_date_.return_value = last_modified_on_filesystem
+
     elements = partition_html(example_doc_path("fake-html.html"))
+
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified == last_modified_on_filesystem
 
@@ -544,9 +566,11 @@ def test_partition_html_from_filename_prefers_metadata_last_modified(
 ):
     metadata_last_modified = "2023-07-05T09:24:28"
     get_last_modified_date_.return_value = "2024-06-04T09:24:28"
+
     elements = partition_html(
         example_doc_path("fake-html.html"), metadata_last_modified=metadata_last_modified
     )
+
     assert isinstance(elements[0], Title)
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
@@ -555,8 +579,10 @@ def test_partition_html_from_file_does_not_assign_last_modified_metadata_by_defa
     get_last_modified_date_from_file_: Mock,
 ):
     get_last_modified_date_from_file_.return_value = "2029-07-05T09:24:28"
+
     with open(example_doc_path("fake-html.html"), "rb") as f:
         elements = partition_html(file=f)
+
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified is None
 
@@ -565,8 +591,10 @@ def test_partition_html_from_file_pulls_last_modified_from_file_like_object_when
     get_last_modified_date_from_file_: Mock,
 ):
     get_last_modified_date_from_file_.return_value = "2024-06-04T09:24:28"
+
     with open(example_doc_path("fake-html.html"), "rb") as f:
         elements = partition_html(file=f, date_from_file_object=True)
+
     assert isinstance(elements[0], Title)
     assert all(e.metadata.last_modified == "2024-06-04T09:24:28" for e in elements)
 
@@ -578,6 +606,7 @@ def test_partition_html_from_file_assigns_no_last_modified_metadata_when_file_ha
         sf.write(f.read())
         sf.seek(0)
         elements = partition_html(file=sf, date_from_file_object=True)
+
     assert all(e.metadata.last_modified is None for e in elements)
 
 
@@ -586,23 +615,28 @@ def test_partition_html_from_file_prefers_metadata_last_modified(
 ):
     metadata_last_modified = "2023-07-05T09:24:28"
     get_last_modified_date_from_file_.return_value = "2024-06-04T09:24:28"
+
     with open(example_doc_path("fake-html.html"), "rb") as f:
         elements = partition_html(file=f, metadata_last_modified=metadata_last_modified)
+
     assert isinstance(elements[0], Title)
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
 def test_partition_html_from_text_assigns_no_last_modified_metadata():
     elements = partition_html(text="<html><div><p>TEST</p></div></html>")
+
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified is None
 
 
 def test_partition_html_from_text_prefers_metadata_last_modified():
     metadata_last_modified = "2023-07-05T09:24:28"
+
     elements = partition_html(
         text="<html><div><p>TEST</p></div></html>", metadata_last_modified=metadata_last_modified
     )
+
     assert isinstance(elements[0], Title)
     assert elements[0].metadata.last_modified == metadata_last_modified
 
@@ -658,6 +692,7 @@ def test_partition_html_links():
             "</html>\n"
         )
     )
+
     e = elements[0]
     assert e.metadata.link_texts == ["A lone link!"]
     assert e.metadata.link_urls == ["/loner"]
@@ -685,6 +720,7 @@ def test_partition_html_from_text_works_with_empty_string():
 
 def test_partition_html_on_ideas_page():
     elements = partition_html(example_doc_path("ideas-page.html"))
+
     assert len(elements) == 1
     assert elements[0] == Table(
         "January 2023 ( Someone fed my essays into GPT to make something that could"
@@ -705,6 +741,7 @@ def test_partition_html_on_ideas_page():
 
 def test_partition_html_returns_html_elements():
     elements = partition_html(example_doc_path("example-10k-1p.html"))
+
     assert len(elements) > 0
     assert isinstance(elements[0], HTMLTable)
 
@@ -720,7 +757,9 @@ def test_user_without_file_write_permission_can_partition_html(
     read_only_file_path = tmp_path / "example-10k-readonly.html"
     read_only_file_path.write_text(example_doc_text("example-10k-1p.html"))
     read_only_file_path.chmod(0o444)
+
     elements = partition_html(filename=str(read_only_file_path.resolve()))
+
     assert len(elements) > 0
 
 
