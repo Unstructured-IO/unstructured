@@ -240,7 +240,7 @@ def test_it_does_not_extract_text_in_style_tags():
     assert element.text == "Lorem ipsum dolor"
 
 
-# ------------------------------------------------------------------------------------------------
+# -- HTMLDocument.elements -----------------------------------------------------------------------
 
 
 def test_parses_tags_correctly():
@@ -258,6 +258,9 @@ def test_parses_tags_correctly():
     doc = HTMLDocument.from_string(raw_html)
     el = doc.elements[0]
     assert el.ancestortags + (el.tag,) == ("html", "body", "table")
+
+
+# -- has_table_ancestor() ------------------------------------------------------------------------
 
 
 def test_has_table_ancestor():
@@ -278,6 +281,9 @@ def test_has_no_table_ancestor():
     assert not html.has_table_ancestor(title)
 
 
+# -- HTMLDocument.doc_after_cleaners() -----------------------------------------------------------
+
+
 def test_read_without_skipping_table(monkeypatch):
     monkeypatch.setattr(html, "is_possible_narrative_text", lambda *args: True)
     doc = """<html>
@@ -295,6 +301,9 @@ def test_read_without_skipping_table(monkeypatch):
     assert document.pages[0].elements[0] == Table(text="Hi there! I am Matt!")
 
 
+# -- _construct_text() ---------------------------------------------------------------------------
+
+
 @pytest.mark.parametrize(
     ("doc", "expected"),
     [
@@ -310,6 +319,9 @@ def test_construct_text(doc, expected):
     para = document_tree.find(".//p")
     text = html._construct_text(para)
     assert text == expected
+
+
+# -- _get_emphasized_texts_from_tag() ------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
@@ -351,6 +363,9 @@ def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: List[Dict[
     emphasized_texts = html._get_emphasized_texts_from_tag(el)
 
     assert emphasized_texts == expected
+
+
+# -- _get_links_from_tag() -----------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
@@ -396,6 +411,9 @@ def test_get_links_from_tag(doc: str, root: str, expected: List[Dict[str, str]])
     assert links == expected
 
 
+# -- _parse_tag() --------------------------------------------------------------------------------
+
+
 def test_parse_nothing():
     doc = """<p></p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
@@ -404,10 +422,16 @@ def test_parse_nothing():
     assert parsed_el is None
 
 
+# -- HTMLDocument.from_pages() -------------------------------------------------------------------
+
+
 def test_read_with_existing_pages():
     page = Page(number=0)
     html_document = HTMLDocument.from_pages([page])
     assert html_document.pages == [page]
+
+
+# -- _parse_tag() --------------------------------------------------------------------------------
 
 
 def test_parse_not_anything(monkeypatch):
@@ -444,11 +468,17 @@ def test_parse_tag_ignores_stubs():
     assert parsed_el is None
 
 
+# -- _is_text_tag() ------------------------------------------------------------------------------
+
+
 def test_adjacent_spans_are_text_tags():
     doc = """<div><span>&#8226;</span><span>A bullet!</span></div>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
     assert html._is_text_tag(el) is True
+
+
+# -- _process_list_item() ------------------------------------------------------------------------
 
 
 def test_process_list_item_gets_next_section():
@@ -468,6 +498,9 @@ def test_process_list_item_gets_next_section():
     assert parsed_el == ListItem(text="An excellent point!")
 
 
+# -- _get_bullet_descendants() -------------------------------------------------------------------
+
+
 def test_get_bullet_descendants():
     div_1 = "<div><p>●</p><p>●</p></div>"
     document_tree_1 = etree.fromstring(div_1, etree.HTMLParser())
@@ -479,6 +512,9 @@ def test_get_bullet_descendants():
 
     descendants = html._get_bullet_descendants(element, next_element)
     assert len(descendants) == 1
+
+
+# -- _process_list_item() ------------------------------------------------------------------------
 
 
 def test_process_list_item_returns_none_if_next_blank():
@@ -529,6 +565,9 @@ def test_process_list_item_ignores_deep_divs():
     el = document_tree.find(".//div")
     parsed_el, _ = html._process_list_item(el, max_predecessor_len=2)
     assert parsed_el is None
+
+
+# -- HTMLDocument.from_file() --------------------------------------------------------------------
 
 
 def test_read_html_doc(tmpdir, monkeypatch):
@@ -602,6 +641,9 @@ def test_read_html_doc(tmpdir, monkeypatch):
     assert all(isinstance(page, Page) for page in pages)
 
 
+# -- _find_main() --------------------------------------------------------------------------------
+
+
 def test_find_main():
     html_str = """<header></header>
     <body>
@@ -646,6 +688,9 @@ def test_find_main_returns_doc_when_main_not_present():
     assert root.tag == "html"
 
 
+# -- _find_articles() ----------------------------------------------------------------------------
+
+
 def test_find_articles():
     html_str = """<header></header>
     <body>
@@ -684,14 +729,23 @@ def test_find_articles_returns_doc_when_none_present():
     assert len(articles) == 1
 
 
+# -- `skip_headers_and_footers` arg --------------------------------------------------------------
+
+
 def test_include_headers_and_footers(sample_doc):
     html_document = sample_doc.doc_after_cleaners(skip_headers_and_footers=False)
     assert len(html_document.pages[1].elements) == 3
 
 
+# -- `skip_table` arg ----------------------------------------------------------------------------
+
+
 def test_include_table_text(sample_doc):
     html_document = sample_doc.doc_after_cleaners(skip_table=False)
     assert len(html_document.pages[0].elements) == 2
+
+
+# -- HTMLDocument.pages --------------------------------------------------------------------------
 
 
 @pytest.mark.parametrize("tag", [tag for tag in TEXT_TAGS if tag not in TABLE_TAGS])
@@ -720,9 +774,15 @@ def test_exclude_tag_types(tag):
     assert len(html_document.pages) == 0
 
 
+# -- HTMLDocument.doc_after_cleaners -------------------------------------------------------------
+
+
 def test_tag_types_table(sample_doc):
     html_document = sample_doc.doc_after_cleaners(skip_table=True)
     assert len(html_document.pages[0].elements) == 2
+
+
+# -- HTMLDocument.elements -----------------------------------------------------------------------
 
 
 def test_nested_text_tags():
@@ -806,6 +866,9 @@ def test_html_grabs_bulleted_text_in_paras():
     ]
 
 
+# -- _bulleted_text_from_table() -----------------------------------------------------------------
+
+
 def test_bulletized_bulleted_text_from_table():
     doc = """<html>
     <body>
@@ -830,6 +893,9 @@ def test_bulletized_bulleted_text_from_table():
         ListItem(text="Happy Groundhog's day!"),
         ListItem(text="Looks like six more weeks of winter ..."),
     ]
+
+
+# -- HTMLDocument.from_string() ------------------------------------------------------------------
 
 
 def test_html_grabs_bulleted_text_in_tables():
@@ -857,11 +923,17 @@ def test_html_grabs_bulleted_text_in_tables():
     ]
 
 
+# -- TagsMixin -----------------------------------------------------------------------------------
+
+
 def test_raises_error_no_tag():
     with pytest.raises(TypeError):
         TagsMixin(tag=None)
     with pytest.raises(TypeError):
         TagsMixin()
+
+
+# -- HTMLDocument.doc_after_cleaners() -----------------------------------------------------------
 
 
 def test_raises_error_wrong_elements(monkeypatch, sample_doc):
@@ -881,6 +953,9 @@ def test_filter_in_place():
     assert len(doc.elements) == 2
     doc.doc_after_cleaners(skip_table=True, inplace=True)
     assert len(doc.elements) == 1
+
+
+# -- HTMLDocument.elements -----------------------------------------------------------------------
 
 
 def test_joins_tag_text_correctly():
