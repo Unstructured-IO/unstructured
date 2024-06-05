@@ -312,13 +312,12 @@ test-unstructured-api-unit:
 	scripts/test-unstructured-api-unit.sh
 
 .PHONY: test-no-extras
-# TODO(newelh) Add json test when fixed
 test-no-extras:
 	PYTHONPATH=. CI=$(CI) \
 		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
-		test_${PACKAGE_NAME}/partition/test_html_partition.py \
+		test_${PACKAGE_NAME}/partition/test_html.py \
 		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
