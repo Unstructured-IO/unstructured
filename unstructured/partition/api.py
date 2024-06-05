@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import contextlib
-import json
 from typing import IO, Optional
 
 import requests
@@ -87,9 +86,9 @@ def partition_via_api(
     # NOTE(christine): Converts all list type parameters to JSON formatted strings
     # (e.g. ["image", "table"] -> '["image", "table"]')
     # This can be removed if "speakeasy" supports passing list type parameters to FastAPI.
-    for k, v in request_kwargs.items():
-        if isinstance(v, list):
-            request_kwargs[k] = json.dumps(v)
+    # for k, v in request_kwargs.items():
+    #     if isinstance(v, list):
+    #         request_kwargs[k] = json.dumps(v)
 
     req = shared.PartitionParameters(files=files, **request_kwargs)
     response = sdk.general.partition(req)
