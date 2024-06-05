@@ -5,6 +5,7 @@
 ### Features
 
 ### Fixes
+* **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
 
 ## 0.14.5
 
