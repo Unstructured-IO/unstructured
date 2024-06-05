@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+
 ### Features
 
 ### Fixes
