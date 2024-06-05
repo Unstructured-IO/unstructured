@@ -519,6 +519,11 @@ def _partition_pdf_or_image_local(
         process_file_with_pdfminer,
     )
 
+    if 'no_ocr_elements' in kwargs.keys():
+        no_ocr_elements = kwargs['no_ocr_elements']
+    else:
+        no_ocr_elements = []
+
     if languages is None:
         languages = ["eng"]
 
@@ -585,6 +590,7 @@ def _partition_pdf_or_image_local(
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
+                no_ocr_elements=no_ocr_elements,
                 pdf_image_dpi=pdf_image_dpi,
             )
     else:
@@ -626,6 +632,7 @@ def _partition_pdf_or_image_local(
                 infer_table_structure=infer_table_structure,
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
+                no_ocr_elements=no_ocr_elements,
                 pdf_image_dpi=pdf_image_dpi,
             )
 
