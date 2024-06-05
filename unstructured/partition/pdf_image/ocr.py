@@ -34,6 +34,8 @@ def process_data_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+# (BK) no_ocr_elements store elements that will not be ocr-ed (only works with ocr_mode="individual blocks")
+    no_ocr_elements: list = [],
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -75,6 +77,7 @@ def process_data_with_ocr(
             infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
+            no_ocr_elements=no_ocr_elements
             pdf_image_dpi=pdf_image_dpi,
         )
         return merged_layouts
@@ -89,6 +92,8 @@ def process_file_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+# (BK) no_ocr_elements store elements that will not be ocr-ed (only works with ocr_mode="individual blocks")
+    no_ocr_elements: list = [],
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -135,6 +140,7 @@ def process_file_with_ocr(
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
+                        no_ocr_elements=no_ocr_elements,
                         extracted_regions=extracted_regions,
                     )
                     merged_page_layouts.append(merged_page_layout)
@@ -157,6 +163,7 @@ def process_file_with_ocr(
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
+                            no_ocr_elements=no_ocr_elements,
                             extracted_regions=extracted_regions,
                         )
                         merged_page_layouts.append(merged_page_layout)
@@ -175,6 +182,7 @@ def supplement_page_layout_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
+    no_ocr_elements: list=[],
     extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> "PageLayout":
     """
@@ -198,23 +206,27 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if not element.text:
-                padding = env_config.IMAGE_CROP_PAD
-                padded_element = pad_element_bboxes(element, padding=padding)
-                cropped_image = image.crop(
-                    (
-                        padded_element.bbox.x1,
-                        padded_element.bbox.y1,
-                        padded_element.bbox.x2,
-                        padded_element.bbox.y2,
-                    ),
-                )
+# any element in no_ocr_elements will not be ocr-ed, it will return a value of -
+                if element.type in no_ocr_elements:
+                    element.text = "-"
+                else:
+                    padding = env_config.IMAGE_CROP_PAD
+                    padded_element = pad_element_bboxes(element, padding=padding)
+                    cropped_image = image.crop(
+                        (
+                            padded_element.bbox.x1,
+                            padded_element.bbox.y1,
+                            padded_element.bbox.x2,
+                            padded_element.bbox.y2,
+                        ),
+                    )
                 # Note(yuming): instead of getting OCR layout, we just need
                 # the text extraced from OCR for individual elements
-                text_from_ocr = ocr_agent.get_text_from_image(
-                    cropped_image,
-                    ocr_languages=ocr_languages,
-                )
-                element.text = text_from_ocr
+                    text_from_ocr = ocr_agent.get_text_from_image(
+                        cropped_image,
+                        ocr_languages=ocr_languages,
+                    )
+                    element.text = text_from_ocr
     else:
         raise ValueError(
             "Invalid OCR mode. Parameter `ocr_mode` "
