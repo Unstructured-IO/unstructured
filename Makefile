@@ -343,7 +343,9 @@ test-extra-markdown:
 
 .PHONY: test-extra-msg
 test-extra-msg:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py
+	# NOTE(scanny): exclude attachment test because partitioning attachments requires other extras
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py \
+          -k "not test_partition_msg_can_process_attachments"
 
 .PHONY: test-extra-odt
 test-extra-odt:
