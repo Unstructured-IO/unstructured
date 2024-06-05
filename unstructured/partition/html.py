@@ -133,7 +133,7 @@ def partition_html(
     elif url is not None:
         response = requests.get(url, headers=headers, verify=ssl_verify)
         if not response.ok:
-            raise ValueError(f"URL return an error: {response.status_code}")
+            raise ValueError(f"Error status code on GET of provided URL: {response.status_code}")
 
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/html"):
