@@ -43,7 +43,7 @@ class ChunkStep(PipelineStep):
         return False
 
     def get_output_filepath(self, filename: Path) -> Path:
-        hashed_output_file = f"{self.get_hash(extras=[filename.stem])}.json"
+        hashed_output_file = f"{self.get_hash(extras=[filename.name])}.json"
         filepath = (self.cache_dir / hashed_output_file).resolve()
         filepath.parent.mkdir(parents=True, exist_ok=True)
         return filepath

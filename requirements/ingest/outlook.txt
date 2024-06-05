@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/outlook.in
 #
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -37,7 +37,7 @@ pyjwt[crypto]==2.8.0
     # via msal
 pytz==2024.1
     # via office365-rest-python-client
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   msal

@@ -266,8 +266,8 @@ def partition_pdf_or_image(
                 for el in page_elements
             )
         except Exception as e:
-            logger.error(e)
-            logger.warning("PDF text extraction failed, skip text extraction...")
+            logger.debug(e)
+            logger.info("PDF text extraction failed, skip text extraction...")
 
     strategy = determine_pdf_or_image_strategy(
         strategy,

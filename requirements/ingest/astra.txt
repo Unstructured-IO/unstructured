@@ -16,7 +16,7 @@ cassandra-driver==3.29.1
     # via cassio
 cassio==0.1.7
     # via astrapy
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -69,7 +69,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   bson
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   cassio

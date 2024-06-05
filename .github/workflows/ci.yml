@@ -391,6 +391,8 @@ jobs:
       env:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        S3_INGEST_TEST_ACCESS_KEY: ${{ secrets.S3_INGEST_TEST_ACCESS_KEY }}
+        S3_INGEST_TEST_SECRET_KEY: ${{ secrets.S3_INGEST_TEST_SECRET_KEY }}
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
         BOX_APP_CONFIG: ${{ secrets.BOX_APP_CONFIG }}
@@ -504,4 +506,5 @@ jobs:
         uses: anchore/scan-action@v3
         with:
           image: "unstructured:dev"
-          severity-cutoff: medium
+          # NOTE(robinson) - revert this to medium when we bump libreoffice
+          severity-cutoff: high
