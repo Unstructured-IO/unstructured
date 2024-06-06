@@ -194,7 +194,7 @@ def test_it_does_not_consider_an_empty_table_a_bulleted_text_table():
         "</html>"
     )
     html_document = HTMLDocument.from_string(html_str)
-    html_elem = html_document.document_tree
+    html_elem = html_document._document_tree
     assert html_elem is not None
     table = html_elem.find(".//table")
     assert table is not None
@@ -562,7 +562,7 @@ def test_find_articles():
         </article>
     </body>"""
     html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document.document_tree
+    document_tree = html_document._document_tree
     articles = html._find_articles(document_tree)
     assert len(articles) == 2
 
@@ -581,7 +581,7 @@ def test_find_articles_returns_doc_when_none_present():
         </section>
     </body>"""
     html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document.document_tree
+    document_tree = html_document._document_tree
     articles = html._find_articles(document_tree)
     assert len(articles) == 1
 
@@ -607,7 +607,7 @@ def test_find_main():
         </main>
     </body>"""
     html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document.document_tree
+    document_tree = html_document._document_tree
     main_tag = html._find_main(document_tree)
     assert main_tag.tag == "main"
 
@@ -628,7 +628,7 @@ def test_find_main_returns_doc_when_main_not_present():
         </article>
     </body>"""
     html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document.document_tree
+    document_tree = html_document._document_tree
     root = html._find_main(document_tree)
     assert root.tag == "html"
 

@@ -47,9 +47,9 @@ class HTMLDocument:
     Uses rules based parsing to identify sections of interest within the document.
     """
 
-    def __init__(self, assemble_articles: bool = True):
+    def __init__(self, html_text: str, assemble_articles: bool = True):
+        self._html_text = html_text
         self._assemble_articles = assemble_articles
-        self.document_tree: etree._Element = None  # pyright: ignore[reportAttributeAccessIssue]
 
     @classmethod
     def from_file(
@@ -62,9 +62,7 @@ class HTMLDocument:
     def from_string(cls, text: str, **kwargs: Any) -> HTMLDocument:
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
-        doc = cls(**kwargs)
-        doc._read_xml(text)
-        return doc
+        return cls(text, **kwargs)
 
     @lazyproperty
     def elements(self) -> list[Element]:
@@ -74,6 +72,36 @@ class HTMLDocument:
     @lazyproperty
     def pages(self) -> list[Page]:
         return self._parse_pages_from_element_tree()
+
+    @lazyproperty
+    def _document_tree(self) -> etree._Element:
+        """The root HTML element."""
+        content = self._html_text
+        parser = etree.HTMLParser(remove_comments=True)
+        # NOTE(robinson) - without the carriage return at the beginning, you get
+        # output that looks like the following when you run partition_pdf
+        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
+        # The correct output is returned once you add the initial return.
+        if content and not content.startswith("\n"):
+            content = "\n" + content
+
+        try:
+            document_tree = etree.fromstring(content, parser)
+            if document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
+                raise ValueError("document_tree is None")
+
+        # NOTE(robinson) - The following ValueError occurs with unicode strings. In that case, we
+        # fall back to encoding the string and passing in bytes.
+        #     ValueError: Unicode strings with encoding declaration are not supported.
+        #     Please use bytes input or XML fragments without declaration.
+        except ValueError:
+            document_tree = etree.fromstring(content.encode(), parser)
+
+        # -- remove all <script> and <style> tags so we don't have to worry about accidentally
+        # -- parsing elements out of those.
+        etree.strip_elements(document_tree, ["script", "style"], with_tail=False)
+
+        return document_tree
 
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
@@ -85,8 +113,7 @@ class HTMLDocument:
         """
         logger.info("Reading document ...")
         pages: list[Page] = []
-        etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
-        root = _find_main(self.document_tree)
+        root = _find_main(self._document_tree)
 
         articles = _find_articles(root, assemble_articles=self._assemble_articles)
         page_number = 0
@@ -164,32 +191,6 @@ class HTMLDocument:
                 page = Page(number=page_number)
 
         return pages
-
-    def _read_xml(self, content: str):
-        """Reads in an XML file and converts it to an lxml element tree object."""
-        parser = etree.HTMLParser(remove_comments=True)
-        # NOTE(robinson) - without the carriage return at the beginning, you get
-        # output that looks like the following when you run partition_pdf
-        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
-        # The correct output is returned once you add the initial return.
-        if content and not content.startswith("\n"):
-            content = "\n" + content
-        if self.document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
-            try:
-                document_tree = etree.fromstring(content, parser)
-                if document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
-                    raise ValueError("document_tree is None")
-
-            # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
-            # case, we fall back to encoding the string and passing in bytes.
-            #     ValueError: Unicode strings with encoding declaration are not supported.
-            #     Please use  bytes input or XML fragments without declaration.
-            except ValueError:
-                document_tree = etree.fromstring(content.encode(), parser)
-
-            self.document_tree = document_tree
-
-        return self.document_tree
 
 
 class Page:
