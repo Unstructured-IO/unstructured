@@ -21,8 +21,28 @@ class UploadStager(BaseProcess, ABC):
     upload_stager_config: Optional[UploadStagerConfigT] = None
 
     @abstractmethod
-    def run(self, elements_filepath: Path, file_data: FileData, **kwargs: Any) -> Path:
+    def run(
+        self,
+        elements_filepath: Path,
+        file_data: FileData,
+        output_dir: Path,
+        output_filename: str,
+        **kwargs: Any
+    ) -> Path:
         pass
 
-    async def run_async(self, elements_filepath: Path, file_data: FileData, **kwargs: Any) -> Path:
-        return self.run(elements_filepath=elements_filepath, file_data=file_data, **kwargs)
+    async def run_async(
+        self,
+        elements_filepath: Path,
+        file_data: FileData,
+        output_dir: Path,
+        output_filename: str,
+        **kwargs: Any
+    ) -> Path:
+        return self.run(
+            elements_filepath=elements_filepath,
+            output_dir=output_dir,
+            output_filename=output_filename,
+            file_data=file_data,
+            **kwargs
+        )

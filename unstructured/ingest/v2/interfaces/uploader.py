@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -25,7 +25,7 @@ class UploadContent:
 
 @dataclass
 class Uploader(BaseProcess, BaseConnector, ABC):
-    upload_config: UploaderConfigT = field(default_factory=UploaderConfig)
+    upload_config: UploaderConfigT
 
     def is_async(self) -> bool:
         return False
