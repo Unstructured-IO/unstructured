@@ -28,7 +28,7 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
-from unstructured.documents.html import HTMLTable, TagsMixin
+from unstructured.documents.html_elements import HTMLTable, TagsMixin
 from unstructured.partition.html import partition_html
 
 # -- document-source (filename, file, text, url) -------------------------------------------------

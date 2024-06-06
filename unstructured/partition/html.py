@@ -6,7 +6,8 @@ import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument, TagsMixin
+from unstructured.documents.html import HTMLDocument
+from unstructured.documents.html_elements import TagsMixin
 from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text

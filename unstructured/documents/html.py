@@ -2,26 +2,21 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Final, Iterator, Optional, Sequence, cast
+from typing import Final, Iterator, Optional, cast
 
 from lxml import etree
 
-from unstructured.cleaners.core import (
-    clean_bullets,
-    replace_unicode_quotes,
-)
+from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import (
-    Address,
-    Element,
-    ElementMetadata,
-    EmailAddress,
-    Link,
-    ListItem,
-    NarrativeText,
-    Table,
-    Text,
-    Title,
+from unstructured.documents.elements import Element, ElementMetadata, Link
+from unstructured.documents.html_elements import (
+    HTMLAddress,
+    HTMLEmailAddress,
+    HTMLListItem,
+    HTMLNarrativeText,
+    HTMLTable,
+    HTMLText,
+    HTMLTitle,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -45,82 +40,6 @@ PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
 EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
-
-
-# -- HTML-specific document-elements and methods -------------------------------------------------
-
-
-class TagsMixin:
-    """Mixin that allows a class to retain tag information."""
-
-    def __init__(
-        self,
-        *args: Any,
-        tag: Optional[str] = None,
-        ancestortags: Sequence[str] = (),
-        links: Sequence[Link] = [],
-        emphasized_texts: Sequence[dict[str, str]] = [],
-        text_as_html: Optional[str] = None,
-        **kwargs: Any,
-    ):
-        if tag is None:
-            raise TypeError("tag argument must be passed and not None")
-        else:
-            self.tag = tag
-        self.ancestortags = ancestortags
-        self.links = links
-        self.emphasized_texts = emphasized_texts
-        self.text_as_html = text_as_html
-        super().__init__(*args, **kwargs)
-
-
-class HTMLText(TagsMixin, Text):
-    """Text with tag information."""
-
-
-class HTMLAddress(TagsMixin, Address):
-    """Address with tag information."""
-
-
-class HTMLEmailAddress(TagsMixin, EmailAddress):
-    """EmailAddress with tag information"""
-
-
-class HTMLTitle(TagsMixin, Title):
-    """Title with tag information."""
-
-
-class HTMLNarrativeText(TagsMixin, NarrativeText):
-    """NarrativeText with tag information."""
-
-
-class HTMLListItem(TagsMixin, ListItem):
-    """NarrativeText with tag information."""
-
-
-class HTMLTable(TagsMixin, Table):
-    """NarrativeText with tag information"""
-
-
-def has_table_ancestor(element: TagsMixin) -> bool:
-    """Checks to see if an element has ancestors that are table elements. If so, we consider
-    it to be a table element rather than a section of narrative text."""
-    return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
-
-
-def in_header_or_footer(element: TagsMixin) -> bool:
-    """Checks to see if an element is contained within a header or a footer tag."""
-    if any(ancestor in HEADER_OR_FOOTER_TAGS for ancestor in element.ancestortags):
-        return True
-    return False
-
-
-def is_table(element: TagsMixin) -> bool:
-    """Checks to see if an element is a table"""
-    return element.tag in TABLE_TAGS
-
-
-# -- HTML element-tree processing ----------------------------------------------------------------
 
 
 class HTMLDocument(XMLDocument):
@@ -200,7 +119,7 @@ class HTMLDocument(XMLDocument):
                     page.elements.extend(bulleted_text)
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
 
-                elif is_list_item_tag(tag_elem):
+                elif _is_list_item_tag(tag_elem):
                     element, next_element = _process_list_item(tag_elem)
                     if element is not None:
                         page.elements.append(element)
@@ -228,67 +147,170 @@ class HTMLDocument(XMLDocument):
 
         return pages
 
-    def doc_after_cleaners(
-        self,
-        skip_headers_and_footers: bool = False,
-        skip_table: bool = False,
-        inplace: bool = False,
-    ) -> HTMLDocument:
-        """Filters elements returning new instance based on the criteria specified.
 
-        Note that the number of pages can change in the case that all elements on a page are
-        filtered out.
+# -- candidate HTMLDocument methods --------------------------------------------------------------
 
-        Parameters
-        ----------
-        skip_table:
-            If True, skips table element
-        skip_headers_and_footers:
-            If True, ignores any content that is within <header> or <footer> tags
-        inplace:
-            If True, document is modified in place and returned.
-        """
-        excluders: list[Callable[[TagsMixin], bool]] = []
-        if skip_headers_and_footers:
-            excluders.append(in_header_or_footer)
-        if skip_table:
-            excluders.append(is_table)
 
-        pages: list[Page] = []
-        page_number = 0
-        new_page = Page(number=page_number)
-        for page in self.pages:
-            elements: list[Element] = []
-            for el in page.elements:
-                if not isinstance(el, TagsMixin):
-                    raise ValueError(
-                        f"elements of class {self.__class__} should be of type HTMLTitle "
-                        f"HTMLNarrativeText, or HTMLListItem but "
-                        f"object has an element of type {type(el)}",
-                    )
-                if not any(excluder(el) for excluder in excluders):
-                    elements.append(el)
-                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (el.tag,):
-                    break
-            if elements:
-                new_page.elements = elements
-                pages.append(new_page)
-                page_number += 1
-                new_page = Page(number=page_number)
-        if inplace:
-            self._pages = pages
-            self._elements = None
-            return self
-        else:
-            out = self.__class__.from_pages(pages)
-            if not isinstance(out, HTMLDocument):
-                # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
-                # Added type check because from_pages is a method on Document. Without the type
-                # check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(
-                    f"Unexpected class: {self.__class__.__name__}",
-                )  # pragma: no cover
-            return out
+def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
+    """Parse articles from `root` of an HTML document.
+
+    Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
+    elements are present, the entire document (`root`) is returned as the single document article.
+    """
+    if assemble_articles is False:
+        return [root]
+
+    articles = root.findall(".//article")
+    if len(articles) == 0:
+        # NOTE(robinson) - ref: https://schema.org/Article
+        articles = root.findall(".//div[@itemprop='articleBody']")
+    return [root] if len(articles) == 0 else articles
+
+
+def _find_main(root: etree._Element) -> etree._Element:
+    """The first <main> tag under `root` if it exists, othewise `root`."""
+    main_tag_elem = root.find(".//main")
+    return main_tag_elem if main_tag_elem is not None else root
+
+
+# -- tag classifiers -----------------------------------------------------------------------------
+
+
+def _is_bulleted_table(table_elem: etree._Element) -> bool:
+    """True when all text in `table_elem` is bulleted text.
+
+    A table-row containing no text is not considered, but at least one bulleted-text item must be
+    present. A table with no text in any row is not a bulleted table.
+    """
+    if table_elem.tag != "table":
+        return False
+
+    trs = table_elem.findall(".//tr")
+    tr_texts = [_construct_text(tr) for tr in trs]
+
+    # -- a table with no text is not a bulleted table --
+    if all(not text for text in tr_texts):
+        return False
+
+    # -- all non-empty rows must contain bulleted text --
+    if any(text and not is_bulleted_text(text) for text in tr_texts):
+        return False
+
+    return True
+
+
+def _is_container_with_text(tag_elem: etree._Element) -> bool:
+    """Checks if a tag is a container that also happens to contain text.
+
+    Example
+    -------
+    <div>Hi there,
+        <div>This is my message.</div>
+        <div>Please read my message!</div>
+    </div>
+    """
+    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
+        return False
+
+    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
+    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+    if not tag_elem_text and not tag_elem_tail:
+        return False
+
+    return True
+
+
+def _is_list_item_tag(tag_elem: etree._Element) -> bool:
+    """True when `tag_elem` contains bulleted text."""
+    return tag_elem.tag in LIST_ITEM_TAGS or (
+        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
+    )
+
+
+def _is_text_tag(
+    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
+) -> bool:
+    """True when `tag_element` potentially contains narrative text."""
+    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+    # it could be the text representation of a giant div
+    # Exclude empty tags from tag_elem
+    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
+    if len(tag_elem) > max_predecessor_len + empty_elems_len:
+        return False
+
+    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
+        return True
+
+    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
+    # case and the tag has text, its potential a text tag
+    children = list(tag_elem)
+    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
+        return True
+
+    if _has_adjacent_bulleted_spans(tag_elem, children):
+        return True
+
+    return False
+
+
+# -- tag processors ------------------------------------------------------------------------------
+
+
+def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
+    """Extracts bulletized narrative text from the `<table>` element in `table`.
+
+    NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
+    will drop non-bullet narrative text in the table.
+    """
+    bulleted_text: list[Element] = []
+    rows = table.findall(".//tr")
+    for row in rows:
+        text = _construct_text(row)
+        if is_bulleted_text(text):
+            bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
+    return bulleted_text
+
+
+def _construct_text(tag_elem: etree._Element, include_tail_text: bool = True) -> str:
+    """Extract "clean"" text from `tag_elem`."""
+    text = "".join(str(t) for t in tag_elem.itertext() if t)
+
+    if include_tail_text and tag_elem.tail:
+        text = text + tag_elem.tail
+
+    text = replace_unicode_quotes(text)
+    return text.strip()
+
+
+def _get_bullet_descendants(
+    element: Optional[etree._Element], next_element: Optional[etree._Element]
+) -> tuple[etree._Element, ...]:
+    """Helper for list-item processing.
+
+    Gathers the descendants of `next_element` so they can be marked visited.
+    """
+    return () if element is None or next_element is None else tuple(next_element.iterdescendants())
+
+
+def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
+    """Emphasized text within and below `tag_element`.
+
+    Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
+    """
+    emphasized_texts: list[dict[str, str]] = []
+    tags_to_track = ["strong", "em", "span", "b", "i"]
+
+    if tag_elem.tag in tags_to_track:
+        text = _construct_text(tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
+
+    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
+        text = _construct_text(descendant_tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+
+    return emphasized_texts
 
 
 def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
@@ -313,27 +335,23 @@ def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
     return links
 
 
-def _is_bulleted_table(table_elem: etree._Element) -> bool:
-    """True when all text in `table_elem` is bulleted text.
+def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
+    """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
 
-    A table-row containing no text is not considered, but at least one bulleted-text item must be
-    present. A table with no text in any row is not a bulleted table.
+    A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
+    they are treated as a single bulleted text element.
     """
-    if table_elem.tag != "table":
-        return False
+    if tag_elem.tag in SECTION_TAGS:
+        all_spans = all(child.tag == "span" for child in children)
+        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+        if all_spans and _is_bulleted:
+            return True
+    return False
 
-    trs = table_elem.findall(".//tr")
-    tr_texts = [_construct_text(tr) for tr in trs]
 
-    # -- a table with no text is not a bulleted table --
-    if all(not text for text in tr_texts):
-        return False
-
-    # -- all non-empty rows must contain bulleted text --
-    if any(text and not is_bulleted_text(text) for text in tr_texts):
-        return False
-
-    return True
+def _has_break_tags(tag_elem: etree._Element) -> bool:
+    """True when `tab_elem` contains a `<br>` descendant."""
+    return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
 def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
@@ -378,27 +396,6 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     )
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
-    """Emphasized text within and below `tag_element`.
-
-    Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
-    """
-    emphasized_texts: list[dict[str, str]] = []
-    tags_to_track = ["strong", "em", "span", "b", "i"]
-
-    if tag_elem.tag in tags_to_track:
-        text = _construct_text(tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
-
-    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
-        text = _construct_text(descendant_tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
-
-    return emphasized_texts
-
-
 def _parse_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
@@ -438,193 +435,6 @@ def _parse_tag(
         emphasized_texts=emphasized_texts,
         depth=depth,
     )
-
-
-def _text_to_element(
-    text: str,
-    tag: str,
-    ancestortags: tuple[str, ...],
-    depth: int,
-    links: list[Link] = [],
-    emphasized_texts: list[dict[str, str]] = [],
-) -> Optional[Element]:
-    """Produce a document-element of the appropriate sub-type for `text`."""
-    if is_bulleted_text(text):
-        if not clean_bullets(text):
-            return None
-        return HTMLListItem(
-            text=clean_bullets(text),
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-            metadata=ElementMetadata(category_depth=depth),
-        )
-    elif is_us_city_state_zip(text):
-        return HTMLAddress(
-            text=text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
-    elif is_email_address(text):
-        return HTMLEmailAddress(
-            text=text,
-            tag=tag,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
-
-    if len(text) < 2:
-        return None
-    elif is_narrative_tag(text, tag):
-        return HTMLNarrativeText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
-    elif is_heading_tag(tag) or is_possible_title(text):
-        return HTMLTitle(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-            metadata=ElementMetadata(category_depth=depth),
-        )
-    else:
-        return HTMLText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
-
-
-def _is_container_with_text(tag_elem: etree._Element) -> bool:
-    """Checks if a tag is a container that also happens to contain text.
-
-    Example
-    -------
-    <div>Hi there,
-        <div>This is my message.</div>
-        <div>Please read my message!</div>
-    </div>
-    """
-    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
-        return False
-
-    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
-    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
-    if not tag_elem_text and not tag_elem_tail:
-        return False
-
-    return True
-
-
-def is_narrative_tag(text: str, tag: str) -> bool:
-    """Uses tag information to infer whether text is narrative."""
-    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
-
-
-def is_heading_tag(tag: str) -> bool:
-    """Uses tag information to infer whether text is a heading."""
-    return tag in HEADING_TAGS
-
-
-def _construct_text(tag_elem: etree._Element, include_tail_text: bool = True) -> str:
-    """Extract "clean"" text from `tag_elem`."""
-    text = "".join(str(t) for t in tag_elem.itertext() if t)
-
-    if include_tail_text and tag_elem.tail:
-        text = text + tag_elem.tail
-
-    text = replace_unicode_quotes(text)
-    return text.strip()
-
-
-def _has_break_tags(tag_elem: etree._Element) -> bool:
-    """True when `tab_elem` contains a `<br>` descendant."""
-    return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
-
-
-def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
-    """Sequence of `tag_elem` and its children with `<br>` elements removed.
-
-    NOTE that these are "loose" `etree._Element` instances that are NOT linked to the original HTML
-    element-tree, so methods like `.getchildren()`, `.find()` etc. will happily produce empty
-    results.
-    """
-    unfurled: list[etree._Element] = []
-
-    if tag_elem.text:
-        _tag_elem = etree.Element(tag_elem.tag)
-        _tag_elem.text = tag_elem.text
-        unfurled.append(_tag_elem)
-
-    for child in tag_elem:
-        if not _has_break_tags(child):
-            unfurled.append(child)
-        else:
-            if child.text:
-                _tag_elem = etree.Element(child.tag)
-                _tag_elem.text = child.text
-                unfurled.append(_tag_elem)
-            unfurled.extend(_unfurl_break_tags(child))
-
-    return unfurled
-
-
-def _is_text_tag(
-    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
-) -> bool:
-    """True when `tag_element` potentially contains narrative text."""
-    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-    # it could be the text representation of a giant div
-    # Exclude empty tags from tag_elem
-    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
-    if len(tag_elem) > max_predecessor_len + empty_elems_len:
-        return False
-
-    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
-        return True
-
-    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
-    # case and the tag has text, its potential a text tag
-    children = list(tag_elem)
-    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
-        return True
-
-    if _has_adjacent_bulleted_spans(tag_elem, children):
-        return True
-
-    return False
-
-
-def _process_text_tag(
-    tag_elem: etree._Element, include_tail_text: bool = True
-) -> tuple[list[Element], tuple[etree._Element, ...]]:
-    """Produces a document element from `tag_elem`."""
-
-    page_elements: list[Element] = []
-    if _has_break_tags(tag_elem):
-        flattened_elems = _unfurl_break_tags(tag_elem)
-        for _tag_elem in flattened_elems:
-            element = _parse_tag(_tag_elem, include_tail_text)
-            if element is not None:
-                page_elements.append(element)
-
-    else:
-        element = _parse_tag(tag_elem, include_tail_text)
-        if element is not None:
-            page_elements.append(element)
-    descendant_tag_elems = tuple(tag_elem.iterdescendants())
-
-    return page_elements, descendant_tag_elems
 
 
 def _process_list_item(
@@ -671,69 +481,131 @@ def _process_list_item(
     return None, None
 
 
-def _get_bullet_descendants(
-    element: Optional[etree._Element], next_element: Optional[etree._Element]
-) -> tuple[etree._Element, ...]:
-    """Helper for list-item processing.
+def _process_text_tag(
+    tag_elem: etree._Element, include_tail_text: bool = True
+) -> tuple[list[Element], tuple[etree._Element, ...]]:
+    """Produces a document element from `tag_elem`."""
 
-    Gathers the descendants of `next_element` so they can be marked visited.
+    page_elements: list[Element] = []
+    if _has_break_tags(tag_elem):
+        flattened_elems = _unfurl_break_tags(tag_elem)
+        for _tag_elem in flattened_elems:
+            element = _parse_tag(_tag_elem, include_tail_text)
+            if element is not None:
+                page_elements.append(element)
+
+    else:
+        element = _parse_tag(tag_elem, include_tail_text)
+        if element is not None:
+            page_elements.append(element)
+    descendant_tag_elems = tuple(tag_elem.iterdescendants())
+
+    return page_elements, descendant_tag_elems
+
+
+def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
+    """Sequence of `tag_elem` and its children with `<br>` elements removed.
+
+    NOTE that these are "loose" `etree._Element` instances that are NOT linked to the original HTML
+    element-tree, so methods like `.getchildren()`, `.find()` etc. will happily produce empty
+    results.
     """
-    return () if element is None or next_element is None else tuple(next_element.iterdescendants())
+    unfurled: list[etree._Element] = []
+
+    if tag_elem.text:
+        _tag_elem = etree.Element(tag_elem.tag)
+        _tag_elem.text = tag_elem.text
+        unfurled.append(_tag_elem)
+
+    for child in tag_elem:
+        if not _has_break_tags(child):
+            unfurled.append(child)
+        else:
+            if child.text:
+                _tag_elem = etree.Element(child.tag)
+                _tag_elem.text = child.text
+                unfurled.append(_tag_elem)
+            unfurled.extend(_unfurl_break_tags(child))
+
+    return unfurled
 
 
-def is_list_item_tag(tag_elem: etree._Element) -> bool:
-    """True when `tag_elem` contains bulleted text."""
-    return tag_elem.tag in LIST_ITEM_TAGS or (
-        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
-    )
+# -- text-element classifier ---------------------------------------------------------------------
 
 
-def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
-    """Extracts bulletized narrative text from the `<table>` element in `table`.
+def _text_to_element(
+    text: str,
+    tag: str,
+    ancestortags: tuple[str, ...],
+    depth: int,
+    links: list[Link] = [],
+    emphasized_texts: list[dict[str, str]] = [],
+) -> Optional[Element]:
+    """Produce a document-element of the appropriate sub-type for `text`."""
+    if is_bulleted_text(text):
+        if not clean_bullets(text):
+            return None
+        return HTMLListItem(
+            text=clean_bullets(text),
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+            metadata=ElementMetadata(category_depth=depth),
+        )
+    elif is_us_city_state_zip(text):
+        return HTMLAddress(
+            text=text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
+    elif is_email_address(text):
+        return HTMLEmailAddress(
+            text=text,
+            tag=tag,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
 
-    NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
-    will drop non-bullet narrative text in the table.
-    """
-    bulleted_text: list[Element] = []
-    rows = table.findall(".//tr")
-    for row in rows:
-        text = _construct_text(row)
-        if is_bulleted_text(text):
-            bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
-    return bulleted_text
+    if len(text) < 2:
+        return None
+    elif _is_narrative_tag(text, tag):
+        return HTMLNarrativeText(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
+    elif _is_heading_tag(tag) or is_possible_title(text):
+        return HTMLTitle(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+            metadata=ElementMetadata(category_depth=depth),
+        )
+    else:
+        return HTMLText(
+            text,
+            tag=tag,
+            ancestortags=ancestortags,
+            links=links,
+            emphasized_texts=emphasized_texts,
+        )
 
 
-def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
-    """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
-
-    A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
-    they are treated as a single bulleted text element.
-    """
-    if tag_elem.tag in SECTION_TAGS:
-        all_spans = all(child.tag == "span" for child in children)
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
-        if all_spans and _is_bulleted:
-            return True
-    return False
+# -- HTML-specific text classifiers --------------------------------------------------------------
 
 
-def _find_main(root: etree._Element) -> etree._Element:
-    """The first <main> tag under `root` if it exists, othewise `root`."""
-    main_tag_elem = root.find(".//main")
-    return main_tag_elem if main_tag_elem is not None else root
+def _is_heading_tag(tag: str) -> bool:
+    """Uses tag information to infer whether text is a heading."""
+    return tag in HEADING_TAGS
 
 
-def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
-    """Parse articles from `root` of an HTML document.
-
-    Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
-    elements are present, the entire document (`root`) is returned as the single document article.
-    """
-    if assemble_articles is False:
-        return [root]
-
-    articles = root.findall(".//article")
-    if len(articles) == 0:
-        # NOTE(robinson) - ref: https://schema.org/Article
-        articles = root.findall(".//div[@itemprop='articleBody']")
-    return [root] if len(articles) == 0 else articles
+def _is_narrative_tag(text: str, tag: str) -> bool:
+    """Uses tag information to infer whether text is narrative."""
+    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
