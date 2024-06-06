@@ -43,12 +43,6 @@ HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
 
-def has_table_ancestor(element: TagsMixin) -> bool:
-    """Checks to see if an element has ancestors that are table elements. If so, we consider
-    it to be a table element rather than a section of narrative text."""
-    return any(ancestor in TABLE_TAGS for ancestor in element.ancestortags)
-
-
 def in_header_or_footer(element: TagsMixin) -> bool:
     """Checks to see if an element is contained within a header or a footer tag."""
     if any(ancestor in HEADER_OR_FOOTER_TAGS for ancestor in element.ancestortags):

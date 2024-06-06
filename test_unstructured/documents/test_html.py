@@ -574,19 +574,6 @@ def test_exclude_tag_types(tag: str):
     assert len(html_document.pages) == 0
 
 
-# -- has_table_ancestor() ------------------------------------------------------------------------
-
-
-def test_has_table_ancestor():
-    title = HTMLTitle("I am a Title", tag="td", ancestortags=["html", "body", "table", "tr"])
-    assert html.has_table_ancestor(title)
-
-
-def test_has_no_table_ancestor():
-    title = HTMLTitle("I am a Title", tag="p", ancestortags=["html", "body"])
-    assert not html.has_table_ancestor(title)
-
-
 # -- _bulleted_text_from_table() -----------------------------------------------------------------
 
 
