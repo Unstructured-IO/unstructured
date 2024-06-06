@@ -481,7 +481,56 @@ def _process_list_item(
     return None, None
 
 
-# ------------------------------------------------------------------------------------------------
+def _process_text_tag(
+    tag_elem: etree._Element, include_tail_text: bool = True
+) -> tuple[list[Element], tuple[etree._Element, ...]]:
+    """Produces a document element from `tag_elem`."""
+
+    page_elements: list[Element] = []
+    if _has_break_tags(tag_elem):
+        flattened_elems = _unfurl_break_tags(tag_elem)
+        for _tag_elem in flattened_elems:
+            element = _parse_tag(_tag_elem, include_tail_text)
+            if element is not None:
+                page_elements.append(element)
+
+    else:
+        element = _parse_tag(tag_elem, include_tail_text)
+        if element is not None:
+            page_elements.append(element)
+    descendant_tag_elems = tuple(tag_elem.iterdescendants())
+
+    return page_elements, descendant_tag_elems
+
+
+def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
+    """Sequence of `tag_elem` and its children with `<br>` elements removed.
+
+    NOTE that these are "loose" `etree._Element` instances that are NOT linked to the original HTML
+    element-tree, so methods like `.getchildren()`, `.find()` etc. will happily produce empty
+    results.
+    """
+    unfurled: list[etree._Element] = []
+
+    if tag_elem.text:
+        _tag_elem = etree.Element(tag_elem.tag)
+        _tag_elem.text = tag_elem.text
+        unfurled.append(_tag_elem)
+
+    for child in tag_elem:
+        if not _has_break_tags(child):
+            unfurled.append(child)
+        else:
+            if child.text:
+                _tag_elem = etree.Element(child.tag)
+                _tag_elem.text = child.text
+                unfurled.append(_tag_elem)
+            unfurled.extend(_unfurl_break_tags(child))
+
+    return unfurled
+
+
+# -- text-element classifier ---------------------------------------------------------------------
 
 
 def _text_to_element(
@@ -549,9 +598,7 @@ def _text_to_element(
         )
 
 
-def _is_narrative_tag(text: str, tag: str) -> bool:
-    """Uses tag information to infer whether text is narrative."""
-    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
+# -- HTML-specific text classifiers --------------------------------------------------------------
 
 
 def _is_heading_tag(tag: str) -> bool:
@@ -559,50 +606,6 @@ def _is_heading_tag(tag: str) -> bool:
     return tag in HEADING_TAGS
 
 
-def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
-    """Sequence of `tag_elem` and its children with `<br>` elements removed.
-
-    NOTE that these are "loose" `etree._Element` instances that are NOT linked to the original HTML
-    element-tree, so methods like `.getchildren()`, `.find()` etc. will happily produce empty
-    results.
-    """
-    unfurled: list[etree._Element] = []
-
-    if tag_elem.text:
-        _tag_elem = etree.Element(tag_elem.tag)
-        _tag_elem.text = tag_elem.text
-        unfurled.append(_tag_elem)
-
-    for child in tag_elem:
-        if not _has_break_tags(child):
-            unfurled.append(child)
-        else:
-            if child.text:
-                _tag_elem = etree.Element(child.tag)
-                _tag_elem.text = child.text
-                unfurled.append(_tag_elem)
-            unfurled.extend(_unfurl_break_tags(child))
-
-    return unfurled
-
-
-def _process_text_tag(
-    tag_elem: etree._Element, include_tail_text: bool = True
-) -> tuple[list[Element], tuple[etree._Element, ...]]:
-    """Produces a document element from `tag_elem`."""
-
-    page_elements: list[Element] = []
-    if _has_break_tags(tag_elem):
-        flattened_elems = _unfurl_break_tags(tag_elem)
-        for _tag_elem in flattened_elems:
-            element = _parse_tag(_tag_elem, include_tail_text)
-            if element is not None:
-                page_elements.append(element)
-
-    else:
-        element = _parse_tag(tag_elem, include_tail_text)
-        if element is not None:
-            page_elements.append(element)
-    descendant_tag_elems = tuple(tag_elem.iterdescendants())
-
-    return page_elements, descendant_tag_elems
+def _is_narrative_tag(text: str, tag: str) -> bool:
+    """Uses tag information to infer whether text is narrative."""
+    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
