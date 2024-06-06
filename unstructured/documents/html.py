@@ -2,15 +2,7 @@
 
 from __future__ import annotations
 
-import sys
-from typing import Any, Callable, Dict, Iterator, List, Optional, Sequence, Tuple, cast
-
-from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
-
-if sys.version_info < (3, 8):
-    from typing_extensions import Final
-else:
-    from typing import Final
+from typing import Any, Callable, Final, Iterator, Optional, Sequence, cast
 
 from lxml import etree
 
@@ -40,18 +32,19 @@ from unstructured.partition.text_type import (
     is_possible_title,
     is_us_city_state_zip,
 )
+from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
 from unstructured.utils import htmlify_matrix_of_cell_texts
 
-TEXT_TAGS: Final[List[str]] = ["p", "a", "td", "span", "b", "font"]
-LIST_ITEM_TAGS: Final[List[str]] = ["li", "dd"]
-LIST_TAGS: Final[List[str]] = ["ul", "ol", "dl"]
-HEADING_TAGS: Final[List[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
-TABLE_TAGS: Final[List[str]] = ["table", "tbody", "td", "tr"]
-TEXTBREAK_TAGS: Final[List[str]] = ["br"]
-PAGEBREAK_TAGS: Final[List[str]] = ["hr"]
-EMPTY_TAGS: Final[List[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
-HEADER_OR_FOOTER_TAGS: Final[List[str]] = ["header", "footer"]
-SECTION_TAGS: Final[List[str]] = ["div", "pre"]
+TEXT_TAGS: Final[list[str]] = ["p", "a", "td", "span", "b", "font"]
+LIST_ITEM_TAGS: Final[list[str]] = ["li", "dd"]
+LIST_TAGS: Final[list[str]] = ["ul", "ol", "dl"]
+HEADING_TAGS: Final[list[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
+TABLE_TAGS: Final[list[str]] = ["table", "tbody", "td", "tr"]
+TEXTBREAK_TAGS: Final[list[str]] = ["br"]
+PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
+EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
+HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
+SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
 
 # -- HTML-specific document-elements and methods -------------------------------------------------
@@ -66,7 +59,7 @@ class TagsMixin:
         tag: Optional[str] = None,
         ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
-        emphasized_texts: Sequence[Dict[str, str]] = [],
+        emphasized_texts: Sequence[dict[str, str]] = [],
         text_as_html: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -143,7 +136,7 @@ class HTMLDocument(XMLDocument):
         self.assembled_articles = assemble_articles
         super().__init__(stylesheet=stylesheet, parser=parser)
 
-    def _parse_pages_from_element_tree(self) -> List[Page]:
+    def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
 
         A *page* is a subsequence of the document-elements parsed from the HTML document
@@ -154,7 +147,7 @@ class HTMLDocument(XMLDocument):
         if self._pages:
             return self._pages
         logger.info("Reading document ...")
-        pages: List[Page] = []
+        pages: list[Page] = []
         etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
         root = _find_main(self.document_tree)
 
@@ -162,7 +155,7 @@ class HTMLDocument(XMLDocument):
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
-            descendanttag_elems: Tuple[etree._Element, ...] = ()
+            descendanttag_elems: tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
                 if tag_elem in descendanttag_elems:
                     # Prevent repeating something that's been flagged as text as we chase it
@@ -180,6 +173,7 @@ class HTMLDocument(XMLDocument):
                         page.elements.extend(_page_elements)
 
                         # NOTE(christine): generate a separate element using a tag tail
+                        assert tag_elem.tail is not None
                         element = _text_to_element(
                             tag_elem.tail,
                             tag_elem.tag,
@@ -189,6 +183,7 @@ class HTMLDocument(XMLDocument):
                     else:
                         links = _get_links_from_tag(tag_elem)
                         emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                        assert tag_elem.text is not None
                         element = _text_to_element(
                             tag_elem.text,
                             tag_elem.tag,
@@ -253,17 +248,17 @@ class HTMLDocument(XMLDocument):
         inplace:
             If True, document is modified in place and returned.
         """
-        excluders: List[Callable[[TagsMixin], bool]] = []
+        excluders: list[Callable[[TagsMixin], bool]] = []
         if skip_headers_and_footers:
             excluders.append(in_header_or_footer)
         if skip_table:
             excluders.append(is_table)
 
-        pages: List[Page] = []
+        pages: list[Page] = []
         page_number = 0
         new_page = Page(number=page_number)
         for page in self.pages:
-            elements: List[Element] = []
+            elements: list[Element] = []
             for el in page.elements:
                 if not isinstance(el, TagsMixin):
                     raise ValueError(
@@ -296,9 +291,9 @@ class HTMLDocument(XMLDocument):
             return out
 
 
-def _get_links_from_tag(tag_elem: etree._Element) -> List[Link]:
+def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
     """Hyperlinks within and below `tag_elem`."""
-    links: List[Link] = []
+    links: list[Link] = []
     tag_elem_href = tag_elem.get("href")
     if tag_elem_href:
         tag_elem_text = _construct_text(tag_elem, False)
@@ -351,7 +346,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     # -- cell within the table within the cell too.)
 
     trs = cast(
-        List[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
+        list[etree._Element], table_elem.xpath("./tr | ./thead/tr | ./tbody/tr | ./tfoot/tr")
     )
 
     if not trs:
@@ -360,12 +355,12 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     def iter_cell_texts(tr: etree._Element) -> Iterator[str]:
         """Generate the text of each cell in `tr`."""
         # -- a cell can be either a "data" cell (td) or a "heading" cell (th) --
-        tds = cast(List[etree._Element], tr.xpath("./td | ./th"))
+        tds = cast(list[etree._Element], tr.xpath("./td | ./th"))
         for td in tds:
             # -- a cell can contain other elements like spans etc. so we can't count on the text
             # -- being directly below the `<td>` element. `.itertext()` gets all of it recursively.
             # -- Filter out whitespace text nodes that result from HTML formatting.
-            stripped_text_nodes = (t.strip() for t in cast(Iterator[str], td.itertext()))
+            stripped_text_nodes = (t.strip() for t in td.itertext())
             yield " ".join(t for t in stripped_text_nodes if t)
 
     table_data = [list(iter_cell_texts(tr)) for tr in trs]
@@ -383,12 +378,12 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     )
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> List[Dict[str, str]]:
+def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
     """Emphasized text within and below `tag_element`.
 
     Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
     """
-    emphasized_texts: List[Dict[str, str]] = []
+    emphasized_texts: list[dict[str, str]] = []
     tags_to_track = ["strong", "em", "span", "b", "i"]
 
     if tag_elem.tag in tags_to_track:
@@ -414,7 +409,7 @@ def _parse_tag(
     the document tree again. In the future we might want to keep descendants too, but we don't have
     a use for them at the moment.
     """
-    ancestortags: Tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
+    ancestortags: tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
     links = _get_links_from_tag(tag_elem)
     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
@@ -448,10 +443,10 @@ def _parse_tag(
 def _text_to_element(
     text: str,
     tag: str,
-    ancestortags: Tuple[str, ...],
+    ancestortags: tuple[str, ...],
     depth: int,
-    links: List[Link] = [],
-    emphasized_texts: List[Dict[str, str]] = [],
+    links: list[Link] = [],
+    emphasized_texts: list[dict[str, str]] = [],
 ) -> Optional[Element]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
@@ -557,22 +552,21 @@ def _has_break_tags(tag_elem: etree._Element) -> bool:
     return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
-def _unfurl_break_tags(tag_elem: etree._Element) -> List[etree._Element]:
+def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
     """Sequence of `tag_elem` and its children with `<br>` elements removed.
 
     NOTE that these are "loose" `etree._Element` instances that are NOT linked to the original HTML
     element-tree, so methods like `.getchildren()`, `.find()` etc. will happily produce empty
     results.
     """
-    unfurled: List[etree._Element] = []
+    unfurled: list[etree._Element] = []
 
     if tag_elem.text:
         _tag_elem = etree.Element(tag_elem.tag)
         _tag_elem.text = tag_elem.text
         unfurled.append(_tag_elem)
 
-    children = tag_elem.getchildren()
-    for child in children:
+    for child in tag_elem:
         if not _has_break_tags(child):
             unfurled.append(child)
         else:
@@ -586,14 +580,13 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> List[etree._Element]:
 
 
 def _is_text_tag(
-    tag_elem: etree._Element,
-    max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
+    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
 ) -> bool:
     """True when `tag_element` potentially contains narrative text."""
     # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
     # it could be the text representation of a giant div
     # Exclude empty tags from tag_elem
-    empty_elems_len = len([el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS])
+    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
     if len(tag_elem) > max_predecessor_len + empty_elems_len:
         return False
 
@@ -602,7 +595,7 @@ def _is_text_tag(
 
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
     # case and the tag has text, its potential a text tag
-    children = tag_elem.getchildren()
+    children = list(tag_elem)
     if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
         return True
 
@@ -613,12 +606,11 @@ def _is_text_tag(
 
 
 def _process_text_tag(
-    tag_elem: etree._Element,
-    include_tail_text: bool = True,
-) -> tuple[list[Element], tuple[etree._Element]]:
+    tag_elem: etree._Element, include_tail_text: bool = True
+) -> tuple[list[Element], tuple[etree._Element, ...]]:
     """Produces a document element from `tag_elem`."""
 
-    page_elements = []
+    page_elements: list[Element] = []
     if _has_break_tags(tag_elem):
         flattened_elems = _unfurl_break_tags(tag_elem)
         for _tag_elem in flattened_elems:
@@ -638,7 +630,7 @@ def _process_text_tag(
 def _process_list_item(
     tag_elem: etree._Element,
     max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
-) -> Tuple[Optional[Element], Optional[etree._Element]]:
+) -> tuple[Optional[Element], Optional[etree._Element]]:
     """Produces an `HTMLListItem` document element from `tag_elem`.
 
     When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also returns
@@ -670,9 +662,7 @@ def _process_list_item(
         next_text = _construct_text(next_element)
         # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
         # it could be the text representation of a giant div
-        empty_elems_len = len(
-            [el for el in tag_elem.getchildren() if el.tag in EMPTY_TAGS],
-        )
+        empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
         if len(tag_elem) > max_predecessor_len + empty_elems_len:
             return None, None
         if next_text:
@@ -683,7 +673,7 @@ def _process_list_item(
 
 def _get_bullet_descendants(
     element: Optional[etree._Element], next_element: Optional[etree._Element]
-) -> Tuple[etree._Element, ...]:
+) -> tuple[etree._Element, ...]:
     """Helper for list-item processing.
 
     Gathers the descendants of `next_element` so they can be marked visited.
@@ -698,13 +688,13 @@ def is_list_item_tag(tag_elem: etree._Element) -> bool:
     )
 
 
-def _bulleted_text_from_table(table: etree._Element) -> List[Element]:
+def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
     """Extracts bulletized narrative text from the `<table>` element in `table`.
 
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
     will drop non-bullet narrative text in the table.
     """
-    bulleted_text: List[Element] = []
+    bulleted_text: list[Element] = []
     rows = table.findall(".//tr")
     for row in rows:
         text = _construct_text(row)
@@ -713,7 +703,7 @@ def _bulleted_text_from_table(table: etree._Element) -> List[Element]:
     return bulleted_text
 
 
-def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: List[etree._Element]) -> bool:
+def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
     """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
 
     A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
@@ -733,7 +723,7 @@ def _find_main(root: etree._Element) -> etree._Element:
     return main_tag_elem if main_tag_elem is not None else root
 
 
-def _find_articles(root: etree._Element, assemble_articles: bool = True) -> List[etree._Element]:
+def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
     """Parse articles from `root` of an HTML document.
 
     Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
