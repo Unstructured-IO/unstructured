@@ -1,14 +1,59 @@
-## 0.14.3-dev1
+## 0.14.5-dev3
 
 ### Enhancements
 
-* **Move `category` field from Text class to Element class.**
+* **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+* **Use `python-oxmsg` for `partition_msg()`.** Outlook MSG emails are now partitioned using the `python-oxmsg` package which resolves some shortcomings of the prior MSG parser.
 
 ### Features
 
 ### Fixes
 
-* Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call.
+* **8-bit string Outlook MSG files are parsed.** `partition_msg()` is now able to parse non-unicode Outlook MSG emails.
+* **Attachments to Outlook MSG files are extracted intact.** `partition_msg()` is now able to extract attachments without corruption.
+
+## 0.14.4
+
+### Enhancements
+
+* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
+
+### Features
+
+- **Allow configuration of the Google Vision API endpoint** Add an environment variable to select the Google Vision API in the US or the EU.
+
+### Fixes
+
+* **Address the issue of unrecognized tables in `UnstructuredTableTransformerModel`** When a table is not recognized, the `element.metadata.text_as_html` attribute is set to an empty string.
+* **Remove root handlers in ingest logger**. Removes root handlers in ingest loggers to ensure secrets aren't accidentally exposed in Colab notebooks.
+* **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+
+## 0.14.3
+
+### Enhancements
+
+* **Move `category` field from Text class to Element class.**
+* **`partition_docx()` now supports pluggable picture sub-partitioners.** A subpartitioner that accepts a DOCX `Paragraph` and generates elements is now supported. This allows adding a custom sub-partitioner that extracts images and applies OCR or summarization for the image.
+* **Add VoyageAI embedder** Adds VoyageAI embeddings to support embedding via Voyage AI.
+
+### Features
+
+### Fixes
+
+* **Fix `partition_pdf()` to keep spaces in the text**. The control character `\t` is now replaced with a space instead of being removed when merging inferred elements with embedded elements.
+* **Turn off XML resolve entities** Sets `resolve_entities=False` for XML parsing with `lxml`
+  to avoid text being dynamically injected into the XML document.
+* **Add backward compatibility for the deprecated pdf_infer_table_structure parameter**.
+* **Add the missing `form_extraction_skip_tables` argument to the `partition_pdf_or_image` call**.
+  to avoid text being dynamically injected into the XML document.
+* **Chromadb change from Add to Upsert using element_id to make idempotent**
+* **Diable `table_as_cells` output by default** to reduce overhead in partition; now `table_as_cells` is only produced when the env `EXTACT_TABLE_AS_CELLS` is `true`
+* **Reduce excessive logging** Change per page ocr info level logging into detail level trace logging
+* **Replace try block in `document_to_element_list` for handling HTMLDocument** Use `getattr(element, "type", "")` to get the `type` attribute of an element when it exists. This is more explicit way to handle the special case for HTML documents and prevents other types of attribute error from being silenced by the try block
 
 ## 0.14.2
 

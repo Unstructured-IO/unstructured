@@ -51,7 +51,7 @@ def _get_leaf_elements(
     """Parse the XML tree in a memory efficient manner if possible."""
     element_stack = []
 
-    element_iterator = etree.iterparse(file, events=("start", "end"))
+    element_iterator = etree.iterparse(file, events=("start", "end"), resolve_entities=False)
     # NOTE(alan) If xml_path is used for filtering, I've yet to find a good way to stream
     # elements through in a memory efficient way, so we bite the bullet and load it all into
     # memory.

@@ -253,7 +253,7 @@ def supplement_element_with_table_extraction(
     """Supplement the existing layout with table extraction. Any Table elements
     that are extracted will have a metadata fields "text_as_html" where
     the table's text content is rendered into a html string and "table_as_cells"
-    with the raw table cells output from table agent
+    with the raw table cells output from table agent if env_config.EXTRACT_TABLE_AS_CELLS is True
     """
     from unstructured_inference.models.tables import cells_to_html
 
@@ -279,13 +279,16 @@ def supplement_element_with_table_extraction(
         tatr_cells = tables_agent.predict(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
         )
-        text_as_html = cells_to_html(tatr_cells)
-        simple_table_cells = [
-            SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
-        ]
 
+        # NOTE(christine): `tatr_cells == ""` means that the table was not recognized
+        text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
         element.text_as_html = text_as_html
-        element.table_as_cells = simple_table_cells
+
+        if env_config.EXTRACT_TABLE_AS_CELLS:
+            simple_table_cells = [
+                SimpleTableCell.from_table_transformer_cell(cell).to_dict() for cell in tatr_cells
+            ]
+            element.table_as_cells = simple_table_cells
 
     return elements
 

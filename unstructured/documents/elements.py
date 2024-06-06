@@ -234,13 +234,15 @@ class ElementMetadata:
         filename: Optional[str | pathlib.Path] = None,
         filetype: Optional[str] = None,
         header_footer_type: Optional[str] = None,
+        image_base64: Optional[str] = None,
+        image_mime_type: Optional[str] = None,
         image_path: Optional[str] = None,
         is_continuation: Optional[bool] = None,
         languages: Optional[list[str]] = None,
         last_modified: Optional[str] = None,
+        link_start_indexes: Optional[list[int]] = None,
         link_texts: Optional[list[str]] = None,
         link_urls: Optional[list[str]] = None,
-        link_start_indexes: Optional[list[int]] = None,
         links: Optional[list[Link]] = None,
         orig_elements: Optional[list[Element]] = None,
         page_name: Optional[str] = None,
@@ -251,8 +253,8 @@ class ElementMetadata:
         sent_to: Optional[list[str]] = None,
         signature: Optional[str] = None,
         subject: Optional[str] = None,
-        text_as_html: Optional[str] = None,
         table_as_cells: Optional[dict[str, str | int]] = None,
+        text_as_html: Optional[str] = None,
         url: Optional[str] = None,
     ) -> None:
         self.attached_to_filename = attached_to_filename
@@ -274,6 +276,8 @@ class ElementMetadata:
 
         self.filetype = filetype
         self.header_footer_type = header_footer_type
+        self.image_base64 = image_base64
+        self.image_mime_type = image_mime_type
         self.image_path = image_path
         self.is_continuation = is_continuation
         self.languages = languages

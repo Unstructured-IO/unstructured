@@ -51,7 +51,7 @@ six==1.16.0
     # via
     #   -c ./ingest/../base.txt
     #   python-dateutil
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   -c ./ingest/../base.txt
     #   aioitertools

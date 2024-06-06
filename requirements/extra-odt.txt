@@ -11,10 +11,8 @@ lxml==5.2.2
 pypandoc==1.13
     # via -r ./extra-odt.in
 python-docx==1.1.2
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./extra-odt.in
-typing-extensions==4.11.0
+    # via -r ./extra-odt.in
+typing-extensions==4.12.1
     # via
     #   -c ./base.txt
     #   python-docx

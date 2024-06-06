@@ -1,96 +1,96 @@
 [
   {
+    "type": "Title",
     "element_id": "17e9a90f9616f2abed8cf32b5bd3810d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:24.973000+00:00",
-        "date_modified": "2023-06-20T23:48:24.973000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "COul9MuE0/8CEAE="
-      },
-      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "languages": [
-        "eng"
-      ],
-      "page_name": "Stanley Cups",
-      "page_number": 1
-    },
     "text": "Stanley Cups",
-    "type": "Title"
-  },
-  {
-    "element_id": "8d70ea477d9db14ed01ff1d39a118a42",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:24.973000+00:00",
-        "date_modified": "2023-06-20T23:48:24.973000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "COul9MuE0/8CEAE="
-      },
-      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "languages": [
-        "eng"
-      ],
       "page_name": "Stanley Cups",
       "page_number": 1,
-      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>"
-    },
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "25646232132200560657189097157576319365",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304904.973",
+        "date_modified": "1687304904.973"
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "8d70ea477d9db14ed01ff1d39a118a42",
     "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n",
-    "type": "Table"
+    "metadata": {
+      "page_name": "Stanley Cups",
+      "page_number": 1,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "25646232132200560657189097157576319365",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304904.973",
+        "date_modified": "1687304904.973"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "ee34bd8c186b57e3530d5443ffa58122",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:24.973000+00:00",
-        "date_modified": "2023-06-20T23:48:24.973000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "COul9MuE0/8CEAE="
-      },
-      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "languages": [
-        "eng"
-      ],
-      "page_name": "Stanley Cups Since 67",
-      "page_number": 2
-    },
     "text": "Stanley Cups Since 67",
-    "type": "Title"
-  },
-  {
-    "element_id": "310cd42767ffd563f6639210df793c5b",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-06-20T23:48:24.973000+00:00",
-        "date_modified": "2023-06-20T23:48:24.973000+00:00",
-        "record_locator": {
-          "protocol": "gs",
-          "remote_file_path": "utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx"
-        },
-        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
-        "version": "COul9MuE0/8CEAE="
-      },
-      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "languages": [
-        "eng"
-      ],
       "page_name": "Stanley Cups Since 67",
       "page_number": 2,
-      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>0</td>\n    </tr>\n  </tbody>\n</table>"
-    },
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "25646232132200560657189097157576319365",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304904.973",
+        "date_modified": "1687304904.973"
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "310cd42767ffd563f6639210df793c5b",
     "text": "\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n0\n\n\n",
-    "type": "Table"
+    "metadata": {
+      "page_name": "Stanley Cups Since 67",
+      "page_number": 2,
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>0</td>\n    </tr>\n  </tbody>\n</table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "data_source": {
+        "url": "gs://utic-test-ingest-fixtures/nested-2/stanley-cups.xlsx",
+        "version": "25646232132200560657189097157576319365",
+        "record_locator": {
+          "protocol": "gs",
+          "remote_file_path": "gs://utic-test-ingest-fixtures/"
+        },
+        "date_created": "1687304904.973",
+        "date_modified": "1687304904.973"
+      }
+    }
   }
 ]

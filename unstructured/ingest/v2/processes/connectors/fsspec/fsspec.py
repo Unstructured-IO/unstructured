@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import fnmatch
-import json
 import os
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -26,6 +25,7 @@ from unstructured.ingest.v2.interfaces import (
     UploaderConfig,
 )
 from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.processes.connectors.fsspec.utils import sterilize_dict
 
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem
@@ -68,6 +68,7 @@ class FileConfig(Base):
             )
 
 
+@dataclass
 class FsspecIndexerConfig(FileConfig, IndexerConfig):
     recursive: bool = False
     file_glob: Optional[list[str]] = None
@@ -84,16 +85,6 @@ FsspecAccessConfigT = TypeVar("FsspecAccessConfigT", bound=FsspecAccessConfig)
 class FsspecConnectionConfig(ConnectionConfig):
     access_config: FsspecAccessConfigT = enhanced_field(sensitive=True, default=None)
     connector_type: str = CONNECTOR_TYPE
-
-
-def convert_datetime(data: dict) -> dict:
-    def json_serial(obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        raise TypeError("Type %s not serializable" % type(obj))
-
-    data_s = json.dumps(data, default=json_serial)
-    return json.loads(data_s)
 
 
 FsspecIndexerConfigT = TypeVar("FsspecIndexerConfigT", bound=FsspecIndexerConfig)
@@ -143,7 +134,9 @@ class FsspecIndexer(Indexer):
             # because they are seen as 0 byte files
             found = self.fs.ls(self.index_config.path_without_protocol, detail=True)
             if isinstance(found, list):
-                return [x.get("name") for x in found if x.get("size") > 0]
+                return [
+                    x.get("name") for x in found if x.get("size") > 0 and x.get("type") == "file"
+                ]
             else:
                 raise TypeError(f"unhandled response type from ls: {type(found)}")
         else:
@@ -154,7 +147,9 @@ class FsspecIndexer(Indexer):
                 detail=True,
             )
             if isinstance(found, dict):
-                return [k for k, v in found.items() if v.get("size") > 0]
+                return [
+                    k for k, v in found.items() if v.get("size") > 0 and v.get("type") == "file"
+                ]
             else:
                 raise TypeError(f"unhandled response type from find: {type(found)}")
 
@@ -195,18 +190,23 @@ class FsspecIndexer(Indexer):
             },
         )
 
+    def sterilize_info(self, path) -> dict:
+        info = self.fs.info(path=path)
+        return sterilize_dict(data=info)
+
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         raw_files = self.list_files()
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         for file in files:
+            rel_path = file.replace(self.index_config.path_without_protocol, "")
             yield FileData(
                 identifier=file,
                 connector_type=self.connector_type,
                 source_identifiers=SourceIdentifiers(
                     filename=Path(file).name,
-                    rel_path=file.replace(self.index_config.path_without_protocol, ""),
+                    rel_path=rel_path or None,
                     fullpath=file,
-                    additional_metadata=convert_datetime(self.fs.info(path=file)),
+                    additional_metadata=self.sterilize_info(path=file),
                 ),
                 metadata=self.get_metadata(path=file),
             )
@@ -237,7 +237,7 @@ class FsspecDownloader(Downloader):
 
     def get_download_path(self, file_data: FileData) -> Path:
         return (
-            self.download_config.download_dir / Path(file_data.source_identifiers.rel_path)
+            self.download_config.download_dir / Path(file_data.source_identifiers.relative_path)
             if self.download_config
             else Path(file_data.source_identifiers.rel_path)
         )
@@ -252,6 +252,7 @@ class FsspecDownloader(Downloader):
 
     def run(self, file_data: FileData, **kwargs: Any) -> Path:
         download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
         try:
             self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
         except Exception as e:
@@ -308,7 +309,7 @@ class FsspecUploader(Uploader):
             Path(self.upload_config.path_without_protocol)
             / file_data.source_identifiers.relative_path
         )
-        updated_upload_path = upload_path.parent / f"{upload_path.stem}.json"
+        updated_upload_path = upload_path.parent / f"{upload_path.name}.json"
         upload_path_str = str(updated_upload_path)
         path_str = str(path.resolve())
         if self.fs.exists(path=upload_path_str) and not self.upload_config.overwrite:

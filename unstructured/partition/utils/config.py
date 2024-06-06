@@ -96,10 +96,13 @@ class ENVConfig:
         return self._get_int("TESSERACT_OPTIMUM_TEXT_HEIGHT", 20)
 
     @property
+    def GOOGLEVISION_API_ENDPOINT(self) -> str:
+        """API endpoint to use for Google Vision"""
+        return self._get_string("GOOGLEVISION_API_ENDPOINT", "")
+
+    @property
     def OCR_AGENT(self) -> str:
-        """error margin when comparing if a ocr region is within the table element when preparing
-        table tokens
-        """
+        """OCR Agent to use"""
         return self._get_string("OCR_AGENT", OCR_AGENT_TESSERACT)
 
     @property
@@ -115,6 +118,11 @@ class ENVConfig:
         vertically; measured in pixels
         """
         return self._get_int("EXTRACT_IMAGE_BLOCK_CROP_VERTICAL_PAD", 0)
+
+    @property
+    def EXTRACT_TABLE_AS_CELLS(self) -> bool:
+        """adds `table_as_cells` to a Table element's metadata when it is True"""
+        return self._get_bool("EXTRACT_TABLE_AS_CELLS", False)
 
     @property
     def OCR_LAYOUT_SUBREGION_THRESHOLD(self) -> float:

@@ -38,7 +38,7 @@ class PartitionStep(PipelineStep):
         return False
 
     def get_output_filepath(self, filename: Path) -> Path:
-        hashed_output_file = f"{self.get_hash(extras=[filename.stem])}.json"
+        hashed_output_file = f"{self.get_hash(extras=[filename.name])}.json"
         filepath = (self.cache_dir / hashed_output_file).resolve()
         filepath.parent.mkdir(parents=True, exist_ok=True)
         return filepath
@@ -51,7 +51,7 @@ class PartitionStep(PipelineStep):
     def _run(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
-        output_filepath = self.get_output_filepath(filename=path)
+        output_filepath = self.get_output_filepath(filename=Path(file_data_path))
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
@@ -64,7 +64,7 @@ class PartitionStep(PipelineStep):
     async def _run_async(self, path: str, file_data_path: str) -> PartitionStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
-        output_filepath = self.get_output_filepath(filename=path)
+        output_filepath = self.get_output_filepath(filename=Path(file_data_path))
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))

@@ -17,7 +17,7 @@ from unittest.mock import (
     patch,
 )
 
-from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture  # noqa: PT013
+from pytest import CaptureFixture, FixtureRequest, LogCaptureFixture, MonkeyPatch  # noqa: PT013
 
 from unstructured.documents.elements import Element
 from unstructured.staging.base import elements_from_json, elements_to_json
@@ -29,6 +29,7 @@ __all__ = (
     "LogCaptureFixture",
     "MagicMock",
     "Mock",
+    "MonkeyPatch",
     "call",
     "class_mock",
     "function_mock",
@@ -86,6 +87,12 @@ def example_doc_path(file_name: str) -> str:
     example_docs_dir = pathlib.Path(__file__).parent.parent / "example-docs"
     file_path = example_docs_dir / file_name
     return str(file_path.resolve())
+
+
+def example_doc_text(file_name: str) -> str:
+    """Contents of example-doc `file_name` as text (decoded as utf-8)."""
+    with open(example_doc_path(file_name)) as f:
+        return f.read()
 
 
 def parse_optional_datetime(datetime_str: Optional[str]) -> Optional[dt.datetime]:

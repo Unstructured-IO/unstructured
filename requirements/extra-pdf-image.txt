@@ -8,7 +8,7 @@ antlr4-python3-runtime==4.9.3
     # via omegaconf
 cachetools==5.3.3
     # via google-auth
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
@@ -39,7 +39,7 @@ filelock==3.14.0
     #   transformers
 flatbuffers==24.3.25
     # via onnxruntime
-fonttools==4.51.0
+fonttools==4.53.0
     # via matplotlib
 fsspec==2024.5.0
     # via
@@ -54,17 +54,17 @@ google-auth==2.29.0
     #   google-cloud-vision
 google-cloud-vision==3.7.2
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.63.0
+googleapis-common-protos==1.63.1
     # via
     #   google-api-core
     #   grpcio-status
-grpcio==1.64.0
+grpcio==1.64.1
     # via
     #   google-api-core
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.1
+huggingface-hub==0.23.2
     # via
     #   timm
     #   tokenizers
@@ -118,7 +118,7 @@ numpy==1.26.4
     #   transformers
 omegaconf==2.3.0
     # via effdet
-onnx==1.16.0
+onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
@@ -152,7 +152,7 @@ pdfminer-six==20231228
     #   pdfplumber
 pdfplumber==0.11.0
     # via layoutparser
-pikepdf==8.15.1
+pikepdf==9.0.0
     # via -r ./extra-pdf-image.in
 pillow==10.3.0
     # via
@@ -221,7 +221,7 @@ pyyaml==6.0.1
     #   omegaconf
     #   timm
     #   transformers
-rapidfuzz==3.9.1
+rapidfuzz==3.9.3
     # via
     #   -c ./base.txt
     #   unstructured-inference
@@ -229,7 +229,7 @@ regex==2024.5.15
     # via
     #   -c ./base.txt
     #   transformers
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./base.txt
     #   google-api-core
@@ -249,7 +249,7 @@ six==1.16.0
     # via
     #   -c ./base.txt
     #   python-dateutil
-sympy==1.12
+sympy==1.12.1
     # via
     #   onnxruntime
     #   torch
@@ -276,9 +276,9 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.41.1
+transformers==4.41.2
     # via unstructured-inference
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   -c ./base.txt
     #   huggingface-hub
@@ -303,5 +303,5 @@ wrapt==1.16.0
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.18.2
+zipp==3.19.1
     # via importlib-resources

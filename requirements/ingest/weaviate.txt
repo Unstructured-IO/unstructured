@@ -10,9 +10,9 @@ anyio==3.7.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httpx
-authlib==1.3.0
+authlib==1.3.1
     # via weaviate-client
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -29,7 +29,7 @@ cryptography==42.0.7
     # via authlib
 exceptiongroup==1.2.1
     # via anyio
-grpcio==1.64.0
+grpcio==1.64.1
     # via
     #   grpcio-health-checking
     #   grpcio-tools
@@ -57,11 +57,11 @@ protobuf==4.23.4
     #   grpcio-tools
 pycparser==2.22
     # via cffi
-pydantic==2.7.1
+pydantic==2.7.3
     # via weaviate-client
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   weaviate-client
@@ -69,7 +69,7 @@ sniffio==1.3.1
     # via
     #   anyio
     #   httpx
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   -c ./ingest/../base.txt
     #   pydantic
@@ -79,9 +79,9 @@ urllib3==1.26.18
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
-validators==0.28.1
+validators==0.28.3
     # via weaviate-client
-weaviate-client==4.6.3
+weaviate-client==4.6.4
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in
