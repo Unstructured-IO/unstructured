@@ -48,33 +48,23 @@ class HTMLDocument(Document):
     Uses rules based parsing to identify sections of interest within the document.
     """
 
-    def __init__(self, stylesheet: Optional[str] = None, assemble_articles: bool = True):
-        self.stylesheet = stylesheet
-        self.document_tree: etree._Element = None  # pyright: ignore[reportAttributeAccessIssue]
-        self.assembled_articles = assemble_articles
+    def __init__(self, assemble_articles: bool = True):
         super().__init__()
+        self._assemble_articles = assemble_articles
+        self.document_tree: etree._Element = None  # pyright: ignore[reportAttributeAccessIssue]
 
     @classmethod
     def from_file(
-        cls,
-        filename: str,
-        stylesheet: Optional[str] = None,
-        encoding: Optional[str] = None,
-        **kwargs: Any,
+        cls, filename: str, encoding: Optional[str] = None, **kwargs: Any
     ) -> HTMLDocument:
         _, content = read_txt_file(filename=filename, encoding=encoding)
-        return cls.from_string(content, stylesheet=stylesheet, **kwargs)
+        return cls.from_string(content, **kwargs)
 
     @classmethod
-    def from_string(
-        cls,
-        text: str,
-        stylesheet: Optional[str] = None,
-        **kwargs: Any,
-    ) -> HTMLDocument:
+    def from_string(cls, text: str, **kwargs: Any) -> HTMLDocument:
         """Supports reading in an XML file as a raw string rather than as a file."""
         logger.info("Reading document from string ...")
-        doc = cls(stylesheet=stylesheet, **kwargs)
+        doc = cls(**kwargs)
         doc._read_xml(text)
         return doc
 
@@ -100,7 +90,7 @@ class HTMLDocument(Document):
         etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
         root = _find_main(self.document_tree)
 
-        articles = _find_articles(root, assemble_articles=self.assembled_articles)
+        articles = _find_articles(root, assemble_articles=self._assemble_articles)
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
@@ -193,25 +183,13 @@ class HTMLDocument(Document):
                     raise ValueError("document_tree is None")
 
             # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
-            # case, we call back to encoding the string and passing in bytes.
+            # case, we fall back to encoding the string and passing in bytes.
             #     ValueError: Unicode strings with encoding declaration are not supported.
             #     Please use  bytes input or XML fragments without declaration.
             except ValueError:
                 document_tree = etree.fromstring(content.encode(), parser)
 
-            if self.stylesheet:
-                logger.warning(
-                    "You are using the HTML parser with an XSLT stylesheet. "
-                    "Stylesheets are more commonly parsed with the "
-                    "XMLParser. If your HTML does not display properly, try "
-                    "`import lxml.etree as etree` and setting "
-                    "`parser=etree.XMLParser()` instead.",
-                )
-                xslt = etree.parse(self.stylesheet)
-                transform = etree.XSLT(xslt)
-                document_tree = transform(document_tree)
-
-            self.document_tree = cast(etree._Element, document_tree)
+            self.document_tree = document_tree
 
         return self.document_tree
 
