@@ -74,6 +74,25 @@ class HTMLDocument:
         return self._parse_pages_from_element_tree()
 
     @lazyproperty
+    def _articles(self) -> list[etree._Element]:
+        """Parse articles from `root` of an HTML document.
+
+        Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
+        elements are present, the entire document (`root`) is returned as the single document
+        article.
+        """
+        root = self._main
+        if not self._assemble_articles:
+            return [root]
+
+        return (
+            root.findall(".//article")
+            # NOTE(robinson) - ref: https://schema.org/Article
+            or root.findall(".//div[@itemprop='articleBody']")
+            or [root]
+        )
+
+    @lazyproperty
     def _document_tree(self) -> etree._Element:
         """The root HTML element."""
         content = self._html_text
@@ -103,6 +122,12 @@ class HTMLDocument:
 
         return document_tree
 
+    @lazyproperty
+    def _main(self) -> etree._Element:
+        """The first <main> tag under `root` if it exists, othewise `root`."""
+        main_tag_elem = self._document_tree.find(".//main")
+        return main_tag_elem if main_tag_elem is not None else self._document_tree
+
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
 
@@ -113,12 +138,10 @@ class HTMLDocument:
         """
         logger.info("Reading document ...")
         pages: list[Page] = []
-        root = _find_main(self._document_tree)
-
-        articles = _find_articles(root, assemble_articles=self._assemble_articles)
         page_number = 0
         page = Page(number=page_number)
-        for article in articles:
+
+        for article in self._articles:
             descendanttag_elems: tuple[etree._Element, ...] = ()
             for tag_elem in article.iter():
                 if tag_elem in descendanttag_elems:
@@ -205,31 +228,6 @@ class Page:
 
     def __str__(self):
         return "\n\n".join([str(element) for element in self.elements])
-
-
-# -- candidate HTMLDocument methods --------------------------------------------------------------
-
-
-def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
-    """Parse articles from `root` of an HTML document.
-
-    Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
-    elements are present, the entire document (`root`) is returned as the single document article.
-    """
-    if assemble_articles is False:
-        return [root]
-
-    articles = root.findall(".//article")
-    if len(articles) == 0:
-        # NOTE(robinson) - ref: https://schema.org/Article
-        articles = root.findall(".//div[@itemprop='articleBody']")
-    return [root] if len(articles) == 0 else articles
-
-
-def _find_main(root: etree._Element) -> etree._Element:
-    """The first <main> tag under `root` if it exists, othewise `root`."""
-    main_tag_elem = root.find(".//main")
-    return main_tag_elem if main_tag_elem is not None else root
 
 
 # -- tag classifiers -----------------------------------------------------------------------------
