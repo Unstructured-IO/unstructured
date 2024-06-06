@@ -34,8 +34,8 @@ def process_data_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
-# (BK) no_ocr_elements store elements that will not be ocr-ed (only works with ocr_mode="individual blocks")
-    no_ocr_elements: list = [],
+# (BK) pdf_skip_ocr_element_types store elementt types that will not be ocr-ed (only works with ocr_mode="individual blocks")
+    pdf_skip_ocr_element_types: list = [],
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -77,7 +77,7 @@ def process_data_with_ocr(
             infer_table_structure=infer_table_structure,
             ocr_languages=ocr_languages,
             ocr_mode=ocr_mode,
-            no_ocr_elements=no_ocr_elements
+            pdf_skip_ocr_element_types=pdf_skip_ocr_element_types,
             pdf_image_dpi=pdf_image_dpi,
         )
         return merged_layouts
@@ -92,8 +92,8 @@ def process_file_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
-# (BK) no_ocr_elements store elements that will not be ocr-ed (only works with ocr_mode="individual blocks")
-    no_ocr_elements: list = [],
+# (BK) pdf_skip_ocr_element_types stores element types that will not be ocr-ed (only works with ocr_mode="individual blocks")
+    pdf_skip_ocr_element_types: list = [],
     pdf_image_dpi: int = 200,
 ) -> "DocumentLayout":
     """
@@ -140,7 +140,7 @@ def process_file_with_ocr(
                         infer_table_structure=infer_table_structure,
                         ocr_languages=ocr_languages,
                         ocr_mode=ocr_mode,
-                        no_ocr_elements=no_ocr_elements,
+                        pdf_skip_ocr_element_types=pdf_skip_ocr_element_types,
                         extracted_regions=extracted_regions,
                     )
                     merged_page_layouts.append(merged_page_layout)
@@ -163,7 +163,7 @@ def process_file_with_ocr(
                             infer_table_structure=infer_table_structure,
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
-                            no_ocr_elements=no_ocr_elements,
+                            pdf_skip_ocr_element_types=pdf_skip_ocr_element_types,
                             extracted_regions=extracted_regions,
                         )
                         merged_page_layouts.append(merged_page_layout)
@@ -182,7 +182,7 @@ def supplement_page_layout_with_ocr(
     infer_table_structure: bool = False,
     ocr_languages: str = "eng",
     ocr_mode: str = OCRMode.FULL_PAGE.value,
-    no_ocr_elements: list=[],
+    pdf_skip_ocr_element_types: list=[],
     extracted_regions: Optional[List["TextRegion"]] = None,
 ) -> "PageLayout":
     """
@@ -206,8 +206,9 @@ def supplement_page_layout_with_ocr(
     elif ocr_mode == OCRMode.INDIVIDUAL_BLOCKS.value:
         for element in page_layout.elements:
             if not element.text:
-# any element in no_ocr_elements will not be ocr-ed, it will return a value of -
-                if element.type in no_ocr_elements:
+# (BK) any element type in pdf_skip_ocr_element_types will not be ocr-ed, it will return a value of -
+# if it is image, use the element type obtained from the model (e.g. Picture for Yolox)
+                if element.type in pdf_skip_ocr_element_types:
                     element.text = "-"
                 else:
                     padding = env_config.IMAGE_CROP_PAD
