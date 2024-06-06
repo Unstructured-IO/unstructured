@@ -20,7 +20,6 @@ from test_unstructured.unit_utils import (
     property_mock,
 )
 from unstructured.documents import html
-from unstructured.documents.base import Page
 from unstructured.documents.elements import (
     ListItem,
     NarrativeText,
@@ -28,7 +27,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import HTMLDocument, _parse_HTMLTable_from_table_elem
+from unstructured.documents.html import HTMLDocument, Page, _parse_HTMLTable_from_table_elem
 from unstructured.documents.html_elements import (
     HTMLAddress,
     HTMLNarrativeText,
@@ -327,15 +326,6 @@ def test_read_html_doc(tmp_path: pathlib.Path):
         Title("A New Beginning"),
         NarrativeText("Here is the start of a new page."),
     ]
-
-
-# -- HTMLDocument.from_pages() -------------------------------------------------------------------
-
-
-def test_HTMLDocument_can_construct_from_existing_pages():
-    page = Page(number=0)
-    html_document = HTMLDocument.from_pages([page])
-    assert html_document.pages == [page]
 
 
 # -- HTMLDocument.elements -----------------------------------------------------------------------
@@ -1004,22 +994,3 @@ def is_possible_title_(request: FixtureRequest):
 @pytest.fixture
 def pages_prop_(request: FixtureRequest):
     return property_mock(request, HTMLDocument, "pages")
-
-
-@pytest.fixture
-def sample_doc():
-    table_element = HTMLTitle(
-        "I'm a title in a table.",
-        tag="p",
-        ancestortags=("table", "tbody", "tr", "td"),
-    )
-    narrative = HTMLNarrativeText("I'm some narrative text", tag="p", ancestortags=())
-    page1 = Page(0)
-    page1.elements = [table_element, narrative]
-    header = HTMLTitle("I'm a header", tag="header", ancestortags=())
-    body = HTMLNarrativeText("Body text", tag="p", ancestortags=())
-    footer = HTMLTitle("I'm a footer", tag="footer", ancestortags=())
-    page2 = Page(1)
-    page2.elements = [header, body, footer]
-    doc = HTMLDocument.from_pages([page1, page2])
-    return doc

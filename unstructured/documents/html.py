@@ -7,7 +7,6 @@ from typing import Any, Final, Iterator, Optional, cast
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.base import Document, Page
 from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
@@ -28,7 +27,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
-from unstructured.utils import htmlify_matrix_of_cell_texts
+from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
 
 TEXT_TAGS: Final[list[str]] = ["p", "a", "td", "span", "b", "font"]
 LIST_ITEM_TAGS: Final[list[str]] = ["li", "dd"]
@@ -42,14 +41,13 @@ HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
 
-class HTMLDocument(Document):
+class HTMLDocument:
     """Class for handling HTML documents.
 
     Uses rules based parsing to identify sections of interest within the document.
     """
 
     def __init__(self, assemble_articles: bool = True):
-        super().__init__()
         self._assemble_articles = assemble_articles
         self.document_tree: etree._Element = None  # pyright: ignore[reportAttributeAccessIssue]
 
@@ -68,12 +66,14 @@ class HTMLDocument(Document):
         doc._read_xml(text)
         return doc
 
-    @property
-    def pages(self) -> list[Page]:
+    @lazyproperty
+    def elements(self) -> list[Element]:
         """Gets all elements from pages in sequential order."""
-        if self._pages is None:
-            self._pages = self._parse_pages_from_element_tree()
-        return super().pages
+        return [el for page in self.pages for el in page.elements]
+
+    @lazyproperty
+    def pages(self) -> list[Page]:
+        return self._parse_pages_from_element_tree()
 
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
@@ -83,8 +83,6 @@ class HTMLDocument(Document):
         elements that surround something like a blog-post. Each article becomes its own page. If no
         article tags are present in the HTML the entire HTML document is a single page.
         """
-        if self._pages:
-            return self._pages
         logger.info("Reading document ...")
         pages: list[Page] = []
         etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
@@ -192,6 +190,20 @@ class HTMLDocument(Document):
             self.document_tree = document_tree
 
         return self.document_tree
+
+
+class Page:
+    """A page consists of an ordered set of elements.
+
+    The intent of the ordering is to align with the order in which a person would read the document.
+    """
+
+    def __init__(self, number: int):
+        self.number: int = number
+        self.elements: list[Element] = []
+
+    def __str__(self):
+        return "\n\n".join([str(element) for element in self.elements])
 
 
 # -- candidate HTMLDocument methods --------------------------------------------------------------
