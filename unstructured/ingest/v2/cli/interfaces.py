@@ -19,7 +19,6 @@ class CliConfig(ABC):
         existing_opts = []
         for param in cmd.params:
             existing_opts.extend(param.opts)
-
         for param in params:
             for opt in param.opts:
                 if opt in existing_opts:

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional, TypeVar
 
@@ -19,7 +19,7 @@ DownloaderConfigT = TypeVar("DownloaderConfigT", bound=DownloaderConfig)
 
 class Downloader(BaseProcess, BaseConnector, ABC):
     connector_type: str
-    download_config: Optional[DownloaderConfigT] = field(default_factory=DownloaderConfig)
+    download_config: DownloaderConfigT
 
     @property
     def download_dir(self) -> Path:
