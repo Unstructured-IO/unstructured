@@ -2,26 +2,22 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Final, Iterator, Optional, Sequence, cast
+from typing import Callable, Final, Iterator, Optional, cast
 
 from lxml import etree
 
-from unstructured.cleaners.core import (
-    clean_bullets,
-    replace_unicode_quotes,
-)
+from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.base import Page
-from unstructured.documents.elements import (
-    Address,
-    Element,
-    ElementMetadata,
-    EmailAddress,
-    Link,
-    ListItem,
-    NarrativeText,
-    Table,
-    Text,
-    Title,
+from unstructured.documents.elements import Element, ElementMetadata, Link
+from unstructured.documents.html_elements import (
+    HTMLAddress,
+    HTMLEmailAddress,
+    HTMLListItem,
+    HTMLNarrativeText,
+    HTMLTable,
+    HTMLText,
+    HTMLTitle,
+    TagsMixin,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -45,61 +41,6 @@ PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
 EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
-
-
-# -- HTML-specific document-elements and methods -------------------------------------------------
-
-
-class TagsMixin:
-    """Mixin that allows a class to retain tag information."""
-
-    def __init__(
-        self,
-        *args: Any,
-        tag: Optional[str] = None,
-        ancestortags: Sequence[str] = (),
-        links: Sequence[Link] = [],
-        emphasized_texts: Sequence[dict[str, str]] = [],
-        text_as_html: Optional[str] = None,
-        **kwargs: Any,
-    ):
-        if tag is None:
-            raise TypeError("tag argument must be passed and not None")
-        else:
-            self.tag = tag
-        self.ancestortags = ancestortags
-        self.links = links
-        self.emphasized_texts = emphasized_texts
-        self.text_as_html = text_as_html
-        super().__init__(*args, **kwargs)
-
-
-class HTMLText(TagsMixin, Text):
-    """Text with tag information."""
-
-
-class HTMLAddress(TagsMixin, Address):
-    """Address with tag information."""
-
-
-class HTMLEmailAddress(TagsMixin, EmailAddress):
-    """EmailAddress with tag information"""
-
-
-class HTMLTitle(TagsMixin, Title):
-    """Title with tag information."""
-
-
-class HTMLNarrativeText(TagsMixin, NarrativeText):
-    """NarrativeText with tag information."""
-
-
-class HTMLListItem(TagsMixin, ListItem):
-    """NarrativeText with tag information."""
-
-
-class HTMLTable(TagsMixin, Table):
-    """NarrativeText with tag information"""
 
 
 def has_table_ancestor(element: TagsMixin) -> bool:

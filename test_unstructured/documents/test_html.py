@@ -27,15 +27,14 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import (
+from unstructured.documents.html import HTMLDocument, _parse_HTMLTable_from_table_elem
+from unstructured.documents.html_elements import (
     HTMLAddress,
-    HTMLDocument,
     HTMLNarrativeText,
     HTMLTable,
     HTMLText,
     HTMLTitle,
     TagsMixin,
-    _parse_HTMLTable_from_table_elem,
 )
 
 TAGS = (
