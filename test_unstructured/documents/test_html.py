@@ -1,4 +1,5 @@
 # pyright: reportPrivateUsage=false
+# pyright: reportUnusedFunction=false
 
 """Test suite for `unstructured.documents.html` module."""
 
@@ -771,8 +772,8 @@ def test_parse_nothing():
     assert parsed_el is None
 
 
-def test_parse_not_anything(is_narrative_tag_: Mock, is_possible_title_: Mock):
-    is_narrative_tag_.return_value = False
+def test_parse_not_anything(_is_narrative_tag_: Mock, is_possible_title_: Mock):  # noqa: PT019
+    _is_narrative_tag_.return_value = False
     is_possible_title_.return_value = False
     doc = """<p>This is nothing</p>"""
     document_tree = etree.fromstring(doc, etree.HTMLParser())
@@ -857,7 +858,7 @@ def test_process_list_item_returns_none_if_next_has_no_text():
     document_tree = etree.fromstring(doc, etree.HTMLParser())
     el = document_tree.find(".//div")
     assert el is not None
-    assert html.is_list_item_tag(el) is True
+    assert html._is_list_item_tag(el) is True
     parsed_el, _ = html._process_list_item(el)
     assert parsed_el is None
 
@@ -986,8 +987,8 @@ class Describe_parse_HTMLTable_from_table_elem:
 
 
 @pytest.fixture
-def is_narrative_tag_(request: FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.is_narrative_tag")
+def _is_narrative_tag_(request: FixtureRequest):
+    return function_mock(request, "unstructured.documents.html._is_narrative_tag")
 
 
 @pytest.fixture

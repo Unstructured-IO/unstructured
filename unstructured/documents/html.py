@@ -119,7 +119,7 @@ class HTMLDocument(XMLDocument):
                     page.elements.extend(bulleted_text)
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
 
-                elif is_list_item_tag(tag_elem):
+                elif _is_list_item_tag(tag_elem):
                     element, next_element = _process_list_item(tag_elem)
                     if element is not None:
                         page.elements.append(element)
@@ -335,7 +335,7 @@ def _text_to_element(
 
     if len(text) < 2:
         return None
-    elif is_narrative_tag(text, tag):
+    elif _is_narrative_tag(text, tag):
         return HTMLNarrativeText(
             text,
             tag=tag,
@@ -343,7 +343,7 @@ def _text_to_element(
             links=links,
             emphasized_texts=emphasized_texts,
         )
-    elif is_heading_tag(tag) or is_possible_title(text):
+    elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
             tag=tag,
@@ -383,12 +383,12 @@ def _is_container_with_text(tag_elem: etree._Element) -> bool:
     return True
 
 
-def is_narrative_tag(text: str, tag: str) -> bool:
+def _is_narrative_tag(text: str, tag: str) -> bool:
     """Uses tag information to infer whether text is narrative."""
     return tag not in HEADING_TAGS and is_possible_narrative_text(text)
 
 
-def is_heading_tag(tag: str) -> bool:
+def _is_heading_tag(tag: str) -> bool:
     """Uses tag information to infer whether text is a heading."""
     return tag in HEADING_TAGS
 
@@ -538,7 +538,7 @@ def _get_bullet_descendants(
     return () if element is None or next_element is None else tuple(next_element.iterdescendants())
 
 
-def is_list_item_tag(tag_elem: etree._Element) -> bool:
+def _is_list_item_tag(tag_elem: etree._Element) -> bool:
     """True when `tag_elem` contains bulleted text."""
     return tag_elem.tag in LIST_ITEM_TAGS or (
         tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
