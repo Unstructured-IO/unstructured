@@ -286,9 +286,6 @@ def test_read_html_doc(tmp_path: pathlib.Path):
         f.write(
             "<html>\n"
             "  <body>\n"
-            "    <header>\n"
-            "      <p>Here is a header. We want to ignore anything that is in this section.</p>\n"
-            "    </header>\n"
             "    <h1>A Great and Glorious Section</h1>\n"
             "    <p>Dear Leader is the best. He is such a wonderful engineer!</p>\n"
             "    <p></p>\n"
@@ -297,42 +294,35 @@ def test_read_html_doc(tmp_path: pathlib.Path):
             "    <table>\n"
             "      <tbody>\n"
             "        <tr>\n"
-            "          <td><p>Skip me because I'm in a table</p></td>\n"
+            "          <td><p>I'm in a table</p></td>\n"
             "        </tr>\n"
             "      </tbody>\n"
             "    </table>\n"
             "    <hr>\n"
             "    <h2>A New Beginning</h2>\n"
             "    <div>Here is the start of a new page.</div>\n"
-            "    <footer>\n"
-            "      <p>Here is a footer. We want to ignore anything that is in this section</p>\n"
-            "    </footer>\n"
-            "    <div>\n"
-            "      <p>Let's ignore anything after the footer too since it's probably garbage.</p>\n"
-            "    </div>\n"
             "  </body>\n"
             "</html>\n"
         )
 
-    html_document = HTMLDocument.from_file(filename=filename).doc_after_cleaners(
-        skip_headers_and_footers=True, skip_table=True
-    )
+    html_document = HTMLDocument.from_file(filename)
 
     assert len(html_document.pages) == 2
     assert all(isinstance(p, Page) for p in html_document.pages)
     # --
-    page_one = html_document.pages[0]
-    assert len(page_one.elements) == 4
-    assert page_one.elements == [
+    p = html_document.pages[0]
+    assert len(p.elements) == 5
+    assert p.elements == [
         Title("A Great and Glorious Section"),
         NarrativeText("Dear Leader is the best. He is such a wonderful engineer!"),
         Title("Another Magnificent Title"),
         NarrativeText("The prior element is a title based on its capitalization patterns!"),
+        Table("I'm in a table"),
     ]
     # --
-    page_two = html_document.pages[1]
-    assert len(page_two.elements) == 2
-    assert page_two.elements == [
+    p = html_document.pages[1]
+    assert len(p.elements) == 2
+    assert p.elements == [
         Title("A New Beginning"),
         NarrativeText("Here is the start of a new page."),
     ]
@@ -345,64 +335,6 @@ def test_HTMLDocument_can_construct_from_existing_pages():
     page = Page(number=0)
     html_document = HTMLDocument.from_pages([page])
     assert html_document.pages == [page]
-
-
-# -- HTMLDocument.doc_after_cleaners() -----------------------------------------------------------
-
-
-def test_include_headers_and_footers(sample_doc: HTMLDocument):
-    html_document = sample_doc.doc_after_cleaners(skip_headers_and_footers=False)
-    assert len(html_document.pages[1].elements) == 3
-
-
-def test_read_without_skipping_table(is_possible_narrative_text_: Mock):
-    is_possible_narrative_text_.return_value = True
-    document = HTMLDocument.from_string(
-        "<html>\n"
-        "  <body>\n"
-        "    <table>\n"
-        "      <tbody>\n"
-        "        <tr>\n"
-        "          <td><p>Hi there! I am Matt!</p></td>\n"
-        "        </tr>\n"
-        "      </tbody>\n"
-        "    </table>\n"
-        "  </body>\n"
-        "</html>\n"
-    ).doc_after_cleaners(skip_table=False)
-    assert document.pages[0].elements[0] == Table(text="Hi there! I am Matt!")
-
-
-def test_include_table_text(sample_doc: HTMLDocument):
-    html_document = sample_doc.doc_after_cleaners(skip_table=False)
-    assert len(html_document.pages[0].elements) == 2
-
-
-def test_tag_types_table(sample_doc: HTMLDocument):
-    html_document = sample_doc.doc_after_cleaners(skip_table=True)
-    assert len(html_document.pages[0].elements) == 2
-
-
-def test_cleaner_raises_on_non_element_elements(sample_doc: HTMLDocument, pages_prop_: Mock):
-    page = Page(0)
-    page.elements = [
-        "this should def not be a string"  # pyright: ignore[reportAttributeAccessIssue]
-    ]
-    pages_prop_.return_value = [page]
-    with pytest.raises(ValueError):
-        sample_doc.doc_after_cleaners()
-
-
-def test_cleaner_can_filter_out_tables_in_place():
-    doc = HTMLDocument.from_string(
-        "<table><tbody><tr><td>A table thing.</td></tr></tbody></table>\n"
-        "<p>A non-table thing</p>\n"
-    )
-    assert len(doc.elements) == 2
-
-    doc.doc_after_cleaners(skip_table=True, inplace=True)
-
-    assert len(doc.elements) == 1
 
 
 # -- HTMLDocument.elements -----------------------------------------------------------------------
@@ -428,18 +360,15 @@ def test_parses_tags_correctly():
 
 
 def test_nested_text_tags():
-    tag1, tag2 = [tag for tag in html.TEXT_TAGS if tag not in html.TABLE_TAGS][:2]
-    html_str = (
-        f"<body>\n"
-        f"    <{tag1}>\n"
-        f"        <{tag2}>\n"
-        f"            There is some text here.\n"
-        f"        </{tag2}>\n"
-        f"    </{tag1}>\n"
-        f"</body>\n"
+    html_document = HTMLDocument.from_string(
+        "<body>\n"
+        "  <p>\n"
+        "    <a>\n"
+        "      There is some text here.\n"
+        "    </a>\n"
+        "  </p>\n"
+        "</body>\n"
     )
-
-    html_document = HTMLDocument.from_string(html_str).doc_after_cleaners(skip_table=False)
 
     assert len(html_document.pages[0].elements) == 1
 

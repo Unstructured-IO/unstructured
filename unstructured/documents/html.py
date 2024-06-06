@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Callable, Final, Iterator, Optional, cast
+from typing import Final, Iterator, Optional, cast
 
 from lxml import etree
 
@@ -17,7 +17,6 @@ from unstructured.documents.html_elements import (
     HTMLTable,
     HTMLText,
     HTMLTitle,
-    TagsMixin,
 )
 from unstructured.documents.xml import VALID_PARSERS, XMLDocument
 from unstructured.logger import logger
@@ -41,21 +40,6 @@ PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
 EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
-
-
-def in_header_or_footer(element: TagsMixin) -> bool:
-    """Checks to see if an element is contained within a header or a footer tag."""
-    if any(ancestor in HEADER_OR_FOOTER_TAGS for ancestor in element.ancestortags):
-        return True
-    return False
-
-
-def is_table(element: TagsMixin) -> bool:
-    """Checks to see if an element is a table"""
-    return element.tag in TABLE_TAGS
-
-
-# -- HTML element-tree processing ----------------------------------------------------------------
 
 
 class HTMLDocument(XMLDocument):
@@ -162,68 +146,6 @@ class HTMLDocument(XMLDocument):
                 page = Page(number=page_number)
 
         return pages
-
-    def doc_after_cleaners(
-        self,
-        skip_headers_and_footers: bool = False,
-        skip_table: bool = False,
-        inplace: bool = False,
-    ) -> HTMLDocument:
-        """Filters elements returning new instance based on the criteria specified.
-
-        Note that the number of pages can change in the case that all elements on a page are
-        filtered out.
-
-        Parameters
-        ----------
-        skip_table:
-            If True, skips table element
-        skip_headers_and_footers:
-            If True, ignores any content that is within <header> or <footer> tags
-        inplace:
-            If True, document is modified in place and returned.
-        """
-        excluders: list[Callable[[TagsMixin], bool]] = []
-        if skip_headers_and_footers:
-            excluders.append(in_header_or_footer)
-        if skip_table:
-            excluders.append(is_table)
-
-        pages: list[Page] = []
-        page_number = 0
-        new_page = Page(number=page_number)
-        for page in self.pages:
-            elements: list[Element] = []
-            for el in page.elements:
-                if not isinstance(el, TagsMixin):
-                    raise ValueError(
-                        f"elements of class {self.__class__} should be of type HTMLTitle "
-                        f"HTMLNarrativeText, or HTMLListItem but "
-                        f"object has an element of type {type(el)}",
-                    )
-                if not any(excluder(el) for excluder in excluders):
-                    elements.append(el)
-                if skip_headers_and_footers and "footer" in tuple(el.ancestortags) + (el.tag,):
-                    break
-            if elements:
-                new_page.elements = elements
-                pages.append(new_page)
-                page_number += 1
-                new_page = Page(number=page_number)
-        if inplace:
-            self._pages = pages
-            self._elements = None
-            return self
-        else:
-            out = self.__class__.from_pages(pages)
-            if not isinstance(out, HTMLDocument):
-                # NOTE(robinson) - Skipping for test coverage because this condition is impossible.
-                # Added type check because from_pages is a method on Document. Without the type
-                # check, mypy complains about returning Document instead of HTMLDocument
-                raise ValueError(
-                    f"Unexpected class: {self.__class__.__name__}",
-                )  # pragma: no cover
-            return out
 
 
 def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
