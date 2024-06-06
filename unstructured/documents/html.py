@@ -253,7 +253,64 @@ def _is_text_tag(
     return False
 
 
-# ------------------------------------------------------------------------------------------------
+# -- tag processors ------------------------------------------------------------------------------
+
+
+def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
+    """Extracts bulletized narrative text from the `<table>` element in `table`.
+
+    NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
+    will drop non-bullet narrative text in the table.
+    """
+    bulleted_text: list[Element] = []
+    rows = table.findall(".//tr")
+    for row in rows:
+        text = _construct_text(row)
+        if is_bulleted_text(text):
+            bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
+    return bulleted_text
+
+
+def _construct_text(tag_elem: etree._Element, include_tail_text: bool = True) -> str:
+    """Extract "clean"" text from `tag_elem`."""
+    text = "".join(str(t) for t in tag_elem.itertext() if t)
+
+    if include_tail_text and tag_elem.tail:
+        text = text + tag_elem.tail
+
+    text = replace_unicode_quotes(text)
+    return text.strip()
+
+
+def _get_bullet_descendants(
+    element: Optional[etree._Element], next_element: Optional[etree._Element]
+) -> tuple[etree._Element, ...]:
+    """Helper for list-item processing.
+
+    Gathers the descendants of `next_element` so they can be marked visited.
+    """
+    return () if element is None or next_element is None else tuple(next_element.iterdescendants())
+
+
+def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
+    """Emphasized text within and below `tag_element`.
+
+    Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
+    """
+    emphasized_texts: list[dict[str, str]] = []
+    tags_to_track = ["strong", "em", "span", "b", "i"]
+
+    if tag_elem.tag in tags_to_track:
+        text = _construct_text(tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
+
+    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
+        text = _construct_text(descendant_tag_elem, False)
+        if text:
+            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+
+    return emphasized_texts
 
 
 def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
@@ -276,6 +333,25 @@ def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
                 start_index = start_index + len(tag.tail)
 
     return links
+
+
+def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
+    """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
+
+    A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
+    they are treated as a single bulleted text element.
+    """
+    if tag_elem.tag in SECTION_TAGS:
+        all_spans = all(child.tag == "span" for child in children)
+        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+        if all_spans and _is_bulleted:
+            return True
+    return False
+
+
+def _has_break_tags(tag_elem: etree._Element) -> bool:
+    """True when `tab_elem` contains a `<br>` descendant."""
+    return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
 def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
@@ -320,27 +396,6 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     )
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
-    """Emphasized text within and below `tag_element`.
-
-    Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
-    """
-    emphasized_texts: list[dict[str, str]] = []
-    tags_to_track = ["strong", "em", "span", "b", "i"]
-
-    if tag_elem.tag in tags_to_track:
-        text = _construct_text(tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
-
-    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
-        text = _construct_text(descendant_tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
-
-    return emphasized_texts
-
-
 def _parse_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
@@ -380,6 +435,53 @@ def _parse_tag(
         emphasized_texts=emphasized_texts,
         depth=depth,
     )
+
+
+def _process_list_item(
+    tag_elem: etree._Element,
+    max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
+) -> tuple[Optional[Element], Optional[etree._Element]]:
+    """Produces an `HTMLListItem` document element from `tag_elem`.
+
+    When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also returns
+    the next html element so we can skip processing if bullets are found in a div element.
+    """
+    if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
+        text = _construct_text(tag_elem)
+        links = _get_links_from_tag(tag_elem)
+        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        depth = len(
+            [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
+        )
+        return (
+            HTMLListItem(
+                text=text,
+                tag=tag_elem.tag,
+                links=links,
+                emphasized_texts=emphasized_texts,
+                metadata=ElementMetadata(category_depth=depth),
+            ),
+            tag_elem,
+        )
+
+    elif tag_elem.tag in SECTION_TAGS:
+        text = _construct_text(tag_elem)
+        next_element = tag_elem.getnext()
+        if next_element is None:
+            return None, None
+        next_text = _construct_text(next_element)
+        # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+        # it could be the text representation of a giant div
+        empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
+        if len(tag_elem) > max_predecessor_len + empty_elems_len:
+            return None, None
+        if next_text:
+            return HTMLListItem(text=next_text, tag=next_element.tag), next_element
+
+    return None, None
+
+
+# ------------------------------------------------------------------------------------------------
 
 
 def _text_to_element(
@@ -457,22 +559,6 @@ def _is_heading_tag(tag: str) -> bool:
     return tag in HEADING_TAGS
 
 
-def _construct_text(tag_elem: etree._Element, include_tail_text: bool = True) -> str:
-    """Extract "clean"" text from `tag_elem`."""
-    text = "".join(str(t) for t in tag_elem.itertext() if t)
-
-    if include_tail_text and tag_elem.tail:
-        text = text + tag_elem.tail
-
-    text = replace_unicode_quotes(text)
-    return text.strip()
-
-
-def _has_break_tags(tag_elem: etree._Element) -> bool:
-    """True when `tab_elem` contains a `<br>` descendant."""
-    return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
-
-
 def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
     """Sequence of `tag_elem` and its children with `<br>` elements removed.
 
@@ -520,86 +606,3 @@ def _process_text_tag(
     descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
     return page_elements, descendant_tag_elems
-
-
-def _process_list_item(
-    tag_elem: etree._Element,
-    max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
-) -> tuple[Optional[Element], Optional[etree._Element]]:
-    """Produces an `HTMLListItem` document element from `tag_elem`.
-
-    When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also returns
-    the next html element so we can skip processing if bullets are found in a div element.
-    """
-    if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
-        text = _construct_text(tag_elem)
-        links = _get_links_from_tag(tag_elem)
-        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-        depth = len(
-            [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
-        )
-        return (
-            HTMLListItem(
-                text=text,
-                tag=tag_elem.tag,
-                links=links,
-                emphasized_texts=emphasized_texts,
-                metadata=ElementMetadata(category_depth=depth),
-            ),
-            tag_elem,
-        )
-
-    elif tag_elem.tag in SECTION_TAGS:
-        text = _construct_text(tag_elem)
-        next_element = tag_elem.getnext()
-        if next_element is None:
-            return None, None
-        next_text = _construct_text(next_element)
-        # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-        # it could be the text representation of a giant div
-        empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
-        if len(tag_elem) > max_predecessor_len + empty_elems_len:
-            return None, None
-        if next_text:
-            return HTMLListItem(text=next_text, tag=next_element.tag), next_element
-
-    return None, None
-
-
-def _get_bullet_descendants(
-    element: Optional[etree._Element], next_element: Optional[etree._Element]
-) -> tuple[etree._Element, ...]:
-    """Helper for list-item processing.
-
-    Gathers the descendants of `next_element` so they can be marked visited.
-    """
-    return () if element is None or next_element is None else tuple(next_element.iterdescendants())
-
-
-def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
-    """Extracts bulletized narrative text from the `<table>` element in `table`.
-
-    NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
-    will drop non-bullet narrative text in the table.
-    """
-    bulleted_text: list[Element] = []
-    rows = table.findall(".//tr")
-    for row in rows:
-        text = _construct_text(row)
-        if is_bulleted_text(text):
-            bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
-    return bulleted_text
-
-
-def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
-    """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
-
-    A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
-    they are treated as a single bulleted text element.
-    """
-    if tag_elem.tag in SECTION_TAGS:
-        all_spans = all(child.tag == "span" for child in children)
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
-        if all_spans and _is_bulleted:
-            return True
-    return False
