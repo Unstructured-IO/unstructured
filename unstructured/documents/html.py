@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Final, Iterator, Optional, cast
+from typing import Any, Final, Iterator, Optional, Union, cast
 
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.base import Page
+from unstructured.documents.base import Document, Page
 from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
@@ -18,7 +18,7 @@ from unstructured.documents.html_elements import (
     HTMLText,
     HTMLTitle,
 )
-from unstructured.documents.xml import VALID_PARSERS, XMLDocument
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -41,10 +41,14 @@ EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
+VALID_PARSERS = Union[etree.HTMLParser, etree.XMLParser, None]
 
-class HTMLDocument(XMLDocument):
-    """Class for handling HTML documents. Uses rules based parsing to identify sections
-    of interest within the document."""
+
+class HTMLDocument(Document):
+    """Class for handling HTML documents.
+
+    Uses rules based parsing to identify sections of interest within the document.
+    """
 
     def __init__(
         self,
@@ -52,8 +56,51 @@ class HTMLDocument(XMLDocument):
         parser: VALID_PARSERS = None,
         assemble_articles: bool = True,
     ):
+        if not parser:
+            parser = (
+                etree.XMLParser(remove_comments=True)
+                if stylesheet
+                else etree.HTMLParser(remove_comments=True)
+            )
+
+        self.stylesheet = stylesheet
+        self.parser = parser
+        self.document_tree: etree._Element = None  # pyright: ignore[reportAttributeAccessIssue]
         self.assembled_articles = assemble_articles
-        super().__init__(stylesheet=stylesheet, parser=parser)
+        super().__init__()
+
+    @classmethod
+    def from_file(
+        cls,
+        filename: str,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        encoding: Optional[str] = None,
+        **kwargs: Any,
+    ) -> HTMLDocument:
+        _, content = read_txt_file(filename=filename, encoding=encoding)
+        return cls.from_string(content, parser=parser, stylesheet=stylesheet, **kwargs)
+
+    @classmethod
+    def from_string(
+        cls,
+        text: str,
+        parser: VALID_PARSERS = None,
+        stylesheet: Optional[str] = None,
+        **kwargs: Any,
+    ) -> HTMLDocument:
+        """Supports reading in an XML file as a raw string rather than as a file."""
+        logger.info("Reading document from string ...")
+        doc = cls(parser=parser, stylesheet=stylesheet, **kwargs)
+        doc._read_xml(text)
+        return doc
+
+    @property
+    def pages(self) -> list[Page]:
+        """Gets all elements from pages in sequential order."""
+        if self._pages is None:
+            self._pages = self._parse_pages_from_element_tree()
+        return super().pages
 
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
@@ -146,6 +193,45 @@ class HTMLDocument(XMLDocument):
                 page = Page(number=page_number)
 
         return pages
+
+    def _read_xml(self, content: str):
+        """Reads in an XML file and converts it to an lxml element tree object."""
+        # NOTE(robinson) - without the carriage return at the beginning, you get
+        # output that looks like the following when you run partition_pdf
+        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
+        # The correct output is returned once you add the initial return.
+        is_html_parser = isinstance(self.parser, etree.HTMLParser)
+        if content and not content.startswith("\n") and is_html_parser:
+            content = "\n" + content
+        if self.document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
+            try:
+                document_tree = etree.fromstring(content, self.parser)
+                if document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
+                    raise ValueError("document_tree is None")
+
+            # NOTE(robinson) - The following ValueError occurs with unicode strings. In that
+            # case, we call back to encoding the string and passing in bytes.
+            #     ValueError: Unicode strings with encoding declaration are not supported.
+            #     Please use  bytes input or XML fragments without declaration.
+            except ValueError:
+                document_tree = etree.fromstring(content.encode(), self.parser)
+
+            if self.stylesheet:
+                if isinstance(self.parser, etree.HTMLParser):
+                    logger.warning(
+                        "You are using the HTML parser with an XSLT stylesheet. "
+                        "Stylesheets are more commonly parsed with the "
+                        "XMLParser. If your HTML does not display properly, try "
+                        "`import lxml.etree as etree` and setting "
+                        "`parser=etree.XMLParser()` instead.",
+                    )
+                xslt = etree.parse(self.stylesheet)
+                transform = etree.XSLT(xslt)
+                document_tree = transform(document_tree)
+
+            self.document_tree = cast(etree._Element, document_tree)
+
+        return self.document_tree
 
 
 # -- candidate HTMLDocument methods --------------------------------------------------------------

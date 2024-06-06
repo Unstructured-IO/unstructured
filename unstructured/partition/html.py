@@ -6,15 +6,11 @@ import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument
+from unstructured.documents.html import VALID_PARSERS, HTMLDocument
 from unstructured.documents.html_elements import TagsMixin
-from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
