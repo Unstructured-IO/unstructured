@@ -148,26 +148,32 @@ class HTMLDocument(XMLDocument):
         return pages
 
 
-def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
-    """Hyperlinks within and below `tag_elem`."""
-    links: list[Link] = []
-    tag_elem_href = tag_elem.get("href")
-    if tag_elem_href:
-        tag_elem_text = _construct_text(tag_elem, False)
-        links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
-    else:
-        start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
-        for tag in tag_elem.iterdescendants():
-            href = tag.get("href")
-            if href:
-                links.append({"text": tag.text, "url": href, "start_index": start_index})
+# -- candidate HTMLDocument methods --------------------------------------------------------------
 
-            if tag.text and not (tag.text.isspace()):
-                start_index = start_index + len(tag.text)
-            if tag.tail and not (tag.tail.isspace()):
-                start_index = start_index + len(tag.tail)
 
-    return links
+def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
+    """Parse articles from `root` of an HTML document.
+
+    Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
+    elements are present, the entire document (`root`) is returned as the single document article.
+    """
+    if assemble_articles is False:
+        return [root]
+
+    articles = root.findall(".//article")
+    if len(articles) == 0:
+        # NOTE(robinson) - ref: https://schema.org/Article
+        articles = root.findall(".//div[@itemprop='articleBody']")
+    return [root] if len(articles) == 0 else articles
+
+
+def _find_main(root: etree._Element) -> etree._Element:
+    """The first <main> tag under `root` if it exists, othewise `root`."""
+    main_tag_elem = root.find(".//main")
+    return main_tag_elem if main_tag_elem is not None else root
+
+
+# -- tag classifiers -----------------------------------------------------------------------------
 
 
 def _is_bulleted_table(table_elem: etree._Element) -> bool:
@@ -191,6 +197,85 @@ def _is_bulleted_table(table_elem: etree._Element) -> bool:
         return False
 
     return True
+
+
+def _is_container_with_text(tag_elem: etree._Element) -> bool:
+    """Checks if a tag is a container that also happens to contain text.
+
+    Example
+    -------
+    <div>Hi there,
+        <div>This is my message.</div>
+        <div>Please read my message!</div>
+    </div>
+    """
+    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
+        return False
+
+    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
+    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+    if not tag_elem_text and not tag_elem_tail:
+        return False
+
+    return True
+
+
+def _is_list_item_tag(tag_elem: etree._Element) -> bool:
+    """True when `tag_elem` contains bulleted text."""
+    return tag_elem.tag in LIST_ITEM_TAGS or (
+        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
+    )
+
+
+def _is_text_tag(
+    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
+) -> bool:
+    """True when `tag_element` potentially contains narrative text."""
+    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+    # it could be the text representation of a giant div
+    # Exclude empty tags from tag_elem
+    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
+    if len(tag_elem) > max_predecessor_len + empty_elems_len:
+        return False
+
+    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
+        return True
+
+    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
+    # case and the tag has text, its potential a text tag
+    children = list(tag_elem)
+    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
+        return True
+
+    if _has_adjacent_bulleted_spans(tag_elem, children):
+        return True
+
+    return False
+
+
+# ------------------------------------------------------------------------------------------------
+
+
+def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
+    """Hyperlinks within and below `tag_elem`."""
+    links: list[Link] = []
+    tag_elem_href = tag_elem.get("href")
+    if tag_elem_href:
+        tag_elem_text = _construct_text(tag_elem, False)
+        links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
+    else:
+        start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
+        for tag in tag_elem.iterdescendants():
+            href = tag.get("href")
+            if href:
+                links.append({"text": tag.text, "url": href, "start_index": start_index})
+
+            if tag.text and not (tag.text.isspace()):
+                start_index = start_index + len(tag.text)
+            if tag.tail and not (tag.tail.isspace()):
+                start_index = start_index + len(tag.tail)
+
+    return links
 
 
 def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
@@ -362,27 +447,6 @@ def _text_to_element(
         )
 
 
-def _is_container_with_text(tag_elem: etree._Element) -> bool:
-    """Checks if a tag is a container that also happens to contain text.
-
-    Example
-    -------
-    <div>Hi there,
-        <div>This is my message.</div>
-        <div>Please read my message!</div>
-    </div>
-    """
-    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
-        return False
-
-    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
-    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
-    if not tag_elem_text and not tag_elem_tail:
-        return False
-
-    return True
-
-
 def _is_narrative_tag(text: str, tag: str) -> bool:
     """Uses tag information to infer whether text is narrative."""
     return tag not in HEADING_TAGS and is_possible_narrative_text(text)
@@ -434,32 +498,6 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
             unfurled.extend(_unfurl_break_tags(child))
 
     return unfurled
-
-
-def _is_text_tag(
-    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
-) -> bool:
-    """True when `tag_element` potentially contains narrative text."""
-    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-    # it could be the text representation of a giant div
-    # Exclude empty tags from tag_elem
-    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
-    if len(tag_elem) > max_predecessor_len + empty_elems_len:
-        return False
-
-    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
-        return True
-
-    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
-    # case and the tag has text, its potential a text tag
-    children = list(tag_elem)
-    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
-        return True
-
-    if _has_adjacent_bulleted_spans(tag_elem, children):
-        return True
-
-    return False
 
 
 def _process_text_tag(
@@ -538,13 +576,6 @@ def _get_bullet_descendants(
     return () if element is None or next_element is None else tuple(next_element.iterdescendants())
 
 
-def _is_list_item_tag(tag_elem: etree._Element) -> bool:
-    """True when `tag_elem` contains bulleted text."""
-    return tag_elem.tag in LIST_ITEM_TAGS or (
-        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
-    )
-
-
 def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
     """Extracts bulletized narrative text from the `<table>` element in `table`.
 
@@ -572,25 +603,3 @@ def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree.
         if all_spans and _is_bulleted:
             return True
     return False
-
-
-def _find_main(root: etree._Element) -> etree._Element:
-    """The first <main> tag under `root` if it exists, othewise `root`."""
-    main_tag_elem = root.find(".//main")
-    return main_tag_elem if main_tag_elem is not None else root
-
-
-def _find_articles(root: etree._Element, assemble_articles: bool = True) -> list[etree._Element]:
-    """Parse articles from `root` of an HTML document.
-
-    Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
-    elements are present, the entire document (`root`) is returned as the single document article.
-    """
-    if assemble_articles is False:
-        return [root]
-
-    articles = root.findall(".//article")
-    if len(articles) == 0:
-        # NOTE(robinson) - ref: https://schema.org/Article
-        articles = root.findall(".//div[@itemprop='articleBody']")
-    return [root] if len(articles) == 0 else articles
