@@ -7,7 +7,7 @@ from typing import Any, Final, Iterator, Optional, cast
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.elements import Element, ElementMetadata, Link
+from unstructured.documents.elements import Element, ElementMetadata, Link, PageBreak
 from unstructured.documents.html_elements import (
     HTMLAddress,
     HTMLEmailAddress,
@@ -16,6 +16,7 @@ from unstructured.documents.html_elements import (
     HTMLTable,
     HTMLText,
     HTMLTitle,
+    TagsMixin,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
@@ -60,7 +61,7 @@ class HTMLDocument:
 
     @classmethod
     def from_string(cls, text: str, **kwargs: Any) -> HTMLDocument:
-        """Supports reading in an XML file as a raw string rather than as a file."""
+        """Supports reading in an HTML file as a string rather than as a file."""
         logger.info("Reading document from string ...")
         return cls(text, **kwargs)
 
@@ -228,6 +229,78 @@ class Page:
 
     def __str__(self):
         return "\n\n".join([str(element) for element in self.elements])
+
+
+# -- TEMPORARY EXTRACTION OF document_to_element_list() ------------------------------------------
+
+
+def document_to_element_list(
+    document: HTMLDocument,
+    *,
+    include_page_breaks: bool = False,
+    last_modified: str | None,
+    starting_page_number: int = 1,
+    detection_origin: str | None = None,
+    **kwargs: Any,
+) -> Iterator[Element]:
+    """Converts a DocumentLayout or HTMLDocument object to a list of unstructured elements."""
+
+    def iter_page_elements(page: Page, page_number: int | None) -> Iterator[Element]:
+        """Generate each element in page after applying its metadata."""
+        for element in page.elements:
+            add_element_metadata(
+                element,
+                detection_origin=detection_origin,
+                last_modified=last_modified,
+                page_number=page_number,
+                **kwargs,
+            )
+            yield element
+
+    num_pages = len(document.pages)
+    for page_number, page in enumerate(document.pages, start=starting_page_number):
+        yield from iter_page_elements(page, page_number)
+        if include_page_breaks and page_number < num_pages + starting_page_number:
+            yield PageBreak(text="")
+
+
+def add_element_metadata(
+    element: Element,
+    *,
+    detection_origin: str | None,
+    last_modified: str | None,
+    page_number: int | None,
+    **kwargs: Any,
+) -> Element:
+    """Adds document metadata to the document element.
+
+    Document metadata includes information like the filename, source url, and page number.
+    """
+    assert isinstance(element, TagsMixin)
+
+    emphasized_text_contents = [et.get("text") or "" for et in element.emphasized_texts]
+    emphasized_text_tags = [et.get("tag") or "" for et in element.emphasized_texts]
+
+    link_urls = [link.get("url") for link in element.links]
+    link_texts = [link.get("text") or "" for link in element.links]
+    link_start_indexes = [link.get("start_index") for link in element.links]
+
+    metadata = ElementMetadata(
+        emphasized_text_contents=emphasized_text_contents or None,
+        emphasized_text_tags=emphasized_text_tags or None,
+        last_modified=last_modified,
+        link_start_indexes=link_start_indexes or None,
+        link_texts=link_texts or None,
+        link_urls=link_urls or None,
+        page_number=page_number,
+        text_as_html=element.text_as_html,
+    )
+    element.metadata.update(metadata)
+
+    if detection_origin is not None:
+        element.metadata.detection_origin = detection_origin
+
+    return element
 
 
 # -- tag classifiers -----------------------------------------------------------------------------

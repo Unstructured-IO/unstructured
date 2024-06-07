@@ -6,13 +6,12 @@ import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument
+from unstructured.documents.html import HTMLDocument, document_to_element_list
 from unstructured.documents.html_elements import TagsMixin
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
-    document_to_element_list,
     exactly_one,
     get_last_modified_date,
     get_last_modified_date_from_file,
@@ -25,30 +24,27 @@ from unstructured.partition.lang import apply_lang_metadata
 @add_chunking_strategy
 def partition_html(
     filename: Optional[str] = None,
+    *,
     file: Optional[IO[bytes]] = None,
     text: Optional[str] = None,
-    url: Optional[str] = None,
     encoding: Optional[str] = None,
-    include_page_breaks: bool = False,
-    include_metadata: bool = True,
+    url: Optional[str] = None,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
-    source_format: Optional[str] = None,
+    date_from_file_object: bool = False,
+    detect_language_per_element: bool = False,
     html_assemble_articles: bool = False,
-    metadata_filename: Optional[str] = None,
+    languages: Optional[list[str]] = ["auto"],
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
-    chunking_strategy: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
-    detect_language_per_element: bool = False,
-    detection_origin: Optional[str] = None,
-    date_from_file_object: bool = False,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
 
-    Parameters
-    ----------
+    HTML source parameters
+    ----------------------
+    The HTML to be partitioned can be specified four different ways:
+
     filename
         A string defining the target filename path.
     file
@@ -57,25 +53,23 @@ def partition_html(
         The string representation of the HTML document.
     url
         The URL of a webpage to parse. Only for URLs that return an HTML document.
+    headers
+        The HTTP headers to be used in the HTTP request when `url` is specified.
+    ssl_verify
+        If the URL parameter is set, determines whether or not SSL verification is performed
+        on the HTTP request.
+
+    date_from_file_object
+        Applies only when providing file via `file` parameter. If this option is True, attempt
+        infer last_modified metadata from bytes, otherwise set it to None.
     encoding
         The encoding method used to decode the text input. If None, utf-8 will be used.
-    include_page_breaks
-        If True, includes page breaks at the end of each page in the document.
+
+    Other parameters
+    ----------------
     include_metadata
         Optionally allows for excluding metadata from the output. Primarily intended
-        for when partition_html is called in other partition bricks (like partition_email)
-    headers
-        The headers to be used in conjunction with the HTTP request if URL is set.
-    ssl_verify
-        If the URL parameter is set, determines whether or not partition uses SSL verification
-        in the HTTP request.
-    source_format
-        The source of the original html. If None we will return HTMLElements but for example
-         partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
-    metadata_last_modified
-        The last modified date for the document.
-    skip_headers_and_footers
-        If True, ignores any content that is within <header> or <footer> tags
+        for when partition_html is called by other partitioners (like partition_email).
     languages
         User defined value for `metadata.languages` if provided. Otherwise language is detected
         using naive Bayesian filter via `langdetect`. Multiple languages indicates text could be
@@ -83,26 +77,35 @@ def partition_html(
         Additional Parameters:
             detect_language_per_element
                 Detect language per element instead of at the document level.
-    date_from_file_object
-        Applies only when providing file via `file` parameter. If this option is True, attempt
-        infer last_modified metadata from bytes, otherwise set it to None.
+    metadata_last_modified
+        The last modified date for the document.
+    skip_headers_and_footers
+        If True, ignores any content that is within <header> or <footer> tags
+    source_format
+        The source of the original html. If None we will return HTMLElements but for example
+         partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
     """
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
 
     # Verify that only one of the arguments was provided
     exactly_one(filename=filename, file=file, text=text, url=url)
-    last_modification_date = None
+
+    def last_modified():
+        if metadata_last_modified:
+            return metadata_last_modified
+        if filename:
+            return get_last_modified_date(filename)
+        if file and date_from_file_object:
+            return get_last_modified_date_from_file(file)
+        return None
+
     if filename is not None:
-        last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
             filename, encoding=encoding, assemble_articles=html_assemble_articles
         )
 
     elif file is not None:
-        last_modification_date = (
-            get_last_modified_date_from_file(file) if date_from_file_object else None
-        )
         _, file_text = read_txt_file(file=file, encoding=encoding)
         document = HTMLDocument.from_string(file_text, assemble_articles=html_assemble_articles)
 
@@ -127,25 +130,17 @@ def partition_html(
 
     elements = list(
         apply_lang_metadata(
-            document_to_element_list(
-                document,
-                sortable=False,
-                include_page_breaks=include_page_breaks,
-                last_modification_date=metadata_last_modified or last_modification_date,
-                source_format=source_format if source_format else None,
-                detection_origin=detection_origin,
-                **kwargs,
-            ),
+            document_to_element_list(document, last_modified=last_modified(), **kwargs),
             languages=languages,
             detect_language_per_element=detect_language_per_element,
-        ),
+        )
     )
 
-    # Note(yuming): Rip off page_number metadata fields here
-    # until we have a better way to handle page counting for html files
-    for element in elements:
-        if hasattr(element.metadata, "page_number"):
-            element.metadata.page_number = None
+    # Note(yuming): Rip off page_number metadata fields here until we have a better way to handle
+    # page counting for html files.
+    for e in elements:
+        e.metadata.page_number = None
+
     return elements
 
 
