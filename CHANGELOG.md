@@ -1,3 +1,13 @@
+## 0.14.5-dev8
+
+### Enhancements
+
+### Features
+
+### Fixes
+* **table metric bug fix** `get_element_level_alignment()`now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string. 
+
+
 ## 0.14.5-dev7
 
 ### Enhancements
