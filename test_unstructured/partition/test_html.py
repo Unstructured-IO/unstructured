@@ -5,11 +5,12 @@ from __future__ import annotations
 import io
 import pathlib
 from tempfile import SpooledTemporaryFile
-from typing import cast
+from typing import Any, cast
 
 import pytest
 
 from test_unstructured.unit_utils import (
+    FixtureRequest,
     Mock,
     MonkeyPatch,
     assert_round_trips_through_JSON,
@@ -35,7 +36,8 @@ from unstructured.documents.html_elements import (
     HTMLTitle,
     TagsMixin,
 )
-from unstructured.partition.html import partition_html
+from unstructured.file_utils.encoding import read_txt_file
+from unstructured.partition.html import HtmlPartitionerOptions, partition_html
 
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
@@ -75,15 +77,8 @@ def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
 
 
 def test_partition_html_raises_when_no_path_or_file_or_text_or_url_is_specified():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be sp"):
         partition_html()
-
-
-def test_partition_html_raises_with_too_many_specified():
-    with pytest.raises(ValueError):
-        partition_html(
-            example_doc_path("example-10k-1p.html"), text=example_doc_text("example-10k-1p.html")
-        )
 
 
 # -- partition_html() from URL -------------------------------------------------------------------
@@ -888,12 +883,12 @@ EXPECTED_OUTPUT_LANGUAGE_DE = [
 
 @pytest.fixture
 def get_last_modified_date_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.partition.html.get_last_modified_date")
+    return function_mock(request, "unstructured.documents.html.get_last_modified_date")
 
 
 @pytest.fixture
 def get_last_modified_date_from_file_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.partition.html.get_last_modified_date_from_file")
+    return function_mock(request, "unstructured.documents.html.get_last_modified_date_from_file")
 
 
 class FakeResponse:
@@ -906,4 +901,187 @@ class FakeResponse:
 
 @pytest.fixture
 def requests_get_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.partition.html.requests.get")
+    return function_mock(request, "unstructured.documents.html.requests.get")
+
+
+# ================================================================================================
+# ISOLATED UNIT TESTS
+# ================================================================================================
+# These test components used by `partition_html()` in isolation such that all edge cases can be
+# exercised.
+# ================================================================================================
+
+
+class DescribeHtmlPartitionerOptions:
+    """Unit-test suite for `unstructured.partition.html.HtmlPartitionerOptions` objects."""
+
+    # -- .detection_origin -----------------------
+
+    @pytest.mark.parametrize("detection_origin", ["html", None])
+    def it_knows_the_caller_provided_detection_origin(
+        self, detection_origin: str | None, opts_args: dict[str, Any]
+    ):
+        opts_args["detection_origin"] = detection_origin
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.detection_origin == detection_origin
+
+    # -- .encoding -------------------------------
+
+    @pytest.mark.parametrize("encoding", ["utf-8", None])
+    def it_knows_the_caller_provided_encoding(
+        self, encoding: str | None, opts_args: dict[str, Any]
+    ):
+        opts_args["encoding"] = encoding
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.encoding == encoding
+
+    # -- .html_str -------------------------------
+
+    def it_gets_the_HTML_from_the_file_path_when_one_is_provided(self, opts_args: dict[str, Any]):
+        file_path = example_doc_path("example-10k-1p.html")
+        opts_args["file_path"] = file_path
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        html_str = opts.html_str
+
+        assert isinstance(html_str, str)
+        assert html_str == read_txt_file(file_path)[1]
+
+    def and_it_gets_the_HTML_from_the_file_like_object_when_one_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        file_path = example_doc_path("example-10k-1p.html")
+        with open(file_path, "rb") as f:
+            file = io.BytesIO(f.read())
+        opts_args["file"] = file
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        html_str = opts.html_str
+
+        assert isinstance(html_str, str)
+        assert html_str == read_txt_file(file_path)[1]
+
+    def and_it_uses_the_HTML_in_the_text_argument_when_that_is_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<html><body><p>Hello World!</p></body></html>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.html_str == "<html><body><p>Hello World!</p></body></html>"
+
+    def and_it_gets_the_HTML_from_the_url_when_one_is_provided(
+        self, requests_get_: Mock, opts_args: dict[str, Any]
+    ):
+        requests_get_.return_value = FakeResponse(
+            text="<html><body><p>I just flew over the internet!</p></body></html>",
+            status_code=200,
+            headers={"Content-Type": "text/html"},
+        )
+        opts_args["url"] = "https://insta.tweet.face.org"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.html_str == "<html><body><p>I just flew over the internet!</p></body></html>"
+
+    def but_it_raises_when_no_path_or_file_or_text_or_url_was_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be"):
+            opts.html_str
+
+    # -- .last_modified --------------------------
+
+    def it_gets_the_last_modified_date_of_the_document_from_the_caller_when_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["metadata_last_modified"] = "2024-03-05T17:02:53"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.last_modified == "2024-03-05T17:02:53"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_path_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_: Mock
+    ):
+        opts_args["file_path"] = "a/b/document.html"
+        get_last_modified_date_.return_value = "2024-04-02T20:32:35"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_.assert_called_once_with("a/b/document.html")
+        assert last_modified == "2024-04-02T20:32:35"
+
+    def and_it_falls_back_to_the_last_modified_date_of_the_file_when_a_file_like_object_is_provided(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = True
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_called_once_with(file)
+        assert last_modified == "2024-04-02T20:42:07"
+
+    def but_it_falls_back_to_None_for_the_last_modified_date_when_date_from_file_object_is_False(
+        self, opts_args: dict[str, Any], get_last_modified_date_from_file_: Mock
+    ):
+        file = io.BytesIO(b"abcdefg")
+        opts_args["file"] = file
+        opts_args["date_from_file_object"] = False
+        get_last_modified_date_from_file_.return_value = "2024-04-02T20:42:07"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        last_modified = opts.last_modified
+
+        get_last_modified_date_from_file_.assert_not_called()
+        assert last_modified is None
+
+    # -- .skip_headers_and_footers ---------------
+
+    @pytest.mark.parametrize("skip_headers_and_footers", [True, False])
+    def it_knows_the_caller_provided_skip_headers_and_footers_setting(
+        self, skip_headers_and_footers: bool, opts_args: dict[str, Any]
+    ):
+        opts_args["skip_headers_and_footers"] = skip_headers_and_footers
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert opts.skip_headers_and_footers is skip_headers_and_footers
+
+    # -- fixtures --------------------------------------------------------------------------------
+
+    @pytest.fixture()
+    def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
+        return function_mock(request, "unstructured.documents.html.get_last_modified_date")
+
+    @pytest.fixture()
+    def get_last_modified_date_from_file_(self, request: FixtureRequest):
+        return function_mock(
+            request, "unstructured.documents.html.get_last_modified_date_from_file"
+        )
+
+    @pytest.fixture
+    def opts_args(self) -> dict[str, Any]:
+        """All default arguments for `HtmlPartitionerOptions`.
+
+        Individual argument values can be changed to suit each test. Makes construction of opts more
+        compact for testing purposes.
+        """
+        return {
+            "file": None,
+            "file_path": None,
+            "text": None,
+            "encoding": None,
+            "url": None,
+            "headers": {},
+            "ssl_verify": True,
+            "date_from_file_object": False,
+            "metadata_last_modified": None,
+            "skip_headers_and_footers": False,
+            "detection_origin": None,
+        }
