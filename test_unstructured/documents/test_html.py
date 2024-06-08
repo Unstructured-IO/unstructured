@@ -10,7 +10,6 @@ from typing import Any
 
 import pytest
 from lxml import etree
-from lxml import html as lxml_html
 
 from test_unstructured.unit_utils import (
     FixtureRequest,
@@ -27,11 +26,7 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import (
-    HTMLDocument,
-    HtmlPartitionerOptions,
-    _parse_HTMLTable_from_table_elem,
-)
+from unstructured.documents.html import HTMLDocument, HtmlPartitionerOptions
 from unstructured.documents.html_elements import (
     HTMLAddress,
     HTMLNarrativeText,
@@ -511,36 +506,6 @@ def test_exclude_tag_types(tag: str, opts_args: dict[str, Any]):
     assert len(elements) == 0
 
 
-# -- _bulleted_text_from_table() -----------------------------------------------------------------
-
-
-def test_bulletized_bulleted_text_from_table():
-    doc = """<html>
-    <body>
-        <table>
-            <tbody>
-                <tr>
-                    <td>•</td>
-                    <td><p>Happy Groundhog's day!</p></td>
-                </tr>
-                <tr>
-                    <td>•</td>
-                    <td><p>Looks like six more weeks of winter ...</p></td>
-                </tr>
-            </tbody>
-        </table>
-    </body>
-</html>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    table = document_tree.find(".//table")
-    assert table is not None
-    bulleted_text = html._bulleted_text_from_table(table)
-    assert bulleted_text == [
-        ListItem(text="Happy Groundhog's day!"),
-        ListItem(text="Looks like six more weeks of winter ..."),
-    ]
-
-
 # -- _construct_text() ---------------------------------------------------------------------------
 
 
@@ -679,130 +644,6 @@ def test_adjacent_spans_are_text_tags():
     assert html._is_text_tag(el) is True
 
 
-# -- _parse_tag() --------------------------------------------------------------------------------
-
-
-def test_parse_nothing():
-    doc = """<p></p>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//p")
-    assert el is not None
-    parsed_el = html._parse_tag(el)
-    assert parsed_el is None
-
-
-def test_parse_not_anything(_is_narrative_tag_: Mock, is_possible_title_: Mock):  # noqa: PT019
-    _is_narrative_tag_.return_value = False
-    is_possible_title_.return_value = False
-    doc = """<p>This is nothing</p>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//p")
-    assert el is not None
-    parsed_el = html._parse_tag(el)
-    assert parsed_el == Text(text="This is nothing")
-
-
-def test_parse_bullets():
-    doc = """<p>● An excellent point!</p>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//p")
-    assert el is not None
-    parsed_el = html._parse_tag(el)
-    assert parsed_el == ListItem("An excellent point!")
-
-
-def test_parse_tag_ignores_lonely_bullets():
-    doc = """<p>●</p>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//p")
-    assert el is not None
-    parsed_el = html._parse_tag(el)
-    assert parsed_el is None
-
-
-def test_parse_tag_ignores_stubs():
-    doc = """<p>$</p>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//p")
-    assert el is not None
-    parsed_el = html._parse_tag(el)
-    assert parsed_el is None
-
-
-# -- _process_list_item() ------------------------------------------------------------------------
-
-
-def test_process_list_item_gets_next_section():
-    doc = """
-    <div>
-        <p>●</p>
-        <p>●</p>
-    </div>
-    <div>
-        <p>An excellent point!</p>
-    </div>
-
-    """
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//div")
-    assert el is not None
-    parsed_el, _ = html._process_list_item(el, max_predecessor_len=10)
-    assert parsed_el == ListItem(text="An excellent point!")
-
-
-def test_process_list_item_returns_none_if_next_blank():
-    doc = """
-    <div>
-        <p>●</p>
-        <p>●</p>
-    </div>
-
-    """
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//div")
-    assert el is not None
-    parsed_el, _ = html._process_list_item(el)
-    assert parsed_el is None
-
-
-def test_process_list_item_returns_none_if_next_has_no_text():
-    doc = """
-    <div>
-        <p>●</p>
-        <p>●</p>
-    </div>
-    <div>
-    </div>
-    """
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//div")
-    assert el is not None
-    assert html._is_list_item_tag(el) is True
-    parsed_el, _ = html._process_list_item(el)
-    assert parsed_el is None
-
-
-def test_process_list_item_ignores_deep_divs():
-    doc = """
-    <div>
-        <p>●</p>
-        <p>●</p>
-        <p>●</p>
-        <p>●</p>
-        <p>●</p>
-    </div>
-    <div>
-        <p>An excellent point!</p>
-    </div>
-
-    """
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//div")
-    assert el is not None
-    parsed_el, _ = html._process_list_item(el, max_predecessor_len=2)
-    assert parsed_el is None
-
-
 # -- unit-level tests ----------------------------------------------------------------------------
 
 
@@ -855,12 +696,44 @@ class DescribeHTMLDocument:
         html_document = HTMLDocument.load(opts)
         assert html_document._main.tag == "html"
 
+    # -- ._parse_bulleted_text_from_table() ------
 
-class Describe_parse_HTMLTable_from_table_elem:
-    """Unit-test suite for `unstructured.documents.html._parse_HTMLTable_from_table_elem`."""
+    def it_extracts_bullet_text_from_table_as_ListItem_elements(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = """
+        <html>
+          <body>
+            <table>
+              <tbody>
+                <tr>
+                  <td>•</td>
+                  <td><p>Happy Groundhog's day!</p></td>
+                </tr>
+                <tr>
+                  <td>•</td>
+                  <td><p>Looks like six more weeks of winter ...</p></td>
+                </tr>
+              </tbody>
+            </table>
+          </body>
+        </html>
+        """
+        html_document = HTMLDocument(html_str, opts)
+        table_elem = html_document._main.find(".//table")
+        assert table_elem is not None
 
-    def it_produces_one_cell_for_each_original_table_cell(self):
-        table_html = (
+        bulleted_text = html_document._parse_bulleted_text_from_table(table_elem)
+
+        assert bulleted_text == [
+            ListItem(text="Happy Groundhog's day!"),
+            ListItem(text="Looks like six more weeks of winter ..."),
+        ]
+
+    # -- ._parse_HTMLTable_from_table_elem() -----
+
+    def it_produces_one_cell_for_each_original_table_cell(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = (
             # -- include formatting whitespace to make sure it is removed --
             "<table>\n"
             "  <tr>\n"
@@ -869,17 +742,20 @@ class Describe_parse_HTMLTable_from_table_elem:
             "  </tr>\n"
             "</table>"
         )
-        table_elem = lxml_html.fromstring(table_html)
+        html_document = HTMLDocument(html_str, opts)
+        table_elem = html_document._main.find(".//table")
+        assert table_elem is not None
 
-        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
 
         assert isinstance(html_table, HTMLTable)
         assert html_table.text == "foo bar"
         assert html_table.text_as_html == "<table><tr><td>foo</td><td>bar</td></tr></table>"
 
-    def it_accommodates_tds_with_child_elements(self):
+    def it_accommodates_tds_with_child_elements(self, opts_args: dict[str, Any]):
         """Like this example from an SEC 10k filing."""
-        table_html = (
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = (
             "<table>\n"
             " <tr>\n"
             "  <td></td>\n"
@@ -906,9 +782,11 @@ class Describe_parse_HTMLTable_from_table_elem:
             " </tr>\n"
             "</table>\n"
         )
-        table_elem = lxml_html.fromstring(table_html)
+        html_document = HTMLDocument(html_str, opts)
+        table_elem = html_document._main.find(".//table")
+        assert table_elem is not None
 
-        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
 
         assert isinstance(html_table, HTMLTable)
         assert html_table.text == (
@@ -922,9 +800,13 @@ class Describe_parse_HTMLTable_from_table_elem:
             "</table>"
         )
 
-    def it_reduces_a_nested_table_to_its_text_placed_in_the_cell_containing_the_nested_table(self):
+    def it_reduces_a_nested_table_to_its_text_placed_in_the_cell_containing_the_nested_table(
+        self, opts_args: dict[str, Any]
+    ):
         """Recursively ..."""
-        nested_table_html = (
+        opts = HtmlPartitionerOptions(**opts_args)
+        # -- note <table> elements nested in <td> elements --
+        html_str = (
             "<table>\n"
             " <tr>\n"
             "  <td>\n"
@@ -941,15 +823,154 @@ class Describe_parse_HTMLTable_from_table_elem:
             " </tr>\n"
             "</table>"
         )
-        table_elem = lxml_html.fromstring(nested_table_html)
+        html_document = HTMLDocument(html_str, opts)
+        table_elem = html_document._main.find(".//table")
+        assert table_elem is not None
 
-        html_table = _parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
 
         assert isinstance(html_table, HTMLTable)
         assert html_table.text == "foo bar baz bng fizz bang"
         assert html_table.text_as_html == (
             "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"
         )
+
+    # -- ._parse_tag() ---------------------------
+
+    def it_produces_a_Text_element_when_the_tag_contents_are_not_narrative_or_a_title(
+        self,
+        _is_narrative_tag_: Mock,  # noqa: PT019
+        is_possible_title_: Mock,
+        opts_args: dict[str, Any],
+    ):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = "<p>This is nothing</p>"
+        _is_narrative_tag_.return_value = False
+        is_possible_title_.return_value = False
+        html_document = HTMLDocument(html_str, opts)
+        p = html_document._main.find(".//p")
+        assert p is not None
+
+        assert html_document._parse_tag(p) == Text(text="This is nothing")
+
+    def it_produces_a_ListItem_element_when_the_tag_contains_are_preceded_by_a_bullet_character(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = "<p>● An excellent point!</p>"
+        html_document = HTMLDocument(html_str, opts)
+        p = html_document._main.find(".//p")
+        assert p is not None
+
+        assert html_document._parse_tag(p) == ListItem("An excellent point!")
+
+    def but_not_when_the_tag_contains_only_a_bullet_character_and_no_text(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = "<p>●</p>"
+        html_document = HTMLDocument(html_str, opts)
+        p = html_document._main.find(".//p")
+        assert p is not None
+
+        assert html_document._parse_tag(p) is None
+
+    def it_returns_None_when_the_tag_has_no_content(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = "<p></p>"
+        html_document = HTMLDocument(html_str, opts)
+        p = html_document._main.find(".//p")
+        assert p is not None
+
+        assert html_document._parse_tag(p) is None
+
+    def and_it_returns_None_when_the_tag_contains_only_a_stub(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = "<p>$</p>"
+        html_document = HTMLDocument(html_str, opts)
+        p = html_document._main.find(".//p")
+        assert p is not None
+
+        assert html_document._parse_tag(p) is None
+
+    # -- ._process_list_item() -------------------------------------------------------------------
+
+    def it_continues_processing_elements_after_a_bulleted_list(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = """
+        <div>
+            <p>●</p>
+            <p>●</p>
+        </div>
+        <div>
+            <p>An excellent point!</p>
+        </div>
+        """
+        html_document = HTMLDocument(html_str, opts)
+        el = html_document._main.find(".//div")
+        assert el is not None
+
+        parsed_el, _ = html_document._process_list_item(el, max_predecessor_len=10)
+
+        assert parsed_el == ListItem(text="An excellent point!")
+
+    def but_it_returns_None_when_no_element_follows_empty_bullets(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = """
+        <div>
+            <p>●</p>
+            <p>●</p>
+        </div>
+        """
+        html_document = HTMLDocument(html_str, opts)
+        el = html_document._main.find(".//div")
+        assert el is not None
+
+        parsed_el, _ = html_document._process_list_item(el)
+
+        assert parsed_el is None
+
+    def and_it_returns_None_when_following_element_contains_no_text(
+        self, opts_args: dict[str, Any]
+    ):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = """
+        <div>
+            <p>●</p>
+            <p>●</p>
+        </div>
+        <div>
+        </div>
+        """
+        html_document = HTMLDocument(html_str, opts)
+        el = html_document._main.find(".//div")
+        assert el is not None
+
+        parsed_el, _ = html_document._process_list_item(el)
+
+        assert parsed_el is None
+
+    def it_ignores_deep_divs_when_so_instructed(self, opts_args: dict[str, Any]):
+        opts = HtmlPartitionerOptions(**opts_args)
+        html_str = """
+        <div>
+            <p>●</p>
+            <p>●</p>
+            <p>●</p>
+            <p>●</p>
+            <p>●</p>
+        </div>
+        <div>
+            <p>An excellent point!</p>
+        </div>
+        """
+        html_document = HTMLDocument(html_str, opts)
+        el = html_document._main.find(".//div")
+        assert el is not None
+
+        parsed_el, _ = html_document._process_list_item(el, max_predecessor_len=2)
+
+        assert parsed_el is None
 
 
 # -- module-level fixtures -----------------------------------------------------------------------
