@@ -105,11 +105,6 @@ def partition_html(
         )
     )
 
-    # Note(yuming): Rip off page_number metadata fields here until we have a better way to handle
-    # page counting for html files.
-    for e in elements:
-        e.metadata.page_number = None
-
     return elements
 
 

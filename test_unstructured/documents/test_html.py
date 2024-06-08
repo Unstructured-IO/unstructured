@@ -30,7 +30,6 @@ from unstructured.documents.elements import (
 from unstructured.documents.html import (
     HTMLDocument,
     HtmlPartitionerOptions,
-    Page,
     _parse_HTMLTable_from_table_elem,
 )
 from unstructured.documents.html_elements import (
@@ -319,13 +318,10 @@ def test_read_html_doc(tmp_path: pathlib.Path, opts_args: dict[str, Any]):
     opts_args["file_path"] = file_path
     opts = HtmlPartitionerOptions(**opts_args)
 
-    html_document = HTMLDocument.load(opts)
+    elements = HTMLDocument.load(opts).elements
 
-    assert len(html_document.pages) == 1
-    assert all(isinstance(p, Page) for p in html_document.pages)
-    p = html_document.pages[0]
-    assert len(p.elements) == 7
-    assert p.elements == [
+    assert len(elements) == 7
+    assert elements == [
         Title("A Great and Glorious Section"),
         NarrativeText("Dear Leader is the best. He is such a wonderful engineer!"),
         Title("Another Magnificent Title"),
@@ -371,9 +367,9 @@ def test_nested_text_tags(opts_args: dict[str, Any]):
         "</body>\n"
     )
     opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
+    elements = HTMLDocument.load(opts).elements
 
-    assert len(html_document.pages[0].elements) == 1
+    assert len(elements) == 1
 
 
 def test_containers_with_text_are_processed(opts_args: dict[str, Any]):
@@ -495,23 +491,24 @@ def test_line_break_in_text_tag(tag: str, opts_args: dict[str, Any]):
     assert doc.elements[1].text == "World"
 
 
-# -- HTMLDocument.pages --------------------------------------------------------------------------
-
-
 @pytest.mark.parametrize("tag", [tag for tag in html.TEXT_TAGS if tag not in html.TABLE_TAGS])
 def test_tag_types(tag: str, opts_args: dict[str, Any]):
     opts_args["text"] = f"<body>\n  <{tag}>\n    There is some text here.\n  </{tag}>\n</body>\n"
     opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
-    assert len(html_document.pages[0].elements) == 1
+
+    elements = HTMLDocument.load(opts).elements
+
+    assert len(elements) == 1
 
 
 @pytest.mark.parametrize("tag", EXCLUDED_TAGS)
 def test_exclude_tag_types(tag: str, opts_args: dict[str, Any]):
     opts_args["text"] = f"<body>\n  <{tag}>\n    There is some text here.\n  </{tag}>\n</body>\n"
     opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
-    assert len(html_document.pages) == 0
+
+    elements = HTMLDocument.load(opts).elements
+
+    assert len(elements) == 0
 
 
 # -- _bulleted_text_from_table() -----------------------------------------------------------------

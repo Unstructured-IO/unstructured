@@ -67,10 +67,6 @@ class HTMLDocument:
         return cast(list[Element], self._html_elements)
 
     @lazyproperty
-    def pages(self) -> list[Page]:
-        return self._parse_pages_from_element_tree()
-
-    @lazyproperty
     def _document_tree(self) -> etree._Element:
         """The root HTML element."""
         content = self._html_text
@@ -110,6 +106,7 @@ class HTMLDocument:
 
         Elements are sequenced in document order.
         """
+        pages = self._parse_pages_from_element_tree()
 
         def document_to_element_list() -> Iterator[HtmlElement]:
             """Converts an HTMLDocument object to a list of unstructured elements."""
@@ -124,7 +121,7 @@ class HTMLDocument:
                     )
                     yield element
 
-            for page in self.pages:
+            for page in pages:
                 yield from iter_page_elements(page)
 
         return list(document_to_element_list())
