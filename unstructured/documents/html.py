@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Final, Iterator, Optional, cast
+from typing import Any, Final, Iterator, Optional, cast
 
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.base import Page
 from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
@@ -18,7 +17,7 @@ from unstructured.documents.html_elements import (
     HTMLText,
     HTMLTitle,
 )
-from unstructured.documents.xml import VALID_PARSERS, XMLDocument
+from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -28,7 +27,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
-from unstructured.utils import htmlify_matrix_of_cell_texts
+from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
 
 TEXT_TAGS: Final[list[str]] = ["p", "a", "td", "span", "b", "font"]
 LIST_ITEM_TAGS: Final[list[str]] = ["li", "dd"]
@@ -42,18 +41,67 @@ HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
 
-class HTMLDocument(XMLDocument):
-    """Class for handling HTML documents. Uses rules based parsing to identify sections
-    of interest within the document."""
+class HTMLDocument:
+    """Class for handling HTML documents.
 
-    def __init__(
-        self,
-        stylesheet: Optional[str] = None,
-        parser: VALID_PARSERS = None,
-        assemble_articles: bool = True,
-    ):
-        self.assembled_articles = assemble_articles
-        super().__init__(stylesheet=stylesheet, parser=parser)
+    Uses rules based parsing to identify sections of interest within the document.
+    """
+
+    def __init__(self, html_text: str, assemble_articles: bool = True):
+        self._html_text = html_text
+        self._assemble_articles = assemble_articles
+
+    @classmethod
+    def from_file(
+        cls, filename: str, encoding: Optional[str] = None, **kwargs: Any
+    ) -> HTMLDocument:
+        _, content = read_txt_file(filename=filename, encoding=encoding)
+        return cls.from_string(content, **kwargs)
+
+    @classmethod
+    def from_string(cls, text: str, **kwargs: Any) -> HTMLDocument:
+        """Supports reading in an XML file as a raw string rather than as a file."""
+        logger.info("Reading document from string ...")
+        return cls(text, **kwargs)
+
+    @lazyproperty
+    def elements(self) -> list[Element]:
+        """Gets all elements from pages in sequential order."""
+        return [el for page in self.pages for el in page.elements]
+
+    @lazyproperty
+    def pages(self) -> list[Page]:
+        return self._parse_pages_from_element_tree()
+
+    @lazyproperty
+    def _document_tree(self) -> etree._Element:
+        """The root HTML element."""
+        content = self._html_text
+        parser = etree.HTMLParser(remove_comments=True)
+        # NOTE(robinson) - without the carriage return at the beginning, you get
+        # output that looks like the following when you run partition_pdf
+        #   'h   3       a   l   i   g   n   =   "   c   e   n   t   e   r   "   >'
+        # The correct output is returned once you add the initial return.
+        if content and not content.startswith("\n"):
+            content = "\n" + content
+
+        try:
+            document_tree = etree.fromstring(content, parser)
+            if document_tree is None:  # pyright: ignore[reportUnnecessaryComparison]
+                raise ValueError("document_tree is None")
+
+        # NOTE(robinson) - The following ValueError occurs with unicode strings. In that case, we
+        # fall back to encoding the string and passing in bytes.
+        #     ValueError: Unicode strings with encoding declaration are not supported.
+        #     Please use bytes input or XML fragments without declaration.
+        except ValueError:
+            document_tree = etree.fromstring(content.encode(), parser)
+
+        # -- remove all <script> and <style> tags so we don't have to worry about accidentally
+        # -- parsing elements out of those.
+        etree.strip_elements(document_tree, ["script", "style"], with_tail=False)
+
+        return document_tree
 
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
@@ -63,14 +111,11 @@ class HTMLDocument(XMLDocument):
         elements that surround something like a blog-post. Each article becomes its own page. If no
         article tags are present in the HTML the entire HTML document is a single page.
         """
-        if self._pages:
-            return self._pages
         logger.info("Reading document ...")
         pages: list[Page] = []
-        etree.strip_elements(self.document_tree, ["script", "style"], with_tail=False)
-        root = _find_main(self.document_tree)
+        root = _find_main(self._document_tree)
 
-        articles = _find_articles(root, assemble_articles=self.assembled_articles)
+        articles = _find_articles(root, assemble_articles=self._assemble_articles)
         page_number = 0
         page = Page(number=page_number)
         for article in articles:
@@ -146,6 +191,20 @@ class HTMLDocument(XMLDocument):
                 page = Page(number=page_number)
 
         return pages
+
+
+class Page:
+    """A page consists of an ordered set of elements.
+
+    The intent of the ordering is to align with the order in which a person would read the document.
+    """
+
+    def __init__(self, number: int):
+        self.number: int = number
+        self.elements: list[Element] = []
+
+    def __str__(self):
+        return "\n\n".join([str(element) for element in self.elements])
 
 
 # -- candidate HTMLDocument methods --------------------------------------------------------------
