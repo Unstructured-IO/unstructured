@@ -298,7 +298,6 @@ def test_read_html_doc(tmp_path: pathlib.Path):
             "        </tr>\n"
             "      </tbody>\n"
             "    </table>\n"
-            "    <hr>\n"
             "    <h2>A New Beginning</h2>\n"
             "    <div>Here is the start of a new page.</div>\n"
             "  </body>\n"
@@ -307,22 +306,16 @@ def test_read_html_doc(tmp_path: pathlib.Path):
 
     html_document = HTMLDocument.from_file(filename)
 
-    assert len(html_document.pages) == 2
+    assert len(html_document.pages) == 1
     assert all(isinstance(p, Page) for p in html_document.pages)
-    # --
     p = html_document.pages[0]
-    assert len(p.elements) == 5
+    assert len(p.elements) == 7
     assert p.elements == [
         Title("A Great and Glorious Section"),
         NarrativeText("Dear Leader is the best. He is such a wonderful engineer!"),
         Title("Another Magnificent Title"),
         NarrativeText("The prior element is a title based on its capitalization patterns!"),
         Table("I'm in a table"),
-    ]
-    # --
-    p = html_document.pages[1]
-    assert len(p.elements) == 2
-    assert p.elements == [
         Title("A New Beginning"),
         NarrativeText("Here is the start of a new page."),
     ]

@@ -36,8 +36,7 @@ LIST_TAGS: Final[list[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[list[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[list[str]] = ["table", "tbody", "td", "tr"]
 TEXTBREAK_TAGS: Final[list[str]] = ["br"]
-PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
-EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
+EMPTY_TAGS: Final[list[str]] = ["br", "hr"]
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
@@ -183,9 +182,6 @@ class HTMLDocument:
                 if element or tag_elem.tag == "table":
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
 
-            elif tag_elem.tag in PAGEBREAK_TAGS:
-                yield PageBreak("")
-
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
 
@@ -205,17 +201,7 @@ class HTMLDocument:
         page = Page(number=page_number)
 
         for article in self._articles:
-            for element in self._parse_article_to_elements(article):
-                # -- `<hr/>` element produces a `PageBreak` element, but is not added to elements --
-                if element == PageBreak(""):
-                    # -- ignore leading page-break and second and later consecutive page-breaks --
-                    if not page.elements:
-                        continue
-                    pages.append(page)
-                    page_number += 1
-                    page = Page(number=page_number)
-                else:
-                    page.elements.append(element)
+            page.elements = list(self._parse_article_to_elements(article))
 
             # -- create new page for each article, but not when article was empty --
             if len(page.elements) > 0:
