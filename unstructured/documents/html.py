@@ -108,7 +108,7 @@ class HTMLDocument:
 
         def iter_html_elements() -> Iterator[HtmlElement]:
             """Generate each HTML-specific element in document after applying its metadata."""
-            for e in self._parse_article_to_elements(self._main):
+            for e in self._iter_elements(self._main):
                 add_element_metadata(
                     e,
                     last_modified=self._opts.last_modified,
@@ -118,16 +118,10 @@ class HTMLDocument:
 
         return list(iter_html_elements())
 
-    @lazyproperty
-    def _main(self) -> etree._Element:
-        """The first <main> tag under `root` if it exists, othewise `root`."""
-        main_tag_elem = self._document_tree.find(".//main")
-        return main_tag_elem if main_tag_elem is not None else self._document_tree
-
-    def _parse_article_to_elements(self, article: etree._Element) -> Iterator[HtmlElement]:
-        """Parse <article> container element or root element into `Element`s."""
+    def _iter_elements(self, subtree: etree._Element) -> Iterator[HtmlElement]:
+        """Parse HTML-subtree into `Element` objects in document order."""
         descendanttag_elems: tuple[etree._Element, ...] = ()
-        for tag_elem in article.iter():
+        for tag_elem in subtree.iter():
             # -- Prevent repeating something that's been flagged as text as we descend branch --
             if tag_elem in descendanttag_elems:
                 continue
@@ -176,6 +170,12 @@ class HTMLDocument:
                     yield element
                 if element or tag_elem.tag == "table":
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
+
+    @lazyproperty
+    def _main(self) -> etree._Element:
+        """The first <main> tag under `root` if it exists, othewise `root`."""
+        main_tag_elem = self._document_tree.find(".//main")
+        return main_tag_elem if main_tag_elem is not None else self._document_tree
 
 
 class HtmlPartitionerOptions:
