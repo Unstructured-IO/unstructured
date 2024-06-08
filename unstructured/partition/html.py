@@ -33,7 +33,6 @@ def partition_html(
     ssl_verify: bool = True,
     date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
-    html_assemble_articles: bool = False,
     languages: Optional[list[str]] = ["auto"],
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
@@ -101,17 +100,15 @@ def partition_html(
         return None
 
     if filename is not None:
-        document = HTMLDocument.from_file(
-            filename, encoding=encoding, assemble_articles=html_assemble_articles
-        )
+        document = HTMLDocument.from_file(filename, encoding=encoding)
 
     elif file is not None:
         _, file_text = read_txt_file(file=file, encoding=encoding)
-        document = HTMLDocument.from_string(file_text, assemble_articles=html_assemble_articles)
+        document = HTMLDocument.from_string(file_text)
 
     elif text is not None:
         _text: str = str(text)
-        document = HTMLDocument.from_string(_text, assemble_articles=html_assemble_articles)
+        document = HTMLDocument.from_string(_text)
 
     else:
         assert url is not None

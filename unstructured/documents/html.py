@@ -47,9 +47,8 @@ class HTMLDocument:
     Uses rules based parsing to identify sections of interest within the document.
     """
 
-    def __init__(self, html_text: str, assemble_articles: bool = True):
+    def __init__(self, html_text: str):
         self._html_text = html_text
-        self._assemble_articles = assemble_articles
 
     @classmethod
     def from_file(
@@ -72,25 +71,6 @@ class HTMLDocument:
     @lazyproperty
     def pages(self) -> list[Page]:
         return self._parse_pages_from_element_tree()
-
-    @lazyproperty
-    def _articles(self) -> list[etree._Element]:
-        """Parse articles from `root` of an HTML document.
-
-        Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
-        elements are present, the entire document (`root`) is returned as the single document
-        article.
-        """
-        root = self._main
-        if not self._assemble_articles:
-            return [root]
-
-        return (
-            root.findall(".//article")
-            # NOTE(robinson) - ref: https://schema.org/Article
-            or root.findall(".//div[@itemprop='articleBody']")
-            or [root]
-        )
 
     @lazyproperty
     def _document_tree(self) -> etree._Element:
@@ -196,20 +176,12 @@ class HTMLDocument:
         A horizontal-rule (`<hr/>`) element also triggers a page break.
         """
         logger.info("Reading document ...")
-        pages: list[Page] = []
-        page_number = 0
-        page = Page(number=page_number)
+        page = Page(number=0)
 
-        for article in self._articles:
-            page.elements = list(self._parse_article_to_elements(article))
+        page.elements = list(self._parse_article_to_elements(self._main))
 
-            # -- create new page for each article, but not when article was empty --
-            if len(page.elements) > 0:
-                pages.append(page)
-                page_number += 1
-                page = Page(number=page_number)
-
-        return pages
+        # -- don't return empty page --
+        return [page] if len(page.elements) > 0 else []
 
 
 class Page:

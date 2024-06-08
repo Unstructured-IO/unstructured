@@ -785,44 +785,6 @@ def test_process_list_item_ignores_deep_divs():
 class DescribeHTMLDocument:
     """Unit-test suite for `unstructured.documents.html.HTMLDocument`."""
 
-    # -- ._articles ------------------------------
-
-    def it_can_find_the_article_elements_in_the_element_tree(self):
-        html_document = HTMLDocument.from_string(
-            "<header></header>\n"
-            "<body>\n"
-            "  <p>Lots preamble stuff yada yada yada</p>\n"
-            "  <article>\n"
-            "    <h2>A Wonderful Section!</h2>\n"
-            "    <p>Look at this amazing section!</p>\n"
-            "  </article>\n"
-            "  <article>\n"
-            "    <h2>Another Wonderful Section!</h2>\n"
-            "    <p>Look at this other amazing section!</p>\n"
-            "  </article>\n"
-            "</body>\n"
-        )
-        assert len(html_document._articles) == 2
-        assert all(a.tag == "article" for a in html_document._articles)
-
-    def but_it_returns_the_root_element_when_no_articles_are_present(self):
-        html_document = HTMLDocument.from_string(
-            "<header></header>\n"
-            "<body>\n"
-            "  <p>Lots preamble stuff yada yada yada</p>\n"
-            "  <section>\n"
-            "    <h2>A Wonderful Section!</h2>\n"
-            "    <p>Look at this amazing section!</p>\n"
-            "  </section>\n"
-            "  <section>\n"
-            "    <h2>Another Wonderful Section!</h2>\n"
-            "    <p>Look at this other amazing section!</p>\n"
-            "  </section>\n"
-            "</body>\n"
-        )
-        assert len(html_document._articles) == 1
-        assert html_document._articles[0].tag == "html"
-
     # -- ._main ----------------------------------
 
     def it_can_find_the_main_element_in_the_document(self):
