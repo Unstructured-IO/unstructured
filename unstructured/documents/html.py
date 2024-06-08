@@ -129,13 +129,75 @@ class HTMLDocument:
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
 
+    def _parse_article_to_elements(self, article: etree._Element) -> Iterator[Element]:
+        """Parse <article> container element or root element into `Element`s."""
+        descendanttag_elems: tuple[etree._Element, ...] = ()
+        for tag_elem in article.iter():
+            # -- Prevent repeating something that's been flagged as text as we descend branch --
+            if tag_elem in descendanttag_elems:
+                continue
+
+            if _is_text_tag(tag_elem):
+                _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
+                yield from _page_elements
+
+            elif _is_container_with_text(tag_elem):
+                tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+                if tag_elem_tail:
+                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
+                    yield from _page_elements
+
+                    # NOTE(christine): generate a separate element using a tag tail
+                    assert tag_elem.tail is not None
+                    element = _text_to_element(tag_elem.tail, tag_elem.tag, (), depth=0)
+                else:
+                    links = _get_links_from_tag(tag_elem)
+                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    assert tag_elem.text is not None
+                    element = _text_to_element(
+                        tag_elem.text,
+                        tag_elem.tag,
+                        (),
+                        depth=0,
+                        links=links,
+                        emphasized_texts=emphasized_texts,
+                    )
+                if element is not None:
+                    yield element
+
+            elif _is_bulleted_table(tag_elem):
+                bulleted_text = _bulleted_text_from_table(tag_elem)
+                yield from bulleted_text
+                descendanttag_elems = tuple(tag_elem.iterdescendants())
+
+            elif _is_list_item_tag(tag_elem):
+                element, next_element = _process_list_item(tag_elem)
+                if element is not None:
+                    yield element
+                    descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+
+            elif tag_elem.tag in TABLE_TAGS:
+                element = _parse_HTMLTable_from_table_elem(tag_elem)
+                if element is not None:
+                    yield element
+                if element or tag_elem.tag == "table":
+                    descendanttag_elems = tuple(tag_elem.iterdescendants())
+
+            elif tag_elem.tag in PAGEBREAK_TAGS:
+                yield PageBreak("")
+
     def _parse_pages_from_element_tree(self) -> list[Page]:
         """Parse HTML elements into pages.
 
         A *page* is a subsequence of the document-elements parsed from the HTML document
-        corresponding to a distinct topic. At present pagination is determined by `<article>`
-        elements that surround something like a blog-post. Each article becomes its own page. If no
-        article tags are present in the HTML the entire HTML document is a single page.
+        corresponding to a distinct topic.
+
+        A page is detected in two ways, either an "article" or a horizontal-rule.
+
+        An HTML `<article>` element surrounds something like a blog-post or news article on a page
+        that summarizes multiple such articles. Each article becomes its own page.
+
+        A horizontal-rule (`<hr/>`) element also triggers a page break.
         """
         logger.info("Reading document ...")
         pages: list[Page] = []
@@ -143,72 +205,19 @@ class HTMLDocument:
         page = Page(number=page_number)
 
         for article in self._articles:
-            descendanttag_elems: tuple[etree._Element, ...] = ()
-            for tag_elem in article.iter():
-                if tag_elem in descendanttag_elems:
-                    # Prevent repeating something that's been flagged as text as we chase it
-                    # down a chain
-                    continue
-
-                if _is_text_tag(tag_elem):
-                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
-                    page.elements.extend(_page_elements)
-
-                elif _is_container_with_text(tag_elem):
-                    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
-                    if tag_elem_tail:
-                        _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
-                        page.elements.extend(_page_elements)
-
-                        # NOTE(christine): generate a separate element using a tag tail
-                        assert tag_elem.tail is not None
-                        element = _text_to_element(
-                            tag_elem.tail,
-                            tag_elem.tag,
-                            (),
-                            depth=0,
-                        )
-                    else:
-                        links = _get_links_from_tag(tag_elem)
-                        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                        assert tag_elem.text is not None
-                        element = _text_to_element(
-                            tag_elem.text,
-                            tag_elem.tag,
-                            (),
-                            depth=0,
-                            links=links,
-                            emphasized_texts=emphasized_texts,
-                        )
-                    if element is not None:
-                        page.elements.append(element)
-
-                elif _is_bulleted_table(tag_elem):
-                    bulleted_text = _bulleted_text_from_table(tag_elem)
-                    page.elements.extend(bulleted_text)
-                    descendanttag_elems = tuple(tag_elem.iterdescendants())
-
-                elif _is_list_item_tag(tag_elem):
-                    element, next_element = _process_list_item(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                        descendanttag_elems = _get_bullet_descendants(
-                            tag_elem,
-                            next_element,
-                        )
-
-                elif tag_elem.tag in TABLE_TAGS:
-                    element = _parse_HTMLTable_from_table_elem(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                    if element or tag_elem.tag == "table":
-                        descendanttag_elems = tuple(tag_elem.iterdescendants())
-
-                elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
+            for element in self._parse_article_to_elements(article):
+                # -- `<hr/>` element produces a `PageBreak` element, but is not added to elements --
+                if element == PageBreak(""):
+                    # -- ignore leading page-break and second and later consecutive page-breaks --
+                    if not page.elements:
+                        continue
                     pages.append(page)
                     page_number += 1
                     page = Page(number=page_number)
+                else:
+                    page.elements.append(element)
 
+            # -- create new page for each article, but not when article was empty --
             if len(page.elements) > 0:
                 pages.append(page)
                 page_number += 1
