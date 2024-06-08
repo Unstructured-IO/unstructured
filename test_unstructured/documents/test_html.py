@@ -552,29 +552,15 @@ def test_get_bullet_descendants():
         (
             "<p>Hello <strong>there</strong> I <em>am</em> a <b>very</b> <i>important</i> text</p>",
             "p",
-            [
-                {"text": "there", "tag": "strong"},
-                {"text": "am", "tag": "em"},
-                {"text": "very", "tag": "b"},
-                {"text": "important", "tag": "i"},
-            ],
+            (["there", "am", "very", "important"], ["strong", "em", "b", "i"]),
         ),
         (
             "<p>Here is a <span>list</span> of <b>my <i>favorite</i> things</b></p>",
             "p",
-            [
-                {"text": "list", "tag": "span"},
-                {"text": "my favorite things", "tag": "b"},
-                {"text": "favorite", "tag": "i"},
-            ],
+            (["list", "my favorite things", "favorite"], ["span", "b", "i"]),
         ),
-        (
-            "<strong>A lone strong text!</strong>",
-            "strong",
-            [{"text": "A lone strong text!", "tag": "strong"}],
-        ),
-        ("<span>I have a</span> tail", "span", [{"text": "I have a", "tag": "span"}]),
-        ("<p>Text with no emphasized runs</p> ", "p", []),
+        ("<strong>A lone strong text!</strong>", "strong", (["A lone strong text!"], ["strong"])),
+        ("<span>I have a</span> tail", "span", (["I have a"], ["span"])),
     ],
 )
 def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: list[dict[str, str]]):

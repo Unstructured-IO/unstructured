@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Protocol, Sequence
+from typing import Any, Optional, Protocol, Sequence
 
 from unstructured.documents.elements import (
     Address,
@@ -20,7 +20,6 @@ from unstructured.documents.elements import (
 class HtmlElement(Protocol):
     """Interface provided by HTML-specific elements like HTMLNarrativeText."""
 
-    emphasized_texts: Sequence[Dict[str, str]]
     links: Sequence[Link]
     metadata: ElementMetadata
     tag: str
@@ -42,7 +41,6 @@ class TagsMixin:
         *args: Any,
         tag: Optional[str] = None,
         links: Sequence[Link] = [],
-        emphasized_texts: Sequence[Dict[str, str]] = [],
         text_as_html: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -51,7 +49,6 @@ class TagsMixin:
         else:
             self.tag = tag
         self.links = links
-        self.emphasized_texts = emphasized_texts
         self.text_as_html = text_as_html
         super().__init__(*args, **kwargs)
 

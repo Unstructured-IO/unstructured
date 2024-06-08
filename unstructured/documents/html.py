@@ -141,7 +141,7 @@ class HTMLDocument:
                     element = _text_to_element(tag_elem.tail, tag_elem.tag, depth=0)
                 else:
                     links = _get_links_from_tag(tag_elem)
-                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
                     assert tag_elem.text is not None
                     element = _text_to_element(
                         tag_elem.text,
@@ -149,6 +149,7 @@ class HTMLDocument:
                         depth=0,
                         links=links,
                         emphasized_texts=emphasized_texts,
+                        emphasized_tags=emphasized_tags,
                     )
                 if element is not None:
                     yield element
@@ -238,7 +239,7 @@ class HTMLDocument:
         if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
             text = _construct_text(tag_elem)
             links = _get_links_from_tag(tag_elem)
-            emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+            emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
             depth = len(
                 [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
             )
@@ -247,8 +248,11 @@ class HTMLDocument:
                     text=text,
                     tag=tag_elem.tag,
                     links=links,
-                    emphasized_texts=emphasized_texts,
-                    metadata=ElementMetadata(category_depth=depth),
+                    metadata=ElementMetadata(
+                        category_depth=depth,
+                        emphasized_text_contents=emphasized_texts,
+                        emphasized_text_tags=emphasized_tags,
+                    ),
                 ),
                 tag_elem,
             )
@@ -286,7 +290,8 @@ class HTMLDocument:
             return None
 
         links = _get_links_from_tag(tag_elem)
-        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+        emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
+
         depth = (
             # TODO(newel): Check the surrounding divs to see if should be root level
             # -- zero index the depth --
@@ -304,6 +309,7 @@ class HTMLDocument:
             tag_elem.tag,
             links=links,
             emphasized_texts=emphasized_texts,
+            emphasized_tags=emphasized_tags,
             depth=depth,
         )
 
@@ -441,16 +447,11 @@ def add_element_metadata(
 
     Document metadata includes information like the filename, source url, and page number.
     """
-    emphasized_text_contents = [et.get("text") or "" for et in element.emphasized_texts]
-    emphasized_text_tags = [et.get("tag") or "" for et in element.emphasized_texts]
-
     link_urls = [link.get("url") for link in element.links]
     link_texts = [link.get("text") or "" for link in element.links]
     link_start_indexes = [link.get("start_index") for link in element.links]
 
     metadata = ElementMetadata(
-        emphasized_text_contents=emphasized_text_contents or None,
-        emphasized_text_tags=emphasized_text_tags or None,
         last_modified=last_modified,
         link_start_indexes=link_start_indexes or None,
         link_texts=link_texts or None,
@@ -569,25 +570,36 @@ def _get_bullet_descendants(
     return () if element is None or next_element is None else tuple(next_element.iterdescendants())
 
 
-def _get_emphasized_texts_from_tag(tag_elem: etree._Element) -> list[dict[str, str]]:
+def _get_emphasized_texts_from_tag(
+    tag_elem: etree._Element,
+) -> tuple[list[str] | None, list[str] | None]:
     """Emphasized text within and below `tag_element`.
 
     Emphasis is indicated by `<strong>`, `<em>`, `<span>`, `<b>`, `<i>` tags.
+
+    Return value is a pair of lists like `(["foo", "bar"], ["b", "i"])` ready for assignment to
+    `.metadata.emphasized_text_contents` and `.metadata.emphasized_text_tagS` respectively. These
+    values are both `None` when no emphasized_text is present in `tag_elem`.
     """
-    emphasized_texts: list[dict[str, str]] = []
     tags_to_track = ["strong", "em", "span", "b", "i"]
 
-    if tag_elem.tag in tags_to_track:
-        text = _construct_text(tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": tag_elem.tag})
+    def iter_text_tag_pairs() -> Iterator[tuple[str, str]]:
+        """Generate (text, tag) pair for each emphasized text in or in child of `tag_elem`."""
+        if tag_elem.tag in tags_to_track:
+            text = _construct_text(tag_elem, False)
+            if text:
+                yield text, tag_elem.tag
 
-    for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
-        text = _construct_text(descendant_tag_elem, False)
-        if text:
-            emphasized_texts.append({"text": text, "tag": descendant_tag_elem.tag})
+        for descendant_tag_elem in tag_elem.iterdescendants(*tags_to_track):
+            text = _construct_text(descendant_tag_elem, False)
+            if text:
+                yield text, descendant_tag_elem.tag
 
-    return emphasized_texts
+    text_tag_pairs = list(iter_text_tag_pairs())
+    emphasized_texts = [text for text, _ in text_tag_pairs]
+    emphasized_tags = [tag for _, tag in text_tag_pairs]
+
+    return emphasized_texts or None, emphasized_tags or None
 
 
 def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
@@ -666,7 +678,8 @@ def _text_to_element(
     tag: str,
     depth: int,
     links: list[Link] = [],
-    emphasized_texts: list[dict[str, str]] = [],
+    emphasized_texts: list[str] | None = None,
+    emphasized_tags: list[str] | None = None,
 ) -> Optional[HtmlElement]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
@@ -676,28 +689,66 @@ def _text_to_element(
             text=clean_bullets(text),
             tag=tag,
             links=links,
-            emphasized_texts=emphasized_texts,
-            metadata=ElementMetadata(category_depth=depth),
+            metadata=ElementMetadata(
+                category_depth=depth,
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
         )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
+        return HTMLAddress(
+            text=text,
+            tag=tag,
+            links=links,
+            metadata=ElementMetadata(
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
+        )
     elif is_email_address(text):
-        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
+        return HTMLEmailAddress(
+            text=text,
+            tag=tag,
+            links=links,
+            metadata=ElementMetadata(
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
+        )
 
     if len(text) < 2:
         return None
     elif _is_narrative_tag(text, tag):
-        return HTMLNarrativeText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
+        return HTMLNarrativeText(
+            text,
+            tag=tag,
+            links=links,
+            metadata=ElementMetadata(
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
+        )
     elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
             tag=tag,
             links=links,
-            emphasized_texts=emphasized_texts,
-            metadata=ElementMetadata(category_depth=depth),
+            metadata=ElementMetadata(
+                category_depth=depth,
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
         )
     else:
-        return HTMLText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
+        return HTMLText(
+            text,
+            tag=tag,
+            links=links,
+            metadata=ElementMetadata(
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+            ),
+        )
 
 
 # -- HTML-specific text classifiers --------------------------------------------------------------
