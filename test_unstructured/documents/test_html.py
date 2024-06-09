@@ -487,22 +487,6 @@ def test_construct_text(doc: str, expected: str):
     assert text == expected
 
 
-# -- _get_bullet_descendants() -------------------------------------------------------------------
-
-
-def test_get_bullet_descendants():
-    div_1 = "<div><p>●</p><p>●</p></div>"
-    document_tree_1 = etree.fromstring(div_1, etree.HTMLParser())
-    element = document_tree_1.find(".//div")
-
-    div_2 = "<div><p>An excellent point!</p></div>"
-    document_tree_2 = etree.fromstring(div_2, etree.HTMLParser())
-    next_element = document_tree_2.find(".//div")
-
-    descendants = html._get_bullet_descendants(element, next_element)
-    assert len(descendants) == 1
-
-
 # -- _get_emphasized_texts_from_tag() ------------------------------------------------------------
 
 
@@ -784,19 +768,17 @@ class DescribeHTMLDocument:
 
     def it_produces_a_Text_element_when_the_tag_contents_are_not_narrative_or_a_title(
         self,
-        _is_narrative_tag_: Mock,  # noqa: PT019
         is_possible_title_: Mock,
         opts_args: dict[str, Any],
     ):
         opts = HtmlPartitionerOptions(**opts_args)
-        html_str = "<p>This is nothing</p>"
-        _is_narrative_tag_.return_value = False
+        html_str = "<p>NO PARTICULAR TYPE.</p>"
         is_possible_title_.return_value = False
         html_document = HTMLDocument(html_str, opts)
         p = html_document._main.find(".//p")
         assert p is not None
 
-        assert html_document._parse_tag(p) == Text(text="This is nothing")
+        assert html_document._parse_tag(p) == Text(text="NO PARTICULAR TYPE.")
 
     def it_produces_a_ListItem_element_when_the_tag_contains_are_preceded_by_a_bullet_character(
         self, opts_args: dict[str, Any]
@@ -919,11 +901,6 @@ class DescribeHTMLDocument:
 
 
 # -- module-level fixtures -----------------------------------------------------------------------
-
-
-@pytest.fixture
-def _is_narrative_tag_(request: FixtureRequest):
-    return function_mock(request, "unstructured.documents.html._is_narrative_tag")
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Final, Iterator, Optional, cast
+from typing import IO, Final, Iterator, cast
 
 import requests
 from lxml import etree
@@ -91,10 +91,10 @@ class HTMLDocument:
         if len(text) < 2:
             return None
 
-        if _is_narrative_tag(text, tag):
+        if tag not in HEADING_TAGS and is_possible_narrative_text(text):
             return NarrativeText
 
-        if _is_heading_tag(tag) or is_possible_title(text):
+        if tag in HEADING_TAGS or is_possible_title(text):
             return Title
 
         return Text
@@ -184,10 +184,12 @@ class HTMLDocument:
                 descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
             elif _is_list_item_tag(tag_elem):
-                element, next_element = self._process_list_item(tag_elem)
+                element, next_tag_elem = self._process_list_item(tag_elem)
                 if element is not None:
                     yield element
-                    descendant_tag_elems = _get_bullet_descendants(tag_elem, next_element)
+                    descendant_tag_elems = (
+                        () if next_tag_elem is None else tuple(next_tag_elem.iterdescendants())
+                    )
 
             elif tag_elem.tag in TABLE_TAGS:
                 element = self._parse_Table_from_table_elem(tag_elem)
@@ -554,16 +556,6 @@ def _construct_text(tag_elem: etree._Element, include_tail_text: bool = True) ->
     return text.strip()
 
 
-def _get_bullet_descendants(
-    element: Optional[etree._Element], next_element: Optional[etree._Element]
-) -> tuple[etree._Element, ...]:
-    """Helper for list-item processing.
-
-    Gathers the descendants of `next_element` so they can be marked visited.
-    """
-    return () if element is None or next_element is None else tuple(next_element.iterdescendants())
-
-
 def _get_emphasized_texts_from_tag(
     tag_elem: etree._Element,
 ) -> tuple[list[str] | None, list[str] | None]:
@@ -671,16 +663,3 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
             unfurled.extend(_unfurl_break_tags(child))
 
     return unfurled
-
-
-# -- HTML-specific text classifiers --------------------------------------------------------------
-
-
-def _is_heading_tag(tag: str) -> bool:
-    """Uses tag information to infer whether text is a heading."""
-    return tag in HEADING_TAGS
-
-
-def _is_narrative_tag(text: str, tag: str) -> bool:
-    """Uses tag information to infer whether text is narrative."""
-    return tag not in HEADING_TAGS and is_possible_narrative_text(text)
