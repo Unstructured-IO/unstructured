@@ -141,11 +141,11 @@ class HTMLDocument:
             if tag_elem in descendant_tag_elems:
                 continue
 
-            if _is_text_tag(tag_elem):
+            if self._is_text_tag(tag_elem):
                 yield from self._process_text_tag(tag_elem)
                 descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
-            elif _is_container_with_text(tag_elem):
+            elif self._is_container_with_text(tag_elem):
                 tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
                 if tag_elem_tail:
                     yield from self._process_text_tag(tag_elem, False)
@@ -179,11 +179,11 @@ class HTMLDocument:
                             ),
                         )
 
-            elif _is_bulleted_table(tag_elem):
+            elif self._is_bulleted_table(tag_elem):
                 yield from self._parse_bulleted_text_from_table(tag_elem)
                 descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
-            elif _is_list_item_tag(tag_elem):
+            elif self._is_list_item_tag(tag_elem):
                 element, next_tag_elem = self._process_list_item(tag_elem)
                 if element is not None:
                     yield element
@@ -203,6 +203,98 @@ class HTMLDocument:
         """The first <main> tag under `root` if it exists, othewise `root`."""
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
+
+    # -- tag classifiers --------------------------------------------------
+
+    def _has_adjacent_bulleted_spans(
+        self, tag_elem: etree._Element, children: list[etree._Element]
+    ) -> bool:
+        """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
+
+        A bulleted span is one beginning with a bullet. If there are two or more adjacent to each
+        other they are treated as a single bulleted text element.
+        """
+        if tag_elem.tag in SECTION_TAGS:
+            all_spans = all(child.tag == "span" for child in children)
+            _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
+            if all_spans and _is_bulleted:
+                return True
+        return False
+
+    def _is_bulleted_table(self, table_elem: etree._Element) -> bool:
+        """True when all text in `table_elem` is bulleted text.
+
+        A table-row containing no text is not considered, but at least one bulleted-text item must
+        be present. A table with no text in any row is not a bulleted table.
+        """
+        if table_elem.tag != "table":
+            return False
+
+        trs = table_elem.findall(".//tr")
+        tr_texts = [_construct_text(tr) for tr in trs]
+
+        # -- a table with no text is not a bulleted table --
+        if all(not text for text in tr_texts):
+            return False
+
+        # -- all non-empty rows must contain bulleted text --
+        if any(text and not is_bulleted_text(text) for text in tr_texts):
+            return False
+
+        return True
+
+    def _is_container_with_text(self, tag_elem: etree._Element) -> bool:
+        """Checks if a tag is a container that also happens to contain text.
+
+        Example
+        -------
+        <div>Hi there,
+            <div>This is my message.</div>
+            <div>Please read my message!</div>
+        </div>
+        """
+        if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
+            return False
+
+        tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
+        tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+        if not tag_elem_text and not tag_elem_tail:
+            return False
+
+        return True
+
+    def _is_list_item_tag(self, tag_elem: etree._Element) -> bool:
+        """True when `tag_elem` contains bulleted text."""
+        return tag_elem.tag in LIST_ITEM_TAGS or (
+            tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
+        )
+
+    def _is_text_tag(
+        self, tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
+    ) -> bool:
+        """True when `tag_element` potentially contains narrative text."""
+        # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
+        # it could be the text representation of a giant div
+        # Exclude empty tags from tag_elem
+        empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
+        if len(tag_elem) > max_predecessor_len + empty_elems_len:
+            return False
+
+        if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
+            return True
+
+        # NOTE(robinson) - This indicates that a div tag has no children. If that's the
+        # case and the tag has text, its potential a text tag
+        children = list(tag_elem)
+        if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
+            return True
+
+        if self._has_adjacent_bulleted_spans(tag_elem, children):
+            return True
+
+        return False
+
+    # -- tag processors ---------------------------------------------------
 
     def _parse_bulleted_text_from_table(self, table: etree._Element) -> Iterator[Element]:
         """Generate zero or more document elements from `table` tag.
@@ -462,86 +554,6 @@ class HtmlPartitionerOptions:
         return self._skip_headers_and_footers
 
 
-# -- tag classifiers -----------------------------------------------------------------------------
-
-
-def _is_bulleted_table(table_elem: etree._Element) -> bool:
-    """True when all text in `table_elem` is bulleted text.
-
-    A table-row containing no text is not considered, but at least one bulleted-text item must be
-    present. A table with no text in any row is not a bulleted table.
-    """
-    if table_elem.tag != "table":
-        return False
-
-    trs = table_elem.findall(".//tr")
-    tr_texts = [_construct_text(tr) for tr in trs]
-
-    # -- a table with no text is not a bulleted table --
-    if all(not text for text in tr_texts):
-        return False
-
-    # -- all non-empty rows must contain bulleted text --
-    if any(text and not is_bulleted_text(text) for text in tr_texts):
-        return False
-
-    return True
-
-
-def _is_container_with_text(tag_elem: etree._Element) -> bool:
-    """Checks if a tag is a container that also happens to contain text.
-
-    Example
-    -------
-    <div>Hi there,
-        <div>This is my message.</div>
-        <div>Please read my message!</div>
-    </div>
-    """
-    if tag_elem.tag not in SECTION_TAGS + ["body"] or len(tag_elem) == 0:
-        return False
-
-    tag_elem_text = tag_elem.text.strip() if tag_elem.text else None
-    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
-    if not tag_elem_text and not tag_elem_tail:
-        return False
-
-    return True
-
-
-def _is_list_item_tag(tag_elem: etree._Element) -> bool:
-    """True when `tag_elem` contains bulleted text."""
-    return tag_elem.tag in LIST_ITEM_TAGS or (
-        tag_elem.tag in SECTION_TAGS and is_bulleted_text(_construct_text(tag_elem))
-    )
-
-
-def _is_text_tag(
-    tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
-) -> bool:
-    """True when `tag_element` potentially contains narrative text."""
-    # NOTE(robinson) - Only consider elements with limited depth. Otherwise,
-    # it could be the text representation of a giant div
-    # Exclude empty tags from tag_elem
-    empty_elems_len = len([el for el in tag_elem if el.tag in EMPTY_TAGS])
-    if len(tag_elem) > max_predecessor_len + empty_elems_len:
-        return False
-
-    if tag_elem.tag in TEXT_TAGS + HEADING_TAGS + TEXTBREAK_TAGS:
-        return True
-
-    # NOTE(robinson) - This indicates that a div tag has no children. If that's the
-    # case and the tag has text, its potential a text tag
-    children = list(tag_elem)
-    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
-        return True
-
-    if _has_adjacent_bulleted_spans(tag_elem, children):
-        return True
-
-    return False
-
-
 # -- tag processors ------------------------------------------------------------------------------
 
 
@@ -617,20 +629,6 @@ def _get_links_from_tag(
     link_start_indexes = [offset for _, _, offset in link_triples]
 
     return link_texts or None, link_urls or None, link_start_indexes or None
-
-
-def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
-    """True when `tag_elem` is a <div> or <pre> containing two or more adjacent bulleted spans.
-
-    A bulleted span is one beginning with a bullet. If there are two or more adjacent to each other
-    they are treated as a single bulleted text element.
-    """
-    if tag_elem.tag in SECTION_TAGS:
-        all_spans = all(child.tag == "span" for child in children)
-        _is_bulleted = children[0].text is not None and is_bulleted_text(children[0].text)
-        if all_spans and _is_bulleted:
-            return True
-    return False
 
 
 def _has_break_tags(tag_elem: etree._Element) -> bool:

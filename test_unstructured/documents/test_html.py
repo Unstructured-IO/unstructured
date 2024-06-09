@@ -195,7 +195,7 @@ def test_it_does_not_consider_an_empty_table_a_bulleted_text_table(opts_args: di
     table = html_elem.find(".//table")
     assert table is not None
 
-    assert html._is_bulleted_table(table) is False
+    assert html_document._is_bulleted_table(table) is False
 
 
 def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
@@ -563,12 +563,14 @@ def test_get_links_from_tag(doc: str, root: str, expected: list[dict[str, str]])
 # -- _is_text_tag() ------------------------------------------------------------------------------
 
 
-def test_adjacent_spans_are_text_tags():
-    doc = """<div><span>&#8226;</span><span>A bullet!</span></div>"""
-    document_tree = etree.fromstring(doc, etree.HTMLParser())
-    el = document_tree.find(".//div")
+def test_adjacent_spans_are_text_tags(opts_args: dict[str, Any]):
+    html_str = "<div><span>&#8226;</span><span>A bullet!</span></div>"
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument(html_str, opts)
+    el = html_document._main.find(".//div")
     assert el is not None
-    assert html._is_text_tag(el) is True
+
+    assert html_document._is_text_tag(el) is True
 
 
 # -- unit-level tests ----------------------------------------------------------------------------
