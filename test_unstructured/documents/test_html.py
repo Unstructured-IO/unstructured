@@ -89,7 +89,6 @@ def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element(opts_args: dict
     # -- table text is joined into a single string; no row or cell boundaries are represented --
     assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
     # -- An HTML representation is also available that is longer but represents table structure.
-    # -- Note this is padded with undesired spaces for human-readability that doesn't matter to us.
     assert element.metadata.text_as_html == (
         "<table>"
         "<tr><td>Lorem</td><td>Ipsum</td></tr>"
@@ -224,8 +223,7 @@ def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
         "</body>\n"
         "</html>"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
+    html_document = HTMLDocument.load(HtmlPartitionerOptions(**opts_args))
     (element,) = html_document.elements
     assert isinstance(element, HTMLTable)
     text_as_html = element.metadata.text_as_html
@@ -550,30 +548,27 @@ def test_get_emphasized_texts_from_tag(doc: str, root: str, expected: list[dict[
         (
             "<a href='/loner'>A lone link!</a>",
             "a",
-            [{"text": "A lone link!", "url": "/loner", "start_index": -1}],
+            (["A lone link!"], ["/loner"], [-1]),
         ),
         (
             "<ul><li><a href='/wiki/Parrot'>Parrots</a></li><li>Dogs</li></ul>",
             "ul",
-            [{"text": "Parrots", "url": "/wiki/Parrot", "start_index": 0}],
+            (["Parrots"], ["/wiki/Parrot"], [0]),
         ),
         (
             "<ul><li><a href='/parrot'>Parrots</a></li><li><a href='/dog'>Dogs</a></li></ul>",
             "ul",
-            [
-                {"text": "Parrots", "url": "/parrot", "start_index": 0},
-                {"text": "Dogs", "url": "/dog", "start_index": 7},
-            ],
+            (["Parrots", "Dogs"], ["/parrot", "/dog"], [0, 7]),
         ),
         (
             "<div>Here is <p>P tag</p> tail text. <a href='/link'>link!</a></div>",
             "div",
-            [{"text": "link!", "url": "/link", "start_index": 25}],
+            (["link!"], ["/link"], [25]),
         ),
         (
             "<div>Here is <p>P tag</p><a href='/link'>link!</a></div>",
             "div",
-            [{"text": "link!", "url": "/link", "start_index": 13}],
+            (["link!"], ["/link"], [13]),
         ),
     ],
 )

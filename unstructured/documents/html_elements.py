@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Protocol, Sequence
+from typing import Any, Protocol
 
 from unstructured.documents.elements import (
     Address,
     ElementMetadata,
     EmailAddress,
-    Link,
     ListItem,
     NarrativeText,
     Table,
@@ -20,13 +19,11 @@ from unstructured.documents.elements import (
 class HtmlElement(Protocol):
     """Interface provided by HTML-specific elements like HTMLNarrativeText."""
 
-    links: Sequence[Link]
     metadata: ElementMetadata
 
     def __init__(
         self,
         text: str,
-        tag: str,
         metadata: ElementMetadata | None = None,
     ): ...
 
@@ -37,10 +34,8 @@ class TagsMixin:
     def __init__(
         self,
         *args: Any,
-        links: Sequence[Link] = [],
         **kwargs: Any,
     ):
-        self.links = links
         super().__init__(*args, **kwargs)
 
 

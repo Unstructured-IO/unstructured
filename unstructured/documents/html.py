@@ -8,7 +8,7 @@ import requests
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.elements import Element, ElementMetadata, Link
+from unstructured.documents.elements import Element, ElementMetadata
 from unstructured.documents.html_elements import (
     HTMLAddress,
     HtmlElement,
@@ -109,11 +109,8 @@ class HTMLDocument:
         def iter_html_elements() -> Iterator[HtmlElement]:
             """Generate each HTML-specific element in document after applying its metadata."""
             for e in self._iter_elements(self._main):
-                add_element_metadata(
-                    e,
-                    last_modified=self._opts.last_modified,
-                    detection_origin=self._opts.detection_origin,
-                )
+                e.metadata.last_modified = self._opts.last_modified
+                e.metadata.detection_origin = self._opts.detection_origin
                 yield e
 
         return list(iter_html_elements())
@@ -140,16 +137,18 @@ class HTMLDocument:
                     assert tag_elem.tail is not None
                     element = _text_to_element(tag_elem.tail, tag_elem.tag, depth=0)
                 else:
-                    links = _get_links_from_tag(tag_elem)
+                    link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
                     emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
                     assert tag_elem.text is not None
                     element = _text_to_element(
                         tag_elem.text,
                         tag_elem.tag,
                         depth=0,
-                        links=links,
                         emphasized_texts=emphasized_texts,
                         emphasized_tags=emphasized_tags,
+                        link_texts=link_texts,
+                        link_urls=link_urls,
+                        link_start_indexes=link_start_indexes,
                     )
                 if element is not None:
                     yield element
@@ -238,7 +237,7 @@ class HTMLDocument:
         """
         if tag_elem.tag in LIST_TAGS + LIST_ITEM_TAGS:
             text = _construct_text(tag_elem)
-            links = _get_links_from_tag(tag_elem)
+            link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
             emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
             depth = len(
                 [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
@@ -246,11 +245,13 @@ class HTMLDocument:
             return (
                 HTMLListItem(
                     text=text,
-                    links=links,
                     metadata=ElementMetadata(
                         category_depth=depth,
                         emphasized_text_contents=emphasized_texts,
                         emphasized_text_tags=emphasized_tags,
+                        link_texts=link_texts,
+                        link_urls=link_urls,
+                        link_start_indexes=link_start_indexes,
                     ),
                 ),
                 tag_elem,
@@ -288,7 +289,7 @@ class HTMLDocument:
         if not text:
             return None
 
-        links = _get_links_from_tag(tag_elem)
+        link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
         emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
 
         depth = (
@@ -306,10 +307,12 @@ class HTMLDocument:
         return _text_to_element(
             text,
             tag_elem.tag,
-            links=links,
+            depth=depth,
             emphasized_texts=emphasized_texts,
             emphasized_tags=emphasized_tags,
-            depth=depth,
+            link_texts=link_texts,
+            link_urls=link_urls,
+            link_start_indexes=link_start_indexes,
         )
 
     def _process_text_tag(
@@ -434,34 +437,6 @@ class HtmlPartitionerOptions:
     def skip_headers_and_footers(self) -> bool:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
-
-
-# -- TEMPORARY EXTRACTION OF add_element_metadata() ----------------------------------------------
-
-
-def add_element_metadata(
-    element: HtmlElement, *, last_modified: str | None, detection_origin: str | None
-) -> HtmlElement:
-    """Adds document metadata to the document element.
-
-    Document metadata includes information like the filename, source url, and page number.
-    """
-    link_urls = [link.get("url") for link in element.links]
-    link_texts = [link.get("text") or "" for link in element.links]
-    link_start_indexes = [link.get("start_index") for link in element.links]
-
-    metadata = ElementMetadata(
-        last_modified=last_modified,
-        link_start_indexes=link_start_indexes or None,
-        link_texts=link_texts or None,
-        link_urls=link_urls or None,
-    )
-    element.metadata.update(metadata)
-
-    if detection_origin is not None:
-        element.metadata.detection_origin = detection_origin
-
-    return element
 
 
 # -- tag classifiers -----------------------------------------------------------------------------
@@ -600,26 +575,35 @@ def _get_emphasized_texts_from_tag(
     return emphasized_texts or None, emphasized_tags or None
 
 
-def _get_links_from_tag(tag_elem: etree._Element) -> list[Link]:
+def _get_links_from_tag(
+    tag_elem: etree._Element,
+) -> tuple[list[str] | None, list[str] | None, list[int] | None]:
     """Hyperlinks within and below `tag_elem`."""
-    links: list[Link] = []
-    tag_elem_href = tag_elem.get("href")
-    if tag_elem_href:
-        tag_elem_text = _construct_text(tag_elem, False)
-        links.append({"text": tag_elem_text, "url": tag_elem_href, "start_index": -1})
-    else:
-        start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
-        for tag in tag_elem.iterdescendants():
-            href = tag.get("href")
-            if href:
-                links.append({"text": tag.text, "url": href, "start_index": start_index})
 
-            if tag.text and not (tag.text.isspace()):
-                start_index = start_index + len(tag.text)
-            if tag.tail and not (tag.tail.isspace()):
-                start_index = start_index + len(tag.tail)
+    def iter_link_triples() -> Iterator[tuple[str, str, int]]:
+        """Generate (text, url, offset) pair for each link in `tag_elem` or descendant."""
+        href = tag_elem.get("href")
+        if href:
+            tag_elem_text = _construct_text(tag_elem, False)
+            yield tag_elem_text, href, -1
+        else:
+            start_index = len(tag_elem.text.lstrip()) if tag_elem.text else 0
+            for tag in tag_elem.iterdescendants():
+                href = tag.get("href")
+                if href:
+                    yield tag.text or "", href, start_index
+                # -- recompute start-index for next link --
+                if tag.text and not (tag.text.isspace()):
+                    start_index = start_index + len(tag.text)
+                if tag.tail and not (tag.tail.isspace()):
+                    start_index = start_index + len(tag.tail)
 
-    return links
+    link_triples = list(iter_link_triples())
+    link_texts = [text for text, _, _ in link_triples]
+    link_urls = [url for _, url, _ in link_triples]
+    link_start_indexes = [offset for _, _, offset in link_triples]
+
+    return link_texts or None, link_urls or None, link_start_indexes or None
 
 
 def _has_adjacent_bulleted_spans(tag_elem: etree._Element, children: list[etree._Element]) -> bool:
@@ -675,9 +659,11 @@ def _text_to_element(
     text: str,
     tag: str,
     depth: int,
-    links: list[Link] = [],
     emphasized_texts: list[str] | None = None,
     emphasized_tags: list[str] | None = None,
+    link_texts: list[str] | None = None,
+    link_urls: list[str] | None = None,
+    link_start_indexes: list[int] | None = None,
 ) -> Optional[HtmlElement]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
@@ -685,29 +671,35 @@ def _text_to_element(
             return None
         return HTMLListItem(
             text=clean_bullets(text),
-            links=links,
             metadata=ElementMetadata(
                 category_depth=depth,
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
     elif is_us_city_state_zip(text):
         return HTMLAddress(
             text=text,
-            links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
     elif is_email_address(text):
         return HTMLEmailAddress(
             text=text,
-            links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
 
@@ -716,29 +708,35 @@ def _text_to_element(
     elif _is_narrative_tag(text, tag):
         return HTMLNarrativeText(
             text,
-            links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
     elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
-            links=links,
             metadata=ElementMetadata(
                 category_depth=depth,
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
     else:
         return HTMLText(
             text,
-            links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
                 emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
             ),
         )
 
