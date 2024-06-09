@@ -41,6 +41,8 @@ EMPTY_TAGS: Final[list[str]] = ["br", "hr"]
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
+DEPTH_CLASSES = ListItem, Title
+
 
 class HTMLDocument:
     """Class for handling HTML documents.
@@ -72,6 +74,30 @@ class HTMLDocument:
                 yield e
 
         return list(iter_elements())
+
+    def _classify_text(self, text: str, tag: str) -> type[Text] | None:
+        """Produce a document-element of the appropriate sub-type for `text`."""
+        if is_bulleted_text(text):
+            if not clean_bullets(text):
+                return None
+            return ListItem
+
+        if is_us_city_state_zip(text):
+            return Address
+
+        if is_email_address(text):
+            return EmailAddress
+
+        if len(text) < 2:
+            return None
+
+        if _is_narrative_tag(text, tag):
+            return NarrativeText
+
+        if _is_heading_tag(tag) or is_possible_title(text):
+            return Title
+
+        return Text
 
     @lazyproperty
     def _document_tree(self) -> etree._Element:
@@ -116,34 +142,42 @@ class HTMLDocument:
                 continue
 
             if _is_text_tag(tag_elem):
-                _page_elements, descendant_tag_elems = self._process_text_tag(tag_elem)
-                yield from _page_elements
+                yield from self._process_text_tag(tag_elem)
+                descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
             elif _is_container_with_text(tag_elem):
                 tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
                 if tag_elem_tail:
-                    _page_elements, descendant_tag_elems = self._process_text_tag(tag_elem, False)
-                    yield from _page_elements
+                    yield from self._process_text_tag(tag_elem, False)
+                    descendant_tag_elems = tuple(tag_elem.iterdescendants())
 
                     # NOTE(christine): generate a separate element using a tag tail
                     assert tag_elem.tail is not None
-                    element = _text_to_element(tag_elem.tail, tag_elem.tag, depth=0)
+                    ElementCls = self._classify_text(tag_elem.tail, tag_elem.tag)
+                    if ElementCls:
+                        yield ElementCls(
+                            text=clean_bullets(tag_elem.tail),
+                            metadata=ElementMetadata(
+                                category_depth=0 if ElementCls in DEPTH_CLASSES else None
+                            ),
+                        )
                 else:
                     link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
                     emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
                     assert tag_elem.text is not None
-                    element = _text_to_element(
-                        tag_elem.text,
-                        tag_elem.tag,
-                        depth=0,
-                        emphasized_texts=emphasized_texts,
-                        emphasized_tags=emphasized_tags,
-                        link_texts=link_texts,
-                        link_urls=link_urls,
-                        link_start_indexes=link_start_indexes,
-                    )
-                if element is not None:
-                    yield element
+                    ElementCls = self._classify_text(tag_elem.text, tag_elem.tag)
+                    if ElementCls:
+                        yield ElementCls(
+                            text=clean_bullets(tag_elem.text),
+                            metadata=ElementMetadata(
+                                category_depth=0 if ElementCls in DEPTH_CLASSES else None,
+                                emphasized_text_contents=emphasized_texts,
+                                emphasized_text_tags=emphasized_tags,
+                                link_texts=link_texts,
+                                link_urls=link_urls,
+                                link_start_indexes=link_start_indexes,
+                            ),
+                        )
 
             elif _is_bulleted_table(tag_elem):
                 yield from self._parse_bulleted_text_from_table(tag_elem)
@@ -168,19 +202,19 @@ class HTMLDocument:
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
 
-    def _parse_bulleted_text_from_table(self, table: etree._Element) -> list[Element]:
-        """Extracts bulletized narrative text from the `<table>` element in `table`.
+    def _parse_bulleted_text_from_table(self, table: etree._Element) -> Iterator[Element]:
+        """Generate zero or more document elements from `table` tag.
 
-        NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e.,
-        _read() will drop non-bullet narrative text in the table.
+        Extracts bulletized narrative text from the table.
+
+        NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted; i.e.
+        non-bullet narrative text in the table is dropped.
         """
-        bulleted_text: list[Element] = []
         rows = table.findall(".//tr")
         for row in rows:
             text = _construct_text(row)
             if is_bulleted_text(text):
-                bulleted_text.append(ListItem(text=clean_bullets(text)))
-        return bulleted_text
+                yield ListItem(text=clean_bullets(text))
 
     def _parse_Table_from_table_elem(self, table_elem: etree._Element) -> Element | None:
         """Form `Table` element from `tbl_elem`."""
@@ -271,21 +305,18 @@ class HTMLDocument:
         """Parses `tag_elem` to a Text element if it contains qualifying text.
 
         Ancestor tags are kept so they can be used for filtering or classification without
-        processing the document tree again. In the future we might want to keep descendants too, but
-        we don't have a use for them at the moment.
+        processing the document tree again. In the future we might want to keep descendants too,
+        but we don't have a use for them at the moment.
         """
-        if tag_elem.tag == "script":
-            return None
-
         text = _construct_text(tag_elem, include_tail_text)
         if not text:
             return None
 
-        link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
-        emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
+        ElementCls = self._classify_text(text, tag_elem.tag)
+        if not ElementCls:
+            return None
 
         depth = (
-            # TODO(newel): Check the surrounding divs to see if should be root level
             # -- zero index the depth --
             int(tag_elem.tag[1]) - 1
             if tag_elem.tag in HEADING_TAGS
@@ -295,38 +326,36 @@ class HTMLDocument:
                 else 0
             )
         )
+        emphasized_texts, emphasized_tags = _get_emphasized_texts_from_tag(tag_elem)
+        link_texts, link_urls, link_start_indexes = _get_links_from_tag(tag_elem)
 
-        return _text_to_element(
-            text,
-            tag_elem.tag,
-            depth=depth,
-            emphasized_texts=emphasized_texts,
-            emphasized_tags=emphasized_tags,
-            link_texts=link_texts,
-            link_urls=link_urls,
-            link_start_indexes=link_start_indexes,
+        return ElementCls(
+            text=clean_bullets(text),
+            metadata=ElementMetadata(
+                category_depth=depth if ElementCls in DEPTH_CLASSES else None,
+                emphasized_text_contents=emphasized_texts,
+                emphasized_text_tags=emphasized_tags,
+                link_texts=link_texts,
+                link_urls=link_urls,
+                link_start_indexes=link_start_indexes,
+            ),
         )
 
     def _process_text_tag(
         self, tag_elem: etree._Element, include_tail_text: bool = True
-    ) -> tuple[list[Element], tuple[etree._Element, ...]]:
-        """Produces a document element from `tag_elem`."""
-
-        page_elements: list[Element] = []
+    ) -> Iterator[Element]:
+        """Generate zero or more document elements from `tag_elem`."""
         if _has_break_tags(tag_elem):
             flattened_elems = _unfurl_break_tags(tag_elem)
             for _tag_elem in flattened_elems:
                 element = self._parse_tag(_tag_elem, include_tail_text)
                 if element is not None:
-                    page_elements.append(element)
+                    yield element
 
         else:
             element = self._parse_tag(tag_elem, include_tail_text)
             if element is not None:
-                page_elements.append(element)
-        descendant_tag_elems = tuple(tag_elem.iterdescendants())
-
-        return page_elements, descendant_tag_elems
+                yield element
 
 
 class HtmlPartitionerOptions:
@@ -642,95 +671,6 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
             unfurled.extend(_unfurl_break_tags(child))
 
     return unfurled
-
-
-# -- text-element classifier ---------------------------------------------------------------------
-
-
-def _text_to_element(
-    text: str,
-    tag: str,
-    depth: int,
-    emphasized_texts: list[str] | None = None,
-    emphasized_tags: list[str] | None = None,
-    link_texts: list[str] | None = None,
-    link_urls: list[str] | None = None,
-    link_start_indexes: list[int] | None = None,
-) -> Optional[Element]:
-    """Produce a document-element of the appropriate sub-type for `text`."""
-    if is_bulleted_text(text):
-        if not clean_bullets(text):
-            return None
-        return ListItem(
-            text=clean_bullets(text),
-            metadata=ElementMetadata(
-                category_depth=depth,
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
-    elif is_us_city_state_zip(text):
-        return Address(
-            text=text,
-            metadata=ElementMetadata(
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
-    elif is_email_address(text):
-        return EmailAddress(
-            text=text,
-            metadata=ElementMetadata(
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
-
-    if len(text) < 2:
-        return None
-    elif _is_narrative_tag(text, tag):
-        return NarrativeText(
-            text,
-            metadata=ElementMetadata(
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
-    elif _is_heading_tag(tag) or is_possible_title(text):
-        return Title(
-            text,
-            metadata=ElementMetadata(
-                category_depth=depth,
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
-    else:
-        return Text(
-            text,
-            metadata=ElementMetadata(
-                emphasized_text_contents=emphasized_texts,
-                emphasized_text_tags=emphasized_tags,
-                link_texts=link_texts,
-                link_urls=link_urls,
-                link_start_indexes=link_start_indexes,
-            ),
-        )
 
 
 # -- HTML-specific text classifiers --------------------------------------------------------------

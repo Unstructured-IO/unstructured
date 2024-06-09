@@ -665,12 +665,12 @@ class DescribeHTMLDocument:
         table_elem = html_document._main.find(".//table")
         assert table_elem is not None
 
-        bulleted_text = html_document._parse_bulleted_text_from_table(table_elem)
+        list_item_iter = html_document._parse_bulleted_text_from_table(table_elem)
 
-        assert bulleted_text == [
-            ListItem(text="Happy Groundhog's day!"),
-            ListItem(text="Looks like six more weeks of winter ..."),
-        ]
+        assert next(list_item_iter) == ListItem(text="Happy Groundhog's day!")
+        assert next(list_item_iter) == ListItem(text="Looks like six more weeks of winter ...")
+        with pytest.raises(StopIteration):
+            next(list_item_iter)
 
     # -- ._parse_Table_from_table_elem() ---------
 
