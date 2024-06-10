@@ -14,7 +14,7 @@ async-timeout==4.0.3
     # via aiohttp
 attrs==23.2.0
     # via aiohttp
-azure-core==1.30.1
+azure-core==1.30.2
     # via
     #   adlfs
     #   azure-identity
@@ -38,7 +38,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   azure-identity
     #   azure-storage-blob
@@ -93,7 +93,7 @@ six==1.16.0
     #   -c ./ingest/../base.txt
     #   azure-core
     #   isodate
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   azure-core
