@@ -21,7 +21,7 @@ def get_partition_size(consumer: Consumer, topic_name: str, partition_key: int):
 def get_topic_size(consumer: Consumer, topic_name: str):
     print(f"Getting the number of messages in the topic {topic_name}")
     topic = consumer.list_topics(topic=topic_name)
-    print(f'topic {topic}')
+    print(f"topic {topic}")
     partitions = topic.topics[topic_name].partitions
     workers, max_workers = [], len(partitions) or 1
 
@@ -41,9 +41,9 @@ def get_topic_size(consumer: Consumer, topic_name: str):
 @click.option("--secret", type=str, required=False)
 @click.option("--confluent", type=bool, required=True, default=True)
 @click.option("--port", type=int, required=False, default=9092)
-def check(bootstrap_server: str, topic: str, api_key: str, secret: str, confluent:bool, port:int):
+def check(bootstrap_server: str, topic: str, api_key: str, secret: str, confluent: bool, port: int):
     conf = {
-        "bootstrap.servers": f'{bootstrap_server}:{port}',
+        "bootstrap.servers": f"{bootstrap_server}:{port}",
         "client.id": socket.gethostname(),
         "group.id": "your_group_id",
         "enable.auto.commit": "true",

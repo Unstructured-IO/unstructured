@@ -87,7 +87,7 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
         port = self.connector_config.port
 
         conf = {
-            "bootstrap.servers": f'{bootstrap}:{port}',
+            "bootstrap.servers": f"{bootstrap}:{port}",
             "client.id": socket.gethostname(),
         }
 
@@ -177,8 +177,7 @@ class KafkaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     registry_name: str = "kafka"
 
     def _tmp_download_file(self):
-        # topic_file = self.connector_config.topic + "-" + self.raw_filename + ".json"
-        topic_file = self.connector_config.topic + "-" + self.raw_filename 
+        topic_file = self.connector_config.topic + "-" + self.raw_filename
         return Path(self.read_config.download_dir) / topic_file
 
     @property
@@ -201,7 +200,6 @@ class KafkaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
-        print("###### ******** ADDING JSON &&&&&&")
         output_file = self.connector_config.topic + ".json"
         return Path(self.processor_config.output_dir) / output_file
 
@@ -232,7 +230,6 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     def check_connection(self):
         pass
 
-
     def initialize(self):
         topic = self.connector_config.topic
         logger.info(f"Subscribing to topic: {topic}")
@@ -253,7 +250,7 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         port = self.connector_config.port
 
         conf = {
-            "bootstrap.servers": f'{bootstrap}:{port}',
+            "bootstrap.servers": f"{bootstrap}:{port}",
             "client.id": socket.gethostname(),
             "group.id": "your_group_id",
             "enable.auto.commit": "false",

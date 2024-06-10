@@ -20,15 +20,22 @@ def cli():
 @click.option("--secret", type=str, required=False)
 @click.option("--confluent", type=bool, required=False, default=True)
 @click.option("--port", type=int, required=False, default=9092)
-
-def up(input_file: str, bootstrap_server: str, topic: str, api_key: str, secret: str, confluent: bool, port: int):
+def up(
+    input_file: str,
+    bootstrap_server: str,
+    topic: str,
+    api_key: str,
+    secret: str,
+    confluent: bool,
+    port: int,
+):
     conf = {
-        "bootstrap.servers": f'{bootstrap_server}:{port}',
+        "bootstrap.servers": f"{bootstrap_server}:{port}",
         "client.id": socket.gethostname(),
         "message.max.bytes": 10485760,
     }
 
-    print(f'Confluent setting: {confluent}')
+    print(f"Confluent setting: {confluent}")
     if confluent:
         conf["security.protocol"] = "SASL_SSL"
         conf["sasl.mechanism"] = "PLAIN"
