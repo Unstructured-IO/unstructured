@@ -113,9 +113,8 @@ class TableAlignment:
                 )
                 # BUG FIX: the previous matched_idx will only output the first matched index if
                 # the match has duplicates in the
-                # ground_truth_td_contents_list, my current fix will output its correspondence idx
-                # although once matching is exhausted, it will go back search again the same fashion
-                # matched_idx = ground_truth_td_contents_list.index(matches[0]) if matches else -1
+                # ground_truth_td_contents_list, the current fix will output its correspondence idx
+                # once matching is exhausted, it will go back search again the same fashion
                 matching_indices = []
                 if matches != []:
                     b_indices = [
