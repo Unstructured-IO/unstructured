@@ -60,7 +60,7 @@ fsspec==2024.5.0
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   huggingface-hub
-google-auth==2.29.0
+google-auth==2.30.0
     # via kubernetes
 googleapis-common-protos==1.63.1
     # via opentelemetry-exporter-otlp-proto-grpc
@@ -72,7 +72,7 @@ h11==0.14.0
     # via uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.23.2
+huggingface-hub==0.23.3
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -88,7 +88,7 @@ importlib-metadata==7.1.0
     #   opentelemetry-api
 importlib-resources==6.4.0
     # via chromadb
-kubernetes==29.0.0
+kubernetes==30.1.0
     # via chromadb
 mmh3==4.1.0
     # via chromadb
@@ -234,7 +234,7 @@ typer==0.9.0
     # via
     #   -r ./ingest/chroma.in
     #   chromadb
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   asgiref
@@ -269,7 +269,7 @@ wrapt==1.16.0
     #   -c ./ingest/../deps/constraints.txt
     #   deprecated
     #   opentelemetry-instrumentation
-zipp==3.19.1
+zipp==3.19.2
     # via
     #   importlib-metadata
     #   importlib-resources

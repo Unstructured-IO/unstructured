@@ -8,7 +8,7 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.15.0
     # via flask-babel
-bce-python-sdk==0.9.11
+bce-python-sdk==0.9.14
     # via visualdl
 blinker==1.8.2
     # via flask
@@ -31,7 +31,7 @@ contourpy==1.2.1
     # via matplotlib
 cssselect==1.2.0
     # via premailer
-cssutils==2.11.0
+cssutils==2.11.1
     # via premailer
 cycler==0.12.1
     # via matplotlib
@@ -91,6 +91,8 @@ matplotlib==3.7.2
     #   -c ././deps/constraints.txt
     #   imgaug
     #   visualdl
+more-itertools==10.3.0
+    # via cssutils
 networkx==3.2.1
     # via scikit-image
 numpy==1.26.4
@@ -219,7 +221,7 @@ visualdl==2.5.3
     # via unstructured-paddleocr
 werkzeug==3.0.3
     # via flask
-zipp==3.19.1
+zipp==3.19.2
     # via
     #   importlib-metadata
     #   importlib-resources

@@ -42,14 +42,14 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.2.1
+langchain==0.2.3
     # via -r ./ingest/embed-voyageai.in
 langchain-core==0.2.2
     # via
     #   langchain
     #   langchain-text-splitters
     #   langchain-voyageai
-langchain-text-splitters==0.2.0
+langchain-text-splitters==0.2.1
     # via langchain
 langchain-voyageai==0.1.1
     # via -r ./ingest/embed-voyageai.in
@@ -99,7 +99,7 @@ tenacity==8.3.0
     #   langchain
     #   langchain-core
     #   voyageai
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pydantic

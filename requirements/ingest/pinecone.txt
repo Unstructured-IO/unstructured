@@ -9,13 +9,15 @@ certifi==2024.6.2
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   pinecone-client
-pinecone-client==4.1.0
+pinecone-client==4.1.1
     # via -r ./ingest/pinecone.in
+pinecone-plugin-interface==0.0.7
+    # via pinecone-client
 tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client

@@ -185,7 +185,7 @@ jupyter-server==2.14.1
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.1
+jupyterlab==4.2.2
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -218,9 +218,9 @@ nbformat==5.10.4
     #   nbconvert
 nest-asyncio==1.6.0
     # via ipykernel
-nodeenv==1.9.0
+nodeenv==1.9.1
     # via pre-commit
-notebook==7.2.0
+notebook==7.2.1
     # via jupyter
 notebook-shim==0.2.4
     # via
@@ -261,7 +261,7 @@ pre-commit==3.7.1
     # via -r ./dev.in
 prometheus-client==0.20.0
     # via jupyter-server
-prompt-toolkit==3.0.45
+prompt-toolkit==3.0.47
     # via
     #   ipython
     #   jupyter-console
@@ -365,7 +365,7 @@ tomli==2.0.1
     #   build
     #   jupyterlab
     #   pip-tools
-tornado==6.4
+tornado==6.4.1
     # via
     #   ipykernel
     #   jupyter-client
@@ -392,7 +392,7 @@ traitlets==5.14.3
     #   qtconsole
 types-python-dateutil==2.9.0.20240316
     # via arrow
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./base.txt
     #   -c ./test.txt
@@ -410,7 +410,7 @@ virtualenv==20.26.2
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit
-webcolors==1.13
+webcolors==24.6.0
     # via jsonschema
 webencodings==0.5.1
     # via
@@ -424,7 +424,7 @@ wheel==0.43.0
     #   pip-tools
 widgetsnbextension==4.0.11
     # via ipywidgets
-zipp==3.19.1
+zipp==3.19.2
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

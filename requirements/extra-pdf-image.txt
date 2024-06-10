@@ -24,7 +24,7 @@ coloredlogs==15.0.1
     # via onnxruntime
 contourpy==1.2.1
     # via matplotlib
-cryptography==42.0.7
+cryptography==42.0.8
     # via pdfminer-six
 cycler==0.12.1
     # via matplotlib
@@ -48,7 +48,7 @@ fsspec==2024.5.0
     #   torch
 google-api-core[grpc]==2.19.0
     # via google-cloud-vision
-google-auth==2.29.0
+google-auth==2.30.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -64,7 +64,7 @@ grpcio==1.64.1
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.2
+huggingface-hub==0.23.3
     # via
     #   timm
     #   tokenizers
@@ -259,14 +259,14 @@ timm==1.0.3
     #   unstructured-inference
 tokenizers==0.19.1
     # via transformers
-torch==2.3.0
+torch==2.3.1
     # via
     #   -c ././deps/constraints.txt
     #   effdet
     #   timm
     #   torchvision
     #   unstructured-inference
-torchvision==0.18.0
+torchvision==0.18.1
     # via
     #   effdet
     #   timm
@@ -278,7 +278,7 @@ tqdm==4.66.4
     #   transformers
 transformers==4.41.2
     # via unstructured-inference
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./base.txt
     #   huggingface-hub
@@ -303,5 +303,5 @@ wrapt==1.16.0
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   deprecated
-zipp==3.19.1
+zipp==3.19.2
     # via importlib-resources
