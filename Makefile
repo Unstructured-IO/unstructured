@@ -38,8 +38,8 @@ install-huggingface:
 
 .PHONY: install-nltk-models
 install-nltk-models:
-	python -c "import nltk; nltk.download('punkt')"
-	python -c "import nltk; nltk.download('averaged_perceptron_tagger')"
+	python3 -c "import nltk; nltk.download('punkt')"
+	python3 -c "import nltk; nltk.download('averaged_perceptron_tagger')"
 
 .PHONY: install-test
 install-test:
@@ -312,13 +312,12 @@ test-unstructured-api-unit:
 	scripts/test-unstructured-api-unit.sh
 
 .PHONY: test-no-extras
-# TODO(newelh) Add json test when fixed
 test-no-extras:
 	PYTHONPATH=. CI=$(CI) \
 		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
-		test_${PACKAGE_NAME}/partition/test_html_partition.py \
+		test_${PACKAGE_NAME}/partition/test_html.py \
 		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
@@ -343,7 +342,9 @@ test-extra-markdown:
 
 .PHONY: test-extra-msg
 test-extra-msg:
-	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py
+	# NOTE(scanny): exclude attachment test because partitioning attachments requires other extras
+	PYTHONPATH=. CI=$(CI) pytest test_unstructured/partition/test_msg.py \
+          -k "not test_partition_msg_can_process_attachments"
 
 .PHONY: test-extra-odt
 test-extra-odt:

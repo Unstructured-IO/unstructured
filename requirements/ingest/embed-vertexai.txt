@@ -20,7 +20,7 @@ attrs==23.2.0
     # via aiohttp
 cachetools==5.3.3
     # via google-auth
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -54,7 +54,7 @@ google-auth==2.29.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.52.0
+google-cloud-aiplatform==1.53.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.23.1
     # via google-cloud-aiplatform
@@ -76,14 +76,14 @@ google-resumable-media==2.7.0
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
-googleapis-common-protos[grpc]==1.63.0
+googleapis-common-protos[grpc]==1.63.1
     # via
     #   google-api-core
     #   grpc-google-iam-v1
     #   grpcio-status
 grpc-google-iam-v1==0.13.0
     # via google-cloud-resource-manager
-grpcio==1.64.0
+grpcio==1.64.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -106,7 +106,7 @@ langchain==0.2.1
     #   langchain-community
 langchain-community==0.2.1
     # via -r ./ingest/embed-vertexai.in
-langchain-core==0.2.1
+langchain-core==0.2.2
     # via
     #   langchain
     #   langchain-community
@@ -172,13 +172,13 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.1
+pydantic==2.7.3
     # via
     #   google-cloud-aiplatform
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
 python-dateutil==2.9.0.post0
     # via
@@ -189,7 +189,7 @@ pyyaml==6.0.1
     #   langchain
     #   langchain-community
     #   langchain-core
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   google-api-core
@@ -215,7 +215,7 @@ tenacity==8.3.0
     #   langchain
     #   langchain-community
     #   langchain-core
-typing-extensions==4.12.0
+typing-extensions==4.12.1
     # via
     #   -c ./ingest/../base.txt
     #   pydantic

@@ -1,19 +1,16 @@
 from __future__ import annotations
 
-from typing import IO, TYPE_CHECKING, Any, Optional
+from typing import IO, Any, Optional, cast
 
 import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.documents.html import HTMLDocument
-from unstructured.documents.xml import VALID_PARSERS
+from unstructured.documents.html_elements import TagsMixin
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
-from unstructured.file_utils.filetype import (
-    FileType,
-    add_metadata_with_filetype,
-)
+from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     document_to_element_list,
     exactly_one,
@@ -21,9 +18,6 @@ from unstructured.partition.common import (
     get_last_modified_date_from_file,
 )
 from unstructured.partition.lang import apply_lang_metadata
-
-if TYPE_CHECKING:
-    from unstructured_inference.inference.layout import DocumentLayout
 
 
 @process_metadata()
@@ -39,7 +33,6 @@ def partition_html(
     include_metadata: bool = True,
     headers: dict[str, str] = {},
     ssl_verify: bool = True,
-    parser: VALID_PARSERS = None,
     source_format: Optional[str] = None,
     html_assemble_articles: bool = False,
     metadata_filename: Optional[str] = None,
@@ -76,8 +69,6 @@ def partition_html(
     ssl_verify
         If the URL parameter is set, determines whether or not partition uses SSL verification
         in the HTTP request.
-    parser
-        The parser to use for parsing the HTML document. If None, default parser will be used.
     source_format
         The source of the original html. If None we will return HTMLElements but for example
          partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
@@ -105,10 +96,7 @@ def partition_html(
     if filename is not None:
         last_modification_date = get_last_modified_date(filename)
         document = HTMLDocument.from_file(
-            filename,
-            parser=parser,
-            encoding=encoding,
-            assemble_articles=html_assemble_articles,
+            filename, encoding=encoding, assemble_articles=html_assemble_articles
         )
 
     elif file is not None:
@@ -116,33 +104,26 @@ def partition_html(
             get_last_modified_date_from_file(file) if date_from_file_object else None
         )
         _, file_text = read_txt_file(file=file, encoding=encoding)
-        document = HTMLDocument.from_string(
-            file_text,
-            parser=parser,
-            assemble_articles=html_assemble_articles,
-        )
+        document = HTMLDocument.from_string(file_text, assemble_articles=html_assemble_articles)
 
     elif text is not None:
         _text: str = str(text)
-        document = HTMLDocument.from_string(
-            _text,
-            parser=parser,
-            assemble_articles=html_assemble_articles,
-        )
+        document = HTMLDocument.from_string(_text, assemble_articles=html_assemble_articles)
 
-    elif url is not None:
+    else:
+        assert url is not None
         response = requests.get(url, headers=headers, verify=ssl_verify)
         if not response.ok:
-            raise ValueError(f"URL return an error: {response.status_code}")
+            raise ValueError(f"Error status code on GET of provided URL: {response.status_code}")
 
         content_type = response.headers.get("Content-Type", "")
         if not content_type.startswith("text/html"):
             raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
-        document = HTMLDocument.from_string(response.text, parser=parser)
+        document = HTMLDocument.from_string(response.text)
 
     if skip_headers_and_footers:
-        document = filter_footer_and_header(document)
+        document = _filter_footer_and_header(document)
 
     elements = list(
         apply_lang_metadata(
@@ -236,12 +217,12 @@ def convert_and_partition_html(
     )
 
 
-def filter_footer_and_header(document: "DocumentLayout") -> "DocumentLayout":
+def _filter_footer_and_header(document: HTMLDocument) -> HTMLDocument:
     for page in document.pages:
-        page.elements = list(
-            filter(
-                lambda el: "footer" not in el.ancestortags and "header" not in el.ancestortags,
-                page.elements,
-            ),
-        )
+        page.elements = [
+            e
+            for e in page.elements
+            if "header" not in cast(TagsMixin, e).ancestortags
+            and "footer" not in cast(TagsMixin, e).ancestortags
+        ]
     return document

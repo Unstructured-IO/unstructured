@@ -8,6 +8,8 @@ from typing import Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.v2.interfaces import (
+    AccessConfig,
+    ConnectionConfig,
     Downloader,
     DownloaderConfig,
     FileData,
@@ -30,6 +32,16 @@ CONNECTOR_TYPE = "local"
 
 
 @dataclass
+class LocalAccessConfig(AccessConfig):
+    pass
+
+
+@dataclass
+class LocalConnectionConfig(ConnectionConfig):
+    access_config: LocalAccessConfig = field(default_factory=lambda: LocalAccessConfig())
+
+
+@dataclass
 class LocalIndexerConfig(IndexerConfig):
     input_path: str
     recursive: bool = False
@@ -43,6 +55,9 @@ class LocalIndexerConfig(IndexerConfig):
 @dataclass
 class LocalIndexer(Indexer):
     index_config: LocalIndexerConfig
+    connection_config: LocalConnectionConfig = field(
+        default_factory=lambda: LocalConnectionConfig()
+    )
     connector_type: str = CONNECTOR_TYPE
 
     def list_files(self) -> list[Path]:
@@ -115,7 +130,10 @@ class LocalDownloaderConfig(DownloaderConfig):
 @dataclass
 class LocalDownloader(Downloader):
     connector_type: str = CONNECTOR_TYPE
-    download_config: Optional[LocalDownloaderConfig] = None
+    connection_config: LocalConnectionConfig = field(
+        default_factory=lambda: LocalConnectionConfig()
+    )
+    download_config: LocalDownloaderConfig = field(default_factory=lambda: LocalDownloaderConfig())
 
     def get_download_path(self, file_data: FileData) -> Path:
         return Path(file_data.source_identifiers.fullpath)
@@ -139,7 +157,10 @@ class LocalUploaderConfig(UploaderConfig):
 
 @dataclass
 class LocalUploader(Uploader):
-    upload_config: LocalUploaderConfig = field(default_factory=LocalUploaderConfig)
+    upload_config: LocalUploaderConfig = field(default_factory=lambda: LocalUploaderConfig())
+    connection_config: LocalConnectionConfig = field(
+        default_factory=lambda: LocalConnectionConfig()
+    )
 
     def is_async(self) -> bool:
         return False

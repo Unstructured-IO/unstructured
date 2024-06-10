@@ -1,9 +1,10 @@
 import json
 import os.path
+import sys
 from dataclasses import fields, is_dataclass
 from gettext import gettext, ngettext
 from pathlib import Path
-from typing import Any, Optional, Type, TypeVar, Union, get_args, get_origin
+from typing import Any, ForwardRef, Optional, Type, TypeVar, Union, get_args, get_origin
 
 import click
 
@@ -129,6 +130,19 @@ def extract_config(
         dd = inner_d.copy()
         for field in fields(inner_config):
             f_type = field.type
+            # typing can be defined using a string, in which case it needs to be resolved
+            # to the actual type. following logic is cherry picked from the typing
+            # get_type_hints() since type resolution can be expensive, only do it
+            # when the type is a string
+            if isinstance(f_type, str):
+                try:
+                    base_globals = sys.modules[inner_config.__module__].__dict__
+                    for_ref = ForwardRef(f_type, is_argument=False, is_class=True)
+                    f_type = for_ref._evaluate(
+                        globalns=base_globals, localns=None, recursive_guard=frozenset()
+                    )
+                except NameError as e:
+                    logger.warning(f"couldn't resolve type {f_type}: {e}")
             # Handle the case where the type of a value if a Union (possibly optional)
             if get_origin(f_type) is Union:
                 union_values = get_args(f_type)
