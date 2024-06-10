@@ -34,7 +34,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.6
+dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
@@ -55,16 +55,16 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==2.4
     # via jsonpatch
-langchain==0.2.1
+langchain==0.2.3
     # via langchain-community
-langchain-community==0.2.1
+langchain-community==0.2.4
     # via -r ./ingest/embed-aws-bedrock.in
 langchain-core==0.2.2
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.0
+langchain-text-splitters==0.2.1
     # via langchain
 langsmith==0.1.62
     # via
@@ -72,7 +72,7 @@ langsmith==0.1.62
     #   langchain
     #   langchain-community
     #   langchain-core
-marshmallow==3.21.2
+marshmallow==3.21.3
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
@@ -135,7 +135,7 @@ tenacity==8.3.0
     #   langchain
     #   langchain-community
     #   langchain-core
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pydantic

@@ -13,9 +13,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.3.3
+clarifai==10.5.0
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.3.5
+clarifai-grpc==10.5.0
     # via clarifai
 contextlib2==21.6.0
     # via schema
@@ -43,7 +43,7 @@ pfzy==0.3.4
     # via inquirerpy
 pillow==10.3.0
     # via clarifai
-prompt-toolkit==3.0.45
+prompt-toolkit==3.0.47
     # via inquirerpy
 protobuf==4.23.4
     # via

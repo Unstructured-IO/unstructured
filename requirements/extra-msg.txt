@@ -12,7 +12,7 @@ olefile==0.47
     # via python-oxmsg
 python-oxmsg==0.0.1
     # via -r ./extra-msg.in
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./base.txt
     #   python-oxmsg
