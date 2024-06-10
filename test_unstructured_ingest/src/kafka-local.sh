@@ -49,13 +49,13 @@ echo "Sending test document (pdf)"
 #Check the number of messages in destination topic
 #Note we are calling it twice since this will hack our way into the topic being created (default kafka setting)
 python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
-	--input-file "example-docs/reliance.pdf" \
+	--input-file "example-docs/fake-memo.pdf" \
 	--bootstrap-server localhost \
 	--topic "$KAFKA_TOPIC" \
     --confluent false \
     --port 29092
 python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
-	--input-file "example-docs/reliance.pdf" \
+	--input-file "example-docs/fake-memo.pdf" \
 	--bootstrap-server localhost \
 	--topic "$KAFKA_TOPIC" \
     --confluent false \
