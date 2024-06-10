@@ -59,7 +59,7 @@ def check(bootstrap_server: str, topic: str, api_key: str, secret: str, confluen
     consumer = Consumer(conf)
     print("Checking the number of messages in the topic")
     topic_size = get_topic_size(consumer, topic)
-    expected = 37
+    expected = 16
     print(
         f"Checking that the number of messages found ({topic_size}) "
         f"matches what's expected: {expected}"

@@ -177,7 +177,8 @@ class KafkaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     registry_name: str = "kafka"
 
     def _tmp_download_file(self):
-        topic_file = self.connector_config.topic + "-" + self.raw_filename + ".json"
+        # topic_file = self.connector_config.topic + "-" + self.raw_filename + ".json"
+        topic_file = self.connector_config.topic + "-" + self.raw_filename 
         return Path(self.read_config.download_dir) / topic_file
 
     @property
@@ -200,6 +201,7 @@ class KafkaIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     def _output_filename(self):
         """Create filename document id combined with a hash of the query to uniquely identify
         the output file."""
+        print("###### ******** ADDING JSON &&&&&&")
         output_file = self.connector_config.topic + ".json"
         return Path(self.processor_config.output_dir) / output_file
 

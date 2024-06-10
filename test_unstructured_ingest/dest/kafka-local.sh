@@ -21,7 +21,7 @@ KAFKA_TOPIC=${KAFKA_TOPIC:-"ingest-test-$RANDOM_SUFFIX"}
 
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
-	# Local file cleanupcd .
+	# Local file cleanup
 	cleanup_dir "$WORK_DIR"
 	cleanup_dir "$OUTPUT_DIR"
 
@@ -46,8 +46,11 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
 	--reprocess \
 	--input-path example-docs/layout-parser-paper.pdf \
 	--work-dir "$WORK_DIR" \
-	--chunk-elements \
-	--chunk-combine-text-under-n-chars 200 --chunk-new-after-n-chars 2500 --chunk-max-characters 38000 --chunk-multipage-sections \
+	--chunking-strategy basic \
+	--chunk-combine-text-under-n-chars 200 \
+    --chunk-new-after-n-chars 2500 \
+    --chunk-max-characters 38000 \
+    --chunk-multipage-sections \
 	--embedding-provider "langchain-huggingface" \
 	kafka \
 	--topic "$KAFKA_TOPIC" \

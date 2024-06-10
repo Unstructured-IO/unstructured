@@ -27,12 +27,12 @@ KAFKA_TOPIC=${KAFKA_TOPIC:-"ingest-test-$RANDOM_SUFFIX"}
 source "$SCRIPT_DIR"/cleanup.sh
 # shellcheck disable=SC2317
 function cleanup() {
-	cleanup_dir "$OUTPUT_DIR"
-	cleanup_dir "$WORK_DIR"
-	if [ "$CI" == "true" ]; then
-		echo "here"
-		cleanup_dir "$DOWNLOAD_DIR"
-	fi
+	# cleanup_dir "$OUTPUT_DIR"
+	# cleanup_dir "$WORK_DIR"
+	# if [ "$CI" == "true" ]; then
+	# 	echo "here"
+	# 	cleanup_dir "$DOWNLOAD_DIR"
+	# fi
 
 	echo "Stopping local Kafka instance"
 	docker-compose -f scripts/kafka-test-helpers/docker-compose.yml down --remove-orphans -v
@@ -52,14 +52,14 @@ python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
 	--input-file "example-docs/reliance.pdf" \
 	--bootstrap-server localhost \
 	--topic "$KAFKA_TOPIC" \
-        --confluent false \
-        --port 29092
+    --confluent false \
+    --port 29092
 python "$SCRIPT_DIR"/python/test-produce-kafka-message.py up \
 	--input-file "example-docs/reliance.pdf" \
 	--bootstrap-server localhost \
 	--topic "$KAFKA_TOPIC" \
-        --confluent false \
-        --port 29092
+    --confluent false \
+    --port 29092
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
@@ -75,7 +75,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 	--output-dir "$OUTPUT_DIR" \
 	--verbose \
 	--work-dir "$WORK_DIR" \
-        --confluent false
+    --confluent false
 
 set +e
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
