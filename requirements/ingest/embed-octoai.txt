@@ -38,7 +38,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.31.0
+openai==1.33.0
     # via -r ./ingest/embed-octoai.in
 pydantic==2.7.3
     # via openai
@@ -63,7 +63,7 @@ tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   openai
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   openai

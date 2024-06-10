@@ -10,7 +10,7 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-cryptography==42.0.7
+cryptography==42.0.8
     # via paramiko
 fsspec==2024.5.0
     # via

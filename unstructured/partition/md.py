@@ -7,7 +7,6 @@ import requests
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.xml import VALID_PARSERS
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import (
     exactly_one,
@@ -36,7 +35,6 @@ def partition_md(
     url: Optional[str] = None,
     include_page_breaks: bool = False,
     include_metadata: bool = True,
-    parser: VALID_PARSERS = None,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     chunking_strategy: Optional[str] = None,
@@ -113,7 +111,6 @@ def partition_md(
         text=html,
         include_page_breaks=include_page_breaks,
         include_metadata=include_metadata,
-        parser=parser,
         source_format="md",
         metadata_filename=metadata_filename,
         metadata_last_modified=metadata_last_modified or last_modification_date,
