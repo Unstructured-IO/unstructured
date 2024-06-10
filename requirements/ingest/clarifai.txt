@@ -13,9 +13,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.3.3
+clarifai==10.5.0
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.3.7
+clarifai-grpc==10.5.0
     # via clarifai
 contextlib2==21.6.0
     # via schema
