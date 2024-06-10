@@ -18,52 +18,50 @@ LC_ALL=C
 # Set the variables with default values if they're not set in the environment
 KAFKA_TOPIC=${KAFKA_TOPIC:-"ingest-test-$RANDOM_SUFFIX"}
 
-
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
-	# Local file cleanup
-	cleanup_dir "$WORK_DIR"
-	cleanup_dir "$OUTPUT_DIR"
+  # Local file cleanup
+  cleanup_dir "$WORK_DIR"
+  cleanup_dir "$OUTPUT_DIR"
 
-
-	echo "Stopping local Kafka instance"
-	docker-compose -f scripts/kafka-test-helpers/docker-compose.yml down --remove-orphans -v
+  echo "Stopping local Kafka instance"
+  docker-compose -f scripts/kafka-test-helpers/docker-compose.yml down --remove-orphans -v
 }
 
-trap cleanup EXIT 
+trap cleanup EXIT
 
 echo "Creating local Kafka instance"
 # shellcheck source=/dev/null
-scripts/kafka-test-helpers/create-kafka-instance.sh 
+scripts/kafka-test-helpers/create-kafka-instance.sh
 wait
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
-	local \
-	--num-processes "$max_processes" \
-	--output-dir "$OUTPUT_DIR" \
-	--strategy fast \
-	--verbose \
-	--reprocess \
-	--input-path example-docs/layout-parser-paper.pdf \
-	--work-dir "$WORK_DIR" \
-	--chunking-strategy basic \
-	--chunk-combine-text-under-n-chars 200 \
-    --chunk-new-after-n-chars 2500 \
-    --chunk-max-characters 38000 \
-    --chunk-multipage-sections \
-	--embedding-provider "langchain-huggingface" \
-	kafka \
-	--topic "$KAFKA_TOPIC" \
-	--bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
-	--num-processes "$writer_processes" \
-	--port 29092 \
-	--confluent false
+  local \
+  --num-processes "$max_processes" \
+  --output-dir "$OUTPUT_DIR" \
+  --strategy fast \
+  --verbose \
+  --reprocess \
+  --input-path example-docs/layout-parser-paper.pdf \
+  --work-dir "$WORK_DIR" \
+  --chunking-strategy basic \
+  --chunk-combine-text-under-n-chars 200 \
+  --chunk-new-after-n-chars 2500 \
+  --chunk-max-characters 38000 \
+  --chunk-multipage-sections \
+  --embedding-provider "langchain-huggingface" \
+  kafka \
+  --topic "$KAFKA_TOPIC" \
+  --bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
+  --num-processes "$writer_processes" \
+  --port 29092 \
+  --confluent false
 
 echo "Checking for matching messages in Kafka"
 
 #Check the number of messages in destination topic
 python "$SCRIPT_DIR"/python/test-kafka-output.py check \
-	--bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
-	--topic "$KAFKA_TOPIC" \
-	--confluent false \
-	--port 29092
+  --bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
+  --topic "$KAFKA_TOPIC" \
+  --confluent false \
+  --port 29092
