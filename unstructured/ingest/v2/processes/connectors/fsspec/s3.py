@@ -6,7 +6,7 @@ from typing import Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.v2.interfaces import FileData, UploadContent
+from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -119,11 +119,11 @@ class S3Downloader(FsspecDownloader):
         super().__post_init__()
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return await super().run_async(file_data=file_data, **kwargs)
 
 
