@@ -1,8 +1,10 @@
-## 0.14.6-dev0
+## 0.14.6-dev1
 
 ### Enhancements
 
 ### Features
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
 
