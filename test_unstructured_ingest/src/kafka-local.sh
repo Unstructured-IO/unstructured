@@ -11,10 +11,6 @@ OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$OUTPUT_ROOT/download/$OUTPUT_FOLDER_NAME
 
-#correct for proper build
-DOCKER_DEFAULT_PLATFORM=linux/arm64
-
-max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 CI=${CI:-"false"}
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))

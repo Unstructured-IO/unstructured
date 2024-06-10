@@ -18,6 +18,7 @@ LC_ALL=C
 # Set the variables with default values if they're not set in the environment
 KAFKA_TOPIC=${KAFKA_TOPIC:-"ingest-test-$RANDOM_SUFFIX"}
 
+# shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
 function cleanup {
   # Local file cleanup
