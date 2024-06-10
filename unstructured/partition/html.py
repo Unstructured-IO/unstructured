@@ -4,11 +4,7 @@ from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import (
-    HTMLDocument,
-    HtmlPartitionerOptions,
-    document_to_element_list,
-)
+from unstructured.documents.html import HTMLDocument, HtmlPartitionerOptions
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
@@ -103,7 +99,7 @@ def partition_html(
 
     elements = list(
         apply_lang_metadata(
-            document_to_element_list(document, last_modified=opts.last_modified, **kwargs),
+            document.elements,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
         )

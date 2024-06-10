@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import pathlib
-from typing import Any, cast
+from typing import Any
 
 import pytest
 from lxml import etree
@@ -356,7 +356,7 @@ def test_parses_tags_correctly(opts_args: dict[str, Any]):
     opts = HtmlPartitionerOptions(**opts_args)
     doc = HTMLDocument.load(opts)
 
-    element = cast(TagsMixin, doc.elements[0])
+    element = doc._html_elements[0]
     assert element.tag == "table"
 
 

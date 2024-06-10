@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, Optional, Protocol, Sequence
 
 from unstructured.documents.elements import (
     Address,
+    ElementMetadata,
     EmailAddress,
     Link,
     ListItem,
@@ -14,6 +15,23 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
+
+
+class HtmlElement(Protocol):
+    """Interface provided by HTML-specific elements like HTMLNarrativeText."""
+
+    emphasized_texts: Sequence[Dict[str, str]]
+    links: Sequence[Link]
+    metadata: ElementMetadata
+    tag: str
+    text_as_html: str | None
+
+    def __init__(
+        self,
+        text: str,
+        tag: str,
+        metadata: ElementMetadata | None = None,
+    ): ...
 
 
 class TagsMixin:

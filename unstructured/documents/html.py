@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Any, Final, Iterator, Optional, cast
+from typing import IO, Final, Iterator, Optional, cast
 
 import requests
 from lxml import etree
@@ -11,13 +11,13 @@ from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
+    HtmlElement,
     HTMLEmailAddress,
     HTMLListItem,
     HTMLNarrativeText,
     HTMLTable,
     HTMLText,
     HTMLTitle,
-    TagsMixin,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.logger import logger
@@ -60,8 +60,11 @@ class HTMLDocument:
 
     @lazyproperty
     def elements(self) -> list[Element]:
-        """Gets all elements from pages in sequential order."""
-        return [el for page in self.pages for el in page.elements]
+        """All "regular" elements (e.g. Title, NarrativeText, etc.) parsed from document.
+
+        Elements appear in document order.
+        """
+        return cast(list[Element], self._html_elements)
 
     @lazyproperty
     def pages(self) -> list[Page]:
@@ -102,12 +105,37 @@ class HTMLDocument:
         return document_tree
 
     @lazyproperty
+    def _html_elements(self) -> list[HtmlElement]:
+        """All HTML-specific elements (e.g. HTMLNarrativeText) parsed from document.
+
+        Elements are sequenced in document order.
+        """
+
+        def document_to_element_list() -> Iterator[HtmlElement]:
+            """Converts an HTMLDocument object to a list of unstructured elements."""
+
+            def iter_page_elements(page: Page) -> Iterator[HtmlElement]:
+                """Generate each element in page after applying its metadata."""
+                for element in page.elements:
+                    add_element_metadata(
+                        element,
+                        last_modified=self._opts.last_modified,
+                        detection_origin=self._opts.detection_origin,
+                    )
+                    yield element
+
+            for page in self.pages:
+                yield from iter_page_elements(page)
+
+        return list(document_to_element_list())
+
+    @lazyproperty
     def _main(self) -> etree._Element:
         """The first <main> tag under `root` if it exists, othewise `root`."""
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
 
-    def _parse_article_to_elements(self, article: etree._Element) -> Iterator[Element]:
+    def _parse_article_to_elements(self, article: etree._Element) -> Iterator[HtmlElement]:
         """Parse <article> container element or root element into `Element`s."""
         descendanttag_elems: tuple[etree._Element, ...] = ()
         for tag_elem in article.iter():
@@ -292,45 +320,22 @@ class Page:
 
     def __init__(self, number: int):
         self.number: int = number
-        self.elements: list[Element] = []
+        self.elements: list[HtmlElement] = []
 
     def __str__(self):
         return "\n\n".join([str(element) for element in self.elements])
 
 
-# -- TEMPORARY EXTRACTION OF document_to_element_list() ------------------------------------------
-
-
-def document_to_element_list(
-    document: HTMLDocument,
-    *,
-    last_modified: str | None,
-    detection_origin: str | None = None,
-    **kwargs: Any,
-) -> Iterator[Element]:
-    """Converts a DocumentLayout or HTMLDocument object to a list of unstructured elements."""
-
-    def iter_page_elements(page: Page) -> Iterator[Element]:
-        """Generate each element in page after applying its metadata."""
-        for element in page.elements:
-            add_element_metadata(
-                element, last_modified=last_modified, detection_origin=detection_origin
-            )
-            yield element
-
-    for page in document.pages:
-        yield from iter_page_elements(page)
+# -- TEMPORARY EXTRACTION OF add_element_metadata() ----------------------------------------------
 
 
 def add_element_metadata(
-    element: Element, *, last_modified: str | None, detection_origin: str | None
-) -> Element:
+    element: HtmlElement, *, last_modified: str | None, detection_origin: str | None
+) -> HtmlElement:
     """Adds document metadata to the document element.
 
     Document metadata includes information like the filename, source url, and page number.
     """
-    assert isinstance(element, TagsMixin)
-
     emphasized_text_contents = [et.get("text") or "" for et in element.emphasized_texts]
     emphasized_text_tags = [et.get("tag") or "" for et in element.emphasized_texts]
 
@@ -438,13 +443,13 @@ def _is_text_tag(
 # -- tag processors ------------------------------------------------------------------------------
 
 
-def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
+def _bulleted_text_from_table(table: etree._Element) -> list[HtmlElement]:
     """Extracts bulletized narrative text from the `<table>` element in `table`.
 
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
     will drop non-bullet narrative text in the table.
     """
-    bulleted_text: list[Element] = []
+    bulleted_text: list[HtmlElement] = []
     rows = table.findall(".//tr")
     for row in rows:
         text = _construct_text(row)
@@ -536,7 +541,7 @@ def _has_break_tags(tag_elem: etree._Element) -> bool:
     return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
-def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
+def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[HtmlElement]:
     """Form `HTMLTable` element from `tbl_elem`."""
     if table_elem.tag != "table":
         return None
@@ -576,7 +581,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
 def _parse_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
-) -> Optional[Element]:
+) -> Optional[HtmlElement]:
     """Parses `tag_elem` to a Text element if it contains qualifying text.
 
     Ancestor tags are kept so they can be used for filtering or classification without processing
@@ -611,7 +616,7 @@ def _parse_tag(
 def _process_list_item(
     tag_elem: etree._Element,
     max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
-) -> tuple[Optional[Element], Optional[etree._Element]]:
+) -> tuple[Optional[HtmlElement], Optional[etree._Element]]:
     """Produces an `HTMLListItem` document element from `tag_elem`.
 
     When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also returns
@@ -654,10 +659,10 @@ def _process_list_item(
 
 def _process_text_tag(
     tag_elem: etree._Element, include_tail_text: bool = True
-) -> tuple[list[Element], tuple[etree._Element, ...]]:
+) -> tuple[list[HtmlElement], tuple[etree._Element, ...]]:
     """Produces a document element from `tag_elem`."""
 
-    page_elements: list[Element] = []
+    page_elements: list[HtmlElement] = []
     if _has_break_tags(tag_elem):
         flattened_elems = _unfurl_break_tags(tag_elem)
         for _tag_elem in flattened_elems:
@@ -710,7 +715,7 @@ def _text_to_element(
     depth: int,
     links: list[Link] = [],
     emphasized_texts: list[dict[str, str]] = [],
-) -> Optional[Element]:
+) -> Optional[HtmlElement]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
