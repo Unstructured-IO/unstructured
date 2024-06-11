@@ -4,9 +4,7 @@ from dataclasses import dataclass
 import click
 
 from unstructured.ingest.cli.base.src import BaseSrcCmd
-from unstructured.ingest.cli.interfaces import (
-    CliConfig,
-)
+from unstructured.ingest.cli.interfaces import CliConfig
 from unstructured.ingest.connector.kafka import KafkaWriteConfig, SimpleKafkaConfig
 
 CMD_NAME = "kafka"
