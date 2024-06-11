@@ -20,7 +20,6 @@ from unstructured.documents.html_elements import (
     HTMLTitle,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.logger import logger
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -106,25 +105,18 @@ class HTMLDocument:
 
         Elements are sequenced in document order.
         """
-        pages = self._parse_pages_from_element_tree()
 
-        def document_to_element_list() -> Iterator[HtmlElement]:
-            """Converts an HTMLDocument object to a list of unstructured elements."""
+        def iter_html_elements() -> Iterator[HtmlElement]:
+            """Generate each HTML-specific element in document after applying its metadata."""
+            for e in self._parse_article_to_elements(self._main):
+                add_element_metadata(
+                    e,
+                    last_modified=self._opts.last_modified,
+                    detection_origin=self._opts.detection_origin,
+                )
+                yield e
 
-            def iter_page_elements(page: Page) -> Iterator[HtmlElement]:
-                """Generate each element in page after applying its metadata."""
-                for element in page.elements:
-                    add_element_metadata(
-                        element,
-                        last_modified=self._opts.last_modified,
-                        detection_origin=self._opts.detection_origin,
-                    )
-                    yield element
-
-            for page in pages:
-                yield from iter_page_elements(page)
-
-        return list(document_to_element_list())
+        return list(iter_html_elements())
 
     @lazyproperty
     def _main(self) -> etree._Element:
@@ -184,27 +176,6 @@ class HTMLDocument:
                     yield element
                 if element or tag_elem.tag == "table":
                     descendanttag_elems = tuple(tag_elem.iterdescendants())
-
-    def _parse_pages_from_element_tree(self) -> list[Page]:
-        """Parse HTML elements into pages.
-
-        A *page* is a subsequence of the document-elements parsed from the HTML document
-        corresponding to a distinct topic.
-
-        A page is detected in two ways, either an "article" or a horizontal-rule.
-
-        An HTML `<article>` element surrounds something like a blog-post or news article on a page
-        that summarizes multiple such articles. Each article becomes its own page.
-
-        A horizontal-rule (`<hr/>`) element also triggers a page break.
-        """
-        logger.info("Reading document ...")
-        page = Page(number=0)
-
-        page.elements = list(self._parse_article_to_elements(self._main))
-
-        # -- don't return empty page --
-        return [page] if len(page.elements) > 0 else []
 
 
 class HtmlPartitionerOptions:
@@ -307,20 +278,6 @@ class HtmlPartitionerOptions:
     def skip_headers_and_footers(self) -> bool:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
-
-
-class Page:
-    """A page consists of an ordered set of elements.
-
-    The intent of the ordering is to align with the order in which a person would read the document.
-    """
-
-    def __init__(self, number: int):
-        self.number: int = number
-        self.elements: list[HtmlElement] = []
-
-    def __str__(self):
-        return "\n\n".join([str(element) for element in self.elements])
 
 
 # -- TEMPORARY EXTRACTION OF add_element_metadata() ----------------------------------------------
