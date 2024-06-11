@@ -1,4 +1,4 @@
-## 0.14.6-dev1
+## 0.14.6-dev2
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 
 ### Fixes
 
+**Initial libreoffice run in wolfi image** Run `libreoffice` once in the wolfi image to avoid the
+cold start problem where libreoffice fails on the first run.
 **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
 
 ## 0.14.5
