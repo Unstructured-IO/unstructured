@@ -28,7 +28,13 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
-from unstructured.documents.html_elements import HTMLTable, TagsMixin
+from unstructured.documents.html_elements import (
+    HTMLListItem,
+    HTMLNarrativeText,
+    HTMLTable,
+    HTMLTitle,
+    TagsMixin,
+)
 from unstructured.partition.html import partition_html
 
 # -- document-source (filename, file, text, url) -------------------------------------------------
@@ -169,26 +175,6 @@ def test_pre_tag_parsing_respects_order():
         NarrativeText("The big brown bear is sleeping."),
         Title("The Big Blue Bear"),
     ]
-
-
-@pytest.mark.parametrize(
-    ("tag", "expected_text_as_html"),
-    [
-        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-    ],
-)
-def test_partition_html_with_table_without_tbody(tag: str, expected_text_as_html: str):
-    elements = partition_html(
-        text=(
-            f"<table>\n"
-            f"  <{tag}>\n"
-            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
-            f"  </{tag}>\n"
-            f"</table>"
-        )
-    )
-    assert elements[0].metadata.text_as_html == expected_text_as_html
 
 
 def test_partition_html_b_tag_parsing():
@@ -467,6 +453,58 @@ def test_element_ids_are_deterministic():
     assert ids == ids_2
 
 
+# -- .metadata.category_depth + parent_id --------------------------------------------------------
+
+
+def test_partition_html_records_hierarchy_metadata():
+    elements = partition_html(
+        text=(
+            "<html>\n"
+            "  <p>Preamble gets no category_depth or parent_id</p>\n"
+            "  <h1>Heading gets category_depth but no parent_id</h1>\n"
+            "  <p>Body paragraph gets parent_id but no category_depth</p>\n"
+            "  <ul>\n"
+            "    <li>List item gets category_depth and parent_id</li>\n"
+            "    <li>Second list item gets category_depth and parent_id</li>\n"
+            "  </ul>\n"
+            "  <p>Body paragraph after list gets parent_id but no category_depth</p>\n"
+            "</html>\n"
+        )
+    )
+
+    assert len(elements) == 6
+    e = elements[0]
+    assert isinstance(e, HTMLNarrativeText)
+    assert e.text == "Preamble gets no category_depth or parent_id"
+    assert e.metadata.category_depth is None
+    assert e.metadata.parent_id is None
+    e = elements[1]
+    assert isinstance(e, HTMLTitle)
+    assert e.text == "Heading gets category_depth but no parent_id"
+    assert e.metadata.category_depth == 0
+    assert e.metadata.parent_id is None
+    e = elements[2]
+    assert isinstance(e, HTMLNarrativeText)
+    assert e.text == "Body paragraph gets parent_id but no category_depth"
+    assert e.metadata.category_depth is None
+    assert e.metadata.parent_id == elements[1].id
+    e = elements[3]
+    assert isinstance(e, HTMLListItem)
+    assert e.text == "List item gets category_depth and parent_id"
+    assert e.metadata.category_depth == 1
+    assert e.metadata.parent_id == elements[1].id
+    e = elements[4]
+    assert isinstance(e, HTMLListItem)
+    assert e.text == "Second list item gets category_depth and parent_id"
+    assert e.metadata.category_depth == 1
+    assert e.metadata.parent_id == elements[1].id
+    e = elements[5]
+    assert isinstance(e, HTMLNarrativeText)
+    assert e.text == "Body paragraph after list gets parent_id but no category_depth"
+    assert e.metadata.category_depth is None
+    assert e.metadata.parent_id == elements[1].id
+
+
 # -- .metadata.emphasis --------------------------------------------------------------------------
 
 
@@ -507,6 +545,14 @@ def test_partition_html_grabs_emphasized_texts():
 
 
 # -- .metadata.filename --------------------------------------------------------------------------
+
+
+def test_partition_html_from_filename_uses_source_filename_for_metadata_by_default():
+    elements = partition_html(example_doc_path("example-10k-1p.html"))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
+    assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
 
 
 def test_partition_html_from_filename_prefers_metadata_filename():
@@ -709,6 +755,75 @@ def test_partition_html_links():
     assert e.metadata.link_texts == ["Parrots", "Dogs"]
     assert e.metadata.link_urls == ["/wiki/parrots", "/wiki/dogs"]
     assert e.metadata.link_start_indexes == [0, 12]
+
+
+# -- .metadata.text_as_html ----------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("html_str", "expected_value"),
+    [
+        (
+            "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
+            "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>",
+        ),
+        (
+            "<table>"
+            "<tr><td>Dimensions</td><td>Weight</td></tr>"
+            "<tr><td>4'-6\" x 1'</td><td>18 kg</td></tr>"
+            "</table>",
+            # ----------
+            "<table>"
+            "<tr><td>Dimensions</td><td>Weight</td></tr>"
+            "<tr><td>4&#x27;-6&quot; x 1&#x27;</td><td>18 kg</td></tr>"
+            "</table>",
+        ),
+    ],
+)
+def test_partition_html_applies_text_as_html_metadata_for_tables(
+    html_str: str, expected_value: str
+):
+    elements = partition_html(text=html_str)
+
+    assert len(elements) == 1
+    assert elements[0].metadata.text_as_html == expected_value
+
+
+@pytest.mark.parametrize(
+    ("tag", "expected_text_as_html"),
+    [
+        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+    ],
+)
+def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
+    elements = partition_html(
+        text=(
+            f"<table>\n"
+            f"  <{tag}>\n"
+            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
+            f"  </{tag}>\n"
+            f"</table>"
+        )
+    )
+    assert elements[0].metadata.text_as_html == expected_text_as_html
+
+
+# -- .metadata.url -------------------------------------------------------------------------------
+
+
+def test_partition_html_from_url_adds_url_to_metadata(requests_get_: Mock):
+    requests_get_.return_value = FakeResponse(
+        text=example_doc_text("example-10k-1p.html"),
+        status_code=200,
+        headers={"Content-Type": "text/html"},
+    )
+
+    elements = partition_html(url="https://trusttheforceluke.com")
+
+    requests_get_.assert_called_once_with("https://trusttheforceluke.com", headers={}, verify=True)
+    assert len(elements) > 0
+    assert all(e.metadata.url == "https://trusttheforceluke.com" for e in elements)
 
 
 # -- miscellaneous -------------------------------------------------------------------------------

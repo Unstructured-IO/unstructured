@@ -39,8 +39,6 @@ if TYPE_CHECKING:
     from unstructured_inference.inference.layout import DocumentLayout, PageLayout
     from unstructured_inference.inference.layoutelement import LayoutElement
 
-    from unstructured.documents.html import HTMLDocument
-
 HIERARCHY_RULE_SET = {
     "Title": [
         "Text",
@@ -542,8 +540,10 @@ def _get_page_image_metadata(page: PageLayout) -> dict[str, Any]:
 # FIXME: document here can be either DocumentLayout or HTMLDocument; HTMLDocument is defined in
 # unstructured.documents.html, which imports this module so we can't import the class for type
 # hints. Moreover, those two types of documents have different lists of attributes
+# UPDATE(scanny): HTMLDocument no longer uses this function, so it can be optimized for use by
+# DocumentLayout only.
 def document_to_element_list(
-    document: "DocumentLayout | HTMLDocument",
+    document: DocumentLayout,
     sortable: bool = False,
     include_page_breaks: bool = False,
     last_modification_date: Optional[str] = None,
@@ -555,7 +555,7 @@ def document_to_element_list(
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
-    """Converts a DocumentLayout or HTMLDocument object to a list of unstructured elements."""
+    """Converts a DocumentLayout object to a list of unstructured elements."""
     elements: list[Element] = []
 
     num_pages = len(document.pages)
