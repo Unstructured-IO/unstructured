@@ -41,4 +41,8 @@ RUN python3.11 -c "import nltk; nltk.download('punkt')" && \
 ENV PATH="${PATH}:/home/nonroot/.local/bin"
 ENV TESSDATA_PREFIX=/usr/local/share/tessdata
 
+# NOTE(robinson) - executes libreoffice once because it fails during the
+# first run for an unknown reasons. Thereafter it executes as expected
+RUN /usr/bin/soffice --headless || [ $? -eq 81 ] || exit 1
+
 CMD ["/bin/bash"]
