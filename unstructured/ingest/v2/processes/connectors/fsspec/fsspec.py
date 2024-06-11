@@ -198,9 +198,7 @@ class FsspecIndexer(Indexer):
         raw_files = self.list_files()
         files = [f for f in raw_files if self.does_path_match_glob(f)]
         for file in files:
-            rel_path = file.replace(
-                self.index_config.path_without_protocol, ""
-            ).lstrip("/")
+            rel_path = file.replace(self.index_config.path_without_protocol, "").lstrip("/")
             yield FileData(
                 identifier=file,
                 connector_type=self.connector_type,
