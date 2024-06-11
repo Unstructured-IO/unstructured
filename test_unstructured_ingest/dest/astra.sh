@@ -59,6 +59,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --requested-indexing-policy '{"deny": ["metadata"]}'
 
 python "$SCRIPT_DIR"/python/test-ingest-astra-output.py \
-  --token "$ASTRA_DB_APPLICATION_TOKENx" \
+  --token "$ASTRA_DB_APPLICATION_TOKEN" \
   --api-endpoint "$ASTRA_DB_API_ENDPOINT" \
   --collection-name "$COLLECTION_NAME" check
