@@ -1,0 +1,288 @@
+[
+  {
+    "type": "Title",
+    "element_id": "6e8d4e8762e9bec346ce9637a0efec16",
+    "text": "GSFC: Sciences and Exploration Directorate",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "4cfab7f060a22db4c90b2d0f75f72d5d",
+    "text": "Virtual Machine Environment Scorecard",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0f0ae8b6e925e38d5882b7881568baff",
+    "text": "Code 600: Sciences and Exploration Directorate (SED)",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2cee95c9665ecf4c0ef061df2c84269f",
+    "text": "Code 610: Earth Sciences Division",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d462a5a89ab41204621103f923cb8816",
+    "text": "Code 660: Astrophysics Science Division",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "6e72804e49ae9ddb285026b56e8a7c21",
+    "text": "Code 670: Heliophysics Science Division",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "84304dd1bf3a8501d42c7cf06a10fc36",
+    "text": "Code 690: Solar System Exploration Division",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "606d67afd6257571bd3c1c9be25bf7d6",
+    "text": "Support offices",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "add73d98a4221ed85ac38e4b2ba85f28",
+    "text": "Code 603: Administration and Resources Management Office",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f372bcfbba68a3fcbb1e3bdccd9f6c17",
+    "text": "Code 605: Science Proposal Support Office",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "fd7b9fb95274e0dece5aedb70e2c2296",
+    "text": "Code 606: Computational and Information Sciences and Technology Office  ( The SEDVME project is managed out of 606).",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0463455f2b596a1181ce682c503431d0",
+    "text": "Code 700: Information Technology and Communication Directorate",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ce3c2479c2f2e0f0e2ede14da592480f",
+    "text": "Project management help, CNE, Zoned Architecture, IT Security,  Production SEDVME Service Manager",
+    "metadata": {
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "url": "box:///utic-test-ingest-fixtures/science-exploration-1p.pptx",
+        "version": "309546934335254463247992132065898582121",
+        "record_locator": {
+          "protocol": "box",
+          "remote_file_path": "box://utic-test-ingest-fixtures"
+        },
+        "date_created": "1688874428.0",
+        "date_modified": "1688874428.0"
+      }
+    }
+  }
+]
