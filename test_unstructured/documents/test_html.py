@@ -545,94 +545,6 @@ def test_construct_text(doc: str, expected: str):
     assert text == expected
 
 
-# -- _find_articles() ----------------------------------------------------------------------------
-
-
-def test_find_articles():
-    html_str = """<header></header>
-    <body>
-    <p>Lots preamble stuff yada yada yada</p>
-        <article>
-            <h2>A Wonderful Section!</h2>
-            <p>Look at this amazing section!</p>
-        </article>
-        <article>
-            <h2>Another Wonderful Section!</h2>
-            <p>Look at this other amazing section!</p>
-        </article>
-    </body>"""
-    html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document._document_tree
-    articles = html._find_articles(document_tree)
-    assert len(articles) == 2
-
-
-def test_find_articles_returns_doc_when_none_present():
-    html_str = """<header></header>
-    <body>
-    <p>Lots preamble stuff yada yada yada</p>
-        <section>
-            <h2>A Wonderful Section!</h2>
-            <p>Look at this amazing section!</p>
-        </section>
-        <section>
-            <h2>Another Wonderful Section!</h2>
-            <p>Look at this other amazing section!</p>
-        </section>
-    </body>"""
-    html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document._document_tree
-    articles = html._find_articles(document_tree)
-    assert len(articles) == 1
-
-
-# -- _find_main() --------------------------------------------------------------------------------
-
-
-def test_find_main():
-    html_str = """<header></header>
-    <body>
-        <p>Lots preamble stuff yada yada yada</p>
-        <main>
-            <article>
-                <section>
-                    <h2>A Wonderful Section!</h2>
-                    <p>Look at this amazing section!</p>
-                </section>
-                <section>
-                    <h2>Another Wonderful Section!</h2>
-                    <p>Look at this other amazing section!</p>
-                </section>
-            </article>
-        </main>
-    </body>"""
-    html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document._document_tree
-    main_tag = html._find_main(document_tree)
-    assert main_tag.tag == "main"
-
-
-def test_find_main_returns_doc_when_main_not_present():
-    html_str = """<header></header>
-    <body>
-    <p>Lots preamble stuff yada yada yada</p>
-        <article>
-            <section>
-                <h2>A Wonderful Section!</h2>
-                <p>Look at this amazing section!</p>
-            </section>
-            <section>
-                <h2>Another Wonderful Section!</h2>
-                <p>Look at this other amazing section!</p>
-            </section>
-        </article>
-    </body>"""
-    html_document = HTMLDocument.from_string(html_str)
-    document_tree = html_document._document_tree
-    root = html._find_main(document_tree)
-    assert root.tag == "html"
-
-
 # -- _get_bullet_descendants() -------------------------------------------------------------------
 
 
@@ -875,6 +787,90 @@ def test_process_list_item_ignores_deep_divs():
 
 
 # -- unit-level tests ----------------------------------------------------------------------------
+
+
+class DescribeHTMLDocument:
+    """Unit-test suite for `unstructured.documents.html.HTMLDocument`."""
+
+    # -- ._articles ------------------------------
+
+    def it_can_find_the_article_elements_in_the_element_tree(self):
+        html_document = HTMLDocument.from_string(
+            "<header></header>\n"
+            "<body>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <article>\n"
+            "    <h2>A Wonderful Section!</h2>\n"
+            "    <p>Look at this amazing section!</p>\n"
+            "  </article>\n"
+            "  <article>\n"
+            "    <h2>Another Wonderful Section!</h2>\n"
+            "    <p>Look at this other amazing section!</p>\n"
+            "  </article>\n"
+            "</body>\n"
+        )
+        assert len(html_document._articles) == 2
+        assert all(a.tag == "article" for a in html_document._articles)
+
+    def but_it_returns_the_root_element_when_no_articles_are_present(self):
+        html_document = HTMLDocument.from_string(
+            "<header></header>\n"
+            "<body>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <section>\n"
+            "    <h2>A Wonderful Section!</h2>\n"
+            "    <p>Look at this amazing section!</p>\n"
+            "  </section>\n"
+            "  <section>\n"
+            "    <h2>Another Wonderful Section!</h2>\n"
+            "    <p>Look at this other amazing section!</p>\n"
+            "  </section>\n"
+            "</body>\n"
+        )
+        assert len(html_document._articles) == 1
+        assert html_document._articles[0].tag == "html"
+
+    # -- ._main ----------------------------------
+
+    def it_can_find_the_main_element_in_the_document(self):
+        html_document = HTMLDocument.from_string(
+            "<header></header>\n"
+            "<body>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <main>\n"
+            "    <article>\n"
+            "      <section>\n"
+            "        <h2>A Wonderful Section!</h2>\n"
+            "        <p>Look at this amazing section!</p>\n"
+            "      </section>\n"
+            "      <section>\n"
+            "        <h2>Another Wonderful Section!</h2>\n"
+            "        <p>Look at this other amazing section!</p>\n"
+            "      </section>\n"
+            "    </article>\n"
+            "  </main>\n"
+            "</body>\n"
+        )
+        assert html_document._main.tag == "main"
+
+    def but_it_returns_the_root_when_no_main_element_is_present(self):
+        html_document = HTMLDocument.from_string(
+            "<header></header>\n"
+            "<body>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <article>\n"
+            "    <section>\n"
+            "      <h2>A Wonderful Section!</h2>\n"
+            "      <p>Look at this amazing section!</p>\n"
+            "    </section>\n"
+            "    <section>\n"
+            "      <h2>Another Wonderful Section!</h2>\n"
+            "      <p>Look at this other amazing section!</p>\n"
+            "    </section>\n"
+            "  </article>\n"
+            "</body>\n"
+        )
+        assert html_document._main.tag == "html"
 
 
 class Describe_parse_HTMLTable_from_table_elem:
