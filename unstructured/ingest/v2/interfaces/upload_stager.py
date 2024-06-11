@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, TypeVar
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.file_data import FileData
@@ -18,7 +18,7 @@ UploadStagerConfigT = TypeVar("UploadStagerConfigT", bound=UploadStagerConfig)
 
 @dataclass
 class UploadStager(BaseProcess, ABC):
-    upload_stager_config: Optional[UploadStagerConfigT] = None
+    upload_stager_config: UploadStagerConfigT
 
     @abstractmethod
     def run(
