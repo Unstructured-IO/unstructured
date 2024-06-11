@@ -5,7 +5,7 @@ from __future__ import annotations
 import io
 import pathlib
 from tempfile import SpooledTemporaryFile
-from typing import Any, cast
+from typing import Any
 
 import pytest
 
@@ -34,7 +34,6 @@ from unstructured.documents.html_elements import (
     HTMLNarrativeText,
     HTMLTable,
     HTMLTitle,
-    TagsMixin,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import HtmlPartitionerOptions, partition_html
@@ -319,56 +318,8 @@ def test_partition_html_from_filename_can_suppress_metadata():
 # -- `skip_headers_and_footers` arg --------------------------------------------------------------
 
 
-def test_partition_html_from_filename_can_skip_headers_and_footers():
-    elements = cast(
-        list[TagsMixin],
-        partition_html(
-            filename=example_doc_path("fake-html-with-footer-and-header.html"),
-            skip_headers_and_footers=True,
-        ),
-    )
-
-    assert all("header" not in e.ancestortags for e in elements)
-    assert all("footer" not in e.ancestortags for e in elements)
-
-
-def test_partition_html_from_file_can_skip_headers_and_footers():
-    with open(example_doc_path("fake-html-with-footer-and-header.html"), "rb") as f:
-        elements = cast(list[TagsMixin], partition_html(file=f, skip_headers_and_footers=True))
-
-    assert all("header" not in e.ancestortags for e in elements)
-    assert all("footer" not in e.ancestortags for e in elements)
-
-
-def test_partition_html_from_text_can_skip_headers_and_footers():
-    elements = cast(
-        list[TagsMixin],
-        partition_html(
-            text=(
-                "<!DOCTYPE html>\n"
-                "<html>\n"
-                "    <header>\n"
-                "        <p>Header</p>\n"
-                "    </header>\n"
-                "    <body>\n"
-                "        <h1>My First Heading</h1>\n"
-                "        <p>My first paragraph.</p>\n"
-                "    </body>\n"
-                "    <footer>\n"
-                "        <p>Footer</p>\n"
-                "    </footer>\n"
-                "</html>\n"
-            ),
-            skip_headers_and_footers=True,
-        ),
-    )
-
-    assert all("header" not in e.ancestortags for e in elements)
-    assert all("footer" not in e.ancestortags for e in elements)
-
-
-def test_partition_html_from_url_can_skip_headers_and_footers(requests_get_: Mock):
-    requests_get_.return_value = FakeResponse(
+def test_partition_html_can_skip_headers_and_footers():
+    assert partition_html(
         text=(
             "<html>\n"
             "  <header>\n"
@@ -376,29 +327,18 @@ def test_partition_html_from_url_can_skip_headers_and_footers(requests_get_: Moc
             "  </header>\n"
             "  <body>\n"
             "    <h1>My First Heading</h1>\n"
-            "    <p>My first paragraph.</p>\n"
+            "    <p>It was a dark and stormy night. No one was around.</p>\n"
             "  </body>\n"
             "  <footer>\n"
             "    <p>Footer</p>\n"
             "  </footer>\n"
             "</html>\n"
         ),
-        status_code=200,
-        headers={"Content-Type": "text/html"},
-    )
-
-    elements = cast(
-        list[TagsMixin],
-        partition_html(
-            url="https://example.com", headers={"User-Agent": "test"}, skip_headers_and_footers=True
-        ),
-    )
-
-    requests_get_.assert_called_once_with(
-        "https://example.com", headers={"User-Agent": "test"}, verify=True
-    )
-    assert all("header" not in e.ancestortags for e in elements)
-    assert all("footer" not in e.ancestortags for e in elements)
+        skip_headers_and_footers=True,
+    ) == [
+        Title("My First Heading"),
+        NarrativeText("It was a dark and stormy night. No one was around."),
+    ]
 
 
 # -- `unique_element_ids` arg --------------------------------------------------------------------

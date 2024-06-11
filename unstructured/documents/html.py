@@ -95,6 +95,10 @@ class HTMLDocument:
         # -- parsing elements out of those.
         etree.strip_elements(document_tree, ["script", "style"], with_tail=False)
 
+        # -- remove <header> and <footer> tags if the caller doesn't want their contents --
+        if self._opts.skip_headers_and_footers:
+            etree.strip_elements(document_tree, ["header", "footer"], with_tail=False)
+
         return document_tree
 
     @lazyproperty
@@ -123,7 +127,7 @@ class HTMLDocument:
 
                     # NOTE(christine): generate a separate element using a tag tail
                     assert tag_elem.tail is not None
-                    element = _text_to_element(tag_elem.tail, tag_elem.tag, (), depth=0)
+                    element = _text_to_element(tag_elem.tail, tag_elem.tag, depth=0)
                 else:
                     links = _get_links_from_tag(tag_elem)
                     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
@@ -131,7 +135,6 @@ class HTMLDocument:
                     element = _text_to_element(
                         tag_elem.text,
                         tag_elem.tag,
-                        (),
                         depth=0,
                         links=links,
                         emphasized_texts=emphasized_texts,
@@ -567,12 +570,7 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     if table_text == "":
         return None
 
-    return HTMLTable(
-        text=table_text,
-        text_as_html=html_table,
-        tag=table_elem.tag,
-        ancestortags=tuple(el.tag for el in table_elem.iterancestors())[::-1],
-    )
+    return HTMLTable(text=table_text, text_as_html=html_table, tag=table_elem.tag)
 
 
 def _parse_tag(
@@ -585,7 +583,6 @@ def _parse_tag(
     the document tree again. In the future we might want to keep descendants too, but we don't have
     a use for them at the moment.
     """
-    ancestortags: tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
     links = _get_links_from_tag(tag_elem)
     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
@@ -607,12 +604,7 @@ def _parse_tag(
     if not text:
         return None
     return _text_to_element(
-        text,
-        tag_elem.tag,
-        ancestortags,
-        links=links,
-        emphasized_texts=emphasized_texts,
-        depth=depth,
+        text, tag_elem.tag, links=links, emphasized_texts=emphasized_texts, depth=depth
     )
 
 
@@ -715,7 +707,6 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
 def _text_to_element(
     text: str,
     tag: str,
-    ancestortags: tuple[str, ...],
     depth: int,
     links: list[Link] = [],
     emphasized_texts: list[dict[str, str]] = [],
@@ -727,54 +718,29 @@ def _text_to_element(
         return HTMLListItem(
             text=clean_bullets(text),
             tag=tag,
-            ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
             metadata=ElementMetadata(category_depth=depth),
         )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(
-            text=text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
     elif is_email_address(text):
-        return HTMLEmailAddress(
-            text=text,
-            tag=tag,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
     elif _is_narrative_tag(text, tag):
-        return HTMLNarrativeText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLNarrativeText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
     elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
             tag=tag,
-            ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
             metadata=ElementMetadata(category_depth=depth),
         )
     else:
-        return HTMLText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
 
 # -- HTML-specific text classifiers --------------------------------------------------------------

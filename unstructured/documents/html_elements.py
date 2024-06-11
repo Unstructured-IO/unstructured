@@ -23,7 +23,6 @@ class TagsMixin:
         self,
         *args: Any,
         tag: Optional[str] = None,
-        ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
         emphasized_texts: Sequence[Dict[str, str]] = [],
         text_as_html: Optional[str] = None,
@@ -33,7 +32,6 @@ class TagsMixin:
             raise TypeError("tag argument must be passed and not None")
         else:
             self.tag = tag
-        self.ancestortags = ancestortags
         self.links = links
         self.emphasized_texts = emphasized_texts
         self.text_as_html = text_as_html

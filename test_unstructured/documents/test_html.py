@@ -357,7 +357,6 @@ def test_parses_tags_correctly(opts_args: dict[str, Any]):
     doc = HTMLDocument.load(opts)
 
     element = cast(TagsMixin, doc.elements[0])
-    assert element.ancestortags == ("html", "body")
     assert element.tag == "table"
 
 

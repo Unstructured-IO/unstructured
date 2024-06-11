@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import IO, Any, Optional, cast
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -9,7 +9,6 @@ from unstructured.documents.html import (
     HtmlPartitionerOptions,
     document_to_element_list,
 )
-from unstructured.documents.html_elements import TagsMixin
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
@@ -102,9 +101,6 @@ def partition_html(
 
     document = HTMLDocument.load(opts)
 
-    if skip_headers_and_footers:
-        document = _filter_footer_and_header(document)
-
     elements = list(
         apply_lang_metadata(
             document_to_element_list(document, last_modified=opts.last_modified, **kwargs),
@@ -187,14 +183,3 @@ def convert_and_partition_html(
         detect_language_per_element=detect_language_per_element,
         detection_origin=detection_origin,
     )
-
-
-def _filter_footer_and_header(document: HTMLDocument) -> HTMLDocument:
-    for page in document.pages:
-        page.elements = [
-            e
-            for e in page.elements
-            if "header" not in cast(TagsMixin, e).ancestortags
-            and "footer" not in cast(TagsMixin, e).ancestortags
-        ]
-    return document
