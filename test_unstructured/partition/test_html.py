@@ -316,39 +316,6 @@ def test_partition_html_from_filename_can_suppress_metadata():
     assert all(e.metadata.to_dict() == {} for e in elements)
 
 
-# -- `include_page_breaks` arg -------------------------------------------------------------------
-
-
-def test_partition_html_generates_no_page_breaks_by_default():
-    elements = partition_html(example_doc_path("example-10k-1p.html"))
-    assert all(e.category != "PageBreak" for e in elements)
-
-
-def test_partition_html_generates_page_breaks_when_so_instructed():
-    elements = partition_html(example_doc_path("example-10k-1p.html"), include_page_breaks=True)
-
-    assert any(e.category == "PageBreak" for e in elements)
-    assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
-
-
-def test_partition_html_can_turn_off_assemble_articles():
-    html_text = (
-        "<html>\n"
-        "   <article>\n"
-        "       <h1>Some important stuff is going on!</h1>\n"
-        "       <p>Here is a description of that stuff</p>\n"
-        "   </article>\n"
-        "   <article>\n"
-        "       <h1>Some other important stuff is going on!</h1>\n"
-        "       <p>Here is a description of that stuff</p>\n"
-        "   </article>\n"
-        "   <h4>This is outside of the article.</h4>\n"
-        "</html>\n"
-    )
-    elements = partition_html(text=html_text, html_assemble_articles=False)
-    assert elements[-1] == Title("This is outside of the article.")
-
-
 # -- `skip_headers_and_footers` arg --------------------------------------------------------------
 
 

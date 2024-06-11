@@ -8,7 +8,7 @@ import requests
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.elements import Element, ElementMetadata, Link, PageBreak
+from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
     HTMLEmailAddress,
@@ -301,40 +301,26 @@ class Page:
 def document_to_element_list(
     document: HTMLDocument,
     *,
-    include_page_breaks: bool = False,
     last_modified: str | None,
-    starting_page_number: int = 1,
     detection_origin: str | None = None,
     **kwargs: Any,
 ) -> Iterator[Element]:
     """Converts a DocumentLayout or HTMLDocument object to a list of unstructured elements."""
 
-    def iter_page_elements(page: Page, page_number: int | None) -> Iterator[Element]:
+    def iter_page_elements(page: Page) -> Iterator[Element]:
         """Generate each element in page after applying its metadata."""
         for element in page.elements:
             add_element_metadata(
-                element,
-                detection_origin=detection_origin,
-                last_modified=last_modified,
-                page_number=page_number,
-                **kwargs,
+                element, last_modified=last_modified, detection_origin=detection_origin
             )
             yield element
 
-    num_pages = len(document.pages)
-    for page_number, page in enumerate(document.pages, start=starting_page_number):
-        yield from iter_page_elements(page, page_number)
-        if include_page_breaks and page_number < num_pages + starting_page_number:
-            yield PageBreak(text="")
+    for page in document.pages:
+        yield from iter_page_elements(page)
 
 
 def add_element_metadata(
-    element: Element,
-    *,
-    detection_origin: str | None,
-    last_modified: str | None,
-    page_number: int | None,
-    **kwargs: Any,
+    element: Element, *, last_modified: str | None, detection_origin: str | None
 ) -> Element:
     """Adds document metadata to the document element.
 
@@ -356,7 +342,6 @@ def add_element_metadata(
         link_start_indexes=link_start_indexes or None,
         link_texts=link_texts or None,
         link_urls=link_urls or None,
-        page_number=page_number,
         text_as_html=element.text_as_html,
     )
     element.metadata.update(metadata)
