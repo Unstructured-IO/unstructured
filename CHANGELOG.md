@@ -1,4 +1,4 @@
-## 0.14.6-dev1
+## 0.14.6-dev2
 
 ### Enhancements
 
@@ -6,7 +6,8 @@
 
 ### Fixes
 
-**table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+* **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+* **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
 
 ## 0.14.5
 
