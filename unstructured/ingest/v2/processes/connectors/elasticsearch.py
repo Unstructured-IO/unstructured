@@ -195,6 +195,7 @@ class ElasticsearchDownloader(Downloader):
             logger.debug(
                 f"Downloading results from index {index_name} and id {record_id} to {filepath}"
             )
+            filepath.parent.mkdir(parents=True, exist_ok=True)
             with open(filepath, "w", encoding="utf8") as f:
                 f.write(self.map_es_results(es_results=result))
             download_responses.append(
