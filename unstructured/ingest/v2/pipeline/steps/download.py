@@ -75,7 +75,7 @@ class DownloadStep(PipelineStep):
         if not isinstance(download_results, list):
             return [
                 DownloadStepResponse(
-                    file_data_path=current_file_data_path, path=str(download_responses["path"])
+                    file_data_path=current_file_data_path, path=str(download_results["path"])
                 )
             ]
             # Supplemental results generated as part of the download process
