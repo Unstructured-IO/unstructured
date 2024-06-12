@@ -1,6 +1,7 @@
 import logging
 import multiprocessing as mp
 from dataclasses import InitVar, dataclass, field
+from time import time
 from typing import Any, Optional, Union
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
@@ -82,7 +83,9 @@ class Pipeline:
 
     def run(self):
         try:
+            start_time = time()
             self._run()
+            logger.info(f"Finished ingest process in {time() - start_time}s")
         finally:
             self.log_statuses()
             self.cleanup()
