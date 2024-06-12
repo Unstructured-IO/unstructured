@@ -10,7 +10,8 @@ DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile-amd64
   --build-arg BUILDKIT_INLINE_CACHE=1
   --progress plain
   --platform linux/amd64
-  --cache-from "$DOCKER_REPOSITORY":latest
+#  NOTE(christine) - put this back in after we publish a new image to $DOCKER_REPOSITORY
+#  --cache-from "$DOCKER_REPOSITORY":latest
   -t "$DOCKER_IMAGE" .)
 
 # only build for specific platform if DOCKER_BUILD_PLATFORM is set

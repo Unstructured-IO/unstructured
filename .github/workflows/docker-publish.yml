@@ -54,7 +54,8 @@ jobs:
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \
-          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
+#        NOTE(christine) - put this back in after we publish a new image to $DOCKER_BUILD_REPOSITORY
+#          --cache-from $DOCKER_BUILD_REPOSITORY:$ARCH \
           -t $DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA .
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
