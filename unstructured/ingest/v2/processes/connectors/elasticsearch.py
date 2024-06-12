@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.error import SourceConnectionNetworkError
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -191,13 +192,23 @@ class ElasticsearchDownloader(Downloader):
             record_id = result["_id"]
             filename_id = self.get_identifier(index_name=index_name, record_id=record_id)
             filename = f"{filename_id}.txt"
-            filepath = self.download_config.download_dir / Path(filename)
+            download_path = self.download_config.download_dir / Path(filename)
             logger.debug(
-                f"Downloading results from index {index_name} and id {record_id} to {filepath}"
+                f"Downloading results from index {index_name} and id {record_id} to {download_path}"
             )
-            filepath.parent.mkdir(parents=True, exist_ok=True)
-            with open(filepath, "w", encoding="utf8") as f:
-                f.write(self.map_es_results(es_results=result))
+            download_path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                with open(download_path, "w", encoding="utf8") as f:
+                    f.write(self.map_es_results(es_results=result))
+            except Exception as e:
+                logger.error(
+                    f"failed to download from index {index_name} "
+                    f"and id {record_id} to {download_path}: {e}",
+                    exc_info=True,
+                )
+                raise SourceConnectionNetworkError(
+                    f"failed to download file {file_data.identifier}"
+                )
             download_responses.append(
                 DownloadResponse(
                     file_data=FileData(
@@ -213,7 +224,7 @@ class ElasticsearchDownloader(Downloader):
                             },
                         ),
                     ),
-                    path=filepath,
+                    path=download_path,
                 )
             )
         return download_responses
