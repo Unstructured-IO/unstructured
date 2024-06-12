@@ -11,8 +11,34 @@ EMPTY_CELL = {
 }
 
 
-def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
-    """Convert html format to table structure.
+def _move_cells_for_spanned_cells(cells: List[Dict[str, Any]]):
+    """Move cells to the right if spanned cells have an influence on the rendering.
+
+    Args:
+        cells: List of cells in the table in Deckerd format.
+
+    Returns:
+        List of cells in the table in Deckerd format with cells moved to the right if spanned.
+    """
+    sorted_cells = sorted(cells, key=lambda x: (x["y"], x["x"]))
+    cells_occupied_by_spanned = set()
+    for cell in sorted_cells:
+        if cell["w"] > 1 or cell["h"] > 1:
+            for i in range(cell["y"], cell["y"] + cell["h"]):
+                for j in range(cell["x"], cell["x"] + cell["w"]):
+                    if (i, j) != (cell["y"], cell["x"]):
+                        cells_occupied_by_spanned.add((i, j))
+        while (cell["y"], cell["x"]) in cells_occupied_by_spanned:
+            cell_y, cell_x = cell["y"], cell["x"]
+            cells_to_the_right = [c for c in sorted_cells if c["y"] == cell_y and c["x"] >= cell_x]
+            for cell_to_move in cells_to_the_right:
+                cell_to_move["x"] += 1
+            cells_occupied_by_spanned.remove((cell_y, cell_x))
+    return sorted_cells
+
+
+def _html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
+    """Convert html format to Deckerd table structure.
 
     Args:
         content: The html content with a table to extract.
@@ -20,9 +46,10 @@ def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
     Returns:
         A list of dictionaries where each dictionary represents a cell in the table.
     """
+
     soup = BeautifulSoup(content, "html.parser")
     table = soup.find("table")
-    rows = table.findAll(["tr", "thead"])
+    rows = table.findAll(["tr"])
     table_data = []
 
     for i, row in enumerate(rows):
@@ -32,8 +59,10 @@ def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
         if headers:
             for j, header in enumerate(headers):
                 cell = {
-                    "row_index": i,
-                    "col_index": j,
+                    "y": i,
+                    "x": j,
+                    "w": int(header.attrs.get("colspan", 1)),
+                    "h": int(header.attrs.get("rowspan", 1)),
                     "content": header.text,
                 }
                 table_data.append(cell)
@@ -41,12 +70,28 @@ def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
         if data_row:
             for k, data in enumerate(data_row):
                 cell = {
-                    "row_index": i,
-                    "col_index": k,
+                    "y": i,
+                    "x": k,
+                    "w": int(data.attrs.get("colspan", 1)),
+                    "h": int(data.attrs.get("rowspan", 1)),
                     "content": data.text,
                 }
                 table_data.append(cell)
-    return table_data
+    return _move_cells_for_spanned_cells(table_data)
+
+
+def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
+    """Convert html format to table structure. As a middle step it converts
+    html to the Deckerd format as it's more convenient to work with.
+
+    Args:
+        content: The html content with a table to extract.
+
+    Returns:
+        A list of dictionaries where each dictionary represents a cell in the table.
+    """
+    deckerd_cells = _html_table_to_deckerd(content)
+    return _convert_table_from_deckerd(deckerd_cells)
 
 
 def _convert_table_from_deckerd(content: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -151,11 +196,15 @@ def extract_cells_from_text_as_html(element: Dict[str, Any]) -> List[Dict[str, A
             "metadata": {
                 "text_as_html": "<table>
                                     <thead>
-                                        <th>Month A.</th>
+                                        <tr>
+                                            <th>Month A.</th>
+                                        </tr>
                                     </thead>
-                                    <tr>
-                                        <td>22</td><
-                                    /tr>
+                                    </tbody>
+                                        <tr>
+                                            <td>22</td><
+                                        </tr>
+                                    </tbody>
                                 </table>"
             }
         }
