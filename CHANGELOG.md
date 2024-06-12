@@ -8,7 +8,7 @@
 * **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
 * **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
 * **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
-* **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncracy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
+* **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncrasy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
 
 ## 0.14.5
 
