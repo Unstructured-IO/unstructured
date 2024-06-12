@@ -153,6 +153,7 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 class DeltaTableWriteConfig(WriteConfig):
     drop_empty_cols: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
+    schema_mode: t.Literal["merge", "overwrite"] = "merge"
 
 
 @dataclass
@@ -191,6 +192,7 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
                 "table_or_uri": self.connector_config.table_uri,
                 "data": df,
                 "mode": self.write_config.mode,
+                "schema_mode": self.write_config.schema_mode,
             },
         )
         writer.start()
