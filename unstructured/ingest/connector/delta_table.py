@@ -152,7 +152,6 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 @dataclass
 class DeltaTableWriteConfig(WriteConfig):
     drop_empty_cols: bool = False
-    overwrite_schema: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
 
 
