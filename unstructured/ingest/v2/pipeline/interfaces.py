@@ -49,16 +49,19 @@ class PipelineStep(ABC):
             if len(iterable) == 1:
                 return [self.run(**iterable[0])]
             if self.context.tqdm:
-                return [self.run(**it) for it in tqdm(iterable)]
+                return [self.run(**it) for it in tqdm(iterable, desc=self.identifier)]
             return [self.run(**it) for it in iterable]
         return [self.run()]
 
     async def _process_async(self, iterable: iterable_input) -> Any:
-        gather_fn = tqdm_asyncio.gather if self.context.tqdm else asyncio.gather
         if iterable:
             if len(iterable) == 1:
                 return [self.process_serially(iterable)]
-            return await gather_fn(*[self.run_async(**i) for i in iterable])
+            if self.context.tqdm:
+                return await tqdm_asyncio.gather(
+                    *[self.run_async(**i) for i in iterable], desc=self.identifier
+                )
+            return await asyncio.gather(*[self.run_async(**i) for i in iterable])
         return [await self.run_async()]
 
     def process_async(self, iterable: iterable_input) -> Any:
@@ -83,6 +86,7 @@ class PipelineStep(ABC):
                         tqdm(
                             pool.imap_unordered(func=self._wrap_mp, iterable=iterable),
                             total=len(iterable),
+                            desc=self.identifier,
                         )
                     )
                 return pool.map(self._wrap_mp, iterable)
