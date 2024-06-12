@@ -285,6 +285,8 @@ class FsspecUploader(Uploader):
     upload_config: FsspecUploaderConfigT = field(default=None)
     fs: "AbstractFileSystem" = field(init=False)
 
+    ## Check connection for uploader?
+
     def is_async(self) -> bool:
         return True
 
