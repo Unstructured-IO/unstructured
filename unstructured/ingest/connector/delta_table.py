@@ -191,7 +191,6 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
                 "table_or_uri": self.connector_config.table_uri,
                 "data": df,
                 "mode": self.write_config.mode,
-                "overwrite_schema": self.write_config.overwrite_schema,
             },
         )
         writer.start()
