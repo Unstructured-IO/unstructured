@@ -153,7 +153,8 @@ class DeltaTableSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 class DeltaTableWriteConfig(WriteConfig):
     drop_empty_cols: bool = False
     mode: t.Literal["error", "append", "overwrite", "ignore"] = "error"
-    schema_mode: t.Literal["merge", "overwrite"] = "merge"
+    schema_mode: t.Optional[t.Literal["merge", "overwrite"]] = None
+    engine: t.Literal["pyarrow", "rust"] = "pyarrow"
 
 
 @dataclass
@@ -182,18 +183,21 @@ class DeltaTableDestinationConnector(BaseDestinationConnector):
             f"writing {len(df)} rows to destination table "
             f"at {self.connector_config.table_uri}\ndtypes: {df.dtypes}",
         )
+        writer_kwargs = {
+            "table_or_uri": self.connector_config.table_uri,
+            "data": df,
+            "mode": self.write_config.mode,
+            "engine": self.write_config.engine,
+        }
+        if self.write_config.schema_mode is not None:
+            writer_kwargs["schema_mode"] = self.write_config.schema_mode
         # NOTE: deltalake writer on Linux sometimes can finish but still trigger a SIGABRT and cause
         # ingest to fail, even though all tasks are completed normally. Putting the writer into a
         # process mitigates this issue by ensuring python interpreter waits properly for deltalake's
         # rust backend to finish
         writer = Process(
             target=write_deltalake,
-            kwargs={
-                "table_or_uri": self.connector_config.table_uri,
-                "data": df,
-                "mode": self.write_config.mode,
-                "schema_mode": self.write_config.schema_mode,
-            },
+            kwargs=writer_kwargs,
         )
         writer.start()
         writer.join()
