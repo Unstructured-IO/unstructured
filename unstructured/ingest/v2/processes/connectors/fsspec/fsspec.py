@@ -231,6 +231,9 @@ class FsspecDownloader(Downloader):
     )
     fs: "AbstractFileSystem" = field(init=False)
 
+    def is_async(self) -> bool:
+        return self.fs.async_impl
+
     def __post_init__(self):
         from fsspec import get_filesystem_class
 
@@ -253,14 +256,9 @@ class FsspecDownloader(Downloader):
         except ValueError:
             return False
 
-    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
-        download_path = self.get_download_path(file_data=file_data)
-        download_path.parent.mkdir(parents=True, exist_ok=True)
-        try:
-            self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
-        except Exception as e:
-            logger.error(f"failed to download file {file_data.identifier}: {e}", exc_info=True)
-            raise SourceConnectionNetworkError(f"failed to download file {file_data.identifier}")
+    def generate_download_response(
+        self, file_data: FileData, download_path: Path
+    ) -> DownloadResponse:
         if (
             file_data.metadata.date_modified
             and self.is_float(file_data.metadata.date_modified)
@@ -271,6 +269,26 @@ class FsspecDownloader(Downloader):
             date_created = float(file_data.metadata.date_created)
             os.utime(download_path, times=(date_created, date_modified))
         return DownloadResponse(file_data=file_data, path=download_path)
+
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
+        except Exception as e:
+            logger.error(f"failed to download file {file_data.identifier}: {e}", exc_info=True)
+            raise SourceConnectionNetworkError(f"failed to download file {file_data.identifier}")
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
+
+    async def async_run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            await self.fs.get(rpath=file_data.identifier, lpath=download_path.as_posix())
+        except Exception as e:
+            logger.error(f"failed to download file {file_data.identifier}: {e}", exc_info=True)
+            raise SourceConnectionNetworkError(f"failed to download file {file_data.identifier}")
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
 
 @dataclass
@@ -287,7 +305,7 @@ class FsspecUploader(Uploader):
     fs: "AbstractFileSystem" = field(init=False)
 
     def is_async(self) -> bool:
-        return True
+        return self.fs.async_impl
 
     def __post_init__(self):
         # TODO once python3.9 no longer supported and kw_only is allowed in dataclasses, remove:
@@ -304,19 +322,33 @@ class FsspecUploader(Uploader):
             **fs_kwargs,
         )
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        raise NotImplementedError
-
-    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+    def get_upload_path(self, file_data: FileData) -> Path:
         upload_path = (
             Path(self.upload_config.path_without_protocol)
             / file_data.source_identifiers.relative_path
         )
         updated_upload_path = upload_path.parent / f"{upload_path.name}.json"
-        upload_path_str = str(updated_upload_path)
+        return updated_upload_path
+
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        for content in contents:
+            self._run(path=content.path, file_data=content.file_data)
+
+    def _run(self, path: Path, file_data: FileData) -> None:
         path_str = str(path.resolve())
-        if self.fs.exists(path=upload_path_str) and not self.upload_config.overwrite:
+        upload_path = self.get_upload_path(file_data=file_data)
+        if self.fs.exists(path=str(upload_path)) and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
         logger.info(f"Writing local file {path_str} to {upload_path}")
-        self.fs.upload(lpath=path_str, rpath=upload_path_str)
+        self.fs.upload(lpath=path_str, rpath=str(upload_path))
+
+    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+        upload_path = self.get_upload_path(file_data=file_data)
+        path_str = str(path.resolve())
+        already_exists = await self.fs.exists(path=str(upload_path))
+        if already_exists and not self.upload_config.overwrite:
+            logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
+            return
+        logger.info(f"Writing local file {path_str} to {upload_path}")
+        await self.fs.upload(lpath=path_str, rpath=str(upload_path))
