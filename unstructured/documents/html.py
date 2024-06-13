@@ -225,7 +225,7 @@ class HTMLDocument:
         if table_text == "":
             return None
 
-        return HTMLTable(text=table_text, text_as_html=html_table)
+        return HTMLTable(text=table_text, metadata=ElementMetadata(text_as_html=html_table))
 
     def _process_list_item(
         self, tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
@@ -455,7 +455,6 @@ def add_element_metadata(
         link_start_indexes=link_start_indexes or None,
         link_texts=link_texts or None,
         link_urls=link_urls or None,
-        text_as_html=element.text_as_html,
     )
     element.metadata.update(metadata)
 

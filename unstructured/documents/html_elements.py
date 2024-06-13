@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional, Protocol, Sequence
+from typing import Any, Protocol, Sequence
 
 from unstructured.documents.elements import (
     Address,
@@ -22,7 +22,6 @@ class HtmlElement(Protocol):
 
     links: Sequence[Link]
     metadata: ElementMetadata
-    text_as_html: str | None
 
     def __init__(
         self,
@@ -39,11 +38,9 @@ class TagsMixin:
         self,
         *args: Any,
         links: Sequence[Link] = [],
-        text_as_html: Optional[str] = None,
         **kwargs: Any,
     ):
         self.links = links
-        self.text_as_html = text_as_html
         super().__init__(*args, **kwargs)
 
 

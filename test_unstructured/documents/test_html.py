@@ -90,7 +90,7 @@ def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element(opts_args: dict
     assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
     # -- An HTML representation is also available that is longer but represents table structure.
     # -- Note this is padded with undesired spaces for human-readability that doesn't matter to us.
-    assert element.text_as_html == (
+    assert element.metadata.text_as_html == (
         "<table>"
         "<tr><td>Lorem</td><td>Ipsum</td></tr>"
         "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
@@ -129,7 +129,7 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
 
     (element,) = html_document.elements
     assert isinstance(element, HTMLTable)
-    assert element.text_as_html == (
+    assert element.metadata.text_as_html == (
         "<table>"
         "<tr><td>Lorem</td><td>Ipsum</td></tr>"
         "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
@@ -228,7 +228,7 @@ def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
     html_document = HTMLDocument.load(opts)
     (element,) = html_document.elements
     assert isinstance(element, HTMLTable)
-    text_as_html = element.text_as_html
+    text_as_html = element.metadata.text_as_html
     assert text_as_html is not None
 
     html = etree.fromstring(text_as_html, etree.HTMLParser())
@@ -704,7 +704,9 @@ class DescribeHTMLDocument:
 
         assert isinstance(html_table, HTMLTable)
         assert html_table.text == "foo bar"
-        assert html_table.text_as_html == "<table><tr><td>foo</td><td>bar</td></tr></table>"
+        assert html_table.metadata.text_as_html == (
+            "<table><tr><td>foo</td><td>bar</td></tr></table>"
+        )
 
     def it_accommodates_tds_with_child_elements(self, opts_args: dict[str, Any]):
         """Like this example from an SEC 10k filing."""
@@ -746,7 +748,7 @@ class DescribeHTMLDocument:
         assert html_table.text == (
             "☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934"
         )
-        assert html_table.text_as_html == (
+        assert html_table.metadata.text_as_html == (
             "<table>"
             "<tr><td></td><td></td></tr>"
             "<tr><td>☒</td><td>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES"
@@ -785,7 +787,7 @@ class DescribeHTMLDocument:
 
         assert isinstance(html_table, HTMLTable)
         assert html_table.text == "foo bar baz bng fizz bang"
-        assert html_table.text_as_html == (
+        assert html_table.metadata.text_as_html == (
             "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"
         )
 
