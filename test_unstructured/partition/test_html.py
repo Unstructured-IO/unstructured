@@ -29,12 +29,6 @@ from unstructured.documents.elements import (
     TableChunk,
     Title,
 )
-from unstructured.documents.html_elements import (
-    HTMLListItem,
-    HTMLNarrativeText,
-    HTMLTable,
-    HTMLTitle,
-)
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import HtmlPartitionerOptions, partition_html
 
@@ -376,32 +370,32 @@ def test_partition_html_records_hierarchy_metadata():
 
     assert len(elements) == 6
     e = elements[0]
-    assert isinstance(e, HTMLNarrativeText)
+    assert isinstance(e, NarrativeText)
     assert e.text == "Preamble gets no category_depth or parent_id"
     assert e.metadata.category_depth is None
     assert e.metadata.parent_id is None
     e = elements[1]
-    assert isinstance(e, HTMLTitle)
+    assert isinstance(e, Title)
     assert e.text == "Heading gets category_depth but no parent_id"
     assert e.metadata.category_depth == 0
     assert e.metadata.parent_id is None
     e = elements[2]
-    assert isinstance(e, HTMLNarrativeText)
+    assert isinstance(e, NarrativeText)
     assert e.text == "Body paragraph gets parent_id but no category_depth"
     assert e.metadata.category_depth is None
     assert e.metadata.parent_id == elements[1].id
     e = elements[3]
-    assert isinstance(e, HTMLListItem)
+    assert isinstance(e, ListItem)
     assert e.text == "List item gets category_depth and parent_id"
     assert e.metadata.category_depth == 1
     assert e.metadata.parent_id == elements[1].id
     e = elements[4]
-    assert isinstance(e, HTMLListItem)
+    assert isinstance(e, ListItem)
     assert e.text == "Second list item gets category_depth and parent_id"
     assert e.metadata.category_depth == 1
     assert e.metadata.parent_id == elements[1].id
     e = elements[5]
-    assert isinstance(e, HTMLNarrativeText)
+    assert isinstance(e, NarrativeText)
     assert e.text == "Body paragraph after list gets parent_id but no category_depth"
     assert e.metadata.category_depth is None
     assert e.metadata.parent_id == elements[1].id
@@ -760,7 +754,7 @@ def test_partition_html_returns_html_elements():
     elements = partition_html(example_doc_path("example-10k-1p.html"))
 
     assert len(elements) > 0
-    assert isinstance(elements[0], HTMLTable)
+    assert isinstance(elements[0], Table)
 
 
 def test_partition_html_round_trips_through_json():

@@ -20,6 +20,7 @@ from test_unstructured.unit_utils import (
 )
 from unstructured.documents import html
 from unstructured.documents.elements import (
+    Address,
     ListItem,
     NarrativeText,
     Table,
@@ -27,13 +28,6 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.documents.html import HTMLDocument, HtmlPartitionerOptions
-from unstructured.documents.html_elements import (
-    HTMLAddress,
-    HTMLNarrativeText,
-    HTMLTable,
-    HTMLText,
-    HTMLTitle,
-)
 
 TAGS = (
     (
@@ -68,7 +62,7 @@ EXCLUDED_TAGS = [
 # -- table-extraction behaviors ------------------------------------------------------------------
 
 
-def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element(opts_args: dict[str, Any]):
+def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str, Any]):
     """Bare-bones means no `<thead>`, `<tbody>`, or `<tfoot>` elements."""
     opts_args["text"] = (
         "<html>\n"
@@ -83,9 +77,9 @@ def test_it_can_parse_a_bare_bones_table_to_an_HTMLTable_element(opts_args: dict
     opts = HtmlPartitionerOptions(**opts_args)
     html_document = HTMLDocument.load(opts)
 
-    # -- there is exactly one element and it's an HTMLTable instance --
+    # -- there is exactly one element and it's a TMLTable instance --
     (element,) = html_document.elements
-    assert isinstance(element, HTMLTable)
+    assert isinstance(element, Table)
     # -- table text is joined into a single string; no row or cell boundaries are represented --
     assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
     # -- An HTML representation is also available that is longer but represents table structure.
@@ -127,7 +121,7 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     html_document = HTMLDocument.load(opts)
 
     (element,) = html_document.elements
-    assert isinstance(element, HTMLTable)
+    assert isinstance(element, Table)
     assert element.metadata.text_as_html == (
         "<table>"
         "<tr><td>Lorem</td><td>Ipsum</td></tr>"
@@ -138,7 +132,7 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     )
 
 
-def test_it_does_not_emit_an_HTMLTable_element_for_a_table_with_no_text(opts_args: dict[str, Any]):
+def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text(opts_args: dict[str, Any]):
     opts_args["text"] = (
         "<html>\n"
         "<body>\n"
@@ -225,7 +219,7 @@ def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
     )
     html_document = HTMLDocument.load(HtmlPartitionerOptions(**opts_args))
     (element,) = html_document.elements
-    assert isinstance(element, HTMLTable)
+    assert isinstance(element, Table)
     text_as_html = element.metadata.text_as_html
     assert text_as_html is not None
 
@@ -356,14 +350,14 @@ def test_containers_with_text_are_processed(opts_args: dict[str, Any]):
     html_document = HTMLDocument.load(opts)
 
     assert html_document.elements == [
-        HTMLText(text="Hi All,"),
-        HTMLNarrativeText(text="Get excited for our first annual family day!"),
-        HTMLTitle(text="Best."),
-        HTMLText(text="\n    -- "),
-        HTMLTitle(text="Dino the Datasaur"),
-        HTMLTitle(text="\n      Unstructured Technologies"),
-        HTMLTitle(text="Data Scientist"),
-        HTMLAddress(text="Doylestown, PA 18901"),
+        Text(text="Hi All,"),
+        NarrativeText(text="Get excited for our first annual family day!"),
+        Title(text="Best."),
+        Text(text="\n    -- "),
+        Title(text="Dino the Datasaur"),
+        Title(text="\n      Unstructured Technologies"),
+        Title(text="Data Scientist"),
+        Address(text="Doylestown, PA 18901"),
     ]
 
 
@@ -678,7 +672,7 @@ class DescribeHTMLDocument:
             ListItem(text="Looks like six more weeks of winter ..."),
         ]
 
-    # -- ._parse_HTMLTable_from_table_elem() -----
+    # -- ._parse_Table_from_table_elem() ---------
 
     def it_produces_one_cell_for_each_original_table_cell(self, opts_args: dict[str, Any]):
         opts = HtmlPartitionerOptions(**opts_args)
@@ -695,9 +689,9 @@ class DescribeHTMLDocument:
         table_elem = html_document._main.find(".//table")
         assert table_elem is not None
 
-        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_Table_from_table_elem(table_elem)
 
-        assert isinstance(html_table, HTMLTable)
+        assert isinstance(html_table, Table)
         assert html_table.text == "foo bar"
         assert html_table.metadata.text_as_html == (
             "<table><tr><td>foo</td><td>bar</td></tr></table>"
@@ -737,9 +731,9 @@ class DescribeHTMLDocument:
         table_elem = html_document._main.find(".//table")
         assert table_elem is not None
 
-        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_Table_from_table_elem(table_elem)
 
-        assert isinstance(html_table, HTMLTable)
+        assert isinstance(html_table, Table)
         assert html_table.text == (
             "☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934"
         )
@@ -778,9 +772,9 @@ class DescribeHTMLDocument:
         table_elem = html_document._main.find(".//table")
         assert table_elem is not None
 
-        html_table = html_document._parse_HTMLTable_from_table_elem(table_elem)
+        html_table = html_document._parse_Table_from_table_elem(table_elem)
 
-        assert isinstance(html_table, HTMLTable)
+        assert isinstance(html_table, Table)
         assert html_table.text == "foo bar baz bng fizz bang"
         assert html_table.metadata.text_as_html == (
             "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"

@@ -8,16 +8,16 @@ import requests
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
-from unstructured.documents.elements import Element, ElementMetadata
-from unstructured.documents.html_elements import (
-    HTMLAddress,
-    HtmlElement,
-    HTMLEmailAddress,
-    HTMLListItem,
-    HTMLNarrativeText,
-    HTMLTable,
-    HTMLText,
-    HTMLTitle,
+from unstructured.documents.elements import (
+    Address,
+    Element,
+    ElementMetadata,
+    EmailAddress,
+    ListItem,
+    NarrativeText,
+    Table,
+    Text,
+    Title,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
@@ -63,7 +63,15 @@ class HTMLDocument:
 
         Elements appear in document order.
         """
-        return cast(list[Element], self._html_elements)
+
+        def iter_elements() -> Iterator[Element]:
+            """Generate each element in document."""
+            for e in self._iter_elements(self._main):
+                e.metadata.last_modified = self._opts.last_modified
+                e.metadata.detection_origin = self._opts.detection_origin
+                yield e
+
+        return list(iter_elements())
 
     @lazyproperty
     def _document_tree(self) -> etree._Element:
@@ -99,23 +107,7 @@ class HTMLDocument:
 
         return document_tree
 
-    @lazyproperty
-    def _html_elements(self) -> list[HtmlElement]:
-        """All HTML-specific elements (e.g. HTMLNarrativeText) parsed from document.
-
-        Elements are sequenced in document order.
-        """
-
-        def iter_html_elements() -> Iterator[HtmlElement]:
-            """Generate each HTML-specific element in document after applying its metadata."""
-            for e in self._iter_elements(self._main):
-                e.metadata.last_modified = self._opts.last_modified
-                e.metadata.detection_origin = self._opts.detection_origin
-                yield e
-
-        return list(iter_html_elements())
-
-    def _iter_elements(self, subtree: etree._Element) -> Iterator[HtmlElement]:
+    def _iter_elements(self, subtree: etree._Element) -> Iterator[Element]:
         """Parse HTML-subtree into `Element` objects in document order."""
         descendant_tag_elems: tuple[etree._Element, ...] = ()
         for tag_elem in subtree.iter():
@@ -164,7 +156,7 @@ class HTMLDocument:
                     descendant_tag_elems = _get_bullet_descendants(tag_elem, next_element)
 
             elif tag_elem.tag in TABLE_TAGS:
-                element = self._parse_HTMLTable_from_table_elem(tag_elem)
+                element = self._parse_Table_from_table_elem(tag_elem)
                 if element is not None:
                     yield element
                 if element or tag_elem.tag == "table":
@@ -176,22 +168,22 @@ class HTMLDocument:
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
 
-    def _parse_bulleted_text_from_table(self, table: etree._Element) -> list[HtmlElement]:
+    def _parse_bulleted_text_from_table(self, table: etree._Element) -> list[Element]:
         """Extracts bulletized narrative text from the `<table>` element in `table`.
 
         NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e.,
         _read() will drop non-bullet narrative text in the table.
         """
-        bulleted_text: list[HtmlElement] = []
+        bulleted_text: list[Element] = []
         rows = table.findall(".//tr")
         for row in rows:
             text = _construct_text(row)
             if is_bulleted_text(text):
-                bulleted_text.append(HTMLListItem(text=clean_bullets(text)))
+                bulleted_text.append(ListItem(text=clean_bullets(text)))
         return bulleted_text
 
-    def _parse_HTMLTable_from_table_elem(self, table_elem: etree._Element) -> HtmlElement | None:
-        """Form `HTMLTable` element from `tbl_elem`."""
+    def _parse_Table_from_table_elem(self, table_elem: etree._Element) -> Element | None:
+        """Form `Table` element from `tbl_elem`."""
         if table_elem.tag != "table":
             return None
 
@@ -224,12 +216,12 @@ class HTMLDocument:
         if table_text == "":
             return None
 
-        return HTMLTable(text=table_text, metadata=ElementMetadata(text_as_html=html_table))
+        return Table(text=table_text, metadata=ElementMetadata(text_as_html=html_table))
 
     def _process_list_item(
         self, tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
-    ) -> tuple[HtmlElement | None, etree._Element | None]:
-        """Produces an `HTMLListItem` document element from `tag_elem`.
+    ) -> tuple[Element | None, etree._Element | None]:
+        """Produces an `ListItem` document element from `tag_elem`.
 
         When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also
         returns the next html element so we can skip processing if bullets are found in a div
@@ -243,7 +235,7 @@ class HTMLDocument:
                 [el for el in tag_elem.iterancestors() if el.tag in LIST_TAGS + LIST_ITEM_TAGS],
             )
             return (
-                HTMLListItem(
+                ListItem(
                     text=text,
                     metadata=ElementMetadata(
                         category_depth=depth,
@@ -269,13 +261,13 @@ class HTMLDocument:
             if len(tag_elem) > max_predecessor_len + empty_elems_len:
                 return None, None
             if next_text:
-                return HTMLListItem(text=next_text), next_element
+                return ListItem(text=next_text), next_element
 
         return None, None
 
     def _parse_tag(
         self, tag_elem: etree._Element, include_tail_text: bool = True
-    ) -> HtmlElement | None:
+    ) -> Element | None:
         """Parses `tag_elem` to a Text element if it contains qualifying text.
 
         Ancestor tags are kept so they can be used for filtering or classification without
@@ -317,10 +309,10 @@ class HTMLDocument:
 
     def _process_text_tag(
         self, tag_elem: etree._Element, include_tail_text: bool = True
-    ) -> tuple[list[HtmlElement], tuple[etree._Element, ...]]:
+    ) -> tuple[list[Element], tuple[etree._Element, ...]]:
         """Produces a document element from `tag_elem`."""
 
-        page_elements: list[HtmlElement] = []
+        page_elements: list[Element] = []
         if _has_break_tags(tag_elem):
             flattened_elems = _unfurl_break_tags(tag_elem)
             for _tag_elem in flattened_elems:
@@ -664,12 +656,12 @@ def _text_to_element(
     link_texts: list[str] | None = None,
     link_urls: list[str] | None = None,
     link_start_indexes: list[int] | None = None,
-) -> Optional[HtmlElement]:
+) -> Optional[Element]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
             return None
-        return HTMLListItem(
+        return ListItem(
             text=clean_bullets(text),
             metadata=ElementMetadata(
                 category_depth=depth,
@@ -681,7 +673,7 @@ def _text_to_element(
             ),
         )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(
+        return Address(
             text=text,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -692,7 +684,7 @@ def _text_to_element(
             ),
         )
     elif is_email_address(text):
-        return HTMLEmailAddress(
+        return EmailAddress(
             text=text,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -706,7 +698,7 @@ def _text_to_element(
     if len(text) < 2:
         return None
     elif _is_narrative_tag(text, tag):
-        return HTMLNarrativeText(
+        return NarrativeText(
             text,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -717,7 +709,7 @@ def _text_to_element(
             ),
         )
     elif _is_heading_tag(tag) or is_possible_title(text):
-        return HTMLTitle(
+        return Title(
             text,
             metadata=ElementMetadata(
                 category_depth=depth,
@@ -729,7 +721,7 @@ def _text_to_element(
             ),
         )
     else:
-        return HTMLText(
+        return Text(
             text,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
