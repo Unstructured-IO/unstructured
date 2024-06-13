@@ -56,7 +56,7 @@ class PipelineStep(ABC):
     async def _process_async(self, iterable: iterable_input) -> Any:
         if iterable:
             if len(iterable) == 1:
-                return [self.process_serially(iterable)]
+                return [await self.run_async(**iterable[0])]
             if self.context.tqdm:
                 return await tqdm_asyncio.gather(
                     *[self.run_async(**i) for i in iterable], desc=self.identifier
