@@ -53,30 +53,16 @@ def _html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
     table_data = []
 
     for i, row in enumerate(rows):
-        headers = row.findAll("th")
-        data_row = row.findAll("td")
-
-        if headers:
-            for j, header in enumerate(headers):
-                cell = {
-                    "y": i,
-                    "x": j,
-                    "w": int(header.attrs.get("colspan", 1)),
-                    "h": int(header.attrs.get("rowspan", 1)),
-                    "content": header.text,
-                }
-                table_data.append(cell)
-
-        if data_row:
-            for k, data in enumerate(data_row):
-                cell = {
-                    "y": i,
-                    "x": k,
-                    "w": int(data.attrs.get("colspan", 1)),
-                    "h": int(data.attrs.get("rowspan", 1)),
-                    "content": data.text,
-                }
-                table_data.append(cell)
+        cells = row.findAll(["th", "td"])
+        for j, cell_data in enumerate(cells):
+            cell = {
+                "y": i,
+                "x": j,
+                "w": int(cell_data.attrs.get("colspan", 1)),
+                "h": int(cell_data.attrs.get("rowspan", 1)),
+                "content": cell_data.text,
+            }
+            table_data.append(cell)
     return _move_cells_for_spanned_cells(table_data)
 
 
