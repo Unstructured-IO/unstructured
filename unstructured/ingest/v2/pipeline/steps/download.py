@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 from typing import Optional, TypedDict, TypeVar
 
-from unstructured.ingest.v2.interfaces import FileData
+from unstructured.ingest.v2.interfaces import FileData, download_responses
 from unstructured.ingest.v2.interfaces.downloader import Downloader
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.interfaces import PipelineStep
@@ -69,6 +69,24 @@ class DownloadStep(PipelineStep):
             return True
         return False
 
+    def create_step_results(
+        self, current_file_data_path: str, download_results: download_responses
+    ) -> list[DownloadStepResponse]:
+        if not isinstance(download_results, list):
+            return [
+                DownloadStepResponse(
+                    file_data_path=current_file_data_path, path=str(download_results["path"])
+                )
+            ]
+            # Supplemental results generated as part of the download process
+        download_step_results = []
+        for res in download_results:
+            file_data_path = self.persist_new_file_data(file_data=res["file_data"])
+            download_step_results.append(
+                DownloadStepResponse(file_data_path=file_data_path, path=res["path"])
+            )
+        return download_step_results
+
     def _run(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
@@ -76,21 +94,36 @@ class DownloadStep(PipelineStep):
             logger.debug(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
 
-        download_path = self.process.run(file_data=file_data)
-        return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
+        download_results = self.process.run(file_data=file_data)
+        return self.create_step_results(
+            current_file_data_path=file_data_path, download_results=download_results
+        )
 
     async def _run_async(self, file_data_path: str) -> list[DownloadStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
         download_path = self.process.get_download_path(file_data=file_data)
-        if not self.should_download(file_data=file_data, file_data_path=file_data_path):
+        if download_path and not self.should_download(
+            file_data=file_data, file_data_path=file_data_path
+        ):
             logger.debug(f"Skipping download, file already exists locally: {download_path}")
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
         if semaphore := self.context.semaphore:
             async with semaphore:
-                download_path = await self.process.run_async(file_data=file_data)
+                download_results = await self.process.run_async(file_data=file_data)
         else:
-            download_path = await self.process.run_async(file_data=file_data)
-        return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
+            download_results = await self.process.run_async(file_data=file_data)
+        return self.create_step_results(
+            current_file_data_path=file_data_path, download_results=download_results
+        )
+
+    def persist_new_file_data(self, file_data: FileData) -> str:
+        record_hash = self.get_hash(extras=[file_data.identifier])
+        filename = f"{record_hash}.json"
+        filepath = (self.cache_dir / filename).resolve()
+        filepath.parent.mkdir(parents=True, exist_ok=True)
+        with open(str(filepath), "w") as f:
+            json.dump(file_data.to_dict(), f, indent=2)
+        return str(filepath)
 
     def get_hash(self, extras: Optional[list[str]]) -> str:
         hashable_string = json.dumps(self.process.download_config.to_dict(), sort_keys=True)
