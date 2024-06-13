@@ -168,8 +168,8 @@ class ChromaUploader(Uploader):
         # self.client = Client(url=self.connection_nfig.host_url, auth_client_secret=auth)
 
     def is_async(self) -> bool:
-        # return True
-        return False
+        return True
+        # return False
 
     # def _resolve_auth_method(self):
     #     access_configs = self.connection_config.access_config
@@ -244,8 +244,8 @@ class ChromaUploader(Uploader):
         )
         return collection
 
-    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-    #     raise NotImplementedError
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        raise NotImplementedError
 
     async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
     # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
@@ -258,8 +258,8 @@ class ChromaUploader(Uploader):
 
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
-            f"class {self.connection_config.class_name} "
-            f"at {self.connection_config.host_url}",
+            f"class {self.connection_config.collection_name} "
+            f"at {self.connection_config.host}",
         )
 
         self.client.batch.configure(batch_size=self.upload_config.batch_size)

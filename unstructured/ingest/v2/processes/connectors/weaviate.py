@@ -28,6 +28,7 @@ if TYPE_CHECKING:
 
 CONNECTOR_TYPE = "weaviate"
 
+from pprint import pp
 
 @dataclass
 class WeaviateAccessConfig(AccessConfig):
@@ -77,6 +78,9 @@ class WeaviateUploadStager(UploadStager):
         """
         Updates the element dictionary to conform to the Weaviate schema
         """
+
+        ### This doesn't seem to be called
+        # compare to the e on line 35
 
         # Dict as string formatting
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
@@ -230,6 +234,9 @@ class WeaviateUploader(Uploader):
         with self.client.batch as b:
             for e in elements_dict:
                 vector = e.pop("embeddings", None)
+                print("*** e ***")
+                pp(e)
+                print("*** e ***")
                 b.add_data_object(
                     e,
                     self.connection_config.class_name,
