@@ -2,7 +2,9 @@ import json
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Dict
+
+
 
 from dateutil import parser
 
@@ -24,40 +26,39 @@ from unstructured.ingest.v2.processes.connector_registry import (
 )
 
 if TYPE_CHECKING:
-    from weaviate import Client
+    from chromadb import Collection
 
 CONNECTOR_TYPE = "chroma"
 
 
 @dataclass
 class ChromaAccessConfig(AccessConfig):
-    access_token: Optional[str]
-    api_key: Optional[str]
-    client_secret: Optional[str]
-    password: Optional[str]
+    settings: Optional[Dict[str, str]] = None
+    headers: Optional[Dict[str, str]] = None
 
 
 @dataclass
 class ChromaConnectionConfig(ConnectionConfig):
-    host_url: str
-    class_name: str
-    access_config: WeaviateAccessConfig = enhanced_field(sensitive=True)
-    username: Optional[str] = None
-    anonymous: bool = False
-    scope: Optional[list[str]] = None
-    refresh_token: Optional[str] = None
+    access_config: ChromaAccessConfig = enhanced_field(sensitive=True)
+    collection_name: str
+    path: Optional[str] = None
+    tenant: Optional[str] = "default_tenant"
+    database: Optional[str] = "default_database"
+    host: Optional[str] = None
+    port: Optional[int] = None
+    ssl: bool = False
     connector_type: str = CONNECTOR_TYPE
 
 
 @dataclass
-class WeaviateUploadStagerConfig(UploadStagerConfig):
+class ChromaUploadStagerConfig(UploadStagerConfig):
     pass
 
 
 @dataclass
-class WeaviateUploadStager(UploadStager):
-    upload_stager_config: WeaviateUploadStagerConfig = field(
-        default_factory=lambda: WeaviateUploadStagerConfig()
+class ChromaUploadStager(UploadStager):
+    upload_stager_config: ChromaUploadStagerConfig = field(
+        default_factory=lambda: ChromaUploadStagerConfig()
     )
 
     @staticmethod
@@ -72,7 +73,7 @@ class WeaviateUploadStager(UploadStager):
     @classmethod
     def conform_dict(cls, data: dict) -> None:
         """
-        Updates the element dictionary to conform to the Weaviate schema
+        Updates the element dictionary to conform to the Chroma schema
         """
 
         # Dict as string formatting
@@ -153,57 +154,105 @@ class ChromaUploaderConfig(UploaderConfig):
 
 
 @dataclass
-class WeaviateUploader(Uploader):
-    upload_config: WeaviateUploaderConfig
-    connection_config: WeaviateConnectionConfig
-    client: Optional["Client"] = field(init=False)
+class ChromaUploader(Uploader):
+    upload_config: ChromaUploaderConfig
+    connection_config: ChromaConnectionConfig
+    # client: Optional["Client"] = field(init=False)
+    _collection: Optional["ChromaCollection"] = None
 
     def __post_init__(self):
-        from weaviate import Client
+        # from chromadb import Collection
 
-        auth = self._resolve_auth_method()
-        self.client = Client(url=self.connection_config.host_url, auth_client_secret=auth)
+        # auth = self._resolve_auth_method()
+        self._collection = self.create_collection()
+        # self.client = Client(url=self.connection_nfig.host_url, auth_client_secret=auth)
 
     def is_async(self) -> bool:
-        return True
+        # return True
+        return False
 
-    def _resolve_auth_method(self):
-        access_configs = self.connection_config.access_config
-        connection_config = self.connection_config
-        if connection_config.anonymous:
-            return None
+    # def _resolve_auth_method(self):
+    #     access_configs = self.connection_config.access_config
+    #     connection_config = self.connection_config
 
-        if access_configs.access_token:
-            from weaviate.auth import AuthBearerToken
+    #     breakpoint()
 
-            return AuthBearerToken(
-                access_token=access_configs.access_token,
-                refresh_token=connection_config.refresh_token,
+
+
+
+
+
+    #     if connection_config.anonymous:
+    #         return None
+
+    #     if access_configs.access_token:
+    #         from weaviate.auth import AuthBearerToken
+
+    #         return AuthBearerToken(
+    #             access_token=access_configs.access_token,
+    #             refresh_token=connection_config.refresh_token,
+    #         )
+    #     elif access_configs.api_key:
+    #         from weaviate.auth import AuthApiKey
+
+    #         return AuthApiKey(api_key=access_configs.api_key)
+    #     elif access_configs.client_secret:
+    #         from weaviate.auth import AuthClientCredentials
+
+    #         return AuthClientCredentials(
+    #             client_secret=access_configs.client_secret, scope=connection_config.scope
+    #         )
+    #     elif connection_config.username and access_configs.password:
+    #         from weaviate.auth import AuthClientPassword
+
+    #         return AuthClientPassword(
+    #             username=connection_config.username,
+    #             password=access_configs.password,
+    #             scope=connection_config.scope,
+    #         )
+    #     return None
+
+    # @requires_dependencies(["chromadb"], extras="chroma")
+    def create_collection(self) -> "ChromaCollection":
+        # access_configs = self.connection_config.access_config
+        # connection_config = self.connection_config
+        import chromadb
+
+        if self.connection_config.path:
+            chroma_client = chromadb.PersistentClient(
+                path=self.connection_config.path,
+                settings=self.connection_config.settings,
+                tenant=self.connection_config.tenant,
+                database=self.connection_config.database,
             )
-        elif access_configs.api_key:
-            from weaviate.auth import AuthApiKey
 
-            return AuthApiKey(api_key=access_configs.api_key)
-        elif access_configs.client_secret:
-            from weaviate.auth import AuthClientCredentials
-
-            return AuthClientCredentials(
-                client_secret=access_configs.client_secret, scope=connection_config.scope
+        elif self.connection_config.host and self.connection_config.port:
+            chroma_client = chromadb.HttpClient(
+                host=self.connection_config.host,
+                port=self.connection_config.port,
+                ssl=self.connection_config.ssl,
+                headers=self.connection_config.access_config.headers,
+                settings=self.connection_config.access_config.settings,
+                tenant=self.connection_config.tenant,
+                database=self.connection_config.database,
             )
-        elif connection_config.username and access_configs.password:
-            from weaviate.auth import AuthClientPassword
+        else:
+            raise ValueError("Chroma connector requires either path or host and port to be set.")
 
-            return AuthClientPassword(
-                username=connection_config.username,
-                password=access_configs.password,
-                scope=connection_config.scope,
-            )
-        return None
+        collection = chroma_client.get_or_create_collection(
+            name=self.connection_config.collection_name
+        )
+        return collection
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        raise NotImplementedError
+    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    #     raise NotImplementedError
 
     async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+    # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        breakpoint()
+        # for content in contents:
+
         with open(path) as elements_file:
             elements_dict = json.load(elements_file)
 
@@ -227,10 +276,10 @@ class WeaviateUploader(Uploader):
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
-        connection_config=WeaviateConnectionConfig,
-        uploader=WeaviateUploader,
-        uploader_config=WeaviateUploaderConfig,
-        upload_stager=WeaviateUploadStager,
-        upload_stager_config=WeaviateUploadStagerConfig,
+        connection_config=ChromaConnectionConfig,
+        uploader=ChromaUploader,
+        uploader_config=ChromaUploaderConfig,
+        upload_stager=ChromaUploadStager,
+        upload_stager_config=ChromaUploadStagerConfig,
     ),
 )

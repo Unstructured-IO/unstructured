@@ -34,7 +34,7 @@ if duplicate_src_names:
 dest_cmds = [
     azure_dest_cmd,
     box_dest_cmd,
-    # chroma_dest_cmd,
+    chroma_dest_cmd,
     dropbox_dest_cmd,
     gcs_dest_cmd,
     local_dest_cmd,

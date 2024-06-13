@@ -43,7 +43,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
-  --input-path example-docs/book-war-and-peace-1p.txt \
+  --input-path example-docs/multisimple/ \
   --work-dir "$WORK_DIR" \
   --chunking-strategy by_title \
   --chunk-max-characters 1500 \
