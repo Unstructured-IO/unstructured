@@ -54,7 +54,7 @@ google-auth==2.30.0
     #   google-cloud-core
     #   google-cloud-resource-manager
     #   google-cloud-storage
-google-cloud-aiplatform==1.54.1
+google-cloud-aiplatform==1.55.0
     # via langchain-google-vertexai
 google-cloud-bigquery==3.24.0
     # via google-cloud-aiplatform
@@ -64,7 +64,7 @@ google-cloud-core==2.4.1
     #   google-cloud-storage
 google-cloud-resource-manager==1.12.3
     # via google-cloud-aiplatform
-google-cloud-storage==2.16.0
+google-cloud-storage==2.17.0
     # via
     #   google-cloud-aiplatform
     #   langchain-google-vertexai
@@ -72,7 +72,7 @@ google-crc32c==1.5.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.7.0
+google-resumable-media==2.7.1
     # via
     #   google-cloud-bigquery
     #   google-cloud-storage
@@ -98,7 +98,7 @@ idna==3.7
     #   yarl
 jsonpatch==1.33
     # via langchain-core
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.3
     # via
@@ -141,7 +141,7 @@ numpy==1.26.4
     #   langchain
     #   langchain-community
     #   shapely
-orjson==3.10.3
+orjson==3.10.4
     # via langsmith
 packaging==23.2
     # via
@@ -172,7 +172,7 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   google-cloud-aiplatform
     #   langchain

@@ -147,7 +147,7 @@ opentelemetry-util-http==0.46b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-orjson==3.10.3
+orjson==3.10.4
     # via chromadb
 overrides==7.7.0
     # via chromadb
@@ -172,7 +172,7 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   chromadb
     #   fastapi
