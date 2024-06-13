@@ -54,9 +54,6 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
 class Partitioner(BaseProcess, ABC):
     config: PartitionerConfig
 
-    def is_async(self) -> bool:
-        return self.config.partition_by_api
-
     def postprocess(self, elements: list[dict]) -> list[dict]:
         element_dicts = [e.copy() for e in elements]
         for elem in element_dicts:
@@ -87,7 +84,7 @@ class Partitioner(BaseProcess, ABC):
                 elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
         return element_dicts
 
-    def run(
+    def partition_locally(
         self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
     ) -> list[dict]:
         from unstructured.partition.auto import partition
@@ -101,9 +98,10 @@ class Partitioner(BaseProcess, ABC):
         )
         return self.postprocess(elements=elements_to_dicts(elements))
 
-    async def run_async(
+    def partition_via_api(
         self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
     ) -> list[dict]:
+        # TODO when client supports async, move to run_async()
         from unstructured_client import UnstructuredClient
         from unstructured_client.models.shared import Files, PartitionParameters
 
@@ -126,3 +124,10 @@ class Partitioner(BaseProcess, ABC):
         for element in elements:
             element["metadata"]["data_source"] = metadata.to_dict()
         return self.postprocess(elements=elements)
+
+    def run(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        if self.config.partition_by_api:
+            return self.partition_via_api(filename, metadata=metadata, **kwargs)
+        return self.partition_locally(filename, metadata=metadata, **kwargs)
