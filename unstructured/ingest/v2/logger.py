@@ -112,7 +112,8 @@ def make_default_logger(level: int) -> Logger:
     handler.name = "ingest_log_handler"
     formatter = SensitiveFormatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
     handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if handler.name not in [h.name for h in logger.handlers]:
+        logger.addHandler(handler)
     logger.setLevel(level)
     remove_root_handlers(logger)
     return logger
