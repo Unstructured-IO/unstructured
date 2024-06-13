@@ -4,6 +4,8 @@
 
 ### Features
 
+* **tqdm ingest support** add optional flag to ingest flow to print out progress bar of each step in the process.
+
 ### Fixes
 
 * **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.**. The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.

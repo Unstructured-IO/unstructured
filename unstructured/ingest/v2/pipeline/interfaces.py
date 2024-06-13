@@ -3,14 +3,35 @@ import logging
 import multiprocessing as mp
 from abc import ABC
 from dataclasses import dataclass
+from functools import wraps
 from pathlib import Path
+from time import time
 from typing import Any, Optional, TypeVar
+
+from tqdm import tqdm
+from tqdm.asyncio import tqdm as tqdm_asyncio
 
 from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 
 BaseProcessT = TypeVar("BaseProcessT", bound=BaseProcess)
 iterable_input = list[dict[str, Any]]
+
+
+def timed(func):
+    @wraps(func)
+    def time_it(self, *args, **kwargs):
+        start = time()
+        try:
+            return func(self, *args, **kwargs)
+        finally:
+            if func.__name__ == "__call__":
+                reported_name = f"{self.__class__.__name__} [cls]"
+            else:
+                reported_name = func.__name__
+            logger.info(f"{reported_name} took {time() - start} seconds")
+
+    return time_it
 
 
 @dataclass
@@ -25,6 +46,10 @@ class PipelineStep(ABC):
     def process_serially(self, iterable: iterable_input) -> Any:
         logger.info("processing content serially")
         if iterable:
+            if len(iterable) == 1:
+                return [self.run(**iterable[0])]
+            if self.context.tqdm:
+                return [self.run(**it) for it in tqdm(iterable, desc=self.identifier)]
             return [self.run(**it) for it in iterable]
         return [self.run()]
 
@@ -32,6 +57,10 @@ class PipelineStep(ABC):
         if iterable:
             if len(iterable) == 1:
                 return [await self.run_async(**iterable[0])]
+            if self.context.tqdm:
+                return await tqdm_asyncio.gather(
+                    *[self.run_async(**i) for i in iterable], desc=self.identifier
+                )
             return await asyncio.gather(*[self.run_async(**i) for i in iterable])
         return [await self.run_async()]
 
@@ -44,7 +73,7 @@ class PipelineStep(ABC):
 
         if iterable:
             if len(iterable) == 1:
-                return [self.run(**iterable[0])]
+                return [self.process_serially(iterable)]
             if self.context.num_processes == 1:
                 return self.process_serially(iterable)
             with mp.Pool(
@@ -52,6 +81,14 @@ class PipelineStep(ABC):
                 initializer=self._set_log_level,
                 initargs=(logging.DEBUG if self.context.verbose else logging.INFO,),
             ) as pool:
+                if self.context.tqdm:
+                    return list(
+                        tqdm(
+                            pool.imap_unordered(func=self._wrap_mp, iterable=iterable),
+                            total=len(iterable),
+                            desc=self.identifier,
+                        )
+                    )
                 return pool.map(self._wrap_mp, iterable)
         return [self.run()]
 
@@ -63,6 +100,7 @@ class PipelineStep(ABC):
         # Set the log level for each spawned process when using multiprocessing pool
         logger.setLevel(log_level)
 
+    @timed
     def __call__(self, iterable: Optional[iterable_input] = None) -> Any:
         iterable = iterable or []
         if iterable:
