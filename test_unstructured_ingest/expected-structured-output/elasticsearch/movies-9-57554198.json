@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "6c76a6263b7302899c540e3350cdbd2b",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "49a2c9c74be02fc8fccbd73a83e9bc01",
+    "text": "D. W. Griffith",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f78fe3cd03eff1385fe290de14d2538f",
+    "text": "The film opens in a town on the Mexican border. A poker game is going on in the local saloon. One of the players cheats and is shot dead by another of the players, a Mexican named Pedro. In the uproar that follows Pedro is wounded as he escapes from the saloon. The sheriff is called, who tracks Pedro to his home but Pedro kills the sherriff too. While Pedro hides, his wife Juanita, is arrested on suspicion of murdering the sheriff. Pedro rescues her from the town jail and the two head for the Mexican border. Caught by the posse before they reach the border, Juanita is killed and the film ends with Pedro being arrested and taken back to town.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "9"
+        }
+      }
+    }
+  }
+]
