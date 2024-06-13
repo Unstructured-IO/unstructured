@@ -24,11 +24,13 @@ download_path = work_dir / "download"
 if __name__ == "__main__":
     logger.info(f"Writing all content in: {work_dir.resolve()}")
     Pipeline.from_configs(
-        context=ProcessorConfig(work_dir=str(work_dir.resolve()), tqdm=True, verbose=True),
+        context=ProcessorConfig(
+            work_dir=str(work_dir.resolve()), tqdm=True, reprocess=True, verbose=True
+        ),
         indexer_config=S3IndexerConfig(remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/"),
         downloader_config=S3DownloaderConfig(download_dir=download_path),
         source_connection_config=S3ConnectionConfig(anonymous=True),
-        partitioner_config=PartitionerConfig(strategy="fast"),
+        partitioner_config=PartitionerConfig(strategy="hi_res"),
         chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         uploader_config=LocalUploaderConfig(output_dir=str(output_path.resolve())),
