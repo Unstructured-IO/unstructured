@@ -78,13 +78,15 @@ class DownloadStep(PipelineStep):
             return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
         fn_kwargs = {"file_data": file_data}
         if not asyncio.iscoroutinefunction(fn):
-            download_path = fn(**fn_kwargs)
+            download_results = fn(**fn_kwargs)
         elif semaphore := self.context.semaphore:
             async with semaphore:
-                download_path = await fn(**fn_kwargs)
+                download_results = await fn(**fn_kwargs)
         else:
-            download_path = await fn(**fn_kwargs)
-        return [DownloadStepResponse(file_data_path=file_data_path, path=str(download_path))]
+            download_results = await fn(**fn_kwargs)
+        return self.create_step_results(
+            current_file_data_path=file_data_path, download_results=download_results
+        )
 
     def create_step_results(
         self, current_file_data_path: str, download_results: download_responses

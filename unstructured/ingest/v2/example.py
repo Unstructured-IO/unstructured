@@ -30,7 +30,7 @@ if __name__ == "__main__":
         indexer_config=S3IndexerConfig(remote_url="s3://utic-dev-tech-fixtures/small-pdf-set/"),
         downloader_config=S3DownloaderConfig(download_dir=download_path),
         source_connection_config=S3ConnectionConfig(anonymous=True),
-        partitioner_config=PartitionerConfig(strategy="hi_res"),
+        partitioner_config=PartitionerConfig(strategy="fast"),
         chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         uploader_config=LocalUploaderConfig(output_dir=str(output_path.resolve())),

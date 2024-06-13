@@ -84,7 +84,8 @@ def redact_jsons(s: str) -> str:
         try:
             formatted_j = json.dumps(json.loads(j))
         except json.JSONDecodeError:
-            formatted_j = json.dumps(ast.literal_eval(j))
+            lit = ast.literal_eval(j)
+            formatted_j = json.dumps(lit)
         hidden_j = json.dumps(hide_sensitive_fields(json.loads(formatted_j)))
         s = s.replace(j, hidden_j)
     return s
