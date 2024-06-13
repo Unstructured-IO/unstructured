@@ -33,7 +33,6 @@ from unstructured.documents.html_elements import (
     HTMLTable,
     HTMLText,
     HTMLTitle,
-    TagsMixin,
 )
 
 TAGS = (
@@ -274,16 +273,6 @@ def test_it_does_not_extract_text_in_style_tags(opts_args: dict[str, Any]):
     assert element.text == "Lorem ipsum dolor"
 
 
-# -- TagsMixin -----------------------------------------------------------------------------------
-
-
-def test_TagsMixin_element_raises_on_construction_with_no_or_None_tag():
-    with pytest.raises(TypeError):
-        TagsMixin(tag=None)
-    with pytest.raises(TypeError):
-        TagsMixin()
-
-
 # -- HTMLDocument.from_file() --------------------------------------------------------------------
 
 
@@ -330,27 +319,6 @@ def test_read_html_doc(tmp_path: pathlib.Path, opts_args: dict[str, Any]):
 # -- HTMLDocument.elements -----------------------------------------------------------------------
 
 
-def test_parses_tags_correctly(opts_args: dict[str, Any]):
-    opts_args["text"] = (
-        "<html>\n"
-        "  <body>\n"
-        "    <table>\n"
-        "      <tbody>\n"
-        "        <tr>\n"
-        "          <td><p>Hi there!</p></td>\n"
-        "        </tr>\n"
-        "      </tbody>\n"
-        "    </table>\n"
-        "  </body>\n"
-        "</html>\n"
-    )
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-
-    element = doc._html_elements[0]
-    assert element.tag == "table"
-
-
 def test_nested_text_tags(opts_args: dict[str, Any]):
     opts_args["text"] = (
         "<body>\n"
@@ -390,14 +358,14 @@ def test_containers_with_text_are_processed(opts_args: dict[str, Any]):
     html_document = HTMLDocument.load(opts)
 
     assert html_document.elements == [
-        HTMLText(text="Hi All,", tag="div"),
-        HTMLNarrativeText(text="Get excited for our first annual family day!", tag="div"),
-        HTMLTitle(text="Best.", tag="div"),
-        HTMLText(text="\n    -- ", tag="div"),
-        HTMLTitle(text="Dino the Datasaur", tag="div"),
-        HTMLTitle(text="\n      Unstructured Technologies", tag="div"),
-        HTMLTitle(text="Data Scientist", tag="div"),
-        HTMLAddress(text="Doylestown, PA 18901", tag="div"),
+        HTMLText(text="Hi All,"),
+        HTMLNarrativeText(text="Get excited for our first annual family day!"),
+        HTMLTitle(text="Best."),
+        HTMLText(text="\n    -- "),
+        HTMLTitle(text="Dino the Datasaur"),
+        HTMLTitle(text="\n      Unstructured Technologies"),
+        HTMLTitle(text="Data Scientist"),
+        HTMLAddress(text="Doylestown, PA 18901"),
     ]
 
 

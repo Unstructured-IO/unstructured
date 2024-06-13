@@ -188,7 +188,7 @@ class HTMLDocument:
         for row in rows:
             text = _construct_text(row)
             if is_bulleted_text(text):
-                bulleted_text.append(HTMLListItem(text=clean_bullets(text), tag=row.tag))
+                bulleted_text.append(HTMLListItem(text=clean_bullets(text)))
         return bulleted_text
 
     def _parse_HTMLTable_from_table_elem(self, table_elem: etree._Element) -> HtmlElement | None:
@@ -225,7 +225,7 @@ class HTMLDocument:
         if table_text == "":
             return None
 
-        return HTMLTable(text=table_text, text_as_html=html_table, tag=table_elem.tag)
+        return HTMLTable(text=table_text, text_as_html=html_table)
 
     def _process_list_item(
         self, tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN
@@ -246,7 +246,6 @@ class HTMLDocument:
             return (
                 HTMLListItem(
                     text=text,
-                    tag=tag_elem.tag,
                     links=links,
                     metadata=ElementMetadata(
                         category_depth=depth,
@@ -269,7 +268,7 @@ class HTMLDocument:
             if len(tag_elem) > max_predecessor_len + empty_elems_len:
                 return None, None
             if next_text:
-                return HTMLListItem(text=next_text, tag=next_element.tag), next_element
+                return HTMLListItem(text=next_text), next_element
 
         return None, None
 
@@ -687,7 +686,6 @@ def _text_to_element(
             return None
         return HTMLListItem(
             text=clean_bullets(text),
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 category_depth=depth,
@@ -698,7 +696,6 @@ def _text_to_element(
     elif is_us_city_state_zip(text):
         return HTMLAddress(
             text=text,
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -708,7 +705,6 @@ def _text_to_element(
     elif is_email_address(text):
         return HTMLEmailAddress(
             text=text,
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -721,7 +717,6 @@ def _text_to_element(
     elif _is_narrative_tag(text, tag):
         return HTMLNarrativeText(
             text,
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,
@@ -731,7 +726,6 @@ def _text_to_element(
     elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 category_depth=depth,
@@ -742,7 +736,6 @@ def _text_to_element(
     else:
         return HTMLText(
             text,
-            tag=tag,
             links=links,
             metadata=ElementMetadata(
                 emphasized_text_contents=emphasized_texts,

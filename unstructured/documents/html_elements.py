@@ -22,7 +22,6 @@ class HtmlElement(Protocol):
 
     links: Sequence[Link]
     metadata: ElementMetadata
-    tag: str
     text_as_html: str | None
 
     def __init__(
@@ -39,15 +38,10 @@ class TagsMixin:
     def __init__(
         self,
         *args: Any,
-        tag: Optional[str] = None,
         links: Sequence[Link] = [],
         text_as_html: Optional[str] = None,
         **kwargs: Any,
     ):
-        if tag is None:
-            raise TypeError("tag argument must be passed and not None")
-        else:
-            self.tag = tag
         self.links = links
         self.text_as_html = text_as_html
         super().__init__(*args, **kwargs)
