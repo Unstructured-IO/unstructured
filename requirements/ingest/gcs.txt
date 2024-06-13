@@ -57,13 +57,13 @@ google-auth-oauthlib==1.2.0
     # via gcsfs
 google-cloud-core==2.4.1
     # via google-cloud-storage
-google-cloud-storage==2.16.0
+google-cloud-storage==2.17.0
     # via gcsfs
 google-crc32c==1.5.0
     # via
     #   google-cloud-storage
     #   google-resumable-media
-google-resumable-media==2.7.0
+google-resumable-media==2.7.1
     # via google-cloud-storage
 googleapis-common-protos==1.63.1
     # via google-api-core
