@@ -32,7 +32,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.14.0
+filelock==3.15.1
     # via
     #   huggingface-hub
     #   torch
@@ -287,7 +287,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.33
+unstructured-inference==0.7.35
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

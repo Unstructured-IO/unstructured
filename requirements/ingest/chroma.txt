@@ -52,7 +52,7 @@ exceptiongroup==1.2.1
     # via anyio
 fastapi==0.110.3
     # via chromadb
-filelock==3.14.0
+filelock==3.15.1
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
