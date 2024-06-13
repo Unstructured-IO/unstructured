@@ -15,7 +15,7 @@ RUN apk update && apk add py3.11-pip mesa-gl glib cmake && \
   apk add --allow-untrusted packages/poppler-23.09.0-r0.apk && \
   apk add --allow-untrusted packages/leptonica-1.83.0-r0.apk && \
   apk add --allow-untrusted packages/tesseract-5.3.2-r0.apk && \
-  apk add --allow-untrusted packages/libreoffice-24-24.2.4.1-r0.67f8e014.apk && \
+  apk add --allow-untrusted packages/libreoffice-7.6.5-r0.apk && \
   apk add bash && \
   apk add libmagic && \
   mv /share/tessdata/configs /usr/local/share/tessdata/ && \
