@@ -33,7 +33,7 @@ def test_table_eval_processor_simple():
         {
             "type": "Table",
             "metadata": {
-                "text_as_html": """<table><thead><th>r1c1</th><th>r1c2</th></thead>
+                "text_as_html": """<table><thead><tr><th>r1c1</th><th>r1c2</th></tr></thead>
                     <tbody><tr><td>r2c1</td><td>r2c2</td></tr></tbody></table>"""
             },
         }
@@ -201,7 +201,7 @@ def test_table_eval_processor_when_wrong_source_type():
 @pytest.mark.parametrize(
     "text_as_html",
     [
-        """<table><thead><th>r1c1</th><th>r1c2</th></thead>
+        """<table><thead><tr><th>r1c1</th><th>r1c2</th></tr></thead>
             <tbody><tr><td>r2c1</td><td>r2c2</td></tr><tr><td>r3c1</td>
             <td>r3c2</td></tr></tbody></table>""",
         """<table><tr><th>r1c1</th><th>r1c2</th></tr>
