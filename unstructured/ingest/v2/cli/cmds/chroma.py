@@ -1,11 +1,10 @@
 from dataclasses import dataclass
 
 import click
-from unstructured.ingest.cli.interfaces import Dict
 
+from unstructured.ingest.cli.interfaces import Dict
 from unstructured.ingest.v2.cli.base import DestCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
-from unstructured.ingest.v2.cli.utils import DelimitedString
 from unstructured.ingest.v2.processes.connectors.chroma import CONNECTOR_TYPE
 
 
@@ -77,61 +76,6 @@ class ChromaCliConnectionConfig(CliConfig):
             ),
         ]
         return options
-        #     click.Option(
-        #         ["--host-url"],
-        #         required=True,
-        #         help="Weaviate instance url",
-        #     ),
-        #     click.Option(
-        #         ["--class-name"],
-        #         default=None,
-        #         type=str,
-        #         help="Name of the class to push the records into, e.g: Pdf-elements",
-        #     ),
-        #     click.Option(
-        #         ["--access-token"], default=None, type=str, help="Used to create the bearer token."
-        #     ),
-        #     click.Option(
-        #         ["--refresh-token"],
-        #         default=None,
-        #         type=str,
-        #         help="Will tie this value to the bearer token. If not provided, "
-        #         "the authentication will expire once the lifetime of the access token is up.",
-        #     ),
-        #     click.Option(
-        #         ["--api-key"],
-        #         default=None,
-        #         type=str,
-        #     ),
-        #     click.Option(
-        #         ["--client-secret"],
-        #         default=None,
-        #         type=str,
-        #     ),
-        #     click.Option(
-        #         ["--scope"],
-        #         default=None,
-        #         type=DelimitedString(),
-        #     ),
-        #     click.Option(
-        #         ["--username"],
-        #         default=None,
-        #         type=str,
-        #     ),
-        #     click.Option(
-        #         ["--password"],
-        #         default=None,
-        #         type=str,
-        #     ),
-        #     click.Option(
-        #         ["--anonymous"],
-        #         is_flag=True,
-        #         default=False,
-        #         type=bool,
-        #         help="if set, all auth values will be ignored",
-        #     ),
-        # ]
-        # return options
 
 
 @dataclass

@@ -1,33 +1,23 @@
+import random
 from pathlib import Path
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.pipeline.pipeline import Pipeline
 from unstructured.ingest.v2.processes.chunker import ChunkerConfig
-from unstructured.ingest.v2.processes.connectors.fsspec.s3 import (
-    S3ConnectionConfig,
-    S3DownloaderConfig,
-    S3IndexerConfig,
+from unstructured.ingest.v2.processes.connectors.chroma import (
+    ChromaAccessConfig,
+    ChromaConnectionConfig,
+    ChromaUploaderConfig,
+    ChromaUploadStagerConfig,
 )
 from unstructured.ingest.v2.processes.connectors.local import (
-    LocalUploaderConfig,
-    LocalIndexerConfig,
-    LocalDownloaderConfig,
     LocalConnectionConfig,
-)
-from unstructured.ingest.v2.processes.connectors.weaviate import (
-    WeaviateUploaderConfig,
-    WeaviateConnectionConfig,
-)
-from unstructured.ingest.v2.processes.connectors.chroma import (
-    ChromaUploaderConfig,
-    ChromaConnectionConfig,
-    ChromaAccessConfig,
-    ChromaUploadStagerConfig,
+    LocalDownloaderConfig,
+    LocalIndexerConfig,
 )
 from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
-import random
 
 base_path = Path(__file__).parent.parent.parent.parent
 docs_path = base_path / "example-docs"

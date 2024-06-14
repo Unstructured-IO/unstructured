@@ -1,15 +1,15 @@
 import json
+import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional, Dict
-import uuid
-from unstructured.staging.base import flatten_dict
-from unstructured.ingest.utils.data_prep import chunk_generator
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from dateutil import parser
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.error import DestinationConnectionError
+from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -25,17 +25,14 @@ from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     add_destination_entry,
 )
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
-from unstructured.ingest.error import DestinationConnectionError
+
 if TYPE_CHECKING:
-    from chromadb import Collection
-
-
+    pass
 
 
 import typing as t
-
-
 
 CONNECTOR_TYPE = "chroma"
 
@@ -138,6 +135,7 @@ class ChromaUploadStager(UploadStager):
 
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
+
     @classmethod
     def normalize_dict(cls, data: dict) -> None:
         element_id = data.get("element_id", str(uuid.uuid4()))
@@ -145,10 +143,9 @@ class ChromaUploadStager(UploadStager):
             "id": element_id,
             "embedding": data.pop("embeddings", None),
             "document": data.pop("text", None),
-            "metadata": flatten_dict(
-                data, separator="-", flatten_lists=True, remove_none=True
-            ),
+            "metadata": flatten_dict(data, separator="-", flatten_lists=True, remove_none=True),
         }
+
     def run(
         self,
         elements_filepath: Path,
@@ -164,7 +161,7 @@ class ChromaUploadStager(UploadStager):
         normalized_elements = []
         for element in elements_contents:
             normalized_elements.append(self.normalize_dict(data=element))
-        
+
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
             json.dump(normalized_elements, output_file)
@@ -184,64 +181,13 @@ class ChromaUploader(Uploader):
     _collection: Optional["ChromaCollection"] = None
 
     def __post_init__(self):
-        # from chromadb import Collection
-
-        # auth = self._resolve_auth_method()
         self._collection = self.create_collection()
-        # self.client = Client(url=self.connection_nfig.host_url, auth_client_secret=auth)
-
-    
-
 
     def is_async(self) -> bool:
-        # return True
         return False
-
-    # def _resolve_auth_method(self):
-    #     access_configs = self.connection_config.access_config
-    #     connection_config = self.connection_config
-
-    #     breakpoint()
-
-
-
-
-
-
-    #     if connection_config.anonymous:
-    #         return None
-
-    #     if access_configs.access_token:
-    #         from weaviate.auth import AuthBearerToken
-
-    #         return AuthBearerToken(
-    #             access_token=access_configs.access_token,
-    #             refresh_token=connection_config.refresh_token,
-    #         )
-    #     elif access_configs.api_key:
-    #         from weaviate.auth import AuthApiKey
-
-    #         return AuthApiKey(api_key=access_configs.api_key)
-    #     elif access_configs.client_secret:
-    #         from weaviate.auth import AuthClientCredentials
-
-    #         return AuthClientCredentials(
-    #             client_secret=access_configs.client_secret, scope=connection_config.scope
-    #         )
-    #     elif connection_config.username and access_configs.password:
-    #         from weaviate.auth import AuthClientPassword
-
-    #         return AuthClientPassword(
-    #             username=connection_config.username,
-    #             password=access_configs.password,
-    #             scope=connection_config.scope,
-    #         )
-    #     return None
 
     # @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self) -> "ChromaCollection":
-        # access_configs = self.connection_config.access_config
-        # connection_config = self.connection_config
         import chromadb
 
         if self.connection_config.path:
@@ -269,13 +215,11 @@ class ChromaUploader(Uploader):
             name=self.connection_config.collection_name
         )
         return collection
-    
+
     @DestinationConnectionError.wrap
     @requires_dependencies(["chromadb"], extras="chroma")
     def upsert_batch(self, batch):
         collection = self._collection
-
-        # breakpoint()
 
         try:
             # Chroma wants lists even if there is only one element
@@ -288,7 +232,7 @@ class ChromaUploader(Uploader):
             )
         except Exception as e:
             raise ValueError(f"chroma error: {e}") from e
-    
+
     @staticmethod
     def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
         """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
@@ -306,16 +250,8 @@ class ChromaUploader(Uploader):
             == len(chroma_dict["metadatas"])
         )
         return chroma_dict
-    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-    #     raise NotImplementedError
-    
-    # async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
-    # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        # for content in contents:
-
-
-        #### Normalize dict should happen in the staging phase... minimize upload transformations.
 
         elements_dict = []
         # lets add normalized dicts
@@ -327,58 +263,16 @@ class ChromaUploader(Uploader):
                 # normalized_elements = [self.normalize_dict(x) for x in elements]
                 elements_dict.extend(elements)
 
-
-                # now append the dicts
-                # for x in normalized_elements:
-                #     elements_dict.append(x)
-
-        # with open(path) as elements_file:
-        #     elements_dict = json.load(elements_file)
-
-
-
-        # this is a list of lists
-
-        """
-        so now i need to 
-        break apart the list
-        conform it
-        get it in the right format
-        batch it
-        upload it
-
-        
-        
-        
-        
-        """
-
-    
-
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
             f"collection {self.connection_config.collection_name} "
             f"at {self.connection_config.host}",
         )
 
-
-
         logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
-
-        # chroma_batch_size = self.upload_config.batch_size
 
         for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
             self.upsert_batch(self.prepare_chroma_list(chunk))
-
-        # self.client.batch.configure(batch_size=self.upload_config.batch_size)
-        # with self.client.batch as b:
-        #     for e in elements_dict:
-        #         vector = e.pop("embeddings", None)
-        #         b.add_data_object(
-        #             e,
-        #             self.connection_config.class_name,
-        #             vector=vector,
-        #         )
 
 
 add_destination_entry(

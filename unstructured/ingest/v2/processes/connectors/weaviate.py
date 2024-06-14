@@ -30,6 +30,7 @@ CONNECTOR_TYPE = "weaviate"
 
 from pprint import pp
 
+
 @dataclass
 class WeaviateAccessConfig(AccessConfig):
     access_token: Optional[str]
