@@ -155,7 +155,8 @@ def test_partition_image_with_table_extraction(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><tr>" in table[0] and "</thead><tbody><tr>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
 
 
 def test_partition_image_with_multipage_tiff(
@@ -180,7 +181,8 @@ def test_partition_image_with_bmp(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><tr>" in table[0] and "</thead><tbody><tr>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
 
 
 def test_partition_image_with_language_passed(filename="example-docs/example.jpg"):
@@ -657,7 +659,8 @@ def test_partition_image_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><tr>" in table[0] and "</thead><tbody><tr>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
     assert "Layouts of scanned modern magazines and scientific reports" in table[0]
 
