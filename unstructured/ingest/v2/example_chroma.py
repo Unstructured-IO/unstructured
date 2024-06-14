@@ -43,10 +43,15 @@ if __name__ == "__main__":
         downloader_config=LocalDownloaderConfig(download_dir=download_path),
         source_connection_config=LocalConnectionConfig(),
         partitioner_config=PartitionerConfig(strategy="fast"),
-        chunker_config=ChunkerConfig(chunking_strategy="by_title", include_orig_elements=False),
+        chunker_config=ChunkerConfig(
+            chunking_strategy="by_title",
+            include_orig_elements=False,
+            max_characters=1500,
+            multipage_sections=True,
+        ),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=ChromaConnectionConfig(
-            access_config=ChromaAccessConfig(settings=None,headers=None),
+            access_config=ChromaAccessConfig(settings=None, headers=None),
             host="localhost",
             port=8000,
             collection_name=f"test-collection-{random.randint(1000,9999)}",

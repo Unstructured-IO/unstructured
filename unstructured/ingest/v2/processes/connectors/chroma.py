@@ -261,7 +261,7 @@ class ChromaUploader(Uploader):
     def upsert_batch(self, batch):
         collection = self._collection
 
-        breakpoint()
+        # breakpoint()
 
         try:
             # Chroma wants lists even if there is only one element
@@ -309,6 +309,9 @@ class ChromaUploader(Uploader):
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         # for content in contents:
 
+
+        #### Normalize dict should happen in the staging phase... minimize upload transformations.
+
         elements_dict = []
         # lets add normalized dicts
         for content in contents:
@@ -353,7 +356,6 @@ class ChromaUploader(Uploader):
             f"at {self.connection_config.host}",
         )
 
-        breakpoint()
 
         logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
