@@ -15,7 +15,7 @@ charset-normalizer==3.3.2
     #   requests
 clarifai==10.5.0
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.5.1
+clarifai-grpc==10.5.2
     # via clarifai
 contextlib2==21.6.0
     # via schema
