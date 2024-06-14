@@ -56,7 +56,7 @@ class DownloadStep(PipelineStep):
         if self.context.re_download:
             return True
         download_path = self.process.get_download_path(file_data=file_data)
-        if not download_path.exists():
+        if not download_path or not download_path.exists():
             return True
         if (
             download_path.is_file()
@@ -104,9 +104,7 @@ class DownloadStep(PipelineStep):
             download_step_results.append(
                 DownloadStepResponse(file_data_path=file_data_path, path=res["path"])
             )
-        return self.create_step_results(
-            current_file_data_path=current_file_data_path, download_results=download_results
-        )
+        return download_step_results
 
     def persist_new_file_data(self, file_data: FileData) -> str:
         record_hash = self.get_hash(extras=[file_data.identifier])
