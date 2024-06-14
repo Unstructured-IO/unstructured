@@ -28,6 +28,7 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
+    from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
     from elasticsearch import Elasticsearch as ElasticsearchClient
 
 CONNECTOR_TYPE = "elasticsearch"
@@ -50,10 +51,7 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
     ca_certs: Optional[str] = None
     access_config: ElasticsearchAccessConfig = enhanced_field(sensitive=True)
 
-    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    def get_client(self) -> "ElasticsearchClient":
-        from elasticsearch import Elasticsearch as ElasticsearchClient
-
+    def get_client_kwargs(self) -> dict:
         # Update auth related fields to conform to what the SDK expects based on the
         # supported methods:
         # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
@@ -70,7 +68,19 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
             client_kwargs["basic_auth"] = (self.username, self.access_config.password)
         elif self.access_config.api_key and self.api_key_id:
             client_kwargs["api_key"] = (self.api_key_id, self.access_config.api_key)
-        return ElasticsearchClient(**client_kwargs)
+        return client_kwargs
+
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def get_client(self) -> "ElasticsearchClient":
+        from elasticsearch import Elasticsearch as ElasticsearchClient
+
+        return ElasticsearchClient(**self.get_client_kwargs())
+
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def get_async_client(self) -> "AsyncElasticsearchClient":
+        from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
+
+        return AsyncElasticsearchClient(**self.get_client_kwargs())
 
 
 @dataclass
@@ -144,10 +154,13 @@ class ElasticsearchDownloaderConfig(DownloaderConfig):
 class ElasticsearchDownloader(Downloader):
     connection_config: ElasticsearchConnectionConfig
     download_config: ElasticsearchDownloaderConfig
-    client: "ElasticsearchClient" = field(init=False)
+    client: "AsyncElasticsearchClient" = field(init=False)
+
+    def is_async(self) -> bool:
+        return True
 
     def __post_init__(self):
-        self.client = self.connection_config.get_client()
+        self.client = self.connection_config.get_async_client()
 
     def get_identifier(self, index_name: str, record_id: str) -> str:
         f = f"{index_name}-{record_id}"
@@ -158,23 +171,6 @@ class ElasticsearchDownloader(Downloader):
             )
         return f
 
-    def get_results(self, ids: list[str], index_name: str) -> list[dict]:
-        from elasticsearch.helpers import scan
-
-        scan_query = {
-            "_source": self.download_config.fields,
-            "version": True,
-            "query": {"ids": {"values": ids}},
-        }
-
-        result = scan(
-            self.client,
-            query=scan_query,
-            scroll="1m",
-            index=index_name,
-        )
-        return list(result)
-
     def map_es_results(self, es_results: dict) -> str:
         doc_body = es_results["_source"]
         flattened_dict = flatten_dict(dictionary=doc_body)
@@ -182,49 +178,69 @@ class ElasticsearchDownloader(Downloader):
         concatenated_values = "\n".join(str_values)
         return concatenated_values
 
+    def generate_download_response(
+        self, result: dict, index_name: str, file_data: FileData
+    ) -> DownloadResponse:
+        record_id = result["_id"]
+        filename_id = self.get_identifier(index_name=index_name, record_id=record_id)
+        filename = f"{filename_id}.txt"
+        download_path = self.download_config.download_dir / Path(filename)
+        logger.debug(
+            f"Downloading results from index {index_name} and id {record_id} to {download_path}"
+        )
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with open(download_path, "w", encoding="utf8") as f:
+                f.write(self.map_es_results(es_results=result))
+        except Exception as e:
+            logger.error(
+                f"failed to download from index {index_name} "
+                f"and id {record_id} to {download_path}: {e}",
+                exc_info=True,
+            )
+            raise SourceConnectionNetworkError(f"failed to download file {file_data.identifier}")
+        return DownloadResponse(
+            file_data=FileData(
+                identifier=filename_id,
+                connector_type=CONNECTOR_TYPE,
+                metadata=DataSourceMetadata(
+                    version=str(result["_version"]) if "_version" in result else None,
+                    date_processed=str(time()),
+                    record_locator={
+                        "hosts": self.connection_config.hosts,
+                        "index_name": index_name,
+                        "document_id": record_id,
+                    },
+                ),
+            ),
+            path=download_path,
+        )
+
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        raise NotImplementedError()
+
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        from elasticsearch.helpers import async_scan
+
         index_name: str = file_data.additional_metadata["index_name"]
         ids: list[str] = file_data.additional_metadata["ids"]
 
-        es_results = self.get_results(ids=ids, index_name=index_name)
+        scan_query = {
+            "_source": self.download_config.fields,
+            "version": True,
+            "query": {"ids": {"values": ids}},
+        }
+
         download_responses = []
-        for result in es_results:
-            record_id = result["_id"]
-            filename_id = self.get_identifier(index_name=index_name, record_id=record_id)
-            filename = f"{filename_id}.txt"
-            download_path = self.download_config.download_dir / Path(filename)
-            logger.debug(
-                f"Downloading results from index {index_name} and id {record_id} to {download_path}"
-            )
-            download_path.parent.mkdir(parents=True, exist_ok=True)
-            try:
-                with open(download_path, "w", encoding="utf8") as f:
-                    f.write(self.map_es_results(es_results=result))
-            except Exception as e:
-                logger.error(
-                    f"failed to download from index {index_name} "
-                    f"and id {record_id} to {download_path}: {e}",
-                    exc_info=True,
-                )
-                raise SourceConnectionNetworkError(
-                    f"failed to download file {file_data.identifier}"
-                )
+        async for result in async_scan(
+            self.client,
+            query=scan_query,
+            scroll="1m",
+            index=index_name,
+        ):
             download_responses.append(
-                DownloadResponse(
-                    file_data=FileData(
-                        identifier=filename_id,
-                        connector_type=CONNECTOR_TYPE,
-                        metadata=DataSourceMetadata(
-                            version=str(result["_version"]) if "_version" in result else None,
-                            date_processed=str(time()),
-                            record_locator={
-                                "hosts": self.connection_config.hosts,
-                                "index_name": index_name,
-                                "document_id": record_id,
-                            },
-                        ),
-                    ),
-                    path=download_path,
+                self.generate_download_response(
+                    result=result, index_name=index_name, file_data=file_data
                 )
             )
         return download_responses

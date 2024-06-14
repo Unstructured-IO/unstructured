@@ -1,3 +1,3 @@
 -c ../deps/constraints.txt
 -c ../base.txt
-elasticsearch
+elasticsearch[async]
