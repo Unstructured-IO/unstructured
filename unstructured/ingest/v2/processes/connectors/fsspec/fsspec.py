@@ -83,6 +83,7 @@ class FsspecAccessConfig(AccessConfig):
 FsspecAccessConfigT = TypeVar("FsspecAccessConfigT", bound=FsspecAccessConfig)
 
 
+@dataclass
 class FsspecConnectionConfig(ConnectionConfig):
     access_config: FsspecAccessConfigT = enhanced_field(sensitive=True, default=None)
     connector_type: str = CONNECTOR_TYPE
@@ -97,12 +98,12 @@ class FsspecIndexer(Indexer):
     connection_config: FsspecConnectionConfigT
     index_config: FsspecIndexerConfigT
     connector_type: str = CONNECTOR_TYPE
-    fs: "AbstractFileSystem" = field(init=False)
 
-    def __post_init__(self):
+    @property
+    def fs(self) -> "AbstractFileSystem":
         from fsspec import get_filesystem_class
 
-        self.fs: AbstractFileSystem = get_filesystem_class(self.index_config.protocol)(
+        return get_filesystem_class(self.index_config.protocol)(
             **self.connection_config.get_access_config(),
         )
 
@@ -215,6 +216,7 @@ class FsspecIndexer(Indexer):
             )
 
 
+@dataclass
 class FsspecDownloaderConfig(DownloaderConfig):
     pass
 
@@ -222,6 +224,7 @@ class FsspecDownloaderConfig(DownloaderConfig):
 FsspecDownloaderConfigT = TypeVar("FsspecDownloaderConfigT", bound=FsspecDownloaderConfig)
 
 
+@dataclass
 class FsspecDownloader(Downloader):
     protocol: str
     connection_config: FsspecConnectionConfigT
@@ -229,15 +232,15 @@ class FsspecDownloader(Downloader):
     download_config: Optional[FsspecDownloaderConfigT] = field(
         default_factory=lambda: FsspecDownloaderConfig()
     )
-    fs: "AbstractFileSystem" = field(init=False)
 
     def is_async(self) -> bool:
         return self.fs.async_impl
 
-    def __post_init__(self):
+    @property
+    def fs(self) -> "AbstractFileSystem":
         from fsspec import get_filesystem_class
 
-        self.fs: AbstractFileSystem = get_filesystem_class(self.protocol)(
+        return get_filesystem_class(self.protocol)(
             **self.connection_config.get_access_config(),
         )
 
@@ -302,10 +305,18 @@ FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderCon
 @dataclass
 class FsspecUploader(Uploader):
     upload_config: FsspecUploaderConfigT = field(default=None)
-    fs: "AbstractFileSystem" = field(init=False)
 
     def is_async(self) -> bool:
         return self.fs.async_impl
+
+    @property
+    def fs(self) -> "AbstractFileSystem":
+        from fsspec import get_filesystem_class
+
+        fs_kwargs = self.connection_config.get_access_config() if self.connection_config else {}
+        return get_filesystem_class(self.upload_config.protocol)(
+            **fs_kwargs,
+        )
 
     def __post_init__(self):
         # TODO once python3.9 no longer supported and kw_only is allowed in dataclasses, remove:
@@ -314,13 +325,6 @@ class FsspecUploader(Uploader):
                 f"{self.__class__.__name__}.__init__() "
                 f"missing 1 required positional argument: 'upload_config'"
             )
-
-        from fsspec import get_filesystem_class
-
-        fs_kwargs = self.connection_config.get_access_config() if self.connection_config else {}
-        self.fs: AbstractFileSystem = get_filesystem_class(self.upload_config.protocol)(
-            **fs_kwargs,
-        )
 
     def get_upload_path(self, file_data: FileData) -> Path:
         upload_path = (
