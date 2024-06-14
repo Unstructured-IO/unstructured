@@ -1,4 +1,4 @@
-"""Test suite for `unstructured.partition.html` module."""
+"""Test suite for `unstructured.partition.html.partition` module."""
 
 from __future__ import annotations
 
@@ -30,7 +30,8 @@ from unstructured.documents.elements import (
     Title,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.partition.html import HtmlPartitionerOptions, partition_html
+from unstructured.partition.html import partition_html
+from unstructured.partition.html.partition import HtmlPartitionerOptions
 
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
@@ -814,7 +815,7 @@ def requests_get_(request: pytest.FixtureRequest):
 
 
 class DescribeHtmlPartitionerOptions:
-    """Unit-test suite for `unstructured.partition.html.HtmlPartitionerOptions` objects."""
+    """Unit-test suite for `unstructured.partition.html.partition.HtmlPartitionerOptions`."""
 
     # -- .detection_origin -----------------------
 
