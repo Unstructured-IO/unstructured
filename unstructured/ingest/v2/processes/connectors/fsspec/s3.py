@@ -66,10 +66,6 @@ class S3Indexer(FsspecIndexer):
     index_config: S3IndexerConfig
     connector_type: str = CONNECTOR_TYPE
 
-    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def __post_init__(self):
-        super().__post_init__()
-
     def get_metadata(self, path: str) -> DataSourceMetadata:
         date_created = None
         date_modified = None
@@ -113,10 +109,6 @@ class S3Downloader(FsspecDownloader):
     connection_config: S3ConnectionConfig
     connector_type: str = CONNECTOR_TYPE
     download_config: Optional[S3DownloaderConfig] = field(default_factory=S3DownloaderConfig)
-
-    @requires_dependencies(["s3fs", "fsspec"], extras="s3")
-    def __post_init__(self):
-        super().__post_init__()
 
     @requires_dependencies(["s3fs", "fsspec"], extras="s3")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
