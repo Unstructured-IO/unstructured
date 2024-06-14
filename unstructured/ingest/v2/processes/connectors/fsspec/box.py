@@ -90,10 +90,6 @@ class BoxDownloader(FsspecDownloader):
     download_config: Optional[BoxDownloaderConfig] = field(default_factory=BoxDownloaderConfig)
 
     @requires_dependencies(["boxfs"], extras="box")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["boxfs"], extras="box")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
