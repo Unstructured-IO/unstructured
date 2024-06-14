@@ -1,5 +1,6 @@
+import asyncio
 from pathlib import Path
-from typing import TypedDict
+from typing import Callable, TypedDict
 
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.logger import logger
@@ -42,13 +43,18 @@ class UncompressStep(PipelineStep):
             )
         return responses
 
-    async def _run_async(self, path: str, file_data_path: str) -> list[UncompressStepResponse]:
+    async def _run_async(
+        self, fn: Callable, path: str, file_data_path: str
+    ) -> list[UncompressStepResponse]:
         file_data = FileData.from_file(path=file_data_path)
-        if semaphore := self.context.semaphore:
+        fn_kwargs = {"file_data": file_data}
+        if not asyncio.iscoroutinefunction(fn):
+            new_file_data = fn(**fn_kwargs)
+        elif semaphore := self.context.semaphore:
             async with semaphore:
-                new_file_data = await self.process.run_async(file_data=file_data)
+                new_file_data = await fn(**fn_kwargs)
         else:
-            new_file_data = await self.process.run_async(file_data=file_data)
+            new_file_data = await fn(**fn_kwargs)
         responses = []
         for new_file in new_file_data:
             new_file_data_path = Path(file_data_path).parent / f"{new_file.identifier}.json"

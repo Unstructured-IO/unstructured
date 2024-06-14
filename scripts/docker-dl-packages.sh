@@ -2,6 +2,7 @@
 
 files=(
   "libreoffice-7.6.5-r0.apk"
+  "libreoffice-24-24.2.4.1-r0.67f8e014.apk"
   "openjpeg-2.5.0-r0.apk"
   "poppler-23.09.0-r0.apk"
   "leptonica-1.83.0-r0.apk"

@@ -1,6 +1,8 @@
-## 0.14.6-dev2
+## 0.14.7-dev1
 
 ### Enhancements
+
+* **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
 
 ### Features
 
@@ -8,7 +10,24 @@
 
 ### Fixes
 
-**table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+## 0.14.6
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.35** Fix syntax for generated HTML tables.
+
+### Features
+
+* **tqdm ingest support** add optional flag to ingest flow to print out progress bar of each step in the process.
+
+### Fixes
+
+* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.**. The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
+* **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
+* **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+* **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
+* **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncrasy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
+* **update table metric evaluation to handle corrected HTML syntax for tables** This change is connected to the update in [unstructured-inference change](https://github.com/Unstructured-IO/unstructured-inference/pull/355) - fixes transforming HTML table to deckerd and internal cells format.
 
 ## 0.14.5
 
