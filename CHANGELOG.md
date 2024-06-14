@@ -1,6 +1,8 @@
-## 0.14.6-dev7
+## 0.14.6
 
 ### Enhancements
+
+* **Bump unstructured-inference==0.7.35** Fix syntax for generated HTML tables.
 
 ### Features
 

@@ -98,7 +98,7 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-openai==1.33.0
+openai==1.34.0
     # via -r ./ingest/embed-openai.in
 orjson==3.10.4
     # via langsmith
