@@ -204,7 +204,7 @@ class WeaviateUploader(Uploader):
         for content in contents:
             with open(content.path) as elements_file:
                 elements = json.load(elements_file)
-                elements_dict.append(elements)
+                elements_dict.extend(elements)
 
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
