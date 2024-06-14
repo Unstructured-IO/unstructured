@@ -137,7 +137,7 @@ jinja2==3.1.4
     #   nbconvert
 json5==0.9.25
     # via jupyterlab-server
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonschema
 jsonschema[format-nongpl]==4.22.0
     # via

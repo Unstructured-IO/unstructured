@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-from typing import IO, Any, Optional, cast
-
-import requests
+from typing import IO, Any, Optional
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
-from unstructured.documents.html import HTMLDocument, document_to_element_list
-from unstructured.documents.html_elements import TagsMixin
-from unstructured.file_utils.encoding import read_txt_file
+from unstructured.documents.html import HTMLDocument, HtmlPartitionerOptions
 from unstructured.file_utils.file_conversion import convert_file_to_html_text
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.lang import apply_lang_metadata
 
 
@@ -33,10 +25,10 @@ def partition_html(
     ssl_verify: bool = True,
     date_from_file_object: bool = False,
     detect_language_per_element: bool = False,
-    html_assemble_articles: bool = False,
     languages: Optional[list[str]] = ["auto"],
     metadata_last_modified: Optional[str] = None,
     skip_headers_and_footers: bool = False,
+    detection_origin: Optional[str] = None,
     **kwargs: Any,
 ) -> list[Element]:
     """Partitions an HTML document into its constituent elements.
@@ -85,61 +77,33 @@ def partition_html(
         The source of the original html. If None we will return HTMLElements but for example
          partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
     """
+    # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
         return []
 
-    # Verify that only one of the arguments was provided
-    exactly_one(filename=filename, file=file, text=text, url=url)
+    opts = HtmlPartitionerOptions(
+        file_path=filename,
+        file=file,
+        text=text,
+        encoding=encoding,
+        url=url,
+        headers=headers,
+        ssl_verify=ssl_verify,
+        date_from_file_object=date_from_file_object,
+        metadata_last_modified=metadata_last_modified,
+        skip_headers_and_footers=skip_headers_and_footers,
+        detection_origin=detection_origin,
+    )
 
-    def last_modified():
-        if metadata_last_modified:
-            return metadata_last_modified
-        if filename:
-            return get_last_modified_date(filename)
-        if file and date_from_file_object:
-            return get_last_modified_date_from_file(file)
-        return None
-
-    if filename is not None:
-        document = HTMLDocument.from_file(
-            filename, encoding=encoding, assemble_articles=html_assemble_articles
-        )
-
-    elif file is not None:
-        _, file_text = read_txt_file(file=file, encoding=encoding)
-        document = HTMLDocument.from_string(file_text, assemble_articles=html_assemble_articles)
-
-    elif text is not None:
-        _text: str = str(text)
-        document = HTMLDocument.from_string(_text, assemble_articles=html_assemble_articles)
-
-    else:
-        assert url is not None
-        response = requests.get(url, headers=headers, verify=ssl_verify)
-        if not response.ok:
-            raise ValueError(f"Error status code on GET of provided URL: {response.status_code}")
-
-        content_type = response.headers.get("Content-Type", "")
-        if not content_type.startswith("text/html"):
-            raise ValueError(f"Expected content type text/html. Got {content_type}.")
-
-        document = HTMLDocument.from_string(response.text)
-
-    if skip_headers_and_footers:
-        document = _filter_footer_and_header(document)
+    document = HTMLDocument.load(opts)
 
     elements = list(
         apply_lang_metadata(
-            document_to_element_list(document, last_modified=last_modified(), **kwargs),
+            document.elements,
             languages=languages,
             detect_language_per_element=detect_language_per_element,
         )
     )
-
-    # Note(yuming): Rip off page_number metadata fields here until we have a better way to handle
-    # page counting for html files.
-    for e in elements:
-        e.metadata.page_number = None
 
     return elements
 
@@ -210,14 +174,3 @@ def convert_and_partition_html(
         detect_language_per_element=detect_language_per_element,
         detection_origin=detection_origin,
     )
-
-
-def _filter_footer_and_header(document: HTMLDocument) -> HTMLDocument:
-    for page in document.pages:
-        page.elements = [
-            e
-            for e in page.elements
-            if "header" not in cast(TagsMixin, e).ancestortags
-            and "footer" not in cast(TagsMixin, e).ancestortags
-        ]
-    return document

@@ -23,7 +23,7 @@ inflection==0.5.1
     # via pyairtable
 pyairtable==2.3.3
     # via -r ./ingest/airtable.in
-pydantic==2.7.3
+pydantic==2.7.4
     # via pyairtable
 pydantic-core==2.18.4
     # via pydantic

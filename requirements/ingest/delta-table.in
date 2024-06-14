@@ -1,4 +1,4 @@
 -c ../deps/constraints.txt
 -c ../base.txt
-deltalake<0.18.0
+deltalake
 fsspec
