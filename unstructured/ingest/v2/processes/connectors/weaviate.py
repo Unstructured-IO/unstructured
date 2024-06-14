@@ -31,17 +31,19 @@ CONNECTOR_TYPE = "weaviate"
 
 @dataclass
 class WeaviateAccessConfig(AccessConfig):
-    access_token: Optional[str]
-    api_key: Optional[str]
-    client_secret: Optional[str]
-    password: Optional[str]
+    access_token: Optional[str] = None
+    api_key: Optional[str] = None
+    client_secret: Optional[str] = None
+    password: Optional[str] = None
 
 
 @dataclass
 class WeaviateConnectionConfig(ConnectionConfig):
     host_url: str
     class_name: str
-    access_config: WeaviateAccessConfig = enhanced_field(sensitive=True)
+    access_config: WeaviateAccessConfig = enhanced_field(
+        sensitive=True, default_factory=WeaviateAccessConfig()
+    )
     username: Optional[str] = None
     anonymous: bool = False
     scope: Optional[list[str]] = None
@@ -164,9 +166,6 @@ class WeaviateUploader(Uploader):
         auth = self._resolve_auth_method()
         self.client = Client(url=self.connection_config.host_url, auth_client_secret=auth)
 
-    def is_async(self) -> bool:
-        return True
-
     def _resolve_auth_method(self):
         access_configs = self.connection_config.access_config
         connection_config = self.connection_config
@@ -201,11 +200,13 @@ class WeaviateUploader(Uploader):
         return None
 
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        raise NotImplementedError
-
-    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
-        with open(path) as elements_file:
-            elements_dict = json.load(elements_file)
+        # TODO update to use async support in weaviate client
+        #  once the version can be bumped to include it
+        elements_dict = []
+        for content in contents:
+            with open(content.path) as elements_file:
+                elements = json.load(elements_file)
+                elements_dict.append(elements)
 
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
