@@ -385,7 +385,9 @@ def _is_text_tag(
     # NOTE(robinson) - This indicates that a div tag has no children. If that's the
     # case and the tag has text, its potential a text tag
     children = list(tag_elem)
-    if tag_elem.tag in SECTION_TAGS + ["body"] and len(children) == 0:
+    # Exclude <br> tags when counting children
+    children_count = len([ child for child in children if child.tag not in TEXTBREAK_TAGS])
+    if tag_elem.tag in SECTION_TAGS + ["body"] and children_count == 0:
         return True
 
     if _has_adjacent_bulleted_spans(tag_elem, children):
