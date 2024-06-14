@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import functools
 import html
 import importlib
@@ -227,8 +228,7 @@ def requires_dependencies(
         dependencies = [dependencies]
 
     def decorator(func: Callable[_P, _T]) -> Callable[_P, _T]:
-        @wraps(func)
-        def wrapper(*args: _P.args, **kwargs: _P.kwargs):
+        def run_check():
             missing_deps: List[str] = []
             for dep in dependencies:
                 if not dependency_exists(dep):
@@ -242,8 +242,19 @@ def requires_dependencies(
                         else f"Please install them using `pip install {' '.join(missing_deps)}`."
                     ),
                 )
+
+        @wraps(func)
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs):
+            run_check()
             return func(*args, **kwargs)
 
+        @wraps(func)
+        async def wrapper_async(*args: _P.args, **kwargs: _P.kwargs):
+            run_check()
+            return await func(*args, **kwargs)
+
+        if asyncio.iscoroutinefunction(func):
+            return wrapper_async
         return wrapper
 
     return decorator

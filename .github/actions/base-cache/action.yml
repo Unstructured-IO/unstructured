@@ -12,7 +12,7 @@ runs:
   using: "composite"
   steps:
     - name: Check for/restore base cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: virtualenv-cache-restore
       with:
         path: |
@@ -41,7 +41,7 @@ runs:
     - name: Save Cache
       if: steps.virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: virtualenv-cache-save
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: |
           .venv

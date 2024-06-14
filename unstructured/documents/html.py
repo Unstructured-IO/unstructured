@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Any, Final, Iterator, Optional, cast
+from typing import IO, Final, Iterator, Optional, cast
 
+import requests
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
 from unstructured.documents.elements import Element, ElementMetadata, Link
 from unstructured.documents.html_elements import (
     HTMLAddress,
+    HtmlElement,
     HTMLEmailAddress,
     HTMLListItem,
     HTMLNarrativeText,
@@ -18,7 +20,7 @@ from unstructured.documents.html_elements import (
     HTMLTitle,
 )
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.logger import logger
+from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -27,7 +29,7 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
-from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
+from unstructured.utils import htmlify_matrix_of_cell_texts, is_temp_file_path, lazyproperty
 
 TEXT_TAGS: Final[list[str]] = ["p", "a", "td", "span", "b", "font"]
 LIST_ITEM_TAGS: Final[list[str]] = ["li", "dd"]
@@ -35,8 +37,7 @@ LIST_TAGS: Final[list[str]] = ["ul", "ol", "dl"]
 HEADING_TAGS: Final[list[str]] = ["h1", "h2", "h3", "h4", "h5", "h6"]
 TABLE_TAGS: Final[list[str]] = ["table", "tbody", "td", "tr"]
 TEXTBREAK_TAGS: Final[list[str]] = ["br"]
-PAGEBREAK_TAGS: Final[list[str]] = ["hr"]
-EMPTY_TAGS: Final[list[str]] = PAGEBREAK_TAGS + TEXTBREAK_TAGS
+EMPTY_TAGS: Final[list[str]] = ["br", "hr"]
 HEADER_OR_FOOTER_TAGS: Final[list[str]] = ["header", "footer"]
 SECTION_TAGS: Final[list[str]] = ["div", "pre"]
 
@@ -47,50 +48,22 @@ class HTMLDocument:
     Uses rules based parsing to identify sections of interest within the document.
     """
 
-    def __init__(self, html_text: str, assemble_articles: bool = True):
+    def __init__(self, html_text: str, opts: HtmlPartitionerOptions):
         self._html_text = html_text
-        self._assemble_articles = assemble_articles
+        self._opts = opts
 
     @classmethod
-    def from_file(
-        cls, filename: str, encoding: Optional[str] = None, **kwargs: Any
-    ) -> HTMLDocument:
-        _, content = read_txt_file(filename=filename, encoding=encoding)
-        return cls.from_string(content, **kwargs)
-
-    @classmethod
-    def from_string(cls, text: str, **kwargs: Any) -> HTMLDocument:
-        """Supports reading in an XML file as a raw string rather than as a file."""
-        logger.info("Reading document from string ...")
-        return cls(text, **kwargs)
+    def load(cls, opts: HtmlPartitionerOptions) -> HTMLDocument:
+        """Construct instance from whatever source is specified in `opts`."""
+        return cls(opts.html_str, opts)
 
     @lazyproperty
     def elements(self) -> list[Element]:
-        """Gets all elements from pages in sequential order."""
-        return [el for page in self.pages for el in page.elements]
+        """All "regular" elements (e.g. Title, NarrativeText, etc.) parsed from document.
 
-    @lazyproperty
-    def pages(self) -> list[Page]:
-        return self._parse_pages_from_element_tree()
-
-    @lazyproperty
-    def _articles(self) -> list[etree._Element]:
-        """Parse articles from `root` of an HTML document.
-
-        Each `<article>` element in the HTML becomes its own "sub-document" (article). If no article
-        elements are present, the entire document (`root`) is returned as the single document
-        article.
+        Elements appear in document order.
         """
-        root = self._main
-        if not self._assemble_articles:
-            return [root]
-
-        return (
-            root.findall(".//article")
-            # NOTE(robinson) - ref: https://schema.org/Article
-            or root.findall(".//div[@itemprop='articleBody']")
-            or [root]
-        )
+        return cast(list[Element], self._html_elements)
 
     @lazyproperty
     def _document_tree(self) -> etree._Element:
@@ -120,7 +93,83 @@ class HTMLDocument:
         # -- parsing elements out of those.
         etree.strip_elements(document_tree, ["script", "style"], with_tail=False)
 
+        # -- remove <header> and <footer> tags if the caller doesn't want their contents --
+        if self._opts.skip_headers_and_footers:
+            etree.strip_elements(document_tree, ["header", "footer"], with_tail=False)
+
         return document_tree
+
+    @lazyproperty
+    def _html_elements(self) -> list[HtmlElement]:
+        """All HTML-specific elements (e.g. HTMLNarrativeText) parsed from document.
+
+        Elements are sequenced in document order.
+        """
+
+        def iter_html_elements() -> Iterator[HtmlElement]:
+            """Generate each HTML-specific element in document after applying its metadata."""
+            for e in self._iter_elements(self._main):
+                add_element_metadata(
+                    e,
+                    last_modified=self._opts.last_modified,
+                    detection_origin=self._opts.detection_origin,
+                )
+                yield e
+
+        return list(iter_html_elements())
+
+    def _iter_elements(self, subtree: etree._Element) -> Iterator[HtmlElement]:
+        """Parse HTML-subtree into `Element` objects in document order."""
+        descendanttag_elems: tuple[etree._Element, ...] = ()
+        for tag_elem in subtree.iter():
+            # -- Prevent repeating something that's been flagged as text as we descend branch --
+            if tag_elem in descendanttag_elems:
+                continue
+
+            if _is_text_tag(tag_elem):
+                _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
+                yield from _page_elements
+
+            elif _is_container_with_text(tag_elem):
+                tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
+                if tag_elem_tail:
+                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
+                    yield from _page_elements
+
+                    # NOTE(christine): generate a separate element using a tag tail
+                    assert tag_elem.tail is not None
+                    element = _text_to_element(tag_elem.tail, tag_elem.tag, depth=0)
+                else:
+                    links = _get_links_from_tag(tag_elem)
+                    emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
+                    assert tag_elem.text is not None
+                    element = _text_to_element(
+                        tag_elem.text,
+                        tag_elem.tag,
+                        depth=0,
+                        links=links,
+                        emphasized_texts=emphasized_texts,
+                    )
+                if element is not None:
+                    yield element
+
+            elif _is_bulleted_table(tag_elem):
+                bulleted_text = _bulleted_text_from_table(tag_elem)
+                yield from bulleted_text
+                descendanttag_elems = tuple(tag_elem.iterdescendants())
+
+            elif _is_list_item_tag(tag_elem):
+                element, next_element = _process_list_item(tag_elem)
+                if element is not None:
+                    yield element
+                    descendanttag_elems = _get_bullet_descendants(tag_elem, next_element)
+
+            elif tag_elem.tag in TABLE_TAGS:
+                element = _parse_HTMLTable_from_table_elem(tag_elem)
+                if element is not None:
+                    yield element
+                if element or tag_elem.tag == "table":
+                    descendanttag_elems = tuple(tag_elem.iterdescendants())
 
     @lazyproperty
     def _main(self) -> etree._Element:
@@ -128,106 +177,141 @@ class HTMLDocument:
         main_tag_elem = self._document_tree.find(".//main")
         return main_tag_elem if main_tag_elem is not None else self._document_tree
 
-    def _parse_pages_from_element_tree(self) -> list[Page]:
-        """Parse HTML elements into pages.
 
-        A *page* is a subsequence of the document-elements parsed from the HTML document
-        corresponding to a distinct topic. At present pagination is determined by `<article>`
-        elements that surround something like a blog-post. Each article becomes its own page. If no
-        article tags are present in the HTML the entire HTML document is a single page.
+class HtmlPartitionerOptions:
+    """Encapsulates partitioning option validation, computation, and application of defaults."""
+
+    # TODO: this eventually moves to `unstructured.partition.html` but not until `HTMLDocument`
+    # becomes `_HtmlPartitioner` and moves there with it.
+
+    def __init__(
+        self,
+        *,
+        file_path: str | None,
+        file: IO[bytes] | None,
+        text: str | None,
+        encoding: str | None,
+        url: str | None,
+        headers: dict[str, str],
+        ssl_verify: bool,
+        date_from_file_object: bool,
+        metadata_last_modified: str | None,
+        skip_headers_and_footers: bool,
+        detection_origin: str | None,
+    ):
+        self._file_path = file_path
+        self._file = file
+        self._text = text
+        self._encoding = encoding
+        self._url = url
+        self._headers = headers
+        self._ssl_verify = ssl_verify
+        self._date_from_file_object = date_from_file_object
+        self._metadata_last_modified = metadata_last_modified
+        self._skip_headers_and_footers = skip_headers_and_footers
+        self._detection_origin = detection_origin
+
+    @lazyproperty
+    def detection_origin(self) -> str | None:
+        """Trace of initial partitioner to be included in metadata for debugging purposes."""
+        return self._detection_origin
+
+    @lazyproperty
+    def encoding(self) -> str | None:
+        """Caller-provided encoding used to store HTML character stream as bytes.
+
+        `None` when no encoding was provided and encoding should be auto-detected.
         """
-        logger.info("Reading document ...")
-        pages: list[Page] = []
-        page_number = 0
-        page = Page(number=page_number)
+        return self._encoding
 
-        for article in self._articles:
-            descendanttag_elems: tuple[etree._Element, ...] = ()
-            for tag_elem in article.iter():
-                if tag_elem in descendanttag_elems:
-                    # Prevent repeating something that's been flagged as text as we chase it
-                    # down a chain
-                    continue
+    @lazyproperty
+    def html_str(self) -> str:
+        """The HTML document as a string, loaded from wherever the caller specified."""
+        if self._file_path:
+            return read_txt_file(filename=self._file_path, encoding=self._encoding)[1]
 
-                if _is_text_tag(tag_elem):
-                    _page_elements, descendanttag_elems = _process_text_tag(tag_elem)
-                    page.elements.extend(_page_elements)
+        if self._file:
+            return read_txt_file(file=self._file, encoding=self._encoding)[1]
 
-                elif _is_container_with_text(tag_elem):
-                    tag_elem_tail = tag_elem.tail.strip() if tag_elem.tail else None
-                    if tag_elem_tail:
-                        _page_elements, descendanttag_elems = _process_text_tag(tag_elem, False)
-                        page.elements.extend(_page_elements)
+        if self._text:
+            return str(self._text)
 
-                        # NOTE(christine): generate a separate element using a tag tail
-                        assert tag_elem.tail is not None
-                        element = _text_to_element(
-                            tag_elem.tail,
-                            tag_elem.tag,
-                            (),
-                            depth=0,
-                        )
-                    else:
-                        links = _get_links_from_tag(tag_elem)
-                        emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
-                        assert tag_elem.text is not None
-                        element = _text_to_element(
-                            tag_elem.text,
-                            tag_elem.tag,
-                            (),
-                            depth=0,
-                            links=links,
-                            emphasized_texts=emphasized_texts,
-                        )
-                    if element is not None:
-                        page.elements.append(element)
+        if self._url:
+            response = requests.get(self._url, headers=self._headers, verify=self._ssl_verify)
+            if not response.ok:
+                raise ValueError(
+                    f"Error status code on GET of provided URL: {response.status_code}"
+                )
+            content_type = response.headers.get("Content-Type", "")
+            if not content_type.startswith("text/html"):
+                raise ValueError(f"Expected content type text/html. Got {content_type}.")
 
-                elif _is_bulleted_table(tag_elem):
-                    bulleted_text = _bulleted_text_from_table(tag_elem)
-                    page.elements.extend(bulleted_text)
-                    descendanttag_elems = tuple(tag_elem.iterdescendants())
+            return response.text
 
-                elif _is_list_item_tag(tag_elem):
-                    element, next_element = _process_list_item(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                        descendanttag_elems = _get_bullet_descendants(
-                            tag_elem,
-                            next_element,
-                        )
+        raise ValueError("Exactly one of filename, file, text, or url must be specified.")
 
-                elif tag_elem.tag in TABLE_TAGS:
-                    element = _parse_HTMLTable_from_table_elem(tag_elem)
-                    if element is not None:
-                        page.elements.append(element)
-                    if element or tag_elem.tag == "table":
-                        descendanttag_elems = tuple(tag_elem.iterdescendants())
+    @lazyproperty
+    def last_modified(self) -> str | None:
+        """The best last-modified date available, None if no sources are available."""
+        # -- Value explicitly specified by caller takes precedence. This is used for example when
+        # -- this file was converted from another format.
+        if self._metadata_last_modified:
+            return self._metadata_last_modified
 
-                elif tag_elem.tag in PAGEBREAK_TAGS and len(page.elements) > 0:
-                    pages.append(page)
-                    page_number += 1
-                    page = Page(number=page_number)
+        if self._file_path:
+            return (
+                None
+                if is_temp_file_path(self._file_path)
+                else get_last_modified_date(self._file_path)
+            )
 
-            if len(page.elements) > 0:
-                pages.append(page)
-                page_number += 1
-                page = Page(number=page_number)
+        if self._file:
+            return (
+                get_last_modified_date_from_file(self._file)
+                if self._date_from_file_object
+                else None
+            )
 
-        return pages
+        return None
+
+    @lazyproperty
+    def skip_headers_and_footers(self) -> bool:
+        """When True, elements located within a header or footer are pruned."""
+        return self._skip_headers_and_footers
 
 
-class Page:
-    """A page consists of an ordered set of elements.
+# -- TEMPORARY EXTRACTION OF add_element_metadata() ----------------------------------------------
 
-    The intent of the ordering is to align with the order in which a person would read the document.
+
+def add_element_metadata(
+    element: HtmlElement, *, last_modified: str | None, detection_origin: str | None
+) -> HtmlElement:
+    """Adds document metadata to the document element.
+
+    Document metadata includes information like the filename, source url, and page number.
     """
+    emphasized_text_contents = [et.get("text") or "" for et in element.emphasized_texts]
+    emphasized_text_tags = [et.get("tag") or "" for et in element.emphasized_texts]
 
-    def __init__(self, number: int):
-        self.number: int = number
-        self.elements: list[Element] = []
+    link_urls = [link.get("url") for link in element.links]
+    link_texts = [link.get("text") or "" for link in element.links]
+    link_start_indexes = [link.get("start_index") for link in element.links]
 
-    def __str__(self):
-        return "\n\n".join([str(element) for element in self.elements])
+    metadata = ElementMetadata(
+        emphasized_text_contents=emphasized_text_contents or None,
+        emphasized_text_tags=emphasized_text_tags or None,
+        last_modified=last_modified,
+        link_start_indexes=link_start_indexes or None,
+        link_texts=link_texts or None,
+        link_urls=link_urls or None,
+        text_as_html=element.text_as_html,
+    )
+    element.metadata.update(metadata)
+
+    if detection_origin is not None:
+        element.metadata.detection_origin = detection_origin
+
+    return element
 
 
 # -- tag classifiers -----------------------------------------------------------------------------
@@ -313,13 +397,13 @@ def _is_text_tag(
 # -- tag processors ------------------------------------------------------------------------------
 
 
-def _bulleted_text_from_table(table: etree._Element) -> list[Element]:
+def _bulleted_text_from_table(table: etree._Element) -> list[HtmlElement]:
     """Extracts bulletized narrative text from the `<table>` element in `table`.
 
     NOTE: if a table has mixed bullets and non-bullets, only bullets are extracted. I.e., _read()
     will drop non-bullet narrative text in the table.
     """
-    bulleted_text: list[Element] = []
+    bulleted_text: list[HtmlElement] = []
     rows = table.findall(".//tr")
     for row in rows:
         text = _construct_text(row)
@@ -411,7 +495,7 @@ def _has_break_tags(tag_elem: etree._Element) -> bool:
     return any(descendant.tag in TEXTBREAK_TAGS for descendant in tag_elem.iterdescendants())
 
 
-def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Element]:
+def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[HtmlElement]:
     """Form `HTMLTable` element from `tbl_elem`."""
     if table_elem.tag != "table":
         return None
@@ -445,25 +529,19 @@ def _parse_HTMLTable_from_table_elem(table_elem: etree._Element) -> Optional[Ele
     if table_text == "":
         return None
 
-    return HTMLTable(
-        text=table_text,
-        text_as_html=html_table,
-        tag=table_elem.tag,
-        ancestortags=tuple(el.tag for el in table_elem.iterancestors())[::-1],
-    )
+    return HTMLTable(text=table_text, text_as_html=html_table, tag=table_elem.tag)
 
 
 def _parse_tag(
     tag_elem: etree._Element,
     include_tail_text: bool = True,
-) -> Optional[Element]:
+) -> Optional[HtmlElement]:
     """Parses `tag_elem` to a Text element if it contains qualifying text.
 
     Ancestor tags are kept so they can be used for filtering or classification without processing
     the document tree again. In the future we might want to keep descendants too, but we don't have
     a use for them at the moment.
     """
-    ancestortags: tuple[str, ...] = tuple(el.tag for el in tag_elem.iterancestors())[::-1]
     links = _get_links_from_tag(tag_elem)
     emphasized_texts = _get_emphasized_texts_from_tag(tag_elem)
 
@@ -485,19 +563,14 @@ def _parse_tag(
     if not text:
         return None
     return _text_to_element(
-        text,
-        tag_elem.tag,
-        ancestortags,
-        links=links,
-        emphasized_texts=emphasized_texts,
-        depth=depth,
+        text, tag_elem.tag, links=links, emphasized_texts=emphasized_texts, depth=depth
     )
 
 
 def _process_list_item(
     tag_elem: etree._Element,
     max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN,
-) -> tuple[Optional[Element], Optional[etree._Element]]:
+) -> tuple[Optional[HtmlElement], Optional[etree._Element]]:
     """Produces an `HTMLListItem` document element from `tag_elem`.
 
     When `tag_elem` contains bulleted text, the relevant bulleted text is extracted. Also returns
@@ -540,10 +613,10 @@ def _process_list_item(
 
 def _process_text_tag(
     tag_elem: etree._Element, include_tail_text: bool = True
-) -> tuple[list[Element], tuple[etree._Element, ...]]:
+) -> tuple[list[HtmlElement], tuple[etree._Element, ...]]:
     """Produces a document element from `tag_elem`."""
 
-    page_elements: list[Element] = []
+    page_elements: list[HtmlElement] = []
     if _has_break_tags(tag_elem):
         flattened_elems = _unfurl_break_tags(tag_elem)
         for _tag_elem in flattened_elems:
@@ -593,11 +666,10 @@ def _unfurl_break_tags(tag_elem: etree._Element) -> list[etree._Element]:
 def _text_to_element(
     text: str,
     tag: str,
-    ancestortags: tuple[str, ...],
     depth: int,
     links: list[Link] = [],
     emphasized_texts: list[dict[str, str]] = [],
-) -> Optional[Element]:
+) -> Optional[HtmlElement]:
     """Produce a document-element of the appropriate sub-type for `text`."""
     if is_bulleted_text(text):
         if not clean_bullets(text):
@@ -605,54 +677,29 @@ def _text_to_element(
         return HTMLListItem(
             text=clean_bullets(text),
             tag=tag,
-            ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
             metadata=ElementMetadata(category_depth=depth),
         )
     elif is_us_city_state_zip(text):
-        return HTMLAddress(
-            text=text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
     elif is_email_address(text):
-        return HTMLEmailAddress(
-            text=text,
-            tag=tag,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLEmailAddress(text=text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
     if len(text) < 2:
         return None
     elif _is_narrative_tag(text, tag):
-        return HTMLNarrativeText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLNarrativeText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
     elif _is_heading_tag(tag) or is_possible_title(text):
         return HTMLTitle(
             text,
             tag=tag,
-            ancestortags=ancestortags,
             links=links,
             emphasized_texts=emphasized_texts,
             metadata=ElementMetadata(category_depth=depth),
         )
     else:
-        return HTMLText(
-            text,
-            tag=tag,
-            ancestortags=ancestortags,
-            links=links,
-            emphasized_texts=emphasized_texts,
-        )
+        return HTMLText(text, tag=tag, links=links, emphasized_texts=emphasized_texts)
 
 
 # -- HTML-specific text classifiers --------------------------------------------------------------

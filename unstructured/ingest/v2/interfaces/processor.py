@@ -13,6 +13,7 @@ DEFAULT_WORK_DIR = str((Path.home() / ".cache" / "unstructured" / "ingest" / "pi
 class ProcessorConfig(EnhancedDataClassJsonMixin):
     reprocess: bool = False
     verbose: bool = False
+    tqdm: bool = False
     work_dir: str = field(default_factory=lambda: DEFAULT_WORK_DIR)
     num_processes: int = 2
     max_connections: Optional[int] = None

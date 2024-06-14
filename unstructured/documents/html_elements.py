@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence
+from typing import Any, Dict, Optional, Protocol, Sequence
 
 from unstructured.documents.elements import (
     Address,
+    ElementMetadata,
     EmailAddress,
     Link,
     ListItem,
@@ -16,6 +17,23 @@ from unstructured.documents.elements import (
 )
 
 
+class HtmlElement(Protocol):
+    """Interface provided by HTML-specific elements like HTMLNarrativeText."""
+
+    emphasized_texts: Sequence[Dict[str, str]]
+    links: Sequence[Link]
+    metadata: ElementMetadata
+    tag: str
+    text_as_html: str | None
+
+    def __init__(
+        self,
+        text: str,
+        tag: str,
+        metadata: ElementMetadata | None = None,
+    ): ...
+
+
 class TagsMixin:
     """Mixin that allows a class to retain tag information."""
 
@@ -23,7 +41,6 @@ class TagsMixin:
         self,
         *args: Any,
         tag: Optional[str] = None,
-        ancestortags: Sequence[str] = (),
         links: Sequence[Link] = [],
         emphasized_texts: Sequence[Dict[str, str]] = [],
         text_as_html: Optional[str] = None,
@@ -33,7 +50,6 @@ class TagsMixin:
             raise TypeError("tag argument must be passed and not None")
         else:
             self.tag = tag
-        self.ancestortags = ancestortags
         self.links = links
         self.emphasized_texts = emphasized_texts
         self.text_as_html = text_as_html
