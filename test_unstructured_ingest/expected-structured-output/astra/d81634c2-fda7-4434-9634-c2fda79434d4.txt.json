@@ -1,0 +1,19 @@
+[
+  {
+    "element_id": "c117e685efb382518665a18ce6dbd935",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.443640"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "d81634c2-fda7-4434-9634-c2fda79434d4.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"Heavens! what a virulent attack!\" replied the prince, not in the least disconcerted by this reception. He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, patronizing intonation natural to a man of importance who had grown old in society and at court. He went up to Anna Pavlovna, kissed",
+    "type": "NarrativeText"
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "element_id": "480380963d6e3ea36203932866edb31f",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.408132"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "ba2fb54b-8a29-429d-afb5-4b8a29829db2.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"Don't tease! Well, and what has been decided about Novosiltsev's dispatch? You know everything.\"",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "021706c8826448697ed472a4392e78b2",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.408132"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "ba2fb54b-8a29-429d-afb5-4b8a29829db2.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"What can one say about it?\" replied the prince in a cold, listless tone. \"What has been decided? They have decided that Buonaparte has burnt his boats, and I believe that we are ready to burn ours.\"",
+    "type": "NarrativeText"
+  }
+]

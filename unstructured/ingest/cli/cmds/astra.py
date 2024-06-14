@@ -76,6 +76,30 @@ class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
         ]
         return options
 
+@dataclass
+class AstraCliReadConfig(SimpleAstraConfig, CliConfig):
+    @staticmethod
+    def get_cli_options() -> t.List[click.Option]:
+        options = [
+            click.Option(
+                ["--batch-size"],
+                default=20,
+                type=int,
+                help="Number of records per batch",
+            ),
+        ]
+        return options
+
+def get_base_src_cmd():
+    from unstructured.ingest.cli.base.src import BaseSrcCmd
+
+    cmd_cls = BaseSrcCmd(
+        cmd_name="astra",
+        cli_config=AstraCliConfig,
+        additional_cli_options=[AstraCliReadConfig],
+    )
+    return cmd_cls
+
 
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd

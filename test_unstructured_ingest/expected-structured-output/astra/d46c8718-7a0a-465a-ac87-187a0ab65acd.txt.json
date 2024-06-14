@@ -1,0 +1,37 @@
+[
+  {
+    "element_id": "8d2d45b977d5545965c4afbc784c471a",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.412609"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "CHAPTER I",
+    "type": "Title"
+  },
+  {
+    "element_id": "3c7f4e4f9db013c905c76310d12936a1",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.412609"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59",
+      "parent_id": "8d2d45b977d5545965c4afbc784c471a"
+    },
+    "text": "\"Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes. But I warn you, if you don't tell me that this means war, if you still try to defend the infamies and horrors perpetrated by that Antichrist--I really believe he is Antichrist--I will have nothing more to do with you and you are no longer my friend, no longer my 'faithful slave,' as you call yourself! But how do you do? I see I have frightened you--sit down and tell me all the news.\"",
+    "type": "NarrativeText"
+  }
+]

@@ -2,6 +2,7 @@ import typing as t
 from typing import Type
 
 from .airtable import AirtableRunner
+from .astra import AstraRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
 from .confluence import ConfluenceRunner
@@ -34,6 +35,7 @@ from .wikipedia import WikipediaRunner
 
 runner_map: t.Dict[str, Type[Runner]] = {
     "airtable": AirtableRunner,
+    "astra": AstraRunner,
     "azure": AzureRunner,
     "biomed": BiomedRunner,
     "box": BoxRunner,
@@ -67,6 +69,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
 
 __all__ = [
     "AirtableRunner",
+    "AstraRunner",
     "AzureRunner",
     "BiomedRunner",
     "BoxRunner",

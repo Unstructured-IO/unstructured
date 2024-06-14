@@ -1,0 +1,19 @@
+[
+  {
+    "element_id": "6cbf560c4200daa68bda80640308c305",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.417511"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "ff2ee1f7-1d73-4152-aee1-f71d731152ac.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "It was in July, 1805, and the speaker was the well-known Anna Pavlovna Scherer, maid of honor and favorite of the Empress Marya Fedorovna. With these words she greeted Prince Vasili Kuragin, a man of high rank and importance, who was the first to arrive at her reception. Anna Pavlovna had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in St. Petersburg, used only by the elite.",
+    "type": "NarrativeText"
+  }
+]

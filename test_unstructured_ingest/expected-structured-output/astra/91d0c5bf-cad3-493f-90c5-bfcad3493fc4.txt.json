@@ -1,0 +1,19 @@
+[
+  {
+    "element_id": "2fcbdc521dd2548cd4e3a72067d6f137",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.421344"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "91d0c5bf-cad3-493f-90c5-bfcad3493fc4.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "her hand, presenting to her his bald, scented, and shining head, and complacently seated himself on the sofa.",
+    "type": "NarrativeText"
+  }
+]

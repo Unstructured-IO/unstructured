@@ -1,0 +1,36 @@
+[
+  {
+    "element_id": "b1c211d6c0ab1271ecdfa8f156fc94b7",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.436965"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "05730899-5be9-4ef9-b308-995be93ef940.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "All her invitations without exception, written in French, and delivered by a scarlet-liveried footman that morning, ran as follows:",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "d9e1a517345ccad36808275e8c7e657d",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:02.436965"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "05730899-5be9-4ef9-b308-995be93ef940.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"If you have nothing better to do, Count (or Prince), and if the prospect of spending an evening with a poor invalid is not too terrible, I shall be very charmed to see you tonight between 7 and 10--Annette Scherer.\"",
+    "type": "NarrativeText"
+  }
+]

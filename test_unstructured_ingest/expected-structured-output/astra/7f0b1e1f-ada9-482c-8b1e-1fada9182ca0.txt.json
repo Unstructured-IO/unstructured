@@ -1,0 +1,53 @@
+[
+  {
+    "element_id": "df543c228f859e6724daefaef0f65172",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:00.893391"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"And the fete at the English ambassador's? Today is Wednesday. I must put in an appearance there,\" said the prince. \"My daughter is coming for me to take me there.\"",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "b4f733dcdde32103453bb0e92dacdd29",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:00.893391"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"I thought today's fete had been canceled. I confess all these festivities and fireworks are becoming wearisome.\"",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "91b571b5de1475b259d6d09ac9843d8b",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:00.893391"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"If they had known that you wished it, the entertainment would have been put off,\" said the prince, who, like a wound-up clock, by force of habit said things he did not even wish to be believed.",
+    "type": "NarrativeText"
+  }
+]

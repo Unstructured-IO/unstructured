@@ -1,4 +1,6 @@
 import copy
+import os
+from pathlib import Path
 import typing as t
 from dataclasses import dataclass, field
 
@@ -6,11 +8,16 @@ from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
-from unstructured.ingest.error import DestinationConnectionError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
     BaseDestinationConnector,
+    BaseSingleIngestDoc,
+    BaseSourceConnector,
+    IngestDocCleanupMixin,
+    SourceConnectorCleanupMixin,
+    SourceMetadata,
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
@@ -97,7 +104,7 @@ class AstraDestinationConnector(BaseDestinationConnector):
         return self._astra_db_collection
 
     @requires_dependencies(["astrapy"], extras="astra")
-    @DestinationConnectionError.wrap
+    @DestinationConnectionError.wrap # type: ignore
     def initialize(self):
         _ = self.astra_db_collection
 
@@ -123,3 +130,117 @@ class AstraDestinationConnector(BaseDestinationConnector):
             "content": element_dict.pop("text", None),
             "metadata": element_dict,
         }
+
+
+@dataclass
+class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
+    connector_config: SimpleAstraConfig
+    metadata: t.Dict[str, str] = field(default_factory=dict)
+    registry_name: str = "astra"
+
+    @property
+    def filename(self):
+        return (
+            Path(self.processor_config.output_dir)
+            / f"{self.metadata['_id']}.txt"
+        ).resolve()
+ 
+    @property
+    def _output_filename(self):
+        return Path(self.processor_config.output_dir) / f"{self.filename}.json"
+    
+    def update_source_metadata(self, **kwargs):
+        if not self.metadata:
+            self.source_metadata = SourceMetadata(
+                exists=False,
+            )
+            return
+        self.source_metadata = SourceMetadata(
+            exists=True,
+        )
+    
+    @SourceConnectionError.wrap
+    @requires_dependencies(["astrapy"], extras="astra")
+    @BaseSingleIngestDoc.skip_if_file_exists
+    def get_file(self):
+        with open(self.filename, "w") as f:
+            f.write(self.metadata["content"])
+
+
+class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
+    """Objects of this class support fetching document(s) from Astra DB"""
+
+    connector_config: SimpleAstraConfig
+    _astra_db: t.Optional["AstraDB"] = field(init=False, default=None)
+    _astra_db_collection: t.Optional["AstraDBCollection"] = field(init=False, default=None)
+
+    def to_dict(self, **kwargs):
+        """
+        The _astra_db_collection variable in this dataclass breaks deepcopy due to:
+        TypeError: cannot pickle '_thread.lock' object
+        When serializing, remove it, meaning client data will need to be reinitialized
+        when deserialized
+        """
+        self_cp = copy.copy(self)
+
+        if hasattr(self_cp, "_astra_db_collection"):
+            setattr(self_cp, "_astra_db_collection", None)
+
+        return _asdict(self_cp, **kwargs) # type: ignore
+
+    @property
+    @requires_dependencies(["astrapy"], extras="astra")
+    def astra_db_collection(self) -> "AstraDBCollection":
+        if self._astra_db_collection is not None: ### FIX THIS IS NEVER NONE
+            print("getting connection **************")
+            from astrapy.db import AstraDB
+
+            # Build the Astra DB object.
+            # caller_name/version for AstraDB tracking
+            self._astra_db = AstraDB(
+                api_endpoint=self.connector_config.access_config.api_endpoint,
+                token=self.connector_config.access_config.token,
+                namespace=self.connector_config.namespace,
+                caller_name=integration_name,
+                caller_version=integration_version,
+            )
+
+            # Create and connect to the collection
+            self._astra_db_collection = self._astra_db.collection(
+                collection_name=self.connector_config.collection_name,
+            )
+        return self._astra_db_collection # type: ignore
+
+    @requires_dependencies(["astrapy"], extras="astra")
+    @SourceConnectionError.wrap # type: ignore
+    def initialize(self):
+        _ = self.astra_db_collection
+
+    @requires_dependencies(["astrapy"], extras="astra")
+    def check_connection(self):
+        try:
+            _ = self.astra_db_collection
+        except Exception as e:
+            logger.error(f"Failed to validate connection {e}", exc_info=True)
+
+            raise SourceConnectionError(f"failed to validate connection: {e}")
+
+    @requires_dependencies(["astrapy"], extras="astra")
+    def get_ingest_docs(self): # type: ignore
+        # Perform the find operation
+        astra_docs = list(self.astra_db_collection.paginated_find())
+
+        doc_list = []
+        for record in astra_docs:
+            doc = AstraIngestDoc(
+                connector_config=self.connector_config,
+                processor_config=self.processor_config,
+                read_config=self.read_config,
+                metadata=record,
+            )
+
+            doc.update_source_metadata()
+
+            doc_list.append(doc)
+
+        return doc_list

@@ -1,0 +1,36 @@
+[
+  {
+    "element_id": "0da78abb536f37cbc6daa5e0109f35bd",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:00.900978"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "89cd49f4-b9a7-4c4d-8d49-f4b9a79c4d3b.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"First of all, dear friend, tell me how you are. Set your friend's mind at rest,\" said he without altering his tone, beneath the politeness and affected sympathy of which indifference and even irony could be discerned.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "3b87d2bb7d1804e50f7c526b1b445276",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-14T17:07:00.900978"
+      },
+      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "filename": "89cd49f4-b9a7-4c4d-8d49-f4b9a79c4d3b.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-14T10:06:59"
+    },
+    "text": "\"Can one be well while suffering morally? Can one be calm in times like these if one has any feeling?\" said Anna Pavlovna. \"You are staying the whole evening, I hope?\"",
+    "type": "NarrativeText"
+  }
+]
