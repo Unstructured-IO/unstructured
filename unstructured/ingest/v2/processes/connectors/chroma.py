@@ -82,7 +82,7 @@ class ChromaUploadStager(UploadStager):
     @classmethod
     def conform_dict(cls, data: dict) -> None:
         """
-        Updates the element dictionary to conform to the Chroma schema
+        Updates the element dictionary to improve metadata
         """
 
         # Dict as string formatting
@@ -138,7 +138,17 @@ class ChromaUploadStager(UploadStager):
 
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
-
+    @classmethod
+    def normalize_dict(cls, data: dict) -> None:
+        element_id = data.get("element_id", str(uuid.uuid4()))
+        return {
+            "id": element_id,
+            "embedding": data.pop("embeddings", None),
+            "document": data.pop("text", None),
+            "metadata": flatten_dict(
+                data, separator="-", flatten_lists=True, remove_none=True
+            ),
+        }
     def run(
         self,
         elements_filepath: Path,
@@ -151,9 +161,13 @@ class ChromaUploadStager(UploadStager):
             elements_contents = json.load(elements_file)
         for element in elements_contents:
             self.conform_dict(data=element)
+        normalized_elements = []
+        for element in elements_contents:
+            normalized_elements.append(self.normalize_dict(data=element))
+        
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
-            json.dump(elements_contents, output_file)
+            json.dump(normalized_elements, output_file)
         return output_path
 
 
@@ -294,16 +308,7 @@ class ChromaUploader(Uploader):
         return chroma_dict
     # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
     #     raise NotImplementedError
-    def normalize_dict(self, element_dict: dict) -> dict:
-        element_id = element_dict.get("element_id", str(uuid.uuid4()))
-        return {
-            "id": element_id,
-            "embedding": element_dict.pop("embeddings", None),
-            "document": element_dict.pop("text", None),
-            "metadata": flatten_dict(
-                element_dict, separator="-", flatten_lists=True, remove_none=True
-            ),
-        }
+    
     # async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
     # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
@@ -319,13 +324,13 @@ class ChromaUploader(Uploader):
                 # load a list of elements
                 elements = json.load(elements_file)
                 # normalize dict for them
-                normalized_elements = [self.normalize_dict(x) for x in elements]
-
+                # normalized_elements = [self.normalize_dict(x) for x in elements]
+                elements_dict.extend(elements)
 
 
                 # now append the dicts
-                for x in normalized_elements:
-                    elements_dict.append(x)
+                # for x in normalized_elements:
+                #     elements_dict.append(x)
 
         # with open(path) as elements_file:
         #     elements_dict = json.load(elements_file)
@@ -355,6 +360,7 @@ class ChromaUploader(Uploader):
             f"collection {self.connection_config.collection_name} "
             f"at {self.connection_config.host}",
         )
+
 
 
         logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
