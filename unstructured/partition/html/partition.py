@@ -70,9 +70,6 @@ def partition_html(
         The last modified date for the document.
     skip_headers_and_footers
         If True, ignores any content that is within <header> or <footer> tags
-    source_format
-        The source of the original html. If None we will return HTMLElements but for example
-         partition_rst will pass a value of 'rst' so that we return Title vs HTMLTitle
     """
     # -- parser rejects an empty str, nip that edge-case in the bud here --
     if text is not None and text.strip() == "" and not file and not filename and not url:
