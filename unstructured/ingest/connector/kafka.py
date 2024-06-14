@@ -42,6 +42,7 @@ class SimpleKafkaConfig(ConfigSessionHandleMixin, BaseConnectorConfig):
     access_config: KafkaAccessConfig
     confluent: t.Optional[bool] = True
     num_messages_to_consume: t.Optional[int] = 1
+    timeout: t.Optional[float] = 1.0
 
 
 @dataclass
@@ -163,7 +164,7 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         logger.info(f"Config set for blocking on {num_messages_to_consume} messages")
         # Consume specified number of messages
         while running:
-            msg = consumer.poll(timeout=1.0)
+            msg = consumer.poll(timeout=self.connector_config.timeout)
             if msg is None:
                 logger.debug("No Kafka messages found")
                 continue

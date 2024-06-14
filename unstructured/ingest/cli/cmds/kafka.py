@@ -49,6 +49,12 @@ class KafkaCliConfig(SimpleKafkaConfig, CliConfig):
                 help="The number of messages to consume before unblocking the consumer",
             ),
             click.Option(
+                ["--timeout"],
+                required=False,
+                type=float,
+                help="Maximum time to block waiting for message(Seconds)",
+            ),
+            click.Option(
                 ["--confluent"],
                 required=False,
                 type=bool,
