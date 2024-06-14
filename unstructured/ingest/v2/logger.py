@@ -84,7 +84,8 @@ def redact_jsons(s: str) -> str:
         try:
             formatted_j = json.dumps(json.loads(j))
         except json.JSONDecodeError:
-            formatted_j = json.dumps(ast.literal_eval(j))
+            lit = ast.literal_eval(j)
+            formatted_j = json.dumps(lit)
         hidden_j = json.dumps(hide_sensitive_fields(json.loads(formatted_j)))
         s = s.replace(j, hidden_j)
     return s
@@ -112,7 +113,8 @@ def make_default_logger(level: int) -> Logger:
     handler.name = "ingest_log_handler"
     formatter = SensitiveFormatter("%(asctime)s %(processName)-10s %(levelname)-8s %(message)s")
     handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if handler.name not in [h.name for h in logger.handlers]:
+        logger.addHandler(handler)
     logger.setLevel(level)
     remove_root_handlers(logger)
     return logger
