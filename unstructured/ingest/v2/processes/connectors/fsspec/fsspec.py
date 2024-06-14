@@ -16,6 +16,7 @@ from unstructured.ingest.v2.interfaces import (
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
+    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
@@ -208,9 +209,9 @@ class FsspecIndexer(Indexer):
                     filename=Path(file).name,
                     rel_path=rel_path or None,
                     fullpath=file,
-                    additional_metadata=self.sterilize_info(path=file),
                 ),
                 metadata=self.get_metadata(path=file),
+                additional_metadata=self.sterilize_info(path=file),
             )
 
 
@@ -252,7 +253,7 @@ class FsspecDownloader(Downloader):
         except ValueError:
             return False
 
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         download_path = self.get_download_path(file_data=file_data)
         download_path.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -269,7 +270,7 @@ class FsspecDownloader(Downloader):
             date_modified = float(file_data.metadata.date_modified)
             date_created = float(file_data.metadata.date_created)
             os.utime(download_path, times=(date_created, date_modified))
-        return download_path
+        return DownloadResponse(file_data=file_data, path=download_path)
 
 
 @dataclass

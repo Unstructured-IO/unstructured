@@ -96,7 +96,7 @@ pycodestyle==2.11.1
     # via
     #   flake8
     #   flake8-print
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   -r ./test.in
     #   label-studio-sdk
