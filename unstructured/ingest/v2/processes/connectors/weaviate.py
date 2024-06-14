@@ -28,8 +28,6 @@ if TYPE_CHECKING:
 
 CONNECTOR_TYPE = "weaviate"
 
-from pprint import pp
-
 
 @dataclass
 class WeaviateAccessConfig(AccessConfig):
@@ -64,9 +62,6 @@ class WeaviateUploadStager(UploadStager):
 
     @staticmethod
     def parse_date_string(date_string: str) -> date:
-        print(" ##### date_string ***** ")
-        print(date_string)
-
         try:
             timestamp = float(date_string)
             return datetime.fromtimestamp(timestamp)
@@ -79,9 +74,6 @@ class WeaviateUploadStager(UploadStager):
         """
         Updates the element dictionary to conform to the Weaviate schema
         """
-
-        ### This doesn't seem to be called
-        # compare to the e on line 35
 
         # Dict as string formatting
         if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
@@ -102,7 +94,6 @@ class WeaviateUploadStager(UploadStager):
 
         # Datetime formatting
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            print("date_created")
             data["metadata"]["data_source"]["date_created"] = cls.parse_date_string(
                 date_created
             ).strftime(
@@ -110,7 +101,6 @@ class WeaviateUploadStager(UploadStager):
             )
 
         if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            print("date modified")
             data["metadata"]["data_source"]["date_modified"] = cls.parse_date_string(
                 date_modified
             ).strftime(
@@ -118,7 +108,6 @@ class WeaviateUploadStager(UploadStager):
             )
 
         if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
-            print("date_processed")
             data["metadata"]["data_source"]["date_processed"] = cls.parse_date_string(
                 date_processed
             ).strftime(
@@ -126,8 +115,6 @@ class WeaviateUploadStager(UploadStager):
             )
 
         if last_modified := data.get("metadata", {}).get("last_modified"):
-            # LOOK INTO THIS. it tends not to be a float.
-            print("last modified")
             data["metadata"]["last_modified"] = cls.parse_date_string(last_modified).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             )
@@ -176,11 +163,6 @@ class WeaviateUploader(Uploader):
 
         auth = self._resolve_auth_method()
         self.client = Client(url=self.connection_config.host_url, auth_client_secret=auth)
-        print("(((((( CLIENT    ))))))")
-        print(self.client)
-        print("(((((( CLIENT    ))))))")
-
-        #### do we need a check connection
 
     def is_async(self) -> bool:
         return True
@@ -235,9 +217,6 @@ class WeaviateUploader(Uploader):
         with self.client.batch as b:
             for e in elements_dict:
                 vector = e.pop("embeddings", None)
-                print("*** e ***")
-                pp(e)
-                print("*** e ***")
                 b.add_data_object(
                     e,
                     self.connection_config.class_name,
