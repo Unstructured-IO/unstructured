@@ -77,7 +77,7 @@ def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str,
     opts = HtmlPartitionerOptions(**opts_args)
     html_document = HTMLDocument.load(opts)
 
-    # -- there is exactly one element and it's a TMLTable instance --
+    # -- there is exactly one element and it's a Table instance --
     (element,) = html_document.elements
     assert isinstance(element, Table)
     # -- table text is joined into a single string; no row or cell boundaries are represented --
