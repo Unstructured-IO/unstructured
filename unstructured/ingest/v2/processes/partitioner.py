@@ -1,7 +1,8 @@
+import asyncio
 from abc import ABC
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
@@ -9,6 +10,10 @@ from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import elements_to_dicts, flatten_dict
+
+if TYPE_CHECKING:
+    from unstructured_client import UnstructuredClient
+    from unstructured_client.models.shared import PartitionParameters
 
 
 @dataclass
@@ -54,6 +59,9 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
 class Partitioner(BaseProcess, ABC):
     config: PartitionerConfig
 
+    def is_async(self) -> bool:
+        return self.config.partition_by_api
+
     def postprocess(self, elements: list[dict]) -> list[dict]:
         element_dicts = [e.copy() for e in elements]
         for elem in element_dicts:
@@ -98,17 +106,15 @@ class Partitioner(BaseProcess, ABC):
         )
         return self.postprocess(elements=elements_to_dicts(elements))
 
-    def partition_via_api(
-        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
-    ) -> list[dict]:
-        # TODO when client supports async, move to run_async()
-        from unstructured_client import UnstructuredClient
+    async def call_api(self, client: "UnstructuredClient", request: "PartitionParameters"):
+        # TODO when client supports async, run without using run_in_executor
+        # isolate the IO heavy call
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, client.general.partition, request)
+
+    def create_partition_parameters(self, filename: Path) -> "PartitionParameters":
         from unstructured_client.models.shared import Files, PartitionParameters
 
-        logger.info(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
-        client = UnstructuredClient(
-            server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
-        )
         partition_request = self.config.to_partition_kwargs()
         logger.debug(f"Using hosted partitioner with kwargs: {partition_request}")
         with open(filename, "rb") as f:
@@ -118,7 +124,19 @@ class Partitioner(BaseProcess, ABC):
             )
             partition_request["files"] = files
         partition_params = PartitionParameters(**partition_request)
-        resp = client.general.partition(partition_params)
+        return partition_params
+
+    async def partition_via_api(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        from unstructured_client import UnstructuredClient
+
+        logger.info(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
+        client = UnstructuredClient(
+            server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
+        )
+        partition_params = self.create_partition_parameters(filename=filename)
+        resp = await self.call_api(client=client, request=partition_params)
         elements = resp.elements or []
         # Append the data source metadata the auto partition does for you
         for element in elements:
@@ -128,6 +146,9 @@ class Partitioner(BaseProcess, ABC):
     def run(
         self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
     ) -> list[dict]:
-        if self.config.partition_by_api:
-            return self.partition_via_api(filename, metadata=metadata, **kwargs)
         return self.partition_locally(filename, metadata=metadata, **kwargs)
+
+    async def run_async(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        return await self.partition_via_api(filename, metadata=metadata, **kwargs)
