@@ -41,9 +41,7 @@ class WeaviateAccessConfig(AccessConfig):
 class WeaviateConnectionConfig(ConnectionConfig):
     host_url: str
     class_name: str
-    access_config: WeaviateAccessConfig = enhanced_field(
-        sensitive=True, default_factory=WeaviateAccessConfig()
-    )
+    access_config: WeaviateAccessConfig = enhanced_field(sensitive=True)
     username: Optional[str] = None
     anonymous: bool = False
     scope: Optional[list[str]] = None
