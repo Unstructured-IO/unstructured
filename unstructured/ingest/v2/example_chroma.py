@@ -15,9 +15,6 @@ from unstructured.ingest.v2.processes.connectors.local import (
     LocalDownloaderConfig,
     LocalConnectionConfig,
 )
-from unstructured.ingest.v2.processes.connectors.chroma import (
-    ChromaUploaderConfig,
-)
 from unstructured.ingest.v2.processes.connectors.weaviate import (
     WeaviateUploaderConfig,
     WeaviateConnectionConfig,
@@ -26,6 +23,7 @@ from unstructured.ingest.v2.processes.connectors.chroma import (
     ChromaUploaderConfig,
     ChromaConnectionConfig,
     ChromaAccessConfig,
+    ChromaUploadStagerConfig,
 )
 from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
@@ -45,7 +43,7 @@ if __name__ == "__main__":
         downloader_config=LocalDownloaderConfig(download_dir=download_path),
         source_connection_config=LocalConnectionConfig(),
         partitioner_config=PartitionerConfig(strategy="fast"),
-        chunker_config=ChunkerConfig(chunking_strategy="by_title"),
+        chunker_config=ChunkerConfig(chunking_strategy="by_title", include_orig_elements=False),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=ChromaConnectionConfig(
             access_config=ChromaAccessConfig(settings=None,headers=None),
@@ -55,5 +53,6 @@ if __name__ == "__main__":
             tenant="default_tenant",
             database="default_database",
         ),
+        stager_config=ChromaUploadStagerConfig(),
         uploader_config=ChromaUploaderConfig(batch_size=10),
     ).run()

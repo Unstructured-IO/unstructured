@@ -3,8 +3,9 @@ from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional, Dict
-
-
+import uuid
+from unstructured.staging.base import flatten_dict
+from unstructured.ingest.utils.data_prep import chunk_generator
 
 from dateutil import parser
 
@@ -24,9 +25,17 @@ from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     add_destination_entry,
 )
-
+from unstructured.utils import requires_dependencies
+from unstructured.ingest.error import DestinationConnectionError
 if TYPE_CHECKING:
     from chromadb import Collection
+
+
+
+
+import typing as t
+
+
 
 CONNECTOR_TYPE = "chroma"
 
@@ -167,9 +176,12 @@ class ChromaUploader(Uploader):
         self._collection = self.create_collection()
         # self.client = Client(url=self.connection_nfig.host_url, auth_client_secret=auth)
 
+    
+
+
     def is_async(self) -> bool:
-        return True
-        # return False
+        # return True
+        return False
 
     # def _resolve_auth_method(self):
     #     access_configs = self.connection_config.access_config
@@ -243,34 +255,122 @@ class ChromaUploader(Uploader):
             name=self.connection_config.collection_name
         )
         return collection
+    
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["chromadb"], extras="chroma")
+    def upsert_batch(self, batch):
+        collection = self._collection
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        raise NotImplementedError
-
-    async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
-    # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
-    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         breakpoint()
+
+        try:
+            # Chroma wants lists even if there is only one element
+            # Upserting to prevent duplicates
+            collection.upsert(
+                ids=batch["ids"],
+                documents=batch["documents"],
+                embeddings=batch["embeddings"],
+                metadatas=batch["metadatas"],
+            )
+        except Exception as e:
+            raise ValueError(f"chroma error: {e}") from e
+    
+    @staticmethod
+    def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
+        """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
+        ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
+        chroma_dict = {}
+        chroma_dict["ids"] = [x.get("id") for x in chunk]
+        chroma_dict["documents"] = [x.get("document") for x in chunk]
+        chroma_dict["embeddings"] = [x.get("embedding") for x in chunk]
+        chroma_dict["metadatas"] = [x.get("metadata") for x in chunk]
+        # Make sure all lists are of the same length
+        assert (
+            len(chroma_dict["ids"])
+            == len(chroma_dict["documents"])
+            == len(chroma_dict["embeddings"])
+            == len(chroma_dict["metadatas"])
+        )
+        return chroma_dict
+    # def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+    #     raise NotImplementedError
+    def normalize_dict(self, element_dict: dict) -> dict:
+        element_id = element_dict.get("element_id", str(uuid.uuid4()))
+        return {
+            "id": element_id,
+            "embedding": element_dict.pop("embeddings", None),
+            "document": element_dict.pop("text", None),
+            "metadata": flatten_dict(
+                element_dict, separator="-", flatten_lists=True, remove_none=True
+            ),
+        }
+    # async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+    # def run(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         # for content in contents:
 
-        with open(path) as elements_file:
-            elements_dict = json.load(elements_file)
+        elements_dict = []
+        # lets add normalized dicts
+        for content in contents:
+            with open(content.path) as elements_file:
+                # load a list of elements
+                elements = json.load(elements_file)
+                # normalize dict for them
+                normalized_elements = [self.normalize_dict(x) for x in elements]
+
+
+
+                # now append the dicts
+                for x in normalized_elements:
+                    elements_dict.append(x)
+
+        # with open(path) as elements_file:
+        #     elements_dict = json.load(elements_file)
+
+
+
+        # this is a list of lists
+
+        """
+        so now i need to 
+        break apart the list
+        conform it
+        get it in the right format
+        batch it
+        upload it
+
+        
+        
+        
+        
+        """
+
+    
 
         logger.info(
             f"writing {len(elements_dict)} objects to destination "
-            f"class {self.connection_config.collection_name} "
+            f"collection {self.connection_config.collection_name} "
             f"at {self.connection_config.host}",
         )
 
-        self.client.batch.configure(batch_size=self.upload_config.batch_size)
-        with self.client.batch as b:
-            for e in elements_dict:
-                vector = e.pop("embeddings", None)
-                b.add_data_object(
-                    e,
-                    self.connection_config.class_name,
-                    vector=vector,
-                )
+        breakpoint()
+
+        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
+
+        # chroma_batch_size = self.upload_config.batch_size
+
+        for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
+            self.upsert_batch(self.prepare_chroma_list(chunk))
+
+        # self.client.batch.configure(batch_size=self.upload_config.batch_size)
+        # with self.client.batch as b:
+        #     for e in elements_dict:
+        #         vector = e.pop("embeddings", None)
+        #         b.add_data_object(
+        #             e,
+        #             self.connection_config.class_name,
+        #             vector=vector,
+        #         )
 
 
 add_destination_entry(

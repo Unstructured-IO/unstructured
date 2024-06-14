@@ -19,7 +19,8 @@ from unstructured.ingest.v2.processes.connectors.chroma import (
     ChromaUploaderConfig,)
 from unstructured.ingest.v2.processes.connectors.weaviate import (
     WeaviateUploaderConfig,
-    WeaviateConnectionConfig,)
+    WeaviateConnectionConfig,
+    WeaviateUploadStagerConfig)
 from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
@@ -40,5 +41,6 @@ if __name__ == "__main__":
         chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=WeaviateConnectionConfig(host_url="http://localhost:8080", class_name="elements", access_config=None, anonymous=True),
+        stager_config=WeaviateUploadStagerConfig(),
         uploader_config=WeaviateUploaderConfig(batch_size=10),
     ).run()
