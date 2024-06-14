@@ -5,7 +5,7 @@ from time import time
 from typing import Any, Optional, Union
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
-from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.logger import logger, make_default_logger
 from unstructured.ingest.v2.pipeline.steps.chunk import Chunker, ChunkStep
 from unstructured.ingest.v2.pipeline.steps.download import DownloaderT, DownloadStep
 from unstructured.ingest.v2.pipeline.steps.embed import Embedder, EmbedStep
@@ -59,7 +59,7 @@ class Pipeline:
         stager: UploadStager = None,
         uploader: Uploader = None,
     ):
-        logger.setLevel(level=logging.DEBUG if self.context.verbose else logging.INFO)
+        make_default_logger(level=logging.DEBUG if self.context.verbose else logging.INFO)
         self.indexer_step = IndexStep(process=indexer, context=self.context)
         self.downloader_step = DownloadStep(process=downloader, context=self.context)
         self.partitioner_step = PartitionStep(process=partitioner, context=self.context)

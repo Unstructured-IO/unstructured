@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from time import time
-from typing import Any, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from tqdm import tqdm
 from tqdm.asyncio import tqdm as tqdm_asyncio
 
 from unstructured.ingest.v2.interfaces import BaseProcess, ProcessorConfig
-from unstructured.ingest.v2.logger import logger
+from unstructured.ingest.v2.logger import logger, make_default_logger
 
 BaseProcessT = TypeVar("BaseProcessT", bound=BaseProcess)
 iterable_input = list[dict[str, Any]]
@@ -98,7 +98,7 @@ class PipelineStep(ABC):
 
     def _set_log_level(self, log_level: int):
         # Set the log level for each spawned process when using multiprocessing pool
-        logger.setLevel(log_level)
+        make_default_logger(log_level)
 
     @timed
     def __call__(self, iterable: Optional[iterable_input] = None) -> Any:
@@ -113,15 +113,16 @@ class PipelineStep(ABC):
             return self.process_async(iterable=iterable)
         return self.process_multiprocess(iterable=iterable)
 
-    def _run(self, *args, **kwargs: Any) -> Optional[Any]:
+    def _run(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
+        return asyncio.run(self.run_async(_fn=fn, **kwargs))
+
+    async def _run_async(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError
 
-    async def _run_async(self, *args, **kwargs: Any) -> Optional[Any]:
-        raise NotImplementedError
-
-    def run(self, *args, **kwargs: Any) -> Optional[Any]:
+    def run(self, _fn: Optional[Callable] = None, **kwargs: Any) -> Optional[Any]:
         try:
-            return self._run(*args, **kwargs)
+            fn = _fn or self.process.run
+            return self._run(fn=fn, **kwargs)
         except Exception as e:
             logger.error(f"Exception raised while running {self.identifier}", exc_info=e)
             if "file_data_path" in kwargs:
@@ -130,9 +131,10 @@ class PipelineStep(ABC):
                 raise e
             return None
 
-    async def run_async(self, *args, **kwargs: Any) -> Optional[Any]:
+    async def run_async(self, _fn: Optional[Callable] = None, **kwargs: Any) -> Optional[Any]:
         try:
-            return await self._run_async(*args, **kwargs)
+            fn = _fn or self.process.run_async
+            return await self._run_async(fn=fn, **kwargs)
         except Exception as e:
             logger.error(f"Exception raised while running {self.identifier}", exc_info=e)
             if "file_data_path" in kwargs:

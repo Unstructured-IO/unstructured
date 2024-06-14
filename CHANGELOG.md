@@ -1,4 +1,4 @@
-## 0.14.6-dev6
+## 0.14.6
 
 ### Enhancements
 
@@ -15,6 +15,7 @@
 * **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
 * **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
 * **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncrasy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
+* **update table metric evaluation to handle corrected HTML syntax for tables** This change is connected to the update in [unstructured-inference change](https://github.com/Unstructured-IO/unstructured-inference/pull/355) - fixes transforming HTML table to deckerd and internal cells format.
 
 ## 0.14.5
 
