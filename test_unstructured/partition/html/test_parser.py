@@ -51,8 +51,9 @@ class DescribeFlow:
         elements = div.iter_elements()
 
         e = next(elements)
-        assert e == Text("Text of div with hierarchical phrasing content before first block item")
+        assert e == Title("Text of div with hierarchical phrasing content before first block item")
         assert e.metadata.to_dict() == {
+            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical", "phrasing"],
             "emphasized_text_tags": ["b", "bi", "b"],
         }
@@ -60,17 +61,19 @@ class DescribeFlow:
         assert e == NarrativeText("Click here to see the blurb for this block item.")
         assert e.metadata.to_dict() == {"link_texts": ["here"], "link_urls": ["http://blurb.io"]}
         e = next(elements)
-        assert e == Text("tail of block item with hierarchical phrasing content")
+        assert e == Title("tail of block item with hierarchical phrasing content")
         assert e.metadata.to_dict() == {
+            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical", "phrasing"],
             "emphasized_text_tags": ["b", "bi", "b"],
         }
         e = next(elements)
-        assert e == Text("second block item")
-        assert e.metadata.to_dict() == {}
+        assert e == Title("second block item")
+        assert e.metadata.to_dict() == {"category_depth": 0}
         e = next(elements)
-        assert e == Text("tail of block item with hierarchical phrasing content")
+        assert e == Title("tail of block item with hierarchical phrasing content")
         assert e.metadata.to_dict() == {
+            "category_depth": 0,
             "emphasized_text_contents": ["with", "hierarchical"],
             "emphasized_text_tags": ["b", "bi"],
         }

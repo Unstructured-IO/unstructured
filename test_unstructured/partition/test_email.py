@@ -2,6 +2,7 @@ import datetime
 import email
 import os
 import pathlib
+from typing import cast
 
 import pytest
 
@@ -650,7 +651,7 @@ def test_partition_eml_respects_detect_language_per_element():
     elements = partition_email(filename=filename, detect_language_per_element=True)
     # languages other than English and Spanish are detected by this partitioner,
     # so this test is slightly different from the other partition tests
-    langs = {element.metadata.languages[0] for element in elements}
+    langs = {e.metadata.languages[0] for e in elements if e.metadata.languages is not None}
     assert "eng" in langs
     assert "spa" in langs
 
