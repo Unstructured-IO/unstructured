@@ -27,6 +27,7 @@ from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
     is_possible_narrative_text,
+    is_possible_title,
     is_us_city_state_zip,
 )
 from unstructured.utils import htmlify_matrix_of_cell_texts
@@ -518,8 +519,8 @@ def derive_element_type_from_text(text: str) -> type[Text] | None:
     # _behaves_ like a heading, maybe whether it is bold and how many text elements follow it before
     # the next title and how long since the prior title, whether `h1..h6` are used elsewhere in the
     # document, etc.
-    # if is_possible_title(text):
-    #     return Title
+    if is_possible_title(text):
+        return Title
 
     return Text
 
