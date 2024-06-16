@@ -82,7 +82,8 @@ def process_data_with_ocr(
             pdf_image_dpi=pdf_image_dpi,
         )
     finally:
-        os.remove(file_name)
+        if os.path.isfile(file_name):
+            os.remove(file_name)
         
     return merged_layouts
 
