@@ -1,3 +1,13 @@
+## 0.14.7-dev2
+
+### Enhancements
+
+* **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
+
+### Features
+
+### Fixes
+
 ## 0.14.7-dev1
 
 ### Enhancements
