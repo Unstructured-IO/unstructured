@@ -25,6 +25,7 @@ all_tests=(
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
+  'kdbai.sh'
   'opensearch.sh'
   'pgvector.sh'
   'pinecone.sh'
