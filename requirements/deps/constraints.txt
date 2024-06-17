@@ -54,7 +54,9 @@ unstructured-client<=0.18.0
 fsspec==2024.5.0
 
 # python 3.12 support
-numpy>=1.26.0
+# NOTE(robinson) - pinned due to a feature being deprecated in the latest version. plan to
+# investigate and remove pin
+numpy==1.26.4
 wrapt>=1.14.0
 
 
