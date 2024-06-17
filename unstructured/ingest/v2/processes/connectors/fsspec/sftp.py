@@ -80,7 +80,6 @@ class SftpIndexer(FsspecIndexer):
         parsed_url = urlparse(self.index_config.remote_url)
         self.connection_config.host = parsed_url.hostname or self.connection_config.host
         self.connection_config.port = parsed_url.port or self.connection_config.port
-        super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
@@ -120,7 +119,6 @@ class SftpDownloader(FsspecDownloader):
         parsed_url = urlparse(self.download_config.remote_url)
         self.connection_config.host = parsed_url.hostname or self.connection_config.host
         self.connection_config.port = parsed_url.port or self.connection_config.port
-        super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
