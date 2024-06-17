@@ -253,15 +253,6 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    # @staticmethod
-    # def chunks(iterable, batch_size=100):
-    #     """A helper function to break an iterable into chunks of size batch_size."""
-    #     it = iter(iterable)
-    #     chunk = tuple(itertools.islice(it, batch_size))
-    #     while chunk:
-    #         yield chunk
-    #         chunk = tuple(itertools.islice(it, batch_size))
-
     @DestinationConnectionError.wrap
     def upload_msg(self, batch) -> int:
         logger.debug(f"Uploading batch: {batch}")
