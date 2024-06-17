@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 import pathlib
 
 def convert_file(
-    source_file: str, to: str, format: str | None, outputfile: str | pathlib.Path | None
+    source_file: str, to: str, format: str | None, outputfile: str | pathlib.Path | None = None
 ) -> str: ...
+def get_pandoc_formats() -> tuple[list[str], list[str]]: ...
+def get_pandoc_version() -> str: ...
