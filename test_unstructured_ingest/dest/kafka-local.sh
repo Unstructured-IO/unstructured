@@ -9,7 +9,6 @@ OUTPUT_FOLDER_NAME=local-kafka-dest
 OUTPUT_DIR=$SCRIPT_DIR/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
-writer_processes=$(((max_processes - 1) > 1 ? (max_processes - 1) : 2))
 
 RANDOM_SUFFIX=$((RANDOM % 100000 + 1))
 
