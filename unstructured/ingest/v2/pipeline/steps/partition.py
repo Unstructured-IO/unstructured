@@ -1,8 +1,9 @@
+import asyncio
 import hashlib
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, TypedDict
+from typing import Callable, Optional, TypedDict
 
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.logger import logger
@@ -38,7 +39,7 @@ class PartitionStep(PipelineStep):
         return False
 
     def get_output_filepath(self, filename: Path) -> Path:
-        hashed_output_file = f"{self.get_hash(extras=[filename.stem])}.json"
+        hashed_output_file = f"{self.get_hash(extras=[filename.name])}.json"
         filepath = (self.cache_dir / hashed_output_file).resolve()
         filepath.parent.mkdir(parents=True, exist_ok=True)
         return filepath
@@ -48,35 +49,23 @@ class PartitionStep(PipelineStep):
             logger.debug(f"Writing partitioned output to: {output_filepath}")
             json.dump(partitioned_content, f, indent=2)
 
-    def _run(self, path: str, file_data_path: str) -> PartitionStepResponse:
+    async def _run_async(
+        self, fn: Callable, path: str, file_data_path: str
+    ) -> PartitionStepResponse:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
-        output_filepath = self.get_output_filepath(filename=path)
+        output_filepath = self.get_output_filepath(filename=Path(file_data_path))
         if not self.should_partition(filepath=output_filepath, file_data=file_data):
             logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
             return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        partitioned_content = self.process.run(filename=path, metadata=file_data.metadata)
-        self._save_output(
-            output_filepath=str(output_filepath), partitioned_content=partitioned_content
-        )
-        return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-
-    async def _run_async(self, path: str, file_data_path: str) -> PartitionStepResponse:
-        path = Path(path)
-        file_data = FileData.from_file(path=file_data_path)
-        output_filepath = self.get_output_filepath(filename=path)
-        if not self.should_partition(filepath=output_filepath, file_data=file_data):
-            logger.debug(f"Skipping partitioning, output already exists: {output_filepath}")
-            return PartitionStepResponse(file_data_path=file_data_path, path=str(output_filepath))
-        if semaphore := self.context.semaphore:
+        fn_kwargs = {"filename": path, "metadata": file_data.metadata}
+        if not asyncio.iscoroutinefunction(fn):
+            partitioned_content = fn(**fn_kwargs)
+        elif semaphore := self.context.semaphore:
             async with semaphore:
-                partitioned_content = await self.process.run_async(
-                    filename=path, metadata=file_data.metadata
-                )
+                partitioned_content = await fn(**fn_kwargs)
         else:
-            partitioned_content = await self.process.run_async(
-                filename=path, metadata=file_data.metadata
-            )
+            partitioned_content = await fn(**fn_kwargs)
         self._save_output(
             output_filepath=str(output_filepath), partitioned_content=partitioned_content
         )

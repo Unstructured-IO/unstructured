@@ -23,7 +23,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -34,7 +34,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.6
+dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
@@ -61,18 +61,18 @@ idna==3.7
     #   yarl
 jsonpatch==1.33
     # via langchain-core
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.1
+langchain==0.2.3
     # via langchain-community
-langchain-community==0.2.1
+langchain-community==0.2.4
     # via -r ./ingest/embed-openai.in
-langchain-core==0.2.1
+langchain-core==0.2.2
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.0
+langchain-text-splitters==0.2.1
     # via langchain
 langsmith==0.1.62
     # via
@@ -80,7 +80,7 @@ langsmith==0.1.62
     #   langchain
     #   langchain-community
     #   langchain-core
-marshmallow==3.21.2
+marshmallow==3.21.3
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
@@ -98,9 +98,9 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-openai==1.30.3
+openai==1.34.0
     # via -r ./ingest/embed-openai.in
-orjson==3.10.3
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
@@ -108,13 +108,13 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.1
+pydantic==2.7.4
     # via
     #   langchain
     #   langchain-core
     #   langsmith
     #   openai
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -125,7 +125,7 @@ regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   tiktoken
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   langchain
@@ -141,7 +141,7 @@ sqlalchemy==2.0.30
     # via
     #   langchain
     #   langchain-community
-tenacity==8.3.0
+tenacity==8.4.1
     # via
     #   langchain
     #   langchain-community
@@ -152,7 +152,7 @@ tqdm==4.66.4
     # via
     #   -c ./ingest/../base.txt
     #   openai
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   openai

@@ -18,7 +18,7 @@ async-timeout==4.0.3
     #   langchain
 attrs==23.2.0
     # via aiohttp
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -27,11 +27,11 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-dataclasses-json==0.6.6
+dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.14.0
+filelock==3.15.1
     # via
     #   huggingface-hub
     #   torch
@@ -47,7 +47,7 @@ fsspec==2024.5.0
     #   torch
 huggingface==0.0.1
     # via -r ./ingest/embed-huggingface.in
-huggingface-hub==0.23.1
+huggingface-hub==0.23.4
     # via
     #   sentence-transformers
     #   tokenizers
@@ -65,18 +65,18 @@ joblib==1.4.2
     #   scikit-learn
 jsonpatch==1.33
     # via langchain-core
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.1
+langchain==0.2.3
     # via langchain-community
-langchain-community==0.2.1
+langchain-community==0.2.4
     # via -r ./ingest/embed-huggingface.in
-langchain-core==0.2.1
+langchain-core==0.2.2
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.0
+langchain-text-splitters==0.2.1
     # via langchain
 langsmith==0.1.62
     # via
@@ -86,7 +86,7 @@ langsmith==0.1.62
     #   langchain-core
 markupsafe==2.1.5
     # via jinja2
-marshmallow==3.21.2
+marshmallow==3.21.3
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
@@ -112,7 +112,7 @@ numpy==1.26.4
     #   scipy
     #   sentence-transformers
     #   transformers
-orjson==3.10.3
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
@@ -124,12 +124,12 @@ packaging==23.2
     #   transformers
 pillow==10.3.0
     # via sentence-transformers
-pydantic==2.7.1
+pydantic==2.7.4
     # via
     #   langchain
     #   langchain-core
     #   langsmith
-pydantic-core==2.18.2
+pydantic-core==2.18.4
     # via pydantic
 pyyaml==6.0.1
     # via
@@ -142,7 +142,7 @@ regex==2024.5.15
     # via
     #   -c ./ingest/../base.txt
     #   transformers
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub
@@ -159,15 +159,15 @@ scipy==1.11.3
     #   -c ./ingest/../deps/constraints.txt
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==2.7.0
+sentence-transformers==3.0.1
     # via -r ./ingest/embed-huggingface.in
 sqlalchemy==2.0.30
     # via
     #   langchain
     #   langchain-community
-sympy==1.12
+sympy==1.12.1
     # via torch
-tenacity==8.3.0
+tenacity==8.4.1
     # via
     #   langchain
     #   langchain-community
@@ -176,7 +176,7 @@ threadpoolctl==3.5.0
     # via scikit-learn
 tokenizers==0.19.1
     # via transformers
-torch==2.3.0
+torch==2.3.1
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   sentence-transformers
@@ -186,9 +186,9 @@ tqdm==4.66.4
     #   huggingface-hub
     #   sentence-transformers
     #   transformers
-transformers==4.41.1
+transformers==4.41.2
     # via sentence-transformers
-typing-extensions==4.12.0
+typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   huggingface-hub

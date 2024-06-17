@@ -574,14 +574,11 @@ class BaseSingleIngestDoc(BaseIngestDoc, IngestDocJsonMixin, ABC):
 
             logger.debug(f"Using remote partition ({endpoint})")
 
-            passthrough_partition_kwargs = {
-                k: str(v) for k, v in partition_kwargs.items() if v is not None
-            }
             elements = partition_via_api(
                 filename=str(self.filename),
                 api_key=partition_config.api_key,
                 api_url=endpoint,
-                **passthrough_partition_kwargs,
+                **partition_kwargs,
             )
             # TODO: add m_data_source_metadata to unstructured-api pipeline_api and then
             # pass the stringified json here

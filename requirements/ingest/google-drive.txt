@@ -6,7 +6,7 @@
 #
 cachetools==5.3.3
     # via google-auth
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -17,16 +17,16 @@ charset-normalizer==3.3.2
     #   requests
 google-api-core==2.19.0
     # via google-api-python-client
-google-api-python-client==2.130.0
+google-api-python-client==2.133.0
     # via -r ./ingest/google-drive.in
-google-auth==2.29.0
+google-auth==2.30.0
     # via
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-googleapis-common-protos==1.63.0
+googleapis-common-protos==1.63.1
     # via google-api-core
 httplib2==0.22.0
     # via
@@ -54,7 +54,7 @@ pyparsing==3.0.9
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   httplib2
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   google-api-core

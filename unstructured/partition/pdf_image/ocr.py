@@ -288,7 +288,8 @@ def supplement_element_with_table_extraction(
             cropped_image, ocr_tokens=table_tokens, result_format="cells"
         )
 
-        text_as_html = cells_to_html(tatr_cells)
+        # NOTE(christine): `tatr_cells == ""` means that the table was not recognized
+        text_as_html = "" if tatr_cells == "" else cells_to_html(tatr_cells)
         element.text_as_html = text_as_html
 
         if env_config.EXTRACT_TABLE_AS_CELLS:

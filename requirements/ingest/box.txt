@@ -8,9 +8,9 @@ attrs==23.2.0
     # via boxsdk
 boxfs==0.3.0
     # via -r ./ingest/box.in
-boxsdk[jwt]==3.10.0
+boxsdk[jwt]==3.11.0
     # via boxfs
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.7
+cryptography==42.0.8
     # via boxsdk
 fsspec==2024.5.0
     # via
@@ -40,7 +40,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c ./ingest/../base.txt
     #   boxsdk
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   boxsdk

@@ -1,2942 +1,2942 @@
 [
   {
+    "type": "UncategorizedText",
     "element_id": "65783c5f96432bd7fe68309b620d039c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Network Working Group                                          J. Postel Request for Comments: 854                                    J. Reynolds ISI Obsoletes: NIC 18639                                            May 1983",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "7ec33e6e1fcb9471b9ca790a59c71fcf",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "TELNET PROTOCOL SPECIFICATION",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "d82a527bfa3df66c43ec030743a98752",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "This RFC specifies a standard for the ARPA Internet community. Hosts on the ARPA Internet are expected to adopt and implement this standard.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "0661672d3c5ec5c9cf4174c4d1026b09",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "INTRODUCTION",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "0446d889dfbdff0ac3c80174d11a9aca",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The purpose of the TELNET Protocol is to provide a fairly general, bi-directional, eight-bit byte oriented communications facility. Its primary goal is to allow a standard method of interfacing terminal devices and terminal-oriented processes to each other. It is envisioned that the protocol may also be used for terminal-terminal communication (\"linking\") and process-process communication (distributed computation).",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "5f3d9d91bb3b5b816c8a7ef08ecffe3d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "GENERAL CONSIDERATIONS",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "4d428190fc7fca97cb7467c4b0e45e83",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "A TELNET connection is a Transmission Control Protocol (TCP) connection used to transmit data with interspersed TELNET control information.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "cf93a26711c927e9698cc536bcb1820b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The TELNET Protocol is built upon three main ideas:  first, the concept of a \"Network Virtual Terminal\"; second, the principle of negotiated options; and third, a symmetric view of terminals and processes.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "ba2d99936f5798d117ab3b189c8ee00e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "1. When a TELNET connection is first established, each end is assumed to originate and terminate at a \"Network Virtual Terminal\", or NVT. An NVT is an imaginary device which provides a standard, network-wide, intermediate representation of a canonical terminal. This eliminates the need for \"server\" and \"user\" hosts to keep information about the characteristics of each other's terminals and terminal handling conventions. All hosts, both user and server, map their local device characteristics and conventions so as to appear to be dealing with an NVT over the network, and each can assume a similar mapping by the other party. The NVT is intended to strike a balance between being overly restricted (not providing hosts a rich enough vocabulary for mapping into their local character sets), and being overly inclusive (penalizing users with modest terminals).",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "2002da205e87807acdbc89c0b4596e7e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "NOTE:  The \"user\" host is the host to which the physical terminal is normally attached, and the \"server\" host is the host which is normally providing some service. As an alternate point of view,",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "55aaeedec745102933163d43747b7abb",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 1]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "40eceaad7fbe1a5d37786cfef9ff0ff8",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "6c9bd938aa5808ff458fc2079089e18a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "applicable even in terminal-to-terminal or process-to-process communications, the \"user\" host is the host which initiated the communication.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "23b4cf5747856de963b4d6af696953c4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "2. The principle of negotiated options takes cognizance of the fact that many hosts will wish to provide additional services over and above those available within an NVT, and many users will have sophisticated terminals and would like to have elegant, rather than minimal, services. Independent of, but structured within the TELNET Protocol are various \"options\" that will be sanctioned and may be used with the \"DO, DON'T, WILL, WON'T\" structure (discussed below) to allow a user and server to agree to use a more elaborate (or perhaps just different) set of conventions for their TELNET connection. Such options could include changing the character set, the echo mode, etc.",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "3b8f84b0aa27c2136834d8f8eb3a8030",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The basic strategy for setting up the use of options is to have either party (or both) initiate a request that some option take effect. The other party may then either accept or reject the request. If the request is accepted the option immediately takes effect; if it is rejected the associated aspect of the connection remains as specified for an NVT. Clearly, a party may always refuse a request to enable, and must never refuse a request to disable some option since all parties must be prepared to support the NVT.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "48126945ebf491304faf9cc60d5bc4e4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The syntax of option negotiation has been set up so that if both parties request an option simultaneously, each will see the other's request as the positive acknowledgment of its own.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "6ce61271d913abcd342ea7b8c30fc42f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "3. The symmetry of the negotiation syntax can potentially lead to nonterminating acknowledgment loops -- each party seeing the incoming commands not as acknowledgments but as new requests which must be acknowledged. To prevent such loops, the following rules prevail:",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "1cea7b129d4039aa1ab6a6bb6f55d35f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "a. Parties may only request a change in option status; i.e., a party may not send out a \"request\" merely to announce what mode it is in.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "01cc47e0396d25bdf322c92f542bb67f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "b. If a party receives what appears to be a request to enter some mode it is already in, the request should not be acknowledged. This non-response is essential to prevent endless loops in the negotiation. It is required that a response be sent to requests for a change of mode -- even if the mode is not changed.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "35478d889f81c38e6a8bc021c85de82f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "c. Whenever one party sends an option command to a second party, whether as a request or an acknowledgment, and use of the option will have any effect on the processing of the data being sent from the first party to the second, then the command must be inserted in the data stream at the point where it is desired that it take",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "818a85a5728064919b4e6ff925b58c2c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 2]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "9e2f2d8e30ed3dd95e09a229b56f1c9e",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "b2cb61c13603bb57f5b3a7dd13cea885",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "effect. (It should be noted that some time will elapse between the transmission of a request and the receipt of an acknowledgment, which may be negative. Thus, a host may wish to buffer data, after requesting an option, until it learns whether the request is accepted or rejected, in order to hide the \"uncertainty period\" from the user.)",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "a8dbc669b291ec26484532ff327314f0",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Option requests are likely to flurry back and forth when a TELNET connection is first established, as each party attempts to get the best possible service from the other party. Beyond that, however, options can be used to dynamically modify the characteristics of the connection to suit changing local conditions. For example, the NVT, as will be explained later, uses a transmission discipline well suited to the many \"line at a time\" applications such as BASIC, but poorly suited to the many \"character at a time\" applications such as NLS. A server might elect to devote the extra processor overhead required for a \"character at a time\" discipline when it was suitable for the local process and would negotiate an appropriate option. However, rather than then being permanently burdened with the extra processing overhead, it could switch (i.e., negotiate) back to NVT when the detailed control was no longer necessary.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "458e7a5de622e445e75ad6488dbcc0ba",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "It is possible for requests initiated by processes to stimulate a nonterminating request loop if the process responds to a rejection by merely re-requesting the option. To prevent such loops from occurring, rejected requests should not be repeated until something changes. Operationally, this can mean the process is running a different program, or the user has given another command, or whatever makes sense in the context of the given process and the given option. A good rule of thumb is that a re-request should only occur as a result of subsequent information from the other end of the connection or when demanded by local human intervention.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "6b03b1184b1c953e7066165f29d5c0d1",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Option designers should not feel constrained by the somewhat limited syntax available for option negotiation. The intent of the simple syntax is to make it easy to have options -- since it is correspondingly easy to profess ignorance about them. If some particular option requires a richer negotiation structure than possible within \"DO, DON'T, WILL, WON'T\", the proper tack is to use \"DO, DON'T, WILL, WON'T\" to establish that both parties understand the option, and once this is accomplished a more exotic syntax can be used freely. For example, a party might send a request to alter (establish) line length. If it is accepted, then a different syntax can be used for actually negotiating the line length -- such a \"sub-negotiation\" might include fields for minimum allowable, maximum allowable and desired line lengths. The important concept is that",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "25b564d4c27fe2ed4ef03e0ba0eb9d85",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 3]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "280f60c34402766f62997bb7d74eadf3",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "318131924429cce06494b3ca25351557",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "such expanded negotiations should never begin until some prior (standard) negotiation has established that both parties are capable of parsing the expanded syntax.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "f8e2ea3db2862e6a3252536296a9b537",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "In summary, WILL XXX is sent, by either party, to indicate that party's desire (offer) to begin performing option XXX, DO XXX and DON'T XXX being its positive and negative acknowledgments; similarly, DO XXX is sent to indicate a desire (request) that the other party (i.e., the recipient of the DO) begin performing option XXX, WILL XXX and WON'T XXX being the positive and negative acknowledgments. Since the NVT is what is left when no options are enabled, the DON'T and WON'T responses are guaranteed to leave the connection in a state which both ends can handle. Thus, all hosts may implement their TELNET processes to be totally unaware of options that are not supported, simply returning a rejection to (i.e., refusing) any option request that cannot be understood.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "9f4061cc2fddcc781df9838b16621af0",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "As much as possible, the TELNET protocol has been made server-user symmetrical so that it easily and naturally covers the user-user (linking) and server-server (cooperating processes) cases. It is hoped, but not absolutely required, that options will further this intent. In any case, it is explicitly acknowledged that symmetry is an operating principle rather than an ironclad rule.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "32872f7efe12aff30d8a63a79c83d968",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "A companion document, \"TELNET Option Specifications,\" should be consulted for information about the procedure for establishing new options.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "84ead4d480198af96d5c5b0e0dbf89d4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "THE NETWORK VIRTUAL TERMINAL",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "ebcf8bac597eeaa75fcd2092b242f761",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The Network Virtual Terminal (NVT) is a bi-directional character device. The NVT has a printer and a keyboard. The printer responds to incoming data and the keyboard produces outgoing data which is sent over the TELNET connection and, if \"echoes\" are desired, to the NVT's printer as well. \"Echoes\" will not be expected to traverse the network (although options exist to enable a \"remote\" echoing mode of operation, no host is required to implement this option). The code set is seven-bit USASCII in an eight-bit field, except as modified herein. Any code conversion and timing considerations are local problems and do not affect the NVT.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "086f03a735ce878231ad37cbf4b317c4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "TRANSMISSION OF DATA",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "e4bbe9555fb0ea8509fd4c7e764de130",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Although a TELNET connection through the network is intrinsically full duplex, the NVT is to be viewed as a half-duplex device operating in a line-buffered mode. That is, unless and until",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "8c0adda7630fc7f9ab50c842748b4e17",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 4]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "87658b0f8d69675bdde58c7391a08c48",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "8c1353adf09b23347436b4474c769743",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "options are negotiated to the contrary, the following default conditions pertain to the transmission of data over the TELNET connection:",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "e7ddc718279e45fdb301585e3e2740ee",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "1)  Insofar as the availability of local buffer space permits, data should be accumulated in the host where it is generated until a complete line of data is ready for transmission, or until some locally-defined explicit signal to transmit occurs. This signal could be generated either by a process or by a human user.",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "f1c1850575706baa6c125233d0338546",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The motivation for this rule is the high cost, to some hosts, of processing network input interrupts, coupled with the default NVT specification that \"echoes\" do not traverse the network. Thus, it is reasonable to buffer some amount of data at its source. Many systems take some processing action at the end of each input line (even line printers or card punches frequently tend to work this way), so the transmission should be triggered at the end of a line. On the other hand, a user or process may sometimes find it necessary or desirable to provide data which does not terminate at the end of a line; therefore implementers are cautioned to provide methods of locally signaling that all buffered data should be transmitted immediately.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "e55b99b7b8020a53a25204ee268cac06",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "2)  When a process has completed sending data to an NVT printer and has no queued input from the NVT keyboard for further processing (i.e., when a process at one end of a TELNET connection cannot proceed without input from the other end), the process must transmit the TELNET Go Ahead (GA) command.",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "387bc8384cf6557f58b19e062ce1f9a9",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "This rule is not intended to require that the TELNET GA command be sent from a terminal at the end of each line, since server hosts do not normally require a special signal (in addition to end-of-line or other locally-defined characters) in order to commence processing. Rather, the TELNET GA is designed to help a user's local host operate a physically half duplex terminal which has a \"lockable\" keyboard such as the IBM 2741. A description of this type of terminal may help to explain the proper use of the GA command.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "1259588857ecd79ffe02e7a2d37dd792",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The terminal-computer connection is always under control of either the user or the computer. Neither can unilaterally seize control from the other; rather the controlling end must relinguish its control explicitly. At the terminal end, the hardware is constructed so as to relinquish control each time that a \"line\" is terminated (i.e., when the \"New Line\" key is typed by the user). When this occurs, the attached (local)",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "1bfcf8e4a08c25391c6a112c6a096317",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 5]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "15dc73e83113089c2886d0dfce10005c",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "8702b27f155901f8df4905e6493f549c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "computer processes the input data, decides if output should be generated, and if not returns control to the terminal. If output should be generated, control is retained by the computer until all output has been transmitted.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "9b6c7a9e41bae0b85825da10a61e9aaf",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The difficulties of using this type of terminal through the network should be obvious. The \"local\" computer is no longer able to decide whether to retain control after seeing an end-of-line signal or not; this decision can only be made by the \"remote\" computer which is processing the data. Therefore, the TELNET GA command provides a mechanism whereby the \"remote\" (server) computer can signal the \"local\" (user) computer that it is time to pass control to the user of the terminal. It should be transmitted at those times, and only at those times, when the user should be given control of the terminal. Note that premature transmission of the GA command may result in the blocking of output, since the user is likely to assume that the transmitting system has paused, and therefore he will fail to turn the line around manually.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "c2934067dd12eb82327fd9898ae19244",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The foregoing, of course, does not apply to the user-to-server direction of communication. In this direction, GAs may be sent at any time, but need not ever be sent. Also, if the TELNET connection is being used for process-to-process communication, GAs need not be sent in either direction. Finally, for terminal-to-terminal communication, GAs may be required in neither, one, or both directions. If a host plans to support terminal-to-terminal communication it is suggested that the host provide the user with a means of manually signaling that it is time for a GA to be sent over the TELNET connection; this, however, is not a requirement on the implementer of a TELNET process.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "3c0352a01510cecab50b23577ffb8e44",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Note that the symmetry of the TELNET model requires that there is an NVT at each end of the TELNET connection, at least conceptually.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "13f02e503d4239d24287d7b5bae43d38",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "STANDARD REPRESENTATION OF CONTROL FUNCTIONS",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "8d792dbd5149be3355caa89e793010cc",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "As stated in the Introduction to this document, the primary goal of the TELNET protocol is the provision of a standard interfacing of terminal devices and terminal-oriented processes through the network. Early experiences with this type of interconnection have shown that certain functions are implemented by most servers, but that the methods of invoking these functions differ widely. For a human user who interacts with several server systems, these differences are highly frustrating. TELNET, therefore, defines a standard representation for five of these functions, as described",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "b83f9f35c49a176bd85514041242e219",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 6]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "7b4e28597e9b6ca7a23a59f84ef9ca63",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "5db29555174e45ec2adbd8d2a55b1252",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "below. These standard representations have standard, but not required, meanings (with the exception that the Interrupt Process (IP) function may be required by other protocols which use TELNET); that is, a system which does not provide the function to local users need not provide it to network users and may treat the standard representation for the function as a No-operation. On the other hand, a system which does provide the function to a local user is obliged to provide the same function to a network user who transmits the standard representation for the function.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "be88ea677b8af38f0a932f20d0d718a9",
+    "text": "Interrupt Process (IP)",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Interrupt Process (IP)",
-    "type": "Title"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "64608a8e6126b1d1868c8f7c213264f7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Many systems provide a function which suspends, interrupts, aborts, or terminates the operation of a user process. This function is frequently used when a user believes his process is in an unending loop, or when an unwanted process has been inadvertently activated. IP is the standard representation for invoking this function. It should be noted by implementers that IP may be required by other protocols which use TELNET, and therefore should be implemented if these other protocols are to be supported.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "da98565159183843e2a3cd2b787b27c9",
+    "text": "Abort Output (AO)",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Abort Output (AO)",
-    "type": "Title"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "c1eb1f8b93e2c9d8c787aeff64c2d26f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Many systems provide a function which allows a process, which is generating output, to run to completion (or to reach the same stopping point it would reach if running to completion) but without sending the output to the user's terminal. Further, this function typically clears any output already produced but not yet actually printed (or displayed) on the user's terminal. AO is the standard representation for invoking this function. For example, some subsystem might normally accept a user's command, send a long text string to the user's terminal in response, and finally signal readiness to accept the next command by sending a \"prompt\" character (preceded by <CR><LF>) to the user's terminal. If the AO were received during the transmission of the text string, a reasonable implementation would be to suppress the remainder of the text string, but transmit the prompt character and the preceding <CR><LF>. (This is possibly in distinction to the action which might be taken if an IP were received; the IP might cause suppression of the text string and an exit from the subsystem.)",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "273bf4175279d66e5648c0ce9afe6b0f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "It should be noted, by server systems which provide this function, that there may be buffers external to the system (in",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "c1ce1c9be0308cc1fc79bc38acb421e3",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 7]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "cd0dcf72f199ef70cf1cf785933e7e8c",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "e2e06e8b355eae849878d3b6a33aee85",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "the network and the user's local host) which should be cleared; the appropriate way to do this is to transmit the \"Synch\" signal (described below) to the user system.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "6bb8ee02861cbf67b36254869a2be8e5",
+    "text": "Are You There (AYT)",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Are You There (AYT)",
-    "type": "Title"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "1648c12b55c915992fd64f4728edd97e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Many systems provide a function which provides the user with some visible (e.g., printable) evidence that the system is still up and running. This function may be invoked by the user when the system is unexpectedly \"silent\" for a long time, because of the unanticipated (by the user) length of a computation, an unusually heavy system load, etc. AYT is the standard representation for invoking this function.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "db636fdc95fe405f65bd80fc12579bf8",
+    "text": "Erase Character (EC)",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Erase Character (EC)",
-    "type": "Title"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "7c0484002f646a538a4d2bd9e4fb9366",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Many systems provide a function which deletes the last preceding undeleted character or \"print position\"* from the stream of data being supplied by the user. This function is typically used to edit keyboard input when typing mistakes are made. EC is the standard representation for invoking this function.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "3d71191e551eeff6e917b1fe637cf149",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "NOTE:  A \"print position\" may contain several characters which are the result of overstrikes, or of sequences such as <char1> BS <char2>...",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "430985f34534c2a51e451ba45ba6bc06",
+    "text": "Erase Line (EL)",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Erase Line (EL)",
-    "type": "Title"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "fdae2149450dc87798e530110810599d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Many systems provide a function which deletes all the data in the current \"line\" of input. This function is typically used to edit keyboard input. EL is the standard representation for invoking this function.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "dd2a763ac46619c129568e5b068e0b5f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "THE TELNET \"SYNCH\" SIGNAL",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "23b5970fc1c7844eb4563e118a73d3c6",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Most time-sharing systems provide mechanisms which allow a terminal user to regain control of a \"runaway\" process; the IP and AO functions described above are examples of these mechanisms. Such systems, when used locally, have access to all of the signals supplied by the user, whether these are normal characters or special \"out of band\" signals such as those supplied by the teletype \"BREAK\" key or the IBM 2741 \"ATTN\" key. This is not necessarily true when terminals are connected to the system through the network; the network's flow control mechanisms may cause such a signal to be buffered elsewhere, for example in the user's host.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "e7982bce163a5d73231794c680d355b2",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 8]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "d20ff1f758133e892121fed5cb4d6a0a",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "e31330818b84cd1517eedcd1617c0edb",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "To counter this problem, the TELNET \"Synch\" mechanism is introduced. A Synch signal consists of a TCP Urgent notification, coupled with the TELNET command DATA MARK. The Urgent notification, which is not subject to the flow control pertaining to the TELNET connection, is used to invoke special handling of the data stream by the process which receives it. In this mode, the data stream is immediately scanned for \"interesting\" signals as defined below, discarding intervening data. The TELNET command DATA MARK (DM) is the synchronizing mark in the data stream which indicates that any special signal has already occurred and the recipient can return to normal processing of the data stream.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "2ae0117d8852c34228c2067896a1959f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The Synch is sent via the TCP send operation with the Urgent flag set and the DM as the last (or only) data octet.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "0543b16db878667a1a82fc1bba32d3ff",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "When several Synchs are sent in rapid succession, the Urgent notifications may be merged. It is not possible to count Urgents since the number received will be less than or equal the number sent. When in normal mode, a DM is a no operation; when in urgent mode, it signals the end of the urgent processing.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "d6a66cbe761bcff61954c70df02559c6",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "If TCP indicates the end of Urgent data before the DM is found, TELNET should continue the special handling of the data stream until the DM is found.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "f2724de8867302e7f3bf5c23112d692e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "If TCP indicates more Urgent data after the DM is found, it can only be because of a subsequent Synch. TELNET should continue the special handling of the data stream until another DM is found.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "957e4cbd3cf03c9c2b704514dceccd8e",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "\"Interesting\" signals are defined to be:  the TELNET standard representations of IP, AO, and AYT (but not EC or EL); the local analogs of these standard representations (if any); all other TELNET commands; other site-defined signals which can be acted on without delaying the scan of the data stream.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "b26203ad2a3a766e28a2c570a2ec730f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Since one effect of the SYNCH mechanism is the discarding of essentially all characters (except TELNET commands) between the sender of the Synch and its recipient, this mechanism is specified as the standard way to clear the data path when that is desired. For example, if a user at a terminal causes an AO to be transmitted, the server which receives the AO (if it provides that function at all) should return a Synch to the user.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "d92ec560295df1cd2860c29e93954e3b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Finally, just as the TCP Urgent notification is needed at the TELNET level as an out-of-band signal, so other protocols which make use of TELNET may require a TELNET command which can be viewed as an out-of-band signal at a different level.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "ff2e7867d0b5e1258902d2f5a246192c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                               [Page 9]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "675dc0cb902ab777b7a4baa2f1deded7",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "c4e2296b03a51c67f222cd14d51494f1",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "By convention the sequence [IP, Synch] is to be used as such a signal. For example, suppose that some other protocol, which uses TELNET, defines the character string STOP analogously to the TELNET command AO. Imagine that a user of this protocol wishes a server to process the STOP string, but the connection is blocked because the server is processing other commands. The user should instruct his system to:",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "10888bdd4b90e27173866401ed1fc05a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "1. Send the TELNET IP character;",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "4f2ac242b6db9556d86c383f46016ea8",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "2. Send the TELNET SYNC sequence, that is:",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "a5a6931db4c8b5766dd0134659f3021f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Send the Data Mark (DM) as the only character in a TCP urgent mode send operation.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "12f3eded1448a64506edd348ac0d6d63",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "3. Send the character string STOP; and",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "ListItem",
     "element_id": "586e5aea255297ac41330b1743e0e59a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "4. Send the other protocol's analog of the TELNET DM, if any.",
-    "type": "ListItem"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "5fc371f19a06f1a6a70beb2f7ccf8571",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The user (or process acting on his behalf) must transmit the TELNET SYNCH sequence of step 2 above to ensure that the TELNET IP gets through to the server's TELNET interpreter.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "1065c23d5c06fddad3995940a2711174",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The Urgent should wake up the TELNET process; the IP should wake up the next higher level process.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "d5df89a348ea7e1fd62000163d1a55d0",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "THE NVT PRINTER AND KEYBOARD",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "0cb014ef6ab2491b11417b33d74e7ced",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The NVT printer has an unspecified carriage width and page length and can produce representations of all 95 USASCII graphics (codes 32 through 126). Of the 33 USASCII control codes (0 through 31 and 127), and the 128 uncovered codes (128 through 255), the following have specified meaning to the NVT printer:",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "8ac02faf16fc3c4a6d3f88a02b4ae27f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "NAME                  CODE         MEANING",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "557f7b6c5513b61ca2df1cb23bbac1f4",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "NULL (NUL)              0      No Operation Line Feed (LF)         10      Moves the printer to the next print line, keeping the same horizontal position. Carriage Return (CR)   13      Moves the printer to the left margin of the current line.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "0ae8b967fd1c9509f077c38620040306",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                              [Page 10]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "08e6182a4bde5760868620cc8975b965",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "3d0a761c2b62bf6afecbfdc2464d15e2",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "In addition, the following codes shall have defined, but not required, effects on the NVT printer. Neither end of a TELNET connection may assume that the other party will take, or will have taken, any particular action upon receipt or transmission of these:",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "c1ed2e9872f8ca5c8aaefa6c9f23496a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "BELL (BEL)              7      Produces an audible or visible signal (which does NOT move the print head). Back Space (BS)         8      Moves the print head one character position towards the left margin. Horizontal Tab (HT)     9      Moves the printer to the next horizontal tab stop. It remains unspecified how either party determines or establishes where such tab stops are located. Vertical Tab (VT)       11     Moves the printer to the next vertical tab stop. It remains unspecified how either party determines or establishes where such tab stops are located. Form Feed (FF)          12     Moves the printer to the top of the next page, keeping the same horizontal position.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "d00a4ce79296813ee4e4042acfd0d9ce",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "All remaining codes do not cause the NVT printer to take any action.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "ef45439f1ad0d6aae208f64b92547561",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The sequence \"CR LF\", as defined, will cause the NVT to be positioned at the left margin of the next print line (as would, for example, the sequence \"LF CR\"). However, many systems and terminals do not treat CR and LF independently, and will have to go to some effort to simulate their effect. (For example, some terminals do not have a CR independent of the LF, but on such terminals it may be possible to simulate a CR by backspacing.) Therefore, the sequence \"CR LF\" must be treated as a single \"new line\" character and used whenever their combined action is intended; the sequence \"CR NUL\" must be used where a carriage return alone is actually desired; and the CR character must be avoided in other contexts. This rule gives assurance to systems which must decide whether to perform a \"new line\" function or a multiple-backspace that the TELNET stream contains a character following a CR that will allow a rational decision.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "70e22606b78c619e4a9dfb1faf383f96",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Note that \"CR LF\" or \"CR NUL\" is required in both directions",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "6a5edf0f964ee78a98aa3c12c03421ba",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                              [Page 11]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "091a59aaa3065d618052e90b63558a98",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "57c14d8e9299d25d735e47bff550196b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "(in the default ASCII mode), to preserve the symmetry of the NVT model. Even though it may be known in some situations (e.g., with remote echo and suppress go ahead options in effect) that characters are not being sent to an actual printer, nonetheless, for the sake of consistency, the protocol requires that a NUL be inserted following a CR not followed by a LF in the data stream. The converse of this is that a NUL received in the data stream after a CR (in the absence of options negotiations which explicitly specify otherwise) should be stripped out prior to applying the NVT to local character set mapping.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "768d3f9b5003ff3af02d8648356c1efa",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The NVT keyboard has keys, or key combinations, or key sequences, for generating all 128 USASCII codes. Note that although many have no effect on the NVT printer, the NVT keyboard is capable of generating them.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "7f47c872901991ed6728cb9be79ac595",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "In addition to these codes, the NVT keyboard shall be capable of generating the following additional codes which, except as noted, have defined, but not reguired, meanings. The actual code assignments for these \"characters\" are in the TELNET Command section, because they are viewed as being, in some sense, generic and should be available even when the data stream is interpreted as being some other character set.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "8b1427e31e6da67f1d38362792d9a201",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Synch",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "9871347d1b308ff700671b13c2fb9a2b",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "This key allows the user to clear his data path to the other party. The activation of this key causes a DM (see command section) to be sent in the data stream and a TCP Urgent notification is associated with it. The pair DM-Urgent is to have required meaning as defined previously.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "10d78583717b41072021de8c33b39a9a",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Break (BRK)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "e746fe33f2a93158766ad900eedac080",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "This code is provided because it is a signal outside the USASCII set which is currently given local meaning within many systems. It is intended to indicate that the Break Key or the Attention Key was hit. Note, however, that this is intended to provide a 129th code for systems which require it, not as a synonym for the IP standard representation.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "c0a136025b1cbb6c28259be5b5cf439f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Interrupt Process (IP)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "3463b7fd5d90f642efeb854b5979e008",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Suspend, interrupt, abort or terminate the process to which the NVT is connected. Also, part of the out-of-band signal for other protocols which use TELNET.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "94088dccef5d76c8c68571bea21657d0",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                              [Page 12]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "a5ab0b06b901c57b5cf9a037b5fa7099",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "e83b459128c460f38f2c0c4975b5aded",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Abort Output (AO)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "13daaa9a71d6f4ddbe76b7383c0d89c3",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Allow the current process to (appear to) run to completion, but do not send its output to the user. Also, send a Synch to the user.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "e66716fc6316be88790cafe7a8ce81a5",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Are You There (AYT)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "7d5e72d504efea5078d67e6f9b31c653",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Send back to the NVT some visible (i.e., printable) evidence that the AYT was received.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "3aec51ffe2874a447eb4ff5e29efe102",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Erase Character (EC)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "165a5570effad51acc0a51ff8c073659",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The recipient should delete the last preceding undeleted character or \"print position\" from the data stream.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "1881924bde2fd807ab24c67e9ec731ab",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Erase Line (EL)",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "db6276261225ce210819e214dabc00aa",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The recipient should delete characters from the data stream back to, but not including, the last \"CR LF\" sequence sent over the TELNET connection.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "2ed8d98fcbfb124005eb360b7f074866",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The spirit of these \"extra\" keys, and also the printer format effectors, is that they should represent a natural extension of the mapping that already must be done from \"NVT\" into \"local\". Just as the NVT data byte 68 (104 octal) should be mapped into whatever the local code for \"uppercase D\" is, so the EC character should be mapped into whatever the local \"Erase Character\" function is. Further, just as the mapping for 124 (174 octal) is somewhat arbitrary in an environment that has no \"vertical bar\" character, the EL character may have a somewhat arbitrary mapping (or none at all) if there is no local \"Erase Line\" facility. Similarly for format effectors:  if the terminal actually does have a \"Vertical Tab\", then the mapping for VT is obvious, and only when the terminal does not have a vertical tab should the effect of VT be unpredictable.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "b8bef5fff5c0be4a0bb4ab483faeb6d7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "TELNET COMMAND STRUCTURE",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "5e0cd317a460f20e7588bb51d0d7f6b0",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "All TELNET commands consist of at least a two byte sequence:  the \"Interpret as Command\" (IAC) escape character followed by the code for the command. The commands dealing with option negotiation are three byte sequences, the third byte being the code for the option referenced. This format was chosen so that as more comprehensive use of the \"data space\" is made -- by negotiations from the basic NVT, of course -- collisions of data bytes with reserved command values will be minimized, all such collisions requiring the inconvenience, and",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "35cd2a167c787ccf40c4960ec2c6cacc",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                              [Page 13]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "4dd43bc8f2d115c260aef8ed60c6e8a9",
+    "text": "RFC 854                                                         May 1983",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "6b8ab44f3f7c7ccdbae773383cef5d1d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "inefficiency, of \"escaping\" the data bytes into the stream. With the current set-up, only the IAC need be doubled to be sent as data, and the other 255 codes may be passed transparently.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "a7484ca6f444b3994709e9f207d1a8d6",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The following are the defined TELNET commands. Note that these codes and code sequences have the indicated meaning only when immediately preceded by an IAC.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "bac724eef73a999323c2ad5fb44ba0f7",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "NAME               CODE              MEANING",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "057faab17e391f9807a6ea3959c59af6",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "SE                  240    End of subnegotiation parameters. NOP                 241    No operation. Data Mark           242    The data stream portion of a Synch. This should always be accompanied by a TCP Urgent notification. Break               243    NVT character BRK. Interrupt Process   244    The function IP. Abort output        245    The function AO. Are You There       246    The function AYT. Erase character     247    The function EC. Erase Line          248    The function EL. Go ahead            249    The GA signal. SB                  250    Indicates that what follows is subnegotiation of the indicated option. WILL (option code)  251    Indicates the desire to begin performing, or confirmation that you are now performing, the indicated option. WON'T (option code) 252    Indicates the refusal to perform, or continue performing, the indicated option. DO (option code)    253    Indicates the request that the other party perform, or confirmation that you are expecting the other party to perform, the indicated option. DON'T (option code) 254    Indicates the demand that the other party stop performing, or confirmation that you are no longer expecting the other party to perform, the indicated option. IAC                 255    Data Byte 255.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "baf04fc03397216bc5c2d23dfe7c0064",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Postel & Reynolds                                              [Page 14]",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "dbdbc9ccb4eb43f0662d1d4a6cf6cd95",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "RFC 854                                                         May 1983",
-    "type": "UncategorizedText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "097c45b5f63f4cb89bf6aaaf0b0b01cf",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "CONNECTION ESTABLISHMENT",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "095bace57e556e9593472dc61c06f87d",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "The TELNET TCP connection is established between the user's port U and the server's port L.  The server listens on its well known port L for such connections. Since a TCP connection is full duplex and identified by the pair of ports, the server can engage in many simultaneous connections involving its port L and different user ports U.",
-    "type": "NarrativeText"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "Title",
     "element_id": "e2055fcd19ec409f75983808ba39938c",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
-      "languages": [
-        "eng"
-      ]
-    },
     "text": "Port Assignment",
-    "type": "Title"
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "NarrativeText",
     "element_id": "32a28eece38f78c3654eea72baf30421",
+    "text": "When used for remote user access to service hosts (i.e., remote terminal access) this protocol is assigned server port 23 (27 octal). That is L=23.",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "When used for remote user access to service hosts (i.e., remote terminal access) this protocol is assigned server port 23 (27 octal). That is L=23.",
-    "type": "NarrativeText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   },
   {
+    "type": "UncategorizedText",
     "element_id": "be8601eddd5c41bf4b3fd7f60a7ba764",
+    "text": "Postel & Reynolds                                              [Page 15]",
     "metadata": {
-      "data_source": {
-        "date_created": "2023-03-10T09:55:50+00:00",
-        "date_modified": "2023-03-10T09:55:50+00:00",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "container1/rfc854.txt"
-        },
-        "url": "abfs://container1/rfc854.txt",
-        "version": "296132324119720228801627547314730835862"
-      },
-      "filetype": "text/plain",
       "languages": [
         "eng"
-      ]
-    },
-    "text": "Postel & Reynolds                                              [Page 15]",
-    "type": "UncategorizedText"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "url": "abfs://container1/rfc854.txt",
+        "version": "252402046838802114392575683859882596254",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678442150.0",
+        "date_modified": "1678442150.0"
+      }
+    }
   }
 ]

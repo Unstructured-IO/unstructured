@@ -1,3 +1,66 @@
+## 0.14.7-dev1
+
+### Enhancements
+
+* **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
+
+### Features
+
+### Fixes
+
+## 0.14.6
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.35** Fix syntax for generated HTML tables.
+
+### Features
+
+* **tqdm ingest support** add optional flag to ingest flow to print out progress bar of each step in the process.
+
+### Fixes
+
+* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.**. The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
+* **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
+* **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
+* **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
+* **Dropbox connector internal file path bugs** Dropbox source connector currently raises exceptions when indexing files due to two issues: a path formatting idiosyncrasy of the Dropbox library and a divergence in the definition of the Dropbox libraries fs.info method, expecting a 'url' parameter rather than 'path'.
+* **update table metric evaluation to handle corrected HTML syntax for tables** This change is connected to the update in [unstructured-inference change](https://github.com/Unstructured-IO/unstructured-inference/pull/355) - fixes transforming HTML table to deckerd and internal cells format.
+
+## 0.14.5
+
+### Enhancements
+
+* **Filtering for tar extraction** Adds tar filtering to the compression module for connectors to avoid decompression malicious content in `.tar.gz` files. This was added to the Python `tarfile` lib in Python 3.12. The change only applies when using Python 3.12 and above.
+* **Use `python-oxmsg` for `partition_msg()`.** Outlook MSG emails are now partitioned using the `python-oxmsg` package which resolves some shortcomings of the prior MSG parser.
+
+### Features
+
+### Fixes
+
+* **8-bit string Outlook MSG files are parsed.** `partition_msg()` is now able to parse non-unicode Outlook MSG emails.
+* **Attachments to Outlook MSG files are extracted intact.** `partition_msg()` is now able to extract attachments without corruption.
+
+## 0.14.4
+
+### Enhancements
+
+* **Move logger error to debug level when PDFminer fails to extract text** which includes error message for Invalid dictionary construct.
+* **Add support for Pinecone serverless** Adds Pinecone serverless to the connector tests. Pinecone
+    serverless will work version versions >=0.14.2, but hadn't been tested until now.
+
+### Features
+
+- **Allow configuration of the Google Vision API endpoint** Add an environment variable to select the Google Vision API in the US or the EU.
+
+### Fixes
+
+* **Address the issue of unrecognized tables in `UnstructuredTableTransformerModel`** When a table is not recognized, the `element.metadata.text_as_html` attribute is set to an empty string.
+* **Remove root handlers in ingest logger**. Removes root handlers in ingest loggers to ensure secrets aren't accidentally exposed in Colab notebooks.
+* **Fix V2 S3 Destination Connector authentication** Fixes bugs with S3 Destination Connector where the connection config was neither registered nor properly deserialized.
+* **Clarified dependence on particular version of `python-docx`** Pinned `python-docx` version to ensure a particular method `unstructured` uses is included.
+* **Ingest preserves original file extension** Ingest V2 introduced a change that dropped the original extension for upgraded connectors. This reverts that change.
+
 ## 0.14.3
 
 ### Enhancements
