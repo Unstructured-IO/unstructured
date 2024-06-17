@@ -63,8 +63,8 @@ def process_data_with_ocr(
     Returns:
         DocumentLayout: The merged layout information obtained after OCR processing.
     """
-    file_name = ''
-    with tempfile.NamedTemporaryFile(delete = False) as tmp_file:
+    file_name = ""
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         data_bytes = data if isinstance(data, bytes) else data.read()
         tmp_file.write(data_bytes)
         tmp_file.flush()
