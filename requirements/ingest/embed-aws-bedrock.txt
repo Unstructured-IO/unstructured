@@ -90,7 +90,7 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-orjson==3.10.4
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
@@ -130,7 +130,7 @@ sqlalchemy==2.0.30
     # via
     #   langchain
     #   langchain-community
-tenacity==8.3.0
+tenacity==8.4.1
     # via
     #   langchain
     #   langchain-community
