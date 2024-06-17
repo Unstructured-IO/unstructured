@@ -80,9 +80,9 @@ exceptiongroup==1.2.1
     #   anyio
 executing==2.0.1
     # via stack-data
-fastjsonschema==2.19.1
+fastjsonschema==2.20.0
     # via nbformat
-filelock==3.14.0
+filelock==3.15.1
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -137,7 +137,7 @@ jinja2==3.1.4
     #   nbconvert
 json5==0.9.25
     # via jupyterlab-server
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonschema
 jsonschema[format-nongpl]==4.22.0
     # via

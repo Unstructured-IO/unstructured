@@ -610,7 +610,15 @@ def add_metadata(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element
 def add_filetype(
     filetype: FileType,
 ) -> Callable[[Callable[_P, List[Element]]], Callable[_P, List[Element]]]:
-    """..."""
+    """Post-process element-metadata for list[Element] from partitioning.
+
+    This decorator adds a post-processing step to a document partitioner.
+
+    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
+    - Adds `.metadata.regex-metadata` when `regex_metadata` keyword-argument is provided.
+    - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
+
+    """
 
     def decorator(func: Callable[_P, List[Element]]) -> Callable[_P, List[Element]]:
         @functools.wraps(func)

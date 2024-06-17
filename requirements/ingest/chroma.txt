@@ -52,7 +52,7 @@ exceptiongroup==1.2.1
     # via anyio
 fastapi==0.110.3
     # via chromadb
-filelock==3.14.0
+filelock==3.15.1
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
@@ -72,7 +72,7 @@ h11==0.14.0
     # via uvicorn
 httptools==0.6.1
     # via uvicorn
-huggingface-hub==0.23.3
+huggingface-hub==0.23.4
     # via tokenizers
 humanfriendly==10.0
     # via coloredlogs
@@ -147,7 +147,7 @@ opentelemetry-util-http==0.46b0
     # via
     #   opentelemetry-instrumentation-asgi
     #   opentelemetry-instrumentation-fastapi
-orjson==3.10.3
+orjson==3.10.5
     # via chromadb
 overrides==7.7.0
     # via chromadb
@@ -172,7 +172,7 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   chromadb
     #   fastapi
@@ -219,7 +219,7 @@ starlette==0.37.2
     # via fastapi
 sympy==1.12.1
     # via onnxruntime
-tenacity==8.3.0
+tenacity==8.4.1
     # via chromadb
 tokenizers==0.19.1
     # via chromadb

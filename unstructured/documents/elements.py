@@ -560,10 +560,12 @@ def assign_and_map_hash_ids(elements: list[Element]) -> list[Element]:
 def process_metadata() -> Callable[[Callable[_P, list[Element]]], Callable[_P, list[Element]]]:
     """Post-process element-metadata for this document.
 
-    This decorator adds a post-processing step to a document partitioner. It adds documentation for
-    `metadata_filename` and `include_metadata` parameters if not present. Also adds regex-metadata
-    when `regex_metadata` keyword-argument is provided and changes the element-id to a UUID when
-    `unique_element_ids` argument is provided and True.
+    This decorator adds a post-processing step to a document partitioner.
+
+    - Adds `metadata_filename` and `include_metadata` parameters to docstring if not present.
+    - Adds `.metadata.regex-metadata` when `regex_metadata` keyword-argument is provided.
+    - Updates element.id to a UUID when `unique_element_ids` argument is provided and True.
+
     """
 
     def decorator(func: Callable[_P, list[Element]]) -> Callable[_P, list[Element]]:

@@ -12,7 +12,7 @@ runs:
   using: "composite"
   steps:
     - name: Check for/restore ingest cache
-      uses: actions/cache/restore@v3
+      uses: actions/cache/restore@v4
       id: ingest-virtualenv-cache-restore
       with:
         path: |
@@ -40,7 +40,7 @@ runs:
     - name: Save Ingest Cache
       if: steps.ingest-virtualenv-cache-restore.outputs.cache-hit != 'true'
       id: ingest-virtualenv-cache-save
-      uses: actions/cache/save@v3
+      uses: actions/cache/save@v4
       with:
         path: |
           .venv

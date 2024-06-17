@@ -57,7 +57,7 @@ protobuf==4.23.4
     #   grpcio-tools
 pycparser==2.22
     # via cffi
-pydantic==2.7.3
+pydantic==2.7.4
     # via weaviate-client
 pydantic-core==2.18.4
     # via pydantic
