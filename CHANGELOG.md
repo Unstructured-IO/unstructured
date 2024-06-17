@@ -1,6 +1,18 @@
-## 0.14.6-dev7
+## 0.14.7-dev1
 
 ### Enhancements
+
+* **Pull from `wolfi-base` image.** The amd64 image now pulls from the `unstructured` `wolfi-base` image to avoid duplication of dependency setup steps.
+
+### Features
+
+### Fixes
+
+## 0.14.6
+
+### Enhancements
+
+* **Bump unstructured-inference==0.7.35** Fix syntax for generated HTML tables.
 
 ### Features
 

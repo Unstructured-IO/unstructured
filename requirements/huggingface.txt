@@ -17,7 +17,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   sacremoses
-filelock==3.14.0
+filelock==3.15.1
     # via
     #   huggingface-hub
     #   torch
@@ -27,7 +27,7 @@ fsspec==2024.5.0
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.23.3
+huggingface-hub==0.23.4
     # via
     #   tokenizers
     #   transformers

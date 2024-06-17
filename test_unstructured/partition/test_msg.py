@@ -148,11 +148,11 @@ def test_partition_msg_can_process_attachments():
         "Data Scientist",
     ]
     assert [type(e).__name__ for e in elements][:10] == [
-        "HTMLNarrativeText",
-        "HTMLText",
-        "HTMLTitle",
-        "HTMLTitle",
-        "HTMLTitle",
+        "NarrativeText",
+        "Text",
+        "Title",
+        "Title",
+        "Title",
         "Image",
         "Title",
         "Text",

@@ -116,7 +116,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        TESSERACT_VERSION : "5.3.4"
+        TESSERACT_VERSION : "5.4.1"
       run: |
         source .venv/bin/activate
         sudo apt-get update
