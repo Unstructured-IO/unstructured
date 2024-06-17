@@ -77,10 +77,6 @@ class AzureIndexer(FsspecIndexer):
     index_config: AzureIndexerConfig
     connector_type: str = CONNECTOR_TYPE
 
-    @requires_dependencies(["adlfs", "fsspec"], extras="azure")
-    def __post_init__(self):
-        super().__post_init__()
-
     def sterilize_info(self, path) -> dict:
         info = self.fs.info(path=path)
         return sterilize_dict(data=info, default=azure_json_serial)
@@ -101,10 +97,6 @@ class AzureDownloader(FsspecDownloader):
     connection_config: AzureConnectionConfig
     connector_type: str = CONNECTOR_TYPE
     download_config: Optional[AzureDownloaderConfig] = field(default_factory=AzureDownloaderConfig)
-
-    @requires_dependencies(["adlfs", "fsspec"], extras="azure")
-    def __post_init__(self):
-        super().__post_init__()
 
     @requires_dependencies(["adlfs", "fsspec"], extras="azure")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:

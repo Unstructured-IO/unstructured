@@ -78,7 +78,7 @@ class PipelineStep(ABC):
                 return self.process_serially(iterable)
             with mp.Pool(
                 processes=self.context.num_processes,
-                initializer=self._set_log_level,
+                initializer=self._init_logger,
                 initargs=(logging.DEBUG if self.context.verbose else logging.INFO,),
             ) as pool:
                 if self.context.tqdm:
@@ -96,9 +96,9 @@ class PipelineStep(ABC):
         # Allow mapping of kwargs via multiprocessing map()
         return self.run(**input_kwargs)
 
-    def _set_log_level(self, log_level: int):
-        # Set the log level for each spawned process when using multiprocessing pool
-        make_default_logger(log_level)
+    def _init_logger(self, log_level: int):
+        # Init logger for each spawned process when using multiprocessing pool
+        make_default_logger(level=log_level)
 
     @timed
     def __call__(self, iterable: Optional[iterable_input] = None) -> Any:
