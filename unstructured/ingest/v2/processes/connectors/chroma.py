@@ -29,7 +29,7 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    pass
+    from chromadb import Collection as ChromaCollection
 
 
 import typing as t
@@ -138,7 +138,7 @@ class ChromaUploadStager(UploadStager):
 
     @classmethod
     def normalize_dict(cls, data: dict) -> dict:
-        """ 
+        """
         Prepares dictionary in the format that Chroma requires
         """
         element_id = data.get("element_id", str(uuid.uuid4()))
