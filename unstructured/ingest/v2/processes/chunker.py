@@ -48,6 +48,8 @@ class Chunker(BaseProcess, ABC):
 
     def run(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         elements = elements_from_json(filename=str(elements_filepath))
+        if not elements:
+            return elements
         local_chunking_strategies = ("basic", "by_title")
         if self.config.chunking_strategy not in local_chunking_strategies:
             logger.warning(

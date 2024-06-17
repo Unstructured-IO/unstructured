@@ -70,4 +70,6 @@ class Embedder(BaseProcess, ABC):
         # TODO update base embedder classes to support async
         embedder = self.config.get_embedder()
         elements = elements_from_json(filename=str(elements_filepath))
+        if not elements:
+            return elements
         return embedder.embed_documents(elements=elements)

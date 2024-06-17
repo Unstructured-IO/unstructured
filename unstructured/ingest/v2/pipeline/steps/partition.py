@@ -66,8 +66,6 @@ class PartitionStep(PipelineStep):
                 partitioned_content = await fn(**fn_kwargs)
         else:
             partitioned_content = await fn(**fn_kwargs)
-        if not partitioned_content:
-            return None
         self._save_output(
             output_filepath=str(output_filepath), partitioned_content=partitioned_content
         )
