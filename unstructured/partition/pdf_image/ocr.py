@@ -69,7 +69,7 @@ def process_data_with_ocr(
         tmp_file.write(data_bytes)
         tmp_file.flush()
         file_name = tmp_file.name
-    
+
     try:
         merged_layouts = process_file_with_ocr(
             filename=file_name,
@@ -84,7 +84,7 @@ def process_data_with_ocr(
     finally:
         if os.path.isfile(file_name):
             os.remove(file_name)
-        
+
     return merged_layouts
 
 
