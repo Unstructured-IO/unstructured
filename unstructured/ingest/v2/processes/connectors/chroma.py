@@ -137,7 +137,10 @@ class ChromaUploadStager(UploadStager):
             data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
 
     @classmethod
-    def normalize_dict(cls, data: dict) -> None:
+    def normalize_dict(cls, data: dict) -> dict:
+        """ 
+        Prepares dictionary in the format that Chroma requires
+        """
         element_id = data.get("element_id", str(uuid.uuid4()))
         return {
             "id": element_id,
@@ -177,7 +180,6 @@ class ChromaUploaderConfig(UploaderConfig):
 class ChromaUploader(Uploader):
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
-    # client: Optional["Client"] = field(init=False)
     _collection: Optional["ChromaCollection"] = None
 
     def __post_init__(self):
@@ -186,7 +188,7 @@ class ChromaUploader(Uploader):
     def is_async(self) -> bool:
         return False
 
-    # @requires_dependencies(["chromadb"], extras="chroma")
+    @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self) -> "ChromaCollection":
         import chromadb
 
@@ -217,7 +219,6 @@ class ChromaUploader(Uploader):
         return collection
 
     @DestinationConnectionError.wrap
-    @requires_dependencies(["chromadb"], extras="chroma")
     def upsert_batch(self, batch):
         collection = self._collection
 
@@ -254,13 +255,9 @@ class ChromaUploader(Uploader):
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
 
         elements_dict = []
-        # lets add normalized dicts
         for content in contents:
             with open(content.path) as elements_file:
-                # load a list of elements
                 elements = json.load(elements_file)
-                # normalize dict for them
-                # normalized_elements = [self.normalize_dict(x) for x in elements]
                 elements_dict.extend(elements)
 
         logger.info(
