@@ -28,7 +28,6 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
     from elasticsearch import Elasticsearch as ElasticsearchClient
 
 CONNECTOR_TYPE = "elasticsearch"
@@ -76,12 +75,6 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
 
         return ElasticsearchClient(**self.get_client_kwargs())
 
-    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    def get_async_client(self) -> "AsyncElasticsearchClient":
-        from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
-
-        return AsyncElasticsearchClient(**self.get_client_kwargs())
-
 
 @dataclass
 class ElasticsearchIndexerConfig(IndexerConfig):
@@ -94,6 +87,7 @@ class ElasticsearchIndexer(Indexer):
     connection_config: ElasticsearchConnectionConfig
     index_config: ElasticsearchIndexerConfig
     client: "ElasticsearchClient" = field(init=False)
+    connector_type: str = CONNECTOR_TYPE
 
     def __post_init__(self):
         self.client = self.connection_config.get_client()
@@ -154,13 +148,10 @@ class ElasticsearchDownloaderConfig(DownloaderConfig):
 class ElasticsearchDownloader(Downloader):
     connection_config: ElasticsearchConnectionConfig
     download_config: ElasticsearchDownloaderConfig
-    client: "AsyncElasticsearchClient" = field(init=False)
+    connector_type: str = CONNECTOR_TYPE
 
     def is_async(self) -> bool:
         return True
-
-    def __post_init__(self):
-        self.client = self.connection_config.get_async_client()
 
     def get_identifier(self, index_name: str, record_id: str) -> str:
         f = f"{index_name}-{record_id}"
@@ -184,7 +175,7 @@ class ElasticsearchDownloader(Downloader):
         record_id = result["_id"]
         filename_id = self.get_identifier(index_name=index_name, record_id=record_id)
         filename = f"{filename_id}.txt"
-        download_path = self.download_config.download_dir / Path(filename)
+        download_path = self.download_dir / Path(filename)
         logger.debug(
             f"Downloading results from index {index_name} and id {record_id} to {download_path}"
         )
@@ -219,7 +210,9 @@ class ElasticsearchDownloader(Downloader):
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         raise NotImplementedError()
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        from elasticsearch import AsyncElasticsearch as AsyncElasticsearchClient
         from elasticsearch.helpers import async_scan
 
         index_name: str = file_data.additional_metadata["index_name"]
@@ -232,17 +225,18 @@ class ElasticsearchDownloader(Downloader):
         }
 
         download_responses = []
-        async for result in async_scan(
-            self.client,
-            query=scan_query,
-            scroll="1m",
-            index=index_name,
-        ):
-            download_responses.append(
-                self.generate_download_response(
-                    result=result, index_name=index_name, file_data=file_data
+        async with AsyncElasticsearchClient(**self.connection_config.get_client_kwargs()) as client:
+            async for result in async_scan(
+                client,
+                query=scan_query,
+                scroll="1m",
+                index=index_name,
+            ):
+                download_responses.append(
+                    self.generate_download_response(
+                        result=result, index_name=index_name, file_data=file_data
+                    )
                 )
-            )
         return download_responses
 
 
