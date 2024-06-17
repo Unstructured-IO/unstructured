@@ -37,7 +37,7 @@ coverage[toml]==7.5.3
     #   pytest-cov
 exceptiongroup==1.2.1
     # via pytest
-flake8==7.0.0
+flake8==7.1.0
     # via
     #   -r ./test.in
     #   flake8-print
@@ -92,7 +92,7 @@ platformdirs==3.10.0
     #   black
 pluggy==1.5.0
     # via pytest
-pycodestyle==2.11.1
+pycodestyle==2.12.0
     # via
     #   flake8
     #   flake8-print
@@ -132,7 +132,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-ruff==0.4.8
+ruff==0.4.9
     # via -r ./test.in
 six==1.16.0
     # via
