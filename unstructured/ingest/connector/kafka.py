@@ -1,5 +1,4 @@
 import base64
-import itertools
 import json
 import socket
 import typing as t
@@ -22,6 +21,7 @@ from unstructured.ingest.interfaces import (
     WriteConfig,
 )
 from unstructured.ingest.logger import logger
+from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -179,7 +179,6 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
                 collected.append(json.loads(msg.value().decode("utf8")))
                 if len(collected) >= num_messages_to_consume:
                     logger.debug(f"Found {len(collected)} messages, stopping")
-                    running = False
                     consumer.commit(asynchronous=False)
                     break
 
@@ -197,8 +196,7 @@ class KafkaSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
 
 @dataclass
 class KafkaWriteConfig(WriteConfig):
-    batch_size: int = 50
-    num_processes: int = 1
+    batch_size: int = 4
 
 
 @dataclass
@@ -255,18 +253,18 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
             logger.error(f"failed to validate connection: {e}", exc_info=True)
             raise DestinationConnectionError(f"failed to validate connection: {e}")
 
-    @staticmethod
-    def chunks(iterable, batch_size=100):
-        """A helper function to break an iterable into chunks of size batch_size."""
-        it = iter(iterable)
-        chunk = tuple(itertools.islice(it, batch_size))
-        while chunk:
-            yield chunk
-            chunk = tuple(itertools.islice(it, batch_size))
+    # @staticmethod
+    # def chunks(iterable, batch_size=100):
+    #     """A helper function to break an iterable into chunks of size batch_size."""
+    #     it = iter(iterable)
+    #     chunk = tuple(itertools.islice(it, batch_size))
+    #     while chunk:
+    #         yield chunk
+    #         chunk = tuple(itertools.islice(it, batch_size))
 
     @DestinationConnectionError.wrap
     def upload_msg(self, batch) -> int:
-        logger.debug(f"Uploding batch: {batch}")
+        logger.debug(f"Uploading batch: {batch}")
         topic = self.connector_config.topic
         producer = self.kafka_producer
         uploaded = 0
@@ -279,19 +277,9 @@ class KafkaDestinationConnector(IngestDocSessionHandleMixin, BaseDestinationConn
     @DestinationConnectionError.wrap
     def write_dict(self, *args, dict_list: t.List[t.Dict[str, t.Any]], **kwargs) -> None:
         logger.info(f"Writing {len(dict_list)} documents to Kafka")
-        BATCH_SIZE = 4
         num_uploaded = 0
 
-        """
-        if self.write_config.num_processes == 1:
-           #self.upload_msg("asdf")
-           for chunk in self.chunks(dict_list, BATCH_SIZE):
-                num_uploaded += self.upload_msg(chunk)  # noqa: E203
-        else:
-            with mp.Pool(processes=self.write_config.num_processes) as pool:
-                pool.map(self.upload_msg, list(self.chunks(dict_list, BATCH_SIZE)))
-        """
-        for chunk in self.chunks(dict_list, BATCH_SIZE):
+        for chunk in chunk_generator(dict_list, self.write_config.batch_size):
             num_uploaded += self.upload_msg(chunk)  # noqa: E203
 
         producer = self.kafka_producer

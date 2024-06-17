@@ -74,15 +74,9 @@ class KafkaCliWriteConfig(KafkaWriteConfig, CliConfig):
         options = [
             click.Option(
                 ["--batch-size"],
-                default=50,
+                default=4,
                 type=int,
                 help="Number of records per batch",
-            ),
-            click.Option(
-                ["--num-processes"],
-                default=1,
-                type=int,
-                help="Number of parallel processes with which to upload elements",
             ),
         ]
         return options

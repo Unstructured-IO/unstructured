@@ -54,7 +54,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   kafka \
   --topic "$KAFKA_TOPIC" \
   --bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
-  --num-processes "$writer_processes" \
   --port 29092 \
   --confluent false
 
