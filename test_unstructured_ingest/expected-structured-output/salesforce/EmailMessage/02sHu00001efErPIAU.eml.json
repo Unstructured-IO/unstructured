@@ -69,7 +69,7 @@
       "subject": "Test of email 1"
     },
     "text": "Powered by Salesforce",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
     "element_id": "07a4a605bad4cb7206377108a949ce59",
@@ -93,6 +93,6 @@
       "subject": "Test of email 1"
     },
     "text": "http://www.salesforce.com/",
-    "type": "Title"
+    "type": "UncategorizedText"
   }
 ]

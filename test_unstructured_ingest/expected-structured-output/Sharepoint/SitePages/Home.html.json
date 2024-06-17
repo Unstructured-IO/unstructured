@@ -1,6 +1,28 @@
 [
   {
-    "element_id": "f346c0d677012f9d4265678f9626c829",
+    "element_id": "650d1142443f98497ae853098e246c86",
+    "metadata": {
+      "data_source": {
+        "date_created": "0001-01-01T08:00:00Z",
+        "date_modified": "2023-06-16T05:12:51Z",
+        "record_locator": {
+          "server_path": "SitePages/Home.aspx",
+          "site_url": "https://unstructuredio.sharepoint.com"
+        },
+        "url": "https://unstructuredio.sharepoint.com/SitePages/Home.aspx",
+        "version": "1.2"
+      },
+      "filename": "Home.html",
+      "filetype": "text/html",
+      "languages": [
+        "eng"
+      ]
+    },
+    "text": "\",\"language\":\"en-us\"},\"containsDynamicDataSource\":false}\">",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "21a6870fa18bc6fee21eb640a7ac0c3a",
     "metadata": {
       "data_source": {
         "date_created": "0001-01-01T08:00:00Z",
@@ -19,10 +41,10 @@
       ]
     },
     "text": "Documents",
-    "type": "Title"
+    "type": "UncategorizedText"
   },
   {
-    "element_id": "fea3bac751e7273dfe57b271fe9dd22b",
+    "element_id": "a006193d817847842c8333b5d8e1a994",
     "metadata": {
       "data_source": {
         "date_created": "0001-01-01T08:00:00Z",
@@ -41,6 +63,6 @@
       ]
     },
     "text": "Events",
-    "type": "Title"
+    "type": "UncategorizedText"
   }
 ]
