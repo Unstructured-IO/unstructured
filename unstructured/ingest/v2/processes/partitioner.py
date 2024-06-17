@@ -21,7 +21,7 @@ class PartitionerConfig(EnhancedDataClassJsonMixin):
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
-    additional_partition_args: dict[str, Any] = field(default_factory=dict)
+    additional_partition_args: Optional[dict[str, Any]] = None
     skip_infer_table_types: Optional[list[str]] = None
     fields_include: list[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],

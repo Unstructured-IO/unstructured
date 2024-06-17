@@ -51,7 +51,7 @@ class PartitionStep(PipelineStep):
 
     async def _run_async(
         self, fn: Callable, path: str, file_data_path: str
-    ) -> PartitionStepResponse:
+    ) -> Optional[PartitionStepResponse]:
         path = Path(path)
         file_data = FileData.from_file(path=file_data_path)
         output_filepath = self.get_output_filepath(filename=Path(file_data_path))
@@ -66,6 +66,8 @@ class PartitionStep(PipelineStep):
                 partitioned_content = await fn(**fn_kwargs)
         else:
             partitioned_content = await fn(**fn_kwargs)
+        if not partitioned_content:
+            return None
         self._save_output(
             output_filepath=str(output_filepath), partitioned_content=partitioned_content
         )
