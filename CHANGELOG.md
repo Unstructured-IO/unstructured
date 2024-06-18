@@ -1,4 +1,4 @@
-## 0.14.7-dev3
+## 0.14.7-dev4
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 * **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
 
 ### Features
+
+* **Enhanced analysis features in PDF pipeline** Adds dumps of bboxes visualization for each layout and OD model bboxes dump as JSON.
 
 ### Fixes
 
