@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "304a2118c16f40aaa72398eb7e4fe5b0",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "2"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "5582d78d3be8d660dc39830d4dc9256f",
+    "text": "Unknown",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "2"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5ee24dbcfbf63d973b671a46a2fd2d2e",
+    "text": "Before heading out to a baseball game at a nearby ballpark, sports fan Mr. Brown drinks several highball cocktails. He arrives at the ballpark to watch the game, but has become so inebriated that the game appears to him in reverse, with the players running the bases backwards and the baseball flying back into the pitcher's hand. After the game is over, Mr. Brown is escorted home by one of his friends. When they arrive at Brown's house, they encounter his wife who becomes furious with the friend and proceeds to physically assault him, believing he is responsible for her husband's severe intoxication. [1]",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "2"
+        }
+      }
+    }
+  }
+]

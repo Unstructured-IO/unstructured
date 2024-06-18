@@ -32,7 +32,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.14.0
+filelock==3.15.1
     # via
     #   huggingface-hub
     #   torch
@@ -64,7 +64,7 @@ grpcio==1.64.1
     #   grpcio-status
 grpcio-status==1.62.2
     # via google-api-core
-huggingface-hub==0.23.3
+huggingface-hub==0.23.4
     # via
     #   timm
     #   tokenizers
@@ -150,7 +150,7 @@ pdfminer-six==20231228
     # via
     #   -r ./extra-pdf-image.in
     #   pdfplumber
-pdfplumber==0.11.0
+pdfplumber==0.11.1
     # via layoutparser
 pikepdf==9.0.0
     # via -r ./extra-pdf-image.in
@@ -189,7 +189,7 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-pycocotools==2.0.7
+pycocotools==2.0.8
     # via
     #   -c ././deps/constraints.txt
     #   effdet
@@ -287,7 +287,7 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.33
+unstructured-inference==0.7.35
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via

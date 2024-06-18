@@ -1272,7 +1272,8 @@ def test_partition_image_with_bmp_with_auto(
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 1
-    assert "<table><thead><th>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
 
 
 def test_auto_partition_eml_add_signature_to_metadata():

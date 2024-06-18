@@ -6,7 +6,7 @@ from typing import Any, Generator, Optional, Union
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.utils.string_and_date_utils import json_to_dict
-from unstructured.ingest.v2.interfaces import FileData, UploadContent
+from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -79,10 +79,6 @@ class GcsIndexer(FsspecIndexer):
     connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         return super().run(**kwargs)
 
@@ -100,15 +96,11 @@ class GcsDownloader(FsspecDownloader):
     download_config: Optional[GcsDownloaderConfig] = field(default_factory=GcsDownloaderConfig)
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return await super().run_async(file_data=file_data, **kwargs)
 
 

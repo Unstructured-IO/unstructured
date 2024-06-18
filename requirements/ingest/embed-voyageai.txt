@@ -40,7 +40,7 @@ idna==3.7
     #   yarl
 jsonpatch==1.33
     # via langchain-core
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.3
     # via -r ./ingest/embed-voyageai.in
@@ -68,14 +68,14 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   voyageai
-orjson==3.10.3
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   langchain
     #   langchain-core
@@ -94,7 +94,7 @@ requests==2.32.3
     #   voyageai
 sqlalchemy==2.0.30
     # via langchain
-tenacity==8.3.0
+tenacity==8.4.1
     # via
     #   langchain
     #   langchain-core

@@ -1,0 +1,65 @@
+[
+  {
+    "type": "Title",
+    "element_id": "a41a129d5d7ec934283100f0bb3085c4",
+    "text": "American",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "3"
+        }
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8881a4bd8e4472dd16a594511512caae",
+    "text": "Edwin Stanton Porter",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "3"
+        }
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "30a44c977d9cfa13e44ecc89283747be",
+    "text": "The plot is that of a black woman going to the dentist for a toothache and being given laughing gas. On her way walking home, and in other situations, she can't stop laughing, and everyone she meets \"catches\" the laughter from her, including a vendor and police officers.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "version": "1",
+        "record_locator": {
+          "hosts": [
+            "http://localhost:9200"
+          ],
+          "index_name": "movies",
+          "document_id": "3"
+        }
+      }
+    }
+  }
+]

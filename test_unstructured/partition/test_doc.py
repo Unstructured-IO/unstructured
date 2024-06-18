@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import os
 import pathlib
-import tempfile
 from typing import Any
 
 import pytest
@@ -32,13 +30,8 @@ from unstructured.documents.elements import (
 from unstructured.partition.doc import partition_doc
 from unstructured.partition.docx import partition_docx
 
-is_in_docker = os.path.exists("/.dockerenv")
-
 
 def test_partition_doc_matches_partition_docx(request: FixtureRequest):
-    # NOTE(robinson) - was having issues with the tempfile not being found in the docker tests
-    if is_in_docker:
-        request.applymarker(pytest.mark.xfail)
     doc_file_path = example_doc_path("simple.doc")
     docx_file_path = example_doc_path("simple.docx")
 
@@ -139,11 +132,10 @@ def test_partition_doc_from_file_prefers_metadata_filename_when_provided():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_doc_from_filename_pulls_last_modified_from_filesystem(mocker: MockFixture):
+def test_partition_doc_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date",
-        return_value=filesystem_last_modified,
+        "unstructured.partition.doc.get_last_modified", return_value=filesystem_last_modified
     )
 
     elements = partition_doc(example_doc_path("fake.doc"))
@@ -151,73 +143,18 @@ def test_partition_doc_from_filename_pulls_last_modified_from_filesystem(mocker:
     assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_doc_from_filename_prefers_metadata_last_modified_when_provided(
+def test_partition_doc_prefers_metadata_last_modified_when_provided(
     mocker: MockFixture,
 ):
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
+        "unstructured.partition.doc.get_last_modified", return_value=filesystem_last_modified
     )
 
     elements = partition_doc(
         example_doc_path("simple.doc"), metadata_last_modified=metadata_last_modified
     )
-
-    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
-
-
-def test_partition_doc_from_file_suppresses_last_modified_from_file_by_default(mocker: MockFixture):
-    modified_date_on_file = "2029-07-05T09:24:28"
-    mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=modified_date_on_file,
-    )
-
-    with open(example_doc_path("simple.doc"), "rb") as f:
-        elements = partition_doc(file=f)
-
-    assert all(e.metadata.last_modified is None for e in elements)
-
-
-def test_partition_doc_from_file_pulls_last_modified_from_file_when_date_from_file_obj_arg_is_True(
-    mocker: MockFixture,
-):
-    modified_date_on_file = "2024-05-01T09:24:28"
-    mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=modified_date_on_file,
-    )
-
-    with open(example_doc_path("simple.doc"), "rb") as f:
-        elements = partition_doc(file=f, date_from_file_object=True)
-
-    assert all(e.metadata.last_modified == modified_date_on_file for e in elements)
-
-
-def test_partition_doc_from_file_gets_None_last_modified_when_file_has_no_last_modified():
-    with open(example_doc_path("simple.doc"), "rb") as f:
-        sf = tempfile.SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_doc(file=sf, date_from_file_object=True)
-
-    assert all(e.metadata.last_modified is None for e in elements)
-
-
-def test_partition_doc_from_file_prefers_metadata_last_modified_when_provided(mocker: MockFixture):
-    """Even when `date_from_file_object` arg is `True`."""
-    last_modified_on_file = "2029-07-05T09:24:28"
-    metadata_last_modified = "2020-07-05T09:24:28"
-    mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date_from_file",
-        return_value=last_modified_on_file,
-    )
-
-    with open(example_doc_path("simple.doc"), "rb") as f:
-        elements = partition_doc(
-            file=f, metadata_last_modified=metadata_last_modified, date_from_file_object=True
-        )
 
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 

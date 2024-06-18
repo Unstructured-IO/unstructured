@@ -61,7 +61,7 @@ idna==3.7
     #   yarl
 jsonpatch==1.33
     # via langchain-core
-jsonpointer==2.4
+jsonpointer==3.0.0
     # via jsonpatch
 langchain==0.2.3
     # via langchain-community
@@ -98,9 +98,9 @@ numpy==1.26.4
     #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
-openai==1.33.0
+openai==1.34.0
     # via -r ./ingest/embed-openai.in
-orjson==3.10.3
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
@@ -108,7 +108,7 @@ packaging==23.2
     #   -c ./ingest/../deps/constraints.txt
     #   langchain-core
     #   marshmallow
-pydantic==2.7.3
+pydantic==2.7.4
     # via
     #   langchain
     #   langchain-core
@@ -141,7 +141,7 @@ sqlalchemy==2.0.30
     # via
     #   langchain
     #   langchain-community
-tenacity==8.3.0
+tenacity==8.4.1
     # via
     #   langchain
     #   langchain-community

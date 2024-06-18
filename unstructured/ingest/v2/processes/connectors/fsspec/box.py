@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Generator, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.v2.interfaces import FileData, UploadContent
+from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -69,10 +69,6 @@ class BoxIndexer(FsspecIndexer):
     connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["boxfs"], extras="box")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["boxfs"], extras="box")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         return super().run(**kwargs)
 
@@ -90,15 +86,11 @@ class BoxDownloader(FsspecDownloader):
     download_config: Optional[BoxDownloaderConfig] = field(default_factory=BoxDownloaderConfig)
 
     @requires_dependencies(["boxfs"], extras="box")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["boxfs"], extras="box")
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["boxfs"], extras="box")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return await super().run_async(file_data=file_data, **kwargs)
 
 

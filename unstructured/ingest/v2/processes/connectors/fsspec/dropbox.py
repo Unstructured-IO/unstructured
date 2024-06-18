@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Generator, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.v2.interfaces import FileData, UploadContent
+from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -22,6 +22,7 @@ from unstructured.ingest.v2.processes.connectors.fsspec.fsspec import (
     FsspecUploader,
     FsspecUploaderConfig,
 )
+from unstructured.ingest.v2.processes.connectors.fsspec.utils import sterilize_dict
 from unstructured.utils import requires_dependencies
 
 CONNECTOR_TYPE = "dropbox"
@@ -54,11 +55,19 @@ class DropboxIndexer(FsspecIndexer):
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def __post_init__(self):
-        super().__post_init__()
+        # dropbox expects the path to start with a /
+        if not self.index_config.path_without_protocol.startswith("/"):
+            self.index_config.path_without_protocol = "/" + self.index_config.path_without_protocol
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         return super().run(**kwargs)
+
+    def sterilize_info(self, path) -> dict:
+        # the fs.info method defined in the dropboxdrivefs library expects a "url"
+        # kwarg rather than "path"; though both refer to the same thing
+        info = self.fs.info(url=path)
+        return sterilize_dict(data=info)
 
 
 @dataclass
@@ -76,15 +85,11 @@ class DropboxDownloader(FsspecDownloader):
     )
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return await super().run_async(file_data=file_data, **kwargs)
 
 

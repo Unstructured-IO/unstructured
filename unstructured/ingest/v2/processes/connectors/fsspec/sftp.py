@@ -7,7 +7,7 @@ from typing import Any, Generator, Optional
 from urllib.parse import urlparse
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.v2.interfaces import FileData, UploadContent
+from unstructured.ingest.v2.interfaces import DownloadResponse, FileData, UploadContent
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -80,7 +80,6 @@ class SftpIndexer(FsspecIndexer):
         parsed_url = urlparse(self.index_config.remote_url)
         self.connection_config.host = parsed_url.hostname or self.connection_config.host
         self.connection_config.port = parsed_url.port or self.connection_config.port
-        super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
@@ -120,14 +119,13 @@ class SftpDownloader(FsspecDownloader):
         parsed_url = urlparse(self.download_config.remote_url)
         self.connection_config.host = parsed_url.hostname or self.connection_config.host
         self.connection_config.port = parsed_url.port or self.connection_config.port
-        super().__post_init__()
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return super().run(file_data=file_data, **kwargs)
 
     @requires_dependencies(["paramiko", "fsspec"], extras="sftp")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:
         return await super().run_async(file_data=file_data, **kwargs)
 
 
