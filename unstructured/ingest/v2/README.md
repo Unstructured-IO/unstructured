@@ -127,3 +127,8 @@ because if enabling async, that code will be run in a single process with the as
 with a multiprocessing pool fan out. If the underlying code is completely blocking but the async flag is enabled, this will run as if it's a normal for loop and will get worse performance
 than is simply run via multiprocessing. One option to help support IO heavy tasks that might not support async yet is wrapping it in a `run_in_executor()` call. Otherwise, it is common that
 the underlying SDKs have an async version to run the same network calls without blocking the event loop.
+
+
+# Creating V2 Connectors
+
+As compared to V1 connectors, V2 has a few more steps. Most notably the Index and Download steps have been separated. Also there is a Staging step that saves the documents in a format that is ready to 
