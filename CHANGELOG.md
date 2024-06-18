@@ -1,4 +1,4 @@
-## 0.14.7-dev3
+## 0.14.7-dev4
 
 ### Enhancements
 
@@ -6,6 +6,8 @@
 * **Fix windows temp file.** Make the creation of a temp file in unstructured/partition/pdf_image/ocr.py windows compatible.
 
 ### Features
+
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
 
 ### Fixes
 
