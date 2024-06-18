@@ -1,21 +1,27 @@
+import io
 import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Generator, Optional, Union
 
 from dateutil import parser
 
 from unstructured.documents.elements import DataSourceMetadata
+from unstructured.file_utils.google_filetype import GOOGLE_DRIVE_EXPORT_TYPES
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.error import SourceConnectionNetworkError
 from unstructured.ingest.utils.string_and_date_utils import json_to_dict
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
+    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
     SourceIdentifiers,
+    download_responses,
 )
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
@@ -27,7 +33,8 @@ from unstructured.utils import requires_dependencies
 CONNECTOR_TYPE = "google_drive"
 
 if TYPE_CHECKING:
-    from googleapiclient.discovery import Resource
+    from googleapiclient.discovery import Resource as GoogleAPIResource
+    from googleapiclient.http import MediaIoBaseDownload
 
 
 @dataclass
@@ -41,7 +48,7 @@ class GoogleDriveConnectionConfig(ConnectionConfig):
     access_config: GoogleDriveAccessConfig = enhanced_field(sensitive=True)
 
     @requires_dependencies(["googleapiclient"], extras="google-drive")
-    def get_files_service(self) -> "Resource":
+    def get_files_service(self) -> "GoogleAPIResource":
         from google.auth import default, exceptions
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
@@ -147,7 +154,7 @@ class GoogleDriveIndexer(Indexer):
         else:
             source_identifiers = SourceIdentifiers(fullpath=filename, filename=filename)
         return FileData(
-            connector_type="google_drive",
+            connector_type=CONNECTOR_TYPE,
             identifier=file_id,
             source_identifiers=source_identifiers,
             metadata=DataSourceMetadata(
@@ -262,7 +269,80 @@ class GoogleDriveDownloaderConfig(DownloaderConfig):
 @dataclass
 class GoogleDriveDownloader(Downloader):
     connection_config: GoogleDriveConnectionConfig
-    download_config: GoogleDriveDownloaderConfig
+    download_config: GoogleDriveDownloaderConfig = field(
+        default_factory=lambda: GoogleDriveDownloaderConfig()
+    )
+    connector_type: str = CONNECTOR_TYPE
+
+    def get_download_path(self, file_data: FileData) -> Path:
+        rel_path = file_data.source_identifiers.relative_path
+        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+        return self.download_dir / Path(rel_path)
+
+    @SourceConnectionNetworkError.wrap
+    def _get_content(self, downloader: "MediaIoBaseDownload") -> bool:
+        downloaded = False
+        while downloaded is False:
+            _, downloaded = downloader.next_chunk()
+        return downloaded
+
+    @staticmethod
+    def is_float(value: str):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def _write_file(self, file_data: FileData, file_contents: io.BytesIO):
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.info(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
+        with open(download_path, "wb") as handler:
+            handler.write(file_contents.getbuffer())
+        if (
+            file_data.metadata.date_modified
+            and self.is_float(file_data.metadata.date_modified)
+            and file_data.metadata.date_created
+            and self.is_float(file_data.metadata.date_created)
+        ):
+            date_modified = float(file_data.metadata.date_modified)
+            date_created = float(file_data.metadata.date_created)
+            os.utime(download_path, times=(date_created, date_modified))
+        return DownloadResponse(file_data=file_data, path=download_path)
+
+    @requires_dependencies(["googleapiclient"], extras="google-drive")
+    def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
+        from googleapiclient.http import MediaIoBaseDownload
+
+        logger.info(f"fetching file: {file_data.source_identifiers.fullpath}")
+        mime_type = file_data.additional_metadata["mimeType"]
+        record_id = file_data.identifier
+        files_client = self.connection_config.get_files_service()
+        if mime_type.startswith("application/vnd.google-apps"):
+            export_mime = GOOGLE_DRIVE_EXPORT_TYPES.get(
+                self.meta.get("mimeType"),  # type: ignore
+            )
+            if not export_mime:
+                raise TypeError(
+                    f"File not supported. Name: {file_data.source_identifiers.filename} "
+                    f"ID: {record_id} "
+                    f"MimeType: {mime_type}"
+                )
+
+            request = files_client.export_media(
+                fileId=record_id,
+                mimeType=export_mime,
+            )
+        else:
+            request = files_client.get_media(fileId=record_id)
+
+        file_contents = io.BytesIO()
+        downloader = MediaIoBaseDownload(file_contents, request)
+        downloaded = self._get_content(downloader=downloader)
+        if not downloaded or not file_contents:
+            return []
+        return self._write_file(file_data=file_data, file_contents=file_contents)
 
 
 add_source_entry(
