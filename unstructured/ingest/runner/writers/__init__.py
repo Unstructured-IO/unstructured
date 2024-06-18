@@ -5,6 +5,7 @@ from .azure_cognitive_search import AzureCognitiveSearchWriter
 from .base_writer import Writer
 from .chroma import ChromaWriter
 from .clarifai import ClarifaiWriter
+from .couchbase import CouchbaseWriter
 from .databricks_volumes import DatabricksVolumesWriter
 from .delta_table import DeltaTableWriter
 from .elasticsearch import ElasticsearchWriter
@@ -28,6 +29,7 @@ writer_map: t.Dict[str, t.Type[Writer]] = {
     "box": BoxWriter,
     "chroma": ChromaWriter,
     "clarifai": ClarifaiWriter,
+    "couchbase": CouchbaseWriter,
     "databricks_volumes": DatabricksVolumesWriter,
     "delta_table": DeltaTableWriter,
     "dropbox": DropboxWriter,
