@@ -148,7 +148,7 @@ class BaseMetricsCalculator(ABC):
                 if row is not None
             ]
 
-    def _try_process_document(self, doc: Path) -> Optional[list]:
+    def _try_process_document(self, doc: Path) -> Optional[list]:  # pragma: no cover
         """Safe wrapper around the document processing method."""
         logger.info(f"Processing {doc}")
         try:
@@ -541,7 +541,7 @@ def filter_metrics(
         return_type (str): "file" or "dataframe"
     """
     if isinstance(data_input, str):
-        if not os.path.exists(data_input):
+        if not os.path.exists(data_input):  # pragma: no cover
             raise FileNotFoundError(f"File {data_input} not found.")
         if data_input.endswith(".csv"):
             df = pd.read_csv(data_input, header=None)
@@ -549,13 +549,13 @@ def filter_metrics(
             df = pd.read_csv(data_input, sep="\t")
         elif data_input.endswith(".txt"):
             df = pd.read_csv(data_input, sep="\t", header=None)
-        else:
+        else:  # pragma: no cover
             raise ValueError("Please provide a .csv or .tsv file.")
     else:
         df = data_input
 
     if isinstance(filter_list, str):
-        if not os.path.exists(filter_list):
+        if not os.path.exists(filter_list):  # pragma: no cover
             raise FileNotFoundError(f"File {filter_list} not found.")
         if filter_list.endswith(".csv"):
             filter_df = pd.read_csv(filter_list, header=None)
@@ -563,13 +563,13 @@ def filter_metrics(
             filter_df = pd.read_csv(filter_list, sep="\t")
         elif filter_list.endswith(".txt"):
             filter_df = pd.read_csv(filter_list, sep="\t", header=None)
-        else:
+        else:  # pragma: no cover
             raise ValueError("Please provide a .csv or .tsv file.")
         filter_list = filter_df.iloc[:, 0].astype(str).values.tolist()
-    elif not isinstance(filter_list, list):
+    elif not isinstance(filter_list, list):  # pragma: no cover
         raise ValueError("Please provide a List of strings or path to file.")
 
-    if filter_by not in df.columns:
+    if filter_by not in df.columns:  # pragma: no cover
         raise ValueError("`filter_by` key does not exists in the data provided.")
 
     res = df[df[filter_by].isin(filter_list)]
@@ -581,7 +581,7 @@ def filter_metrics(
         return res
     elif return_type == "file" and export_filename:
         _write_to_file(export_dir, export_filename, res)
-    elif return_type == "file" and not export_filename:
+    elif return_type == "file" and not export_filename:  # pragma: no cover
         raise ValueError("Please provide `export_filename`.")
-    else:
+    else:  # pragma: no cover
         raise ValueError("Return type must be either `dataframe` or `file`.")

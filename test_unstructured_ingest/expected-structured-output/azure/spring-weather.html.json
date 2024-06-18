@@ -64,7 +64,7 @@
   },
   {
     "type": "Title",
-    "element_id": "568c824acda361cfc270a75e2eca7a23",
+    "element_id": "6ef25d028f4c859b5d955c777c4c597e",
     "text": "Weather.gov > News Around NOAA > Are You Weather-Ready for the Spring?",
     "metadata": {
       "link_texts": [
@@ -93,7 +93,7 @@
   },
   {
     "type": "Title",
-    "element_id": "79fb885317b2666481d0a1c31970400d",
+    "element_id": "eddf006a8c46b1cda2aac3b820775397",
     "text": "Weather Safety",
     "metadata": {
       "link_texts": [
@@ -120,10 +120,9 @@
   },
   {
     "type": "ListItem",
-    "element_id": "79fb885317b2666481d0a1c31970400d",
+    "element_id": "2c39116ce12eb3a8cd275e7c89c62abf",
     "text": "Air Quality",
     "metadata": {
-      "category_depth": 2,
       "link_texts": [
         "Air Quality"
       ],
@@ -148,51 +147,499 @@
   },
   {
     "type": "ListItem",
-    "element_id": "79fb885317b2666481d0a1c31970400d",
+    "element_id": "37b3bec5196e722aebbb6bb5153d29c8",
     "text": "Beach Hazards",
     "metadata": {
       "link_texts": [
-        "Beach Hazards",
-        "Cold",
-        "Cold Water",
-        "Drought",
-        "Floods",
-        "Fog",
-        "Heat",
-        " Hurricanes",
-        " Lightning Safety",
-        "Rip Currents",
-        "Safe Boating",
-        "Space Weather",
-        "Sun (Ultraviolet Radiation)",
-        " Thunderstorms & Tornadoes",
-        "Tornado",
-        "Tsunami",
-        "Wildfire",
-        "Wind",
+        "Beach Hazards"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/beachhazards"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "063926ec3c557edf0dfd4bfbb1b93012",
+    "text": "Cold",
+    "metadata": {
+      "link_texts": [
+        "Cold"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/cold"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "819fb41bb2932c2d900130821d88a652",
+    "text": "Cold Water",
+    "metadata": {
+      "link_texts": [
+        "Cold Water"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/coldwater"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "fd2a7923ffb5c283577cb1f44d27d780",
+    "text": "Drought",
+    "metadata": {
+      "link_texts": [
+        "Drought"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/drought"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "e7e66ca3dccdb812809e14dc91915fea",
+    "text": "Floods",
+    "metadata": {
+      "link_texts": [
+        "Floods"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/flood"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "fae686c1beaadff587803a1c2c601824",
+    "text": "Fog",
+    "metadata": {
+      "link_texts": [
+        "Fog"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/fog"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "652b08acd00f3f57b0687d2d1e0580f5",
+    "text": "Heat",
+    "metadata": {
+      "link_texts": [
+        "Heat"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/heat"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "8a9bcf1a4f38c536066c54b17b81b791",
+    "text": "Hurricanes",
+    "metadata": {
+      "link_texts": [
+        "Hurricanes"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/hurricane"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "741014158ee7a9f1de60c9e9e0ffe397",
+    "text": "Lightning Safety",
+    "metadata": {
+      "link_texts": [
+        "Lightning Safety"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/lightning"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "b9ad0403ff877aea1df9bea1c738cbc7",
+    "text": "Rip Currents",
+    "metadata": {
+      "link_texts": [
+        "Rip Currents"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/ripcurrent"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "56b0c95cec6394bbe563cb68582370de",
+    "text": "Safe Boating",
+    "metadata": {
+      "link_texts": [
+        "Safe Boating"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/safeboating"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "c1a739a65b5c223176f8d0a420fd5ab4",
+    "text": "Space Weather",
+    "metadata": {
+      "link_texts": [
+        "Space Weather"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/space"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2122be3ea729f76922b64fc521b23212",
+    "text": "Sun (Ultraviolet Radiation)",
+    "metadata": {
+      "link_texts": [
+        "Sun (Ultraviolet Radiation)"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/heat-uv"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d723c507c477d8be085d8e779fa93f46",
+    "text": "Thunderstorms & Tornadoes",
+    "metadata": {
+      "link_texts": [
+        "Thunderstorms & Tornadoes"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/thunderstorm"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "8dd83da4044b0c0b4346445a5f64ee28",
+    "text": "Tornado",
+    "metadata": {
+      "link_texts": [
+        "Tornado"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/tornado"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "90c8dce77ac1702a2cd2c2b44bf43a33",
+    "text": "Tsunami",
+    "metadata": {
+      "link_texts": [
+        "Tsunami"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/tsunami"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "b3a767e4ec9f8fda753a7300fcff9d1b",
+    "text": "Wildfire",
+    "metadata": {
+      "link_texts": [
+        "Wildfire"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/wildfire"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "4c664805f48d782068e1bea90ee7ec37",
+    "text": "Wind",
+    "metadata": {
+      "link_texts": [
+        "Wind"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/safety/wind"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "753fbd04224edadfd5a3ef4589ac4a94",
+    "text": "Winter",
+    "metadata": {
+      "link_texts": [
         "Winter"
       ],
       "link_urls": [
-        "http://www.weather.gov/safetycampaign",
-        "https://www.weather.gov/safety/airquality",
-        "https://www.weather.gov/safety/beachhazards",
-        "https://www.weather.gov/safety/cold",
-        "https://www.weather.gov/safety/coldwater",
-        "https://www.weather.gov/safety/drought",
-        "https://www.weather.gov/safety/flood",
-        "https://www.weather.gov/safety/fog",
-        "https://www.weather.gov/safety/heat",
-        "https://www.weather.gov/safety/hurricane",
-        "https://www.weather.gov/safety/lightning",
-        "https://www.weather.gov/safety/ripcurrent",
-        "https://www.weather.gov/safety/safeboating",
-        "https://www.weather.gov/safety/space",
-        "https://www.weather.gov/safety/heat-uv",
-        "https://www.weather.gov/safety/thunderstorm",
-        "https://www.weather.gov/safety/tornado",
-        "https://www.weather.gov/safety/tsunami",
-        "https://www.weather.gov/safety/wildfire",
-        "https://www.weather.gov/safety/wind",
         "https://www.weather.gov/safety/winter "
       ],
       "languages": [
@@ -212,27 +659,15 @@
     }
   },
   {
-    "type": "ListItem",
-    "element_id": "512e6a00cacb0ab139ede6b0145f441d",
-    "text": "Safety Campaigns                                                                                                        Seasonal Safety Campaigns                                                                            #SafePlaceSelfie                                                                            Deaf & Hard of Hearing                                                                            Intellectual Disabilities                                                                            Spanish-language Content                                                                            The Great Outdoors",
+    "type": "Title",
+    "element_id": "0225c2250f787f919e1e69d0f49dceff",
+    "text": "Safety Campaigns",
     "metadata": {
       "link_texts": [
-        "Safety Campaigns",
-        "Seasonal Safety Campaigns",
-        "#SafePlaceSelfie",
-        "Deaf & Hard of Hearing",
-        "Intellectual Disabilities",
-        "Spanish-language Content",
-        "The Great Outdoors"
+        "Safety Campaigns"
       ],
       "link_urls": [
-        "https://www.weather.gov/safetycampaign",
-        "https://www.weather.gov/safetycampaign",
-        "https://www.weather.gov/wrn/safeplaceselfie",
-        "https://www.weather.gov/wrn/dhh-safety",
-        "https://www.weather.gov/wrn/intellectualdisabilities",
-        "https://www.weather.gov/wrn/fall2020-espanol-sm",
-        "https://www.noaa.gov/explainers/great-outdoors-weather-safety"
+        "https://www.weather.gov/safetycampaign"
       ],
       "languages": [
         "eng"
@@ -252,38 +687,14 @@
   },
   {
     "type": "ListItem",
-    "element_id": "d4145282089e41261300a9bcf440edb9",
-    "text": "Ambassador                                                                                                        About WRN Ambassadors                                                                            Become an Ambassador                                                                            Ambassadors of Excellence                                                                            People of WRN                                                                             FAQS                                                                            Tell Your Success Story                                                                             Success Stories                                                                            Tri-fold                                                                            Aviation                                                                             Current Ambassadors                                                                            Brochure                                                                            En Espa\u00f1ol",
+    "element_id": "b60f8982fb049e81a6188eb14ed80098",
+    "text": "Seasonal Safety Campaigns",
     "metadata": {
       "link_texts": [
-        "Ambassador",
-        "About WRN Ambassadors",
-        "Become an Ambassador",
-        "Ambassadors of Excellence",
-        "People of WRN",
-        " FAQS",
-        "Tell Your Success Story",
-        " Success Stories",
-        "Tri-fold",
-        "Aviation",
-        " Current Ambassadors",
-        "Brochure",
-        "En Espa\u00f1ol"
+        "Seasonal Safety Campaigns"
       ],
       "link_urls": [
-        "https://www.weather.gov/wrn/ambassadors",
-        "https://www.weather.gov/wrn/ambassadors",
-        "https://www.weather.gov/wrn/amb-tou",
-        "https://www.weather.gov/wrn/ambassador_recognition",
-        "https://www.weather.gov/people/",
-        "https://www.weather.gov/wrn/amb-faqs",
-        "https://docs.google.com/forms/d/e/1FAIpQLScPHee5WAyC5K1LZ3pWLa2zjaM1HZSKN4_AxGUc6RaCy_gxLA/viewform",
-        " https://www.weather.gov/wrn/success-stories",
-        "http://www.weather.gov/media/wrn/WRN_Ambassador_Trifold.pdf",
-        "https://www.weather.gov/wrn/aviation",
-        " http://www.weather.gov/wrn/current-ambassadors",
-        "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf",
-        "https://www.weather.gov/wrn/en-espanol"
+        "https://www.weather.gov/safetycampaign"
       ],
       "languages": [
         "eng"
@@ -303,33 +714,67 @@
   },
   {
     "type": "ListItem",
-    "element_id": "aeee9b1d3904eda123d21c851ce4747d",
-    "text": "Education                                                                                                        NWS Education Home                                                                            Be A Force Of Nature                                                                            WRN Kids Flyer                                                                            Wireless Emergency Alerts                                                                            NOAA Weather Radio                                                                            Mobile Weather                                                                            Brochures                                                                            Hourly Weather Forecast                                                                            Citizen Science                                                                            Intellectual Disabilities",
+    "element_id": "34cffb77f95d809c924234e056b98348",
+    "text": "#SafePlaceSelfie",
     "metadata": {
       "link_texts": [
-        "Education",
-        "NWS Education Home",
-        "Be A Force Of Nature",
-        "WRN Kids Flyer",
-        "Wireless Emergency Alerts",
-        "NOAA Weather Radio",
-        "Mobile Weather",
-        "Brochures",
-        "Hourly Weather Forecast",
-        "Citizen Science",
+        "#SafePlaceSelfie"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/safeplaceselfie"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "85e71456695dc655f543bd5ee5183779",
+    "text": "Deaf & Hard of Hearing",
+    "metadata": {
+      "link_texts": [
+        "Deaf & Hard of Hearing"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/dhh-safety"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "1443765ef30e3e80c7cea055adf7f606",
+    "text": "Intellectual Disabilities",
+    "metadata": {
+      "link_texts": [
         "Intellectual Disabilities"
       ],
       "link_urls": [
-        "http://www.weather.gov/owlie/",
-        "http://www.weather.gov/owlie/",
-        "https://www.weather.gov/wrn/force",
-        " http://www.weather.gov/media/owlie/nws_kids_fact_sheet2.pdf",
-        "https://www.weather.gov/wrn/wea",
-        "http://www.nws.noaa.gov/nwr/",
-        "https://www.weather.gov/wrn/mobile-phone",
-        "http://www.weather.gov/owlie/publication_brochures",
-        "https://www.weather.gov/wrn/hourly-weather-graph",
-        "http://www.weather.gov/media/wrn/citizen_science_page.pdf",
         "https://www.weather.gov/wrn/intellectualdisabilities"
       ],
       "languages": [
@@ -350,31 +795,958 @@
   },
   {
     "type": "ListItem",
-    "element_id": "752f5b846e4a24df6d62d9dc014e5aec",
-    "text": "Collaboration                                                                                                        Get Involved                                                                             Social Media                                                                            WRN Ambassadors \u200b                                                                            Enterprise Resources                                                                            StormReady                                                                            TsunamiReady                                                                            NWSChat (core partners only)                                                                            InteractiveNWS (iNWS) (core partners only)\u200b                                                                            SKYWARN",
+    "element_id": "9de2e41190a645a6b3dc869cbe2ef155",
+    "text": "Spanish-language Content",
     "metadata": {
       "link_texts": [
-        "Collaboration",
-        "Get Involved ",
-        "Social Media",
-        "WRN Ambassadors \u200b",
-        "Enterprise Resources",
-        "StormReady",
-        "TsunamiReady",
-        "NWSChat (core partners only)",
-        "InteractiveNWS (iNWS) (core partners only)\u200b",
+        "Spanish-language Content"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/fall2020-espanol-sm"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a66814e2e1eb1c5183996532c89010e6",
+    "text": "The Great Outdoors",
+    "metadata": {
+      "link_texts": [
+        "The Great Outdoors"
+      ],
+      "link_urls": [
+        "https://www.noaa.gov/explainers/great-outdoors-weather-safety"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "0640346478c8572ccec2dbe32e34a26d",
+    "text": "Ambassador",
+    "metadata": {
+      "link_texts": [
+        "Ambassador"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/ambassadors"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f8e6a863d99658aa1360f28cfb8e4e5a",
+    "text": "About WRN Ambassadors",
+    "metadata": {
+      "link_texts": [
+        "About WRN Ambassadors"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/ambassadors"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ef880d29b42c9f5436c62752cdbe75bf",
+    "text": "Become an Ambassador",
+    "metadata": {
+      "link_texts": [
+        "Become an Ambassador"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/amb-tou"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "eff3596db6d814cbe3d97defcf2797d0",
+    "text": "Ambassadors of Excellence",
+    "metadata": {
+      "link_texts": [
+        "Ambassadors of Excellence"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/ambassador_recognition"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d23a1e5c66257639ff36614b8337c4ea",
+    "text": "People of WRN",
+    "metadata": {
+      "link_texts": [
+        "People of WRN"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/people/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "77c0ac157a229b2081defb62a6ae27a8",
+    "text": "FAQS",
+    "metadata": {
+      "link_texts": [
+        "FAQS"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/amb-faqs"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "c0b1fae13b933ba235f2de5ed8114e3d",
+    "text": "Tell Your Success Story",
+    "metadata": {
+      "link_texts": [
+        "Tell Your Success Story"
+      ],
+      "link_urls": [
+        "https://docs.google.com/forms/d/e/1FAIpQLScPHee5WAyC5K1LZ3pWLa2zjaM1HZSKN4_AxGUc6RaCy_gxLA/viewform"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "145b7263c7cd9d1626cddbf107d05449",
+    "text": "Success Stories",
+    "metadata": {
+      "link_texts": [
+        "Success Stories"
+      ],
+      "link_urls": [
+        " https://www.weather.gov/wrn/success-stories"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "513e9d09a97e1009e09cc193c2646277",
+    "text": "Tri-fold",
+    "metadata": {
+      "link_texts": [
+        "Tri-fold"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/media/wrn/WRN_Ambassador_Trifold.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "c11f051bb195ee9b50425cc950e57649",
+    "text": "Aviation",
+    "metadata": {
+      "link_texts": [
+        "Aviation"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/aviation"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "9412ffe8798653567f37bc7cbe01c383",
+    "text": "Current Ambassadors",
+    "metadata": {
+      "link_texts": [
+        "Current Ambassadors"
+      ],
+      "link_urls": [
+        " http://www.weather.gov/wrn/current-ambassadors"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "4ea1effc6dfdbce63f11ae08f5f0a6bf",
+    "text": "Brochure",
+    "metadata": {
+      "link_texts": [
+        "Brochure"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "3e05ad9b5d5efa415c86072900a544ca",
+    "text": "En Espa\u00f1ol",
+    "metadata": {
+      "link_texts": [
+        "En Espa\u00f1ol"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/en-espanol"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "4f18297d6e97fe97131067c4614d0b56",
+    "text": "Education",
+    "metadata": {
+      "link_texts": [
+        "Education"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/owlie/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "3425ae9a4bf996456c28a3a383f632a7",
+    "text": "NWS Education Home",
+    "metadata": {
+      "link_texts": [
+        "NWS Education Home"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/owlie/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "80411d846bd3dd5f56ca576e376f4005",
+    "text": "Be A Force Of Nature",
+    "metadata": {
+      "link_texts": [
+        "Be A Force Of Nature"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/force"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a4f595c8765cc3a0b5a15084ee7eb122",
+    "text": "WRN Kids Flyer",
+    "metadata": {
+      "link_texts": [
+        "WRN Kids Flyer"
+      ],
+      "link_urls": [
+        " http://www.weather.gov/media/owlie/nws_kids_fact_sheet2.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "c17db7f1aaa47629976e8f5166622e76",
+    "text": "Wireless Emergency Alerts",
+    "metadata": {
+      "link_texts": [
+        "Wireless Emergency Alerts"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/wea"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "edd86282ed0d85e5986532037959a2f0",
+    "text": "NOAA Weather Radio",
+    "metadata": {
+      "link_texts": [
+        "NOAA Weather Radio"
+      ],
+      "link_urls": [
+        "http://www.nws.noaa.gov/nwr/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "46cd16d10b37a045abd2617432c5dbfb",
+    "text": "Mobile Weather",
+    "metadata": {
+      "link_texts": [
+        "Mobile Weather"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/mobile-phone"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "7b443b7cd9b33f94b2a5f808d284a14a",
+    "text": "Brochures",
+    "metadata": {
+      "link_texts": [
+        "Brochures"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/owlie/publication_brochures"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0314b445b3bafe00abe90358aecad7ed",
+    "text": "Hourly Weather Forecast",
+    "metadata": {
+      "link_texts": [
+        "Hourly Weather Forecast"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/hourly-weather-graph"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "1de9330b572f4e8872a37fc798eba1bc",
+    "text": "Citizen Science",
+    "metadata": {
+      "link_texts": [
+        "Citizen Science"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/media/wrn/citizen_science_page.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "9b8f1480242a74332d56768a19c2c3ba",
+    "text": "Intellectual Disabilities",
+    "metadata": {
+      "link_texts": [
+        "Intellectual Disabilities"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/intellectualdisabilities"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f5121742894f599f7bad9e6c204219cd",
+    "text": "Collaboration",
+    "metadata": {
+      "link_texts": [
+        "Collaboration"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/collaborate"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "411f179a39ce6f35d780ececcf5a663e",
+    "text": "Get Involved",
+    "metadata": {
+      "link_texts": [
+        "Get Involved"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/get-involved"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "3bbd638b65f65c518fd27245ad070e31",
+    "text": "Social Media",
+    "metadata": {
+      "link_texts": [
+        "Social Media"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/socialmedia"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "367c30facb2871ff643359f94ef54dbd",
+    "text": "WRN Ambassadors \u200b",
+    "metadata": {
+      "link_texts": [
+        "WRN Ambassadors \u200b"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/ambassadors"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "193fb5253c63d3710c05022a62bb3045",
+    "text": "Enterprise Resources",
+    "metadata": {
+      "link_texts": [
+        "Enterprise Resources"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/enterprise/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "724fcc66e549c1a95f1099f16f03f673",
+    "text": "StormReady",
+    "metadata": {
+      "link_texts": [
+        "StormReady"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/stormready/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "34d416cafa517f35f5d1263d3f84d0e4",
+    "text": "TsunamiReady",
+    "metadata": {
+      "link_texts": [
+        "TsunamiReady"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/tsunamiready/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "613b531929637689a7cd0d616f71fc3e",
+    "text": "NWSChat (core partners only)",
+    "metadata": {
+      "link_texts": [
+        "NWSChat (core partners only)"
+      ],
+      "link_urls": [
+        "https://nwschat.weather.gov/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a49caec66691ba6a0cc9d04c7e9ce9bc",
+    "text": "InteractiveNWS (iNWS) (core partners only)\u200b",
+    "metadata": {
+      "link_texts": [
+        "InteractiveNWS (iNWS) (core partners only)\u200b"
+      ],
+      "link_urls": [
+        "https://inws.ncep.noaa.gov/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ed51ed0b4e5878e9439f0f18edb928f5",
+    "text": "SKYWARN",
+    "metadata": {
+      "link_texts": [
         "SKYWARN"
       ],
       "link_urls": [
-        "https://www.weather.gov/wrn/collaborate",
-        "https://www.weather.gov/wrn/get-involved",
-        "http://www.weather.gov/socialmedia",
-        "https://www.weather.gov/wrn/ambassadors",
-        "https://www.weather.gov/enterprise/",
-        "http://www.weather.gov/stormready/",
-        "https://www.weather.gov/tsunamiready/",
-        "https://nwschat.weather.gov/",
-        "https://inws.ncep.noaa.gov/",
         "https://www.weather.gov/SKYWARN"
       ],
       "languages": [
@@ -394,23 +1766,15 @@
     }
   },
   {
-    "type": "ListItem",
-    "element_id": "8729b5380b0f442c0512948bd18de66b",
-    "text": "News & Events                                                                                                        Latest News                                                                            Calendar                                                                            Meetings & Workshops                                                                            NWS Aware Newsletter",
+    "type": "Title",
+    "element_id": "556fb42a560167c2cc207d7cb6714bad",
+    "text": "News & Events",
     "metadata": {
       "link_texts": [
-        " News & Events",
-        "Latest News",
-        "Calendar",
-        "Meetings & Workshops",
-        "NWS Aware Newsletter"
+        "News & Events"
       ],
       "link_urls": [
-        "http://www.weather.gov/news/",
-        " http://www.weather.gov/news/",
-        "https://www.weather.gov/wrn/calendar",
-        " https://www.weather.gov/wrn/workshops",
-        "https://www.weather.gov/publications/aware"
+        "http://www.weather.gov/news/"
       ],
       "languages": [
         "eng"
@@ -430,7 +1794,115 @@
   },
   {
     "type": "ListItem",
-    "element_id": "ec0f9efa0e7de0d7bbf11f3b8fb2a1ca",
+    "element_id": "a788e14552083ec3eeace45644ab61f6",
+    "text": "Latest News",
+    "metadata": {
+      "link_texts": [
+        "Latest News"
+      ],
+      "link_urls": [
+        " http://www.weather.gov/news/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "081cd4934a58045952774609f4c933b9",
+    "text": "Calendar",
+    "metadata": {
+      "link_texts": [
+        "Calendar"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/calendar"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "11ee8366847061465e77830c50f56541",
+    "text": "Meetings & Workshops",
+    "metadata": {
+      "link_texts": [
+        "Meetings & Workshops"
+      ],
+      "link_urls": [
+        " https://www.weather.gov/wrn/workshops"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0dbdf234ff1ede3066c029317a2c086a",
+    "text": "NWS Aware Newsletter",
+    "metadata": {
+      "link_texts": [
+        "NWS Aware Newsletter"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/publications/aware"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "4fd5499bdc7ef505fbd5ad7808cc15e4",
     "text": "International",
     "metadata": {
       "link_texts": [
@@ -456,34 +1928,284 @@
     }
   },
   {
-    "type": "ListItem",
-    "element_id": "f17da617a620de011003a204ecf48752",
-    "text": "About                                                                                                        Contact Us                                                                             What is WRN?                                                                             WRN FAQ                                                                            WRN Brochure                                                                            Hazard Simplification                                                                            IDSS Brochure                                                                            Roadmap                                                                            Strategic Plan                                                                            WRN International                                                                            Social Science",
+    "type": "Title",
+    "element_id": "aa70c71400e0cbb1efa4a90ffda7b576",
+    "text": "About",
     "metadata": {
       "link_texts": [
-        "About",
-        "Contact Us",
-        " What is WRN?",
-        " WRN FAQ",
-        "WRN Brochure",
-        "Hazard Simplification",
-        "IDSS Brochure",
-        "Roadmap",
-        "Strategic Plan",
-        "WRN International",
+        "About"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/about"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "a2a88821ceb3beaab2113187f62f107b",
+    "text": "Contact Us",
+    "metadata": {
+      "link_texts": [
+        "Contact Us"
+      ],
+      "link_urls": [
+        " https://www.weather.gov/wrn/contact"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d8b62cdf46831c81d890e1dbfca7d48f",
+    "text": "What is WRN?",
+    "metadata": {
+      "link_texts": [
+        "What is WRN?"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/about"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "027ed196c34f111fc5f60bbda8549811",
+    "text": "WRN FAQ",
+    "metadata": {
+      "link_texts": [
+        "WRN FAQ"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/wrn/faqs"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f1227f69a53be4a073c718c7f056e277",
+    "text": "WRN Brochure",
+    "metadata": {
+      "link_texts": [
+        "WRN Brochure"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "76ac56b6bf05505c5ed136a0115b13bc",
+    "text": "Hazard Simplification",
+    "metadata": {
+      "link_texts": [
+        "Hazard Simplification"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/hazardsimplification/"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "dc08ebeca9f26eeb4c46ad055a7e08eb",
+    "text": "IDSS Brochure",
+    "metadata": {
+      "link_texts": [
+        "IDSS Brochure"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/media/wrn/2018-IDSS2-Pager.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d228c35b349de0347cfff635f96308ca",
+    "text": "Roadmap",
+    "metadata": {
+      "link_texts": [
+        "Roadmap"
+      ],
+      "link_urls": [
+        "http://www.weather.gov/media/wrn/nws_wrn_roadmap_final_april17.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "738f4cffb78938db8fd26bb5ee2e8b73",
+    "text": "Strategic Plan",
+    "metadata": {
+      "link_texts": [
+        "Strategic Plan"
+      ],
+      "link_urls": [
+        "https://www.weather.gov/media/wrn/NWS_Weather-Ready-Nation_Strategic_Plan_2019-2022.pdf"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "6b07bf9d8a69a826f08eb8aeb96d40a8",
+    "text": "WRN International",
+    "metadata": {
+      "link_texts": [
+        "WRN International"
+      ],
+      "link_urls": [
+        " https://www.weather.gov/wrn/international"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/html",
+      "data_source": {
+        "url": "abfs://container1/spring-weather.html",
+        "version": "162215905222974206637545574128436022861",
+        "record_locator": {
+          "protocol": "abfs",
+          "remote_file_path": "abfs://container1/"
+        },
+        "date_created": "1678441216.0",
+        "date_modified": "1678441216.0"
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "de29e400f9d0ab80da7d3b3708b1398d",
+    "text": "Social Science",
+    "metadata": {
+      "link_texts": [
         "Social Science"
       ],
       "link_urls": [
-        "https://www.weather.gov/wrn/about",
-        " https://www.weather.gov/wrn/contact",
-        "https://www.weather.gov/wrn/about",
-        "https://www.weather.gov/wrn/faqs",
-        "http://www.weather.gov/media/wrn/WRN_Ambassador_Flyer.pdf",
-        "https://www.weather.gov/hazardsimplification/",
-        "https://www.weather.gov/media/wrn/2018-IDSS2-Pager.pdf",
-        "http://www.weather.gov/media/wrn/nws_wrn_roadmap_final_april17.pdf",
-        "https://www.weather.gov/media/wrn/NWS_Weather-Ready-Nation_Strategic_Plan_2019-2022.pdf",
-        " https://www.weather.gov/wrn/international",
         "https://vlab.noaa.gov/web/nws-social-science"
       ],
       "languages": [
@@ -504,7 +2226,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "623c25f2247b125d6df5138a7c5ee153",
+    "element_id": "a859a27443333ffa9b214673a011d832",
     "text": "The spring season is all about change \u2013 a rebirth both literally and figuratively. Even though the spring season doesn\u2019t officially (astronomically, that is) begin until March 20 this year, climatologically, it starts March 1.",
     "metadata": {
       "languages": [
@@ -525,7 +2247,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "c8c953bd87e4571df8e6486e9c467861",
+    "element_id": "d9065d09d5289f575f03dd67043679f5",
     "text": "As cold winter nights are replaced by the warmth of longer daylight hours, the National Weather Service invites you to do two important things that may save your life or the life of a loved one.",
     "metadata": {
       "languages": [
@@ -546,14 +2268,14 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "b6553aef4dc61e5d31e2e28426e56f0b",
-    "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you.",
+    "element_id": "e100f7b751351d8de4653bd7c5f69245",
+    "text": "First, take steps to better prepare for the seasonal hazards weather can throw at you. This could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become \u201cweather-ready.\u201d",
     "metadata": {
       "emphasized_text_contents": [
         "First, take steps to better prepare for the seasonal hazards weather can throw at you."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "languages": [
         "eng"
@@ -573,35 +2295,14 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "ac246c4693669d08d274f628c3293a78",
-    "text": "This could include a spring cleaning of your storm shelter or ensuring your emergency kit is fully stocked. Take a look at our infographics and social media posts to help you become \u201cweather-ready.\u201d",
-    "metadata": {
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "NarrativeText",
-    "element_id": "d1fa2a66a4df9759bdf01f6f1ec51d8e",
+    "element_id": "55d81694fcd2fade3dfc62ef52422f7b",
     "text": "Second, encourage others to become Weather-Ready as well. Share the message by taking advantage of our vast array of weather safety content \u2013 everything posted on our Spring Safety website is freely available, and we encourage sharing on social media networks. Also remember those who are most vulnerable, like an elderly family member or neighbor who might have limited mobility or is isolated. Reach out to those who are at higher risk of being impacted by extreme weather, and help them get prepared. This simple act of caring could become heroic.",
     "metadata": {
       "emphasized_text_contents": [
         "Second, encourage others to become Weather-Ready as well."
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "link_texts": [
         "Spring Safety website"
@@ -627,7 +2328,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "996f1b86d1cb5a02028bd3816f5790f1",
+    "element_id": "cc697b1fe8918a5033fdc471d0f192f8",
     "text": "This spring, the campaign is focused on heat dangers. Heat illness and death can occur even in spring\u2019s moderately warm weather. The majority of all heat-related deaths occur outside of heat waves and roughly a third of child hot car deaths occur outside of the summer months. Learn more by viewing the infographics that are now available.",
     "metadata": {
       "link_texts": [
@@ -654,7 +2355,7 @@
   },
   {
     "type": "NarrativeText",
-    "element_id": "90b31790a9b5fd903e6dbaea50e05f45",
+    "element_id": "939c4fee892e83225c5b774cf44ebe02",
     "text": "Stay safe this spring, and every season, by being informed, prepared, and Weather-Ready.",
     "metadata": {
       "languages": [
@@ -674,158 +2375,20 @@
     }
   },
   {
-    "type": "Title",
-    "element_id": "9dcf311a7e6225af9333100c709b7f23",
-    "text": "US Dept of Commerce",
+    "type": "NarrativeText",
+    "element_id": "5e3a9e295119f09f8a9e8ac807188176",
+    "text": "US Dept of Commerce National Oceanic and Atmospheric Administration National Weather Service News Around NOAA 1325 East West Highway Silver Spring, MD 20910 Comments? Questions? Please Contact Us.",
     "metadata": {
       "link_texts": [
-        "US Dept of Commerce"
-      ],
-      "link_urls": [
-        "http://www.commerce.gov"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "60711b68cb732ecb10f4c05f0f784647",
-    "text": "National Oceanic and Atmospheric Administration",
-    "metadata": {
-      "link_texts": [
-        "National Oceanic and Atmospheric Administration"
-      ],
-      "link_urls": [
-        "http://www.noaa.gov"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "55ca4bf03b04ffacb8ea8cb528c22a6f",
-    "text": "National Weather Service",
-    "metadata": {
-      "link_texts": [
-        "National Weather Service"
-      ],
-      "link_urls": [
-        "https://www.weather.gov"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "3ebaebb5791662dfa6d2e2b8af436f9d",
-    "text": "News Around NOAA",
-    "metadata": {
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "ccf5cdb2984d2ac2d934010960d32aca",
-    "text": "1325 East West Highway",
-    "metadata": {
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Address",
-    "element_id": "64a081cb854ff90dbc668c2b334d0ae8",
-    "text": "Silver Spring, MD 20910",
-    "metadata": {
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "6af532045e3aa6fe3764590594dc0dd7",
-    "text": "Comments? Questions? Please Contact Us.",
-    "metadata": {
-      "link_texts": [
+        "US Dept of Commerce",
+        "National Oceanic and Atmospheric Administration",
+        "National Weather Service",
         "Comments? Questions? Please Contact Us."
       ],
       "link_urls": [
+        "http://www.commerce.gov",
+        "http://www.noaa.gov",
+        "https://www.weather.gov",
         "https://www.weather.gov/news/contact"
       ],
       "languages": [
@@ -846,94 +2409,19 @@
   },
   {
     "type": "Title",
-    "element_id": "a63c69dcc655b1b32bc6157427e9ca8e",
-    "text": "Disclaimer",
+    "element_id": "a8eed54a458923d7f04b9d1641e98d43",
+    "text": "Disclaimer Information Quality Help Glossary",
     "metadata": {
       "link_texts": [
-        "Disclaimer"
-      ],
-      "link_urls": [
-        "https://www.weather.gov/disclaimer"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "95054785187bcc0cf98cdb17c135ca1d",
-    "text": "Information Quality",
-    "metadata": {
-      "link_texts": [
-        "Information Quality"
-      ],
-      "link_urls": [
-        "http://www.cio.noaa.gov/services_programs/info_quality.html"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "800d660faa52732cd4d361b187bbd6e2",
-    "text": "Help",
-    "metadata": {
-      "link_texts": [
-        "Help"
-      ],
-      "link_urls": [
-        "https://www.weather.gov/help"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "718284e0cdf275514b6aa8fb8976a7cc",
-    "text": "Glossary",
-    "metadata": {
-      "link_texts": [
+        "Disclaimer",
+        "Information Quality",
+        "Help",
         "Glossary"
       ],
       "link_urls": [
+        "https://www.weather.gov/disclaimer",
+        "http://www.cio.noaa.gov/services_programs/info_quality.html",
+        "https://www.weather.gov/help",
         "http://www.weather.gov/glossary"
       ],
       "languages": [
@@ -954,94 +2442,19 @@
   },
   {
     "type": "Title",
-    "element_id": "678ef3e5cd635ba851d2dfd7f6f20d0f",
-    "text": "Privacy Policy",
+    "element_id": "b415705c2c1927eda24b454e6e91bea3",
+    "text": "Privacy Policy Freedom of Information Act (FOIA) About Us Career Opportunities",
     "metadata": {
       "link_texts": [
-        "Privacy Policy"
-      ],
-      "link_urls": [
-        "https://www.weather.gov/privacy"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "f66ad83bfffccef0afe60d0aaba55b54",
-    "text": "Freedom of Information Act (FOIA)",
-    "metadata": {
-      "link_texts": [
-        "Freedom of Information Act (FOIA)"
-      ],
-      "link_urls": [
-        "https://www.noaa.gov/foia-freedom-of-information-act"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "f50c4a988c7336b9d1100227fa7f03a3",
-    "text": "About Us",
-    "metadata": {
-      "link_texts": [
-        "About Us"
-      ],
-      "link_urls": [
-        "https://www.weather.gov/about"
-      ],
-      "languages": [
-        "eng"
-      ],
-      "filetype": "text/html",
-      "data_source": {
-        "url": "abfs://container1/spring-weather.html",
-        "version": "162215905222974206637545574128436022861",
-        "record_locator": {
-          "protocol": "abfs",
-          "remote_file_path": "abfs://container1/"
-        },
-        "date_created": "1678441216.0",
-        "date_modified": "1678441216.0"
-      }
-    }
-  },
-  {
-    "type": "Title",
-    "element_id": "a9a5f8ac29adb68999173b4e65a189bd",
-    "text": "Career Opportunities",
-    "metadata": {
-      "link_texts": [
+        "Privacy Policy",
+        "Freedom of Information Act (FOIA)",
+        "About Us",
         "Career Opportunities"
       ],
       "link_urls": [
+        "https://www.weather.gov/privacy",
+        "https://www.noaa.gov/foia-freedom-of-information-act",
+        "https://www.weather.gov/about",
         "https://www.weather.gov/careers"
       ],
       "languages": [

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import itertools
 from collections import defaultdict, deque
 from types import MappingProxyType
 from typing import Any, Iterable, Iterator, Mapping, NamedTuple, cast
@@ -43,6 +44,22 @@ Annotation: TypeAlias = Mapping[str, Any]
 An annotation can be associated with a text segment or element. In general the keys and value-types
 differ between the individual (text-segment) and consolidated (Element) forms.
 """
+
+
+def _consolidate_annotations(text_segments: Iterable[TextSegment]) -> Annotation:
+    """Combine individual text-segment annotations into an element-level annotation.
+
+    Sequence is significant.
+    """
+    combined_annotations = cast(defaultdict[str, list[str]], defaultdict(list))
+    for ts in text_segments:
+        for k, v in ts.annotation.items():
+            if isinstance(v, list):
+                combined_annotations[k].extend(cast(list[Any], v))
+            else:
+                combined_annotations[k].append(v)
+
+    return MappingProxyType(dict(combined_annotations))
 
 
 class TextSegment(NamedTuple):
@@ -109,19 +126,6 @@ class Flow(etree.ElementBase):
 
         return None
 
-    @staticmethod
-    def _consolidate_annotations(text_segments: Iterable[TextSegment]) -> Annotation:
-        """Combine individual text-segment annotation into an element-level annotation.
-
-        Sequence is significant.
-        """
-        combined_annotations = cast(defaultdict[str, list[str]], defaultdict(list))
-        for ts in text_segments:
-            for k, v in ts.annotation.items():
-                combined_annotations[k].append(v)
-
-        return MappingProxyType(dict(combined_annotations))
-
     def _element_from_text_or_tail(
         self, text: str, q: deque[Flow | Phrasing], ElementCls: type[Element] | None = None
     ) -> Iterator[Element]:
@@ -152,7 +156,7 @@ class Flow(etree.ElementBase):
         yield ElementCls(
             normalized_text,
             metadata=ElementMetadata(
-                **self._consolidate_annotations(text_segments), category_depth=category_depth
+                **_consolidate_annotations(text_segments), category_depth=category_depth
             ),
         )
 
@@ -187,6 +191,41 @@ class BlockItem(Flow):
     # -- Turns out there are no implementation differences so far between Flow and BlockItem, but
     # -- maintaining the distinction for now. We may use it to add hierarchy information or
     # -- customize how we deal with invalid HTML that places flow items inside one of these.
+
+
+class Pre(BlockItem):
+    """Custom element-class for `<pre>` element.
+
+    Can only contain phrasing content.
+    """
+
+    def iter_elements(self) -> Iterator[Element]:
+        """Generate zero or one document element for the entire `<pre>` element.
+
+        Whitespace is preserved just as it appears in the source HTML.
+        """
+        pre_text = self.text or ""
+        # -- this is pretty subtle, but in a browser, if the opening `<pre>` is immediately
+        # -- followed by a newline, that newline is removed from the rendered text.
+        if pre_text.startswith("\n"):
+            pre_text = pre_text[1:]
+
+        text_segments = tuple(self._iter_text_segments(pre_text, deque(self)))
+        text = "".join(ts.text for ts in text_segments)
+
+        # -- also subtle, but in a browser, if the closing `</pre>` tag is immediately preceded
+        # -- by a newline (starts in column 1), that preceding newline is removed too.
+        if text.endswith("\n"):
+            text = text[:-1]
+
+        if not text:
+            return
+
+        ElementCls = derive_element_type_from_text(text)
+        if not ElementCls:
+            return
+
+        yield ElementCls(text, metadata=ElementMetadata(**_consolidate_annotations(text_segments)))
 
 
 class Heading(Flow):
@@ -324,6 +363,15 @@ class Phrasing(etree.ElementBase):
         """
         return enclosing_emphasis
 
+    def _iter_child_text_segments(self, emphasis: str) -> Iterator[TextSegment]:
+        """Generate zero-or-more text-segments for phrasing children of this element.
+
+        All generated text segments will be annotated with `emphasis` when it is other than the
+        empty string.
+        """
+        for child in self:
+            yield from child.iter_text_segments(emphasis)
+
     def _iter_tail_segment(self, emphasis: str) -> Iterator[TextSegment]:
         """Generate zero-or-one text-segment for tail of this element.
 
@@ -367,9 +415,28 @@ class Anchor(Phrasing):
         The behavior for an anchor element is slightly different because link annotations are only
         added to the text, not the tail. Also an anchor can have no children.
         """
-        # -- No text pair is emitted when there is absolutely no text (quite rare I expect) --
-        if text := self.text:
-            yield TextSegment(text, self._link_annotations(text, enclosing_emphasis))
+        # -- the text of the link is everything inside the `<a>` element, text and child text --
+        text_segments = tuple(
+            itertools.chain(
+                self._iter_text_segment(enclosing_emphasis),
+                self._iter_child_text_segments(enclosing_emphasis),
+            )
+        )
+
+        link_text = "".join("".join(ts.text for ts in text_segments))
+
+        # -- the link_text and link_url annotation refers to the entire text inside the `<a>` --
+        link_text_segment = TextSegment(
+            link_text, self._link_annotations(link_text, enclosing_emphasis)
+        )
+
+        # -- but the emphasis annotations must come from the individual text segments within --
+        consolidated_annotations = _consolidate_annotations((link_text_segment, *text_segments))
+
+        # -- generate at most one text-segment for the `<a>` element, the full enclosed text with
+        # -- consolidated emphasis and link annotations.
+        if link_text:
+            yield TextSegment(link_text, consolidated_annotations)
 
         # -- A tail is emitted when present whether anchor itself was or not --
         yield from self._iter_tail_segment(enclosing_emphasis)
@@ -552,7 +619,6 @@ element_class_lookup.get_namespace(None).update(
         "header": Flow,
         "hgroup": Flow,
         "main": Flow,
-        "pre": Flow,
         "section": Flow,
         # -- block items --
         "h1": Heading,
@@ -562,6 +628,7 @@ element_class_lookup.get_namespace(None).update(
         "h5": Heading,
         "h6": Heading,
         "p": BlockItem,
+        "pre": Pre,
         # -- list blocks --
         "ol": ListBlock,
         "ul": ListBlock,
