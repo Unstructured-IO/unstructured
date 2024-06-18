@@ -46,9 +46,19 @@ from unstructured.partition.common import (
     spooled_to_bytes_io_if_needed,
 )
 from unstructured.partition.lang import check_language_args, prepare_languages_for_tesseract
+from unstructured.partition.pdf_image.analysis.bbox_visualisation import (
+    AnalysisDrawer,
+    FinalLayoutDrawer,
+    OCRLayoutDrawer,
+    ODModelLayoutDrawer,
+    PdfminerLayoutDrawer,
+)
+from unstructured.partition.pdf_image.analysis.layout_dump import (
+    JsonLayoutDumper,
+    ObjectDetectionLayoutDumper,
+)
 from unstructured.partition.pdf_image.form_extraction import run_form_extraction
 from unstructured.partition.pdf_image.pdf_image_utils import (
-    annotate_layout_elements,
     check_element_types_to_extract,
     convert_pdf_to_images,
     get_the_last_modification_date_pdf_or_img,
@@ -533,6 +543,11 @@ def _partition_pdf_or_image_local(
             f"(currently {pdf_image_dpi}).",
         )
 
+    pdfminer_drawer: Optional[PdfminerLayoutDrawer] = None
+    od_model_drawer: Optional[ODModelLayoutDrawer] = None
+    ocr_drawer: Optional[OCRLayoutDrawer] = None
+    od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
+
     if file is None:
         inferred_document_layout = process_file_with_model(
             filename,
@@ -561,14 +576,16 @@ def _partition_pdf_or_image_local(
                     else:
                         analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
                 os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
-                annotate_layout_elements(
-                    inferred_document_layout=inferred_document_layout,
-                    extracted_layout=extracted_layout,
-                    filename=filename,
-                    output_dir_path=analyzed_image_output_dir_path,
-                    pdf_image_dpi=pdf_image_dpi,
-                    is_image=is_image,
+                pdfminer_drawer = PdfminerLayoutDrawer(
+                    layout=extracted_layout,
                 )
+                od_model_drawer = ODModelLayoutDrawer(
+                    layout=inferred_document_layout,
+                )
+                od_model_layout_dumper = ObjectDetectionLayoutDumper(
+                    layout=inferred_document_layout,
+                )
+                ocr_drawer = OCRLayoutDrawer()
 
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
@@ -586,6 +603,7 @@ def _partition_pdf_or_image_local(
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
+                ocr_drawer=ocr_drawer,
             )
     else:
         inferred_document_layout = process_data_with_model(
@@ -609,6 +627,23 @@ def _partition_pdf_or_image_local(
                 else []
             )
 
+            if analysis:
+                if not analyzed_image_output_dir_path:
+                    if env_config.GLOBAL_WORKING_DIR_ENABLED:
+                        analyzed_image_output_dir_path = str(
+                            Path(env_config.GLOBAL_WORKING_PROCESS_DIR) / "annotated"
+                        )
+                    else:
+                        analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
+                os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
+                pdfminer_drawer = PdfminerLayoutDrawer(
+                    layout=extracted_layout,
+                )
+                od_model_drawer = ODModelLayoutDrawer(
+                    layout=inferred_document_layout,
+                )
+                ocr_drawer = OCRLayoutDrawer()
+
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
@@ -627,6 +662,7 @@ def _partition_pdf_or_image_local(
                 ocr_languages=ocr_languages,
                 ocr_mode=ocr_mode,
                 pdf_image_dpi=pdf_image_dpi,
+                ocr_drawer=ocr_drawer,
             )
 
     # NOTE(alan): starting with v2, chipper sorts the elements itself.
@@ -712,6 +748,34 @@ def _partition_pdf_or_image_local(
             skip_table_regions=form_extraction_skip_tables,
         )
         out_elements.extend(forms)
+
+    if analysis:
+        final_drawer = FinalLayoutDrawer(
+            layout=out_elements,
+        )
+        analysis_drawer = AnalysisDrawer(
+            filename=filename,
+            save_dir=analyzed_image_output_dir_path,
+        )
+
+        if od_model_drawer:
+            analysis_drawer.add_drawer(od_model_drawer)
+
+        if pdfminer_drawer:
+            analysis_drawer.add_drawer(pdfminer_drawer)
+
+        if ocr_drawer:
+            analysis_drawer.add_drawer(ocr_drawer)
+        analysis_drawer.add_drawer(final_drawer)
+        analysis_drawer.process()
+
+        json_layout_dumper = JsonLayoutDumper(
+            filename=filename,
+            save_dir=analyzed_image_output_dir_path,
+        )
+        if od_model_layout_dumper:
+            json_layout_dumper.add_layout_dumper(od_model_layout_dumper)
+        json_layout_dumper.process()
 
     return out_elements
 
