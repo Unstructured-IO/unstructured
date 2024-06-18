@@ -21,7 +21,7 @@
 
 ### Fixes
 
-* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.**. The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
+* **Remove deprecated `overwrite_schema` kwarg from Delta Table connector.** The `overwrite_schema` kwarg is deprecated in `deltalake>=0.18.0`. `schema_mode=` should be used now instead. `schema_mode="overwrite"` is equivalent to `overwrite_schema=True` and `schema_mode="merge"` is equivalent to `overwrite_schema="False"`. `schema_mode` defaults to `None`. You can also now specify `engine`, which defaults to `"pyarrow"`. You need to specify `enginer="rust"` to use `"schema_mode"`.
 * **Fix passing parameters to python-client** - Remove parsing list arguments to strings in passing arguments to python-client in Ingest workflow and `partition_via_api`
 * **table metric bug fix** get_element_level_alignment()now will find all the matched indices in predicted table data instead of only returning the first match in the case of multiple matches for the same gt string.
 * **fsspec connector path/permissions bug** V2 fsspec connectors were failing when defined relative filepaths had leading slash. This strips that slash to guarantee the relative path never has it.
