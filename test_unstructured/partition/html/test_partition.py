@@ -4,9 +4,7 @@
 
 from __future__ import annotations
 
-import datetime as dt
 import io
-import os
 import pathlib
 from typing import Any
 
@@ -612,10 +610,22 @@ def test_partition_html_br_tag_parsing():
         Title("Text"),
         Title("Header 2"),
         Text(
-            "Param1 = Y Param2 = 1 Param3 = 2 Param4 = A Param5 = A,B,C,D,E Param6 = 7"
-            " Param7 = Five"
+            "\n    Param1 = Y\nParam2 = 1\nParam3 = 2\nParam4 = A\n    \nParam5 = A,B,C,D,E\n"
+            "Param6 = 7\nParam7 = Five\n\n  "
         ),
     ]
+
+    e = elements[3]
+    assert e.metadata.emphasized_text_contents == [
+        "Param1",
+        "Param2",
+        "Param3",
+        "Param4",
+        "Param5",
+        "Param6",
+        "Param7",
+    ]
+    assert e.metadata.emphasized_text_tags == ["b", "b", "b", "b", "b", "b", "b"]
 
 
 def test_partition_html_tag_tail_parsing():
@@ -982,14 +992,19 @@ def test_partition_html_respects_detect_language_per_element():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_html_from_filename_pulls_last_modified_from_filesystem():
+def test_partition_html_from_filename_pulls_last_modified_from_filesystem(request: FixtureRequest):
+    get_last_modified_date_ = function_mock(
+        request,
+        "unstructured.partition.html.partition.get_last_modified_date",
+        return_value="2024-06-17T22:22:20",
+    )
     file_path = example_doc_path("fake-html.html")
-    expected_last_modified = dt.datetime.fromtimestamp(os.path.getmtime(file_path)).isoformat()
 
-    elements = partition_html(str(file_path))
+    elements = partition_html(file_path)
 
+    get_last_modified_date_.assert_called_once_with(file_path)
     assert elements
-    assert all(e.metadata.last_modified == expected_last_modified for e in elements)
+    assert all(e.metadata.last_modified == "2024-06-17T22:22:20" for e in elements)
 
 
 def test_partition_html_from_filename_prefers_metadata_last_modified():

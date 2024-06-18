@@ -11,7 +11,14 @@ import pytest
 from lxml import etree
 
 from unstructured.documents.elements import Address, Element, ListItem, NarrativeText, Text, Title
-from unstructured.partition.html.parser import Annotation, Flow, Phrasing, TextSegment, html_parser
+from unstructured.partition.html.parser import (
+    Annotation,
+    Flow,
+    Phrasing,
+    TextSegment,
+    _consolidate_annotations,
+    html_parser,
+)
 
 
 class DescribeFlow:
@@ -127,7 +134,7 @@ class DescribeFlow:
             ),
         ]
 
-        annotations = Flow._consolidate_annotations(text_segments)
+        annotations = _consolidate_annotations(text_segments)
 
         assert annotations == {
             # -- each distinct key gets a list of values --
@@ -365,21 +372,45 @@ class DescribeAnchor:
             # -- produces no text-segment or annotation for anchor.text when there is none --
             ('<a href="http://abc.com"></a>', []),
             # -- but it produces a text-segment for the tail if there is one --
-            ('<a href="http://abc.com"></a> long tail ', [(" long tail ", {})]),
+            ('<a href="http://abc.com"></a> long tail ', [TextSegment(" long tail ", {})]),
             # -- produces text-segment but no annotation for anchor.text when it is whitespace --
-            ('<a href="http://abc.com">  </a>', [("  ", {})]),
+            ('<a href="http://abc.com">  </a>', [TextSegment("  ", {})]),
             # -- produces text-segment and annotation for anchor text
             # -- Note link-texts annotation is whitespace-normalized but text-segment text is not.
             (
                 '<a href="http://abc.com"> click here </a>',
-                [(" click here ", {"link_texts": "click here", "link_urls": "http://abc.com"})],
+                [
+                    TextSegment(
+                        " click here ",
+                        {"link_texts": ["click here"], "link_urls": ["http://abc.com"]},
+                    )
+                ],
             ),
             # -- produces text-segment for both text and tail when present --
             (
                 '<a href="http://abc.com"> click here </a> long tail',
                 [
-                    (" click here ", {"link_texts": "click here", "link_urls": "http://abc.com"}),
-                    (" long tail", {}),
+                    TextSegment(
+                        " click here ",
+                        {"link_texts": ["click here"], "link_urls": ["http://abc.com"]},
+                    ),
+                    TextSegment(" long tail", {}),
+                ],
+            ),
+            # -- nested phrasing inside <a> element is handled as expected --
+            (
+                '<p>I am <a href="http://eie.io">one <u>with<i> the</i></u> Force</a>.</p>',
+                [
+                    TextSegment(
+                        "one with the Force",
+                        {
+                            "emphasized_text_contents": ["the"],
+                            "emphasized_text_tags": ["i"],
+                            "link_texts": ["one with the Force"],
+                            "link_urls": ["http://eie.io"],
+                        },
+                    ),
+                    TextSegment(".", {}),
                 ],
             ),
         ],

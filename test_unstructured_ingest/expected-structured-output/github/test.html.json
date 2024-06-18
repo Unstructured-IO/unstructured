@@ -35,9 +35,6 @@
       "languages": [
         "eng"
       ],
-      "link_start_indexes": [
-        27
-      ],
       "link_texts": [
         "Github Project Page"
       ],
@@ -49,87 +46,7 @@
     "type": "Title"
   },
   {
-    "element_id": "d31b62e7e93ed0f7cdebc476a335b3b7",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2010-01-23T23:18:40",
-        "record_locator": {
-          "file_path": "test.html",
-          "repo_path": "dcneiner/Downloadify"
-        },
-        "url": "https://raw.githubusercontent.com/dcneiner/Downloadify/master/test.html",
-        "version": "W/\"c63c8fc21d46d44de85a14a3ed4baec0348ce344\""
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "Filename",
-    "type": "Title"
-  },
-  {
-    "element_id": "3cc4ede1735d2fe4f5e3f7e5aa29f277",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2010-01-23T23:18:40",
-        "record_locator": {
-          "file_path": "test.html",
-          "repo_path": "dcneiner/Downloadify"
-        },
-        "url": "https://raw.githubusercontent.com/dcneiner/Downloadify/master/test.html",
-        "version": "W/\"c63c8fc21d46d44de85a14a3ed4baec0348ce344\""
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "File Contents",
-    "type": "Title"
-  },
-  {
-    "element_id": "4064323aa25900cf4cb136f665a2aa06",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2010-01-23T23:18:40",
-        "record_locator": {
-          "file_path": "test.html",
-          "repo_path": "dcneiner/Downloadify"
-        },
-        "url": "https://raw.githubusercontent.com/dcneiner/Downloadify/master/test.html",
-        "version": "W/\"c63c8fc21d46d44de85a14a3ed4baec0348ce344\""
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "Whatever you put in this text box will be downloaded and saved in the file. If you leave it blank, no file will be downloaded",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "4a6c95c31bb76c1c7f818ca31ea6e0a6",
-    "metadata": {
-      "data_source": {
-        "date_modified": "2010-01-23T23:18:40",
-        "record_locator": {
-          "file_path": "test.html",
-          "repo_path": "dcneiner/Downloadify"
-        },
-        "url": "https://raw.githubusercontent.com/dcneiner/Downloadify/master/test.html",
-        "version": "W/\"c63c8fc21d46d44de85a14a3ed4baec0348ce344\""
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "You must have Flash 10 installed to download this file.",
-    "type": "NarrativeText"
-  },
-  {
-    "element_id": "6eeead38cfa3d4b7462eb9042aead2c4",
+    "element_id": "395aed29cd13842fede90a1a8677aa4b",
     "metadata": {
       "data_source": {
         "date_modified": "2010-01-23T23:18:40",
