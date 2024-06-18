@@ -44,7 +44,7 @@ class DestCmd(BaseCmd):
         cmd = click.command(fn)
         if not isinstance(cmd, click.core.Command):
             raise ValueError(f"generated command was not of expected type Command: {type(cmd)}")
-        cmd.name = self.cmd_name
+        cmd.name = self.cli_cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True
         extras = [
