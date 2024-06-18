@@ -131,4 +131,4 @@ the underlying SDKs have an async version to run the same network calls without 
 
 # Creating V2 Connectors
 
-As compared to V1 connectors, V2 has a few more steps. Most notably the Index and Download steps have been separated. Also there is a Staging step that saves the documents in a format that is ready to 
+As compared to V1 connectors, V2 has a few more steps. Most notably for Source Connectors the Index and Download steps have been separated. And in Destination connectors, there is a Staging step that saves the documents in a format that is ready to upload. Ideally the actual Upload step should be doing the minimum amount of processing before uploading. 
