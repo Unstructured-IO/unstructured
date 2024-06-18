@@ -1,4 +1,4 @@
-## 0.14.7-dev3
+## 0.14.7-dev4
 
 ### Enhancements
 
@@ -8,6 +8,8 @@
 ### Features
 
 ### Fixes
+
+* **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
 
 ## 0.14.6
 
