@@ -337,14 +337,38 @@ class HTMLDocument:
                 stripped_text_nodes = (t.strip() for t in td.itertext())
                 yield " ".join(t for t in stripped_text_nodes if t)
 
+        def nested_list_to_variable_markdown_table(nested_list):
+            # Find the maximum number of columns in any row
+            max_columns = max(len(row) for row in nested_list)
+
+            # Create the header row with the appropriate number of columns
+            header_row = (
+                "| " + " | ".join([f"Column {i+1}" for i in range(max_columns)]) + " |\n"
+            )
+            separator_row = "| " + " | ".join(["---"] * max_columns) + " |\n"
+
+            # Initialize the markdown table string with the header and separator rows
+            markdown_table = header_row + separator_row
+
+            # Iterate over the nested list and append rows to the markdown table
+            for row in nested_list:
+                row += [""] * (
+                    max_columns - len(row)
+                )  # Add empty strings to match the column count
+                markdown_table += "| " + " | ".join(row) + " |\n"
+
+            return markdown_table
+
         table_data = [list(iter_cell_texts(tr)) for tr in trs]
         html_table = htmlify_matrix_of_cell_texts(table_data)
         table_text = " ".join(" ".join(t for t in row if t) for row in table_data).strip()
+        markdown_table = nested_list_to_variable_markdown_table(table_data)
+
 
         if table_text == "":
             return None
 
-        return Table(text=table_text, metadata=ElementMetadata(text_as_html=html_table))
+        return Table(text=table_text, markdown_table=markdown_table,metadata=ElementMetadata(text_as_html=html_table))
 
     def _process_list_item(
         self, tag_elem: etree._Element, max_predecessor_len: int = HTML_MAX_PREDECESSOR_LEN

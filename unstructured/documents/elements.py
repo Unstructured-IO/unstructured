@@ -984,6 +984,22 @@ class Table(Text):
     """An element for capturing tables."""
 
     category = "Table"
+    def __init__(
+        self,
+        *args,
+        markdown_table=None,
+        **kwargs,
+    ):
+        """
+        Initialize the HTMLTable with base and HTML-specific properties.
+
+        Args:
+            *args: Variable length argument list.
+            column_headers (Optional[Sequence[str]]): Headers for the table columns.
+            **kwargs: Arbitrary keyword arguments.
+        """
+        self.markdown_table = markdown_table
+        super().__init__(*args, **kwargs)  # Initialize base classes    
 
 
 class TableChunk(Table):
