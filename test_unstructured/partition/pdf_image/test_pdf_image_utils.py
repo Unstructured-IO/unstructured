@@ -79,7 +79,6 @@ def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-i
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_save_elements(
     element_category_to_save,
-    0, # starting page number
     extract_image_block_to_payload,
     filename,
     is_image,
@@ -118,6 +117,7 @@ def test_save_elements(
 
         pdf_image_utils.save_elements(
             elements=elements,
+            starting_page_number=1,
             element_category_to_save=element_category_to_save,
             pdf_image_dpi=200,
             filename=filename,
@@ -158,6 +158,7 @@ def test_save_elements_with_output_dir_path_none(monkeypatch, storage_enabled):
         pdf_image_utils.save_elements(
             elements=[],
             element_category_to_save="",
+            starting_page_number=1,
             pdf_image_dpi=200,
             filename="dummy.pdf",
             output_dir_path=None,
