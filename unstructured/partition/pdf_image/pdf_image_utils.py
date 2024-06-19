@@ -191,7 +191,6 @@ def save_elements(
             metadata_page_number = el.metadata.page_number
             page_index = metadata_page_number - starting_page_number
 
-
             figure_number += 1
             try:
                 basename = "table" if el.category == ElementType.TABLE else "figure"
