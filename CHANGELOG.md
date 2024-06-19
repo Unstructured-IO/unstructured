@@ -1,4 +1,4 @@
-## 0.14.7-dev4
+## 0.14.7-dev5
 
 ### Enhancements
 
@@ -10,6 +10,7 @@
 ### Fixes
 
 * **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
+* **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
 
 ## 0.14.6
 

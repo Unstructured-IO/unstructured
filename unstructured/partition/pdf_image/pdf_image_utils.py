@@ -121,6 +121,7 @@ def pad_bbox(
 
 def save_elements(
     elements: List["Element"],
+    starting_page_number: int,
     element_category_to_save: str,
     pdf_image_dpi: int,
     filename: str = "",
@@ -183,16 +184,22 @@ def save_elements(
             padded_bbox = cast(
                 Tuple[int, int, int, int], pad_bbox((x1, y1, x2, y2), (h_padding, v_padding))
             )
-            page_number = el.metadata.page_number
+
+            # The page number in the metadata may have been offset
+            # by starting_page_number. Make sure we use the right
+            # value for indexing!
+            metadata_page_number = el.metadata.page_number
+            page_index = metadata_page_number - starting_page_number
+
 
             figure_number += 1
             try:
                 basename = "table" if el.category == ElementType.TABLE else "figure"
                 output_f_path = os.path.join(
                     output_dir_path,
-                    f"{basename}-{page_number}-{figure_number}.jpg",
+                    f"{basename}-{metadata_page_number}-{figure_number}.jpg",
                 )
-                image_path = image_paths[page_number - 1]
+                image_path = image_paths[page_index]
                 image = Image.open(image_path)
                 cropped_image = image.crop(padded_bbox)
                 if extract_image_block_to_payload:

@@ -1223,6 +1223,8 @@ def test_partition_pdf_element_extraction(
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
+                # Image extraction shouldn't break by setting this
+                starting_page_number=20,
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 extract_image_block_output_dir=tmpdir,
