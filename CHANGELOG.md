@@ -7,6 +7,8 @@
 
 ### Features
 
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
 ### Fixes
 
 * **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
