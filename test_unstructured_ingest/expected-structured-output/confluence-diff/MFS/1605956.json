@@ -238,6 +238,12 @@
       "filetype": "text/html",
       "languages": [
         "eng"
+      ],
+      "link_texts": [
+        "Inline comments"
+      ],
+      "link_urls": [
+        "https://support.atlassian.com/confluence-cloud/docs/comment-on-pages-and-blog-posts/"
       ]
     },
     "text": "Thoughtful responses can get lost and lose context as email replies pile up. And if you neglect to copy someone or want to add them later on, it's difficult for them to get up to speed. Inline comments allow anyone (or everyone) to huddle around an idea while referencing key information on the project page.",
@@ -323,11 +329,8 @@
       "languages": [
         "eng"
       ],
-      "link_start_indexes": [
-        0
-      ],
       "link_texts": [
-        ""
+        "@mentions"
       ],
       "link_urls": [
         "https://support.atlassian.com/confluence-cloud/docs/mention-a-person-or-team/"
