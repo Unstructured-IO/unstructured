@@ -1229,6 +1229,7 @@ def test_partition_pdf_element_extraction(
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 extract_image_block_output_dir=tmpdir,
             )
+            assert elements[0].metadata.page_number == 20
         else:
             with open(filename, "rb") as f:
                 elements = pdf.partition_pdf(
