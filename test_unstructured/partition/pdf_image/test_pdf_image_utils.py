@@ -79,6 +79,7 @@ def test_convert_pdf_to_image_raises_error(filename=example_doc_path("embedded-i
 @pytest.mark.parametrize("extract_image_block_to_payload", [False, True])
 def test_save_elements(
     element_category_to_save,
+    0, # starting page number
     extract_image_block_to_payload,
     filename,
     is_image,
