@@ -29,7 +29,7 @@ from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
-    from chromadb import Collection as ChromaCollection
+    from chromadb import Client
 
 
 import typing as t
@@ -99,8 +99,7 @@ class ChromaUploadStager(UploadStager):
     ) -> Path:
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
-        # for element in elements_contents:
-        #     self.conform_dict(data=element)
+
         conformed_elements = []
         for element in elements_contents:
             conformed_elements.append(self.conform_dict(data=element))
@@ -120,17 +119,17 @@ class ChromaUploaderConfig(UploaderConfig):
 class ChromaUploader(Uploader):
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
-    _collection: Optional["ChromaCollection"] = field(init=False)
+    client: Optional["Client"] = field(init=False)
 
     def __post_init__(self):
-        self._collection = self.create_collection()
+        self.client = self.create_client()
 
     @requires_dependencies(["chromadb"], extras="chroma")
-    def create_collection(self) -> "ChromaCollection":
+    def create_client(self) -> "Client":
         import chromadb
 
         if self.connection_config.path:
-            chroma_client = chromadb.PersistentClient(
+            return chromadb.PersistentClient(
                 path=self.connection_config.path,
                 settings=self.connection_config.access_config.settings,
                 tenant=self.connection_config.tenant,
@@ -138,7 +137,7 @@ class ChromaUploader(Uploader):
             )
 
         elif self.connection_config.host and self.connection_config.port:
-            chroma_client = chromadb.HttpClient(
+            return chromadb.HttpClient(
                 host=self.connection_config.host,
                 port=self.connection_config.port,
                 ssl=self.connection_config.ssl,
@@ -150,14 +149,8 @@ class ChromaUploader(Uploader):
         else:
             raise ValueError("Chroma connector requires either path or host and port to be set.")
 
-        collection = chroma_client.get_or_create_collection(
-            name=self.connection_config.collection_name
-        )
-        return collection
-
     @DestinationConnectionError.wrap
-    def upsert_batch(self, batch):
-        collection = self._collection
+    def upsert_batch(self, collection, batch):
 
         try:
             # Chroma wants lists even if there is only one element
@@ -205,8 +198,11 @@ class ChromaUploader(Uploader):
 
         logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
+        collection = self.client.get_or_create_collection(
+            name=self.connection_config.collection_name
+        )
         for chunk in chunk_generator(elements_dict, self.upload_config.batch_size):
-            self.upsert_batch(self.prepare_chroma_list(chunk))
+            self.upsert_batch(collection, self.prepare_chroma_list(chunk))
 
 
 add_destination_entry(
