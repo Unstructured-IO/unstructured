@@ -157,6 +157,8 @@ If using the optional `pre-commit`, you'll just need to install the hooks with `
 `pre-commit` package is installed as part of `make install` mentioned above. Finally, if you decided to use `pre-commit`
 you can also uninstall the hooks with `pre-commit uninstall`.
 
+Don't forget to increase the 
+
 In addition to develop in your local OS we also provide a helper to use docker providing a development environment:
 
 ```bash

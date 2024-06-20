@@ -1,4 +1,4 @@
-## 0.14.7-dev5
+## 0.14.7-dev6
 
 ### Enhancements
 
@@ -8,11 +8,15 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+* **Add row-column coordinate to partition-xlsx** Adds row-column coordinate to the metadata of the elements returned when partitioning an Excel file. It both returns the coordinate as a python tuple (and 0-based), and in Excel format (e.g. "A1").
+* **Change behaviour of `starting_page_number` in partition-xlsx** Makes this parameter skip any sheet before its value. Previously, it would name the first sheet as in this
+value. Now the first sheet is always sheet 1.
 
 ### Fixes
 
 * **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
 * **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
+
 
 ## 0.14.6
 
