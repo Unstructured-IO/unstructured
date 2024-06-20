@@ -460,10 +460,6 @@ DOCKER_IMAGE ?= unstructured:dev
 docker-build:
 	PIP_VERSION=${PIP_VERSION} DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
 
-.PHONY: docker-dl-packages
-docker-dl-packages:
-	@scripts/docker-dl-packages.sh
-
 .PHONY: docker-start-bash
 docker-start-bash:
 	docker run -ti --rm ${DOCKER_IMAGE}

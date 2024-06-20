@@ -1,4 +1,6 @@
-from tempfile import SpooledTemporaryFile
+from __future__ import annotations
+
+from pytest_mock import MockFixture
 
 from test_unstructured.unit_utils import assert_round_trips_through_JSON, example_doc_path
 from unstructured.chunking.title import chunk_by_title
@@ -59,113 +61,26 @@ def test_partition_rtf_from_file_exclude_metadata():
         assert elements[i].metadata.to_dict() == {}
 
 
-def test_partition_rtf_metadata_date(
-    mocker,
-    filename="example-docs/fake-doc.rtf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
+def test_partition_rtf_pulls_last_modified_from_filesystem(mocker: MockFixture):
+    filesystem_last_modified = "2024-06-14T16:01:29"
     mocker.patch(
-        "unstructured.partition.html.get_last_modified_date",
-        return_value=mocked_last_modification_date,
+        "unstructured.partition.rtf.get_last_modified", return_value=filesystem_last_modified
     )
+
+    elements = partition_rtf("example-docs/fake-doc.rtf")
+
+    assert elements[0].metadata.last_modified == filesystem_last_modified
+
+
+def test_partition_rtf_prefers_metadata_last_modified(mocker: MockFixture):
+    metadata_last_modified = "2024-06-14T16:01:29"
+    mocker.patch("unstructured.partition.rtf.get_last_modified", return_value="2029-07-05T09:24:28")
 
     elements = partition_rtf(
-        filename=filename,
+        "example-docs/fake-doc.rtf", metadata_last_modified=metadata_last_modified
     )
 
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_rtf_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake-doc.rtf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.html.get_last_modified_date",
-        return_value=mocked_last_modification_date,
-    )
-
-    elements = partition_rtf(
-        filename=filename,
-        metadata_last_modified=expected_last_modification_date,
-    )
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_rtf_from_file_metadata_date(
-    mocker,
-    filename="example-docs/fake-doc.rtf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.html.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_rtf(
-            file=f,
-        )
-
-    assert elements[0].metadata.last_modified is None
-
-
-def test_partition_rtf_from_file_explicit_get_metadata_date(
-    mocker,
-    filename="example-docs/fake-doc.rtf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.html.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_rtf(
-            file=f,
-            date_from_file_object=True,
-        )
-
-    assert elements[0].metadata.last_modified == mocked_last_modification_date
-
-
-def test_partition_rtf_from_file_with_custom_metadata_date(
-    mocker,
-    filename="example-docs/fake-doc.rtf",
-):
-    mocked_last_modification_date = "2029-07-05T09:24:28"
-    expected_last_modification_date = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.html.get_last_modified_date_from_file",
-        return_value=mocked_last_modification_date,
-    )
-
-    with open(filename, "rb") as f:
-        elements = partition_rtf(file=f, metadata_last_modified=expected_last_modification_date)
-
-    assert elements[0].metadata.last_modified == expected_last_modification_date
-
-
-def test_partition_rtf_from_file_without_metadata_date(
-    filename="example-docs/fake-doc.rtf",
-):
-    """Test partition_rtf() with file that are not possible to get last modified date"""
-
-    with open(filename, "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_rtf(file=sf, date_from_file_object=True)
-
-    assert elements[0].metadata.last_modified is None
+    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 
 
 def test_partition_rtf_with_json():

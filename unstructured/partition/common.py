@@ -66,6 +66,19 @@ HIERARCHY_RULE_SET = {
 }
 
 
+def get_last_modified(
+    filename: str | None, file: IO[bytes] | None, date_from_file_object: bool
+) -> str | None:
+    """Determine best available last-modified date from file or filename."""
+    if filename is not None:
+        return get_last_modified_date(filename)
+
+    if file is not None:
+        return get_last_modified_date_from_file(file) if date_from_file_object else None
+
+    return None
+
+
 def get_last_modified_date(filename: str) -> Optional[str]:
     """Modification time of file at path `filename`, if it exists.
 

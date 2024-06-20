@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from bs4 import BeautifulSoup
+from unstructured_inference.models.tables import cells_to_html
 
 EMPTY_CELL = {
     "row_index": "",
@@ -37,7 +38,7 @@ def _move_cells_for_spanned_cells(cells: List[Dict[str, Any]]):
     return sorted_cells
 
 
-def _html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
+def html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
     """Convert html format to Deckerd table structure.
 
     Args:
@@ -66,6 +67,36 @@ def _html_table_to_deckerd(content: str) -> List[Dict[str, Any]]:
     return _move_cells_for_spanned_cells(table_data)
 
 
+def deckerd_table_to_html(cells: List[Dict[str, Any]]) -> str:
+    """Convert Deckerd table structure to html format.
+
+    Args:
+        cells: List of dictionaries where each dictionary represents a cell in the table.
+
+    Returns:
+        A string with the html content of the table.
+    """
+    transformer_cells = []
+    # determine which cells are in header. Consider row 0 as header
+    # but spans may make it larger
+    first_row_cells = [cell for cell in cells if cell["y"] == 0]
+    header_length = max(cell["w"] for cell in first_row_cells)
+    header_rows = set(range(header_length))
+    for cell in cells:
+        cell_data = {
+            "row_nums": list(range(cell["y"], cell["y"] + cell["h"])),
+            "column_nums": list(range(cell["x"], cell["x"] + cell["w"])),
+            "w": cell["w"],
+            "h": cell["h"],
+            "cell text": cell["content"],
+            "column header": cell["y"] in header_rows,
+        }
+        transformer_cells.append(cell_data)
+    # reuse the existing function to convert to HTML
+    table = cells_to_html(transformer_cells)
+    return table
+
+
 def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
     """Convert html format to table structure. As a middle step it converts
     html to the Deckerd format as it's more convenient to work with.
@@ -76,7 +107,7 @@ def _convert_table_from_html(content: str) -> List[Dict[str, Any]]:
     Returns:
         A list of dictionaries where each dictionary represents a cell in the table.
     """
-    deckerd_cells = _html_table_to_deckerd(content)
+    deckerd_cells = html_table_to_deckerd(content)
     return _convert_table_from_deckerd(deckerd_cells)
 
 
@@ -160,11 +191,18 @@ def extract_and_convert_tables_from_prediction(
         )
 
     extract_cells_fn = source_type_to_extraction_strategies[source_type]
+    fallback_extract_cells_fn = (
+        extract_cells_from_table_as_cells
+        if source_type == "cells"
+        else extract_cells_from_text_as_html
+    )
 
     predicted_table_data = []
     for element in file_elements:
         if element.get("type") == "Table":
             extracted_cells = extract_cells_fn(element)
+            if not extracted_cells:
+                extracted_cells = fallback_extract_cells_fn(element)
             if extracted_cells:
                 sorted_cells = _sort_table_cells(extracted_cells)
                 predicted_table_data.append(sorted_cells)

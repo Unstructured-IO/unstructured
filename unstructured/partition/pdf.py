@@ -660,6 +660,7 @@ def _partition_pdf_or_image_local(
     if extract_images_in_pdf:
         save_elements(
             elements=elements,
+            starting_page_number=starting_page_number,
             element_category_to_save=ElementType.IMAGE,
             filename=filename,
             file=file,
@@ -675,6 +676,7 @@ def _partition_pdf_or_image_local(
 
         save_elements(
             elements=elements,
+            starting_page_number=starting_page_number,
             element_category_to_save=el_type,
             filename=filename,
             file=file,

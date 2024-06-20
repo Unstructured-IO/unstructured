@@ -204,6 +204,3 @@ examples/**/output/
 
 outputdiff.txt
 metricsdiff.txt
-
-# APK packages for the docker build
-docker-packages/*

@@ -10,8 +10,7 @@ from unstructured.file_utils.filetype import FileType, add_metadata_with_filetyp
 from unstructured.partition.common import (
     convert_office_doc,
     exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
+    get_last_modified,
 )
 from unstructured.partition.docx import partition_docx
 
@@ -23,11 +22,9 @@ def partition_doc(
     filename: Optional[str] = None,
     file: Optional[IO[bytes]] = None,
     include_page_breaks: bool = True,
-    include_metadata: bool = True,
     metadata_filename: Optional[str] = None,
     metadata_last_modified: Optional[str] = None,
     libre_office_filter: Optional[str] = "MS Word 2007 XML",
-    chunking_strategy: Optional[str] = None,
     languages: Optional[list[str]] = ["auto"],
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
@@ -106,7 +103,6 @@ def partition_doc(
         elements = partition_docx(
             filename=target_file_path,
             detect_language_per_element=detect_language_per_element,
-            include_metadata=include_metadata,
             include_page_breaks=include_page_breaks,
             languages=languages,
             metadata_filename=metadata_filename,
@@ -122,16 +118,3 @@ def partition_doc(
             element.metadata.filename = metadata_filename
 
     return elements
-
-
-def get_last_modified(
-    filename: str | None, file: IO[bytes] | None, date_from_file_object: bool
-) -> str | None:
-    """Determine best available last-modified date from partitioner document-source."""
-    if filename is not None:
-        return get_last_modified_date(filename)
-
-    if file is not None:
-        return get_last_modified_date_from_file(file) if date_from_file_object else None
-
-    return None
