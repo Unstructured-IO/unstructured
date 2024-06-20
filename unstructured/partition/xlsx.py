@@ -59,8 +59,6 @@ def partition_xlsx(
     include_header: bool = False,
     find_subtable: bool = True,
     date_from_file_object: bool = False,
-    # TODO marc: fix this too. This is not doing anything atm, just renaming the number
-    # but keeps starting at 1
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -110,13 +108,10 @@ def partition_xlsx(
     )
 
     elements: list[Element] = []
-    for page_number, (sheet_name, sheet) in enumerate(
-        opts.sheets.items(), start=starting_page_number
-    ):
-        # TODO marc: remove
-        if page_number != 5:
+    # Excel counts sheets 1-based
+    for page_number, (sheet_name, sheet) in enumerate(opts.sheets.items(), start=1):
+        if page_number < starting_page_number:
             continue
-
         if not opts.find_subtable:
             html_text = (
                 sheet.to_html(  # pyright: ignore[reportUnknownMemberType]
@@ -153,15 +148,15 @@ def partition_xlsx(
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
                 subtable_parser = _SubtableParser(component)
-                c = subtable_parser._top_left_coordinate[1]
+                c = subtable_parser.top_left_coordinate[1]
 
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
                 for row_index, content in zip(
-                    subtable_parser._leading_single_cell_row_indices,
+                    subtable_parser.leading_single_cell_row_indices,
                     subtable_parser.iter_leading_single_cell_rows_texts(),
                 ):
                     element = _create_element(str(content))
-                    r = subtable_parser._top_left_coordinate[0] + row_index + include_header
+                    r = subtable_parser.top_left_coordinate[0] + row_index + include_header
                     element.metadata = _get_metadata(
                         sheet_name,
                         page_number,
@@ -185,7 +180,7 @@ def partition_xlsx(
                     )
                     element = Table(text=text)
                     r = (
-                        subtable_parser._top_left_coordinate[0]
+                        subtable_parser.top_left_coordinate[0]
                         + subtable_parser.core_table_start
                         + include_header
                     )
@@ -205,12 +200,12 @@ def partition_xlsx(
 
                 # -- emit each trailing single-cell row as its own `Text`-subtype element --
                 for row_index, content in zip(
-                    subtable_parser._trailing_single_cell_row_indices,
+                    subtable_parser.trailing_single_cell_row_indices,
                     subtable_parser.iter_trailing_single_cell_rows_texts(),
                 ):
                     element = _create_element(str(content))
                     r = (
-                        subtable_parser._top_left_coordinate[0]
+                        subtable_parser.top_left_coordinate[0]
                         + len(component.subtable)
                         + row_index
                         + include_header
@@ -369,12 +364,12 @@ class _ConnectedComponent:
     @lazyproperty
     def max_x(self) -> int:
         """The right-most column index of the connected component."""
-        return self._extents[2]
+        return self.extents[2]
 
     @lazyproperty
     def min_x(self) -> int:
         """The left-most column index of the connected component."""
-        return self._extents[0]
+        return self.extents[0]
 
     @lazyproperty
     def subtable(self) -> pd.DataFrame:
@@ -383,11 +378,11 @@ class _ConnectedComponent:
         The subtable is the rectangular region of the worksheet inside the connected-component
         bounding-box. Row-indices and column labels are preserved, not restarted at 0.
         """
-        min_x, min_y, max_x, max_y = self._extents
+        min_x, min_y, max_x, max_y = self.extents
         return self._worksheet.iloc[min_x : max_x + 1, min_y : max_y + 1]
 
     @lazyproperty
-    def _extents(self) -> tuple[int, int, int, int]:
+    def extents(self) -> tuple[int, int, int, int]:
         """Compute bounding box of this connected component."""
         min_x, min_y, max_x, max_y = float("inf"), float("inf"), float("-inf"), float("-inf")
         for x, y in self._cell_coordinate_set:
@@ -498,12 +493,12 @@ class _SubtableParser:
 
     def __init__(self, component: _ConnectedComponent):
         self._subtable = component.subtable
-        self._top_left_coordinate = component._extents[0:2]
+        self.top_left_coordinate = component.extents[0:2]
 
     @lazyproperty
     def core_table_start(self) -> int:
         """The index of the first row in the core-table."""
-        return len(self._leading_single_cell_row_indices)
+        return len(self.leading_single_cell_row_indices)
 
     @lazyproperty
     def core_table(self) -> pd.DataFrame | None:
@@ -517,23 +512,23 @@ class _SubtableParser:
         # -- assert: there is at least one core-table row (leading single-cell rows greedily
         # -- consumes all consecutive single-cell rows.
 
-        core_table_stop = len(self._subtable) - len(self._trailing_single_cell_row_indices)
+        core_table_stop = len(self._subtable) - len(self.trailing_single_cell_row_indices)
 
         # -- core-table is what's left in-between --
         return self._subtable[self.core_table_start : core_table_stop]
 
     def iter_leading_single_cell_rows_texts(self) -> Iterator[str]:
         """Generate the cell-text for each leading single-cell row."""
-        for row_idx in self._leading_single_cell_row_indices:
+        for row_idx in self.leading_single_cell_row_indices:
             yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
 
     def iter_trailing_single_cell_rows_texts(self) -> Iterator[str]:
         """Generate the cell-text for each trailing single-cell row."""
-        for row_idx in self._trailing_single_cell_row_indices:
+        for row_idx in self.trailing_single_cell_row_indices:
             yield self._subtable.iloc[row_idx].dropna().iloc[0]  # pyright: ignore
 
     @lazyproperty
-    def _leading_single_cell_row_indices(self) -> tuple[int, ...]:
+    def leading_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each leading single-cell row in subtable, in top-down order."""
 
         def iter_leading_single_cell_row_indices() -> Iterator[int]:
@@ -557,10 +552,10 @@ class _SubtableParser:
         return tuple(iter_single_cell_row_idxs())
 
     @lazyproperty
-    def _trailing_single_cell_row_indices(self) -> tuple[int, ...]:
+    def trailing_single_cell_row_indices(self) -> tuple[int, ...]:
         """Index of each trailing single-cell row in subtable, in top-down order."""
         # -- if all subtable rows are single-cell, then by convention they are all leading --
-        if len(self._leading_single_cell_row_indices) == len(self._subtable):
+        if len(self.leading_single_cell_row_indices) == len(self._subtable):
             return ()
 
         def iter_trailing_single_cell_row_indices() -> Iterator[int]:
