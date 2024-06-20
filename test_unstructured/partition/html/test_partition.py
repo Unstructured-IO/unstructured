@@ -14,7 +14,6 @@ import pytest
 from test_unstructured.unit_utils import (
     FixtureRequest,
     Mock,
-    MonkeyPatch,
     assert_round_trips_through_JSON,
     example_doc_path,
     example_doc_text,
@@ -36,6 +35,10 @@ from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
 
+# ================================================================================================
+# SOURCE HTML LOADING BEHAVIORS
+# ================================================================================================
+
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
 
@@ -45,6 +48,16 @@ def test_partition_html_accepts_a_file_path():
     assert len(elements) > 0
     assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
     assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
+
+
+def test_user_without_file_write_permission_can_partition_html(tmp_path: pathlib.Path):
+    read_only_file_path = tmp_path / "example-10k-readonly.html"
+    read_only_file_path.write_text(example_doc_text("example-10k-1p.html"))
+    read_only_file_path.chmod(0o444)
+
+    elements = partition_html(filename=str(read_only_file_path.resolve()))
+
+    assert len(elements) > 0
 
 
 def test_partition_html_accepts_a_file_like_object():
@@ -76,6 +89,89 @@ def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
 def test_partition_html_raises_when_no_path_or_file_or_text_or_url_is_specified():
     with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be sp"):
         partition_html()
+
+
+# -- encoding for filename, file, and text -------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_filename_raises_when_explicit_encoding_is_wrong(filename: str):
+    with pytest.raises(UnicodeDecodeError):
+        with open(example_doc_path(filename), "rb") as f:
+            partition_html(file=f, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_filename_default_encoding(filename: str):
+    elements = partition_html(example_doc_path(filename))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == filename for e in elements)
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_file_raises_encoding_error(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
+        partition_html(file=file, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_file_default_encoding(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        elements = partition_html(file=f)
+
+    assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_file_rb_raises_encoding_error(filename: str):
+    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
+        with open(example_doc_path(filename), "rb") as f:
+            partition_html(file=f, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_file_rb_default_encoding(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        elements = partition_html(file=f)
+
+    assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+def test_partition_html_processes_chinese_chracters():
+    html_text = "<html><div><p>每日新闻</p></div></html>"
+    elements = partition_html(text=html_text)
+    assert elements[0].text == "每日新闻"
+
+
+def test_emoji_appears_with_emoji_utf8_code():
+    assert partition_html(text='<html charset="utf-8"><p>Hello &#128512;</p></html>') == [
+        Title("Hello 😀")
+    ]
 
 
 # -- partition_html() from URL -------------------------------------------------------------------
@@ -117,7 +213,59 @@ def test_partition_from_url_includes_provided_headers_in_request(requests_get_: 
     )
 
 
-# -- HTML tag-specific behaviors -----------------------------------------------------------------
+# ================================================================================================
+# PARSING TESTS
+# ================================================================================================
+
+
+def test_partition_html_on_ideas_page():
+    elements = partition_html(example_doc_path("ideas-page.html"))
+
+    assert len(elements) == 1
+    e = elements[0]
+    assert e == Table(
+        "January 2023 ( Someone fed my essays into GPT to make something that could answer"
+        "\nquestions based on them, then asked it where good ideas come from.  The"
+        "\nanswer was ok, but not what I would have said. This is what I would have said.)"
+        " The way to get new ideas is to notice anomalies: what seems strange,"
+        "\nor missing, or broken? You can see anomalies in everyday life (much"
+        "\nof standup comedy is based on this), but the best place to look for"
+        "\nthem is at the frontiers of knowledge. Knowledge grows fractally."
+        "\nFrom a distance its edges look smooth, but when you learn enough"
+        "\nto get close to one, you'll notice it's full of gaps. These gaps"
+        "\nwill seem obvious; it will seem inexplicable that no one has tried"
+        "\nx or wondered about y. In the best case, exploring such gaps yields"
+        "\nwhole new fractal buds.",
+    )
+    assert e.metadata.emphasized_text_contents is None
+    assert e.metadata.link_urls is None
+    assert e.metadata.text_as_html is not None
+
+
+# -- table parsing behaviors ---------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("tag", "expected_text_as_html"),
+    [
+        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+    ],
+)
+def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
+    elements = partition_html(
+        text=(
+            f"<table>\n"
+            f"  <{tag}>\n"
+            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
+            f"  </{tag}>\n"
+            f"</table>"
+        )
+    )
+    assert elements[0].metadata.text_as_html == expected_text_as_html
+
+
+# -- other element-specific behaviors ------------------------------------------------------------
 
 
 def test_partition_html_recognizes_h1_to_h3_as_Title_except_in_edge_cases():
@@ -211,6 +359,17 @@ def test_partition_html_tag_tail_parsing():
     assert "|".join([str(e).strip() for e in elements]) == "Head|Nested|Tail"
 
 
+# -- parsing edge cases --------------------------------------------------------------------------
+
+
+def test_partition_html_from_text_works_with_empty_string():
+    assert partition_html(text="") == []
+
+
+# ================================================================================================
+# OTHER ARGS
+# ================================================================================================
+
 # -- `chunking_strategy` arg ---------------------------------------------------------------------
 
 
@@ -220,89 +379,6 @@ def test_partition_html_can_chunk_while_partitioning():
     chunks_2 = chunk_by_title(partition_html(file_path))
     assert all(isinstance(c, (CompositeElement, Table, TableChunk)) for c in chunks)
     assert chunks == chunks_2
-
-
-# -- `encoding` arg ------------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_filename_raises_when_explicit_encoding_is_wrong(filename: str):
-    with pytest.raises(UnicodeDecodeError):
-        with open(example_doc_path(filename), "rb") as f:
-            partition_html(file=f, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_filename_default_encoding(filename: str):
-    elements = partition_html(example_doc_path(filename))
-
-    assert len(elements) > 0
-    assert all(e.metadata.filename == filename for e in elements)
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_file_raises_encoding_error(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
-        partition_html(file=file, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_file_default_encoding(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        elements = partition_html(file=f)
-
-    assert len(elements) > 0
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_file_rb_raises_encoding_error(filename: str):
-    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
-        with open(example_doc_path(filename), "rb") as f:
-            partition_html(file=f, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_file_rb_default_encoding(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        elements = partition_html(file=f)
-
-    assert len(elements) > 0
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-def test_partition_html_processes_chinese_chracters():
-    html_text = "<html><div><p>每日新闻</p></div></html>"
-    elements = partition_html(text=html_text)
-    assert elements[0].text == "每日新闻"
-
-
-def test_emoji_appears_with_emoji_utf8_code():
-    html_text = '<html charset="utf-8"><p>Hello &#128512;</p></html>'
-    elements = partition_html(text=html_text)
-    assert elements[0] == Title("Hello 😀")
 
 
 # -- `include_metadata` arg ----------------------------------------------------------------------
@@ -352,6 +428,10 @@ def test_element_ids_are_deterministic():
     ids_2 = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
     assert ids == ids_2
 
+
+# ================================================================================================
+# METADATA BEHAVIORS
+# ================================================================================================
 
 # -- .metadata.category_depth + parent_id --------------------------------------------------------
 
@@ -689,26 +769,6 @@ def test_partition_html_applies_text_as_html_metadata_for_tables(
     assert elements[0].metadata.text_as_html == expected_value
 
 
-@pytest.mark.parametrize(
-    ("tag", "expected_text_as_html"),
-    [
-        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-    ],
-)
-def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
-    elements = partition_html(
-        text=(
-            f"<table>\n"
-            f"  <{tag}>\n"
-            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
-            f"  </{tag}>\n"
-            f"</table>"
-        )
-    )
-    assert elements[0].metadata.text_as_html == expected_text_as_html
-
-
 # -- .metadata.url -------------------------------------------------------------------------------
 
 
@@ -726,39 +786,9 @@ def test_partition_html_from_url_adds_url_to_metadata(requests_get_: Mock):
     assert all(e.metadata.url == "https://trusttheforceluke.com" for e in elements)
 
 
-# -- miscellaneous -------------------------------------------------------------------------------
-
-
-def test_partition_html_from_text_works_with_empty_string():
-    assert partition_html(text="") == []
-
-
-def test_partition_html_on_ideas_page():
-    elements = partition_html(example_doc_path("ideas-page.html"))
-
-    assert len(elements) == 1
-    assert elements[0] == Table(
-        "January 2023 ( Someone fed my essays into GPT to make something that could"
-        " answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer"
-        " was ok, but not what I would have said. This is what I would have said.) The way to get"
-        " new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can"
-        " see anomalies in everyday life (much\nof standup comedy is based on this), but the best"
-        " place to look for\nthem is at the frontiers of knowledge. Knowledge grows"
-        " fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get"
-        " close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will"
-        " seem inexplicable that no one has tried\nx or wondered about y. In the best case,"
-        " exploring such gaps yields\nwhole new fractal buds.",
-    )
-    assert elements[0].metadata.emphasized_text_contents is None
-    assert elements[0].metadata.link_urls is None
-    assert elements[0].metadata.text_as_html is not None
-
-
-def test_partition_html_returns_html_elements():
-    elements = partition_html(example_doc_path("example-10k-1p.html"))
-
-    assert len(elements) > 0
-    assert isinstance(elements[0], Table)
+# ================================================================================================
+# SERIALIZATION BEHAVIORS
+# ================================================================================================
 
 
 def test_partition_html_round_trips_through_json():
@@ -766,20 +796,9 @@ def test_partition_html_round_trips_through_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_user_without_file_write_permission_can_partition_html(
-    tmp_path: pathlib.Path, monkeypatch: MonkeyPatch
-):
-    read_only_file_path = tmp_path / "example-10k-readonly.html"
-    read_only_file_path.write_text(example_doc_text("example-10k-1p.html"))
-    read_only_file_path.chmod(0o444)
-
-    elements = partition_html(filename=str(read_only_file_path.resolve()))
-
-    assert len(elements) > 0
-
-
-# -- module-level fixtures -----------------------------------------------------------------------
-
+# ================================================================================================
+# MODULE-LEVEL FIXTURES
+# ================================================================================================
 
 EXPECTED_OUTPUT_LANGUAGE_DE = [
     Title(text="Jahresabschluss zum Geschäftsjahr vom 01.01.2020 bis zum 31.12.2020"),
