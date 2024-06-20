@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import io
 import pathlib
-from tempfile import SpooledTemporaryFile
 from typing import Any
 
 import pytest
@@ -25,7 +24,6 @@ from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
     CompositeElement,
-    EmailAddress,
     ListItem,
     NarrativeText,
     Table,
@@ -33,7 +31,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import partition_html
 from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
@@ -45,12 +42,43 @@ from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlP
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
 
-def test_partition_html_accepts_a_file_path():
-    elements = partition_html(example_doc_path("example-10k-1p.html"))
+def test_partition_html_accepts_a_file_path(tmp_path: pathlib.Path):
+    file_path = str(tmp_path / "sample-doc.html")
+    with open(file_path, "w") as f:
+        f.write(
+            "<html>\n"
+            "  <body>\n"
+            "    <h1>A Great and Glorious Section</h1>\n"
+            "    <p>Dear Leader is the best. He is such a wonderful engineer!</p>\n"
+            "    <p></p>\n"
+            "    <p>Another Magnificent paragraph</p>\n"
+            "    <p><b>The prior element is a title based on its capitalization patterns!</b></p>\n"
+            "    <table>\n"
+            "      <tbody>\n"
+            "        <tr>\n"
+            "          <td><p>I'm in a table</p></td>\n"
+            "        </tr>\n"
+            "      </tbody>\n"
+            "    </table>\n"
+            "    <h2>A New Beginning</h2>\n"
+            "    <div>Here is the start of a new page.</div>\n"
+            "  </body>\n"
+            "</html>\n"
+        )
 
-    assert len(elements) > 0
-    assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
-    assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
+    elements = partition_html(file_path)
+
+    assert len(elements) == 7
+    assert elements == [
+        Title("A Great and Glorious Section"),
+        NarrativeText("Dear Leader is the best. He is such a wonderful engineer!"),
+        Title("Another Magnificent paragraph"),
+        NarrativeText("The prior element is a title based on its capitalization patterns!"),
+        Table("I'm in a table"),
+        Title("A New Beginning"),
+        NarrativeText("Here is the start of a new page."),
+    ]
+    assert all(e.metadata.filename == "sample-doc.html" for e in elements)
 
 
 def test_user_without_file_write_permission_can_partition_html(tmp_path: pathlib.Path):
@@ -248,25 +276,22 @@ def test_partition_html_on_ideas_page():
 # -- element-suppression behaviors ---------------------------------------------------------------
 
 
-def test_it_does_not_extract_text_in_script_tags(opts_args: dict[str, Any]):
-    opts_args["file_path"] = example_doc_path("example-with-scripts.html")
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-    assert all("function (" not in element.text for element in doc.elements)
+def test_it_does_not_extract_text_in_script_tags():
+    elements = partition_html(example_doc_path("example-with-scripts.html"))
+    assert all("function (" not in e.text for e in elements)
 
 
-def test_it_does_not_extract_text_in_style_tags(opts_args: dict[str, Any]):
-    opts_args["text"] = (
+def test_it_does_not_extract_text_in_style_tags():
+    html_text = (
         "<html>\n"
         "<body>\n"
         "  <p><style> p { margin:0; padding:0; } </style>Lorem ipsum dolor</p>\n"
         "</body>\n"
         "</html>"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
 
-    (element,) = html_document.elements
+    (element,) = partition_html(text=html_text)
+
     assert isinstance(element, Text)
     assert element.text == "Lorem ipsum dolor"
 
@@ -274,9 +299,9 @@ def test_it_does_not_extract_text_in_style_tags(opts_args: dict[str, Any]):
 # -- table parsing behaviors ---------------------------------------------------------------------
 
 
-def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str, Any]):
+def test_it_can_parse_a_bare_bones_table_to_a_Table_element():
     """Bare-bones means no `<thead>`, `<tbody>`, or `<tfoot>` elements."""
-    opts_args["text"] = (
+    html_text = (
         "<html>\n"
         "<body>\n"
         "  <table>\n"
@@ -286,11 +311,9 @@ def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str,
         "</body>\n"
         "</html>"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
 
-    # -- there is exactly one element and it's a Table instance --
-    (element,) = html_document.elements
+    (element,) = partition_html(text=html_text)
+
     assert isinstance(element, Table)
     # -- table text is joined into a single string; no row or cell boundaries are represented --
     assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
@@ -303,15 +326,13 @@ def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str,
     )
 
 
-def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_elements(
-    opts_args: dict[str, Any]
-):
+def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_elements():
     """Cells within a `table/thead` element are included in the text and html.
 
     The presence of a `<thead>` element in the original also determines whether a `<thead>` element
     appears in `.text_as_html` or whether the first row of cells is simply in the body.
     """
-    opts_args["text"] = (
+    html_text = (
         "<html>\n"
         "<body>\n"
         "  <table>\n"
@@ -329,10 +350,9 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
         "</body>\n"
         "</html>"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
 
-    (element,) = html_document.elements
+    (element,) = partition_html(text=html_text)
+
     assert isinstance(element, Table)
     assert element.metadata.text_as_html == (
         "<table>"
@@ -344,8 +364,8 @@ def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_
     )
 
 
-def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text(opts_args: dict[str, Any]):
-    opts_args["text"] = (
+def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text():
+    html_text = (
         "<html>\n"
         "<body>\n"
         "  <table>\n"
@@ -355,14 +375,12 @@ def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text(opts_args: di
         "</body>\n"
         "</html>"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
 
-    assert html_document.elements == []
+    assert partition_html(text=html_text) == []
 
 
-def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
-    opts_args["text"] = (
+def test_it_provides_parseable_HTML_in_text_as_html():
+    html_text = (
         "<html>\n"
         "<body>\n"
         "  <table>\n"
@@ -380,9 +398,9 @@ def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
         "</body>\n"
         "</html>"
     )
-    html_document = HTMLDocument.load(HtmlPartitionerOptions(**opts_args))
-    (element,) = html_document.elements
-    assert isinstance(element, Table)
+
+    (element,) = partition_html(text=html_text)
+
     text_as_html = element.metadata.text_as_html
     assert text_as_html is not None
 
@@ -422,13 +440,8 @@ def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_ht
     assert elements[0].metadata.text_as_html == expected_text_as_html
 
 
-def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it(
-    opts_args: dict[str, Any]
-):
-    """Recursively ..."""
-    opts = HtmlPartitionerOptions(**opts_args)
-    # -- note <table> elements nested in <td> elements --
-    html_str = (
+def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it():
+    html_text = (
         "<table>\n"
         " <tr>\n"
         "  <td>\n"
@@ -445,23 +458,18 @@ def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_th
         " </tr>\n"
         "</table>"
     )
-    html_document = HTMLDocument(html_str, opts)
-    table_elem = html_document._main.find(".//table")
-    assert table_elem is not None
 
-    html_table = html_document._parse_Table_from_table_elem(table_elem)
+    (element,) = partition_html(text=html_text)
 
-    assert isinstance(html_table, Table)
-    assert html_table.text == "foo bar baz bng fizz bang"
-    assert html_table.metadata.text_as_html == (
+    assert element == Table("foo bar baz bng fizz bang")
+    assert element.metadata.text_as_html == (
         "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"
     )
 
 
-def test_partition_html_accommodates_tds_with_child_elements(opts_args: dict[str, Any]):
+def test_partition_html_accommodates_tds_with_child_elements():
     """Like this example from an SEC 10k filing."""
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_str = (
+    html_text = (
         "<table>\n"
         " <tr>\n"
         "  <td></td>\n"
@@ -488,17 +496,13 @@ def test_partition_html_accommodates_tds_with_child_elements(opts_args: dict[str
         " </tr>\n"
         "</table>\n"
     )
-    html_document = HTMLDocument(html_str, opts)
-    table_elem = html_document._main.find(".//table")
-    assert table_elem is not None
 
-    html_table = html_document._parse_Table_from_table_elem(table_elem)
+    (element,) = partition_html(text=html_text)
 
-    assert isinstance(html_table, Table)
-    assert html_table.text == (
+    assert element == Table(
         "☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934"
     )
-    assert html_table.metadata.text_as_html == (
+    assert element.metadata.text_as_html == (
         "<table>"
         "<tr><td></td><td></td></tr>"
         "<tr><td>☒</td><td>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES"
@@ -510,33 +514,52 @@ def test_partition_html_accommodates_tds_with_child_elements(opts_args: dict[str
 # -- other element-specific behaviors ------------------------------------------------------------
 
 
-def test_partition_html_recognizes_h1_to_h3_as_Title_except_in_edge_cases():
-    assert partition_html(
-        text=(
-            "<p>This is a section of narrative text, it's long, flows and has meaning</p>\n"
-            "<h1>This heading is a title, even though it's long, flows and has meaning</h1>\n"
-            "<h2>A heading that is at the second level</h2>\n"
-            "<h3>Finally, the third heading</h3>\n"
-            "<h2>December 1-17, 2017</h2>\n"
-            "<h3>email@example.com</h3>\n"
-            "<h3><li>- bulleted item</li></h3>\n"
-        )
-    ) == [
-        NarrativeText("This is a section of narrative text, it's long, flows and has meaning"),
-        Title("This heading is a title, even though it's long, flows and has meaning"),
-        Title("A heading that is at the second level"),
-        Title("Finally, the third heading"),
-        Title("December 1-17, 2017"),
-        EmailAddress("email@example.com"),
-        ListItem("- bulleted item"),
-    ]
+def test_partition_html_recognizes_h1_to_h6_as_Title_with_category_depth():
+    html_text = (
+        "<p>This is narrative text, it's long, flows and has meaning</p>\n"
+        "<h1>This heading is a title, even though it's long, flows and has meaning</h1>\n"
+        "<h2>A heading that is at the second level</h2>\n"
+        "<h3>Finally, the third heading</h3>\n"
+        "<h4>December 1-17, 2017</h4>\n"
+        "<h5>email@example.com</h5>\n"
+        "<h6>* bullet point</h6>\n"
+        "<h3><li>- invalidly nested list item</li></h3>\n"
+    )
+
+    elements = partition_html(text=html_text)
+
+    assert len(elements) == 8
+    e = elements[0]
+    assert e == NarrativeText("This is narrative text, it's long, flows and has meaning")
+    assert e.metadata.category_depth is None
+    e = elements[1]
+    assert e == Title("This heading is a title, even though it's long, flows and has meaning")
+    assert e.metadata.category_depth == 0
+    e = elements[2]
+    assert e == Title("A heading that is at the second level")
+    assert e.metadata.category_depth == 1
+    e = elements[3]
+    assert e == Title("Finally, the third heading")
+    assert e.metadata.category_depth == 2
+    e = elements[4]
+    assert e == Title("December 1-17, 2017")
+    assert e.metadata.category_depth == 3
+    e = elements[5]
+    assert e == Title("email@example.com")
+    assert e.metadata.category_depth == 4
+    e = elements[6]
+    assert e == Title("* bullet point")
+    assert e.metadata.category_depth == 5
+    e = elements[7]
+    assert e == ListItem("- invalidly nested list item")
+    assert e.metadata.category_depth == 0
 
 
-def test_partition_html_with_pre_tag():
+def test_partition_html_with_widely_encompassing_pre_tag():
     elements = partition_html(example_doc_path("fake-html-pre.htm"))
 
+    print(f"{len(elements)=}")
     assert len(elements) > 0
-    assert all(e.category != "PageBreak" for e in elements)
     assert clean_extra_whitespace(elements[0].text).startswith("[107th Congress Public Law 56]")
     assert isinstance(elements[0], NarrativeText)
     assert elements[0].metadata.filetype == "text/html"
@@ -559,46 +582,65 @@ def test_pre_tag_parsing_respects_order():
     ]
 
 
-def test_partition_html_b_tag_parsing():
-    elements = partition_html(
-        text=(
-            "<!DOCTYPE html>\n"
-            "<html>\n"
-            "<body>\n"
-            "<div>\n"
-            "  <h1>Header 1</h1>\n"
-            "  <p>Text</p>\n"
-            "  <h2>Header 2</h2>\n"
-            "  <pre>\n"
-            "    <b>Param1</b> = Y<br><b>Param2</b> = 1<br><b>Param3</b> = 2<br><b>Param4</b> = A\n"
-            "    <br><b>Param5</b> = A,B,C,D,E<br><b>Param6</b> = 7<br><b>Param7</b> = Five<br>\n"
-            "  </pre>\n"
-            "</div>\n"
-            "</body>\n"
-            "</html>\n"
-        )
+def test_partition_html_br_tag_parsing():
+    html_text = (
+        "<!DOCTYPE html>\n"
+        "<html>\n"
+        "<body>\n"
+        "<div>\n"
+        "  <h1>Header 1</h1>\n"
+        "  <p>Text</p>\n"
+        "  <h2>Header 2</h2>\n"
+        "  <pre>\n"
+        "    <b>Param1</b> = Y<br><b>Param2</b> = 1<br><b>Param3</b> = 2<br><b>Param4</b> = A\n"
+        "    <br><b>Param5</b> = A,B,C,D,E<br><b>Param6</b> = 7<br><b>Param7</b> = Five<br>\n"
+        "  </pre>\n"
+        "</div>\n"
+        "</body>\n"
+        "</html>\n"
     )
-    assert "|".join(e.text for e in elements) == (
-        "Header 1|Text|Header 2|Param1 = Y|Param2 = 1|Param3 = 2|Param4 = A|"
-        "Param5 = A,B,C,D,E|Param6 = 7|Param7 = Five"
-    )
+
+    elements = partition_html(text=html_text)
+
+    assert elements == [
+        Title("Header 1"),
+        Title("Text"),
+        Title("Header 2"),
+        Text(
+            "    Param1 = Y\nParam2 = 1\nParam3 = 2\nParam4 = A\n    \nParam5 = A,B,C,D,E\n"
+            "Param6 = 7\nParam7 = Five\n\n  "
+        ),
+    ]
+
+    e = elements[3]
+    assert e.metadata.emphasized_text_contents == [
+        "Param1",
+        "Param2",
+        "Param3",
+        "Param4",
+        "Param5",
+        "Param6",
+        "Param7",
+    ]
+    assert e.metadata.emphasized_text_tags == ["b", "b", "b", "b", "b", "b", "b"]
 
 
 def test_partition_html_tag_tail_parsing():
-    elements = partition_html(
-        text=(
-            "<html>\n"
-            "<body>\n"
-            "<div>\n"
-            "    Head\n"
-            "    <div><span>Nested</span></div>\n"
-            "    Tail\n"
-            "</div>\n"
-            "</body>\n"
-            "</html>\n"
-        )
+    html_text = (
+        "<html>\n"
+        "<body>\n"
+        "<div>\n"
+        "    Head\n"
+        "    <div><span>Nested</span></div>\n"
+        "    Tail\n"
+        "</div>\n"
+        "</body>\n"
+        "</html>\n"
     )
-    assert "|".join([str(e).strip() for e in elements]) == "Head|Nested|Tail"
+
+    elements = partition_html(text=html_text)
+
+    assert elements == [Title("Head"), Title("Nested"), Title("Tail")]
 
 
 # -- parsing edge cases --------------------------------------------------------------------------
@@ -608,58 +650,99 @@ def test_partition_html_from_text_works_with_empty_string():
     assert partition_html(text="") == []
 
 
-def test_nested_text_tags(opts_args: dict[str, Any]):
-    opts_args["text"] = (
-        "<body>\n"
-        "  <p>\n"
-        "    <a>\n"
-        "      There is some text here.\n"
-        "    </a>\n"
-        "  </p>\n"
-        "</body>\n"
-    )
-    opts = HtmlPartitionerOptions(**opts_args)
-    elements = HTMLDocument.load(opts).elements
+def test_partition_html_accommodates_block_item_nested_inside_phrasing_element():
+    html_text = """
+    <div>
+      We start out normally
+      <cite>
+        and then add a citation
+        <p>But whoa, this is a paragraph inside a phrasing element.</p>
+        so we close the first element at the start of the block element and emit it, then we
+        <b>emit</b> the block element,
+      </cite>
+      and then start a new element for the tail and whatever phrasing follows it.
+    </div>
+    """
 
-    assert len(elements) == 1
+    elements = partition_html(text=html_text)
+
+    assert elements == [
+        NarrativeText("We start out normally and then add a citation"),
+        NarrativeText("But whoa, this is a paragraph inside a phrasing element."),
+        NarrativeText(
+            "so we close the first element at the start of the block element and emit it,"
+            " then we emit the block element,"
+            " and then start a new element for the tail and whatever phrasing follows it."
+        ),
+    ]
+    assert elements[2].metadata.emphasized_text_contents == ["emit"]
+    assert elements[2].metadata.emphasized_text_tags == ["b"]
 
 
-def test_containers_with_text_are_processed(opts_args: dict[str, Any]):
-    opts_args["text"] = (
-        '<div dir=3D"ltr">Hi All,<div><br></div>\n'
+def test_partition_html_handles_anchor_with_nested_block_item():
+    html_text = """
+    <div>
+      O Deep Thought
+      <a href="http://eie.io">
+        computer, he said,
+        <p>The task we have designed you to perform is this.</p>
+        We want you to tell us....
+      </a>
+      he paused,
+    </div>
+    """
+
+    elements = partition_html(text=html_text)
+
+    assert [e.text for e in elements] == [
+        "O Deep Thought computer, he said,",
+        "The task we have designed you to perform is this.",
+        "We want you to tell us.... he paused,",
+    ]
+    link_annotated_element = elements[0]
+    assert link_annotated_element.metadata.link_texts == ["computer, he said,"]
+    assert link_annotated_element.metadata.link_urls == ["http://eie.io"]
+    assert all(e.metadata.link_texts is None for e in elements[1:])
+    assert all(e.metadata.link_urls is None for e in elements[1:])
+
+
+def test_containers_with_text_are_processed():
+    html_text = (
+        '<div dir=3D"ltr">Hi All,\n'
+        "  <div><br></div>\n"
         "  <div>Get excited for our first annual family day!</div>\n"
-        '  <div>Best.<br clear=3D"all">\n'
+        '  <div>Best.<br clear="all">\n'
         "    <div><br></div>\n"
         "    -- <br>\n"
         '    <div dir=3D"ltr">\n'
         '      <div dir=3D"ltr">Dino the Datasaur<div>\n'
         "      Unstructured Technologies<br>\n"
         "      <div>Data Scientist</div>\n"
-        "        <div>Doylestown, PA 18901</div>\n"
-        "        <div><br></div>\n"
-        "      </div>\n"
-        "      </div>\n"
+        "      <div>Doylestown, PA 18901</div>\n"
+        "      <div><br></div>\n"
         "    </div>\n"
         "  </div>\n"
+        "  See you there!\n"
         "</div>\n"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    html_document = HTMLDocument.load(opts)
 
-    assert html_document.elements == [
-        Text(text="Hi All,"),
-        NarrativeText(text="Get excited for our first annual family day!"),
-        Title(text="Best."),
-        Text(text="\n    -- "),
-        Title(text="Dino the Datasaur"),
-        Title(text="\n      Unstructured Technologies"),
-        Title(text="Data Scientist"),
-        Address(text="Doylestown, PA 18901"),
+    elements = partition_html(text=html_text)
+
+    assert elements == [
+        Text("Hi All,"),
+        NarrativeText("Get excited for our first annual family day!"),
+        Title("Best."),
+        Text("--"),
+        Title("Dino the Datasaur"),
+        Title("Unstructured Technologies"),
+        Title("Data Scientist"),
+        Address("Doylestown, PA 18901"),
+        NarrativeText("See you there!"),
     ]
 
 
-def test_html_grabs_bulleted_text_in_tags(opts_args: dict[str, Any]):
-    opts_args["text"] = (
+def test_html_grabs_bulleted_text_in_tags():
+    html_text = (
         "<html>\n"
         "  <body>\n"
         "    <ol>\n"
@@ -669,15 +752,17 @@ def test_html_grabs_bulleted_text_in_tags(opts_args: dict[str, Any]):
         "  </body>\n"
         "</html>\n"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    assert HTMLDocument.load(opts).elements == [
-        ListItem(text="Happy Groundhog's day!"),
-        ListItem(text="Looks like six more weeks of winter ..."),
+
+    elements = partition_html(text=html_text)
+
+    assert elements == [
+        ListItem("Happy Groundhog's day!"),
+        ListItem("Looks like six more weeks of winter ..."),
     ]
 
 
-def test_html_grabs_bulleted_text_in_paras(opts_args: dict[str, Any]):
-    opts_args["text"] = (
+def test_html_grabs_bulleted_text_in_paras():
+    html_text = (
         "<html>\n"
         "  <body>\n"
         "    <p>\n"
@@ -689,59 +774,48 @@ def test_html_grabs_bulleted_text_in_paras(opts_args: dict[str, Any]):
         "  </body>\n"
         "</html>\n"
     )
-    opts = HtmlPartitionerOptions(**opts_args)
-    assert HTMLDocument.load(opts).elements == [
-        ListItem(text="Happy Groundhog's day!"),
-        ListItem(text="Looks like six more weeks of winter ..."),
+
+    elements = partition_html(text=html_text)
+
+    # -- bullet characters are removed --
+    assert elements == [
+        ListItem("Happy Groundhog's day!"),
+        ListItem("Looks like six more weeks of winter ..."),
     ]
 
 
-def test_joins_tag_text_correctly(opts_args: dict[str, Any]):
-    opts_args["text"] = "<p>Hello again peet mag<i>ic</i>al</p>"
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-    assert doc.elements[0].text == "Hello again peet magical"
+def test_joins_tag_text_correctly():
+    elements = partition_html(text="<p>Hello again peet mag<i>ic</i>al</p>")
+    assert elements == [Title("Hello again peet magical")]
 
 
-def test_sample_doc_with_emoji(opts_args: dict[str, Any]):
-    opts_args["text"] = '<html charset="unicode">\n<p>Hello again 😀</p>\n</html>'
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-    # NOTE(robinson) - unclear why right now, but the output is the emoji on the test runners
-    # and the byte string representation when running locally on mac
-    assert doc.elements[0].text in ["Hello again ð\x9f\x98\x80", "Hello again 😀"]
+def test_sample_doc_with_emoji():
+    elements = partition_html(text='<html charset="unicode">\n<p>Hello again 😀</p>\n</html>')
+    assert elements == [NarrativeText("Hello again 😀")]
 
 
-def test_only_plain_text_in_body(opts_args: dict[str, Any]):
-    opts_args["text"] = "<body>Hello</body>"
-    opts = HtmlPartitionerOptions(**opts_args)
-    assert HTMLDocument.load(opts).elements[0].text == "Hello"
+def test_only_text_and_no_elements_in_body():
+    elements = partition_html(text="<body>Hello</body>")
+    assert elements == [Title("Hello")]
 
 
-def test_plain_text_before_anything_in_body(opts_args: dict[str, Any]):
-    opts_args["text"] = "<body>Hello<p>World</p></body>"
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-    assert doc.elements[0].text == "Hello"
-    assert doc.elements[1].text == "World"
+def test_text_before_elements_in_body():
+    elements = partition_html(text="<body>Hello<p>World</p></body>")
+    assert elements == [Title("Hello"), Title("World")]
 
 
-def test_line_break_in_container(opts_args: dict[str, Any]):
-    opts_args["text"] = "<div>Hello<br/>World</div>"
-    opts = HtmlPartitionerOptions(**opts_args)
-    doc = HTMLDocument.load(opts)
-    assert doc.elements[0].text == "Hello"
-    assert doc.elements[1].text == "World"
+def test_line_break_in_container():
+    elements = partition_html(text="<div>Hello<br/>World</div>")
+    assert elements == [Title("Hello World")]
 
 
 @pytest.mark.parametrize("tag", ["del", "form", "noscript"])
-def test_exclude_tag_types(tag: str, opts_args: dict[str, Any]):
-    opts_args["text"] = f"<body>\n  <{tag}>\n    There is some text here.\n  </{tag}>\n</body>\n"
-    opts = HtmlPartitionerOptions(**opts_args)
+def test_exclude_tag_types(tag: str):
+    html_text = f"<body>\n  <{tag}>\n    There is some text here.\n  </{tag}>\n</body>\n"
 
-    elements = HTMLDocument.load(opts).elements
+    elements = partition_html(text=html_text)
 
-    assert len(elements) == 0
+    assert elements == []
 
 
 # ================================================================================================
@@ -883,23 +957,23 @@ def test_partition_html_grabs_emphasized_texts():
     e = elements[0]
     assert e == NarrativeText("Hello there I am a very important text!")
     assert e.metadata.emphasized_text_contents == ["important"]
-    assert e.metadata.emphasized_text_tags == ["strong"]
+    assert e.metadata.emphasized_text_tags == ["b"]
     e = elements[1]
     assert e == NarrativeText("Here is a list of my favorite things")
-    assert e.metadata.emphasized_text_contents == ["list", "my favorite things", "favorite"]
-    assert e.metadata.emphasized_text_tags == ["span", "b", "i"]
+    assert e.metadata.emphasized_text_contents == ["my", "favorite", "things"]
+    assert e.metadata.emphasized_text_tags == ["b", "bi", "b"]
     e = elements[2]
     assert e == ListItem("Parrots")
     assert e.metadata.emphasized_text_contents == ["Parrots"]
-    assert e.metadata.emphasized_text_tags == ["em"]
+    assert e.metadata.emphasized_text_tags == ["i"]
     e = elements[3]
     assert e == ListItem("Dogs")
     assert e.metadata.emphasized_text_contents is None
     assert e.metadata.emphasized_text_tags is None
     e = elements[4]
     assert e == Title("A lone span text!")
-    assert e.metadata.emphasized_text_contents == ["A lone span text!"]
-    assert e.metadata.emphasized_text_tags == ["span"]
+    assert e.metadata.emphasized_text_contents is None
+    assert e.metadata.emphasized_text_tags is None
 
 
 # -- .metadata.filename --------------------------------------------------------------------------
@@ -953,115 +1027,47 @@ def test_partition_html_respects_detect_language_per_element():
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_html_from_filename_pulls_last_modified_from_filesystem(
-    get_last_modified_date_: Mock,
-):
-    last_modified_on_filesystem = "2023-07-05T09:24:28"
-    get_last_modified_date_.return_value = last_modified_on_filesystem
+def test_partition_html_from_filename_pulls_last_modified_from_filesystem(request: FixtureRequest):
+    get_last_modified_date_ = function_mock(
+        request,
+        "unstructured.partition.html.partition.get_last_modified_date",
+        return_value="2024-06-17T22:22:20",
+    )
+    file_path = example_doc_path("fake-html.html")
 
-    elements = partition_html(example_doc_path("fake-html.html"))
+    elements = partition_html(file_path)
 
-    assert isinstance(elements[0], Title)
-    assert elements[0].metadata.last_modified == last_modified_on_filesystem
+    get_last_modified_date_.assert_called_once_with(file_path)
+    assert elements
+    assert all(e.metadata.last_modified == "2024-06-17T22:22:20" for e in elements)
 
 
-def test_partition_html_from_filename_prefers_metadata_last_modified(
-    get_last_modified_date_: Mock,
-):
-    metadata_last_modified = "2023-07-05T09:24:28"
-    get_last_modified_date_.return_value = "2024-06-04T09:24:28"
-
+def test_partition_html_from_filename_prefers_metadata_last_modified():
     elements = partition_html(
-        example_doc_path("fake-html.html"), metadata_last_modified=metadata_last_modified
+        example_doc_path("fake-html.html"), metadata_last_modified="2023-07-05T09:24:28"
     )
 
     assert isinstance(elements[0], Title)
-    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
+    assert all(e.metadata.last_modified == "2023-07-05T09:24:28" for e in elements)
 
 
-def test_partition_html_from_file_does_not_assign_last_modified_metadata_by_default(
-    get_last_modified_date_from_file_: Mock,
-):
-    get_last_modified_date_from_file_.return_value = "2029-07-05T09:24:28"
-
-    with open(example_doc_path("fake-html.html"), "rb") as f:
-        elements = partition_html(file=f)
-
-    assert isinstance(elements[0], Title)
-    assert elements[0].metadata.last_modified is None
-
-
-def test_partition_html_from_file_pulls_last_modified_from_file_like_object_when_so_instructed(
-    get_last_modified_date_from_file_: Mock,
-):
-    get_last_modified_date_from_file_.return_value = "2024-06-04T09:24:28"
-
-    with open(example_doc_path("fake-html.html"), "rb") as f:
-        elements = partition_html(file=f, date_from_file_object=True)
-
-    assert isinstance(elements[0], Title)
-    assert all(e.metadata.last_modified == "2024-06-04T09:24:28" for e in elements)
-
-
-def test_partition_html_from_file_assigns_no_last_modified_metadata_when_file_has_none():
-    """Test partition_html() with file that are not possible to get last modified date"""
-    with open(example_doc_path("fake-html.html"), "rb") as f:
-        sf = SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_html(file=sf, date_from_file_object=True)
-
-    assert all(e.metadata.last_modified is None for e in elements)
-
-
-def test_partition_html_from_file_prefers_metadata_last_modified(
-    get_last_modified_date_from_file_: Mock,
-):
-    metadata_last_modified = "2023-07-05T09:24:28"
-    get_last_modified_date_from_file_.return_value = "2024-06-04T09:24:28"
-
-    with open(example_doc_path("fake-html.html"), "rb") as f:
-        elements = partition_html(file=f, metadata_last_modified=metadata_last_modified)
-
-    assert isinstance(elements[0], Title)
-    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
-
-
-def test_partition_html_from_text_assigns_no_last_modified_metadata():
-    elements = partition_html(text="<html><div><p>TEST</p></div></html>")
-
-    assert isinstance(elements[0], Title)
-    assert elements[0].metadata.last_modified is None
-
-
-def test_partition_html_from_text_prefers_metadata_last_modified():
-    metadata_last_modified = "2023-07-05T09:24:28"
-
-    elements = partition_html(
-        text="<html><div><p>TEST</p></div></html>", metadata_last_modified=metadata_last_modified
-    )
-
-    assert isinstance(elements[0], Title)
-    assert elements[0].metadata.last_modified == metadata_last_modified
-
-
-# -- .metadata.link* -----------------------------------------------------------------------------
+# -- .metadata.link_texts and .link_urls ---------------------------------------------------------
 
 
 def test_partition_html_grabs_links():
-    elements = partition_html(
-        text=(
-            "<html>\n"
-            '  <p>Hello there I am a <a href="/link">very important link!</a></p>\n'
-            "  <p>Here is a list of my favorite things</p>\n"
-            "  <ul>\n"
-            '    <li><a href="https://en.wikipedia.org/wiki/Parrot">Parrots</a></li>\n'
-            "    <li>Dogs</li>\n"
-            "  </ul>\n"
-            '  <a href="/loner">A lone link!</a>\n'
-            "</html>\n"
-        )
+    html_text = (
+        "<html>\n"
+        '  <p>Hello there I am a <a href="/link">very important link!</a></p>\n'
+        "  <p>Here is a list of my favorite things</p>\n"
+        "  <ul>\n"
+        '    <li><a href="https://en.wikipedia.org/wiki/Parrot">Parrots</a></li>\n'
+        "    <li>Dogs</li>\n"
+        "  </ul>\n"
+        '  <a href="/loner">A lone link!</a>\n'
+        "</html>\n"
     )
+
+    elements = partition_html(text=html_text)
 
     e = elements[0]
     assert e == NarrativeText("Hello there I am a very important link!")
@@ -1086,40 +1092,36 @@ def test_partition_html_grabs_links():
 
 
 def test_partition_html_links():
-    elements = partition_html(
-        text=(
-            "<html>\n"
-            '  <a href="/loner">A lone link!</a>\n'
-            '  <p>Hello <a href="/link">link!</a></p>\n'
-            '  <p>\n   Hello <a href="/link">link!</a></p>\n'
-            '  <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>\n'
-            "</html>\n"
-        )
+    html_text = (
+        "<html>\n"
+        '  <a href="/loner">A lone link!</a>\n'
+        '  <p>Hello <a href="/link">link!</a></p>\n'
+        '  <p>\n   Hello <a href="/link">link!</a></p>\n'
+        '  <p><a href="/wiki/parrots">Parrots</a> and <a href="/wiki/dogs">Dogs</a></p>\n'
+        "</html>\n"
     )
+
+    elements = partition_html(text=html_text)
 
     e = elements[0]
     assert e.metadata.link_texts == ["A lone link!"]
     assert e.metadata.link_urls == ["/loner"]
-    assert e.metadata.link_start_indexes == [-1]
     e = elements[1]
     assert e.metadata.link_texts == ["link!"]
     assert e.metadata.link_urls == ["/link"]
-    assert e.metadata.link_start_indexes == [6]
     e = elements[2]
     assert e.metadata.link_texts == ["link!"]
     assert e.metadata.link_urls == ["/link"]
-    assert e.metadata.link_start_indexes == [6]
     e = elements[3]
     assert e.metadata.link_texts == ["Parrots", "Dogs"]
     assert e.metadata.link_urls == ["/wiki/parrots", "/wiki/dogs"]
-    assert e.metadata.link_start_indexes == [0, 12]
 
 
 # -- .metadata.text_as_html ----------------------------------------------------------------------
 
 
 @pytest.mark.parametrize(
-    ("html_str", "expected_value"),
+    ("html_text", "expected_value"),
     [
         (
             "<table><tr><th>Header 1</th><th>Header 2</th></tr></table>",
@@ -1139,9 +1141,9 @@ def test_partition_html_links():
     ],
 )
 def test_partition_html_applies_text_as_html_metadata_for_tables(
-    html_str: str, expected_value: str
+    html_text: str, expected_value: str
 ):
-    elements = partition_html(text=html_str)
+    elements = partition_html(text=html_text)
 
     assert len(elements) == 1
     assert elements[0].metadata.text_as_html == expected_value
@@ -1181,18 +1183,6 @@ def test_partition_html_round_trips_through_json():
 EXPECTED_OUTPUT_LANGUAGE_DE = [
     Title(text="Jahresabschluss zum Geschäftsjahr vom 01.01.2020 bis zum 31.12.2020"),
 ]
-
-
-@pytest.fixture
-def get_last_modified_date_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.partition.html.partition.get_last_modified_date")
-
-
-@pytest.fixture
-def get_last_modified_date_from_file_(request: pytest.FixtureRequest):
-    return function_mock(
-        request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
-    )
 
 
 class FakeResponse:
