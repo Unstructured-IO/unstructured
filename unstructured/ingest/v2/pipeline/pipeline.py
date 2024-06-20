@@ -108,8 +108,11 @@ class Pipeline:
             f"Running local pipline: {self} with configs: "
             f"{sterilize_dict(self.context.to_dict(redact_sensitive=True))}"
         )
-        manager = mp.Manager()
-        self.context.status = manager.dict()
+        if self.context.mp_supported:
+            manager = mp.Manager()
+            self.context.status = manager.dict()
+        else:
+            self.context.status = {}
 
         # Index into data source
         indices = self.indexer_step.run()
