@@ -64,7 +64,12 @@ class Pipeline:
         self.downloader_step = DownloadStep(process=downloader, context=self.context)
         self.partitioner_step = PartitionStep(process=partitioner, context=self.context)
         self.chunker_step = ChunkStep(process=chunker, context=self.context) if chunker else None
+
+        # TODO: support initialize() call from each step process
+        # Potential long call to download embedder models:
+        embedder.config.get_embedder().initialize()
         self.embedder_step = EmbedStep(process=embedder, context=self.context) if embedder else None
+
         self.stager_step = UploadStageStep(process=stager, context=self.context) if stager else None
         self.uploader_step = UploadStep(process=uploader, context=self.context)
         if self.context.uncompress:

@@ -246,7 +246,7 @@ class FsspecDownloader(Downloader):
 
     def get_download_path(self, file_data: FileData) -> Path:
         return (
-            self.download_config.download_dir / Path(file_data.source_identifiers.relative_path)
+            self.download_dir / Path(file_data.source_identifiers.relative_path)
             if self.download_config
             else Path(file_data.source_identifiers.rel_path)
         )

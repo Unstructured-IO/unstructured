@@ -1,5 +1,5 @@
 from abc import ABC
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Any, Optional
 
@@ -29,7 +29,7 @@ class ChunkerConfig(EnhancedDataClassJsonMixin):
     def to_chunking_kwargs(self) -> dict[str, Any]:
         return {
             "chunking_strategy": self.chunking_strategy,
-            "combine_text_under_n_chars": self.chunk_combine_text_under_n_chars,
+            "combine_under_n_chars": self.chunk_combine_text_under_n_chars,
             "max_characters": self.chunk_max_characters,
             "include_orig_elements": self.chunk_include_orig_elements,
             "multipage_sections": self.chunk_multipage_sections,
@@ -71,13 +71,24 @@ class Chunker(BaseProcess, ABC):
             server_url=self.config.chunking_endpoint,
         )
         partition_request = self.config.to_chunking_kwargs()
+        possible_fields = [f.name for f in fields(PartitionParameters)]
+        filtered_partition_request = {
+            k: v for k, v in partition_request.items() if k in possible_fields
+        }
+        if len(filtered_partition_request) == len(partition_request):
+            logger.debug(
+                "Following fields were omitted due to not being "
+                "supported by the currently used unstructured client: {}".format(
+                    ", ".join([v for v in partition_request if v not in filtered_partition_request])
+                )
+            )
         with open(elements_filepath, "rb") as f:
             files = Files(
                 content=f.read(),
                 file_name=str(elements_filepath.resolve()),
             )
-            partition_request["files"] = files
-        partition_params = PartitionParameters(**partition_request)
+            filtered_partition_request["files"] = files
+        partition_params = PartitionParameters(**filtered_partition_request)
         resp = client.general.partition(partition_params)
         elements_raw = resp.elements or []
         elements = dict_to_elements(elements_raw)
