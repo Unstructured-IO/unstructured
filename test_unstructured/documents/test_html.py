@@ -27,7 +27,8 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.documents.html import HTMLDocument, HtmlPartitionerOptions
+from unstructured.documents.html import HTMLDocument
+from unstructured.partition.html.partition import HtmlPartitionerOptions
 
 TAGS = (
     (

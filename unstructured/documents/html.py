@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from typing import IO, Final, Iterator, cast
+from typing import TYPE_CHECKING, Final, Iterator, cast
 
-import requests
 from lxml import etree
 
 from unstructured.cleaners.core import clean_bullets, replace_unicode_quotes
@@ -19,8 +18,6 @@ from unstructured.documents.elements import (
     Text,
     Title,
 )
-from unstructured.file_utils.encoding import read_txt_file
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
 from unstructured.partition.text_type import (
     is_bulleted_text,
     is_email_address,
@@ -29,7 +26,10 @@ from unstructured.partition.text_type import (
     is_us_city_state_zip,
 )
 from unstructured.partition.utils.constants import HTML_MAX_PREDECESSOR_LEN
-from unstructured.utils import htmlify_matrix_of_cell_texts, is_temp_file_path, lazyproperty
+from unstructured.utils import htmlify_matrix_of_cell_texts, lazyproperty
+
+if TYPE_CHECKING:
+    from unstructured.partition.html.partition import HtmlPartitionerOptions
 
 TEXT_TAGS: Final[list[str]] = ["p", "a", "td", "span", "b", "font"]
 LIST_ITEM_TAGS: Final[list[str]] = ["li", "dd"]
@@ -450,108 +450,6 @@ class HTMLDocument:
             element = self._parse_tag(tag_elem, include_tail_text)
             if element is not None:
                 yield element
-
-
-class HtmlPartitionerOptions:
-    """Encapsulates partitioning option validation, computation, and application of defaults."""
-
-    # TODO: this eventually moves to `unstructured.partition.html` but not until `HTMLDocument`
-    # becomes `_HtmlPartitioner` and moves there with it.
-
-    def __init__(
-        self,
-        *,
-        file_path: str | None,
-        file: IO[bytes] | None,
-        text: str | None,
-        encoding: str | None,
-        url: str | None,
-        headers: dict[str, str],
-        ssl_verify: bool,
-        date_from_file_object: bool,
-        metadata_last_modified: str | None,
-        skip_headers_and_footers: bool,
-        detection_origin: str | None,
-    ):
-        self._file_path = file_path
-        self._file = file
-        self._text = text
-        self._encoding = encoding
-        self._url = url
-        self._headers = headers
-        self._ssl_verify = ssl_verify
-        self._date_from_file_object = date_from_file_object
-        self._metadata_last_modified = metadata_last_modified
-        self._skip_headers_and_footers = skip_headers_and_footers
-        self._detection_origin = detection_origin
-
-    @lazyproperty
-    def detection_origin(self) -> str | None:
-        """Trace of initial partitioner to be included in metadata for debugging purposes."""
-        return self._detection_origin
-
-    @lazyproperty
-    def encoding(self) -> str | None:
-        """Caller-provided encoding used to store HTML character stream as bytes.
-
-        `None` when no encoding was provided and encoding should be auto-detected.
-        """
-        return self._encoding
-
-    @lazyproperty
-    def html_str(self) -> str:
-        """The HTML document as a string, loaded from wherever the caller specified."""
-        if self._file_path:
-            return read_txt_file(filename=self._file_path, encoding=self._encoding)[1]
-
-        if self._file:
-            return read_txt_file(file=self._file, encoding=self._encoding)[1]
-
-        if self._text:
-            return str(self._text)
-
-        if self._url:
-            response = requests.get(self._url, headers=self._headers, verify=self._ssl_verify)
-            if not response.ok:
-                raise ValueError(
-                    f"Error status code on GET of provided URL: {response.status_code}"
-                )
-            content_type = response.headers.get("Content-Type", "")
-            if not content_type.startswith("text/html"):
-                raise ValueError(f"Expected content type text/html. Got {content_type}.")
-
-            return response.text
-
-        raise ValueError("Exactly one of filename, file, text, or url must be specified.")
-
-    @lazyproperty
-    def last_modified(self) -> str | None:
-        """The best last-modified date available, None if no sources are available."""
-        # -- Value explicitly specified by caller takes precedence. This is used for example when
-        # -- this file was converted from another format.
-        if self._metadata_last_modified:
-            return self._metadata_last_modified
-
-        if self._file_path:
-            return (
-                None
-                if is_temp_file_path(self._file_path)
-                else get_last_modified_date(self._file_path)
-            )
-
-        if self._file:
-            return (
-                get_last_modified_date_from_file(self._file)
-                if self._date_from_file_object
-                else None
-            )
-
-        return None
-
-    @lazyproperty
-    def skip_headers_and_footers(self) -> bool:
-        """When True, elements located within a header or footer are pruned."""
-        return self._skip_headers_and_footers
 
 
 # -- tag processors ------------------------------------------------------------------------------

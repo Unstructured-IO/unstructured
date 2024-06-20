@@ -785,12 +785,14 @@ EXPECTED_OUTPUT_LANGUAGE_DE = [
 
 @pytest.fixture
 def get_last_modified_date_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.get_last_modified_date")
+    return function_mock(request, "unstructured.partition.html.partition.get_last_modified_date")
 
 
 @pytest.fixture
 def get_last_modified_date_from_file_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.get_last_modified_date_from_file")
+    return function_mock(
+        request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
+    )
 
 
 class FakeResponse:
@@ -803,7 +805,7 @@ class FakeResponse:
 
 @pytest.fixture
 def requests_get_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.requests.get")
+    return function_mock(request, "unstructured.partition.html.partition.requests.get")
 
 
 # ================================================================================================
@@ -959,12 +961,14 @@ class DescribeHtmlPartitionerOptions:
 
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
-        return function_mock(request, "unstructured.documents.html.get_last_modified_date")
+        return function_mock(
+            request, "unstructured.partition.html.partition.get_last_modified_date"
+        )
 
     @pytest.fixture()
     def get_last_modified_date_from_file_(self, request: FixtureRequest):
         return function_mock(
-            request, "unstructured.documents.html.get_last_modified_date_from_file"
+            request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
         )
 
     @pytest.fixture
