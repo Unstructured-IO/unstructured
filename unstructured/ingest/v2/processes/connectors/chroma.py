@@ -45,8 +45,8 @@ class ChromaAccessConfig(AccessConfig):
 
 @dataclass
 class ChromaConnectionConfig(ConnectionConfig):
-    access_config: ChromaAccessConfig = enhanced_field(sensitive=True)
     collection_name: str
+    access_config: ChromaAccessConfig = enhanced_field(sensitive=True)
     path: Optional[str] = None
     tenant: Optional[str] = "default_tenant"
     database: Optional[str] = "default_database"
@@ -77,67 +77,7 @@ class ChromaUploadStager(UploadStager):
         return parser.parse(date_string)
 
     @classmethod
-    def conform_dict(cls, data: dict) -> None:
-        """
-        Updates the element dictionary to improve metadata
-        """
-
-        # Dict as string formatting
-        if record_locator := data.get("metadata", {}).get("data_source", {}).get("record_locator"):
-            # Explicit casting otherwise fails schema type checking
-            data["metadata"]["data_source"]["record_locator"] = str(json.dumps(record_locator))
-
-        # Array of items as string formatting
-        if points := data.get("metadata", {}).get("coordinates", {}).get("points"):
-            data["metadata"]["coordinates"]["points"] = str(json.dumps(points))
-
-        if links := data.get("metadata", {}).get("links", {}):
-            data["metadata"]["links"] = str(json.dumps(links))
-
-        if permissions_data := (
-            data.get("metadata", {}).get("data_source", {}).get("permissions_data")
-        ):
-            data["metadata"]["data_source"]["permissions_data"] = json.dumps(permissions_data)
-
-        # Datetime formatting
-        if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            data["metadata"]["data_source"]["date_created"] = cls.parse_date_string(
-                date_created
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-
-        if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            data["metadata"]["data_source"]["date_modified"] = cls.parse_date_string(
-                date_modified
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-
-        if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
-            data["metadata"]["data_source"]["date_processed"] = cls.parse_date_string(
-                date_processed
-            ).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-
-        if last_modified := data.get("metadata", {}).get("last_modified"):
-            data["metadata"]["last_modified"] = cls.parse_date_string(last_modified).strftime(
-                "%Y-%m-%dT%H:%M:%S.%fZ",
-            )
-
-        # String casting
-        if version := data.get("metadata", {}).get("data_source", {}).get("version"):
-            data["metadata"]["data_source"]["version"] = str(version)
-
-        if page_number := data.get("metadata", {}).get("page_number"):
-            data["metadata"]["page_number"] = str(page_number)
-
-        if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
-            data["metadata"]["regex_metadata"] = str(json.dumps(regex_metadata))
-
-    @classmethod
-    def normalize_dict(cls, data: dict) -> dict:
+    def conform_dict(cls, data: dict) -> dict:
         """
         Prepares dictionary in the format that Chroma requires
         """
@@ -159,15 +99,15 @@ class ChromaUploadStager(UploadStager):
     ) -> Path:
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
+        # for element in elements_contents:
+        #     self.conform_dict(data=element)
+        conformed_elements = []
         for element in elements_contents:
-            self.conform_dict(data=element)
-        normalized_elements = []
-        for element in elements_contents:
-            normalized_elements.append(self.normalize_dict(data=element))
+            conformed_elements.append(self.conform_dict(data=element))
 
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
-            json.dump(normalized_elements, output_file)
+            json.dump(conformed_elements, output_file)
         return output_path
 
 
@@ -180,13 +120,10 @@ class ChromaUploaderConfig(UploaderConfig):
 class ChromaUploader(Uploader):
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
-    _collection: Optional["ChromaCollection"] = None
+    _collection: Optional["ChromaCollection"] = field(init=False)
 
     def __post_init__(self):
         self._collection = self.create_collection()
-
-    def is_async(self) -> bool:
-        return False
 
     @requires_dependencies(["chromadb"], extras="chroma")
     def create_collection(self) -> "ChromaCollection":
@@ -195,7 +132,7 @@ class ChromaUploader(Uploader):
         if self.connection_config.path:
             chroma_client = chromadb.PersistentClient(
                 path=self.connection_config.path,
-                settings=self.connection_config.settings,
+                settings=self.connection_config.access_config.settings,
                 tenant=self.connection_config.tenant,
                 database=self.connection_config.database,
             )
