@@ -1,5 +1,7 @@
 import hashlib
+import json
 import sys
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import time
@@ -8,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Generator, Optional
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionNetworkError
+from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -17,11 +20,18 @@ from unstructured.ingest.v2.interfaces import (
     FileData,
     Indexer,
     IndexerConfig,
+    UploadContent,
+    Uploader,
+    UploaderConfig,
+    UploadStager,
+    UploadStagerConfig,
     download_responses,
 )
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
+    DestinationRegistryEntry,
     SourceRegistryEntry,
+    add_destination_entry,
     add_source_entry,
 )
 from unstructured.staging.base import flatten_dict
@@ -240,6 +250,88 @@ class ElasticsearchDownloader(Downloader):
         return download_responses
 
 
+@dataclass
+class ElasticsearchUploadStagerConfig(UploadStagerConfig):
+    index_name: str
+
+
+@dataclass
+class ElasticsearchUploadStager(UploadStager):
+    upload_stager_config: ElasticsearchUploadStagerConfig
+
+    def conform_dict(self, data: dict) -> dict:
+        resp = {
+            "_index": self.upload_stager_config.index_name,
+            "_id": str(uuid.uuid4()),
+            "_source": {
+                "element_id": data.pop("element_id", None),
+                "embeddings": data.pop("embeddings", None),
+                "text": data.pop("text", None),
+                "type": data.pop("type", None),
+            },
+        }
+        if "metadata" in data and isinstance(data["metadata"], dict):
+            resp["_source"]["metadata"] = flatten_dict(data["metadata"], separator="-")
+        return resp
+
+    def run(
+        self,
+        elements_filepath: Path,
+        file_data: FileData,
+        output_dir: Path,
+        output_filename: str,
+        **kwargs: Any,
+    ) -> Path:
+        with open(elements_filepath) as elements_file:
+            elements_contents = json.load(elements_file)
+        conformed_elements = [self.conform_dict(data=element) for element in elements_contents]
+        output_path = Path(output_dir) / Path(f"{output_filename}.json")
+        with open(output_path, "w") as output_file:
+            json.dump(conformed_elements, output_file)
+        return output_path
+
+
+@dataclass
+class ElasticsearchUploaderConfig(UploaderConfig):
+    index_name: str
+    batch_size_bytes: int = 15_000_000
+    thread_count: int = 4
+
+
+@dataclass
+class ElasticsearchUploader(Uploader):
+    upload_config: ElasticsearchUploaderConfig
+    connection_config: ElasticsearchConnectionConfig
+
+    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        elements_dict = []
+        for content in contents:
+            with open(content.path) as elements_file:
+                elements = json.load(elements_file)
+                elements_dict.extend(elements)
+        logger.info(
+            f"writing document batches to destination"
+            f" index named {self.upload_config.index_name}"
+            f" at {self.connection_config.hosts}"
+            f" with batch size (in bytes) {self.upload_config.batch_size_bytes}"
+            f" with {self.upload_config.thread_count} (number of) threads"
+        )
+        from elasticsearch.helpers import parallel_bulk
+
+        for batch in generator_batching_wbytes(
+            elements_dict, batch_size_limit_bytes=self.upload_config.batch_size_bytes
+        ):
+            for success, info in parallel_bulk(
+                self.connection_config.get_client(),
+                batch,
+                thread_count=self.upload_config.thread_count,
+            ):
+                if not success:
+                    logger.error(
+                        "upload failed for a batch in elasticsearch destination connector:", info
+                    )
+
+
 add_source_entry(
     source_type=CONNECTOR_TYPE,
     entry=SourceRegistryEntry(
@@ -248,5 +340,16 @@ add_source_entry(
         indexer_config=ElasticsearchIndexerConfig,
         downloader=ElasticsearchDownloader,
         downloader_config=ElasticsearchDownloaderConfig,
+    ),
+)
+
+add_destination_entry(
+    destination_type=CONNECTOR_TYPE,
+    entry=DestinationRegistryEntry(
+        connection_config=ElasticsearchConnectionConfig,
+        upload_stager_config=ElasticsearchUploadStagerConfig,
+        upload_stager=ElasticsearchUploadStager,
+        uploader_config=ElasticsearchUploaderConfig,
+        uploader=ElasticsearchUploader,
     ),
 )
