@@ -1,4 +1,4 @@
-## 0.14.7-dev4
+## 0.14.7-dev6
 
 ### Enhancements
 
@@ -8,8 +8,12 @@
 ### Features
 
 * **Enhanced analysis features in PDF pipeline** Adds dumps of bboxes visualization for each layout and OD model bboxes dump as JSON.
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
 
 ### Fixes
+
+* **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
+* **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
 
 ## 0.14.6
 
