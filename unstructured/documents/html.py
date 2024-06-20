@@ -57,7 +57,7 @@ class HTMLDocument:
     @classmethod
     def load(cls, opts: HtmlPartitionerOptions) -> HTMLDocument:
         """Construct instance from whatever source is specified in `opts`."""
-        return cls(opts.html_str, opts)
+        return cls(opts.html_text, opts)
 
     @lazyproperty
     def elements(self) -> list[Element]:

@@ -1,8 +1,13 @@
+# pyright: reportPrivateUsage=false
+
+"""Provides `partition_html()."""
+
 from __future__ import annotations
 
-from typing import IO, Any, Optional
+from typing import IO, Any, Iterator, Optional, cast
 
 import requests
+from lxml import etree
 
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
@@ -10,6 +15,7 @@ from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
 from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
+from unstructured.partition.html.parser import Flow, html_parser
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.utils import is_temp_file_path, lazyproperty
 
@@ -151,7 +157,7 @@ class HtmlPartitionerOptions:
         return self._encoding
 
     @lazyproperty
-    def html_str(self) -> str:
+    def html_text(self) -> str:
         """The HTML document as a string, loaded from wherever the caller specified."""
         if self._file_path:
             return read_txt_file(filename=self._file_path, encoding=self._encoding)[1]
@@ -204,3 +210,59 @@ class HtmlPartitionerOptions:
     def skip_headers_and_footers(self) -> bool:
         """When True, elements located within a header or footer are pruned."""
         return self._skip_headers_and_footers
+
+
+class _HtmlPartitioner:  # pyright: ignore[reportUnusedClass]
+    """Partition HTML document into document-elements."""
+
+    def __init__(self, opts: HtmlPartitionerOptions):
+        self._opts = opts
+
+    @classmethod
+    def iter_elements(cls, opts: HtmlPartitionerOptions) -> Iterator[Element]:
+        """Partition HTML document provided by `opts` into document-elements."""
+        yield from cls(opts)._iter_elements()
+
+    def _iter_elements(self) -> Iterator[Element]:
+        """Generated document-elements (e.g. Title, NarrativeText, etc.) parsed from document.
+
+        Elements appear in document order.
+        """
+        for e in self._main.iter_elements():
+            e.metadata.last_modified = self._opts.last_modified
+            e.metadata.detection_origin = self._opts.detection_origin
+            yield e
+
+    @lazyproperty
+    def _main(self) -> Flow:
+        """The root HTML element."""
+        # NOTE(scanny) - get `html_text` first so any encoding error raised is not confused with a
+        # recoverable parsing error.
+        html_text = self._opts.html_text
+
+        # NOTE(scanny) - `lxml` will not parse a `str` that includes an XML encoding declaration
+        # and will raise the following error:
+        #     ValueError: Unicode strings with encoding declaration are not supported. ...
+        # This is not valid HTML (would be in XHTML), but Chrome accepts it so we work around it
+        # by UTF-8 encoding the str bytes and parsing those.
+        try:
+            root = etree.fromstring(html_text, html_parser)
+        except ValueError:
+            root = etree.fromstring(html_text.encode("utf-8"), html_parser)
+
+        # -- remove a variety of HTML element types like <script> and <style> that we prefer not
+        # -- to encounter while parsing.
+        etree.strip_elements(
+            root, ["del", "img", "link", "meta", "noscript", "script", "style"], with_tail=False
+        )
+
+        # -- remove <header> and <footer> tags if the caller doesn't want their contents --
+        if self._opts.skip_headers_and_footers:
+            etree.strip_elements(root, ["header", "footer"], with_tail=False)
+
+        # -- jump to the core content if the document indicates where it is --
+        if (main := root.find(".//main")) is not None:
+            return cast(Flow, main)
+        if (body := root.find(".//body")) is not None:
+            return cast(Flow, body)
+        return cast(Flow, root)

@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 """Test suite for `unstructured.partition.html.partition` module."""
 
 from __future__ import annotations
@@ -27,11 +29,12 @@ from unstructured.documents.elements import (
     NarrativeText,
     Table,
     TableChunk,
+    Text,
     Title,
 )
 from unstructured.file_utils.encoding import read_txt_file
 from unstructured.partition.html import partition_html
-from unstructured.partition.html.partition import HtmlPartitionerOptions
+from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
 
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
@@ -804,6 +807,28 @@ class FakeResponse:
 
 
 @pytest.fixture
+def opts_args() -> dict[str, Any]:
+    """All default arguments for `HtmlPartitionerOptions`.
+
+    Individual argument values can be changed to suit each test. Makes construction of opts more
+    compact for testing purposes.
+    """
+    return {
+        "file": None,
+        "file_path": None,
+        "text": None,
+        "encoding": None,
+        "url": None,
+        "headers": {},
+        "ssl_verify": True,
+        "date_from_file_object": False,
+        "metadata_last_modified": None,
+        "skip_headers_and_footers": False,
+        "detection_origin": None,
+    }
+
+
+@pytest.fixture
 def requests_get_(request: pytest.FixtureRequest):
     return function_mock(request, "unstructured.partition.html.partition.requests.get")
 
@@ -841,17 +866,17 @@ class DescribeHtmlPartitionerOptions:
 
         assert opts.encoding == encoding
 
-    # -- .html_str -------------------------------
+    # -- .html_text ------------------------------
 
     def it_gets_the_HTML_from_the_file_path_when_one_is_provided(self, opts_args: dict[str, Any]):
         file_path = example_doc_path("example-10k-1p.html")
         opts_args["file_path"] = file_path
         opts = HtmlPartitionerOptions(**opts_args)
 
-        html_str = opts.html_str
+        html_text = opts.html_text
 
-        assert isinstance(html_str, str)
-        assert html_str == read_txt_file(file_path)[1]
+        assert isinstance(html_text, str)
+        assert html_text == read_txt_file(file_path)[1]
 
     def and_it_gets_the_HTML_from_the_file_like_object_when_one_is_provided(
         self, opts_args: dict[str, Any]
@@ -862,10 +887,10 @@ class DescribeHtmlPartitionerOptions:
         opts_args["file"] = file
         opts = HtmlPartitionerOptions(**opts_args)
 
-        html_str = opts.html_str
+        html_text = opts.html_text
 
-        assert isinstance(html_str, str)
-        assert html_str == read_txt_file(file_path)[1]
+        assert isinstance(html_text, str)
+        assert html_text == read_txt_file(file_path)[1]
 
     def and_it_uses_the_HTML_in_the_text_argument_when_that_is_provided(
         self, opts_args: dict[str, Any]
@@ -873,7 +898,7 @@ class DescribeHtmlPartitionerOptions:
         opts_args["text"] = "<html><body><p>Hello World!</p></body></html>"
         opts = HtmlPartitionerOptions(**opts_args)
 
-        assert opts.html_str == "<html><body><p>Hello World!</p></body></html>"
+        assert opts.html_text == "<html><body><p>Hello World!</p></body></html>"
 
     def and_it_gets_the_HTML_from_the_url_when_one_is_provided(
         self, requests_get_: Mock, opts_args: dict[str, Any]
@@ -886,7 +911,7 @@ class DescribeHtmlPartitionerOptions:
         opts_args["url"] = "https://insta.tweet.face.org"
         opts = HtmlPartitionerOptions(**opts_args)
 
-        assert opts.html_str == "<html><body><p>I just flew over the internet!</p></body></html>"
+        assert opts.html_text == "<html><body><p>I just flew over the internet!</p></body></html>"
 
     def but_it_raises_when_no_path_or_file_or_text_or_url_was_provided(
         self, opts_args: dict[str, Any]
@@ -894,7 +919,7 @@ class DescribeHtmlPartitionerOptions:
         opts = HtmlPartitionerOptions(**opts_args)
 
         with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be"):
-            opts.html_str
+            opts.html_text
 
     # -- .last_modified --------------------------
 
@@ -971,23 +996,85 @@ class DescribeHtmlPartitionerOptions:
             request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
         )
 
-    @pytest.fixture
-    def opts_args(self) -> dict[str, Any]:
-        """All default arguments for `HtmlPartitionerOptions`.
 
-        Individual argument values can be changed to suit each test. Makes construction of opts more
-        compact for testing purposes.
-        """
-        return {
-            "file": None,
-            "file_path": None,
-            "text": None,
-            "encoding": None,
-            "url": None,
-            "headers": {},
-            "ssl_verify": True,
-            "date_from_file_object": False,
-            "metadata_last_modified": None,
-            "skip_headers_and_footers": False,
-            "detection_origin": None,
-        }
+class Describe_HtmlPartitioner:
+    """Unit-test suite for `unstructured.partition.html.partition._HtmlPartitioner`."""
+
+    # -- ._main ----------------------------------
+
+    def it_can_find_the_main_element_in_the_document(self, opts_args: dict[str, Any]):
+        opts_args["text"] = (
+            "<body>\n"
+            "  <header></header>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <main>\n"
+            "    <h2>A Wonderful Section!</h2>\n"
+            "    <p>Look at this amazing section!</p>\n"
+            "  </main>\n"
+            "</body>\n"
+        )
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        partitioner = _HtmlPartitioner(opts)
+
+        assert partitioner._main.tag == "main"
+
+    def and_it_falls_back_to_the_body_when_there_is_no_main(self, opts_args: dict[str, Any]):
+        """And there is always a <body>, the parser adds one if there's not one in the HTML."""
+        opts_args["text"] = (
+            "<body>\n"
+            "  <header></header>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <h2>A Wonderful Section!</h2>\n"
+            "  <p>Look at this amazing section!</p>\n"
+            "</body>\n"
+        )
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        partitioner = _HtmlPartitioner(opts)
+
+        assert partitioner._main.tag == "body"
+
+    # -- ElementCls selection behaviors -----------------
+
+    def it_produces_a_Text_element_when_the_tag_contents_are_not_narrative_or_a_title(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>NO PARTICULAR TYPE.</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        (element,) = list(_HtmlPartitioner.iter_elements(opts))
+
+        assert element == Text("NO PARTICULAR TYPE.")
+
+    def it_produces_a_ListItem_element_when_the_tag_contains_are_preceded_by_a_bullet_character(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>● An excellent point!</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        (element,) = list(_HtmlPartitioner.iter_elements(opts))
+
+        assert element == ListItem("An excellent point!")
+
+    def but_not_when_the_tag_contains_only_a_bullet_character_and_no_text(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>●</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+    def it_produces_no_element_when_the_tag_has_no_content(self, opts_args: dict[str, Any]):
+        opts_args["text"] = "<p></p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+    def and_it_produces_no_element_when_the_tag_contains_only_a_stub(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>$</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
