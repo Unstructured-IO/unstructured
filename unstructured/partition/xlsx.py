@@ -15,6 +15,7 @@ from typing_extensions import Self, TypeAlias
 from unstructured.chunking import add_chunking_strategy
 from unstructured.cleaners.core import clean_bullets
 from unstructured.documents.elements import (
+    DataSourceMetadata,
     Element,
     ElementMetadata,
     ListItem,
@@ -25,7 +26,10 @@ from unstructured.documents.elements import (
     process_metadata,
 )
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import get_last_modified_date, get_last_modified_date_from_file
+from unstructured.partition.common import (
+    get_last_modified_date,
+    get_last_modified_date_from_file,
+)
 from unstructured.partition.lang import apply_lang_metadata
 from unstructured.partition.text_type import (
     is_bulleted_text,
@@ -55,6 +59,8 @@ def partition_xlsx(
     include_header: bool = False,
     find_subtable: bool = True,
     date_from_file_object: bool = False,
+    # TODO marc: fix this too. This is not doing anything atm, just renaming the number
+    # but keeps starting at 1
     starting_page_number: int = 1,
     **kwargs: Any,
 ) -> list[Element]:
@@ -107,6 +113,10 @@ def partition_xlsx(
     for page_number, (sheet_name, sheet) in enumerate(
         opts.sheets.items(), start=starting_page_number
     ):
+        # TODO marc: remove
+        if page_number != 5:
+            continue
+
         if not opts.find_subtable:
             html_text = (
                 sheet.to_html(  # pyright: ignore[reportUnknownMemberType]
@@ -130,6 +140,9 @@ def partition_xlsx(
                     page_number=page_number,
                     filename=opts.metadata_file_path,
                     last_modified=opts.last_modified,
+                    data_source=DataSourceMetadata(
+                        record_locator=dict(rc=(0, 0), excel_rc="A1"),
+                    ),
                 )
                 metadata.detection_origin = DETECTION_ORIGIN
             else:
@@ -139,12 +152,23 @@ def partition_xlsx(
             elements.append(table)
         else:
             for component in _ConnectedComponents.from_worksheet_df(sheet):
-                subtable_parser = _SubtableParser(component.subtable)
+                subtable_parser = _SubtableParser(component)
+                c = subtable_parser._top_left_coordinate[1]
 
                 # -- emit each leading single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_leading_single_cell_rows_texts():
+                for row_index, content in zip(
+                    subtable_parser._leading_single_cell_row_indices,
+                    subtable_parser.iter_leading_single_cell_rows_texts(),
+                ):
                     element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = subtable_parser._top_left_coordinate[0] + row_index + include_header
+                    element.metadata = _get_metadata(
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
+                        header_included=include_header,
+                    )
                     elements.append(element)
 
                 # -- emit core-table (if it exists) as a `Table` element --
@@ -160,7 +184,18 @@ def partition_xlsx(
                         ).text_content(),
                     )
                     element = Table(text=text)
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = (
+                        subtable_parser._top_left_coordinate[0]
+                        + subtable_parser.core_table_start
+                        + include_header
+                    )
+                    element.metadata = _get_metadata(
+                        sheet_name,
+                        page_number,
+                        opts,
+                        rc=(r, c),
+                        header_included=include_header,
+                    )
                     element.metadata.text_as_html = (
                         html_text if opts.infer_table_structure else None
                     )
@@ -169,9 +204,20 @@ def partition_xlsx(
                 # -- no core-table is emitted if it's empty (all rows are single-cell rows) --
 
                 # -- emit each trailing single-cell row as its own `Text`-subtype element --
-                for content in subtable_parser.iter_trailing_single_cell_rows_texts():
+                for row_index, content in zip(
+                    subtable_parser._trailing_single_cell_row_indices,
+                    subtable_parser.iter_trailing_single_cell_rows_texts(),
+                ):
                     element = _create_element(str(content))
-                    element.metadata = _get_metadata(sheet_name, page_number, opts)
+                    r = (
+                        subtable_parser._top_left_coordinate[0]
+                        + len(component.subtable)
+                        + row_index
+                        + include_header
+                    )
+                    element.metadata = _get_metadata(
+                        sheet_name, page_number, opts, rc=(r, c), header_included=include_header
+                    )
                     elements.append(element)
 
     elements = list(
@@ -310,20 +356,20 @@ class _ConnectedComponent:
         self._worksheet = worksheet
         self._cell_coordinate_set = cell_coordinate_set
 
-    @lazyproperty
-    def max_x(self) -> int:
-        """The right-most column index of the connected component."""
-        return self._extents[2]
-
     def merge(self, other: _ConnectedComponent) -> _ConnectedComponent:
         """Produce new instance with union of cells in `self` and `other`.
 
-        Used to combine regions of workshet that are "overlapping" row-wise but not actually
+        Used to combine regions of worksheet that are "overlapping" row-wise but not actually
         2D-connected.
         """
         return _ConnectedComponent(
             self._worksheet, self._cell_coordinate_set.union(other._cell_coordinate_set)
         )
+
+    @lazyproperty
+    def max_x(self) -> int:
+        """The right-most column index of the connected component."""
+        return self._extents[2]
 
     @lazyproperty
     def min_x(self) -> int:
@@ -450,17 +496,22 @@ class _SubtableParser:
     element.
     """
 
-    def __init__(self, subtable: pd.DataFrame):
-        self._subtable = subtable
+    def __init__(self, component: _ConnectedComponent):
+        self._subtable = component.subtable
+        self._top_left_coordinate = component._extents[0:2]
+
+    @lazyproperty
+    def core_table_start(self) -> int:
+        """The index of the first row in the core-table."""
+        return len(self._leading_single_cell_row_indices)
 
     @lazyproperty
     def core_table(self) -> pd.DataFrame | None:
         """The part between the leading and trailing single-cell rows, if any."""
-        core_table_start = len(self._leading_single_cell_row_indices)
 
         # -- if core-table start is the end of table, there is no core-table
         # -- (all rows are single-cell)
-        if core_table_start == len(self._subtable):
+        if self.core_table_start == len(self._subtable):
             return None
 
         # -- assert: there is at least one core-table row (leading single-cell rows greedily
@@ -469,7 +520,7 @@ class _SubtableParser:
         core_table_stop = len(self._subtable) - len(self._trailing_single_cell_row_indices)
 
         # -- core-table is what's left in-between --
-        return self._subtable[core_table_start:core_table_stop]
+        return self._subtable[self.core_table_start : core_table_stop]
 
     def iter_leading_single_cell_rows_texts(self) -> Iterator[str]:
         """Generate the cell-text for each leading single-cell row."""
@@ -539,16 +590,51 @@ def _create_element(text: str) -> Element:
 
 
 def _get_metadata(
-    sheet_name: str, page_number: int, opts: _XlsxPartitionerOptions
+    sheet_name: str,
+    page_number: int,
+    opts: _XlsxPartitionerOptions,
+    rc: Optional[_CellCoordinate] = None,
+    header_included: bool = False,
 ) -> ElementMetadata:
     """Returns metadata depending on `include_metadata` flag"""
+    excel_rc = _turn_coordinate_to_excel_format(rc, header_included=header_included)
     return (
         ElementMetadata(
             page_name=sheet_name,
             page_number=page_number,
             filename=opts.metadata_file_path,
             last_modified=opts.last_modified,
+            data_source=DataSourceMetadata(record_locator=dict(rc=rc, excel_rc=excel_rc)),
         )
         if opts.include_metadata
         else ElementMetadata()
     )
+
+
+def _turn_coordinate_to_excel_format(
+    rc: _CellCoordinate | None,
+    header_included: bool = False,
+) -> None | str:
+    """
+    Converts a tuple of row and column indices to Excel-like cell coordinate.
+    Takes into account that
+    - after Z it starts with AA, AB, ..., ZZ, AAA, ...
+    - if the header was included, the row index needs to be increased by 1
+    """
+    if rc is None:
+        return None
+    row, col = rc
+
+    # Adjust column index to be 1-based
+    col += 1
+
+    col_letters = ""
+    while col > 0:
+        col, remainder = divmod(col - 1, 26)
+        col_letters = chr(remainder + 65) + col_letters
+
+    # Adjust row index if header is included
+    if header_included:
+        row += 1
+
+    return f"{col_letters}{row}"
