@@ -1,10 +1,12 @@
-## 0.14.8-dev1
+## 0.14.8-dev2
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **`partition()` now forwards `strategy` arg to `partition_docx()` and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()` and `partition_pptx()` when those filetypes are detected.
 
 ## 0.14.7
 
