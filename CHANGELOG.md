@@ -1,4 +1,14 @@
-## 0.14.7-dev6
+## 0.14.8-dev0
+
+### Enhancements
+
+### Features
+
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+### Fixes
+
+## 0.14.7
 
 ### Enhancements
 
@@ -7,7 +17,6 @@
 
 ### Features
 
-* **Enhanced analysis features in PDF pipeline** Adds dumps of bboxes visualization for each layout and OD model bboxes dump as JSON.
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
 
 ### Fixes
