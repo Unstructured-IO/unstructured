@@ -310,11 +310,10 @@ class ElasticsearchUploader(Uploader):
                 elements = json.load(elements_file)
                 elements_dict.extend(elements)
         logger.info(
-            f"writing document batches to destination"
-            f" index named {self.upload_config.index_name}"
-            f" at {self.connection_config.hosts}"
-            f" with batch size (in bytes) {self.upload_config.batch_size_bytes}"
-            f" with {self.upload_config.thread_count} (number of) threads"
+            f"writing {len(elements_dict)} elements via document batches to destination "
+            f"index named {self.upload_config.index_name} at {self.connection_config.hosts} with "
+            f"batch size (in bytes) {self.upload_config.batch_size_bytes} with "
+            f"{self.upload_config.thread_count} (number of) threads"
         )
         from elasticsearch.helpers import parallel_bulk
 
