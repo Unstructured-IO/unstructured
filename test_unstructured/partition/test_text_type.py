@@ -88,7 +88,7 @@ def test_text_type_handles_multi_language_examples(monkeypatch):
 
     assert text_type.is_possible_narrative_text(title, languages=["eng"]) is False
     assert text_type.is_possible_narrative_text(title, languages=["spa", "rus"]) is False
-    assert text_type.is_possible_narrative_text(title, languages=[]) is True
+    assert text_type.is_possible_narrative_text(title, languages=[]) is False
 
     assert text_type.is_possible_title(title, languages=["eng"]) is False
     assert text_type.is_possible_title(title, languages=["spa", "rus"]) is True
