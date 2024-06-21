@@ -8,8 +8,8 @@ from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
-from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import SourceConnectionNetworkError
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -52,6 +52,15 @@ class ElasticsearchAccessConfig(AccessConfig):
 
 
 @dataclass
+class ElasticsearchClientInput(EnhancedDataClassJsonMixin):
+    hosts: Optional[str] = None
+    cloud_id: Optional[str] = None
+    ca_certs: Optional[str] = None
+    basic_auth: Optional[tuple[str, str]] = None
+    api_key: Optional[str] = enhanced_field(sensitive=True, default=None)
+
+
+@dataclass
 class ElasticsearchConnectionConfig(ConnectionConfig):
     hosts: Optional[list[str]] = None
     username: Optional[str] = None
@@ -64,28 +73,42 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
         # Update auth related fields to conform to what the SDK expects based on the
         # supported methods:
         # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
-        client_kwargs = {}
+        client_input = ElasticsearchClientInput()
         if self.hosts:
-            client_kwargs["hosts"] = self.hosts
+            client_input.hosts = self.hosts
         if self.cloud_id:
-            client_kwargs["cloud_id"] = self.cloud_id
+            client_input.cloud_id = self.cloud_id
         if self.ca_certs:
-            client_kwargs["ca_certs"] = self.ca_certs
+            client_input.ca_certs = self.ca_certs
         if self.access_config.password and (
             self.cloud_id or self.ca_certs or self.access_config.ssl_assert_fingerprint
         ):
-            client_kwargs["basic_auth"] = ("elastic", self.access_config.password)
+            client_input.basic_auth = ("elastic", self.access_config.password)
         elif not self.cloud_id and self.username and self.access_config.password:
-            client_kwargs["basic_auth"] = (self.username, self.access_config.password)
+            client_input.basic_auth = (self.username, self.access_config.password)
         elif self.access_config.api_key and self.api_key_id:
-            client_kwargs["api_key"] = (self.api_key_id, self.access_config.api_key)
+            client_input.api_key = (self.api_key_id, self.access_config.api_key)
+        logger.debug(
+            f"Elasticsearch client inputs mapped to: {client_input.to_dict(redact_sensitive=True)}"
+        )
+        client_kwargs = client_input.to_dict(redact_sensitive=False)
+        client_kwargs = {k: v for k, v in client_kwargs.items() if v is not None}
         return client_kwargs
 
     @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def get_client(self) -> "ElasticsearchClient":
         from elasticsearch import Elasticsearch as ElasticsearchClient
 
-        return ElasticsearchClient(**self.get_client_kwargs())
+        client = ElasticsearchClient(**self.get_client_kwargs())
+        self.check_connection(client=client)
+        return client
+
+    def check_connection(self, client: "ElasticsearchClient"):
+        try:
+            client.perform_request("HEAD", "/", headers={"accept": "application/json"})
+        except Exception as e:
+            logger.error(f"failed to validate connection: {e}", exc_info=True)
+            raise SourceConnectionError(f"failed to validate connection: {e}")
 
 
 @dataclass
