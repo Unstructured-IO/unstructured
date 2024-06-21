@@ -1,3 +1,14 @@
+## 0.14.8-dev0
+
+### Enhancements
+
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
+### Features
+
+### Fixes
+
+
 ## 0.14.7
 
 ### Enhancements
