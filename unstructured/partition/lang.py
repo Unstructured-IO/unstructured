@@ -349,6 +349,8 @@ def detect_languages(
             langdetect_result = detect_langs(text)
         except lang_detect_exception.LangDetectException as e:
             logger.warning(e)
+            if bool(re.match(r"^[\x00-\x7F]+$", text)):
+                return ["eng"]  # default to English if text is only ascii characters
             return None  # None as default
 
         langdetect_langs: list[str] = []
@@ -369,7 +371,6 @@ def detect_languages(
         for lang in langdetect_langs:
             if lang not in doc_languages:
                 doc_languages.append(lang)
-
     return doc_languages
 
 

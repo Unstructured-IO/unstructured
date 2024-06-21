@@ -59,10 +59,10 @@ def is_possible_narrative_text(
         If True, conducts checks that are specific to the chosen language. Turn on for more
         accurate partitioning and off for faster processing.
     """
-    if languages is None:
-        languages = ["eng"]
+    if languages is None or languages == [""]:
+        languages = ["auto"]
     if isinstance(languages, list) and "auto" in languages and text:
-        languages = detect_languages(text)
+        languages = detect_languages(text) or []
     _language_checks = os.environ.get("UNSTRUCTURED_LANGUAGE_CHECKS")
     if _language_checks is not None:
         language_checks = _language_checks.lower() == "true"

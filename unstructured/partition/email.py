@@ -281,7 +281,7 @@ def partition_email(
     attachment_partitioner: Optional[Callable[..., list[Element]]] = None,
     min_partition: Optional[int] = 0,
     chunking_strategy: Optional[str] = None,
-    languages: Optional[list[str]] = ["auto"],
+    languages: Optional[list[str]] = None,
     detect_language_per_element: bool = False,
     date_from_file_object: bool = False,
     **kwargs: Any,
@@ -327,6 +327,7 @@ def partition_email(
         from message header failed, attempt to infer last_modified metadata from bytes,
         otherwise set it to None.
     """
+    languages = languages or ["auto"]
     if content_source not in VALID_CONTENT_SOURCES:
         raise ValueError(
             f"{content_source} is not a valid value for content_source. "

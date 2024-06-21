@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Final, Iterator, cast
+from typing import IO, Final, Iterator, cast, Any
 
 import requests
 from lxml import etree
@@ -91,10 +91,10 @@ class HTMLDocument:
         if len(text) < 2:
             return None
 
-        if tag not in HEADING_TAGS and is_possible_narrative_text(text):
+        if tag not in HEADING_TAGS and is_possible_narrative_text(text, languages=self._opts.languages):
             return NarrativeText
 
-        if tag in HEADING_TAGS or is_possible_title(text):
+        if tag in HEADING_TAGS or is_possible_title(text, languages=self._opts.languages):
             return Title
 
         return Text
@@ -472,6 +472,7 @@ class HtmlPartitionerOptions:
         metadata_last_modified: str | None,
         skip_headers_and_footers: bool,
         detection_origin: str | None,
+        **kwargs: Any,
     ):
         self._file_path = file_path
         self._file = file
@@ -484,6 +485,12 @@ class HtmlPartitionerOptions:
         self._metadata_last_modified = metadata_last_modified
         self._skip_headers_and_footers = skip_headers_and_footers
         self._detection_origin = detection_origin
+        self._languages = kwargs.get("languages")
+
+    @property
+    def languages(self) -> list[str]:
+        """Languages to use for language detection."""
+        return self._languages if self._languages and self._languages != [""] else ["auto"]
 
     @lazyproperty
     def detection_origin(self) -> str | None:

@@ -90,6 +90,7 @@ def partition_html(
         metadata_last_modified=metadata_last_modified,
         skip_headers_and_footers=skip_headers_and_footers,
         detection_origin=detection_origin,
+        languages=languages,
     )
 
     document = HTMLDocument.load(opts)
