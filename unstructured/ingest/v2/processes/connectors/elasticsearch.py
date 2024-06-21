@@ -88,6 +88,8 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
             client_input.basic_auth = (self.username, self.access_config.password)
         elif self.access_config.api_key and self.api_key_id:
             client_input.api_key = (self.api_key_id, self.access_config.api_key)
+        elif self.access_config.api_key:
+            client_input.api_key = self.access_config.api_key
         logger.debug(
             f"Elasticsearch client inputs mapped to: {client_input.to_dict(redact_sensitive=True)}"
         )
