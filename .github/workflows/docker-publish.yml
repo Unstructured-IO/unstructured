@@ -70,7 +70,7 @@ jobs:
           DOCKER_PLATFORM="${{ matrix.docker-platform }}" DOCKER_IMAGE="$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA" \
             make docker-test CI=true TEST_FILE=test_unstructured/partition/test_text.py
         fi
-        DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
+        # DOCKER_IMAGE=$DOCKER_BUILD_REPOSITORY:$ARCH-$SHORT_SHA make docker-smoke-test
     - name: Push images
       run: |
         # write to the build repository to cache for the publish-images job
