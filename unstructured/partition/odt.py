@@ -7,11 +7,7 @@ from typing import IO, Any, Optional, cast
 from unstructured.chunking import add_chunking_strategy
 from unstructured.documents.elements import Element, process_metadata
 from unstructured.file_utils.filetype import FileType, add_metadata_with_filetype
-from unstructured.partition.common import (
-    exactly_one,
-    get_last_modified_date,
-    get_last_modified_date_from_file,
-)
+from unstructured.partition.common import exactly_one, get_last_modified
 from unstructured.partition.docx import partition_docx
 from unstructured.utils import requires_dependencies
 
@@ -61,12 +57,6 @@ def partition_odt(
         infer last_modified metadata from the file-like object, otherwise set it to None.
     """
 
-    last_modification_date = (
-        get_last_modified_date(filename)
-        if filename
-        else get_last_modified_date_from_file(file) if file and date_from_file_object else None
-    )
-
     with tempfile.TemporaryDirectory() as target_dir:
         docx_path = _convert_odt_to_docx(target_dir, filename, file)
         elements = partition_docx(
@@ -75,7 +65,9 @@ def partition_odt(
             infer_table_structure=infer_table_structure,
             languages=languages,
             metadata_filename=metadata_filename,
-            metadata_last_modified=metadata_last_modified or last_modification_date,
+            metadata_last_modified=(
+                metadata_last_modified or get_last_modified(filename, file, date_from_file_object)
+            ),
             starting_page_number=starting_page_number,
             strategy=strategy,
         )

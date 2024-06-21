@@ -55,7 +55,6 @@ class DropboxIndexer(FsspecIndexer):
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def __post_init__(self):
-        super().__post_init__()
         # dropbox expects the path to start with a /
         if not self.index_config.path_without_protocol.startswith("/"):
             self.index_config.path_without_protocol = "/" + self.index_config.path_without_protocol
@@ -84,10 +83,6 @@ class DropboxDownloader(FsspecDownloader):
     download_config: Optional[DropboxDownloaderConfig] = field(
         default_factory=DropboxDownloaderConfig
     )
-
-    @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
-    def __post_init__(self):
-        super().__post_init__()
 
     @requires_dependencies(["dropboxdrivefs", "fsspec"], extras="dropbox")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:

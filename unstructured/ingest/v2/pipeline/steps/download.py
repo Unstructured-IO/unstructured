@@ -116,7 +116,9 @@ class DownloadStep(PipelineStep):
         return str(filepath)
 
     def get_hash(self, extras: Optional[list[str]]) -> str:
-        hashable_string = json.dumps(self.process.download_config.to_dict(), sort_keys=True)
+        hashable_string = json.dumps(
+            sterilize_dict(self.process.download_config.to_dict()), sort_keys=True
+        )
         if extras:
             hashable_string += "".join(extras)
         return hashlib.sha256(hashable_string.encode()).hexdigest()[:12]

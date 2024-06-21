@@ -57,6 +57,6 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --username "$ELASTIC_USER" \
   --password "$ELASTIC_PASSWORD" \
   --batch-size-bytes 15000000 \
-  --num-processes "$max_processes"
+  --num-threads "$max_processes"
 
 PYTHONPATH=. scripts/elasticsearch-test-helpers/destination_connector/test-ingest-elasticsearch-output.py

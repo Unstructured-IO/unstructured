@@ -428,6 +428,29 @@ jobs:
         tesseract --version
         ./test_unstructured_ingest/test-ingest-dest.sh
 
+  test_ingest_help:
+    environment: ci
+    strategy:
+      matrix:
+        python-version: ["3.9","3.10","3.11", "3.12"]
+    runs-on: ubuntu-latest
+    needs: [setup_ingest, lint]
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup virtual environment
+        uses: ./.github/actions/base-ingest-cache
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate --help
+        run: |
+          source .venv/bin/activate
+          ./test_unstructured_ingest/test-help.sh
+
+
   test_unstructured_api_unit:
     strategy:
       matrix:
@@ -500,7 +523,6 @@ jobs:
       - name: Test Dockerfile
         run: |
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-          make docker-dl-packages
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
       - name: Scan image
