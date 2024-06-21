@@ -14,7 +14,7 @@ from test_unstructured.unit_utils import (
     function_mock,
 )
 from unstructured.chunking.basic import chunk_elements
-from unstructured.documents.elements import CompositeElement, Table, TableChunk, Title, NarrativeText
+from unstructured.documents.elements import CompositeElement, NarrativeText, Table, TableChunk
 from unstructured.partition.docx import partition_docx
 from unstructured.partition.odt import partition_odt
 from unstructured.partition.utils.constants import UNSTRUCTURED_INCLUDE_DEBUG_METADATA

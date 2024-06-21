@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import IO, Final, Iterator, cast, Any
+from typing import IO, Any, Final, Iterator, cast
 
 import requests
 from lxml import etree
@@ -91,7 +91,9 @@ class HTMLDocument:
         if len(text) < 2:
             return None
 
-        if tag not in HEADING_TAGS and is_possible_narrative_text(text, languages=self._opts.languages):
+        if tag not in HEADING_TAGS and is_possible_narrative_text(
+            text, languages=self._opts.languages
+        ):
             return NarrativeText
 
         if tag in HEADING_TAGS or is_possible_title(text, languages=self._opts.languages):
