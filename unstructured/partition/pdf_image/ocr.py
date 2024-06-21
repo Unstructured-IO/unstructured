@@ -171,6 +171,7 @@ def process_file_with_ocr(
                             ocr_languages=ocr_languages,
                             ocr_mode=ocr_mode,
                             extracted_regions=extracted_regions,
+                            ocr_drawer=ocr_drawer,
                         )
                         merged_page_layouts.append(merged_page_layout)
                 return DocumentLayout.from_pages(merged_page_layouts)
