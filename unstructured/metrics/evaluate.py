@@ -636,11 +636,10 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
             logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
             return None
 
-        # processor = ObjectDetectionEvalProcessor.from_json_files(
-        #     prediction_file=prediction_file,
-        #     ground_truth_file=ground_truth_file
-        # )
-        processor = ObjectDetectionEvalProcessor()
+        processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file=prediction_file,
+            ground_truth_file=ground_truth_file
+        )
         metrics = processor.get_metrics()
 
         return [
