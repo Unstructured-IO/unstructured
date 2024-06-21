@@ -334,9 +334,10 @@ class ElasticsearchUploader(Uploader):
             with open(content.path) as elements_file:
                 elements = json.load(elements_file)
                 elements_dict.extend(elements)
+        upload_destination = self.connection_config.hosts or self.connection_config.cloud_id
         logger.info(
             f"writing {len(elements_dict)} elements via document batches to destination "
-            f"index named {self.upload_config.index_name} at {self.connection_config.hosts} with "
+            f"index named {self.upload_config.index_name} at {upload_destination} with "
             f"batch size (in bytes) {self.upload_config.batch_size_bytes} with "
             f"{self.upload_config.thread_count} (number of) threads"
         )
