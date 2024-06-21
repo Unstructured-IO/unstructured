@@ -218,7 +218,7 @@ class DocxPartitionerOptions:
         # -- options object maintains page-number state --
         self._page_counter = starting_page_number
         # -- languages is a list of languages to use for category detection --
-        self._languages: list[str] = kwargs.get("languages", ["auto"])
+        self._languages: list[str] = kwargs.get("languages") or ["auto"]
 
     @classmethod
     def register_picture_partitioner(cls, picture_partitioner: PicturePartitionerT):
