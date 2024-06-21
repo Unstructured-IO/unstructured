@@ -9,7 +9,7 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
-RUN chown -R notebook-user:notebook-user /app
+RUN chown -R notebook-user:notebook-user /app && ln -s /usr/bin/python3.11 /usr/bin/python3
 
 USER notebook-user
 
