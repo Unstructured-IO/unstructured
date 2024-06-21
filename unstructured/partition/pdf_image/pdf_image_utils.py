@@ -427,7 +427,7 @@ def remove_control_characters(text: str) -> str:
     """Removes control characters from text."""
 
     # Replace newline character with a space
-    text = text.replace("\n", " ")
+    text = text.replace("\t", " ").replace("\n", " ")
     # Remove other control characters
     out_text = "".join(c for c in text if unicodedata.category(c)[0] != "C")
     return out_text

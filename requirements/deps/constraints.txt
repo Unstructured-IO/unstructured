@@ -38,10 +38,6 @@ opencv-python==4.8.0.76
 opencv-contrib-python==4.8.0.76
 platformdirs==3.10.0
 
-# Note(scanny): partition_docx() uses table features added in python-docx v1.1.2. Added here since
-# multiple formats have a python-docx dependency (docx, odt)
-python-docx>=1.1.2
-
 # TODO: Constraint due to langchain, remove when that gets updated:
 packaging<24.0
 
