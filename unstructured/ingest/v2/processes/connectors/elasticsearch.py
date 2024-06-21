@@ -64,9 +64,11 @@ class ElasticsearchConnectionConfig(ConnectionConfig):
         # Update auth related fields to conform to what the SDK expects based on the
         # supported methods:
         # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
-        client_kwargs = {
-            "hosts": self.hosts,
-        }
+        client_kwargs = {}
+        if self.hosts:
+            client_kwargs["hosts"] = self.hosts
+        if self.cloud_id:
+            client_kwargs["cloud_id"] = self.cloud_id
         if self.ca_certs:
             client_kwargs["ca_certs"] = self.ca_certs
         if self.access_config.password and (
