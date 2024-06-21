@@ -494,7 +494,8 @@ def test_partition_pdf_hi_table_extraction_with_languages(ocr_mode):
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert elements[0].metadata.languages == ["kor"]
     assert len(table) == 2
-    assert "<table><thead><th>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
     # FIXME(yuming): didn't test full sentence here since unit test and docker test have
     # some differences on spaces between characters
     assert "업" in table[0]
@@ -535,7 +536,8 @@ def test_partition_pdf_hi_res_ocr_mode_with_table_extraction(ocr_mode):
     )
     table = [el.metadata.text_as_html for el in elements if el.metadata.text_as_html]
     assert len(table) == 2
-    assert "<table><thead><th>" in table[0]
+    assert "<table><thead><tr>" in table[0]
+    assert "</thead><tbody><tr>" in table[0]
     assert "Layouts of history Japanese documents" in table[0]
     assert "Layouts of scanned modern magazines and scientific report" in table[0]
     assert "Layouts of scanned US newspapers from the 20th century" in table[0]
@@ -1221,6 +1223,8 @@ def test_partition_pdf_element_extraction(
         if file_mode == "filename":
             elements = pdf.partition_pdf(
                 filename=filename,
+                # Image extraction shouldn't break by setting this
+                starting_page_number=20,
                 extract_image_block_types=extract_image_block_types,
                 extract_image_block_to_payload=extract_image_block_to_payload,
                 extract_image_block_output_dir=tmpdir,
@@ -1229,11 +1233,13 @@ def test_partition_pdf_element_extraction(
             with open(filename, "rb") as f:
                 elements = pdf.partition_pdf(
                     file=f,
+                    # Image extraction shouldn't break by setting this
+                    starting_page_number=20,
                     extract_image_block_types=extract_image_block_types,
                     extract_image_block_to_payload=extract_image_block_to_payload,
                     extract_image_block_output_dir=tmpdir,
                 )
-
+        assert elements[0].metadata.page_number == 20
         assert_element_extraction(
             elements, extract_image_block_types, extract_image_block_to_payload, tmpdir
         )

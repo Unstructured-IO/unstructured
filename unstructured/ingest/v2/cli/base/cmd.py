@@ -74,7 +74,7 @@ class BaseCmd(ABC):
                 f"setting destination on pipeline {dest} with options: {destination_options}"
             )
             if uploader_stager := self.get_upload_stager(dest=dest, options=destination_options):
-                pipeline_kwargs["upload_stager"] = uploader_stager
+                pipeline_kwargs["stager"] = uploader_stager
             pipeline_kwargs["uploader"] = self.get_uploader(dest=dest, options=destination_options)
         else:
             # Default to local uploader
@@ -148,7 +148,7 @@ class BaseCmd(ABC):
         dest_entry = destination_registry[dest]
         upload_stager_kwargs: dict[str, Any] = {}
         if upload_stager_config_cls := dest_entry.upload_stager_config:
-            upload_stager_kwargs["config"] = extract_config(
+            upload_stager_kwargs["upload_stager_config"] = extract_config(
                 flat_data=options, config=upload_stager_config_cls
             )
         if upload_stager_cls := dest_entry.upload_stager:

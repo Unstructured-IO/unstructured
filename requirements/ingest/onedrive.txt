@@ -10,7 +10,7 @@ beautifulsoup4==4.12.3
     #   bs4
 bs4==0.0.2
     # via -r ./ingest/onedrive.in
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -21,7 +21,7 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   msal
     #   pyjwt
@@ -29,7 +29,7 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-msal==1.28.0
+msal==1.28.1
     # via
     #   -r ./ingest/onedrive.in
     #   office365-rest-python-client
@@ -43,7 +43,7 @@ pyjwt[crypto]==2.8.0
     # via msal
 pytz==2024.1
     # via office365-rest-python-client
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   msal

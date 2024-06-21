@@ -6,7 +6,7 @@
 #
 cachetools==5.3.3
     # via google-auth
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
@@ -17,7 +17,7 @@ charset-normalizer==3.3.2
     #   requests
 databricks-sdk==0.28.0
     # via -r ./ingest/databricks-volumes.in
-google-auth==2.29.0
+google-auth==2.30.0
     # via databricks-sdk
 idna==3.7
     # via
@@ -29,7 +29,7 @@ pyasn1==0.6.0
     #   rsa
 pyasn1-modules==0.4.0
     # via google-auth
-requests==2.32.2
+requests==2.32.3
     # via
     #   -c ./ingest/../base.txt
     #   databricks-sdk

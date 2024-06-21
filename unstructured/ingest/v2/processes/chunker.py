@@ -18,24 +18,24 @@ class ChunkerConfig(EnhancedDataClassJsonMixin):
     chunk_by_api: bool = False
     chunk_api_key: Optional[str] = enhanced_field(default=None, sensitive=True)
 
-    combine_text_under_n_chars: Optional[int] = None
-    include_orig_elements: Optional[bool] = None
-    max_characters: Optional[int] = None
-    multipage_sections: Optional[bool] = None
-    new_after_n_chars: Optional[int] = None
-    overlap: Optional[int] = None
-    overlap_all: Optional[bool] = None
+    chunk_combine_text_under_n_chars: Optional[int] = None
+    chunk_include_orig_elements: Optional[bool] = None
+    chunk_max_characters: Optional[int] = None
+    chunk_multipage_sections: Optional[bool] = None
+    chunk_new_after_n_chars: Optional[int] = None
+    chunk_overlap: Optional[int] = None
+    chunk_overlap_all: Optional[bool] = None
 
     def to_chunking_kwargs(self) -> dict[str, Any]:
         return {
             "chunking_strategy": self.chunking_strategy,
-            "combine_text_under_n_chars": self.combine_text_under_n_chars,
-            "max_characters": self.max_characters,
-            "include_orig_elements": self.include_orig_elements,
-            "multipage_sections": self.multipage_sections,
-            "new_after_n_chars": self.new_after_n_chars,
-            "overlap": self.overlap,
-            "overlap_all": self.overlap_all,
+            "combine_text_under_n_chars": self.chunk_combine_text_under_n_chars,
+            "max_characters": self.chunk_max_characters,
+            "include_orig_elements": self.chunk_include_orig_elements,
+            "multipage_sections": self.chunk_multipage_sections,
+            "new_after_n_chars": self.chunk_new_after_n_chars,
+            "overlap": self.chunk_overlap,
+            "overlap_all": self.chunk_overlap_all,
         }
 
 
@@ -48,6 +48,8 @@ class Chunker(BaseProcess, ABC):
 
     def run(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
         elements = elements_from_json(filename=str(elements_filepath))
+        if not elements:
+            return elements
         local_chunking_strategies = ("basic", "by_title")
         if self.config.chunking_strategy not in local_chunking_strategies:
             logger.warning(

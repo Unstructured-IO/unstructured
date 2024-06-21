@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import tempfile
 from typing import Any
 
 import pytest
@@ -121,10 +120,10 @@ def test_partition_odt_suppresses_text_as_html_when_infer_table_structure_is_Fal
 # -- .metadata.last_modified ---------------------------------------------------------------------
 
 
-def test_partition_odt_from_filename_pulls_last_modified_from_filesystem(mocker: MockFixture):
+def test_partition_odt_pulls_last_modified_from_filesystem(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date", return_value=filesystem_last_modified
+        "unstructured.partition.odt.get_last_modified", return_value=filesystem_last_modified
     )
 
     elements = partition_odt(example_doc_path("fake.odt"))
@@ -132,72 +131,16 @@ def test_partition_odt_from_filename_pulls_last_modified_from_filesystem(mocker:
     assert all(e.metadata.last_modified == filesystem_last_modified for e in elements)
 
 
-def test_partition_odt_from_filename_prefers_metadata_last_modified_when_provided(
-    mocker: MockFixture,
-):
+def test_partition_odt_prefers_metadata_last_modified_when_provided(mocker: MockFixture):
     filesystem_last_modified = "2029-07-05T09:24:28"
     metadata_last_modified = "2020-07-05T09:24:28"
     mocker.patch(
-        "unstructured.partition.doc.get_last_modified_date", return_value=filesystem_last_modified
+        "unstructured.partition.odt.get_last_modified", return_value=filesystem_last_modified
     )
 
     elements = partition_odt(
         example_doc_path("simple.odt"), metadata_last_modified=metadata_last_modified
     )
-
-    assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
-
-
-def test_partition_odt_from_file_suppresses_last_modified_from_file_by_default(mocker: MockFixture):
-    modified_date_on_file = "2029-07-05T09:24:28"
-    mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date_from_file",
-        return_value=modified_date_on_file,
-    )
-
-    with open(example_doc_path("simple.odt"), "rb") as f:
-        elements = partition_odt(file=f)
-
-    assert all(e.metadata.last_modified is None for e in elements)
-
-
-def test_partition_odt_from_file_pulls_last_modified_from_file_when_date_from_file_obj_arg_is_True(
-    mocker: MockFixture,
-):
-    modified_date_on_file = "2024-05-01T09:24:28"
-    mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date_from_file",
-        return_value=modified_date_on_file,
-    )
-
-    with open(example_doc_path("simple.odt"), "rb") as f:
-        elements = partition_odt(file=f, date_from_file_object=True)
-
-    assert all(e.metadata.last_modified == modified_date_on_file for e in elements)
-
-
-def test_partition_odt_from_file_gets_None_last_modified_when_file_has_no_last_modified():
-    with open(example_doc_path("simple.odt"), "rb") as f:
-        sf = tempfile.SpooledTemporaryFile()
-        sf.write(f.read())
-        sf.seek(0)
-        elements = partition_odt(file=sf, date_from_file_object=True)
-
-    assert all(e.metadata.last_modified is None for e in elements)
-
-
-def test_partition_odt_from_file_prefers_metadata_last_modified_when_provided(mocker: MockFixture):
-    """Even when `date_from_file_object` arg is `True`."""
-    modified_date_on_file = "2029-07-05T09:24:28"
-    metadata_last_modified = "2020-07-05T09:24:28"
-
-    mocker.patch(
-        "unstructured.partition.odt.get_last_modified_date_from_file",
-        return_value=modified_date_on_file,
-    )
-
-    with open(example_doc_path("fake.odt"), "rb") as f:
-        elements = partition_odt(file=f, metadata_last_modified=metadata_last_modified)
 
     assert all(e.metadata.last_modified == metadata_last_modified for e in elements)
 

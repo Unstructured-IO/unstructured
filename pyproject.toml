@@ -31,6 +31,7 @@ lint.select = [
 ]
 lint.ignore = [
     "COM812",   # -- over aggressively insists on trailing commas where not desireable --
+    "PT001",    # -- wants empty parens on @pytest.fixture where not used (essentially always) --
     "PT005",    # -- flags mock fixtures with names intentionally matching private method name --
     "PT011",    # -- pytest.raises({exc}) too broad, use match param or more specific exception --
     "PT012",    # -- pytest.raises() block should contain a single simple statement --

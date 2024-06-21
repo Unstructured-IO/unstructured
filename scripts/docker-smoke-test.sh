@@ -45,7 +45,7 @@ if [[ "$DOCKER_IMAGE" == *"arm64"* ]]; then
 else
   docker cp test_unstructured_ingest $CONTAINER_NAME:/app
   docker cp requirements/ingest $CONTAINER_NAME:/app/requirements/ingest
-  docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R nonroot:nonroot /app/test_unstructured_ingest"
+  docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R notebook-user:notebook-user /app/test_unstructured_ingest"
   docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/wikipedia.sh"
 fi
 

@@ -93,7 +93,6 @@ python_version=$(python --version 2>&1)
 
 tests_to_ignore=(
   'notion.sh'
-  'dropbox.sh'
 )
 
 for test in "${all_tests[@]}"; do
@@ -110,11 +109,21 @@ for test in "${all_tests[@]}"; do
   rc=$?
   if [[ $rc -eq 8 ]]; then
     echo "$test (skipped due to missing env var)" | tee -a "$SKIPPED_FILES_LOG"
-  elif [[ "${tests_to_ignore[*]}" =~ $test ]]; then
-    echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
-    continue
-  elif [[ $rc -ne 0 ]]; then
-    exit $rc
+  else
+    # Check if the test is in tests_to_ignore
+    ignore_test=false
+    for ignore in "${tests_to_ignore[@]}"; do
+      if [[ "$ignore" == "$test" ]]; then
+        ignore_test=true
+        break
+      fi
+    done
+    if $ignore_test; then
+      echo "$test (skipped checking error code: $rc)" | tee -a "$SKIPPED_FILES_LOG"
+      continue
+    elif [[ $rc -ne 0 ]]; then
+      exit $rc
+    fi
   fi
   echo "--------- FINISHED SCRIPT $test ---------"
 done

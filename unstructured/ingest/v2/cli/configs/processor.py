@@ -83,5 +83,6 @@ class ProcessorCliConfig(CliConfig):
                 "files based on file extension.",
             ),
             click.Option(["--verbose"], is_flag=True, default=False),
+            click.Option(["--tqdm"], is_flag=True, default=False, help="Show progress bar"),
         ]
         return options

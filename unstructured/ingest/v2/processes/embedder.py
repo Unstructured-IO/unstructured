@@ -66,14 +66,10 @@ class EmbedderConfig(EnhancedDataClassJsonMixin):
 class Embedder(BaseProcess, ABC):
     config: EmbedderConfig
 
-    def is_async(self) -> bool:
-        # huggingface is run locally rather than via an api call so don't run async
-        return self.config.embedding_provider not in ["langchain-huggingface"]
-
     def run(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
+        # TODO update base embedder classes to support async
         embedder = self.config.get_embedder()
         elements = elements_from_json(filename=str(elements_filepath))
+        if not elements:
+            return elements
         return embedder.embed_documents(elements=elements)
-
-    async def run_async(self, elements_filepath: Path, **kwargs: Any) -> list[Element]:
-        return self.run(elements_filepath=elements_filepath, **kwargs)

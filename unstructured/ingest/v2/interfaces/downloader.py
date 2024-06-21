@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional, TypedDict, TypeVar, Union
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
@@ -17,9 +17,17 @@ class DownloaderConfig(EnhancedDataClassJsonMixin):
 DownloaderConfigT = TypeVar("DownloaderConfigT", bound=DownloaderConfig)
 
 
+class DownloadResponse(TypedDict):
+    file_data: FileData
+    path: Path
+
+
+download_responses = Union[list[DownloadResponse], DownloadResponse]
+
+
 class Downloader(BaseProcess, BaseConnector, ABC):
     connector_type: str
-    download_config: Optional[DownloaderConfigT] = field(default_factory=DownloaderConfig)
+    download_config: DownloaderConfigT
 
     @property
     def download_dir(self) -> Path:
@@ -37,13 +45,12 @@ class Downloader(BaseProcess, BaseConnector, ABC):
     def is_async(self) -> bool:
         return True
 
-    @abstractmethod
-    def get_download_path(self, file_data: FileData) -> Path:
-        pass
+    def get_download_path(self, file_data: FileData) -> Optional[Path]:
+        return None
 
     @abstractmethod
-    def run(self, file_data: FileData, **kwargs: Any) -> Path:
+    def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         pass
 
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> Path:
+    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
         return self.run(file_data=file_data, **kwargs)
