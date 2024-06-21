@@ -31,7 +31,7 @@ dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.15.1
+filelock==3.15.3
     # via
     #   huggingface-hub
     #   torch
@@ -161,7 +161,7 @@ scipy==1.11.3
     #   sentence-transformers
 sentence-transformers==3.0.1
     # via -r ./ingest/embed-huggingface.in
-sqlalchemy==2.0.30
+sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
@@ -201,7 +201,7 @@ typing-inspect==0.9.0
     # via
     #   -c ./ingest/../base.txt
     #   dataclasses-json
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

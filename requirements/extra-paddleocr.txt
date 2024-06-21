@@ -59,7 +59,7 @@ imageio==2.34.1
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-metadata==7.1.0
+importlib-metadata==7.2.0
     # via flask
 importlib-resources==6.4.0
     # via matplotlib
@@ -151,7 +151,7 @@ protobuf==4.23.4
     # via
     #   -c ././deps/constraints.txt
     #   visualdl
-psutil==5.9.8
+psutil==6.0.0
     # via visualdl
 pyclipper==1.3.0.post5
     # via unstructured-paddleocr
@@ -181,7 +181,7 @@ requests==2.32.3
     #   -c ./base.txt
     #   premailer
     #   visualdl
-scikit-image==0.22.0
+scikit-image==0.24.0
     # via
     #   imgaug
     #   unstructured-paddleocr
@@ -202,7 +202,7 @@ six==1.16.0
     #   imgaug
     #   python-dateutil
     #   visualdl
-tifffile==2024.5.22
+tifffile==2024.6.18
     # via scikit-image
 tqdm==4.66.4
     # via
@@ -212,7 +212,7 @@ tzdata==2024.1
     # via pandas
 unstructured-paddleocr==2.6.1.3
     # via -r ./extra-paddleocr.in
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

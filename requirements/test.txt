@@ -132,7 +132,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-ruff==0.4.9
+ruff==0.4.10
     # via -r ./test.in
 six==1.16.0
     # via
@@ -162,7 +162,7 @@ typing-extensions==4.12.2
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
