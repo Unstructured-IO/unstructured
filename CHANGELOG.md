@@ -1,10 +1,12 @@
-## 0.14.8-dev0
+## 0.14.8
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
 
 ## 0.14.7
 
