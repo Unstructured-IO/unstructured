@@ -615,6 +615,7 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
     def _process_document(self, doc: Path) -> list:  # TODO implement
         doc_path = Path(doc)
         out_filename = doc_path.stem
+        doctype = Path(out_filename).suffix[1:]
 
         src_gt_filename = out_filename + ".json"  # TODO check if this is correct
         # currently we have different ground truth format
@@ -640,4 +641,9 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
         #     ground_truth_file=ground_truth_file
         # )
         processor = ObjectDetectionEvalProcessor()
-        report = processor.get_metrics()
+        metrics = processor.get_metrics()
+
+        return [
+            out_filename,
+            doctype,
+        ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
