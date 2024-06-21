@@ -79,10 +79,6 @@ class GcsIndexer(FsspecIndexer):
     connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    def __post_init__(self):
-        super().__post_init__()
-
-    @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         return super().run(**kwargs)
 
@@ -98,10 +94,6 @@ class GcsDownloader(FsspecDownloader):
     connection_config: GcsConnectionConfig
     connector_type: str = CONNECTOR_TYPE
     download_config: Optional[GcsDownloaderConfig] = field(default_factory=GcsDownloaderConfig)
-
-    @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
-    def __post_init__(self):
-        super().__post_init__()
 
     @requires_dependencies(["gcsfs", "fsspec"], extras="gcs")
     def run(self, file_data: FileData, **kwargs: Any) -> DownloadResponse:

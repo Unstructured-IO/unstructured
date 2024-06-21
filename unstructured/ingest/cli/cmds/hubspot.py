@@ -11,6 +11,8 @@ OBJECT_TYPES = {t.value for t in HubSpotObjectTypes}
 
 
 def validate_custom_property(ctx, param, value) -> t.Dict[str, t.List[str]]:
+    if not value:
+        return value
     for k in value:
         if k not in OBJECT_TYPES:
             raise ValueError(f"Invalid object type: {k}, must be one of {OBJECT_TYPES}")
