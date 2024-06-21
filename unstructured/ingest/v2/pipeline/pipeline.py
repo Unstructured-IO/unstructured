@@ -67,7 +67,8 @@ class Pipeline:
 
         # TODO: support initialize() call from each step process
         # Potential long call to download embedder models:
-        embedder.config.get_embedder().initialize()
+        if embedder and embedder.config:
+            embedder.config.get_embedder().initialize()
         self.embedder_step = EmbedStep(process=embedder, context=self.context) if embedder else None
 
         self.stager_step = UploadStageStep(process=stager, context=self.context) if stager else None
