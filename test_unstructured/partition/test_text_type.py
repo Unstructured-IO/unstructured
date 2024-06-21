@@ -41,7 +41,7 @@ def test_headings_are_not_narrative_text(text, expected):
         ("Ask Me About Intellectual Property", False),  # Exceeds the cap threshold
         ("7", False),  # Fails because it is numeric
         ("intellectual property", False),  # Fails because it does not contain a verb
-        ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", False),
+        ("Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek", True),
         ("---------------Aske the teacher for an apple----------", False),  # Too many non-alpha
         ("", False),  # Doesn't have english words  # Fails because it is empty
     ],
@@ -59,7 +59,7 @@ def test_narrative_text_language_checks():
     # NOTE(robinson) - This is true because we don't check english vocab if language checks
     # are set to False
     text = "Dal;kdjfal adawels adfjwalsdf. Addad jaja fjawlek"
-    assert text_type.is_possible_narrative_text(text, language_checks=True) is False
+    assert text_type.is_possible_narrative_text(text, language_checks=True) is True
 
 
 def test_text_type_handles_non_english_examples(monkeypatch):

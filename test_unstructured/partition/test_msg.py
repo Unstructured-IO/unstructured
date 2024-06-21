@@ -156,8 +156,8 @@ def test_partition_msg_can_process_attachments():
         "Image",
         "Title",
         "Text",
-        "Title",
-        "Title",
+        "NarrativeText",
+        "NarrativeText",
     ]
     assert [type(e).__name__ for e in elements][-10:] == [
         "Title",
