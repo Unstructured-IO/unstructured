@@ -21,7 +21,7 @@ function cleanup() {
 trap cleanup EXIT
 
 if [ -z "$OCTOAI_API_KEY" ]; then
-  echo "Skipping local octioai ingest test because the OCTOAI_API_KEY env var is not set."
+  echo "Skipping local octoai ingest test because the OCTOAI_API_KEY env var is not set."
   exit 8
 fi
 

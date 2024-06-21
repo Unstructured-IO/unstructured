@@ -20,6 +20,11 @@ function cleanup() {
 }
 trap cleanup EXIT
 
+if [ -z "$GCP_INGEST_SERVICE_KEY" ]; then
+  echo "Skipping local vertexai ingest test because the GCP_INGEST_SERVICE_KEY env var is not set."
+  exit 8
+fi
+
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
