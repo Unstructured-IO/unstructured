@@ -345,12 +345,19 @@ class ElasticsearchUploader(Uploader):
         )
         from elasticsearch.helpers import parallel_bulk
 
+        client = self.connection_config.get_client()
+        if not client.indices.exists(index=self.upload_config.index_name):
+            logger.warning(
+                f"Elasticsearch index does not exist: "
+                f"{self.upload_config.index_name}. "
+                f"This may cause issues when uploading."
+            )
         for batch in generator_batching_wbytes(
             elements_dict, batch_size_limit_bytes=self.upload_config.batch_size_bytes
         ):
             for success, info in parallel_bulk(
-                self.connection_config.get_client(),
-                batch,
+                client=client,
+                actions=batch,
                 thread_count=self.upload_config.thread_count,
             ):
                 if not success:
