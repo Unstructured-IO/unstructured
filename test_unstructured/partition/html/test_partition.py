@@ -1,4 +1,6 @@
-"""Test suite for `unstructured.partition.html` module."""
+# pyright: reportPrivateUsage=false
+
+"""Test suite for `unstructured.partition.html.partition` module."""
 
 from __future__ import annotations
 
@@ -8,11 +10,11 @@ from tempfile import SpooledTemporaryFile
 from typing import Any
 
 import pytest
+from lxml import etree
 
 from test_unstructured.unit_utils import (
     FixtureRequest,
     Mock,
-    MonkeyPatch,
     assert_round_trips_through_JSON,
     example_doc_path,
     example_doc_text,
@@ -21,16 +23,24 @@ from test_unstructured.unit_utils import (
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
+    Address,
     CompositeElement,
     EmailAddress,
     ListItem,
     NarrativeText,
     Table,
     TableChunk,
+    Text,
     Title,
 )
+from unstructured.documents.html import HTMLDocument
 from unstructured.file_utils.encoding import read_txt_file
-from unstructured.partition.html import HtmlPartitionerOptions, partition_html
+from unstructured.partition.html import partition_html
+from unstructured.partition.html.partition import HtmlPartitionerOptions, _HtmlPartitioner
+
+# ================================================================================================
+# SOURCE HTML LOADING BEHAVIORS
+# ================================================================================================
 
 # -- document-source (filename, file, text, url) -------------------------------------------------
 
@@ -41,6 +51,16 @@ def test_partition_html_accepts_a_file_path():
     assert len(elements) > 0
     assert all(e.metadata.filename == "example-10k-1p.html" for e in elements)
     assert all(e.metadata.file_directory == example_doc_path("") for e in elements)
+
+
+def test_user_without_file_write_permission_can_partition_html(tmp_path: pathlib.Path):
+    read_only_file_path = tmp_path / "example-10k-readonly.html"
+    read_only_file_path.write_text(example_doc_text("example-10k-1p.html"))
+    read_only_file_path.chmod(0o444)
+
+    elements = partition_html(filename=str(read_only_file_path.resolve()))
+
+    assert len(elements) > 0
 
 
 def test_partition_html_accepts_a_file_like_object():
@@ -72,6 +92,89 @@ def test_partition_html_accepts_a_url_to_an_HTML_document(requests_get_: Mock):
 def test_partition_html_raises_when_no_path_or_file_or_text_or_url_is_specified():
     with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be sp"):
         partition_html()
+
+
+# -- encoding for filename, file, and text -------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_filename_raises_when_explicit_encoding_is_wrong(filename: str):
+    with pytest.raises(UnicodeDecodeError):
+        with open(example_doc_path(filename), "rb") as f:
+            partition_html(file=f, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_filename_default_encoding(filename: str):
+    elements = partition_html(example_doc_path(filename))
+
+    assert len(elements) > 0
+    assert all(e.metadata.filename == filename for e in elements)
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_file_raises_encoding_error(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
+        partition_html(file=file, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_file_default_encoding(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        elements = partition_html(file=f)
+
+    assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+@pytest.mark.parametrize(
+    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
+)
+def test_partition_html_from_file_rb_raises_encoding_error(filename: str):
+    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
+        with open(example_doc_path(filename), "rb") as f:
+            partition_html(file=f, encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    "filename",
+    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
+)
+def test_partition_html_from_file_rb_default_encoding(filename: str):
+    with open(example_doc_path(filename), "rb") as f:
+        elements = partition_html(file=f)
+
+    assert len(elements) > 0
+    if filename == "fake-html-lang-de.html":
+        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
+
+
+def test_partition_html_processes_chinese_chracters():
+    html_text = "<html><div><p>每日新闻</p></div></html>"
+    elements = partition_html(text=html_text)
+    assert elements[0].text == "每日新闻"
+
+
+def test_emoji_appears_with_emoji_utf8_code():
+    assert partition_html(text='<html charset="utf-8"><p>Hello &#128512;</p></html>') == [
+        Title("Hello 😀")
+    ]
 
 
 # -- partition_html() from URL -------------------------------------------------------------------
@@ -113,7 +216,298 @@ def test_partition_from_url_includes_provided_headers_in_request(requests_get_: 
     )
 
 
-# -- HTML tag-specific behaviors -----------------------------------------------------------------
+# ================================================================================================
+# PARSING TESTS
+# ================================================================================================
+
+
+def test_partition_html_on_ideas_page():
+    elements = partition_html(example_doc_path("ideas-page.html"))
+
+    assert len(elements) == 1
+    e = elements[0]
+    assert e == Table(
+        "January 2023 ( Someone fed my essays into GPT to make something that could answer"
+        "\nquestions based on them, then asked it where good ideas come from.  The"
+        "\nanswer was ok, but not what I would have said. This is what I would have said.)"
+        " The way to get new ideas is to notice anomalies: what seems strange,"
+        "\nor missing, or broken? You can see anomalies in everyday life (much"
+        "\nof standup comedy is based on this), but the best place to look for"
+        "\nthem is at the frontiers of knowledge. Knowledge grows fractally."
+        "\nFrom a distance its edges look smooth, but when you learn enough"
+        "\nto get close to one, you'll notice it's full of gaps. These gaps"
+        "\nwill seem obvious; it will seem inexplicable that no one has tried"
+        "\nx or wondered about y. In the best case, exploring such gaps yields"
+        "\nwhole new fractal buds.",
+    )
+    assert e.metadata.emphasized_text_contents is None
+    assert e.metadata.link_urls is None
+    assert e.metadata.text_as_html is not None
+
+
+# -- element-suppression behaviors ---------------------------------------------------------------
+
+
+def test_it_does_not_extract_text_in_script_tags(opts_args: dict[str, Any]):
+    opts_args["file_path"] = example_doc_path("example-with-scripts.html")
+    opts = HtmlPartitionerOptions(**opts_args)
+    doc = HTMLDocument.load(opts)
+    assert all("function (" not in element.text for element in doc.elements)
+
+
+def test_it_does_not_extract_text_in_style_tags(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<html>\n"
+        "<body>\n"
+        "  <p><style> p { margin:0; padding:0; } </style>Lorem ipsum dolor</p>\n"
+        "</body>\n"
+        "</html>"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument.load(opts)
+
+    (element,) = html_document.elements
+    assert isinstance(element, Text)
+    assert element.text == "Lorem ipsum dolor"
+
+
+# -- table parsing behaviors ---------------------------------------------------------------------
+
+
+def test_it_can_parse_a_bare_bones_table_to_a_Table_element(opts_args: dict[str, Any]):
+    """Bare-bones means no `<thead>`, `<tbody>`, or `<tfoot>` elements."""
+    opts_args["text"] = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td>Lorem</td><td>Ipsum</td></tr>\n"
+        "    <tr><td>Ut enim non</td><td>ad minim\nveniam quis</td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument.load(opts)
+
+    # -- there is exactly one element and it's a Table instance --
+    (element,) = html_document.elements
+    assert isinstance(element, Table)
+    # -- table text is joined into a single string; no row or cell boundaries are represented --
+    assert element.text == "Lorem Ipsum Ut enim non ad minim\nveniam quis"
+    # -- An HTML representation is also available that is longer but represents table structure.
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_accommodates_column_heading_cells_enclosed_in_thead_tbody_and_tfoot_elements(
+    opts_args: dict[str, Any]
+):
+    """Cells within a `table/thead` element are included in the text and html.
+
+    The presence of a `<thead>` element in the original also determines whether a `<thead>` element
+    appears in `.text_as_html` or whether the first row of cells is simply in the body.
+    """
+    opts_args["text"] = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument.load(opts)
+
+    (element,) = html_document.elements
+    assert isinstance(element, Table)
+    assert element.metadata.text_as_html == (
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "</table>"
+    )
+
+
+def test_it_does_not_emit_a_Table_element_for_a_table_with_no_text(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "    <tr><td> </td><td> </td></tr>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument.load(opts)
+
+    assert html_document.elements == []
+
+
+def test_it_provides_parseable_HTML_in_text_as_html(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<html>\n"
+        "<body>\n"
+        "  <table>\n"
+        "    <thead>\n"
+        "      <tr><th>Lorem</th><th>Ipsum</th></tr>\n"
+        "    </thead>\n"
+        "    <tbody>\n"
+        "      <tr><th>Lorem ipsum</th><td>dolor sit amet nulla</td></tr>\n"
+        "      <tr><th>Ut enim non</th><td>ad minim\nveniam quis</td></tr>\n"
+        "    </tbody>\n"
+        "    <tfoot>\n"
+        "      <tr><th>Dolor</th><td>Equis</td></tr>\n"
+        "    </tfoot>\n"
+        "  </table>\n"
+        "</body>\n"
+        "</html>"
+    )
+    html_document = HTMLDocument.load(HtmlPartitionerOptions(**opts_args))
+    (element,) = html_document.elements
+    assert isinstance(element, Table)
+    text_as_html = element.metadata.text_as_html
+    assert text_as_html is not None
+
+    html = etree.fromstring(text_as_html, etree.HTMLParser())
+
+    assert html is not None
+    # -- lxml adds the <html><body> container, that's not present in `.text_as_html` --
+    assert etree.tostring(html, encoding=str) == (
+        "<html><body>"
+        "<table>"
+        "<tr><td>Lorem</td><td>Ipsum</td></tr>"
+        "<tr><td>Lorem ipsum</td><td>dolor sit amet nulla</td></tr>"
+        "<tr><td>Ut enim non</td><td>ad minim<br/>veniam quis</td></tr>"
+        "<tr><td>Dolor</td><td>Equis</td></tr>"
+        "</table>"
+        "</body></html>"
+    )
+
+
+@pytest.mark.parametrize(
+    ("tag", "expected_text_as_html"),
+    [
+        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
+    ],
+)
+def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
+    elements = partition_html(
+        text=(
+            f"<table>\n"
+            f"  <{tag}>\n"
+            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
+            f"  </{tag}>\n"
+            f"</table>"
+        )
+    )
+    assert elements[0].metadata.text_as_html == expected_text_as_html
+
+
+def test_partition_html_reduces_a_nested_table_to_its_text_placed_in_the_cell_that_contains_it(
+    opts_args: dict[str, Any]
+):
+    """Recursively ..."""
+    opts = HtmlPartitionerOptions(**opts_args)
+    # -- note <table> elements nested in <td> elements --
+    html_str = (
+        "<table>\n"
+        " <tr>\n"
+        "  <td>\n"
+        "   <table>\n"
+        "     <tr><td>foo</td><td>bar</td></tr>\n"
+        "     <tr><td>baz</td><td>bng</td></tr>\n"
+        "   </table>\n"
+        "  </td>\n"
+        "  <td>\n"
+        "   <table>\n"
+        "     <tr><td>fizz</td><td>bang</td></tr>\n"
+        "   </table>\n"
+        "  </td>\n"
+        " </tr>\n"
+        "</table>"
+    )
+    html_document = HTMLDocument(html_str, opts)
+    table_elem = html_document._main.find(".//table")
+    assert table_elem is not None
+
+    html_table = html_document._parse_Table_from_table_elem(table_elem)
+
+    assert isinstance(html_table, Table)
+    assert html_table.text == "foo bar baz bng fizz bang"
+    assert html_table.metadata.text_as_html == (
+        "<table><tr><td>foo bar baz bng</td><td>fizz bang</td></tr></table>"
+    )
+
+
+def test_partition_html_accommodates_tds_with_child_elements(opts_args: dict[str, Any]):
+    """Like this example from an SEC 10k filing."""
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_str = (
+        "<table>\n"
+        " <tr>\n"
+        "  <td></td>\n"
+        "  <td></td>\n"
+        " </tr>\n"
+        " <tr>\n"
+        "  <td>\n"
+        "   <p>\n"
+        "    <span>\n"
+        '     <ix:nonNumeric id="F_be4cc145-372a-4689-be60-d8a70b0c8b9a"'
+        ' contextRef="C_1de69f73-df01-4830-8af0-0f11b469bc4a" name="dei:DocumentAnnualReport"'
+        ' format="ixt-sec:boolballotbox">\n'
+        "     <span>&#9746;</span>\n"
+        "     </ix:nonNumeric>\n"
+        "    </span>\n"
+        "   </p>\n"
+        "  </td>\n"
+        "  <td>\n"
+        "   <p>\n"
+        "    <span>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE"
+        " ACT OF 1934</span>\n"
+        "   </p>\n"
+        "  </td>\n"
+        " </tr>\n"
+        "</table>\n"
+    )
+    html_document = HTMLDocument(html_str, opts)
+    table_elem = html_document._main.find(".//table")
+    assert table_elem is not None
+
+    html_table = html_document._parse_Table_from_table_elem(table_elem)
+
+    assert isinstance(html_table, Table)
+    assert html_table.text == (
+        "☒ ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934"
+    )
+    assert html_table.metadata.text_as_html == (
+        "<table>"
+        "<tr><td></td><td></td></tr>"
+        "<tr><td>☒</td><td>ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES"
+        " EXCHANGE ACT OF 1934</td></tr>"
+        "</table>"
+    )
+
+
+# -- other element-specific behaviors ------------------------------------------------------------
 
 
 def test_partition_html_recognizes_h1_to_h3_as_Title_except_in_edge_cases():
@@ -207,6 +601,153 @@ def test_partition_html_tag_tail_parsing():
     assert "|".join([str(e).strip() for e in elements]) == "Head|Nested|Tail"
 
 
+# -- parsing edge cases --------------------------------------------------------------------------
+
+
+def test_partition_html_from_text_works_with_empty_string():
+    assert partition_html(text="") == []
+
+
+def test_nested_text_tags(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<body>\n"
+        "  <p>\n"
+        "    <a>\n"
+        "      There is some text here.\n"
+        "    </a>\n"
+        "  </p>\n"
+        "</body>\n"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    elements = HTMLDocument.load(opts).elements
+
+    assert len(elements) == 1
+
+
+def test_containers_with_text_are_processed(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        '<div dir=3D"ltr">Hi All,<div><br></div>\n'
+        "  <div>Get excited for our first annual family day!</div>\n"
+        '  <div>Best.<br clear=3D"all">\n'
+        "    <div><br></div>\n"
+        "    -- <br>\n"
+        '    <div dir=3D"ltr">\n'
+        '      <div dir=3D"ltr">Dino the Datasaur<div>\n'
+        "      Unstructured Technologies<br>\n"
+        "      <div>Data Scientist</div>\n"
+        "        <div>Doylestown, PA 18901</div>\n"
+        "        <div><br></div>\n"
+        "      </div>\n"
+        "      </div>\n"
+        "    </div>\n"
+        "  </div>\n"
+        "</div>\n"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    html_document = HTMLDocument.load(opts)
+
+    assert html_document.elements == [
+        Text(text="Hi All,"),
+        NarrativeText(text="Get excited for our first annual family day!"),
+        Title(text="Best."),
+        Text(text="\n    -- "),
+        Title(text="Dino the Datasaur"),
+        Title(text="\n      Unstructured Technologies"),
+        Title(text="Data Scientist"),
+        Address(text="Doylestown, PA 18901"),
+    ]
+
+
+def test_html_grabs_bulleted_text_in_tags(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<html>\n"
+        "  <body>\n"
+        "    <ol>\n"
+        "      <li>Happy Groundhog's day!</li>\n"
+        "      <li>Looks like six more weeks of winter ...</li>\n"
+        "    </ol>\n"
+        "  </body>\n"
+        "</html>\n"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    assert HTMLDocument.load(opts).elements == [
+        ListItem(text="Happy Groundhog's day!"),
+        ListItem(text="Looks like six more weeks of winter ..."),
+    ]
+
+
+def test_html_grabs_bulleted_text_in_paras(opts_args: dict[str, Any]):
+    opts_args["text"] = (
+        "<html>\n"
+        "  <body>\n"
+        "    <p>\n"
+        "      <span>&#8226; Happy Groundhog's day!</span>\n"
+        "    </p>\n"
+        "    <p>\n"
+        "      <span>&#8226; Looks like six more weeks of winter ...</span>\n"
+        "    </p>\n"
+        "  </body>\n"
+        "</html>\n"
+    )
+    opts = HtmlPartitionerOptions(**opts_args)
+    assert HTMLDocument.load(opts).elements == [
+        ListItem(text="Happy Groundhog's day!"),
+        ListItem(text="Looks like six more weeks of winter ..."),
+    ]
+
+
+def test_joins_tag_text_correctly(opts_args: dict[str, Any]):
+    opts_args["text"] = "<p>Hello again peet mag<i>ic</i>al</p>"
+    opts = HtmlPartitionerOptions(**opts_args)
+    doc = HTMLDocument.load(opts)
+    assert doc.elements[0].text == "Hello again peet magical"
+
+
+def test_sample_doc_with_emoji(opts_args: dict[str, Any]):
+    opts_args["text"] = '<html charset="unicode">\n<p>Hello again 😀</p>\n</html>'
+    opts = HtmlPartitionerOptions(**opts_args)
+    doc = HTMLDocument.load(opts)
+    # NOTE(robinson) - unclear why right now, but the output is the emoji on the test runners
+    # and the byte string representation when running locally on mac
+    assert doc.elements[0].text in ["Hello again ð\x9f\x98\x80", "Hello again 😀"]
+
+
+def test_only_plain_text_in_body(opts_args: dict[str, Any]):
+    opts_args["text"] = "<body>Hello</body>"
+    opts = HtmlPartitionerOptions(**opts_args)
+    assert HTMLDocument.load(opts).elements[0].text == "Hello"
+
+
+def test_plain_text_before_anything_in_body(opts_args: dict[str, Any]):
+    opts_args["text"] = "<body>Hello<p>World</p></body>"
+    opts = HtmlPartitionerOptions(**opts_args)
+    doc = HTMLDocument.load(opts)
+    assert doc.elements[0].text == "Hello"
+    assert doc.elements[1].text == "World"
+
+
+def test_line_break_in_container(opts_args: dict[str, Any]):
+    opts_args["text"] = "<div>Hello<br/>World</div>"
+    opts = HtmlPartitionerOptions(**opts_args)
+    doc = HTMLDocument.load(opts)
+    assert doc.elements[0].text == "Hello"
+    assert doc.elements[1].text == "World"
+
+
+@pytest.mark.parametrize("tag", ["del", "form", "noscript"])
+def test_exclude_tag_types(tag: str, opts_args: dict[str, Any]):
+    opts_args["text"] = f"<body>\n  <{tag}>\n    There is some text here.\n  </{tag}>\n</body>\n"
+    opts = HtmlPartitionerOptions(**opts_args)
+
+    elements = HTMLDocument.load(opts).elements
+
+    assert len(elements) == 0
+
+
+# ================================================================================================
+# OTHER ARGS
+# ================================================================================================
+
 # -- `chunking_strategy` arg ---------------------------------------------------------------------
 
 
@@ -216,89 +757,6 @@ def test_partition_html_can_chunk_while_partitioning():
     chunks_2 = chunk_by_title(partition_html(file_path))
     assert all(isinstance(c, (CompositeElement, Table, TableChunk)) for c in chunks)
     assert chunks == chunks_2
-
-
-# -- `encoding` arg ------------------------------------------------------------------------------
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_filename_raises_when_explicit_encoding_is_wrong(filename: str):
-    with pytest.raises(UnicodeDecodeError):
-        with open(example_doc_path(filename), "rb") as f:
-            partition_html(file=f, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_filename_default_encoding(filename: str):
-    elements = partition_html(example_doc_path(filename))
-
-    assert len(elements) > 0
-    assert all(e.metadata.filename == filename for e in elements)
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_file_raises_encoding_error(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        file = io.BytesIO(f.read())
-
-    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
-        partition_html(file=file, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_file_default_encoding(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        elements = partition_html(file=f)
-
-    assert len(elements) > 0
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-@pytest.mark.parametrize(
-    "filename", ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html"]
-)
-def test_partition_html_from_file_rb_raises_encoding_error(filename: str):
-    with pytest.raises(UnicodeDecodeError, match="'utf-8' codec can't decode byte 0xff in posi"):
-        with open(example_doc_path(filename), "rb") as f:
-            partition_html(file=f, encoding="utf-8")
-
-
-@pytest.mark.parametrize(
-    "filename",
-    ["example-10k-utf-16.html", "example-steelJIS-datasheet-utf-16.html", "fake-html-lang-de.html"],
-)
-def test_partition_html_from_file_rb_default_encoding(filename: str):
-    with open(example_doc_path(filename), "rb") as f:
-        elements = partition_html(file=f)
-
-    assert len(elements) > 0
-    if filename == "fake-html-lang-de.html":
-        assert elements == EXPECTED_OUTPUT_LANGUAGE_DE
-
-
-def test_partition_html_processes_chinese_chracters():
-    html_text = "<html><div><p>每日新闻</p></div></html>"
-    elements = partition_html(text=html_text)
-    assert elements[0].text == "每日新闻"
-
-
-def test_emoji_appears_with_emoji_utf8_code():
-    html_text = '<html charset="utf-8"><p>Hello &#128512;</p></html>'
-    elements = partition_html(text=html_text)
-    assert elements[0] == Title("Hello 😀")
 
 
 # -- `include_metadata` arg ----------------------------------------------------------------------
@@ -348,6 +806,10 @@ def test_element_ids_are_deterministic():
     ids_2 = [e.id for e in partition_html("example-docs/fake-html-with-duplicate-elements.html")]
     assert ids == ids_2
 
+
+# ================================================================================================
+# METADATA BEHAVIORS
+# ================================================================================================
 
 # -- .metadata.category_depth + parent_id --------------------------------------------------------
 
@@ -685,26 +1147,6 @@ def test_partition_html_applies_text_as_html_metadata_for_tables(
     assert elements[0].metadata.text_as_html == expected_value
 
 
-@pytest.mark.parametrize(
-    ("tag", "expected_text_as_html"),
-    [
-        ("thead", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-        ("tfoot", "<table><tr><td>Header 1</td><td>Header 2</td></tr></table>"),
-    ],
-)
-def test_partition_html_parses_table_without_tbody(tag: str, expected_text_as_html: str):
-    elements = partition_html(
-        text=(
-            f"<table>\n"
-            f"  <{tag}>\n"
-            f"    <tr><th>Header 1</th><th>Header 2</th></tr>\n"
-            f"  </{tag}>\n"
-            f"</table>"
-        )
-    )
-    assert elements[0].metadata.text_as_html == expected_text_as_html
-
-
 # -- .metadata.url -------------------------------------------------------------------------------
 
 
@@ -722,39 +1164,9 @@ def test_partition_html_from_url_adds_url_to_metadata(requests_get_: Mock):
     assert all(e.metadata.url == "https://trusttheforceluke.com" for e in elements)
 
 
-# -- miscellaneous -------------------------------------------------------------------------------
-
-
-def test_partition_html_from_text_works_with_empty_string():
-    assert partition_html(text="") == []
-
-
-def test_partition_html_on_ideas_page():
-    elements = partition_html(example_doc_path("ideas-page.html"))
-
-    assert len(elements) == 1
-    assert elements[0] == Table(
-        "January 2023 ( Someone fed my essays into GPT to make something that could"
-        " answer\nquestions based on them, then asked it where good ideas come from.  The\nanswer"
-        " was ok, but not what I would have said. This is what I would have said.) The way to get"
-        " new ideas is to notice anomalies: what seems strange,\nor missing, or broken? You can"
-        " see anomalies in everyday life (much\nof standup comedy is based on this), but the best"
-        " place to look for\nthem is at the frontiers of knowledge. Knowledge grows"
-        " fractally.\nFrom a distance its edges look smooth, but when you learn enough\nto get"
-        " close to one, you'll notice it's full of gaps. These gaps\nwill seem obvious; it will"
-        " seem inexplicable that no one has tried\nx or wondered about y. In the best case,"
-        " exploring such gaps yields\nwhole new fractal buds.",
-    )
-    assert elements[0].metadata.emphasized_text_contents is None
-    assert elements[0].metadata.link_urls is None
-    assert elements[0].metadata.text_as_html is not None
-
-
-def test_partition_html_returns_html_elements():
-    elements = partition_html(example_doc_path("example-10k-1p.html"))
-
-    assert len(elements) > 0
-    assert isinstance(elements[0], Table)
+# ================================================================================================
+# SERIALIZATION BEHAVIORS
+# ================================================================================================
 
 
 def test_partition_html_round_trips_through_json():
@@ -762,20 +1174,9 @@ def test_partition_html_round_trips_through_json():
     assert_round_trips_through_JSON(elements)
 
 
-def test_user_without_file_write_permission_can_partition_html(
-    tmp_path: pathlib.Path, monkeypatch: MonkeyPatch
-):
-    read_only_file_path = tmp_path / "example-10k-readonly.html"
-    read_only_file_path.write_text(example_doc_text("example-10k-1p.html"))
-    read_only_file_path.chmod(0o444)
-
-    elements = partition_html(filename=str(read_only_file_path.resolve()))
-
-    assert len(elements) > 0
-
-
-# -- module-level fixtures -----------------------------------------------------------------------
-
+# ================================================================================================
+# MODULE-LEVEL FIXTURES
+# ================================================================================================
 
 EXPECTED_OUTPUT_LANGUAGE_DE = [
     Title(text="Jahresabschluss zum Geschäftsjahr vom 01.01.2020 bis zum 31.12.2020"),
@@ -784,12 +1185,14 @@ EXPECTED_OUTPUT_LANGUAGE_DE = [
 
 @pytest.fixture
 def get_last_modified_date_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.get_last_modified_date")
+    return function_mock(request, "unstructured.partition.html.partition.get_last_modified_date")
 
 
 @pytest.fixture
 def get_last_modified_date_from_file_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.get_last_modified_date_from_file")
+    return function_mock(
+        request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
+    )
 
 
 class FakeResponse:
@@ -801,8 +1204,30 @@ class FakeResponse:
 
 
 @pytest.fixture
+def opts_args() -> dict[str, Any]:
+    """All default arguments for `HtmlPartitionerOptions`.
+
+    Individual argument values can be changed to suit each test. Makes construction of opts more
+    compact for testing purposes.
+    """
+    return {
+        "file": None,
+        "file_path": None,
+        "text": None,
+        "encoding": None,
+        "url": None,
+        "headers": {},
+        "ssl_verify": True,
+        "date_from_file_object": False,
+        "metadata_last_modified": None,
+        "skip_headers_and_footers": False,
+        "detection_origin": None,
+    }
+
+
+@pytest.fixture
 def requests_get_(request: pytest.FixtureRequest):
-    return function_mock(request, "unstructured.documents.html.requests.get")
+    return function_mock(request, "unstructured.partition.html.partition.requests.get")
 
 
 # ================================================================================================
@@ -814,7 +1239,7 @@ def requests_get_(request: pytest.FixtureRequest):
 
 
 class DescribeHtmlPartitionerOptions:
-    """Unit-test suite for `unstructured.partition.html.HtmlPartitionerOptions` objects."""
+    """Unit-test suite for `unstructured.partition.html.partition.HtmlPartitionerOptions`."""
 
     # -- .detection_origin -----------------------
 
@@ -838,17 +1263,17 @@ class DescribeHtmlPartitionerOptions:
 
         assert opts.encoding == encoding
 
-    # -- .html_str -------------------------------
+    # -- .html_text ------------------------------
 
     def it_gets_the_HTML_from_the_file_path_when_one_is_provided(self, opts_args: dict[str, Any]):
         file_path = example_doc_path("example-10k-1p.html")
         opts_args["file_path"] = file_path
         opts = HtmlPartitionerOptions(**opts_args)
 
-        html_str = opts.html_str
+        html_text = opts.html_text
 
-        assert isinstance(html_str, str)
-        assert html_str == read_txt_file(file_path)[1]
+        assert isinstance(html_text, str)
+        assert html_text == read_txt_file(file_path)[1]
 
     def and_it_gets_the_HTML_from_the_file_like_object_when_one_is_provided(
         self, opts_args: dict[str, Any]
@@ -859,10 +1284,10 @@ class DescribeHtmlPartitionerOptions:
         opts_args["file"] = file
         opts = HtmlPartitionerOptions(**opts_args)
 
-        html_str = opts.html_str
+        html_text = opts.html_text
 
-        assert isinstance(html_str, str)
-        assert html_str == read_txt_file(file_path)[1]
+        assert isinstance(html_text, str)
+        assert html_text == read_txt_file(file_path)[1]
 
     def and_it_uses_the_HTML_in_the_text_argument_when_that_is_provided(
         self, opts_args: dict[str, Any]
@@ -870,7 +1295,7 @@ class DescribeHtmlPartitionerOptions:
         opts_args["text"] = "<html><body><p>Hello World!</p></body></html>"
         opts = HtmlPartitionerOptions(**opts_args)
 
-        assert opts.html_str == "<html><body><p>Hello World!</p></body></html>"
+        assert opts.html_text == "<html><body><p>Hello World!</p></body></html>"
 
     def and_it_gets_the_HTML_from_the_url_when_one_is_provided(
         self, requests_get_: Mock, opts_args: dict[str, Any]
@@ -883,7 +1308,7 @@ class DescribeHtmlPartitionerOptions:
         opts_args["url"] = "https://insta.tweet.face.org"
         opts = HtmlPartitionerOptions(**opts_args)
 
-        assert opts.html_str == "<html><body><p>I just flew over the internet!</p></body></html>"
+        assert opts.html_text == "<html><body><p>I just flew over the internet!</p></body></html>"
 
     def but_it_raises_when_no_path_or_file_or_text_or_url_was_provided(
         self, opts_args: dict[str, Any]
@@ -891,7 +1316,7 @@ class DescribeHtmlPartitionerOptions:
         opts = HtmlPartitionerOptions(**opts_args)
 
         with pytest.raises(ValueError, match="Exactly one of filename, file, text, or url must be"):
-            opts.html_str
+            opts.html_text
 
     # -- .last_modified --------------------------
 
@@ -958,31 +1383,95 @@ class DescribeHtmlPartitionerOptions:
 
     @pytest.fixture()
     def get_last_modified_date_(self, request: FixtureRequest) -> Mock:
-        return function_mock(request, "unstructured.documents.html.get_last_modified_date")
+        return function_mock(
+            request, "unstructured.partition.html.partition.get_last_modified_date"
+        )
 
     @pytest.fixture()
     def get_last_modified_date_from_file_(self, request: FixtureRequest):
         return function_mock(
-            request, "unstructured.documents.html.get_last_modified_date_from_file"
+            request, "unstructured.partition.html.partition.get_last_modified_date_from_file"
         )
 
-    @pytest.fixture
-    def opts_args(self) -> dict[str, Any]:
-        """All default arguments for `HtmlPartitionerOptions`.
 
-        Individual argument values can be changed to suit each test. Makes construction of opts more
-        compact for testing purposes.
-        """
-        return {
-            "file": None,
-            "file_path": None,
-            "text": None,
-            "encoding": None,
-            "url": None,
-            "headers": {},
-            "ssl_verify": True,
-            "date_from_file_object": False,
-            "metadata_last_modified": None,
-            "skip_headers_and_footers": False,
-            "detection_origin": None,
-        }
+class Describe_HtmlPartitioner:
+    """Unit-test suite for `unstructured.partition.html.partition._HtmlPartitioner`."""
+
+    # -- ._main ----------------------------------
+
+    def it_can_find_the_main_element_in_the_document(self, opts_args: dict[str, Any]):
+        opts_args["text"] = (
+            "<body>\n"
+            "  <header></header>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <main>\n"
+            "    <h2>A Wonderful Section!</h2>\n"
+            "    <p>Look at this amazing section!</p>\n"
+            "  </main>\n"
+            "</body>\n"
+        )
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        partitioner = _HtmlPartitioner(opts)
+
+        assert partitioner._main.tag == "main"
+
+    def and_it_falls_back_to_the_body_when_there_is_no_main(self, opts_args: dict[str, Any]):
+        """And there is always a <body>, the parser adds one if there's not one in the HTML."""
+        opts_args["text"] = (
+            "<body>\n"
+            "  <header></header>\n"
+            "  <p>Lots preamble stuff yada yada yada</p>\n"
+            "  <h2>A Wonderful Section!</h2>\n"
+            "  <p>Look at this amazing section!</p>\n"
+            "</body>\n"
+        )
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        partitioner = _HtmlPartitioner(opts)
+
+        assert partitioner._main.tag == "body"
+
+    # -- ElementCls selection behaviors -----------------
+
+    def it_produces_a_Text_element_when_the_tag_contents_are_not_narrative_or_a_title(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>NO PARTICULAR TYPE.</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        (element,) = list(_HtmlPartitioner.iter_elements(opts))
+
+        assert element == Text("NO PARTICULAR TYPE.")
+
+    def it_produces_a_ListItem_element_when_the_tag_contains_are_preceded_by_a_bullet_character(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>● An excellent point!</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        (element,) = list(_HtmlPartitioner.iter_elements(opts))
+
+        assert element == ListItem("An excellent point!")
+
+    def but_not_when_the_tag_contains_only_a_bullet_character_and_no_text(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>●</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+    def it_produces_no_element_when_the_tag_has_no_content(self, opts_args: dict[str, Any]):
+        opts_args["text"] = "<p></p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
+
+    def and_it_produces_no_element_when_the_tag_contains_only_a_stub(
+        self, opts_args: dict[str, Any]
+    ):
+        opts_args["text"] = "<p>$</p>"
+        opts = HtmlPartitionerOptions(**opts_args)
+
+        assert list(_HtmlPartitioner.iter_elements(opts)) == []
