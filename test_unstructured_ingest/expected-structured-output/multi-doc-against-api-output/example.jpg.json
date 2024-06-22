@@ -1,0 +1,28 @@
+[
+  {
+    "type": "Image",
+    "element_id": "4eeaa1547ed1e9ea367136708d31bc04",
+    "text": "n\\\\\\* y - *4 A\\",
+    "metadata": {
+      "filetype": "image/jpeg",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filename": "example.jpg",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example.jpg"
+        },
+        "date_created": "1708472803.5639243",
+        "date_modified": "1708472803.5640454",
+        "date_processed": "1719066522.311436",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

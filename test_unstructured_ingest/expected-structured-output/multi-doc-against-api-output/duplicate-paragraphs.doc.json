@@ -1,0 +1,184 @@
+[
+  {
+    "type": "Title",
+    "element_id": "ade273c622c48d67a7be7b3816d5b4d8",
+    "text": "This document contains duplicates",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "7d0b32fdf169f9578723486cb4bc1235",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1feb6e8e9c1662cfaef75907aeeb0900",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "aa2a8ac10143b12f0fe2087837ea11d2",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "da31ba7ed3919067d2c6572dc1617271",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1914359c179a160df921b769acf8c353",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f9d0d379fc791bae487b7a45f65caa50",
+    "text": "some text",
+    "metadata": {
+      "filename": "duplicate-paragraphs.doc",
+      "languages": [
+        "eng",
+        "fra"
+      ],
+      "filetype": "application/msword",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/duplicate-paragraphs.doc"
+        },
+        "date_created": "1714429437.2080503",
+        "date_modified": "1714429437.2083569",
+        "date_processed": "1719066522.310018",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]
