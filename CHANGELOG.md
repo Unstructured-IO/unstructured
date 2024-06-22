@@ -1,4 +1,4 @@
-## 0.14.8-dev3
+## 0.14.8-dev4
 
 ### Enhancements
 
@@ -20,6 +20,8 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
 
