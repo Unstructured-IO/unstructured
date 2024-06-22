@@ -40,7 +40,31 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
-  --file-glob "DA-1p.heic,README.md,all-number-table.pdf,book-war-and-peace-1p.txt,copy-protected.pdf,duplicate-paragraphs.doc,example-10k-1p.html,example.jpg,factbook.xml,fake-email.msg,fake-power-point.ppt,layout-parser-paper-fast.tiff,multi-column-2p.pdf,spring-weather.html.jeson,stanley-cups.csv,stanley-cups.tsv,table-multi-row-column-cells.png,tests-example.xls" \
+  --file-glob "all-number-table.pdf, \
+book-war-and-peace-1p.txt, \
+copy-protected.pdf, \
+DA-1p.heic, \
+docx-tables.docx, \
+duplicate-paragraphs.doc, \
+example-10k-1p.html, \
+example.jpg, \
+factbook.xml, \
+fake-doc.rtf, \
+fake-email.msg, \
+fake-power-point.ppt, \
+fake-power-point.pptx, \
+layout-parser-paper-fast.tiff, \
+multi-column-2p.pdf, \
+README.md, \
+README.org, \
+simple.odt, \
+spring-weather.html.json, \
+stanley-cups.csv, \
+stanley-cups.tsv, \
+stanley-cups.xlsx, \
+table-multi-row-column-cells.png, \
+tests-example.xls, \
+winter-sports.epub" \
   --num-processes "$max_processes" \
   --input-path "example-docs/" \
   --work-dir "$WORK_DIR"
