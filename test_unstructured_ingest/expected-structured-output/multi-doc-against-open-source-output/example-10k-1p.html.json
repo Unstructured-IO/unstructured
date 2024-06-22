@@ -1,0 +1,682 @@
+[
+  {
+    "type": "Table",
+    "element_id": "2526b5d80e91650580fd1ab6fde73eac",
+    "text": "\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934",
+    "metadata": {
+      "text_as_html": "<table><tr><td>\u2610</td><td>TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f639437d59782b33fb31451990a21a4b",
+    "text": "For the transition period from\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0\u00a0to",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "a0d8f69a66aaba1b04b8ec9b3f3cd4c0",
+    "text": "Commission file number:\u00a0000-30653",
+    "metadata": {
+      "emphasized_text_contents": [
+        ":\u00a0000-30653"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "73d6d33d33b633a31448e76754230716",
+    "text": "Galaxy Gaming, Inc.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b6e7428e10be481314c97f0b720e78db",
+    "text": "(Exact name of small business issuer as specified in its charter)",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "8ec4ccfb76d506b1f838afe4f679abbc",
+    "text": "Nevada 20-8143439 (State or other jurisdiction of incorporation or organization) (IRS Employer Identification No.) 6480 Cameron Street Ste. 305 \u2013 Las Vegas , NV 89118 (Address of principal executive offices) ( 702 ) 939-3254 (Registrant\u2019s telephone number)",
+    "metadata": {
+      "text_as_html": "<table><tr><td>Nevada</td><td></td><td>20-8143439</td></tr><tr><td>(State or other jurisdiction of incorporation or organization)</td><td></td><td>(IRS Employer Identification No.)</td></tr><tr><td>6480 Cameron Street Ste. 305 \u2013 Las Vegas , NV 89118</td></tr><tr><td>(Address of principal executive offices)</td></tr><tr><td>( 702 ) 939-3254</td></tr><tr><td>(Registrant\u2019s telephone number)</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4b97ff9dbfcd69edc5f1fec4c8310975",
+    "text": "Securities registered under Section\u00a012(b) of the Act:",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "f22197624899ab35f107b40910ad86f0",
+    "text": "Title of each class Trading symbol Name of exchange on which registered Common stock GLXZ OTCQB marketplace",
+    "metadata": {
+      "text_as_html": "<table><tr><td>Title of each class</td><td></td><td>Trading symbol</td><td></td><td>Name of exchange on which registered</td></tr><tr><td>Common stock</td><td></td><td>GLXZ</td><td></td><td>OTCQB marketplace</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e37164fad9fee5678a2b65ca15b26a52",
+    "text": "Indicate by check mark if the registrant is a well-known seasoned issuer, as defined in Rule 405 of the Securities Act.\u00a0\u00a0\u00a0\u00a0Yes\u00a0\u00a0\u2610\u00a0\u00a0\u00a0\u00a0No\u00a0\u00a0\u2611",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610",
+        "\u2611"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "6f6262ff4a119d5c5299ebcb1e82e400",
+    "text": "Indicate by check mark if the registrant is not required to file reports pursuant to Section\u00a013 or Section\u00a015(d) of the Act. \u00a0\u00a0\u00a0\u00a0Yes\u00a0\u00a0\u2610\u00a0\u00a0\u00a0\u00a0No\u00a0\u00a0\u2611",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610",
+        "\u2611"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "0660b7f0e4bdfecd7c5740652795c0a1",
+    "text": "Indicate by checkmark whether the registrant (1)\u00a0has filed all reports required to be filed by Section\u00a013 or 15(d) of the Securities Exchange Act of 1934 during the preceding 12 months (or for such shorter period that the registrant was required to file such reports), and (2)\u00a0has been subject to such filing requirements for the past 90 days.\u00a0\u00a0\u00a0\u00a0Yes\u00a0\u00a0\u2611\u00a0\u00a0\u00a0\u00a0No\u00a0\u00a0\u2610",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2611",
+        "\u2610"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "cae2b66d72ba45b183fea65ce21d12d3",
+    "text": "Indicate by check mark whether the issuer has submitted electronically every Interactive Data File required to be submitted pursuant to Rule 405 of Regulation S-T (\u00a7232.405 of this chapter) during the preceding 12 months (or for such shorter period that the registrant was required to submit such files). \u00a0\u00a0\u00a0\u00a0Yes\u00a0\u00a0\u2611\u00a0\u00a0\u00a0\u00a0No\u00a0\u00a0\u2610",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2611",
+        "\u2610"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "088ab50d39c557a7923ae7dcaae9302d",
+    "text": "Indicate by check mark whether the registrant is a large accelerated filer, an accelerated filer, a non-accelerated filer, a smaller reporting company, or an emerging growth company. See the definitions of \u201clarge accelerated filer,\u201d \u201caccelerated filer,\u201d \u201csmaller reporting company,\u201d and \u201cemerging growth company\u201d in Rule 12b-2 of the Exchange Act.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "1b395c81b034de14d63e2734bb0a2ad6",
+    "text": "Large accelerated filer \u2610 Accelerated filer \u2610 Non-accelerated filer \u2610 Smaller reporting company \u2611 Emerging growth Company \u2610",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610",
+        "\u2610",
+        "\u2610",
+        "\u2611",
+        "\u2610"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f5907fc9897fea6a6494dd3285495a0a",
+    "text": "If an emerging growth company, indicate by check mark if the registrant has elected not to use the extended transition period for complying with any new or revised financial accounting standard provided pursuant to Section 13(a) of the Exchange Act.\u00a0\u00a0\u2610",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c9af203217629ef643772c5c5aab9347",
+    "text": "Indicate by check mark whether the registrant has filed a report on and attestation to its management\u2019s assessment of the effectiveness of its internal control over financial reporting under Section 404(b) of the Sarbanes-Oxley Act (15 U.S.C. 7262(b)) by the registered public accounting firm that prepared or issued its audit report.\u00a0\u00a0\u2610",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4573614fed05109f54b7dadd3bf2f21e",
+    "text": "Indicate by check mark whether the registrant is a shell company (as defined in Rule 12b-2 of the Exchange Act).\u00a0\u00a0\u00a0\u00a0Yes\u00a0\u00a0\u2610\u00a0\u00a0\u00a0\u00a0No\u00a0\u00a0\u2611",
+    "metadata": {
+      "emphasized_text_contents": [
+        "\u2610",
+        "\u2611"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "97305f9bd6b16b17d1a76043993a6c19",
+    "text": "State the aggregate market value of the voting and non-voting common equity held by non-affiliates computed by reference to the price at which the common equity was last sold, or the average bid and asked price of such common equity, as of the last business day of the registrant\u2019s second fiscal quarter. $70,923,698.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "19ec64a352fcdb84755d18a362034074",
+    "text": "Indicate the number of shares outstanding of each of the registrant\u2019s classes of common stock, as of the latest practicable date: 23,718,968 common shares as of March 28, 2022.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "8aa18494c79df1534598408d22467527",
+    "text": "GALAXY GAMING, INC.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "872f2d0f3b58a5c0c9903898c6c9e38a",
+    "text": "ANNUAL REPORT ON FORM 10-K FOR THE YEAR ENDED DECEMBER 31, 2021",
+    "metadata": {
+      "emphasized_text_contents": [
+        "AL REPORT ON FORM 10-K FOR THE YEAR ENDED DECEMBER 31, 2021"
+      ],
+      "emphasized_text_tags": [
+        "span"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "8869356baedeff635c632bca7ef979b7",
+    "text": "TABLE OF CONTENTS",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "468a6fe3bf752c9e3f97afe9a749ace5",
+    "text": "PART I Item 1. Business 4 Item 1A. Risk Factors 9 Item 1B. Unresolved Staff Comments 9 Item 2. Properties 9 Item 3. Legal Proceedings 9 Item 4. Mine Safety Disclosures 9 PART II Item 5. Market for Registrant\u2019s Common Equity and Related Stockholder Matters 10 Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations 12 Item 7A. Quantitative and Qualitative Disclosures about Market Risk 14 Item 8. Financial Statements and Supplementary Financial Information 15 Item 9. Changes in and Disagreements with Accountants on Accounting and Financial Disclosure 35 Item\u00a09A. Controls and Procedures 35 Item 9B. Other Information 35",
+    "metadata": {
+      "text_as_html": "<table><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>PART I</td></tr><tr><td>Item 1.</td><td></td><td>Business</td><td></td><td>4</td></tr><tr><td>Item 1A.</td><td></td><td>Risk Factors</td><td></td><td>9</td></tr><tr><td>Item 1B.</td><td></td><td>Unresolved Staff Comments</td><td></td><td>9</td></tr><tr><td>Item 2.</td><td></td><td>Properties</td><td></td><td>9</td></tr><tr><td>Item 3.</td><td></td><td>Legal Proceedings</td><td></td><td>9</td></tr><tr><td>Item 4.</td><td></td><td>Mine Safety Disclosures</td><td></td><td>9</td></tr><tr><td>PART II</td></tr><tr><td>Item 5.</td><td></td><td>Market for Registrant\u2019s Common Equity and Related Stockholder Matters</td><td></td><td>10</td></tr><tr><td>Item 7.</td><td></td><td>Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations</td><td></td><td>12</td></tr><tr><td>Item 7A.</td><td></td><td>Quantitative and Qualitative Disclosures about Market Risk</td><td></td><td>14</td></tr><tr><td>Item 8.</td><td></td><td>Financial Statements and Supplementary Financial Information</td><td></td><td>15</td></tr><tr><td>Item 9.</td><td></td><td>Changes in and Disagreements with Accountants on Accounting and Financial Disclosure</td><td></td><td>35</td></tr><tr><td>Item\u00a09A.</td><td></td><td>Controls and Procedures</td><td></td><td>35</td></tr><tr><td>Item 9B.</td><td></td><td>Other Information</td><td></td><td>35</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "example-10k-1p.html",
+      "filetype": "text/html",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/example-10k-1p.html"
+        },
+        "date_created": "1708472803.5425622",
+        "date_modified": "1708472803.5427709",
+        "date_processed": "1719068915.072213",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

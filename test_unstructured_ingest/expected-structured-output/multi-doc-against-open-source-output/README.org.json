@@ -1,0 +1,371 @@
+[
+  {
+    "type": "Title",
+    "element_id": "809f2a2b4bf6e5bd4b49cbed62fadf5d",
+    "text": "Example Docs",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4c34985eddf319672b2d3ba9350d6f10",
+    "text": "The sample docs directory contains the following files:",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0b8fbaa1d8f9d6bcda8092e967387e9a",
+    "text": "example-10k.html - A 10-K SEC filing in HTML\nformat",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "d85606587f236f9f58de65b282ced44d",
+    "text": "layout-parser-paper.pdf - A PDF copy of the layout\nparser paper",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ee227684e3245791eade6812dae6662a",
+    "text": "factbook.xml / factbook.xsl - Example\nXML/XLS files that you can use to test stylesheets",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b3d67da15573c793ad39d360597d27c1",
+    "text": "These documents can be used to test out the parsers in the library.\nIn addition, here are instructions for pulling in some sample docs that\nare too big to store in the repo.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "4fb7b816ecade4865ee2ba0abcb81afd",
+    "text": "XBRL 10-K",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f7641e334930bd7eb71d61be240185d5",
+    "text": "You can get an example 10-K in inline XBRL format using the following\ncurl. Note, you need to have the user agent set in the\nheader or the SEC site will reject your request.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "60769bbcfdddb553f23328b67c936bb9",
+    "text": "curl -O \\",
+    "metadata": {
+      "emphasized_text_contents": [
+        "curl -O \\",
+        "curl",
+        "-O",
+        "\\"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span",
+        "span"
+      ],
+      "link_texts": [
+        ""
+      ],
+      "link_urls": [
+        "#cb1-2"
+      ],
+      "link_start_indexes": [
+        0
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "aa7da82cc331549386ffe9075bc34bdf",
+    "text": "A '${organization} ${email}'",
+    "metadata": {
+      "emphasized_text_contents": [
+        "-A '${organization} ${email}'",
+        "-A",
+        "'${organization} ${email}'"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span",
+        "span"
+      ],
+      "link_texts": [
+        ""
+      ],
+      "link_urls": [
+        "#cb1-3"
+      ],
+      "link_start_indexes": [
+        0
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "ff375cc8d5f1675d47673f3e6540e593",
+    "text": "https://www.sec.gov/Archives/edgar/data/311094/000117184321001344/0001171843-21-001344.txt",
+    "metadata": {
+      "emphasized_text_contents": [
+        "https://www.sec.gov/Archives/edgar/data/311094/000117184321001344/0001171843-21-001344.txt",
+        "https://www.sec.gov/Archives/edgar/data/311094/000117184321001344/0001171843-21-001344.txt"
+      ],
+      "emphasized_text_tags": [
+        "span",
+        "span"
+      ],
+      "link_texts": [
+        ""
+      ],
+      "link_urls": [
+        "#cb1-4"
+      ],
+      "link_start_indexes": [
+        0
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "c32552ffb25b38cbc22f169cbe4e930c",
+    "text": "You can parse this document using the HTML parser.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/org",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "README.org",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/README.org"
+        },
+        "date_created": "1708472803.5178735",
+        "date_modified": "1708472803.5179262",
+        "date_processed": "1719068915.078922",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

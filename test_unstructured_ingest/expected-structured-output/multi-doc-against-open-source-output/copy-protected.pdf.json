@@ -1,0 +1,569 @@
+[
+  {
+    "type": "Header",
+    "element_id": "ed2c80074a1693eaf6e0bde82d2d6111",
+    "text": "1 2 0 2 n u J 1 2 ] V C . s c [",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0f7ec1124cc7c28c968c2fb1f28dd842",
+    "text": "2 v 8 4 3 5 1 . 3 0 1 2 : v i X r a",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "f727ccb74c0080530e26ca7240d04e39",
+    "text": "LayoutParser: A Uni\ufb01ed Toolkit for Deep Learning Based Document Image Analysis",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b8c1315b5ec3e717bdda4011b4a75f72",
+    "text": "Zejiang Shen1 ( ), Ruochen Zhang2, Melissa Dell3, Benjamin Charles Germain Lee4, Jacob Carlson3, and Weining Li5",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Image",
+    "element_id": "1f701382ce0011f521e0ff1b9a481518",
+    "text": "",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "b60f2ffa805a8e906fb9116ccf4b63f3",
+    "text": "1 Allen Institute for AI shannons@allenai.org 2 Brown University ruochen zhang@brown.edu 3 Harvard University melissadell,jacob carlson @fas.harvard.edu } 4 University of Washington bcgl@cs.washington.edu 5 University of Waterloo w422li@uwaterloo.ca",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "baf930eba597eec336c0e2bc1cb051a4",
+    "text": "{",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e97706c2dbf2349d9f8ab58e37a20caf",
+    "text": "Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation. However, various factors like loosely organized codebases and sophisticated model con\ufb01gurations complicate the easy reuse of im- portant innovations by a wide audience. Though there have been on-going e\u21b5orts to improve reusability and simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper introduces LayoutParser, an open-source library for streamlining the usage of DL in DIA research and applica- tions. The core LayoutParser library comes with a set of simple and intuitive interfaces for applying and customizing DL models for layout de- tection, character recognition, and many other document processing tasks. To promote extensibility, LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digiti- zation pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in real-word use cases. The library is publicly available at https://layout-parser.github.io.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "19f9a71d4d100f432a9841bfed9bab65",
+    "text": "Keywords: Document Image Analysis \u00b7 Deep Learning \u00b7 Layout Analysis \u00b7 Character Recognition \u00b7 Open Source library \u00b7 Toolkit.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "cb05a3da79fbeca25949455834f62dd3",
+    "text": "Introduction",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "5f2fb74b93c231eac78eb4510822b420",
+    "text": "Deep Learning(DL)-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks including document image classi\ufb01cation [11,",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "3cb008d254d07aa9d778c29eb6a44ff1",
+    "text": "2 Z. Shen et al.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f4b8b92b704cdef23b53906b390c6149",
+    "text": "37], layout detection [38, 22], table detection [26], and scene text detection [4]. A generalized learning-based framework dramatically reduces the need for the manual speci\ufb01cation of complicated rules, which is the status quo with traditional methods. DL has the potential to transform DIA pipelines and bene\ufb01t a broad spectrum of large-scale document digitization projects.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "57ac6afca5d199811d643cb6191dee8e",
+    "text": "However, there are several practical diculties for taking advantages of re- cent advances in DL-based methods: 1) DL models are notoriously convoluted for reuse and extension. Existing models are developed using distinct frame- works like TensorFlow [1] or PyTorch [24], and the high-level parameters can be obfuscated by implementation details [8]. It can be a time-consuming and frustrating experience to debug, reproduce, and adapt existing models for DIA, and many researchers who would bene\ufb01t the most from using these methods lack the technical background to implement them from scratch. 2) Document images contain diverse and disparate patterns across domains, and customized training is often required to achieve a desirable detection accuracy. Currently there is no full-\ufb02edged infrastructure for easily curating the target document image datasets and \ufb01ne-tuning or re-training the models. 3) DIA usually requires a sequence of models and other processing to obtain the \ufb01nal outputs. Often research teams use DL models and then perform further document analyses in separate processes, and these pipelines are not documented in any central location (and often not documented at all). This makes it dicult for research teams to learn about how full pipelines are implemented and leads them to invest signi\ufb01cant resources in reinventing the DIA wheel.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "76086b98d0dcb6066fb76412c5d54daf",
+    "text": "LayoutParser provides a uni\ufb01ed toolkit to support DL-based document image analysis and processing. To address the aforementioned challenges, LayoutParser is built with the following components:",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "c46a5cd831eac459cccc377ab084d535",
+    "text": "1. An o\u21b5-the-shelf toolkit for applying DL models for layout detection, character recognition, and other DIA tasks (Section 3)",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0315cf8a124ca92b0c85f4656d8c4ad7",
+    "text": "2. A rich repository of pre-trained neural network models (Model Zoo) that underlies the o\u21b5-the-shelf usage",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "0a5fe833961c54b9c3e9c1f9a8842bb7",
+    "text": "3. Comprehensive tools for ecient document image data annotation and model tuning to support di\u21b5erent levels of customization",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "2f0f16b7be54dd9eacfeb1cb4db7a1ab",
+    "text": "4. A DL model hub and community platform for the easy sharing, distribu- tion, and discussion of DIA models and pipelines, to promote reusability, reproducibility, and extensibility (Section 4)",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ad8667ab7fdacd25f663503ca890ff55",
+    "text": "The library implements simple and intuitive Python APIs without sacri\ufb01cing generalizability and versatility, and can be easily installed via pip. Its convenient functions for handling document image data can be seamlessly integrated with existing DIA pipelines. With detailed documentations and carefully curated tutorials, we hope this tool will bene\ufb01t a variety of end-users, and will lead to advances in applications in both industry and academic research.",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "57a2018577df484f8d19b3aa45d5bb0e",
+    "text": "LayoutParser is well aligned with recent e\u21b5orts for improving DL model reusability in other disciplines like natural language processing [8, 34] and com- puter vision [35], but with a focus on unique challenges in DIA. We show LayoutParser can be applied in sophisticated and large-scale digitization projects",
+    "metadata": {
+      "filetype": "application/pdf",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 2,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "copy-protected.pdf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/copy-protected.pdf"
+        },
+        "date_created": "1708472803.531207",
+        "date_modified": "1708472803.5321293",
+        "date_processed": "1719068915.069491",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

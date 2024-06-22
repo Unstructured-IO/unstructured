@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # Tests the following filetypes against Open Source:
-# .heic, .md, .pdf, .txt, .doc, .html, .jpg, .xml, .msg, .ppt, .tiff, .csv, .tsv, .png, .xls, .rst, .org, .docx, .rtf, .pptx, .odt, .xlsx, .epub
-# The following filetypes are not supported: .org, .docx, .rtf, .pptx, .odt, .xlsx, .epub
+# .csv, .doc, .docx, .epub, .heic, .html, .jpg, .md, .msg, .odt, .org, .pdf, .png, .ppt, .pptx, .rst, .rtf, .tiff, .tsv, .txt, .xls, .xlsx, .xml
+# All should partition fine
+
 
 set -e
 
@@ -35,8 +36,32 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --reprocess \
   --output-dir "$OUTPUT_DIR" \
   --verbose \
-  --file-glob "DA-1p.heic,README.md,all-number-table.pdf,book-war-and-peace-1p.txt,copy-protected.pdf,duplicate-paragraphs.doc,example-10k-1p.html,example.jpg,factbook.xml,fake-email.msg,fake-power-point.ppt,layout-parser-paper-fast.tiff,multi-column-2p.pdf,spring-weather.html.jeson,stanley-cups.csv,stanley-cups.tsv,table-multi-row-column-cells.png,tests-example.xls" \
-  --num-processes "$max_processes" \
+  --file-glob "all-number-table.pdf, \
+book-war-and-peace-1p.txt, \
+copy-protected.pdf, \
+DA-1p.heic, \
+docx-tables.docx, \
+duplicate-paragraphs.doc, \
+example-10k-1p.html, \
+example.jpg, \
+factbook.xml, \
+fake-doc.rtf, \
+fake-email.msg, \
+fake-power-point.ppt, \
+fake-power-point.pptx, \
+layout-parser-paper-fast.tiff, \
+multi-column-2p.pdf, \
+README.md, \
+README.org, \
+simple.odt, \
+spring-weather.html.json, \
+stanley-cups.csv, \
+stanley-cups.tsv, \
+stanley-cups.xlsx, \
+table-multi-row-column-cells.png, \
+tests-example.xls, \
+winter-sports.epub" \
+  --num-processes "1" \
   --input-path "example-docs/" \
   --work-dir "$WORK_DIR"
 

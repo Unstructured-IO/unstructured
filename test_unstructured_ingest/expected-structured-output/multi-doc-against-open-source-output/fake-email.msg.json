@@ -1,0 +1,134 @@
+[
+  {
+    "type": "NarrativeText",
+    "element_id": "5203e3ba542536e736c05dec71818656",
+    "text": "This is a test email to use for unit tests.",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-email.msg",
+      "sent_from": [
+        "\"Matthew Robinson\" <mrobinson@unstructured.io>"
+      ],
+      "sent_to": [
+        "mrobinson@unstructured.io"
+      ],
+      "subject": "Test Email",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.ms-outlook",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
+        },
+        "date_created": "1708472803.5720737",
+        "date_modified": "1708472803.5721438",
+        "date_processed": "1719068915.0746088",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "1114e85a861bac7c4ed9450af9029b17",
+    "text": "Important points:",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-email.msg",
+      "sent_from": [
+        "\"Matthew Robinson\" <mrobinson@unstructured.io>"
+      ],
+      "sent_to": [
+        "mrobinson@unstructured.io"
+      ],
+      "subject": "Test Email",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.ms-outlook",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
+        },
+        "date_created": "1708472803.5720737",
+        "date_modified": "1708472803.5721438",
+        "date_processed": "1719068915.0746088",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "f4a61ebd5140ed79ea340af59d04f867",
+    "text": "Roses are red",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-email.msg",
+      "sent_from": [
+        "\"Matthew Robinson\" <mrobinson@unstructured.io>"
+      ],
+      "sent_to": [
+        "mrobinson@unstructured.io"
+      ],
+      "subject": "Test Email",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.ms-outlook",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
+        },
+        "date_created": "1708472803.5720737",
+        "date_modified": "1708472803.5721438",
+        "date_processed": "1719068915.0746088",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "5f13082ed5fad42f2735f976d4343b33",
+    "text": "Violets are blue",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-email.msg",
+      "sent_from": [
+        "\"Matthew Robinson\" <mrobinson@unstructured.io>"
+      ],
+      "sent_to": [
+        "mrobinson@unstructured.io"
+      ],
+      "subject": "Test Email",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.ms-outlook",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
+        },
+        "date_created": "1708472803.5720737",
+        "date_modified": "1708472803.5721438",
+        "date_processed": "1719068915.0746088",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

@@ -1,0 +1,164 @@
+[
+  {
+    "type": "Title",
+    "element_id": "0b24c570d8e8f681e8a1ac639d4ba5ce",
+    "text": "Adding a Bullet Slide",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "ad722aae20535a20f96d29b83b36eaa7",
+    "text": "Find the bullet slide layout",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "815e04d622abd491ccf6db0492dc14ad",
+    "text": "Use _TextFrame.text for first bullet",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "ListItem",
+    "element_id": "9ed9b67d6f809bc990dd33f5c12970fb",
+    "text": "Use _TextFrame.add_paragraph() for subsequent bullets",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "39ff069515bea564498f260fda5f3668",
+    "text": "Here is a lot of text!",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3bcefafea90176451b073b9a3b19254e",
+    "text": "Here is some text in a text box!",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-power-point.pptx",
+      "page_number": 1,
+      "languages": [
+        "eng"
+      ],
+      "filetype": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.pptx"
+        },
+        "date_created": "1708472803.575851",
+        "date_modified": "1708472803.5760703",
+        "date_processed": "1719068915.0760589",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

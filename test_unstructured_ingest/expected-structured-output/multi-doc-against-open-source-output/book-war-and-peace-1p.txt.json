@@ -1,0 +1,340 @@
+[
+  {
+    "type": "Title",
+    "element_id": "ecc6ecfdda0975d91546edf1cd407e86",
+    "text": "CHAPTER I",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9ab2c6fc3fff6cedc83ffce2ffcc8705",
+    "text": "\"Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes. But I warn you, if you don't tell me that this means war, if you still try to defend the infamies and horrors perpetrated by that Antichrist--I really believe he is Antichrist--I will have nothing more to do with you and you are no longer my friend, no longer my 'faithful slave,' as you call yourself! But how do you do? I see I have frightened you--sit down and tell me all the news.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "19fd6c4711db1634658ca1b582bbb282",
+    "text": "It was in July, 1805, and the speaker was the well-known Anna Pavlovna Scherer, maid of honor and favorite of the Empress Marya Fedorovna. With these words she greeted Prince Vasili Kuragin, a man of high rank and importance, who was the first to arrive at her reception. Anna Pavlovna had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in St. Petersburg, used only by the elite.",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9a29e46f349e568cbec4c13d6ac6d3e1",
+    "text": "All her invitations without exception, written in French, and delivered by a scarlet-liveried footman that morning, ran as follows:",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "e37f7a0354c187111dbbd76c353a8548",
+    "text": "\"If you have nothing better to do, Count (or Prince), and if the prospect of spending an evening with a poor invalid is not too terrible, I shall be very charmed to see you tonight between 7 and 10--Annette Scherer.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "ff53e9e3e2c0a40c878f3117dfaee12e",
+    "text": "\"Heavens! what a virulent attack!\" replied the prince, not in the least disconcerted by this reception. He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, patronizing intonation natural to a man of importance who had grown old in society and at court. He went up to Anna Pavlovna, kissed her hand, presenting to her his bald, scented, and shining head, and complacently seated himself on the sofa.",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "944f331f0e9f276612e232b36f28b5f6",
+    "text": "\"First of all, dear friend, tell me how you are. Set your friend's mind at rest,\" said he without altering his tone, beneath the politeness and affected sympathy of which indifference and even irony could be discerned.",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9ff1d8f7e93d526d0e3a174a51850ec8",
+    "text": "\"Can one be well while suffering morally? Can one be calm in times like these if one has any feeling?\" said Anna Pavlovna. \"You are staying the whole evening, I hope?\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "92ccca74969ed207c2b36cecb1b1b677",
+    "text": "\"And the fete at the English ambassador's? Today is Wednesday. I must put in an appearance there,\" said the prince. \"My daughter is coming for me to take me there.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fc189a009c8fc4507bd42d9601bdb566",
+    "text": "\"I thought today's fete had been canceled. I confess all these festivities and fireworks are becoming wearisome.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "73b0874758fb74535ea6817963e50dc5",
+    "text": "\"If they had known that you wished it, the entertainment would have been put off,\" said the prince, who, like a wound-up clock, by force of habit said things he did not even wish to be believed.",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "3b8e76f2baafa3482edb98626c6fd7aa",
+    "text": "\"Don't tease! Well, and what has been decided about Novosiltsev's dispatch? You know everything.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fbc14cba30b1dc3c20bd0bcbb36d7de5",
+    "text": "\"What can one say about it?\" replied the prince in a cold, listless tone. \"What has been decided? They have decided that Buonaparte has burnt his boats, and I believe that we are ready to burn ours.\"",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "book-war-and-peace-1p.txt",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/plain",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/book-war-and-peace-1p.txt"
+        },
+        "date_created": "1708472803.5273297",
+        "date_modified": "1708472803.5274272",
+        "date_processed": "1719068915.068702",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

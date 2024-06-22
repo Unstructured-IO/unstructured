@@ -1,0 +1,29 @@
+[
+  {
+    "type": "Table",
+    "element_id": "a6b358085ac42e7b1d429ffff0b4260f",
+    "text": "\n\n\nStanley Cups\n\n\n\n\nTeam\nLocation\nStanley Cups\n\n\nBlues\nSTL\n1\n\n\nFlyers\nPHI\n2\n\n\nMaple Leafs\nTOR\n13\n\n\n",
+    "metadata": {
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "stanley-cups.tsv",
+      "text_as_html": "<table border=\"1\" class=\"dataframe\">\n  <tbody>\n    <tr>\n      <td>Stanley Cups</td>\n      <td></td>\n      <td></td>\n    </tr>\n    <tr>\n      <td>Team</td>\n      <td>Location</td>\n      <td>Stanley Cups</td>\n    </tr>\n    <tr>\n      <td>Blues</td>\n      <td>STL</td>\n      <td>1</td>\n    </tr>\n    <tr>\n      <td>Flyers</td>\n      <td>PHI</td>\n      <td>2</td>\n    </tr>\n    <tr>\n      <td>Maple Leafs</td>\n      <td>TOR</td>\n      <td>13</td>\n    </tr>\n  </tbody>\n</table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/tsv",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/stanley-cups.tsv"
+        },
+        "date_created": "1708472803.6714196",
+        "date_modified": "1708472803.671457",
+        "date_processed": "1719068915.0821152",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

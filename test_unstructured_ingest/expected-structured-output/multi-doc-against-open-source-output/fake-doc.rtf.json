@@ -1,0 +1,113 @@
+[
+  {
+    "type": "Title",
+    "element_id": "1b4295d468a6248d569a50400a5230fa",
+    "text": "My First Heading",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/rtf",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-doc.rtf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
+        },
+        "date_created": "1708472803.5671077",
+        "date_modified": "1708472803.5671537",
+        "date_processed": "1719068915.0740218",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "c6e3363e130bd2c32408010fa7658564",
+    "text": "My first paragraph.",
+    "metadata": {
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/rtf",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-doc.rtf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
+        },
+        "date_created": "1708472803.5671077",
+        "date_modified": "1708472803.5671537",
+        "date_processed": "1719068915.0740218",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "09ee68742feacdcf36d3d04fc5f76817",
+    "text": "Table Example:",
+    "metadata": {
+      "emphasized_text_contents": [
+        "Table Example:"
+      ],
+      "emphasized_text_tags": [
+        "strong"
+      ],
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/rtf",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-doc.rtf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
+        },
+        "date_created": "1708472803.5671077",
+        "date_modified": "1708472803.5671537",
+        "date_processed": "1719068915.0740218",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Table",
+    "element_id": "815e99e45a3a2a93fe32564e9607ca58",
+    "text": "Column 1 Column 2 Row 1, Cell 1 Row 1, Cell 2 Row 2, Cell 1 Row 2, Cell 2",
+    "metadata": {
+      "text_as_html": "<table><tr><td>Column 1</td><td>Column 2</td><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr></table>",
+      "languages": [
+        "eng"
+      ],
+      "filetype": "text/rtf",
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "fake-doc.rtf",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
+        },
+        "date_created": "1708472803.5671077",
+        "date_modified": "1708472803.5671537",
+        "date_processed": "1719068915.0740218",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

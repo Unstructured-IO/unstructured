@@ -1,0 +1,29 @@
+[
+  {
+    "type": "Table",
+    "element_id": "c7aa50dcb3234dcac9553479afcd7f48",
+    "text": "Results soa Ballot: etealeiliay Participants pallets incom lete/ Category P Completed Ne Accuracy Time to Terminated complete Blind 5 1 4 34.5%, n=1 1199 sec, n=1 Low Vision 5 2 3 98.3% n=2 1716 sec, n=3 (97.7%, n=3) | (1934 sec, n=2) Dexterity 5 4 1 98.3%, n=4 1672.1 sec, n=4 Mobility 3 3 0 95.4%, n=3 1416 sec, n=3",
+    "metadata": {
+      "filetype": "image/png",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "table-multi-row-column-cells.png",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/table-multi-row-column-cells.png"
+        },
+        "date_created": "1708472803.6720896",
+        "date_modified": "1708472803.6724584",
+        "date_processed": "1719068915.083703",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]

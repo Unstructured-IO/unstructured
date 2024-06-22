@@ -1,0 +1,245 @@
+[
+  {
+    "type": "Header",
+    "element_id": "d9129050443c257a7cf90535b43fafc8",
+    "text": "[cs.CV] 21 Jun 2021",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "UncategorizedText",
+    "element_id": "0635a76c7499b0d2a3d4fdf28bd71af7",
+    "text": "2103.15348v2 arXiv",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "bf969a7768b516f99072950b15fc35f4",
+    "text": "LayoutParser: A Unified Toolkit for Deep Learning Based Document Image Analysis",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "11382e40546801a10e7889285407f23a",
+    "text": "Zejiang Shen! (\u00a9), Ruochen Zhang\u201d, Melissa Dell\u2019, Benjamin Charles Germain Lee*, Jacob Carlson*, and Weining Li\u00ae",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "9236bdac49b17d36df75b523feaeb65e",
+    "text": "\" Allen Institute for Al shannonstallenai .org ? Brown University ruochen-zhang@broun.edu \u00ae Harvard University {melissadell, jacob.carlson}@fas.harvard.edu 4 University of Washington begl0cs.washington.edu \u00a9 University of Waterloo vd22li@uvaterloo.ca",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "fb563fd3de79b1e96744077b558873ee",
+    "text": "Abstract. Recent advances in document image analysis (DIA) have been primarily driven by the application of neural networks. Ideally, research outcomes could be easily deployed in production and extended for further investigation. However, various factors like loosely organized codebases and sophisticated model configurations complicate the easy reuse of im- portant innovations by a wide audience. Though there have been on-going efforts to improve reusability and simplify deep learning (DL) model development in disciplines like natural language processing and computer vision, none of them are optimized for challenges in the domain of DIA. This represents a major gap in the existing toolkit, as DIA is central to academic research across a wide range of disciplines in the social sciences and humanities. This paper introduces LayoutParser, an open-source library for streamlining the usage of DL in DIA research and applica. tions. The core LayoutParser library comes with a sct of simple and intuitive interfaces for applying and customizing DL models for layout de- tection, character recognition, and many other document processing tasks. \u2018To promote extensibility, LayoutParser also incorporates a community platform for sharing both pre-trained models and full document digiti- zation pipelines. We demonstrate that LayoutParser is helpful for both lightweight and large-scale digitization pipelines in real-word use cases. The library is publicly available at https: //layout-parser.github.io",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "f8f249a7104e61cc43424413a147106b",
+    "text": "Keywords: Document Image Analysis - Deep Learning - Layout Analysis \u00bb Character Recognition - Open Source library - Toolkit.",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "Title",
+    "element_id": "ecf90b8ba3cb7c7c3e652089dfb9ca8c",
+    "text": "1 Introduction",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "NarrativeText",
+    "element_id": "4cda4c7557e7a1e195c02aa9b1037aeb",
+    "text": "Deep Learning(DL)}-based approaches are the state-of-the-art for a wide range of document image analysis (DIA) tasks including document image classification [11|",
+    "metadata": {
+      "filetype": "image/tiff",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
+      "filename": "layout-parser-paper-fast.tiff",
+      "data_source": {
+        "record_locator": {
+          "path": "/Users/potter/Documents/unstructured/example-docs/layout-parser-paper-fast.tiff"
+        },
+        "date_created": "1708472803.623822",
+        "date_modified": "1708472803.6275",
+        "date_processed": "1719068915.076661",
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]
