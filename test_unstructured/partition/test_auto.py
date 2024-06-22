@@ -617,6 +617,34 @@ def test_partition_forwards_strategy_arg_to_partition_pptx(request: FixtureReque
     assert element.text == f"strategy=={strategy}"
 
 
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_forwards_strategy_arg_to_partition_ppt(request: FixtureRequest, strategy: str):
+    from unstructured.partition.pptx import _PptxPartitioner
+
+    def fake_iter_presentation_elements(self: _PptxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy=={self._opts.strategy}")
+
+    _iter_elements_ = method_mock(
+        request,
+        _PptxPartitioner,
+        "_iter_presentation_elements",
+        side_effect=fake_iter_presentation_elements,
+    )
+
+    (element,) = partition(example_doc_path("fake-power-point.ppt"), strategy=strategy)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy=={strategy}"
+
+
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
 def test_auto_partition_ppt_from_filename():
     filename = os.path.join(EXAMPLE_DOCS_DIRECTORY, "fake-power-point.ppt")
