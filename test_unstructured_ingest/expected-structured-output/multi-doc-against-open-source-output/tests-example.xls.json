@@ -4,7 +4,6 @@
     "element_id": "fef5ed2f1b95429f98f47f83b92ce387",
     "text": "\n\n\nMC\nWhat is 2+2?\n4\ncorrect\n3\nincorrect\n\n\n\n\n\nMA\nWhat C datatypes are 8 bits? (assume i386)\nint\n\nfloat\n\ndouble\n\nchar\n\n\nTF\nBagpipes are awesome.\ntrue\n\n\n\n\n\n\n\n\nESS\nHow have the original Henry Hornbostel buildings influenced campus architecture and design in the last 30 years?\n\n\n\n\n\n\n\n\n\nORD\nRank the following in their order of operation.\nParentheses\nExponents\nDivision\nAddition\n\n\n\n\n\nFIB\nThe student activities fee is\n95\ndollars for students enrolled in\n19\nunits or more,\n\n\n\n\n\nMAT\nMatch the lower-case greek letter with its capital form.\n\u03bb\n\u039b\n\u03b1\n\u03b3\n\u0393\n\u03c6\n\u03a6\n\n\n",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Example Test",
       "page_number": 1,
@@ -14,11 +13,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -32,7 +26,6 @@
     "element_id": "25b8c43e8e0a43c1875a85bedf73778b",
     "text": "http://www.cmu.edu/blackboard",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Format Abbr.",
       "page_number": 2,
@@ -41,11 +34,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -59,7 +47,6 @@
     "element_id": "5f24833344fd2bd3e41db455ec693e9e",
     "text": "Question Format Abbreviations",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Format Abbr.",
       "page_number": 2,
@@ -68,11 +55,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -86,7 +68,6 @@
     "element_id": "dd5cca33b529edcca38130a0a86c3d52",
     "text": "\n\n\nAbbreviation\nQuestion Type\n\n\nMC\nMultiple Choice\n\n\nMA\nMultiple Answer\n\n\nTF\nTrue/False\n\n\nESS\nEssay\n\n\nORD\nOrdering\n\n\nMAT\nMatching\n\n\nFIB\nFill in the Blank\n\n\nFIL\nFile response\n\n\nNUM\nNumeric Response\n\n\nSR\nShort response\n\n\nOP\nOpinion\n\n\nFIB_PLUS\nMultiple Fill in the Blank\n\n\nJUMBLED_SENTENCE\nJumbled Sentence\n\n\nQUIZ_BOWL\nQuiz Bowl\n\n\n",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Format Abbr.",
       "page_number": 2,
@@ -96,11 +77,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -114,7 +90,6 @@
     "element_id": "f7e00d0aa6af3d980c86807e9e3930ef",
     "text": "http://www.cmu.edu/blackboard",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -123,11 +98,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -141,7 +111,6 @@
     "element_id": "803d650611d71a621296a2c860089a41",
     "text": "File Information",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -150,11 +119,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -168,7 +132,6 @@
     "element_id": "806f60804c4612f7e8bab4e9e1ab2c80",
     "text": "Source",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -177,11 +140,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -195,7 +153,6 @@
     "element_id": "50f7d55f7c1fcb88e4af988071ec257d",
     "text": "http://www.cmu.edu/blackboard/files/evaluate/tests-example.xls",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -204,11 +161,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -222,7 +174,6 @@
     "element_id": "bbabf2f4c03162938b3baa08aa11a4cf",
     "text": "Version",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -231,11 +182,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -249,7 +195,6 @@
     "element_id": "93b23e7bd487808d1a809ce164c22d1d",
     "text": "1.0 (January 2012)",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -258,11 +203,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -276,7 +216,6 @@
     "element_id": "f2ef71c9f397fd338e4d1b2cdefd3166",
     "text": "Contact",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -285,11 +224,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -303,7 +237,6 @@
     "element_id": "51705b1c1c0ef085b3f26543dc02e945",
     "text": "bb-help@andrew.cmu.edu",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -312,11 +245,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -330,7 +258,6 @@
     "element_id": "8a2122678bdcb858d5d69d752dc38392",
     "text": "About",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -339,11 +266,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188
@@ -357,7 +279,6 @@
     "element_id": "39061b80749d2ef6c7cbe93a0dac33fc",
     "text": "This is an example and template for preparing Blackboard tests offline. See the full directions at: http://www.cmu.edu/blackboard/evaluate#manage_tests/import_questions",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "tests-example.xls",
       "page_name": "Readme",
       "page_number": 3,
@@ -366,11 +287,6 @@
       ],
       "filetype": "application/vnd.ms-excel",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/tests-example.xls"
-        },
-        "date_created": "1708472803.674849",
-        "date_modified": "1708472803.6749363",
         "permissions_data": [
           {
             "mode": 33188

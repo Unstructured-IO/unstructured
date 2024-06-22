@@ -4,18 +4,12 @@
     "element_id": "0e99e8319204527459aad131af47c79b",
     "text": "Simple uniform table",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "languages": [
         "eng"
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188
@@ -29,7 +23,6 @@
     "element_id": "d7fa9300ff009d00826ee1b6ef34d1f9",
     "text": "Header Col 1 Header Col 2 Lorem ipsum A link example",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "text_as_html": "<table>\n<thead>\n<tr><th>Header Col 1  </th><th>Header Col 2  </th></tr>\n</thead>\n<tbody>\n<tr><td>Lorem ipsum   </td><td>A link example</td></tr>\n</tbody>\n</table>",
       "languages": [
@@ -37,11 +30,6 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188
@@ -55,18 +43,12 @@
     "element_id": "c94de87eab8bcc06f48c3fea82370e8f",
     "text": "Nested Table",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "languages": [
         "eng"
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188
@@ -80,7 +62,6 @@
     "element_id": "5a84bd4abf2054fe4e8d89f644eef949",
     "text": "a >b< c d e f g&t h i j k l",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "text_as_html": "<table>\n<thead>\n<tr><th>a  </th><th>&gt;b&lt;  </th><th>c  </th></tr>\n</thead>\n<tbody>\n<tr><td>d  </td><td><table>\n<tbody>\n<tr><td>e      </td><td>f</td></tr>\n<tr><td>g&amp;t</td><td>h</td></tr>\n</tbody>\n</table>            </td><td>i  </td></tr>\n<tr><td>j  </td><td>k          </td><td>l  </td></tr>\n</tbody>\n</table>",
       "languages": [
@@ -88,11 +69,6 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188
@@ -106,18 +82,12 @@
     "element_id": "2bc10193a313615239e8efc33d499a1d",
     "text": "Table with merged cells",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "languages": [
         "eng"
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188
@@ -131,7 +101,6 @@
     "element_id": "46dfec867f4fbceee901da608d67ea12",
     "text": "a b c d e",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "docx-tables.docx",
       "text_as_html": "<table>\n<thead>\n<tr><th>a  </th><th>b  </th><th>b  </th></tr>\n</thead>\n<tbody>\n<tr><td>a  </td><td>c  </td><td>d  </td></tr>\n<tr><td>e  </td><td>e  </td><td>d  </td></tr>\n</tbody>\n</table>",
       "languages": [
@@ -139,11 +108,6 @@
       ],
       "filetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/docx-tables.docx"
-        },
-        "date_created": "1708472803.532384",
-        "date_modified": "1708472803.5324807",
         "permissions_data": [
           {
             "mode": 33188

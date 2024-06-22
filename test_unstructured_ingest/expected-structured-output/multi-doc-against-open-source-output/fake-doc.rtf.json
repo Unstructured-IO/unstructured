@@ -8,14 +8,8 @@
         "eng"
       ],
       "filetype": "text/rtf",
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-doc.rtf",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
-        },
-        "date_created": "1708472803.5671077",
-        "date_modified": "1708472803.5671537",
         "permissions_data": [
           {
             "mode": 33188
@@ -33,14 +27,8 @@
         "eng"
       ],
       "filetype": "text/rtf",
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-doc.rtf",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
-        },
-        "date_created": "1708472803.5671077",
-        "date_modified": "1708472803.5671537",
         "permissions_data": [
           {
             "mode": 33188
@@ -64,14 +52,8 @@
         "eng"
       ],
       "filetype": "text/rtf",
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-doc.rtf",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
-        },
-        "date_created": "1708472803.5671077",
-        "date_modified": "1708472803.5671537",
         "permissions_data": [
           {
             "mode": 33188
@@ -90,14 +72,8 @@
         "eng"
       ],
       "filetype": "text/rtf",
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-doc.rtf",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-doc.rtf"
-        },
-        "date_created": "1708472803.5671077",
-        "date_modified": "1708472803.5671537",
         "permissions_data": [
           {
             "mode": 33188

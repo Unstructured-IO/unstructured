@@ -11,11 +11,6 @@
       ],
       "filetype": "text/csv",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/stanley-cups.csv"
-        },
-        "date_created": "1708472803.6713421",
-        "date_modified": "1708472803.671387",
         "permissions_data": [
           {
             "mode": 33188

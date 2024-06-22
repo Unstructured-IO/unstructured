@@ -11,11 +11,6 @@
       "page_number": 1,
       "filename": "example.jpg",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/example.jpg"
-        },
-        "date_created": "1708472803.5639243",
-        "date_modified": "1708472803.5640454",
         "permissions_data": [
           {
             "mode": 33188

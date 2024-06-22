@@ -10,11 +10,6 @@
         "eng"
       ],
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/stanley-cups.tsv"
-        },
-        "date_created": "1708472803.6714196",
-        "date_modified": "1708472803.671457",
         "permissions_data": [
           {
             "mode": 33188

@@ -17,11 +17,6 @@
       ],
       "filetype": "application/vnd.ms-outlook",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
-        },
-        "date_created": "1708472803.5720737",
-        "date_modified": "1708472803.5721438",
         "permissions_data": [
           {
             "mode": 33188
@@ -48,11 +43,6 @@
       ],
       "filetype": "application/vnd.ms-outlook",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
-        },
-        "date_created": "1708472803.5720737",
-        "date_modified": "1708472803.5721438",
         "permissions_data": [
           {
             "mode": 33188
@@ -79,11 +69,6 @@
       ],
       "filetype": "application/vnd.ms-outlook",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
-        },
-        "date_created": "1708472803.5720737",
-        "date_modified": "1708472803.5721438",
         "permissions_data": [
           {
             "mode": 33188
@@ -110,11 +95,6 @@
       ],
       "filetype": "application/vnd.ms-outlook",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-email.msg"
-        },
-        "date_created": "1708472803.5720737",
-        "date_modified": "1708472803.5721438",
         "permissions_data": [
           {
             "mode": 33188

@@ -4,18 +4,12 @@
     "element_id": "dc836888aeda94c6e00f6feefa3e3399",
     "text": "United States",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -29,18 +23,12 @@
     "element_id": "1982abebb3ee289b4fe4fb0519e9c07c",
     "text": "Washington, DC",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -54,18 +42,12 @@
     "element_id": "ee1ead1a7749d7ce87fc152b1ddac99c",
     "text": "Joe Biden",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -79,18 +61,12 @@
     "element_id": "87b4ed88f0f96485284c837da5fcbf47",
     "text": "Baseball",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -104,18 +80,12 @@
     "element_id": "88bb184fddaeccb488e05ce87eb21a29",
     "text": "Canada",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -129,18 +99,12 @@
     "element_id": "6e6f3cc6ac6f2dec3133d9b75d5a6111",
     "text": "Ottawa",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -154,18 +118,12 @@
     "element_id": "78405310b147f6369f4e82a24463d178",
     "text": "Justin Trudeau",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -179,18 +137,12 @@
     "element_id": "506a97bd525400daec564b7c9f1e0718",
     "text": "Hockey",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -204,18 +156,12 @@
     "element_id": "4d7b0c0db56ce81a179bdd35a8d1a864",
     "text": "France",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -229,18 +175,12 @@
     "element_id": "8d458867c9837c682da92473655444f7",
     "text": "Paris",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -254,18 +194,12 @@
     "element_id": "7ed46fb79a10f275149c73cf2192fcec",
     "text": "Emmanuel Macron",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -279,18 +213,12 @@
     "element_id": "631a62ff2852c08d14892cad92cbf88f",
     "text": "Soccer",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -304,18 +232,12 @@
     "element_id": "275e920f0df4ad914cff4ccf7d38b271",
     "text": "Trinidad & Tobado",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -329,18 +251,12 @@
     "element_id": "259e2303f44fd7eeee0d4506a9a9641f",
     "text": "Port of Spain",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -354,18 +270,12 @@
     "element_id": "6d779e9323de21358e1270c83a5502ad",
     "text": "Keith Rowley",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188
@@ -379,18 +289,12 @@
     "element_id": "bb0cec5259d173d9b1411da7a609aa66",
     "text": "Track & Field",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "factbook.xml",
       "languages": [
         "eng"
       ],
       "filetype": "application/xml",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/factbook.xml"
-        },
-        "date_created": "1708472803.5642004",
-        "date_modified": "1708472803.5642478",
         "permissions_data": [
           {
             "mode": 33188

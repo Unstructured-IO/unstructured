@@ -4,7 +4,6 @@
     "element_id": "b6f6dba63f6ed4328b2591fe3beb7245",
     "text": "Adding a Bullet Slide",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -12,11 +11,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188
@@ -30,7 +24,6 @@
     "element_id": "f47e3ed00dc940ecaea62561b0dec076",
     "text": "Find the bullet slide layout",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -38,11 +31,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188
@@ -56,7 +44,6 @@
     "element_id": "d7180b9b31d9c7402da28e2e9f6d5d47",
     "text": "Use _TextFrame.text for first bullet",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -64,11 +51,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188
@@ -82,7 +64,6 @@
     "element_id": "f572933b0d03154afdcee20b29dc8dbb",
     "text": "Use _TextFrame.add_paragraph() for subsequent bullets",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -90,11 +71,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188
@@ -108,7 +84,6 @@
     "element_id": "b1fe5d88091fea29cea734e718406802",
     "text": "Here is a lot of text!",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -116,11 +91,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188
@@ -134,7 +104,6 @@
     "element_id": "4e2259fc7ad921f83dc87a08734641e5",
     "text": "Here is some text in a text box!",
     "metadata": {
-      "file_directory": "/Users/potter/Documents/unstructured/example-docs",
       "filename": "fake-power-point.ppt",
       "page_number": 1,
       "languages": [
@@ -142,11 +111,6 @@
       ],
       "filetype": "application/vnd.ms-powerpoint",
       "data_source": {
-        "record_locator": {
-          "path": "/Users/potter/Documents/unstructured/example-docs/fake-power-point.ppt"
-        },
-        "date_created": "1708472803.5746498",
-        "date_modified": "1708472803.57575",
         "permissions_data": [
           {
             "mode": 33188

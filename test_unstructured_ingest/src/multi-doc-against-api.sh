@@ -31,7 +31,7 @@ RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
   --api-key "$UNS_API_KEY" \
-  --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadata.data_source.date_processed \
+  --metadata-exclude coordinates,metadata.last_modified,metadata.detection_class_prob,metadata.parent_id,metadata.category_depth,metadata.data_source.date_processed,metadata.data_source.date_created,metadata.data_source.date_modified,metadata.data_source.record_locator,file_directory \
   --partition-by-api \
   --strategy hi_res \
   --reprocess \
