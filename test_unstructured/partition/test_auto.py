@@ -1,3 +1,5 @@
+# pyright: reportPrivateUsage=false
+
 from __future__ import annotations
 
 import json
@@ -6,6 +8,7 @@ import pathlib
 import tempfile
 import warnings
 from importlib import import_module
+from typing import Iterator
 from unittest.mock import Mock, patch
 
 import docx
@@ -20,10 +23,12 @@ from test_unstructured.partition.test_constants import (
     EXPECTED_TEXT_XLSX,
     EXPECTED_TITLE,
 )
+from test_unstructured.unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 from unstructured.chunking.title import chunk_by_title
 from unstructured.cleaners.core import clean_extra_whitespace
 from unstructured.documents.elements import (
     Address,
+    Element,
     ElementMetadata,
     ListItem,
     NarrativeText,
@@ -171,6 +176,34 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
     with open(doc_filename, "rb") as f:
         elements = partition(file=f, strategy=PartitionStrategy.HI_RES)
     assert elements == expected_docx_elements
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_forwards_strategy_arg_to_partition_docx(request: FixtureRequest, strategy: str):
+    from unstructured.partition.docx import _DocxPartitioner
+
+    def fake_iter_document_elements(self: _DocxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy=={self._opts.strategy}")
+
+    _iter_elements_ = method_mock(
+        request,
+        _DocxPartitioner,
+        "_iter_document_elements",
+        side_effect=fake_iter_document_elements,
+    )
+
+    (element,) = partition(example_doc_path("simple.docx"), strategy=strategy)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy=={strategy}"
 
 
 @pytest.mark.parametrize(
@@ -554,6 +587,34 @@ def test_auto_partition_pptx_from_filename():
     assert elements == EXPECTED_PPTX_OUTPUT
     assert elements[0].metadata.filename == os.path.basename(filename)
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
+
+
+@pytest.mark.parametrize(
+    "strategy",
+    [
+        PartitionStrategy.AUTO,
+        PartitionStrategy.FAST,
+        PartitionStrategy.HI_RES,
+        PartitionStrategy.OCR_ONLY,
+    ],
+)
+def test_partition_forwards_strategy_arg_to_partition_pptx(request: FixtureRequest, strategy: str):
+    from unstructured.partition.pptx import _PptxPartitioner
+
+    def fake_iter_presentation_elements(self: _PptxPartitioner) -> Iterator[Element]:
+        yield Text(f"strategy=={self._opts.strategy}")
+
+    _iter_elements_ = method_mock(
+        request,
+        _PptxPartitioner,
+        "_iter_presentation_elements",
+        side_effect=fake_iter_presentation_elements,
+    )
+
+    (element,) = partition(example_doc_path("simple.pptx"), strategy=strategy)
+
+    _iter_elements_.assert_called_once_with(ANY)
+    assert element.text == f"strategy=={strategy}"
 
 
 @pytest.mark.skipif(is_in_docker, reason="Skipping this test in Docker container")
