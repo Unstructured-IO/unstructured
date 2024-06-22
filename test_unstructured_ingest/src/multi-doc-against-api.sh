@@ -27,8 +27,6 @@ function cleanup() {
 }
 trap cleanup EXIT
 
-TEST_FILE_NAME=layout-parser-paper-with-table.pdf
-
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \

@@ -13,7 +13,6 @@ OUTPUT_FOLDER_NAME=multi-doc-against-open-source-output
 OUTPUT_ROOT=${OUTPUT_ROOT:-$SCRIPT_DIR}
 OUTPUT_DIR=$OUTPUT_ROOT/structured-output/$OUTPUT_FOLDER_NAME
 WORK_DIR=$OUTPUT_ROOT/workdir/$OUTPUT_FOLDER_NAME
-max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
 
 # shellcheck disable=SC1091
 source "$SCRIPT_DIR"/cleanup.sh
@@ -22,8 +21,6 @@ function cleanup() {
   cleanup_dir "$WORK_DIR"
 }
 trap cleanup EXIT
-
-TEST_FILE_NAME=layout-parser-paper-with-table.pdf
 
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
