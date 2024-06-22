@@ -7,6 +7,7 @@
 ### Fixes
 
 * **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
 
 ## 0.14.7
 
