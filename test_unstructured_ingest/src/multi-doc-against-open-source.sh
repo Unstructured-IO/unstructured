@@ -4,7 +4,6 @@
 # .csv, .doc, .docx, .epub, .heic, .html, .jpg, .md, .msg, .odt, .org, .pdf, .png, .ppt, .pptx, .rst, .rtf, .tiff, .tsv, .txt, .xls, .xlsx, .xml
 # All should partition fine
 
-
 set -e
 
 SRC_PATH=$(dirname "$(realpath "$0")")
@@ -63,6 +62,5 @@ winter-sports.epub" \
   --num-processes "1" \
   --input-path "example-docs/" \
   --work-dir "$WORK_DIR"
-
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME

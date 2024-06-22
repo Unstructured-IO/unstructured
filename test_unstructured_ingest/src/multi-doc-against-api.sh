@@ -2,7 +2,7 @@
 
 # Tests the following filetypes against the API https://api.unstructured.io/general/v0/general :
 # .csv, .doc, .docx, .epub, .heic, .html, .jpg, .md, .msg, .odt, .org, .pdf, .png, .ppt, .pptx, .rst, .rtf, .tiff, .tsv, .txt, .xls, .xlsx, .xml
-# The following filetypes are not supported:  .docx, .epub, .odt, .org, .pptx, .rtf, .xlsx 
+# The following filetypes are not supported:  .docx, .epub, .odt, .org, .pptx, .rtf, .xlsx
 
 set -e
 
@@ -25,7 +25,7 @@ function cleanup() {
   cleanup_dir "$OUTPUT_DIR"
   cleanup_dir "$WORK_DIR"
 }
-# trap cleanup EXIT
+trap cleanup EXIT
 
 TEST_FILE_NAME=layout-parser-paper-with-table.pdf
 
@@ -60,7 +60,6 @@ tests-example.xls" \
   --num-processes "$max_processes" \
   --input-path "example-docs/" \
   --work-dir "$WORK_DIR"
-
 
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
