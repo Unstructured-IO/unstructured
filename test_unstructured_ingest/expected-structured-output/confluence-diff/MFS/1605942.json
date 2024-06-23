@@ -37,7 +37,7 @@
         "Win"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -48,70 +48,7 @@
     "type": "Title"
   },
   {
-    "element_id": "3fa457c99713dacee34a094ca844d369",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "f147aba8b007b4bd8208e4572f5b9deb",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "6eb6112deae2548a83547e5ef9a21b88",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "0ec9faddd7d36aa48091805f98e064a0",
+    "element_id": "4669e057140b5179bcccddf030564faf",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.226000",
@@ -127,7 +64,7 @@
         "Needs input"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -138,70 +75,7 @@
     "type": "Title"
   },
   {
-    "element_id": "10d0eeb46296850b4d495368cd20f70f",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "70f82254d37a60cc5c83e07d98cce166",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "93362aec18fca024916f21651c4fb019",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "2342f48f943338e6a30647e86ced5d81",
+    "element_id": "85e720f616ed2097311e2e844a1e9e37",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.226000",
@@ -217,7 +91,7 @@
         "Focus"
       ],
       "emphasized_text_tags": [
-        "strong"
+        "b"
       ],
       "filetype": "text/html",
       "languages": [
@@ -228,49 +102,7 @@
     "type": "Title"
   },
   {
-    "element_id": "e33fbc16d200926cce19fe943c3bbb62",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "1a2728decdac66085a26a43934e2c7cd",
-    "metadata": {
-      "data_source": {
-        "date_created": "2023-07-09T12:54:45.226000",
-        "date_modified": "2023-07-09T12:54:45.226000",
-        "record_locator": {
-          "page_id": "1605942",
-          "url": "https://unstructured-ingest-test.atlassian.net"
-        },
-        "url": "https://unstructured-ingest-test.atlassian.net/wiki/rest/api/content/1605942",
-        "version": "1"
-      },
-      "filetype": "text/html",
-      "languages": [
-        "eng"
-      ]
-    },
-    "text": "",
-    "type": "ListItem"
-  },
-  {
-    "element_id": "86e4984d57e4197d967dd0f0e866e9fd",
+    "element_id": "6a881c411fad6112029b96cc9e477d1e",
     "metadata": {
       "data_source": {
         "date_created": "2023-07-09T12:54:45.226000",
