@@ -49,7 +49,7 @@ class UploadStep(PipelineStep):
         logger.info(
             f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore
         )
-        if self.process.is_async() and self.process.is_async():
+        if self.process.is_async():
             self.process_async(iterable=iterable)
         else:
             self.process_whole(iterable=iterable)
