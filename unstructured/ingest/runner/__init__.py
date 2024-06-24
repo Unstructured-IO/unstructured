@@ -5,6 +5,7 @@ from .airtable import AirtableRunner
 from .base_runner import Runner
 from .biomed import BiomedRunner
 from .confluence import ConfluenceRunner
+from .couchbase import CouchbaseRunner
 from .delta_table import DeltaTableRunner
 from .discord import DiscordRunner
 from .elasticsearch import ElasticSearchRunner
@@ -38,6 +39,7 @@ runner_map: t.Dict[str, Type[Runner]] = {
     "biomed": BiomedRunner,
     "box": BoxRunner,
     "confluence": ConfluenceRunner,
+    "couchbase": CouchbaseRunner,
     "delta_table": DeltaTableRunner,
     "discord": DiscordRunner,
     "dropbox": DropboxRunner,

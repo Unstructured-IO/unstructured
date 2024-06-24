@@ -4,6 +4,7 @@ from typing import Dict, Type, cast
 from unstructured.ingest.connector.airtable import AirtableIngestDoc
 from unstructured.ingest.connector.biomed import BiomedIngestDoc
 from unstructured.ingest.connector.confluence import ConfluenceIngestDoc
+from unstructured.ingest.connector.couchbase import CouchbaseIngestDoc, CouchbaseIngestDocBatch
 from unstructured.ingest.connector.delta_table import DeltaTableIngestDoc
 from unstructured.ingest.connector.discord import DiscordIngestDoc
 from unstructured.ingest.connector.elasticsearch import (
@@ -48,6 +49,8 @@ INGEST_DOC_NAME_TO_CLASS: Dict[str, Type[EnhancedDataClassJsonMixin]] = {
     "biomed": BiomedIngestDoc,
     "box": BoxIngestDoc,
     "confluence": ConfluenceIngestDoc,
+    "couchbase": CouchbaseIngestDoc,
+    "couchbase_batch": CouchbaseIngestDocBatch,
     "delta-table": DeltaTableIngestDoc,
     "discord": DiscordIngestDoc,
     "dropbox": DropboxIngestDoc,
