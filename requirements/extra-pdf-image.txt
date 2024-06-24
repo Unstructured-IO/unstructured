@@ -32,7 +32,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.15.3
+filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch
@@ -167,7 +167,7 @@ pillow==10.3.0
     #   unstructured-pytesseract
 pillow-heif==0.16.0
     # via -r ./extra-pdf-image.in
-portalocker==2.8.2
+portalocker==2.10.0
     # via iopath
 proto-plus==1.24.0
     # via

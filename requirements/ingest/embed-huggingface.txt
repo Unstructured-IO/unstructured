@@ -31,7 +31,7 @@ dataclasses-json==0.6.7
     # via
     #   -c ./ingest/../base.txt
     #   langchain-community
-filelock==3.15.3
+filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch

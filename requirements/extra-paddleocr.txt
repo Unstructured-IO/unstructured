@@ -53,14 +53,16 @@ idna==3.7
     # via
     #   -c ./base.txt
     #   requests
-imageio==2.34.1
+imageio==2.34.2
     # via
     #   imgaug
     #   scikit-image
 imgaug==0.4.0
     # via unstructured-paddleocr
-importlib-metadata==7.2.0
-    # via flask
+importlib-metadata==7.1.0
+    # via
+    #   -c ././deps/constraints.txt
+    #   flask
 importlib-resources==6.4.0
     # via matplotlib
 itsdangerous==2.2.0

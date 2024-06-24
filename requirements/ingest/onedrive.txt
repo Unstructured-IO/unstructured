@@ -29,7 +29,7 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-msal==1.28.1
+msal==1.29.0
     # via
     #   -r ./ingest/onedrive.in
     #   office365-rest-python-client

@@ -55,7 +55,7 @@ exceptiongroup==1.2.1
     # via anyio
 fastapi==0.110.3
     # via chromadb
-filelock==3.15.3
+filelock==3.15.4
     # via huggingface-hub
 flatbuffers==24.3.25
     # via onnxruntime
@@ -93,6 +93,7 @@ idna==3.7
     #   requests
 importlib-metadata==7.1.0
     # via
+    #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/chroma.in
     #   build
     #   opentelemetry-api

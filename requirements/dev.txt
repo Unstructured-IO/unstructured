@@ -82,7 +82,7 @@ executing==2.0.1
     # via stack-data
 fastjsonschema==2.20.0
     # via nbformat
-filelock==3.15.3
+filelock==3.15.4
     # via virtualenv
 fqdn==1.5.1
     # via jsonschema
@@ -102,8 +102,9 @@ idna==3.7
     #   httpx
     #   jsonschema
     #   requests
-importlib-metadata==7.2.0
+importlib-metadata==7.1.0
     # via
+    #   -c ././deps/constraints.txt
     #   build
     #   jupyter-client
     #   jupyter-lsp
@@ -406,7 +407,7 @@ urllib3==1.26.19
     #   -c ./base.txt
     #   -c ./test.txt
     #   requests
-virtualenv==20.26.2
+virtualenv==20.26.3
     # via pre-commit
 wcwidth==0.2.13
     # via prompt-toolkit

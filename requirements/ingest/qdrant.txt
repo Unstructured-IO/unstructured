@@ -46,7 +46,7 @@ numpy==1.26.4
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   qdrant-client
-portalocker==2.8.2
+portalocker==2.10.0
     # via qdrant-client
 protobuf==4.23.4
     # via
