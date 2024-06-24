@@ -49,13 +49,13 @@ heavily on the Elasticsearch connector code, inheriting the functionality as muc
 class OpenSearchAccessConfig(AccessConfig):
     # hosts: t.Optional[t.List[str]] = None
     # username: t.Optional[str] = None
-    password: t.Optional[str] = enhanced_field(default=None, sensitive=True)
+    password: Optional[str] = enhanced_field(default=None, sensitive=True)
     use_ssl: bool = False
     verify_certs: bool = False
     ssl_show_warn: bool = False
-    ca_certs: t.Optional[str] = None
-    client_cert: t.Optional[str] = None
-    client_key: t.Optional[str] = None
+    ca_certs: Optional[str] = None
+    client_cert: Optional[str] = None
+    client_key: Optional[str] = None
 
 
 @dataclass
@@ -66,7 +66,7 @@ class OpenSearchConnectionConfig(ConnectionConfig):
     api_key_id: Optional[str] = None
     ca_certs: Optional[str] = None
     access_config: OpenSearchAccessConfig = enhanced_field(sensitive=True)
-    def to_dict(self, **kwargs) -> t.Dict[str, Json]:
+    def to_dict(self, **kwargs) -> dict[str, json]:
         d = super().to_dict(**kwargs)
         d["http_auth"] = (self.username, self.password)
         return d
@@ -262,13 +262,13 @@ class OpenSearchConnectionConfig(ConnectionConfig):
 
 
 @dataclass
-class ElasticsearchUploadStagerConfig(UploadStagerConfig):
+class OpenSearchUploadStagerConfig(UploadStagerConfig):
     index_name: str
 
 
 @dataclass
-class ElasticsearchUploadStager(UploadStager):
-    upload_stager_config: ElasticsearchUploadStagerConfig
+class OpenSearchUploadStager(UploadStager):
+    upload_stager_config: OpenSearchUploadStagerConfig
 
     def conform_dict(self, data: dict) -> dict:
         resp = {
@@ -303,16 +303,16 @@ class ElasticsearchUploadStager(UploadStager):
 
 
 @dataclass
-class ElasticsearchUploaderConfig(UploaderConfig):
+class OpenSearchUploaderConfig(UploaderConfig):
     index_name: str
     batch_size_bytes: int = 15_000_000
     thread_count: int = 4
 
 
 @dataclass
-class ElasticsearchUploader(Uploader):
-    upload_config: ElasticsearchUploaderConfig
-    connection_config: ElasticsearchConnectionConfig
+class OpenSearchUploader(Uploader):
+    upload_config: OpenSearchUploaderConfig
+    connection_config: OpenSearchConnectionConfig
 
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
         elements_dict = []
@@ -357,10 +357,10 @@ class ElasticsearchUploader(Uploader):
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
-        connection_config=ElasticsearchConnectionConfig,
-        upload_stager_config=ElasticsearchUploadStagerConfig,
-        upload_stager=ElasticsearchUploadStager,
-        uploader_config=ElasticsearchUploaderConfig,
-        uploader=ElasticsearchUploader,
+        connection_config=OpenSearchConnectionConfig,
+        upload_stager_config=OpenSearchUploadStagerConfig,
+        upload_stager=OpenSearchUploadStager,
+        uploader_config=OpenSearchUploaderConfig,
+        uploader=OpenSearchUploader,
     ),
 )

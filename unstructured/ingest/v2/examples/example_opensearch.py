@@ -15,9 +15,10 @@ from unstructured.ingest.v2.processes.connectors.weaviate import (
     WeaviateUploadStagerConfig,
 )
 from unstructured.ingest.v2.processes.connectors.opensearch import (
-    OpensearchConnectionConfig,
-    OpensearchUploaderConfig,
-    OpensearchUploadStagerConfig,
+    OpenSearchAccessConfig,
+    OpenSearchConnectionConfig,
+    OpenSearchUploaderConfig,
+    OpenSearchUploadStagerConfig,
 )
 from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
@@ -38,13 +39,16 @@ if __name__ == "__main__":
         partitioner_config=PartitionerConfig(strategy="fast"),
         chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
-        destination_connection_config=OpensearchConnectionConfig(
+        destination_connection_config=OpenSearchConnectionConfig(
             hosts="http://localhost:9247",
-            index_name="ingest-test-destination",
-            username="admin", 
-            password="admin",
-            use_ssl=True,
+            username="admin",
+            access_config=OpenSearchAccessConfig(
+                password="admin",
+                use_ssl=True,
+            ),
         ),
-        stager_config=OpensearchUploadStagerConfig(),
-        uploader_config=OpensearchUploaderConfig(batch_size_bytes=150),
+        stager_config=OpenSearchUploadStagerConfig(index_name="ingest-test-destination"),
+        uploader_config=OpenSearchUploaderConfig(
+            index_name="ingest-test-destination", batch_size_bytes=150
+        ),
     ).run()
