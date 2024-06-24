@@ -62,3 +62,7 @@ wrapt>=1.14.0
 
 # NOTE(robinson): for compatiblity with voyage embeddings
 langsmith==0.1.62
+
+# NOTE(robinson): choma was pinned to importlib-metadata>=7.1.0 but 7.1.0 was installed
+# instead of 7.2.0. Need to investigate
+importlib-metadata==7.1.0

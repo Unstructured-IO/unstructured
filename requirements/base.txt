@@ -103,7 +103,7 @@ unstructured-client==0.18.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   requests
