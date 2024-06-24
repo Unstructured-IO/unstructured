@@ -1,7 +1,9 @@
+import inspect
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from unstructured_inference.constants import ElementType
 from unstructured_inference.inference.layout import DocumentLayout
 
 from unstructured.partition.pdf_image.analysis.processor import AnalysisProcessor
@@ -15,7 +17,7 @@ class LayoutDumper(ABC):
         """Transforms the results to a dict convertible structured formats like JSON or YAML"""
 
 
-def extract_layout_info(layout: DocumentLayout):
+def extract_layout_info(layout: DocumentLayout) -> dict:
     pages = []
 
     for page in layout.pages:
@@ -34,6 +36,14 @@ def extract_layout_info(layout: DocumentLayout):
     return {"pages": pages}
 
 
+def object_detection_classes() -> list[str]:
+    classes = []
+    for i in inspect.getmembers(ElementType):
+        if not i[0].startswith("_") and not inspect.ismethod(i[1]):
+            classes.append(i[0])
+    return classes
+
+
 class ObjectDetectionLayoutDumper(LayoutDumper):
     """Forms the results in COCO format and saves them to a file"""
 
@@ -44,6 +54,7 @@ class ObjectDetectionLayoutDumper(LayoutDumper):
 
     def dump(self) -> dict:
         """Transforms the results to COCO format and saves them to a file"""
+        self.layout.update({"object_detection_classes": object_detection_classes()})
         return self.layout
 
 

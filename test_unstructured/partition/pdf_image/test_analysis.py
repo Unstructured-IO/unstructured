@@ -140,4 +140,4 @@ def test_od_document_layout_dump():
         ]
     }
     od_layout_dump = ObjectDetectionLayoutDumper(od_document_layout).dump()
-    assert od_layout_dump == expected_dump
+    assert {"pages": od_layout_dump.get("pages")} == expected_dump
