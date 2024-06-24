@@ -75,7 +75,7 @@ class Chunker(BaseProcess, ABC):
         filtered_partition_request = {
             k: v for k, v in partition_request.items() if k in possible_fields
         }
-        if len(filtered_partition_request) == len(partition_request):
+        if len(filtered_partition_request) != len(partition_request):
             logger.debug(
                 "Following fields were omitted due to not being "
                 "supported by the currently used unstructured client: {}".format(
