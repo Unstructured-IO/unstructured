@@ -34,3 +34,15 @@ class ProcessorConfig(EnhancedDataClassJsonMixin):
     def __post_init__(self):
         if self.max_connections is not None:
             self.semaphore = Semaphore(self.max_connections)
+
+    @property
+    def mp_supported(self) -> bool:
+        return not self.disable_parallelism and self.num_processes > 1
+
+    @property
+    def async_supported(self) -> bool:
+        if self.disable_parallelism:
+            return False
+        if self.max_connections is not None and isinstance(self.max_connections, int):
+            return self.max_connections > 1
+        return True
