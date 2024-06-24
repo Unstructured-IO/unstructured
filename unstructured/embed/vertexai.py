@@ -10,6 +10,7 @@ from unstructured.documents.elements import (
     Element,
 )
 from unstructured.embed.interfaces import BaseEmbeddingEncoder, EmbeddingConfig
+from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import EmbeddingEncoderConnectionError
 from unstructured.utils import FileHandler, requires_dependencies
 
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 
 @dataclass
 class VertexAIEmbeddingConfig(EmbeddingConfig):
-    api_key: str
+    api_key: str = enhanced_field(sensitive=True)
     model_name: Optional[str] = "textembedding-gecko@001"
 
 
