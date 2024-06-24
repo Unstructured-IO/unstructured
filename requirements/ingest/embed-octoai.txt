@@ -38,7 +38,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-openai==1.34.0
+openai==1.35.3
     # via -r ./ingest/embed-octoai.in
 pydantic==2.7.4
     # via openai
@@ -69,7 +69,7 @@ typing-extensions==4.12.2
     #   openai
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

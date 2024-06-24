@@ -32,7 +32,7 @@ deprecated==1.2.14
     # via pikepdf
 effdet==0.4.1
     # via -r ./extra-pdf-image.in
-filelock==3.15.1
+filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch
@@ -167,9 +167,9 @@ pillow==10.3.0
     #   unstructured-pytesseract
 pillow-heif==0.16.0
     # via -r ./extra-pdf-image.in
-portalocker==2.8.2
+portalocker==2.10.0
     # via iopath
-proto-plus==1.23.0
+proto-plus==1.24.0
     # via
     #   google-api-core
     #   google-cloud-vision
@@ -253,7 +253,7 @@ sympy==1.12.1
     # via
     #   onnxruntime
     #   torch
-timm==1.0.3
+timm==1.0.7
     # via
     #   effdet
     #   unstructured-inference
@@ -287,13 +287,13 @@ typing-extensions==4.12.2
     #   torch
 tzdata==2024.1
     # via pandas
-unstructured-inference==0.7.35
+unstructured-inference==0.7.36
     # via -r ./extra-pdf-image.in
 unstructured-pytesseract==0.3.12
     # via
     #   -c ././deps/constraints.txt
     #   -r ./extra-pdf-image.in
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
