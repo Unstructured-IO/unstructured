@@ -48,8 +48,8 @@ jobs:
     - name: Build images
       run: |
         ARCH=$(cut -d "/" -f2 <<< ${{ matrix.docker-platform }})
-        DOCKER_BUILDKIT=1 docker buildx build --platform=$ARCH --load \
-          -f Dockerfile-$ARCH \
+        DOCKER_BUILDKIT=1 docker buildx build --platform=${{ matrix.docker-platform }} --load \
+          -f Dockerfile \
           --build-arg PIP_VERSION=$PIP_VERSION \
           --build-arg BUILDKIT_INLINE_CACHE=1 \
           --progress plain \

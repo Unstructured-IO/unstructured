@@ -21,7 +21,7 @@ typing-extensions==4.12.2
     # via
     #   -c ./ingest/../base.txt
     #   pinecone-client
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

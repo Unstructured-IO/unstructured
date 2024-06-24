@@ -1,4 +1,4 @@
-FROM quay.io/unstructured-io/base-images:wolfi-base@sha256:863fd5b87e780dacec62b97c2db2aeda7f770fcf9b045b29f53ec1ddbe607b4d
+FROM quay.io/unstructured-io/base-images:wolfi-base@sha256:753fa1ed5a4793eb2bb179c07a34ba9164ac46328642e2db615259274b0c9baf as base
 
 USER root
 
@@ -9,7 +9,7 @@ COPY unstructured unstructured
 COPY test_unstructured test_unstructured
 COPY example-docs example-docs
 
-RUN chown -R notebook-user:notebook-user /app
+RUN chown -R notebook-user:notebook-user /app && ln -s /usr/bin/python3.11 /usr/bin/python3
 
 USER notebook-user
 

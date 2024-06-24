@@ -74,14 +74,14 @@ typing-extensions==4.12.2
     #   -c ./ingest/../base.txt
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   requests
 validators==0.28.3
     # via weaviate-client
-weaviate-client==4.6.4
+weaviate-client==4.6.5
     # via
     #   -c ./ingest/../deps/constraints.txt
     #   -r ./ingest/weaviate.in
