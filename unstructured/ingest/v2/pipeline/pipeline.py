@@ -17,7 +17,7 @@ from unstructured.ingest.v2.pipeline.steps.upload import Uploader, UploadStep
 from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 from unstructured.ingest.v2.processes.chunker import ChunkerConfig
 from unstructured.ingest.v2.processes.connector_registry import (
-    ConnectionConfigT,
+    ConnectionConfig,
     DownloaderConfigT,
     IndexerConfigT,
     UploaderConfigT,
@@ -76,6 +76,30 @@ class Pipeline:
         if self.context.uncompress:
             process = Uncompressor()
             self.uncompress_step = UncompressStep(process=process, context=self.context)
+
+        self.check_destination_connector()
+
+    def check_destination_connector(self):
+        # Make sure that if the set destination connector expects a stager, one is also set
+        if not self.uploader_step:
+            return
+        matching_registry_entry = [
+            v
+            for v in destination_registry.values()
+            if isinstance(self.uploader_step.process, v.uploader)
+        ]
+        if len(matching_registry_entry) > 1:
+            raise ValueError(
+                f"More than one entry found in destination registry "
+                f"for uploader type: {self.uploader_step.process}"
+            )
+        registry_entry = matching_registry_entry[0]
+        if registry_entry.upload_stager and self.stager_step is None:
+            raise ValueError(
+                f"pipeline with uploader type {self.uploader_step.process.__class__.__name__} "
+                f"expects a stager of type {registry_entry.upload_stager.__name__} "
+                f"but one was not set"
+            )
 
     def cleanup(self):
         pass
@@ -177,11 +201,11 @@ class Pipeline:
         context: ProcessorConfig,
         indexer_config: IndexerConfigT,
         downloader_config: DownloaderConfigT,
-        source_connection_config: ConnectionConfigT,
+        source_connection_config: ConnectionConfig,
         partitioner_config: PartitionerConfig,
         chunker_config: Optional[ChunkerConfig] = None,
         embedder_config: Optional[EmbedderConfig] = None,
-        destination_connection_config: Optional[ConnectionConfigT] = None,
+        destination_connection_config: Optional[ConnectionConfig] = None,
         stager_config: Optional[UploadStagerConfigT] = None,
         uploader_config: Optional[UploaderConfigT] = None,
     ) -> "Pipeline":
