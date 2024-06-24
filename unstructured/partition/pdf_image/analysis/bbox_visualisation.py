@@ -1,4 +1,5 @@
 import copy
+import logging
 import math
 import tempfile
 from abc import ABC, abstractmethod
@@ -9,7 +10,7 @@ from typing import Collection, Generator, List, Optional, TypeVar, Union
 
 import numpy as np
 from matplotlib import colors, font_manager
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont
 from unstructured_inference.constants import ElementType
 from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout
@@ -34,6 +35,8 @@ def get_font():
 
 
 FONT = get_font()
+COLOR_WHITE = ("white", (255, 255, 255))
+COLOR_BLACK = ("black", (0, 0, 0))
 
 
 class TextAlignment(Enum):
@@ -68,7 +71,11 @@ def get_rgb_color(color: str) -> tuple[int, int, int]:
     Returns:
         A tuple of three integers representing the RGB values of the color.
     """
-    rgb_colors = colors.to_rgb(color)
+    try:
+        rgb_colors = colors.to_rgb(color)
+    except ValueError:
+        print("Error")
+        raise
     return int(rgb_colors[0] * 255), int(rgb_colors[1] * 255), int(rgb_colors[2] * 255)
 
 
@@ -170,8 +177,8 @@ def get_bbox_thickness(
 
 
 def get_text_color(
-    background_color: tuple[int, int, int], brightness_threshold: float = 0.5
-) -> tuple[int, int, int]:
+    background_color: Union[str, tuple[int, int, int]], brightness_threshold: float = 0.5
+) -> tuple[str, tuple[int, int, int]]:
     """Returns the contrastive text color (black or white) for a given background color.
 
     Args:
@@ -180,13 +187,15 @@ def get_text_color(
     Returns:
         Tuple containing RGB values of the text color.
     """
+    if isinstance(background_color, str):
+        background_color = get_rgb_color(background_color)
     background_brightness = (
         0.299 * background_color[0] + 0.587 * background_color[1] + 0.114 * background_color[0]
     ) / 255
     if background_brightness > brightness_threshold:
-        return (0, 0, 0)
+        return COLOR_BLACK
     else:
-        return (255, 255, 255)
+        return COLOR_WHITE
 
 
 def get_label_rect_and_coords(
@@ -254,30 +263,28 @@ def get_label_rect_and_coords(
 
 
 def draw_bbox_label(
-    image: Image.Image,
+    image_draw: ImageDraw.ImageDraw,
     text: str,
     bbox_points: tuple[int, int, int, int],
     alignment: TextAlignment,
     font_size: int,
-    background_color: tuple[int, int, int],
-) -> Image.Image:
+    background_color: str,
+):
     """Draw a label stick to a bounding box.
     The alignment parameter specifies where the label should be placed.
 
     Args:
-        image:              Image on which to draw the text box.
+        image_draw:         ImageDraw object to draw on the image.
         text:               Text to draw.
         bbox_points:        Bounding box points.
         alignment:          Text alignment.
         font_size:          Font size of the text.
         background_color:   RGB values of the background color.
-
-    Returns:
-        The image with the text box drawn.
     """
     font = ImageFont.truetype(FONT, font_size)
-    draw = ImageDraw.ImageDraw(image)
-    text_x1, text_y1, text_x2, text_y2 = draw.textbbox((0, 0), text, font=font, align="center")
+    text_x1, text_y1, text_x2, text_y2 = image_draw.textbbox(
+        (0, 0), text, font=font, align="center"
+    )
     text_width = text_x2 - text_x1
     text_height = text_y2 - text_y1
 
@@ -285,40 +292,57 @@ def draw_bbox_label(
         alignment, bbox_points, text_width, text_height
     )
 
-    draw.rectangle(
-        label_rectangle,
-        fill=background_color,
-        outline=background_color,
-    )
-    draw.text(label_coords, text, fill=get_text_color(background_color), font=font, align="center")
+    rgb_background_color = get_rgb_color(background_color)
+    try:
+        image_draw.rectangle(
+            label_rectangle,
+            fill=background_color,
+            outline=background_color,
+        )
+    except TypeError:
+        image_draw.rectangle(
+            label_rectangle,
+            fill=rgb_background_color,
+            outline=rgb_background_color,
+        )
+    text_color, text_color_rgb = get_text_color(background_color)
+    try:
+        image_draw.text(label_coords, text, fill=text_color, font=font, align="center")
+    except TypeError:
+        image_draw.text(label_coords, text, fill=text_color_rgb, font=font, align="center")
 
-    return image
 
-
-def draw_bbox_on_image(image: Image.Image, bbox: BBox, color: tuple[int, int, int]) -> Image.Image:
+def draw_bbox_on_image(
+    image_draw: ImageDraw.ImageDraw,
+    bbox: BBox,
+    color: str,
+):
     """Draw bbox with additional labels on the image..
 
     Args:
-        image:          PIL Image on which to draw the bounding box.
+        image_draw:     ImageDraw object to draw on the image.
         bbox:           Bounding box to draw.
         color:          RGB values of the color of the bounding box (edges + label backgrounds).
-
-    Returns:
-        The image with the bounding box drawn.
     """
     x1, y1, x2, y2 = bbox.points
+    if x1 >= x2 or y1 >= y2:
+        print(f"Invalid bbox coordinates: {bbox.points}")
+        return
     top_left = x1, y1  # the main
     bottom_right = x2, y2
-    box_thickness = get_bbox_thickness(bbox=bbox.points, page_size=image.size)
-    font_size = get_bbox_text_size(bbox=bbox.points, page_size=image.size)
+    box_thickness = get_bbox_thickness(bbox=bbox.points, page_size=image_draw.im.size)
+    font_size = get_bbox_text_size(bbox=bbox.points, page_size=image_draw.im.size)
 
-    draw = ImageDraw.ImageDraw(image)
-    draw.rectangle((top_left, bottom_right), outline=color, width=box_thickness)
+    try:
+        image_draw.rectangle((top_left, bottom_right), outline=color, width=box_thickness)
+    except TypeError:
+        rgb_color = get_rgb_color(color)
+        image_draw.rectangle((top_left, bottom_right), outline=rgb_color, width=box_thickness)
 
     if bbox.labels is not None:
         if top_left_label := bbox.labels.top_left:
             draw_bbox_label(
-                image,
+                image_draw,
                 top_left_label,
                 bbox_points=bbox.points,
                 alignment=TextAlignment.TOP_LEFT,
@@ -327,7 +351,7 @@ def draw_bbox_on_image(image: Image.Image, bbox: BBox, color: tuple[int, int, in
             )
         if top_right_label := bbox.labels.top_right:
             draw_bbox_label(
-                image,
+                image_draw,
                 top_right_label,
                 bbox_points=bbox.points,
                 alignment=TextAlignment.TOP_RIGHT,
@@ -336,7 +360,7 @@ def draw_bbox_on_image(image: Image.Image, bbox: BBox, color: tuple[int, int, in
             )
         if bottom_left_label := bbox.labels.bottom_left:
             draw_bbox_label(
-                image,
+                image_draw,
                 bottom_left_label,
                 bbox_points=bbox.points,
                 alignment=TextAlignment.BOTTOM_LEFT,
@@ -345,7 +369,7 @@ def draw_bbox_on_image(image: Image.Image, bbox: BBox, color: tuple[int, int, in
             )
         if bottom_right_label := bbox.labels.bottom_right:
             draw_bbox_label(
-                image,
+                image_draw,
                 bottom_right_label,
                 bbox_points=bbox.points,
                 alignment=TextAlignment.BOTTOM_RIGHT,
@@ -354,14 +378,13 @@ def draw_bbox_on_image(image: Image.Image, bbox: BBox, color: tuple[int, int, in
             )
         if center_label := bbox.labels.center:
             draw_bbox_label(
-                image,
+                image_draw,
                 center_label,
                 bbox_points=bbox.points,
                 alignment=TextAlignment.CENTER,
                 font_size=font_size * 2,
                 background_color=color,
             )
-    return image
 
 
 class LayoutDrawer(ABC):
@@ -374,7 +397,7 @@ class LayoutDrawer(ABC):
 
 class SimpleLayoutDrawer(LayoutDrawer, ABC):
     layout: list[list[TextRegion]]
-    color: tuple[int, int, int]
+    color: str
     show_order: bool = False
     show_text_length: bool = False
 
@@ -385,6 +408,7 @@ class SimpleLayoutDrawer(LayoutDrawer, ABC):
         if len(self.layout) < page_num:
             print(f"Error! Page {page_num} not found in layout (pages: {len(self.layout)})")
             return page_image
+        image_draw = ImageDraw.ImageDraw(page_image)
         page_layout = self.layout[page_num - 1]
         for idx, region in enumerate(page_layout):
             text_len = len(region.text) if region.text else 0
@@ -399,14 +423,14 @@ class SimpleLayoutDrawer(LayoutDrawer, ABC):
                     center=element_order,
                 ),
             )
-            draw_bbox_on_image(page_image, bbox, color=self.color)
+            draw_bbox_on_image(image_draw, bbox, color=self.color)
         return page_image
 
 
 class PdfminerLayoutDrawer(SimpleLayoutDrawer):
     layout_source = "pdfminer"
 
-    def __init__(self, layout: List[List[TextRegion]], color: tuple[int, int, int] = (255, 0, 0)):
+    def __init__(self, layout: List[List[TextRegion]], color: str = "red"):
         self.layout = copy.deepcopy(layout)
         self.color = color
         self.show_order = True
@@ -441,6 +465,7 @@ class ODModelLayoutDrawer(LayoutDrawer):
         if len(self.layout) < page_num:
             print(f"Error! Page {page_num} not found in layout (pages: {len(self.layout)})")
             return page_image
+        image_draw = ImageDraw.ImageDraw(page_image)
         page_layout = self.layout[page_num - 1]
         for layout_element in page_layout:
             element_type = layout_element.type
@@ -458,17 +483,17 @@ class ODModelLayoutDrawer(LayoutDrawer):
                     top_right=f"prob: {element_prob:.2f}" if element_prob else None,
                 ),
             )
-            draw_bbox_on_image(page_image, bbox, color=color)
+            draw_bbox_on_image(image_draw, bbox, color=color)
         return page_image
 
-    def get_element_type_color(self, element_type: str) -> tuple[int, int, int]:
-        return get_rgb_color(self.color_map.get(element_type, "cyan"))
+    def get_element_type_color(self, element_type: str) -> str:
+        return self.color_map.get(element_type, "cyan")
 
 
 class OCRLayoutDrawer(SimpleLayoutDrawer):
     layout_source = "ocr"
 
-    def __init__(self, color: tuple[int, int, int] = (255, 0, 0)):
+    def __init__(self, color: str = "red"):
         self.color = color
         self.layout: list[list[TextRegion]] = []
         self.show_order = False
@@ -501,6 +526,7 @@ class FinalLayoutDrawer(LayoutDrawer):
         self.layout = layout
 
     def draw_layout_on_page(self, page_image: Image.Image, page_num: int) -> Image.Image:
+        image_draw = ImageDraw.ImageDraw(page_image)
         elements_for_page = [
             element for element in self.layout if element.metadata.page_number == page_num
         ]
@@ -524,12 +550,11 @@ class FinalLayoutDrawer(LayoutDrawer):
                     center=f"{element_order}",
                 ),
             )
-            draw_bbox_on_image(page_image, bbox, color=color)
+            draw_bbox_on_image(image_draw, bbox, color=color)
         return page_image
 
-    def get_element_type_color(self, element_type: str) -> tuple[int, int, int]:
-
-        return get_rgb_color(self.color_map.get(element_type, "cyan"))
+    def get_element_type_color(self, element_type: str) -> str:
+        return self.color_map.get(element_type, "cyan")
 
 
 class AnalysisDrawer(AnalysisProcessor):
@@ -539,10 +564,14 @@ class AnalysisDrawer(AnalysisProcessor):
         filename: Union[str, Path],
         save_dir: Union[str, Path],
         draw_caption: bool = True,
-        draw_separate_files: bool = True,
+        draw_grid: bool = False,
+        resize: Optional[float] = None,
+        format: str = "png",
     ):
         self.draw_caption = draw_caption
-        self.draw_separate_files = draw_separate_files
+        self.draw_grid = draw_grid
+        self.resize = resize
+        self.format = format
         self.drawers = []
 
         super().__init__(filename, save_dir)
@@ -560,27 +589,64 @@ class AnalysisDrawer(AnalysisProcessor):
             images_for_grid = []
             page_num = page_idx + 1
             for drawer in self.drawers:
-                image = drawer.draw_layout_on_page(orig_image_page.copy(), page_num=page_num)
+                try:
+                    image = drawer.draw_layout_on_page(orig_image_page.copy(), page_num=page_num)
+                except:  # noqa: E722
+                    logging.exception(
+                        f"Error while drawing layout for page {page_num} "
+                        f"for file {self.filename} with drawer "
+                        f"{drawer.__class__.__name__}"
+                    )
+                    continue
                 if self.draw_caption:
                     image = self.add_caption(
                         image, caption=f"Layout source: {drawer.layout_source}"
                     )
-                if self.draw_separate_files:
+                if not self.draw_grid:
+                    if self.resize is not None:
+                        image = image.resize(
+                            (int(image.width * self.resize), int(image.height * self.resize)),
+                        )
                     image.save(
-                        analysis_save_dir / f"page{page_num}" f"_layout_{drawer.layout_source}.png"
+                        analysis_save_dir / f"page{page_num}"
+                        f"_layout_{drawer.layout_source}.{self.format}",
+                        optimize=True,
+                        quality=85,
                     )
+                    image.close()
                 else:
                     images_for_grid.append(image)
             if images_for_grid:
                 grid_image = self.paste_images_on_grid(images_for_grid)
-                grid_image.save(analysis_save_dir / f"page{page_num}_layout_all.png")
+                if self.resize is not None:
+                    grid_image = grid_image.resize(
+                        (int(grid_image.width * self.resize), int(grid_image.height * self.resize))
+                    )
+                grid_image.save(
+                    analysis_save_dir / f"page{page_num}_layout_all.{self.format}",
+                    optimize=True,
+                    quality=85,
+                )
+                grid_image.close()
 
     def add_caption(self, image: Image.Image, caption: str):
-        image = ImageOps.expand(image, border=45, fill=(255, 255, 255))
-        draw = ImageDraw.Draw(image)
         font = ImageFont.truetype(FONT, 52)
-        draw.text((20, 45), caption, (0, 0, 0), font=font)
-        return image
+        draw = ImageDraw.ImageDraw(image)
+        text_x1, text_y1, text_x2, text_y2 = draw.textbbox(
+            (0, 0), caption, font=font, align="center"
+        )
+        text_width = text_x2 - text_x1
+        text_height = int((text_y2 - text_y1) * 1.5)
+        text_xy = (image.width - text_width) // 2, 10
+        caption_image = Image.new("RGB", (image.width, text_height), color=(255, 255, 255))
+        caption_draw = ImageDraw.ImageDraw(caption_image)
+        caption_draw.text(text_xy, caption, (0, 0, 0), font=font)
+
+        expanded_image = Image.new("RGB", (image.width, image.height + text_height))
+        expanded_image.paste(caption_image, (0, 0))
+        expanded_image.paste(image, (0, text_height))
+        image.close()
+        return expanded_image
 
     def paste_images_on_grid(self, images: list[Image.Image]) -> Image.Image:
         """Creates a single image that presents all the images on a grid 2 x n/2"""
@@ -603,6 +669,8 @@ class AnalysisDrawer(AnalysisProcessor):
                 new_im.paste(image_right, (image_left.width, height_shift))
             height_shift += max(image_left.height, image_right.height if image_right else 0)
 
+        for image in images:
+            image.close()
         return new_im
 
     def load_source_image(self) -> Generator[Image.Image, None, None]:
@@ -619,4 +687,4 @@ class AnalysisDrawer(AnalysisProcessor):
 
             for image_path in image_paths:
                 with Image.open(image_path) as image:
-                    yield image
+                    yield image.convert("RGB")

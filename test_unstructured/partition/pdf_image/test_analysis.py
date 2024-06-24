@@ -76,7 +76,7 @@ def test_best_text_color(color, expected_text_color):
     color_tuple = get_rgb_color(color)
     expected_text_color_tuple = get_rgb_color(expected_text_color)
 
-    text_color_tuple = get_text_color(color_tuple)
+    _, text_color_tuple = get_text_color(color_tuple)
     assert text_color_tuple == expected_text_color_tuple
 
 

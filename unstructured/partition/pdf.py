@@ -547,6 +547,8 @@ def _partition_pdf_or_image_local(
     od_model_drawer: Optional[ODModelLayoutDrawer] = None
     ocr_drawer: Optional[OCRLayoutDrawer] = None
     od_model_layout_dumper: Optional[ObjectDetectionLayoutDumper] = None
+    skip_bboxes = env_config.ANALYSIS_BBOX_SKIP
+    skip_dump_od = env_config.ANALYSIS_DUMP_OD_SKIP
 
     if file is None:
         inferred_document_layout = process_file_with_model(
@@ -576,17 +578,18 @@ def _partition_pdf_or_image_local(
                     else:
                         analyzed_image_output_dir_path = str(Path.cwd() / "annotated")
                 os.makedirs(analyzed_image_output_dir_path, exist_ok=True)
-                pdfminer_drawer = PdfminerLayoutDrawer(
-                    layout=extracted_layout,
-                )
-                od_model_drawer = ODModelLayoutDrawer(
-                    layout=inferred_document_layout,
-                )
-                od_model_layout_dumper = ObjectDetectionLayoutDumper(
-                    layout=inferred_document_layout,
-                )
-                ocr_drawer = OCRLayoutDrawer()
-
+                if not skip_bboxes:
+                    pdfminer_drawer = PdfminerLayoutDrawer(
+                        layout=extracted_layout,
+                    )
+                    od_model_drawer = ODModelLayoutDrawer(
+                        layout=inferred_document_layout,
+                    )
+                    ocr_drawer = OCRLayoutDrawer()
+                if not skip_dump_od:
+                    od_model_layout_dumper = ObjectDetectionLayoutDumper(
+                        layout=inferred_document_layout,
+                    )
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(
                 inferred_document_layout=inferred_document_layout,
@@ -751,13 +754,17 @@ def _partition_pdf_or_image_local(
         )
         out_elements.extend(forms)
 
-    if analysis:
+    if analysis and not skip_bboxes:
         final_drawer = FinalLayoutDrawer(
             layout=out_elements,
         )
         analysis_drawer = AnalysisDrawer(
             filename=filename,
             save_dir=analyzed_image_output_dir_path,
+            draw_grid=env_config.ANALYSIS_BBOX_DRAW_GRID,
+            draw_caption=env_config.ANALYSIS_BBOX_DRAW_CAPTION,
+            resize=env_config.ANALYSIS_BBOX_RESIZE,
+            format=env_config.ANALYSIS_BBOX_FORMAT,
         )
 
         if od_model_drawer:
@@ -771,6 +778,7 @@ def _partition_pdf_or_image_local(
         analysis_drawer.add_drawer(final_drawer)
         analysis_drawer.process()
 
+    if analysis and not skip_dump_od:
         json_layout_dumper = JsonLayoutDumper(
             filename=filename,
             save_dir=analyzed_image_output_dir_path,
