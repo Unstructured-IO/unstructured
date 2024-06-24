@@ -62,14 +62,21 @@ class OpenSearchAccessConfig(AccessConfig):
 class OpenSearchConnectionConfig(ConnectionConfig):
     hosts: Optional[list[str]] = None
     username: Optional[str] = None
-    cloud_id: Optional[str] = None
-    api_key_id: Optional[str] = None
-    ca_certs: Optional[str] = None
+    # cloud_id: Optional[str] = None
+    # api_key_id: Optional[str] = None
+    # ca_certs: Optional[str] = None
     access_config: OpenSearchAccessConfig = enhanced_field(sensitive=True)
     def to_dict(self, **kwargs) -> dict[str, json]:
-        d = super().to_dict(**kwargs)
-        d["http_auth"] = (self.username, self.access_config.password)
-        return d
+        ddd = super().to_dict(**kwargs)
+        ddd["use_ssl"] = self.access_config.use_ssl
+        ddd["verify_certs"] = self.access_config.verify_certs
+        ddd["ssl_show_warn"] = self.access_config.ssl_show_warn
+        ddd["ca_certs"] = self.access_config.ca_certs
+        ddd["client_cert"] = self.access_config.client_cert
+        ddd["client_key"] = self.access_config.client_key
+    
+        ddd["http_auth"] = (self.username, self.access_config.password)
+        return ddd
 
     # def get_client_kwargs(self) -> dict:
     #     # Update auth related fields to conform to what the SDK expects based on the
@@ -334,10 +341,18 @@ class OpenSearchUploader(Uploader):
         )
         from opensearchpy.helpers import parallel_bulk
 
+        client = self.connection_config.get_client()
+
+        if not client.indices.exists(index=self.upload_config.index_name):
+            logger.warning(
+                f"Elasticsearch index does not exist: "
+                f"{self.upload_config.index_name}. "
+                f"This may cause issues when uploading."
+            )
+
         for batch in generator_batching_wbytes(
             elements_dict, batch_size_limit_bytes=self.upload_config.batch_size_bytes
         ):
-            breakpoint()
             for success, info in parallel_bulk(
                 self.connection_config.get_client(),
                 batch,
