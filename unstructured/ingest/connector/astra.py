@@ -22,6 +22,7 @@ from unstructured.ingest.interfaces import (
 )
 from unstructured.ingest.logger import logger
 from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.staging.base import flatten_dict
 from unstructured.utils import requires_dependencies
 
 if t.TYPE_CHECKING:
@@ -141,7 +142,8 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @property
     def filename(self):
         return (
-            Path(self.processor_config.output_dir)
+            Path(self.read_config.download_dir)
+            / self.connector_config.collection_name
             / f"{self.metadata['_id']}.txt"
         ).resolve()
  
@@ -163,8 +165,14 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @requires_dependencies(["astrapy"], extras="astra")
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
+        self.filename.parent.mkdir(parents=True, exist_ok=True)
+
+        flattened_dict = flatten_dict(dictionary=self.metadata)
+        str_values = [str(value) for value in flattened_dict.values()]
+        concatenated_values = "\n".join(str_values)
+        
         with open(self.filename, "w") as f:
-            f.write(self.metadata["content"])
+            f.write(concatenated_values)
 
 
 class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):

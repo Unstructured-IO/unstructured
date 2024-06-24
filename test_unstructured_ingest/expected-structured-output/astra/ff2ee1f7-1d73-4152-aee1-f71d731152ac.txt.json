@@ -1,19 +1,36 @@
 [
   {
-    "element_id": "6cbf560c4200daa68bda80640308c305",
+    "element_id": "d8380b5563ff2eca00e25fdf1c621edf",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.417511"
+        "date_processed": "2024-06-24T15:46:06.865666"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "ff2ee1f7-1d73-4152-aee1-f71d731152ac.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "It was in July, 1805, and the speaker was the well-known Anna Pavlovna Scherer, maid of honor and favorite of the Empress Marya Fedorovna. With these words she greeted Prince Vasili Kuragin, a man of high rank and importance, who was the first to arrive at her reception. Anna Pavlovna had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in St. Petersburg, used only by the elite.",
+    "text": "ff2ee1f7-1d73-4152-aee1-f71d731152ac It was in July, 1805, and the speaker was the well-known Anna Pavlovna Scherer, maid of honor and favorite of the Empress Marya Fedorovna. With these words she greeted Prince Vasili Kuragin, a man of high rank and importance, who was the first to arrive at her reception. Anna Pavlovna had had a cough for some days. She was, as she said, suffering from la grippe; grippe being then a new word in St. Petersburg, used only by the elite.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "a7d5ac5d4bde6ab81c0c407b379234bf",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.865666"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "ff2ee1f7-1d73-4152-aee1-f71d731152ac.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "{'type': 'CompositeElement', 'element_id': 'c6e82292e0948e0180c0d952f10eb893', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJx1Ut9r2zAQ/lcOP8euZceOkz3tYYNtbBRatodSwlk6OyK2ZCS5aSj933dy024U+mBkSZ++H3d395TQQCOZsNcq2UEitp2q5XojhGpFXa7rqpEo2qop2rYtmiJZQTJSQIUBGf+UxJ+9t7OT9LqnvXTEy0JY5MU6zYu0WIPY7PJiV5ZZWazzTRWpFvRole70O3gJotit612xzTaiyKv8DT45K8n7//F1KsRtnu/EdldU2aYsmhf6idyovdfW+P3F8d1TwnrRa1mKpnm+Z9jshshFjzhOA6XKSn/VWntMT+hSNCqdCCWlYsrCY0ie+UWnB9or7UgG687vHycXhMExCiUfc12A4TwtwECP4WoaUJt4M6DpZ+zJR9sJmT65X059+KBkt68lW7Kj+9dWkrIm2SmF+XZTqa2o1jWpTkjFnaCmXkJF9Qj+FuCEHrSB7/NwXoFo8moF7B3CgcBzgCO5BRL3JxqG9GjsycBnYxCu8WGwD/xzIw/kyK1gRK3AdnCwxrqFp8MH63SgeBo5voyT45bCT3RnhK+krIsUGfzR4RARnnWsUx48o3tHxNMF104bSfAbvR40/Jgd9tqwURY0i57uD+DQHBdNPU7WBeQXKzgd7Jv/TjsfIFhA5/QDAQZg38CtpSnw5GTvYh1QLR+CtDMLdJzJ25FA4dlncBNLgp5tvJj1HH4Ffu46Yrs9dM6OMCCH0NNEny4rtBQv2Y9hYkOnJW5swU3I4JrjOt/Orl/BzIMP1gxnaM+Lfxq4kFns+OsU/eIkGDjLbWzo8/1fT6pAGw=='}}",
+    "type": "UncategorizedText"
   }
 ]

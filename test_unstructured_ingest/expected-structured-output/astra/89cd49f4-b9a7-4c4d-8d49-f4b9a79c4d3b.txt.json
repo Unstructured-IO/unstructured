@@ -1,36 +1,36 @@
 [
   {
-    "element_id": "0da78abb536f37cbc6daa5e0109f35bd",
+    "element_id": "cfbb2ac4954b1d669b0c9527e2d30a30",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:00.900978"
+        "date_processed": "2024-06-24T15:46:05.177919"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "89cd49f4-b9a7-4c4d-8d49-f4b9a79c4d3b.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"First of all, dear friend, tell me how you are. Set your friend's mind at rest,\" said he without altering his tone, beneath the politeness and affected sympathy of which indifference and even irony could be discerned.",
+    "text": "89cd49f4-b9a7-4c4d-8d49-f4b9a79c4d3b \"First of all, dear friend, tell me how you are. Set your friend's mind at rest,\" said he without altering his tone, beneath the politeness and affected sympathy of which indifference and even irony could be discerned.",
     "type": "NarrativeText"
   },
   {
-    "element_id": "3b87d2bb7d1804e50f7c526b1b445276",
+    "element_id": "c0fe3225c47b50ad220899b0681355e8",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:00.900978"
+        "date_processed": "2024-06-24T15:46:05.177919"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "89cd49f4-b9a7-4c4d-8d49-f4b9a79c4d3b.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"Can one be well while suffering morally? Can one be calm in times like these if one has any feeling?\" said Anna Pavlovna. \"You are staying the whole evening, I hope?\"",
+    "text": "\"Can one be well while suffering morally? Can one be calm in times like these if one has any feeling?\" said Anna Pavlovna. \"You are staying the whole evening, I hope?\" {'type': 'CompositeElement', 'element_id': 'c13aa955ff6e1be93c5de9a46307e788', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJztk8tu3CAUhl/liE0344mNr+NNVFWq1E1VqdlUSTRi4DBGwWABc7GivHvBybRRqvQF2pUNfPznwn9uHwlqHNGErRKkB7KpKlmWhcxxI2nbNAVFWtJd2Uja7WrZkBWQEQMTLLDIP5L0s/X24Dhe1rjlDuNnEaQ5rbKcZrSCou1z2pfluqRV3tZJaqFHK5RUb/ASCtpXTU8367ageZ3/widnOXr/mm+yorjJ877Y9LRetyXtnuUndKPyXlnjty8Z3z6SGC/lGsvsuqf7iB2cTlp4ZuOkMROW+6udtQ/ZibmMGZFNyDhmxbQO50Ce4g2pNG6FcsiDdfPby+SFMGxMgcj7Wi9gmKcFDHgOV5NmyqQTzcz+wPboU9oEzZ7cL7s+vNOym0vLltqZ+/2syHmDXArB8k1bi01RVw0KWXARXwK7ZikqRU/wHfmsnA9gJTCtVyCQOZBOoRErCKg1jAiDPcFsDxCjrOE7hrS4UB88jMoIYAEc+rC6I+CZEjAgnFQY7CFE4YBOmT0MykOwBlewQxNdM0CI2GS1CnHtPbAkJGXsNArw8zhFZk65nQbFB4hxVDyNtXJcWDyiAeWsmYHbgxZRF4TyHJ1BsU6duXT7K3OOBXXEG3x+1j+GQcpCdLLFTSlq2ogcS1a0FauLrs6Rd/+H4V8Yhk/MQDRo8tEpmT/6TiP4Q3JdcvBoXRyT+RpegZzpMVoTghrRg1YPmGztEZRckIElY88gEXXUuL5MyEdjGHxjR22Phq3hjvx4HjHwgc0pWBqO02BjAsnncWcFX+IsThgl/uLt+59HK9eQ'}}",
     "type": "NarrativeText"
   }
 ]

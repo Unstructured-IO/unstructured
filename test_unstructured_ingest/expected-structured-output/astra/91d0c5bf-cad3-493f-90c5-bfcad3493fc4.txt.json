@@ -1,19 +1,36 @@
 [
   {
-    "element_id": "2fcbdc521dd2548cd4e3a72067d6f137",
+    "element_id": "ec9817bf0a86fe4f62a16716e928a435",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.421344"
+        "date_processed": "2024-06-24T15:46:06.872260"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "91d0c5bf-cad3-493f-90c5-bfcad3493fc4.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "her hand, presenting to her his bald, scented, and shining head, and complacently seated himself on the sofa.",
+    "text": "91d0c5bf-cad3-493f-90c5-bfcad3493fc4 her hand, presenting to her his bald, scented, and shining head, and complacently seated himself on the sofa.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "5fd3c109c7a43e664622b55957294161",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.872260"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "91d0c5bf-cad3-493f-90c5-bfcad3493fc4.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "{'type': 'CompositeElement', 'element_id': '692753f1dbf36af601a3f34cbe35b554', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJx1VMtu2zAQ/JWNzrajh9+3Xoqcih5ySwJjTS4l1hIpkJQfDfLv3ZXttgiQk6jlcHZmuNLLe0YtdeTSzupsC5kxi4o2VFGpcpznar1am6ooVtogUVFSNoGso4QaEzL+PZPFLvohKLq/004F4sdIWOblfJqX03IOxWqbl9uqmlXlPF8thGpEd15bYz/BKyjK7Xy5LTezVVHmi/wvvA9eUYz/45fTonjO822x2ZaL2aoq11f6nkJnY7Texd1N8ct7xv1Ea1UV6/XHG8OG0AoXnbHrW5pqr+Lj3vvD9IRhik5Pe0JF06KfpXPKPviEsS3ttA2kkg+Xz4ezG8JhJ42yr7luwHTpR2Cic3rsW7ROdlp09YA1RZGdkauzt7Ea0xeRPd8jG71j+HetpNSSlNEa881qoTfFYr4kbQql+SZovRxNSXcBv2ZPhEdy8QFODSZAONowsB1epoTq8PCaQaC+ZQGQGoI+WKdoAs4nsG4stcQyQduoPG8FHgbYX3jHRj6pqE98JzN4ImhQw6+BsUxPgfQEToTMVwM6oG4fvNVSB8UzlmBw1vjQTeDgiGAfiFRDccJgDbHx96WwxoQhgncgTRkpgmQPITKhI6BzH2icjjvKtGzX8P2M0mLvD3Q1xOVAxjrW8Z3PqkbKp8bygmVBHZjYIBvnjpKCd+3ldn4/JCbwQ92kq7aTTc2YUc2WW46txxS8s7/FtHXJO5R0gB9DwBaSZ8kdp+EN2K73ISFHyt39aLMO/sR7rRZJ0SvL03T1ma6ZjV5OcntDL2TfnEP4icfWHx1ykFa+JWDpTOc4fwmF0aKG0WNdAsSW96KSa9L3vK0TVEN4qyjP3wAKRuyP/wA+3EVqjUQspqM3OJP5vM/8DwyBDR/pWcbv4+0PSvuC2g==', 'is_continuation': True}}",
+    "type": "UncategorizedText"
   }
 ]

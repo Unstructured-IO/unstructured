@@ -1,19 +1,36 @@
 [
   {
-    "element_id": "c117e685efb382518665a18ce6dbd935",
+    "element_id": "1dc6976735d761352b440dd39478fcba",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.443640"
+        "date_processed": "2024-06-24T15:46:06.880202"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "d81634c2-fda7-4434-9634-c2fda79434d4.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"Heavens! what a virulent attack!\" replied the prince, not in the least disconcerted by this reception. He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, patronizing intonation natural to a man of importance who had grown old in society and at court. He went up to Anna Pavlovna, kissed",
+    "text": "d81634c2-fda7-4434-9634-c2fda79434d4 \"Heavens! what a virulent attack!\" replied the prince, not in the least disconcerted by this reception. He had just entered, wearing an embroidered court uniform, knee breeches, and shoes, and had stars on his breast and a serene expression on his flat face. He spoke in that refined French in which our grandfathers not only spoke but thought, and with the gentle, patronizing intonation natural to a man of importance who had grown old in society and at court.",
+    "type": "NarrativeText"
+  },
+  {
+    "element_id": "02108a5ef63f142f893fdf2320967479",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.880202"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d81634c2-fda7-4434-9634-c2fda79434d4.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "He went up to Anna Pavlovna, kissed {'type': 'CompositeElement', 'element_id': '6daaee3b5d3db18e4da9049bd9251268', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJx1VMtu2zAQ/JWNzrajh9+3Xoqcih5ySwJjTS4l1hIpkJQfDfLv3ZXttgiQk6jlcHZmuNLLe0YtdeTSzupsC5kxi4o2VFGpcpznar1am6ooVtogUVFSNoGso4QaEzL+PZPFLvohKLq/004F4sdIWOblfJqX03IOxWqbl9uqmlXlPF8thGpEd15bYz/BKyjK7Xy5LTezVVHmi/wvvA9eUYz/45fTonjO822x2ZaL2aoq11f6nkJnY7Texd1N8ct7xv1Ea1UV6/XHG8OG0AoXnbHrW5pqr+Lj3vvD9IRhik5Pe0JF06KfpXPKPviEsS3ttA2kkg+Xz4ezG8JhJ42yr7luwHTpR2Cic3rsW7ROdlp09YA1RZGdkauzt7Ea0xeRPd8jG71j+HetpNSSlNEa881qoTfFYr4kbQql+SZovRxNSXcBv2ZPhEdy8QFODSZAONowsB1epoTq8PCaQaC+ZQGQGoI+WKdoAs4nsG4stcQyQduoPG8FHgbYX3jHRj6pqE98JzN4ImhQw6+BsUxPgfQEToTMVwM6oG4fvNVSB8UzlmBw1vjQTeDgiGAfiFRDccJgDbHx96WwxoQhgncgTRkpgmQPITKhI6BzH2icjjvKtGzX8P2M0mLvD3Q1xOVAxjrW8Z3PqkbKp8bygmVBHZjYIBvnjpKCd+3ldn4/JCbwQ92kq7aTTc2YUc2WW46txxS8s7/FtHXJO5R0gB9DwBaSZ8kdp+EN2K73ISFHyt39aLMO/sR7rRZJ0SvL03T1ma6ZjV5OcntDL2TfnEP4icfWHx1ykFa+JWDpTOc4fwmF0aKG0WNdAsSW96KSa9L3vK0TVEN4qyjP3wAKRuyP/wA+3EVqjUQspqM3OJP5vM/8DwyBDR/pWcbv4+0PSvuC2g=='}}",
     "type": "NarrativeText"
   }
 ]

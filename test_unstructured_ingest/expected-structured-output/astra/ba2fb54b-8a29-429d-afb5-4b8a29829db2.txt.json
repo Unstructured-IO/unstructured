@@ -1,36 +1,36 @@
 [
   {
-    "element_id": "480380963d6e3ea36203932866edb31f",
+    "element_id": "7d3a3c4b98c0de506f461478225acbd0",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.408132"
+        "date_processed": "2024-06-24T15:46:06.850373"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "ba2fb54b-8a29-429d-afb5-4b8a29829db2.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"Don't tease! Well, and what has been decided about Novosiltsev's dispatch? You know everything.\"",
+    "text": "ba2fb54b-8a29-429d-afb5-4b8a29829db2 \"Don't tease! Well, and what has been decided about Novosiltsev's dispatch? You know everything.\"",
     "type": "NarrativeText"
   },
   {
-    "element_id": "021706c8826448697ed472a4392e78b2",
+    "element_id": "6110fe0b27e19a404a46d4c1af2e1d7c",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.408132"
+        "date_processed": "2024-06-24T15:46:06.850373"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "ba2fb54b-8a29-429d-afb5-4b8a29829db2.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"What can one say about it?\" replied the prince in a cold, listless tone. \"What has been decided? They have decided that Buonaparte has burnt his boats, and I believe that we are ready to burn ours.\"",
+    "text": "\"What can one say about it?\" replied the prince in a cold, listless tone. \"What has been decided? They have decided that Buonaparte has burnt his boats, and I believe that we are ready to burn ours.\" {'type': 'CompositeElement', 'element_id': '43c4186261fc7851613e222e57c0e45c', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJztU8tu2zAQ/JUtL7lEjkTJkqxLgKKXXnIyEBRJYKzIlU2EJgWS8gNG/r2U7CSFgfQH2pMoamZ2dnf0dGKkaUsmrJRkDbC8rakqO94idpgXNSfZLuqSl6LsZIXIboFtKaDEgBF/YuNh5e3gBL2/00o4io9JkKe8SFKe8AKyqkl5k+eznBdpNR+lJvTWStWpK3gOGW+KsuGLWZXxdJ5+wHtnBXn/J75MsmyZpk22aPh8VuW8Psv35LbKe2WNX10cP51YrDd6zfOsrt9eImxwetSiA257TYm0wt+11r4me3QJGpn0hIKSrJ+FQ2BvkdEpTSupHIlg3fGazC4Ig9uxEPta6wIMx34CBjqEu16jMuMXjWY94Jr8aJuRWbOX6daHL0a2fB/Z1Du6z7WSECWJTkpMF9VcLrJ5UZLsMiHjJqgup6bG6iP4mf2w5iZAIPT0DR5J61uI1mG/wQAb9NASGZAklCQJ2NohwIPdWa908LS78SCV7zGIzT38sgO8GrsH2pE7ho0y69kzGw2+N/2AzmFQO1rSebrXmexakRWixTxtMylywdNWpq1o27yUlaT5/0z+C5l8HMMn0IA1BB6Pl9ypcP/MwFGvY2kIG4LeKSMIlAEEYbW8Ba180HE9ECJ3Bhet6yDfw3JDx3i9o49shxH4fbAGo/VAZ87gTGSreLIY/PnX+BmlooNInSh7gthqtIXyGKtOHIiB9H/P/stv5Sy5tg=='}}",
     "type": "NarrativeText"
   }
 ]

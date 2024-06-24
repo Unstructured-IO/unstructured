@@ -1,37 +1,141 @@
 [
   {
-    "element_id": "8d2d45b977d5545965c4afbc784c471a",
+    "element_id": "2dd84851334efa095c7a029c9281eccc",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.412609"
+        "date_processed": "2024-06-24T15:46:06.857146"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "d46c8718",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "46a0e4eaeced270cc4092097b4883ddd",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "7a0a",
+    "type": "Title"
+  },
+  {
+    "element_id": "3d5a914b39a3ac250e26aeed7e2c96b8",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18",
+      "parent_id": "46a0e4eaeced270cc4092097b4883ddd"
+    },
+    "text": "465a",
+    "type": "UncategorizedText"
+  },
+  {
+    "element_id": "4a628c6374685771343383b50f065588",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "ac87",
+    "type": "Title"
+  },
+  {
+    "element_id": "52ecba56b6339370fbcd763964dc0537",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "187a0ab65acd",
+    "type": "Title"
+  },
+  {
+    "element_id": "15f2b5a9be67229e2aab5560643594cf",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
     },
     "text": "CHAPTER I",
     "type": "Title"
   },
   {
-    "element_id": "3c7f4e4f9db013c905c76310d12936a1",
+    "element_id": "792cf4045d1ef5c97f4a27fa4aa59778",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.412609"
+        "date_processed": "2024-06-24T15:46:06.857146"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59",
-      "parent_id": "8d2d45b977d5545965c4afbc784c471a"
+      "last_modified": "2024-06-24T08:35:18",
+      "parent_id": "15f2b5a9be67229e2aab5560643594cf"
     },
     "text": "\"Well, Prince, so Genoa and Lucca are now just family estates of the Buonapartes. But I warn you, if you don't tell me that this means war, if you still try to defend the infamies and horrors perpetrated by that Antichrist--I really believe he is Antichrist--I will have nothing more to do with you and you are no longer my friend, no longer my 'faithful slave,' as you call yourself! But how do you do? I see I have frightened you--sit down and tell me all the news.\"",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "e73c03d35da17549bcc57821af1548dc",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.857146"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "d46c8718-7a0a-465a-ac87-187a0ab65acd.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18",
+      "parent_id": "15f2b5a9be67229e2aab5560643594cf"
+    },
+    "text": "{'type': 'CompositeElement', 'element_id': '30b5b853563799829e2df679cda80f16', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJztU8tq3DAU/ZVbbbIZT/yYpzclLaUNlBLKQBdJGDTS1VitLBlJzsSE/HuvnExIB7LostCN9Tr3nKOj6+sHhgZbtHGrJauBoRALFEpKnq+Xc7ku5rMFSlUIOcuXuFqwCbAWI5c8csI/sDTZBtd7gcc1boVHGkbCMi9nWV5m5QyKZZ2XdVVNq5LI5olqRLdOaqVP4BUUZT1b1OV6uizKfJ6/wDvvBIbwGr/IimKT53Wxrsv5dFmVqyf6Dn2rQ9DOhu2z4+sHRnrJa1UVq9XjLcF6b8a73/O2M5hJJ8L5zrlf2YH7jFuZdcgFZkU3jfeRPVKF0ga3UnsU0fnhtJg9IyxvkxB7m+sZGIduBEa8j+ed4dqmE8Ptvud7DMk2Q7tnt+NuiG9EtjlGNnpMZOn845eLq82n73CZOI9KGx0NJthpA6z5rhQLJSql1EKgFCuaCSzpI1bLfP6/Af6JBkh35/4v/uvXHXPDfqAxE7jy2gqcQHDwGa3jQPbhay8EzTyCdQf42YcIirfaDIAh0vMEcApig/Chd5aTCdqa0iLCJVAEFgbXT0CrNIJ09ixCJDVokao4LRodaMFtSPAXZIiaQNEPEB1IVEhWkoq2SZ1Uk7fGee98AHr2DqNPLQi74Yn3wkYtGq9DzLJLoP40ZHmHRuMdQiIKJ5BDEmz4XboombJ7aB3dOsk7OozN6CvJjuMYCBhn9+ihHUB5TR4nf26eKU6FqjcQDDFPzoCHsVyQnTTxAY16N8bVULyk9BTTe0ovINJ3dETk+yaixVE8y4KOBDrY0c4xzkSZIrJ4CNMb9vr3/8Y9paPvcJOe/PH2N1jI5l8='}}",
+    "type": "UncategorizedText"
   }
 ]

@@ -1,36 +1,53 @@
 [
   {
-    "element_id": "b1c211d6c0ab1271ecdfa8f156fc94b7",
+    "element_id": "4ba73331bb06cf6bb0bea26d4cc74f84",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.436965"
+        "date_processed": "2024-06-24T15:46:06.872578"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "05730899-5be9-4ef9-b308-995be93ef940.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "All her invitations without exception, written in French, and delivered by a scarlet-liveried footman that morning, ran as follows:",
+    "text": "05730899-5be9-4ef9-b308-995be93ef940 All her invitations without exception, written in French, and delivered by a scarlet-liveried footman that morning, ran as follows:",
     "type": "NarrativeText"
   },
   {
     "element_id": "d9e1a517345ccad36808275e8c7e657d",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:02.436965"
+        "date_processed": "2024-06-24T15:46:06.872578"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "05730899-5be9-4ef9-b308-995be93ef940.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
     "text": "\"If you have nothing better to do, Count (or Prince), and if the prospect of spending an evening with a poor invalid is not too terrible, I shall be very charmed to see you tonight between 7 and 10--Annette Scherer.\"",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "9ee60dafd99d04b57af7da14de4d2138",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:06.872578"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "05730899-5be9-4ef9-b308-995be93ef940.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "{'type': 'CompositeElement', 'element_id': '429cd188f0f673abfe072b629a00c88f', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJztU8tq3TAQ/ZVBqxaubyy/7V0oFLIphWaXhIssja9FbclIui9C/r0j59ESSD+gdGV5dHTmzMyZu0eGE85owk4r1gFrRdZiUQ150WJZNbJHWUieq0rISuXI2QbYjEEoEQThH1k87Lw9OImv/7iTDumzEmZpViRplmQF8LpLsy7Pt3lWpHUZqVb0bJUe9Dt4DjzriqrL2m3Ns7RM3+CLsxK9/xNfJZzfpmnH2y4rt3WeNc/0C7pZe6+t8bsXxXePjPJFrXnOm+bpgWAHN0UuPIt5mTBRVvqr3tqfyUm4RBiVLCgkJnzZhnNgT/Ri0BPulHYog3WX94/ZC8KIOSZiH3O9AMNlWYEBz+FqmYQ28WYSZn8Qe/RRNkOzZw9r1IcPWnb72rK1duF+jxWlrFAOSom0rUvV8rKoUA1cKpoENtVaVMwewdfTBCM60Oaogwixe3DSYbSHAHiWuMTQBk5Oh4CGYPCVUslxA1QfKJz0ER0q6C8gwEvhqMBkDZJiGKwNszAQRhFgts5os9+Ao4jwdDlN9uS7WMBrU74J50jFEW/xufvvPYt5PdQizUtyalNzzlXfq7qSeZmLpiya/5799z17z24GuNgDjOKIYGwYyVbQIznUQbCg7Aa+2IMJ8Mk6+O60kfj52bB6IC8i0Ij8Qr0BOwAdjIoE5Eo8YrTougHk58XadTPEpOmpj6mI3wLlcbqfcAM34EdBK9QjkOUvIEfhZjI+qfCIq8hgjd6PIeo7Ia1QvQrhaZJcGxM1ww9JG4hue8/+sgoPvwBLrspY'}}",
+    "type": "UncategorizedText"
   }
 ]

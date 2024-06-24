@@ -1,34 +1,34 @@
 [
   {
-    "element_id": "df543c228f859e6724daefaef0f65172",
+    "element_id": "6d11906aff063ee1af01b0616e2db9d3",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:00.893391"
+        "date_processed": "2024-06-24T15:46:05.162595"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
-    "text": "\"And the fete at the English ambassador's? Today is Wednesday. I must put in an appearance there,\" said the prince. \"My daughter is coming for me to take me there.\"",
+    "text": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0 \"And the fete at the English ambassador's? Today is Wednesday. I must put in an appearance there,\" said the prince. \"My daughter is coming for me to take me there.\"",
     "type": "NarrativeText"
   },
   {
     "element_id": "b4f733dcdde32103453bb0e92dacdd29",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:00.893391"
+        "date_processed": "2024-06-24T15:46:05.162595"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
     "text": "\"I thought today's fete had been canceled. I confess all these festivities and fireworks are becoming wearisome.\"",
     "type": "NarrativeText"
@@ -37,17 +37,34 @@
     "element_id": "91b571b5de1475b259d6d09ac9843d8b",
     "metadata": {
       "data_source": {
-        "date_processed": "2024-06-14T17:07:00.893391"
+        "date_processed": "2024-06-24T15:46:05.162595"
       },
-      "file_directory": "/Users/erichare/GitHub/unstructured/test_unstructured_ingest/structured-output/astra",
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
       "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
       "filetype": "text/plain",
       "languages": [
         "eng"
       ],
-      "last_modified": "2024-06-14T10:06:59"
+      "last_modified": "2024-06-24T08:35:18"
     },
     "text": "\"If they had known that you wished it, the entertainment would have been put off,\" said the prince, who, like a wound-up clock, by force of habit said things he did not even wish to be believed.",
     "type": "NarrativeText"
+  },
+  {
+    "element_id": "23d4219afda0a90dd5b26ec21bfe609d",
+    "metadata": {
+      "data_source": {
+        "date_processed": "2024-06-24T15:46:05.162595"
+      },
+      "file_directory": "/Users/erichare/.cache/unstructured/ingest/astra/f45b695d45/unstructured",
+      "filename": "7f0b1e1f-ada9-482c-8b1e-1fada9182ca0.txt",
+      "filetype": "text/plain",
+      "languages": [
+        "eng"
+      ],
+      "last_modified": "2024-06-24T08:35:18"
+    },
+    "text": "{'type': 'CompositeElement', 'element_id': '873bc6cb7b9ccf2a6e55ba267372e014', 'metadata': {'data_source': {'url': 'example-docs/book-war-and-peace-1p.txt', 'date_created': '2024-02-24 17:02:33.324075', 'date_modified': '2024-02-23 12:46:29.712050', 'date_processed': '2024-06-11T00:19:25.732875', 'permissions_data': [{'mode': 33188}]}, 'file_directory': 'example-docs', 'filename': 'book-war-and-peace-1p.txt', 'filetype': 'text/plain', 'languages': ['eng'], 'last_modified': '2024-02-23T12:46:29', 'orig_elements': 'eJztlE1v2zAMhv8KoUsvsefvj1yGHXboYTsF2KEpAlmiEyG2ZEhy06Dofx/lpNtQrAN2bhEDEWXyJUU95t0TwwFH1H6nJFsDazMhBK+LtmpRZkktsi6vBIoupV9V12wFbETPJfec/J9YWOycma3AFxt3wiL9LYJZkhVRkkVZAWm9TrJ1nsd5ViR1GaQW79FI1atX7jmk2bqo1lkb12mWlMkv98kagc796V9FabpJknXarrMyrvOsuchPaEflnDLa7a4V3z0xyhdqzfO0aZ7vyW22Q9DCRz5OA0bSCPepM+YYnbiNuJbRhFxglE6xf/TsmSJ6NeBOKovCG3t+HcyuHpqPIRF7W+vq6M/T4ujx0X+aBq50eDNwvZ/5Hl0om6Hes/tl1/k3WrZ5adlydm5/XysKUaHopeRJW5eyTcuiQtmnQtJNYFMthwrZg/OWfdES/AGhR4/A/bL+qveDcgfgY8ed49LYG/cZNkbyMygHP1BqdGTEcAvj7DxMswelgdMz0aEt1wKDksXVloHj6pJjsopexLBl384g+bw/eLRBUZhR6T30xsJIgQY8P+KyDBrxloVTvnTuO7eWe/WAG7xc0Wuwe5E2LU+SVjS9KMqk7mSRybZK0k52ZVV9gP0ewL4leExAjHgiVm/cBfEDl9AhahAB0gFlgFgY3dN1AB+GgJwLn4MjxJRXSLv0ifTUp5OxR7IsksCV2BPBrpwZ/5vROu+Spi7qsum7uijzEnnVpHVb5VgmUpQfjL4LRvuA23mB8qjNSZNJM/hsZjjRAEYJyq+W0Ukp0HoqODAEJzMPkqIe8MJymL+m7/8ybFdwOpgVDIrmKQ9x1Jl5AjEYcVxBdw4zl2a16UmtU/4lnNh2QCKSLG084ANlCSWF4dyFrIOiPRn/A/r7nz3EnOI='}}",
+    "type": "UncategorizedText"
   }
 ]
