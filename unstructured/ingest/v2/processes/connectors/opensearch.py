@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
-
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import SourceConnectionNetworkError
@@ -68,34 +68,39 @@ class OpenSearchConnectionConfig(ConnectionConfig):
     access_config: OpenSearchAccessConfig = enhanced_field(sensitive=True)
     def to_dict(self, **kwargs) -> dict[str, json]:
         d = super().to_dict(**kwargs)
-        d["http_auth"] = (self.username, self.password)
+        d["http_auth"] = (self.username, self.access_config.password)
         return d
 
-    def get_client_kwargs(self) -> dict:
-        # Update auth related fields to conform to what the SDK expects based on the
-        # supported methods:
-        # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
-        client_kwargs = {
-            "hosts": self.hosts,
-        }
-        if self.ca_certs:
-            client_kwargs["ca_certs"] = self.ca_certs
-        if self.access_config.password and (
-            self.cloud_id or self.ca_certs or self.access_config.ssl_assert_fingerprint
-        ):
-            client_kwargs["basic_auth"] = ("elastic", self.access_config.password)
-        elif not self.cloud_id and self.username and self.access_config.password:
-            client_kwargs["basic_auth"] = (self.username, self.access_config.password)
-        elif self.access_config.api_key and self.api_key_id:
-            client_kwargs["api_key"] = (self.api_key_id, self.access_config.api_key)
-        return client_kwargs
+    # def get_client_kwargs(self) -> dict:
+    #     # Update auth related fields to conform to what the SDK expects based on the
+    #     # supported methods:
+    #     # https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
+    #     client_kwargs = {
+    #         "hosts": self.hosts,
+    #     }
+    #     if self.ca_certs:
+    #         client_kwargs["ca_certs"] = self.ca_certs
+    #     if self.access_config.password and (
+    #         self.cloud_id or self.ca_certs or self.access_config.ssl_assert_fingerprint
+    #     ):
+    #         client_kwargs["basic_auth"] = ("elastic", self.access_config.password)
+    #     elif not self.cloud_id and self.username and self.access_config.password:
+    #         client_kwargs["basic_auth"] = (self.username, self.access_config.password)
+    #     elif self.access_config.api_key and self.api_key_id:
+    #         client_kwargs["api_key"] = (self.api_key_id, self.access_config.api_key)
+    #     return client_kwargs
 
-    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
-    def get_client(self) -> "ElasticsearchClient":
-        from elasticsearch import Elasticsearch as ElasticsearchClient
+    # @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    # def get_client(self) -> "ElasticsearchClient":
+    #     from elasticsearch import Elasticsearch as ElasticsearchClient
 
-        return ElasticsearchClient(**self.get_client_kwargs())
+    #     return ElasticsearchClient(**self.get_client_kwargs())
+    @DestinationConnectionError.wrap
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
+    def get_client(self) -> "OpenSearch":
+        from opensearchpy import OpenSearch
 
+        return OpenSearch(**self.to_dict(apply_name_overload=False))
 
 # @dataclass
 # class ElasticsearchIndexerConfig(IndexerConfig):
@@ -327,11 +332,12 @@ class OpenSearchUploader(Uploader):
             f" with batch size (in bytes) {self.upload_config.batch_size_bytes}"
             f" with {self.upload_config.thread_count} (number of) threads"
         )
-        from elasticsearch.helpers import parallel_bulk
+        from opensearchpy.helpers import parallel_bulk
 
         for batch in generator_batching_wbytes(
             elements_dict, batch_size_limit_bytes=self.upload_config.batch_size_bytes
         ):
+            breakpoint()
             for success, info in parallel_bulk(
                 self.connection_config.get_client(),
                 batch,
@@ -339,7 +345,7 @@ class OpenSearchUploader(Uploader):
             ):
                 if not success:
                     logger.error(
-                        "upload failed for a batch in elasticsearch destination connector:", info
+                        "upload failed for a batch in opensearch destination connector:", info
                     )
 
 
