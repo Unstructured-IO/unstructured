@@ -3,12 +3,15 @@ from __future__ import annotations
 import numbers
 import os
 import subprocess
+import zipfile
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
+from time import sleep
 from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
+import psutil
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
@@ -365,6 +368,16 @@ def remove_element_metadata(layout_elements) -> list[Element]:
     return elements
 
 
+def _is_soffice_running():
+    for proc in psutil.process_iter():
+        try:
+            if "soffice" in proc.name().lower():
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False
+
+
 def convert_office_doc(
     input_filename: str,
     output_directory: str,
@@ -407,12 +420,9 @@ def convert_office_doc(
         input_filename,
     ]
     try:
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        output, error = process.communicate()
+        while _is_soffice_running():
+            sleep(0.01)
+        output = subprocess.run(command, capture_output=True)
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -423,9 +433,26 @@ on your system and try again.
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
 
-    logger.info(output.decode().strip())
-    if error:
-        logger.error(error.decode().strip())
+    logger.info(output.stdout.strip())
+    if output.returncode != 0:
+        logger.error("soffice failed to convert %s with code %i", input_filename, output.returncode)
+        logger.error(output)
+
+    if not os.path.exists(output_directory):
+        raise RuntimeError(f"temp dir {output_directory} gone before processing converted file")
+
+    _, filename_no_path = os.path.split(os.path.abspath(input_filename))
+    base_filename, _ = os.path.splitext(filename_no_path)
+    target_file_path = os.path.join(output_directory, f"{base_filename}.docx")
+
+    if not os.path.exists(output_directory):
+        raise RuntimeError(f"temp dir {output_directory} gone before processing converted file")
+
+    if not os.path.isfile(target_file_path):
+        raise RuntimeError(f"no output file {target_file_path} produced by soffice")
+
+    if not zipfile.is_zipfile(target_file_path):
+        raise RuntimeError(f"output file {target_file_path} is not a ZIP archive")
 
 
 def exactly_one(**kwargs: Any) -> None:
