@@ -2,6 +2,8 @@
 
 ### Enhancements
 
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
 ### Features
 
 ### Fixes
@@ -19,6 +21,8 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
 

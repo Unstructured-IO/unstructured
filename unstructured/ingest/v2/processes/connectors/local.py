@@ -193,6 +193,7 @@ add_source_entry(
         indexer_config=LocalIndexerConfig,
         downloader=LocalDownloader,
         downloader_config=LocalDownloaderConfig,
+        connection_config=LocalConnectionConfig,
     ),
 )
 
