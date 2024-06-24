@@ -21,17 +21,12 @@ def get_cmd() -> click.Command:
     dest_dict = {d.name: d for d in dest}
     for s in src_v2:
         src_dict[s.name] = s
-    # TODO Remove custom logic around v2 connectors once all connectors migrated:
-    #  Inject the v2 connectors to override the existing v1 connectors
-    #  If a v2 source connector is used, only a v2 destination connector can be associated
+    for d in dest_v2:
+        dest_dict[d.name] = d
     # Add all subcommands
-    for src_key, src_subcommand in src_dict.items():
+    for src_subcommand in src_dict.values():
         # Add all destination subcommands
-        if src_key in [s.name for s in src_v2]:
-            for dest_subcommand in dest_v2:
-                src_subcommand.add_command(dest_subcommand)
-        else:
-            for dest_subcommand in dest_dict.values():
-                src_subcommand.add_command(dest_subcommand)
+        for dest_subcommand in dest_dict.values():
+            src_subcommand.add_command(dest_subcommand)
         cmd.add_command(src_subcommand)
     return cmd
