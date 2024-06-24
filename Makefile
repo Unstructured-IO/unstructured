@@ -169,6 +169,10 @@ install-ingest-reddit:
 install-ingest-slack:
 	pip install -r requirements/ingest/slack.txt
 
+.PHONY: install-ingest-kafka
+install-ingest-kafka:
+	python3 -m pip install -r requirements/ingest/kafka.txt
+
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest/wikipedia.txt
