@@ -1,6 +1,6 @@
 import asyncio
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -116,14 +116,25 @@ class Partitioner(BaseProcess, ABC):
         from unstructured_client.models.shared import Files, PartitionParameters
 
         partition_request = self.config.to_partition_kwargs()
+        possible_fields = [f.name for f in fields(PartitionParameters)]
+        filtered_partition_request = {
+            k: v for k, v in partition_request.items() if k in possible_fields
+        }
+        if len(filtered_partition_request) != len(partition_request):
+            logger.debug(
+                "Following fields were omitted due to not being "
+                "supported by the currently used unstructured client: {}".format(
+                    ", ".join([v for v in partition_request if v not in filtered_partition_request])
+                )
+            )
         logger.debug(f"Using hosted partitioner with kwargs: {partition_request}")
         with open(filename, "rb") as f:
             files = Files(
                 content=f.read(),
                 file_name=str(filename.resolve()),
             )
-            partition_request["files"] = files
-        partition_params = PartitionParameters(**partition_request)
+            filtered_partition_request["files"] = files
+        partition_params = PartitionParameters(**filtered_partition_request)
         return partition_params
 
     async def partition_via_api(
