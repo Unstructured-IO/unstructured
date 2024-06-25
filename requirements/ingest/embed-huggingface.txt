@@ -167,7 +167,7 @@ sqlalchemy==2.0.31
     #   langchain-community
 sympy==1.12.1
     # via torch
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community

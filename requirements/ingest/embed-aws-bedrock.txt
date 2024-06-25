@@ -120,7 +120,7 @@ requests==2.32.3
     #   langchain
     #   langchain-community
     #   langsmith
-s3transfer==0.10.1
+s3transfer==0.10.2
     # via boto3
 six==1.16.0
     # via
@@ -130,7 +130,7 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community

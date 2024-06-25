@@ -65,7 +65,7 @@ fsspec==2024.5.0
     #   huggingface-hub
 google-auth==2.30.0
     # via kubernetes
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via opentelemetry-exporter-otlp-proto-grpc
 grpcio==1.64.1
     # via
@@ -232,7 +232,7 @@ starlette==0.37.2
     # via fastapi
 sympy==1.12.1
     # via onnxruntime
-tenacity==8.4.1
+tenacity==8.4.2
     # via chromadb
 tokenizers==0.19.1
     # via chromadb
