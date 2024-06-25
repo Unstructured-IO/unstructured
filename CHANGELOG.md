@@ -1,4 +1,27 @@
-## 0.14.7-dev3
+## 0.14.9-dev0
+
+### Enhancements
+
+### Features
+
+### Fixes
+
+## 0.14.8
+
+### Enhancements
+
+* **Move arm64 image to wolfi-base** The `arm64` image now runs on `wolfi-base`. The `arm64` build for `wolfi-base` does not yet include `libreoffce`, and so `arm64` does not currently support processing `.doc`, `.ppt`, or `.xls` file. If you need to process those files on `arm64`, use the legacy `rockylinux` image.
+
+### Features
+
+### Fixes
+
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
+* **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+
+* **Fix missing sensitive field markers** for embedders
+
+## 0.14.7
 
 ### Enhancements
 
@@ -7,7 +30,14 @@
 
 ### Features
 
+* **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
+
 ### Fixes
+
+* **Fix an error publishing docker images.** Update user in docker-smoke-test to reflect changes made by the amd64 image pull from the "unstructured" "wolfi-base" image.
+* **Fix a IndexError when partitioning a pdf with values for both `extract_image_block_types` and `starting_page_number`.
 
 ## 0.14.6
 

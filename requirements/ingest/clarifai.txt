@@ -13,9 +13,9 @@ charset-normalizer==3.3.2
     # via
     #   -c ./ingest/../base.txt
     #   requests
-clarifai==10.5.0
+clarifai==10.5.2
     # via -r ./ingest/clarifai.in
-clarifai-grpc==10.5.2
+clarifai-grpc==10.5.3
     # via clarifai
 contextlib2==21.6.0
     # via schema
@@ -74,7 +74,7 @@ tqdm==4.66.4
     #   clarifai
 tritonclient==2.41.1
     # via clarifai
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

@@ -26,6 +26,8 @@ all_tests=(
   'dropbox.sh'
   'elasticsearch.sh'
   'gcs.sh'
+  'kafka-local.sh'
+  'mongodb.sh'
   'opensearch.sh'
   'pgvector.sh'
   'pinecone.sh'
@@ -35,7 +37,6 @@ all_tests=(
   'sqlite.sh'
   'vectara.sh'
   'weaviate.sh'
-  'mongodb.sh'
 )
 
 full_python_matrix_tests=(

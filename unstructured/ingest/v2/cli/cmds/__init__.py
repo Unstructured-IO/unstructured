@@ -2,7 +2,8 @@ from collections import Counter
 
 import click
 
-from .elasticsearch import elasticsearch_src_cmd
+from .chroma import chroma_dest_cmd
+from .elasticsearch import elasticsearch_dest_cmd, elasticsearch_src_cmd
 from .fsspec.azure import azure_dest_cmd, azure_src_cmd
 from .fsspec.box import box_dest_cmd, box_src_cmd
 from .fsspec.dropbox import dropbox_dest_cmd, dropbox_src_cmd
@@ -35,7 +36,9 @@ if duplicate_src_names:
 dest_cmds = [
     azure_dest_cmd,
     box_dest_cmd,
+    chroma_dest_cmd,
     dropbox_dest_cmd,
+    elasticsearch_dest_cmd,
     gcs_dest_cmd,
     local_dest_cmd,
     s3_dest_cmd,
