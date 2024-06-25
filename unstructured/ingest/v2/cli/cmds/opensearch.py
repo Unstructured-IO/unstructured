@@ -2,10 +2,12 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.v2.cli.base import DestCmd
+from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
 from unstructured.ingest.v2.cli.cmds.elasticsearch import (
     ElasticsearchCliUploadStagerConfig,
     ElasticsearchUploaderConfig,
+    ElasticsearchCliIndexerConfig,
+    ElasticsearchCliDownloadConfig 
 )
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import DelimitedString
@@ -75,6 +77,12 @@ class OpenSearchCliConnectionConfig(CliConfig):
         ]
         return options
 
+opensearch_src_cmd = SrcCmd(
+    cmd_name=CONNECTOR_TYPE,
+    connection_config=OpenSearchCliConnectionConfig,
+    indexer_config=ElasticsearchCliIndexerConfig,
+    downloader_config=ElasticsearchCliDownloadConfig,
+)
 
 opensearch_dest_cmd = DestCmd(
     cmd_name=CONNECTOR_TYPE,
