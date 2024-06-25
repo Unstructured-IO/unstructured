@@ -36,7 +36,9 @@ coverage[toml]==7.5.4
     #   -r ./test.in
     #   pytest-cov
 exceptiongroup==1.2.1
-    # via pytest
+    # via
+    #   -c ./base.txt
+    #   pytest
 flake8==7.1.0
     # via
     #   -r ./test.in
