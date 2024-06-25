@@ -149,6 +149,7 @@ setup(
         "google-drive": load_requirements("requirements/ingest/google-drive.in"),
         "hubspot": load_requirements("requirements/ingest/hubspot.in"),
         "jira": load_requirements("requirements/ingest/jira.in"),
+        "kafka": load_requirements("requirements/ingest/kafka.in"),
         "mongodb": load_requirements("requirements/ingest/mongodb.in"),
         "notion": load_requirements("requirements/ingest/notion.in"),
         "onedrive": load_requirements("requirements/ingest/onedrive.in"),

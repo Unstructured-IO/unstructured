@@ -1,9 +1,14 @@
-## 0.14.9-dev0
+## 0.14.9-dev1
+
 ### Enhancements
 
 * **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
 
-## 0.14.8-dev3
+### Features
+
+### Fixes
+
+## 0.14.8
 
 ### Enhancements
 
@@ -13,7 +18,10 @@
 
 ### Fixes
 
+* **Bump unstructured-inference==0.7.36** Fix `ValueError` when converting cells to html.
 * **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_ppt()`, and `partition_pptx()`.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_ppt()`, and `partition_pptx()` when those filetypes are detected.
+
+* **Fix missing sensitive field markers** for embedders
 
 ## 0.14.7
 
@@ -25,6 +33,8 @@
 ### Features
 
 * **Expose conversion functions for tables** Adds public functions to convert tables from HTML to the Deckerd format and back
+
+* **Adds Kafka Source and Destination** New source and destination connector added to all CLI ingest commands to support reading from and writing to Kafka streams. Also supports Confluent Kafka.
 
 ### Fixes
 
