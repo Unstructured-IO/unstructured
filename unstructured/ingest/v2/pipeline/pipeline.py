@@ -92,11 +92,12 @@ class Pipeline:
             for v in destination_registry.values()
             if isinstance(self.uploader_step.process, v.uploader)
         ]
-        if len(matching_registry_entry) > 1:
-            raise ValueError(
-                f"More than one entry found in destination registry "
-                f"for uploader type: {self.uploader_step.process}"
-            )
+        # breakpoint()
+        # if len(matching_registry_entry) > 1:
+        #     raise ValueError(
+        #         f"More than one entry found in destination registry "
+        #         f"for uploader type: {self.uploader_step.process}"
+        #     )
         registry_entry = matching_registry_entry[0]
         if registry_entry.upload_stager and self.stager_step is None:
             raise ValueError(

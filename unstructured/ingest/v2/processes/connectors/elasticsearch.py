@@ -330,7 +330,13 @@ class ElasticsearchUploader(Uploader):
     upload_config: ElasticsearchUploaderConfig
     connection_config: ElasticsearchConnectionConfig
 
+    def load_parallel_bulk(self):
+        from elasticsearch.helpers import parallel_bulk
+
+        return parallel_bulk
+
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        parallel_bulk = self.load_parallel_bulk()
         elements_dict = []
         for content in contents:
             with open(content.path) as elements_file:
@@ -343,12 +349,11 @@ class ElasticsearchUploader(Uploader):
             f"batch size (in bytes) {self.upload_config.batch_size_bytes} with "
             f"{self.upload_config.thread_count} (number of) threads"
         )
-        from elasticsearch.helpers import parallel_bulk
 
         client = self.connection_config.get_client()
         if not client.indices.exists(index=self.upload_config.index_name):
             logger.warning(
-                f"Elasticsearch index does not exist: "
+                f"Index does not exist: "
                 f"{self.upload_config.index_name}. "
                 f"This may cause issues when uploading."
             )
@@ -362,7 +367,7 @@ class ElasticsearchUploader(Uploader):
             ):
                 if not success:
                     logger.error(
-                        "upload failed for a batch in elasticsearch destination connector:", info
+                        "upload failed for a batch in destination connector:", info
                     )
 
 

@@ -1,22 +1,19 @@
 import json
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError
-from unstructured.ingest.utils.data_prep import generator_batching_wbytes
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
-    UploadContent,
-    Uploader,
 )
-from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     add_destination_entry,
 )
 from unstructured.ingest.v2.processes.connectors.elasticsearch import (
+    ElasticsearchUploader,
     ElasticsearchUploaderConfig,
     ElasticsearchUploadStager,
     ElasticsearchUploadStagerConfig,
@@ -64,46 +61,13 @@ class OpenSearchConnectionConfig(ConnectionConfig):
 
 
 @dataclass
-class OpenSearchUploader(Uploader):
-    upload_config: ElasticsearchUploaderConfig
+class OpenSearchUploader(ElasticsearchUploader):
     connection_config: OpenSearchConnectionConfig
 
-    def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
-        elements_dict = []
-        for content in contents:
-            with open(content.path) as elements_file:
-                elements = json.load(elements_file)
-                elements_dict.extend(elements)
-        logger.info(
-            f"writing document batches to destination"
-            f" index named {self.upload_config.index_name}"
-            f" at {self.connection_config.hosts}"
-            f" with batch size (in bytes) {self.upload_config.batch_size_bytes}"
-            f" with {self.upload_config.thread_count} (number of) threads"
-        )
+    def load_parallel_bulk(self):
         from opensearchpy.helpers import parallel_bulk
 
-        client = self.connection_config.get_client()
-
-        if not client.indices.exists(index=self.upload_config.index_name):
-            logger.warning(
-                f"OpenSearch index does not exist: "
-                f"{self.upload_config.index_name}. "
-                f"This may cause issues when uploading."
-            )
-
-        for batch in generator_batching_wbytes(
-            elements_dict, batch_size_limit_bytes=self.upload_config.batch_size_bytes
-        ):
-            for success, info in parallel_bulk(
-                self.connection_config.get_client(),
-                batch,
-                thread_count=self.upload_config.thread_count,
-            ):
-                if not success:
-                    logger.error(
-                        "upload failed for a batch in opensearch destination connector:", info
-                    )
+        return parallel_bulk
 
 
 add_destination_entry(
