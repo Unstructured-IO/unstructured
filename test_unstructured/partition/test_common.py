@@ -338,20 +338,23 @@ def test_normalize_layout_element_bulleted_list():
     ]
 
 
-class MockPopenWithError:
-    def __init__(self, *args, **kwargs):
-        pass
+class MockRunOutput:
 
-    def communicate(self):
-        return b"", b"an error occurred"
+    def __init__(self, returncode, stdout, stderr):
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
 
 
 def test_convert_office_doc_captures_errors(monkeypatch, caplog):
-    import subprocess
+    from unstructured.partition.common import subprocess
 
-    monkeypatch.setattr(subprocess, "Popen", MockPopenWithError)
+    def mock_run(*args, **kwargs):
+        return MockRunOutput(1, "an error occurred".encode(), "error details".encode())
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
     common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
-    assert "an error occurred" in caplog.text
+    assert "soffice failed to convert to format docx with code 1" in caplog.text
 
 
 def test_convert_office_docs_avoids_concurrent_call_to_soffice():
