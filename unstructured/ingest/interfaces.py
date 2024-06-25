@@ -241,6 +241,13 @@ class EmbeddingConfig(BaseConfig):
             )
 
             return VoyageAIEmbeddingEncoder(config=VoyageAIEmbeddingConfig(**kwargs))
+        elif self.provider == "mixedbread-ai":
+            from unstructured.embed.mixedbreadai import (
+                MixedBreadAIEmbeddingConfig,
+                MixedbreadAIEmbeddingEncoder,
+            )
+
+            return MixedbreadAIEmbeddingEncoder(config=MixedBreadAIEmbeddingConfig(**kwargs))
         else:
             raise ValueError(f"{self.provider} not a recognized encoder")
 
