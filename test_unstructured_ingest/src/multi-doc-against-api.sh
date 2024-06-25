@@ -41,20 +41,26 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
 book-war-and-peace-1p.txt, \
 copy-protected.pdf, \
 DA-1p.heic, \
+docx-tables.docx, \
 duplicate-paragraphs.doc, \
 example-10k-1p.html, \
 example.jpg, \
 factbook.xml, \
+fake-doc.rtf, \
 fake-email.msg, \
 fake-power-point.ppt, \
+fake-power-point.pptx, \
 layout-parser-paper-fast.tiff, \
 multi-column-2p.pdf, \
 README.md, \
+simple.odt, \
 spring-weather.html.json, \
 stanley-cups.csv, \
 stanley-cups.tsv, \
+stanley-cups.xlsx, \
 table-multi-row-column-cells.png, \
-tests-example.xls" \
+tests-example.xls, \
+winter-sports.epub" \
   --num-processes "$max_processes" \
   --input-path "example-docs/" \
   --work-dir "$WORK_DIR"
@@ -62,10 +68,4 @@ tests-example.xls" \
 "$SCRIPT_DIR"/check-diff-expected-output.sh $OUTPUT_FOLDER_NAME
 
 # Failed docs not included in api test:
-# docx-tables.docx, \
-# fake-doc.rtf, \
-# fake-power-point.pptx, \
 # README.org, \
-# simple.odt, \
-# stanley-cups.xlsx, \
-# winter-sports.epub" \
