@@ -51,13 +51,7 @@ class OpenSearchConnectionConfig(ConnectionConfig):
 
     def to_dict(self, **kwargs) -> dict[str, json]:
         d = super().to_dict(**kwargs)
-        d["use_ssl"] = self.access_config.use_ssl
-        d["verify_certs"] = self.access_config.verify_certs
-        d["ssl_show_warn"] = self.access_config.ssl_show_warn
-        d["ca_certs"] = self.access_config.ca_certs
-        d["client_cert"] = self.access_config.client_cert
-        d["client_key"] = self.access_config.client_key
-
+        d.update({k:v for k,v in self.access_config.to_dict().items()})
         d["http_auth"] = (self.username, self.access_config.password)
         return d
 
