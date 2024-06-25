@@ -200,37 +200,46 @@ class TableEvalProcessor:
         predicted_table_data = extract_and_convert_tables_from_prediction(
             file_elements=self.prediction, source_type=self.source_type
         )
+        is_table_in_gt = bool(predicted_table_data)
+        is_table_predicted = bool(predicted_table_data)
 
-        matched_indices = TableAlignment.get_table_level_alignment(
-            predicted_table_data,
-            ground_truth_table_data,
-        )
-        if matched_indices:
+        if not is_table_in_gt:
+            # There is no table data in ground truth, you either got perfect score or 0
+            # default value for files with no tables and without predicted tables
+            score = 0 if is_table_predicted else np.nan
+            return TableEvaluation(
+                total_tables=0,
+                table_level_acc=int(is_table_predicted),
+                element_col_level_index_acc=score,
+                element_row_level_index_acc=score,
+                element_col_level_content_acc=score,
+                element_row_level_content_acc=score,
+            )
+        if is_table_in_gt:
+            matched_indices = TableAlignment.get_table_level_alignment(
+                predicted_table_data,
+                ground_truth_table_data,
+            )
             predicted_table_acc = np.mean(
                 table_level_acc(predicted_table_data, ground_truth_table_data, matched_indices)
             )
-        elif ground_truth_table_data:
-            # no matching prediction but has actual table -> total failure
-            predicted_table_acc = 0
-        else:
-            # no predicted and no actual table -> good job
-            predicted_table_acc = 1
 
-        metrics = TableAlignment.get_element_level_alignment(
-            predicted_table_data,
-            ground_truth_table_data,
-            matched_indices,
-            cutoff=self.cutoff,
-        )
+            metrics = TableAlignment.get_element_level_alignment(
+                predicted_table_data,
+                ground_truth_table_data,
+                matched_indices,
+                cutoff=self.cutoff,
+            )
 
-        return TableEvaluation(
-            total_tables=len(ground_truth_table_data),
-            table_level_acc=predicted_table_acc,
-            element_col_level_index_acc=metrics.get("col_index_acc", np.nan),
-            element_row_level_index_acc=metrics.get("row_index_acc", np.nan),
-            element_col_level_content_acc=metrics.get("col_content_acc", np.nan),
-            element_row_level_content_acc=metrics.get("row_content_acc", np.nan),
-        )
+            evaluation = TableEvaluation(
+                total_tables=len(ground_truth_table_data),
+                table_level_acc=predicted_table_acc,
+                element_col_level_index_acc=metrics.get("col_index_acc", 0),
+                element_row_level_index_acc=metrics.get("row_index_acc", 0),
+                element_col_level_content_acc=metrics.get("col_content_acc", 0),
+                element_row_level_content_acc=metrics.get("row_content_acc", 0),
+            )
+            return evaluation
 
 
 @click.command()
