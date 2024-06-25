@@ -71,7 +71,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.10.0
+mypy==1.10.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -92,6 +92,8 @@ platformdirs==3.10.0
     #   black
 pluggy==1.5.0
     # via pytest
+psutil==6.0.0
+    # via -r ./test.in
 pycodestyle==2.12.0
     # via
     #   flake8

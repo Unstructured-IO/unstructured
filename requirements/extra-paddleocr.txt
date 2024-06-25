@@ -8,7 +8,7 @@ attrdict==2.0.1
     # via unstructured-paddleocr
 babel==2.15.0
     # via flask-babel
-bce-python-sdk==0.9.14
+bce-python-sdk==0.9.17
     # via visualdl
 blinker==1.8.2
     # via flask

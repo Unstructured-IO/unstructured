@@ -94,7 +94,7 @@ requests==2.32.3
     #   voyageai
 sqlalchemy==2.0.31
     # via langchain
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-core

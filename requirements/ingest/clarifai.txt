@@ -19,7 +19,7 @@ clarifai-grpc==10.5.3
     # via clarifai
 contextlib2==21.6.0
     # via schema
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via clarifai-grpc
 grpcio==1.64.1
     # via clarifai-grpc

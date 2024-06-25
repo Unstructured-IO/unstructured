@@ -141,7 +141,7 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community
