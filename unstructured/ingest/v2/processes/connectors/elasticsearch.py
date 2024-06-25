@@ -366,9 +366,7 @@ class ElasticsearchUploader(Uploader):
                 thread_count=self.upload_config.thread_count,
             ):
                 if not success:
-                    logger.error(
-                        "upload failed for a batch in destination connector:", info
-                    )
+                    logger.error("upload failed for a batch in destination connector:", info)
 
 
 add_source_entry(
