@@ -1,3 +1,8 @@
+## 0.14.9-dev0
+### Enhancements
+
+* **Add MixedbreadAI embedder** Adds MixedbreadAI embeddings to support embedding via Mixedbread AI.
+
 ## 0.14.8-dev3
 
 ### Enhancements
