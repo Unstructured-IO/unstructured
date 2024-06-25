@@ -17,7 +17,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=True,
                 type=str,
                 help="Astra DB Token with access to the database.",
-                envvar="ASTRA_DB_TOKEN",
+                envvar="ASTRA_DB_APPLICATION_TOKEN",
                 show_envvar=True,
             ),
             click.Option(
@@ -25,7 +25,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
                 required=True,
                 type=str,
                 help="The API endpoint for the Astra DB.",
-                envvar="ASTRA_DB_ENDPOINT",
+                envvar="ASTRA_DB_API_ENDPOINT",
                 show_envvar=True,
             ),
             click.Option(
