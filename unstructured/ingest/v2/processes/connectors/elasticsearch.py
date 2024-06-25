@@ -322,7 +322,7 @@ class ElasticsearchUploadStager(UploadStager):
 class ElasticsearchUploaderConfig(UploaderConfig):
     index_name: str
     batch_size_bytes: int = 15_000_000
-    thread_count: int = 4 #### should this be num_threads instead of thread_count?
+    thread_count: int = 4  # should this be num_threads instead of thread_count?
 
 
 @dataclass
