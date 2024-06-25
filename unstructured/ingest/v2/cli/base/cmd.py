@@ -34,6 +34,10 @@ class BaseCmd(ABC):
     def cmd_name_key(self):
         return self.cmd_name.replace("-", "_")
 
+    @property
+    def cli_cmd_name(self):
+        return self.cmd_name.replace("_", "-")
+
     @abstractmethod
     def cmd(self, ctx: click.Context, **options) -> None:
         pass
