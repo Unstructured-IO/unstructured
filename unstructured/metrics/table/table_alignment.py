@@ -78,7 +78,6 @@ class TableAlignment:
         content_diff_rows = []
         col_index_acc = []
         row_index_acc = []
-
         for idx, td in zip(matched_indices, predicted_table_data):
             if idx == -1:
                 content_diff_cols.append(0)
@@ -169,4 +168,3 @@ class TableAlignment:
             "col_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
             "row_content_acc": round(np.mean(content_diff_cols) / 100.0, 2),
         }
-

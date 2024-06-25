@@ -200,22 +200,31 @@ class TableEvalProcessor:
         predicted_table_data = extract_and_convert_tables_from_prediction(
             file_elements=self.prediction, source_type=self.source_type
         )
-        is_table_in_gt = bool(predicted_table_data)
+        is_table_in_gt = bool(ground_truth_table_data)
         is_table_predicted = bool(predicted_table_data)
-
         if not is_table_in_gt:
             # There is no table data in ground truth, you either got perfect score or 0
-            # default value for files with no tables and without predicted tables
             score = 0 if is_table_predicted else np.nan
+            table_acc = 1 if not is_table_predicted else 0
             return TableEvaluation(
                 total_tables=0,
-                table_level_acc=int(is_table_predicted),
+                table_level_acc=table_acc,
                 element_col_level_index_acc=score,
                 element_row_level_index_acc=score,
                 element_col_level_content_acc=score,
                 element_row_level_content_acc=score,
             )
-        if is_table_in_gt:
+        if is_table_in_gt and not is_table_predicted:
+            return TableEvaluation(
+                total_tables=len(ground_truth_table_data),
+                table_level_acc=0,
+                element_col_level_index_acc=0,
+                element_row_level_index_acc=0,
+                element_col_level_content_acc=0,
+                element_row_level_content_acc=0,
+            )
+        else:
+            # We have both ground truth tables and predicted tables
             matched_indices = TableAlignment.get_table_level_alignment(
                 predicted_table_data,
                 ground_truth_table_data,
