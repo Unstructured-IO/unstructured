@@ -78,6 +78,7 @@ class TableAlignment:
         content_diff_rows = []
         col_index_acc = []
         row_index_acc = []
+
         for idx, td in zip(matched_indices, predicted_table_data):
             if idx == -1:
                 content_diff_cols.append(0)
@@ -161,6 +162,13 @@ class TableAlignment:
 
             col_index_acc.append(table_col_index_acc)
             row_index_acc.append(table_row_index_acc)
+
+        not_found_gt_table_indexes = [id for id in range(len(ground_truth_table_data)) if id not in matched_indices]
+        for _ in not_found_gt_table_indexes:
+            content_diff_cols.append(0)
+            content_diff_rows.append(0)
+            col_index_acc.append(0)
+            row_index_acc.append(0)
 
         return {
             "col_index_acc": round(np.mean(col_index_acc), 2),
