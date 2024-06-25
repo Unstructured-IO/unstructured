@@ -30,6 +30,10 @@ from unstructured.ingest.v2.processes.embedder import EmbedderConfig
 from unstructured.ingest.v2.processes.partitioner import PartitionerConfig
 
 
+class PipelineError(Exception):
+    pass
+
+
 @dataclass
 class Pipeline:
     context: ProcessorConfig
@@ -119,6 +123,8 @@ class Pipeline:
         finally:
             self.log_statuses()
             self.cleanup()
+            if self.context.status:
+                raise PipelineError("Pipeline did not run successfully")
 
     def clean_results(self, results: Optional[list[Union[Any, list[Any]]]]) -> Optional[list[Any]]:
         if not results:
