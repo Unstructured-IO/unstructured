@@ -355,15 +355,15 @@ def test_convert_office_doc_captures_errors(monkeypatch, caplog):
 
 
 def test_convert_office_docs_avoids_concurrent_call_to_soffice():
-    paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2")]
+    paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2", "/tmp/proc3")]
     for path in paths_to_save:
         path.mkdir(exist_ok=True)
     file_to_convert = example_doc_path("simple.doc")
 
-    with Pool(2) as pool:
+    with Pool(3) as pool:
         pool.starmap(common.convert_office_doc, [(file_to_convert, path) for path in paths_to_save])
 
-    assert all((path / "simple.docx").is_file() for path in paths_to_save)
+    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) == 3
 
 
 def test_convert_office_docs_respects_wait_timeout():

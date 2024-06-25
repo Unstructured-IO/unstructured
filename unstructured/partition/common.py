@@ -425,10 +425,13 @@ def convert_office_doc(
         # only one soffice process can be ran
         wait_time = 0
         sleep_time = 0.01
-        while wait_time < wait_for_soffice_ready_time_out and _is_soffice_running():
-            wait_time += sleep_time
-            sleep(sleep_time)
         output = subprocess.run(command, capture_output=True)
+        while wait_time < wait_for_soffice_ready_time_out and output.returncode == 1:
+            if _is_soffice_running():
+                wait_time += sleep_time
+                sleep(sleep_time)
+            else:
+                output = subprocess.run(command, capture_output=True)
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
