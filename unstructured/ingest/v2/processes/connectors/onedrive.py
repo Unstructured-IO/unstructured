@@ -1,5 +1,7 @@
 import json
+import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
 
@@ -7,12 +9,13 @@ from dateutil import parser
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import SourceConnectionNetworkError
+from unstructured.ingest.error import SourceConnectionError, SourceConnectionNetworkError
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
+    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
@@ -120,7 +123,7 @@ class OnedriveIndexer(Indexer):
         file_path = file_path[1:] if file_path and file_path[0] == "/" else file_path
         filename = drive_item.name
         server_path = file_path + "/" + filename
-        rel_path = file_path.replace(self.index_config.path, "").lstrip("/")
+        rel_path = server_path.replace(self.index_config.path, "").lstrip("/")
         date_modified_dt = (
             parser.parse(drive_item.last_modified_datetime)
             if drive_item.last_modified_datetime
@@ -133,7 +136,7 @@ class OnedriveIndexer(Indexer):
             identifier=drive_item.id,
             connector_type=CONNECTOR_TYPE,
             source_identifiers=SourceIdentifiers(
-                fullpath=file_path, filename=drive_item.name, rel_path=rel_path
+                fullpath=server_path, filename=drive_item.name, rel_path=rel_path
             ),
             metadata=DataSourceMetadata(
                 url=drive_item.parent_reference.path + "/" + drive_item.name,
@@ -166,10 +169,66 @@ class OnedriveDownloaderConfig(DownloaderConfig):
 @dataclass
 class OnedriveDownloader(Downloader):
     connection_config: OnedriveConnectionConfig
-    downloader_config: OnedriveDownloaderConfig
+    download_config: OnedriveDownloaderConfig
 
+    @SourceConnectionNetworkError.wrap
+    def _fetch_file(self, file_data: FileData):
+        if file_data.source_identifiers is None or not file_data.source_identifiers.fullpath:
+            raise ValueError(
+                f"file data doesn't have enough information to get "
+                f"file content: {file_data.to_dict()}"
+            )
+
+        server_relative_path = file_data.source_identifiers.fullpath
+        client = self.connection_config.get_client()
+        root = client.users[self.connection_config.user_pname].drive.get().execute_query().root
+        file = root.get_by_path(server_relative_path).get().execute_query()
+        if not file:
+            raise FileNotFoundError(f"file not found: {server_relative_path}")
+        return file
+
+    def get_download_path(self, file_data: FileData) -> Optional[Path]:
+        rel_path = file_data.source_identifiers.relative_path
+        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+        return self.download_dir / Path(rel_path)
+
+    @staticmethod
+    def is_float(value: str):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
+
+    def generate_download_response(
+        self, file_data: FileData, download_path: Path
+    ) -> DownloadResponse:
+        if (
+            file_data.metadata.date_modified
+            and self.is_float(file_data.metadata.date_modified)
+            and file_data.metadata.date_created
+            and self.is_float(file_data.metadata.date_created)
+        ):
+            date_modified = float(file_data.metadata.date_modified)
+            date_created = float(file_data.metadata.date_created)
+            os.utime(download_path, times=(date_created, date_modified))
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
+
+    @SourceConnectionError.wrap
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        pass
+        file = self._fetch_file(file_data=file_data)
+        fsize = file.get_property("size", 0)
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Downloading {file_data.source_identifiers.fullpath} to {download_path}")
+        if fsize > MAX_MB_SIZE:
+            logger.info(f"Downloading file with size: {fsize} bytes in chunks")
+            with download_path.open(mode="wb") as f:
+                file.download_session(f, chunk_size=1024 * 1024 * 100).execute_query()
+        else:
+            with download_path.open(mode="wb") as f:
+                file.download(f).execute_query()
+        return DownloadResponse(file_data=file_data, path=download_path)
 
 
 add_source_entry(
