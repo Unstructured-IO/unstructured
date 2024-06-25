@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Optional, TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 import numpy as np
 
@@ -13,7 +13,6 @@ USER_AGENT = "mixedbread-ai@unstructured"
 
 if TYPE_CHECKING:
     from mixedbread_ai.client import MixedbreadAI
-    from mixedbread_ai import EncodingFormat, TruncationStrategy
     from mixedbread_ai.core import RequestOptions
 
 
@@ -35,6 +34,7 @@ class MixedBreadAIEmbeddingConfig(EmbeddingConfig):
         dimensions (Optional[int]): Number of dimensions for the embeddings.
         prompt (Optional[str]): Optional prompt for embedding generation.
     """
+
     from mixedbread_ai import EncodingFormat, TruncationStrategy
 
     api_key: str = field(
@@ -52,9 +52,7 @@ class MixedBreadAIEmbeddingConfig(EmbeddingConfig):
     encoding_format: Optional["EncodingFormat"] = field(
         default=EncodingFormat.FLOAT,
     )
-    truncation_strategy: Optional["TruncationStrategy"] = field(
-        default=TruncationStrategy.START
-    )
+    truncation_strategy: Optional["TruncationStrategy"] = field(default=TruncationStrategy.START)
     dimensions: Optional[int] = field(default=None)
     prompt: Optional[str] = field(default=None)
 
@@ -67,6 +65,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
     Attributes:
         config (MixedBreadAIEmbeddingConfig): Configuration for the embedding encoder.
     """
+
     config: MixedBreadAIEmbeddingConfig
 
     _client: Optional["MixedbreadAI"] = field(init=False, default=None)
@@ -108,7 +107,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         self._request_options = RequestOptions(
             max_retries=self.config.max_retries,
             timeout_in_seconds=self.config.timeout,
-            additional_headers={"User-Agent": USER_AGENT}
+            additional_headers={"User-Agent": USER_AGENT},
         )
 
     @property
@@ -137,7 +136,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
         responses = []
 
         for i in batch_itr:
-            batch = texts[i: i + batch_size]
+            batch = texts[i : i + batch_size]
             response = self.client.embeddings(
                 model=self.config.model_name,
                 normalized=self.config.normalized,
@@ -146,7 +145,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
                 dimensions=self.config.dimensions,
                 prompt=self.config.prompt,
                 request_options=self._request_options,
-                input=batch
+                input=batch,
             )
             responses.append(response)
         return [item.embedding for response in responses for item in response.data]
@@ -205,6 +204,7 @@ class MixedbreadAIEmbeddingEncoder(BaseEmbeddingEncoder):
             MixedbreadAI: Initialized client.
         """
         from mixedbread_ai.client import MixedbreadAI
+
         return MixedbreadAI(
             api_key=self.config.api_key,
             base_url=self.config.base_url,

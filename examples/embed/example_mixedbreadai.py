@@ -1,6 +1,10 @@
 import os
+
 from unstructured.documents.elements import Text
-from unstructured.embed.mixedbreadai import MixedBreadAIEmbeddingConfig, MixedbreadAIEmbeddingEncoder
+from unstructured.embed.mixedbreadai import (
+    MixedBreadAIEmbeddingConfig,
+    MixedbreadAIEmbeddingEncoder,
+)
 
 # To use Mixedbread AI you will need to pass
 # Mixedbread AI API Key (obtained from https://www.mixedbread.ai)
@@ -12,7 +16,7 @@ from unstructured.embed.mixedbreadai import MixedBreadAIEmbeddingConfig, Mixedbr
 embedding_encoder = MixedbreadAIEmbeddingEncoder(
     config=MixedBreadAIEmbeddingConfig(
         api_key=os.environ.get("MXBAI_API_KEY", None),
-        model_name="mixedbread-ai/mxbai-embed-large-v1"
+        model_name="mixedbread-ai/mxbai-embed-large-v1",
     )
 )
 

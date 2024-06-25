@@ -1,10 +1,10 @@
 from unstructured.embed.bedrock import BedrockEmbeddingEncoder
 from unstructured.embed.huggingface import HuggingFaceEmbeddingEncoder
+from unstructured.embed.mixedbreadai import MixedbreadAIEmbeddingEncoder
 from unstructured.embed.octoai import OctoAIEmbeddingEncoder
 from unstructured.embed.openai import OpenAIEmbeddingEncoder
 from unstructured.embed.vertexai import VertexAIEmbeddingEncoder
 from unstructured.embed.voyageai import VoyageAIEmbeddingEncoder
-from unstructured.embed.mixedbreadai import MixedbreadAIEmbeddingEncoder
 
 EMBEDDING_PROVIDER_TO_CLASS_MAP = {
     "langchain-openai": OpenAIEmbeddingEncoder,
@@ -13,5 +13,5 @@ EMBEDDING_PROVIDER_TO_CLASS_MAP = {
     "langchain-vertexai": VertexAIEmbeddingEncoder,
     "langchain-voyageai": VoyageAIEmbeddingEncoder,
     "octoai": OctoAIEmbeddingEncoder,
-    "mixedbread-ai": MixedbreadAIEmbeddingEncoder
+    "mixedbread-ai": MixedbreadAIEmbeddingEncoder,
 }
