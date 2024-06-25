@@ -1,10 +1,12 @@
-## 0.14.9-dev0
+## 0.14.9-dev1
 
 ### Enhancements
 
 ### Features
 
 ### Fixes
+
+* **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
 
 ## 0.14.8
 
