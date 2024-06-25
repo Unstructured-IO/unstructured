@@ -11,7 +11,6 @@ emoji
 dataclasses-json
 python-iso639
 langdetect
-# python 3.12 support
 # NOTE(robinson) - pinned due to a feature being deprecated in the latest version. plan to
 # investigate and remove pin
 numpy<2

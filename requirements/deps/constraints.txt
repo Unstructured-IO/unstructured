@@ -53,6 +53,7 @@ unstructured-client<=0.18.0
 
 fsspec==2024.5.0
 
+# python 3.12 support
 wrapt>=1.14.0
 
 
