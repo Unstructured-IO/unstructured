@@ -2,10 +2,13 @@ from dataclasses import dataclass
 
 import click
 
-from unstructured.ingest.v2.cli.base import DestCmd, SrcCmd
+from unstructured.ingest.v2.cli.base import DestCmd
+from unstructured.ingest.v2.cli.cmds.elasticsearch import (
+    ElasticsearchCliUploadStagerConfig,
+    ElasticsearchUploaderConfig,
+)
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import DelimitedString
-from unstructured.ingest.v2.cli.cmds.elasticsearch import ElasticsearchCliUploadStagerConfig, ElasticsearchUploaderConfig, ElasticsearchCliConnectionConfig
 from unstructured.ingest.v2.processes.connectors.opensearch import CONNECTOR_TYPE
 
 
@@ -14,24 +17,11 @@ class OpenSearchCliConnectionConfig(CliConfig):
     @staticmethod
     def get_cli_options() -> list[click.Option]:
         options = [
-            # click.Option(
-            #     ["--index-name"],
-            #     required=True,
-            #     type=str,
-            #     help="Name of the OpenSearch index to pull data from, or upload data to.",
-            # ),
             click.Option(
                 ["--hosts"],
                 type=DelimitedString(),
                 help='List of the OpenSearch hosts to connect to, e.g. "http://localhost:9200"',
             ),
-            # click.Option(
-            #     ["--fields"],
-            #     type=DelimitedString(),
-            #     default=[],
-            #     help="If provided, will limit the fields returned by OpenSearch "
-            #     "to this comma-delimited list",
-            # ),
             click.Option(
                 ["--username"], type=str, default=None, help="username when using basic auth"
             ),
@@ -82,104 +72,9 @@ class OpenSearchCliConnectionConfig(CliConfig):
                 help="path to the file containing the private key"
                 " if using separate cert and key files",
             ),
-            # click.Option(
-            #     ["--batch-size"],
-            #     default=100,
-            #     type=click.IntRange(0),
-            #     help="how many records to read at a time per process",
-            # ),
         ]
         return options
 
-
-# @dataclass
-# class ElasticsearchCliDownloadConfig(CliConfig):
-#     @staticmethod
-#     def get_cli_options() -> list[click.Option]:
-#         options = [
-#             click.Option(
-#                 ["--download-dir"],
-#                 help="Where files are downloaded to, defaults to a location at"
-#                 "`$HOME/.cache/unstructured/ingest/<connector name>/<SHA256>`.",
-#             ),
-#             click.Option(
-#                 ["--fields"],
-#                 type=DelimitedString(),
-#                 default=[],
-#                 help="If provided, will limit the fields returned by Elasticsearch "
-#                 "to this comma-delimited list",
-#             ),
-#         ]
-#         return options
-
-
-# @dataclass
-# class ElasticsearchCliIndexerConfig(CliConfig):
-#     @staticmethod
-#     def get_cli_options() -> list[click.Option]:
-#         options = [
-#             click.Option(
-#                 ["--index-name"],
-#                 required=True,
-#                 type=str,
-#                 help="Name of the Elasticsearch index to pull data from, or upload data to.",
-#             ),
-#             click.Option(
-#                 ["--batch-size"],
-#                 default=100,
-#                 type=click.IntRange(0),
-#                 help="how many records to read at a time per process",
-#             ),
-#         ]
-#         return options
-
-
-# @dataclass
-# class ElasticsearchCliUploadStagerConfig(CliConfig):
-#     @staticmethod
-#     def get_cli_options() -> list[click.Option]:
-#         options = [
-#             click.Option(
-#                 ["--index-name"],
-#                 required=True,
-#                 type=str,
-#                 help="Name of the Elasticsearch index to pull data from, or upload data to.",
-#             ),
-#         ]
-#         return options
-
-
-# @dataclass
-# class ElasticsearchUploaderConfig(CliConfig):
-#     @staticmethod
-#     def get_cli_options() -> list[click.Option]:
-#         options = [
-#             click.Option(
-#                 ["--batch-size-bytes"],
-#                 required=False,
-#                 default=15_000_000,
-#                 type=int,
-#                 help="Size limit (in bytes) for each batch of items to be uploaded. Check"
-#                 " https://www.elastic.co/guide/en/elasticsearch/guide/current/bulk.html"
-#                 "#_how_big_is_too_big for more information.",
-#             ),
-#             click.Option(
-#                 ["--num-threads"],
-#                 required=False,
-#                 default=1,
-#                 type=int,
-#                 help="Number of threads to be used while uploading content",
-#             ),
-#         ]
-#         return options
-
-
-# elasticsearch_src_cmd = SrcCmd(
-#     cmd_name=CONNECTOR_TYPE,
-#     connection_config=ElasticsearchCliConnectionConfig,
-#     indexer_config=ElasticsearchCliIndexerConfig,
-#     downloader_config=ElasticsearchCliDownloadConfig,
-# )
 
 opensearch_dest_cmd = DestCmd(
     cmd_name=CONNECTOR_TYPE,

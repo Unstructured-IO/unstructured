@@ -9,11 +9,6 @@ from unstructured.ingest.v2.processes.connectors.local import (
     LocalDownloaderConfig,
     LocalIndexerConfig,
 )
-from unstructured.ingest.v2.processes.connectors.weaviate import (
-    WeaviateConnectionConfig,
-    WeaviateUploaderConfig,
-    WeaviateUploadStagerConfig,
-)
 from unstructured.ingest.v2.processes.connectors.opensearch import (
     OpenSearchAccessConfig,
     OpenSearchConnectionConfig,
@@ -33,7 +28,9 @@ if __name__ == "__main__":
     logger.info(f"Writing all content in: {work_dir.resolve()}")
     Pipeline.from_configs(
         context=ProcessorConfig(work_dir=str(work_dir.resolve())),
-        indexer_config=LocalIndexerConfig(input_path=str(docs_path.resolve()) + "/multisimple/"),
+        indexer_config=LocalIndexerConfig(
+            input_path=str(docs_path.resolve()) + "/book-war-and-peace-1p.txt"
+        ),
         downloader_config=LocalDownloaderConfig(download_dir=download_path),
         source_connection_config=LocalConnectionConfig(),
         partitioner_config=PartitionerConfig(strategy="fast"),
