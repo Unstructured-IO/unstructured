@@ -589,6 +589,7 @@ def _partition_pdf_or_image_local(
                 if not skip_dump_od:
                     od_model_layout_dumper = ObjectDetectionLayoutDumper(
                         layout=inferred_document_layout,
+                        model_name=hi_res_model_name,
                     )
             # NOTE(christine): merged_document_layout = extracted_layout + inferred_layout
             merged_document_layout = merge_inferred_with_extracted_layout(

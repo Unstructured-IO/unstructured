@@ -1,10 +1,17 @@
-import inspect
 import json
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Optional
 
-from unstructured_inference.constants import ElementType
 from unstructured_inference.inference.layout import DocumentLayout
+from unstructured_inference.models.base import get_model
+from unstructured_inference.models.detectron2onnx import (
+    DEFAULT_LABEL_MAP as DETECTRON_LABEL_MAP,
+)
+from unstructured_inference.models.detectron2onnx import (
+    UnstructuredDetectronONNXModel,
+)
+from unstructured_inference.models.yolox import YOLOX_LABEL_MAP, UnstructuredYoloXModel
 
 from unstructured.partition.pdf_image.analysis.processor import AnalysisProcessor
 
@@ -36,12 +43,14 @@ def extract_layout_info(layout: DocumentLayout) -> dict:
     return {"pages": pages}
 
 
-def object_detection_classes() -> list[str]:
-    classes = []
-    for i in inspect.getmembers(ElementType):
-        if not i[0].startswith("_") and not inspect.ismethod(i[1]):
-            classes.append(i[0])
-    return classes
+def object_detection_classes(model_name) -> list[str]:
+    model = get_model(model_name)
+    if isinstance(model, UnstructuredYoloXModel):
+        return list(YOLOX_LABEL_MAP.values())
+    if isinstance(model, UnstructuredDetectronONNXModel):
+        return list(DETECTRON_LABEL_MAP.values())
+    else:
+        raise ValueError(f"Cannot get OD model classes - unknown model type: {model_name}")
 
 
 class ObjectDetectionLayoutDumper(LayoutDumper):
@@ -49,12 +58,16 @@ class ObjectDetectionLayoutDumper(LayoutDumper):
 
     layout_source = "object_detection"
 
-    def __init__(self, layout: DocumentLayout):
+    def __init__(self, layout: DocumentLayout, model_name: Optional[str] = None):
         self.layout: dict = extract_layout_info(layout)
 
     def dump(self) -> dict:
         """Transforms the results to COCO format and saves them to a file"""
-        self.layout.update({"object_detection_classes": object_detection_classes()})
+        try:
+            classes_dict = {"object_detection_classes": object_detection_classes()}
+        except ValueError:
+            classes_dict = {"object_detection_classes": []}
+        self.layout.update(classes_dict)
         return self.layout
 
 
