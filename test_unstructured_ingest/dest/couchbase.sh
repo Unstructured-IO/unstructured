@@ -11,11 +11,13 @@ WORK_DIR=$SCRIPT_DIR/workdir/$OUTPUT_FOLDER_NAME
 DOWNLOAD_DIR=$SCRIPT_DIR/download/$OUTPUT_FOLDER_NAME
 DESTINATION_PATH=$SCRIPT_DIR/couchbase-dest
 max_processes=${MAX_PROCESSES:=$(python3 -c "import os; print(os.cpu_count())")}
+DESTINATION_CB_SCOPE="_default"
+DESTINATION_CB_COLLECTION="_default"
 CI=${CI:-"false"}
 
 # Check if all necessary environment variables are set
-if [ -z "$CB_USERNAME" ] || [ -z "$CB_PASSWORD" ] || [ -z "$CB_CONN_STR" ] || [ -z "$CB_BUCKET" ] || [ -z "$CB_SCOPE" ] || [ -z "$CB_COLLECTION" ]; then
-  echo "Error: One or more environment variables are not set. Please set CB_CONN_STR, CB_USERNAME, CB_PASSWORD, CB_BUCKET, CB_SCOPE, and CB_COLLECTION."
+if [ -z "$CB_USERNAME" ] || [ -z "$CB_PASSWORD" ] || [ -z "$CB_CONN_STR" ] || [ -z "$CB_BUCKET" ];  then
+  echo "Error: One or more environment variables are not set. Please set CB_CONN_STR, CB_USERNAME, CB_PASSWORD, and CB_BUCKET"
   exit 1
 fi
 
@@ -31,10 +33,17 @@ function cleanup() {
   if [ "$CI" == "true" ]; then
     cleanup_dir "$DOWNLOAD_DIR"
   fi
+
+  python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
+    --connection-string "$CB_CONN_STR" \
+    --username "$CB_USERNAME" \
+    --password "$CB_PASSWORD" \
+    --bucket "$CB_BUCKET" \
+    --scope "$DESTINATION_CB_SCOPE" \
+    --collection "$DESTINATION_CB_COLLECTION" down
 }
 
 trap cleanup EXIT
-
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -53,8 +62,25 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --bucket "$CB_BUCKET" \
   --username "$CB_USERNAME" \
   --password "$CB_PASSWORD" \
-  --scope "$CB_SCOPE" \
-  --collection "$CB_COLLECTION" \
+  --scope "$DESTINATION_CB_SCOPE" \
+  --collection "$DESTINATION_CB_COLLECTION" \
   --batch-size 80
 
-#python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py --collection-name "$COLLECTION_NAME"
+python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
+  --connection-string "$CB_CONN_STR" \
+  --username "$CB_USERNAME" \
+  --password "$CB_PASSWORD" \
+  --bucket "$CB_BUCKET" \
+  --scope "$DESTINATION_CB_SCOPE" \
+  --collection "$DESTINATION_CB_COLLECTION" \
+  check --expected-docs 34
+
+python "$SCRIPT_DIR"/python/test-ingest-couchbase-output.py \
+  --connection-string "$CB_CONN_STR" \
+  --username "$CB_USERNAME" \
+  --password "$CB_PASSWORD" \
+  --bucket "$CB_BUCKET" \
+  --scope "$DESTINATION_CB_SCOPE" \
+  --collection "$DESTINATION_CB_COLLECTION" \
+  check-vector \
+  --output-json "$OUTPUT_DIR"/book-war-and-peace-1225p.txt.json
