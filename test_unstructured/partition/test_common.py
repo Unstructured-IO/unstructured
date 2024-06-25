@@ -358,6 +358,7 @@ def test_convert_office_docs_avoids_concurrent_call_to_soffice():
     paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2", "/tmp/proc3")]
     for path in paths_to_save:
         path.mkdir(exist_ok=True)
+        (path / "simple.docx").unlink(missing_ok=True)
     file_to_convert = example_doc_path("simple.doc")
 
     with Pool(3) as pool:
@@ -367,20 +368,25 @@ def test_convert_office_docs_avoids_concurrent_call_to_soffice():
 
 
 def test_convert_office_docs_respects_wait_timeout():
-    paths_to_save = [pathlib.Path(path) for path in ("/tmp/wait/proc1", "/tmp/wait/proc2")]
+    paths_to_save = [
+        pathlib.Path(path) for path in ("/tmp/wait/proc1", "/tmp/wait/proc2", "/tmp/wait/proc3")
+    ]
     for path in paths_to_save:
         path.mkdir(parents=True, exist_ok=True)
+        (path / "simple.docx").unlink(missing_ok=True)
     file_to_convert = example_doc_path("simple.doc")
 
-    with Pool(2) as pool:
+    with Pool(3) as pool:
         pool.starmap(
             common.convert_office_doc,
             # set timeout to wait for soffice to be available to 0 so only one process can convert
-            # the doc file
+            # the doc file on the first try; then the catch all
             [(file_to_convert, path, "docx", None, 0) for path in paths_to_save],
         )
 
-    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) == 1
+    # because this test file is very small we could have occasions where two files are converted
+    # when one of the processes spawned just a little
+    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) < 3
 
 
 class MockDocxEmptyTable:

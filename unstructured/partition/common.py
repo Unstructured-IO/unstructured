@@ -382,7 +382,7 @@ def convert_office_doc(
     output_directory: str,
     target_format: str = "docx",
     target_filter: Optional[str] = None,
-    wait_for_soffice_ready_time_out: int = 60,
+    wait_for_soffice_ready_time_out: int = 10,
 ):
     """Converts a .doc file to a .docx file using the libreoffice CLI.
 
@@ -424,14 +424,19 @@ def convert_office_doc(
     try:
         # only one soffice process can be ran
         wait_time = 0
-        sleep_time = 0.01
+        sleep_time = 0.1
         output = subprocess.run(command, capture_output=True)
-        while wait_time < wait_for_soffice_ready_time_out and output.returncode == 1:
+        message = output.stdout.decode().strip()
+        # we can't rely on returncode unfortunately because on macOS it would return 0 even when the
+        # command failed to run; instead we have to rely on the stdout being empty as a sign of the
+        # process failed
+        while (wait_time < wait_for_soffice_ready_time_out) and (message == ""):
+            wait_time += sleep_time
             if _is_soffice_running():
-                wait_time += sleep_time
                 sleep(sleep_time)
             else:
                 output = subprocess.run(command, capture_output=True)
+                message = output.stdout.decode().strip()
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -442,9 +447,11 @@ on your system and try again.
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
 
-    logger.info(output.stdout.decode().strip())
-    if output.returncode != 0:
-        logger.error("soffice failed to convert %s with code %i", input_filename, output.returncode)
+    logger.info(message)
+    if output.returncode != 0 or message == "":
+        logger.error(
+            "soffice failed to convert to format %s with code %i", target_format, output.returncode
+        )
         logger.error(output.stderr.decode().strip())
 
 
