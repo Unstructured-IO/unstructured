@@ -26,7 +26,9 @@ PageImage = TypeVar("PageImage", Image.Image, np.ndarray)
 
 def get_font():
     preferred_fonts = ["Arial.ttf"]
-    available_fonts = font_manager.findSystemFonts(fontpaths=None, fontext="ttf")
+    available_fonts = font_manager.findSystemFonts()
+    if not available_fonts:
+        raise ValueError("No fonts available")
     for font in preferred_fonts:
         for available_font in available_fonts:
             if font in available_font:
@@ -34,7 +36,6 @@ def get_font():
     return available_fonts[0]
 
 
-FONT = get_font()
 COLOR_WHITE = ("white", (255, 255, 255))
 COLOR_BLACK = ("black", (0, 0, 0))
 
@@ -281,7 +282,7 @@ def draw_bbox_label(
         font_size:          Font size of the text.
         background_color:   RGB values of the background color.
     """
-    font = ImageFont.truetype(FONT, font_size)
+    font = ImageFont.truetype(get_font(), font_size)
     text_x1, text_y1, text_x2, text_y2 = image_draw.textbbox(
         (0, 0), text, font=font, align="center"
     )
@@ -630,7 +631,7 @@ class AnalysisDrawer(AnalysisProcessor):
                 grid_image.close()
 
     def add_caption(self, image: Image.Image, caption: str):
-        font = ImageFont.truetype(FONT, 52)
+        font = ImageFont.truetype(get_font(), 52)
         draw = ImageDraw.ImageDraw(image)
         text_x1, text_y1, text_x2, text_y2 = draw.textbbox(
             (0, 0), caption, font=font, align="center"
