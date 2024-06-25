@@ -2,11 +2,12 @@ import asyncio
 import logging
 import multiprocessing as mp
 from abc import ABC
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import wraps
 from pathlib import Path
 from time import time
-from typing import Any, Callable, Optional, TypeVar
+from typing import Any, Awaitable, Callable, Optional, TypeVar
 
 from tqdm import tqdm
 from tqdm.asyncio import tqdm as tqdm_asyncio
@@ -66,7 +67,25 @@ class PipelineStep(ABC):
 
     def process_async(self, iterable: iterable_input) -> Any:
         logger.info("processing content async")
-        return asyncio.run(self._process_async(iterable=iterable))
+        return self.asyncio_run(fn=self._process_async, iterable=iterable)
+
+    def asyncio_run(
+        self, fn: Callable[[Any, Any], Awaitable[Any]], *args: Any, **kwargs: Any
+    ) -> Any:
+        current_loop = asyncio._get_running_loop()
+        if current_loop is None:
+            return asyncio.run(fn(*args, **kwargs))
+        with ThreadPoolExecutor(thread_name_prefix="asyncio") as thread_pool:
+            logger.warning(
+                f"async code being run in dedicated thread pool "
+                f"to not conflict with existing event loop: {current_loop}"
+            )
+
+            def wrapped():
+                return asyncio.run(fn(*args, **kwargs))
+
+            future = thread_pool.submit(wrapped)
+            return future.result()
 
     def process_multiprocess(self, iterable: iterable_input) -> Any:
         logger.info("processing content across processes")
@@ -107,14 +126,14 @@ class PipelineStep(ABC):
             logger.info(
                 f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore
             )
-        if self.context.disable_parallelism:
-            return self.process_serially(iterable=iterable)
-        if self.process.is_async():
+        if self.context.async_supported and self.process.is_async():
             return self.process_async(iterable=iterable)
-        return self.process_multiprocess(iterable=iterable)
+        if self.context.mp_supported:
+            return self.process_multiprocess(iterable=iterable)
+        return self.process_serially(iterable=iterable)
 
     def _run(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
-        return asyncio.run(self.run_async(_fn=fn, **kwargs))
+        return self.asyncio_run(fn=self.run_async, _fn=fn, **kwargs)
 
     async def _run_async(self, fn: Callable, **kwargs: Any) -> Optional[Any]:
         raise NotImplementedError
