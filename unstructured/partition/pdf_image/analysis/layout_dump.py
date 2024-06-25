@@ -60,11 +60,12 @@ class ObjectDetectionLayoutDumper(LayoutDumper):
 
     def __init__(self, layout: DocumentLayout, model_name: Optional[str] = None):
         self.layout: dict = extract_layout_info(layout)
+        self.model_name = model_name
 
     def dump(self) -> dict:
         """Transforms the results to COCO format and saves them to a file"""
         try:
-            classes_dict = {"object_detection_classes": object_detection_classes()}
+            classes_dict = {"object_detection_classes": object_detection_classes(self.model_name)}
         except ValueError:
             classes_dict = {"object_detection_classes": []}
         self.layout.update(classes_dict)
