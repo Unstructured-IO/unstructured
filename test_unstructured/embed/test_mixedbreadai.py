@@ -26,6 +26,9 @@ def test_embed_documents_does_not_break_element_to_dict(mocker):
         )
     )
 
+    encoder.initialize()
+
+
     elements = encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
     )
@@ -46,6 +49,9 @@ def test_embed_documents_live():
             model_name="mixedbread-ai/mxbai-embed-large-v1"
         )
     )
+
+    encoder.initialize()
+
     elements = encoder.embed_documents(
         elements=[Text("This is sentence 1"), Text("This is sentence 2")],
     )

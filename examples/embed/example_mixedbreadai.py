@@ -16,6 +16,8 @@ embedding_encoder = MixedbreadAIEmbeddingEncoder(
     )
 )
 
+embedding_encoder.initialize()
+
 # Embedding documents
 elements = embedding_encoder.embed_documents(
     elements=[Text("This is sentence 1"), Text("This is sentence 2")]
