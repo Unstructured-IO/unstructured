@@ -1,14 +1,13 @@
 import copy
-import os
-from pathlib import Path
 import typing as t
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.enhanced_dataclass.core import _asdict
-from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError, SourceConnectionNetworkError
+from unstructured.ingest.error import DestinationConnectionError, SourceConnectionError
 from unstructured.ingest.interfaces import (
     AccessConfig,
     BaseConnectorConfig,
@@ -149,7 +148,10 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
  
     @property
     def _output_filename(self):
-        return Path(self.processor_config.output_dir) / f"{self.filename}.json"
+        return (Path(self.processor_config.output_dir)
+            / self.connector_config.collection_name
+            / f"{self.metadata['_id']}.json"
+            )
     
     def update_source_metadata(self, **kwargs):
         if not self.metadata:
