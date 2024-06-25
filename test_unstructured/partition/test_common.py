@@ -3,8 +3,10 @@ import io
 import os
 import pathlib
 from dataclasses import dataclass
+from multiprocessing import Pool
 from unittest import mock
 
+import numpy as np
 import pytest
 from PIL import Image
 from unstructured_inference.inference import layout
@@ -12,6 +14,7 @@ from unstructured_inference.inference.elements import TextRegion
 from unstructured_inference.inference.layout import DocumentLayout, PageLayout
 from unstructured_inference.inference.layoutelement import LayoutElement
 
+from test_unstructured.unit_utils import example_doc_path
 from unstructured.documents.coordinates import PixelSpace
 from unstructured.documents.elements import (
     TYPE_TO_TEXT_ELEMENT_MAP,
@@ -349,6 +352,35 @@ def test_convert_office_doc_captures_errors(monkeypatch, caplog):
     monkeypatch.setattr(subprocess, "Popen", MockPopenWithError)
     common.convert_office_doc("no-real.docx", "fake-directory", target_format="docx")
     assert "an error occurred" in caplog.text
+
+
+def test_convert_office_docs_avoids_concurrent_call_to_soffice():
+    paths_to_save = [pathlib.Path(path) for path in ("/tmp/proc1", "/tmp/proc2")]
+    for path in paths_to_save:
+        path.mkdir(exist_ok=True)
+    file_to_convert = example_doc_path("simple.doc")
+
+    with Pool(2) as pool:
+        pool.starmap(common.convert_office_doc, [(file_to_convert, path) for path in paths_to_save])
+
+    assert all((path / "simple.docx").is_file() for path in paths_to_save)
+
+
+def test_convert_office_docs_respects_wait_timeout():
+    paths_to_save = [pathlib.Path(path) for path in ("/tmp/wait/proc1", "/tmp/wait/proc2")]
+    for path in paths_to_save:
+        path.mkdir(parents=True, exist_ok=True)
+    file_to_convert = example_doc_path("simple.doc")
+
+    with Pool(2) as pool:
+        pool.starmap(
+            common.convert_office_doc,
+            # set timeout to wait for soffice to be available to 0 so only one process can convert
+            # the doc file
+            [(file_to_convert, path, "docx", None, 0) for path in paths_to_save],
+        )
+
+    assert np.sum([(path / "simple.docx").is_file() for path in paths_to_save]) == 1
 
 
 class MockDocxEmptyTable:

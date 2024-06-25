@@ -3,7 +3,6 @@ from __future__ import annotations
 import numbers
 import os
 import subprocess
-import zipfile
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
@@ -383,6 +382,7 @@ def convert_office_doc(
     output_directory: str,
     target_format: str = "docx",
     target_filter: Optional[str] = None,
+    wait_for_soffice_ready_time_out: int = 60,
 ):
     """Converts a .doc file to a .docx file using the libreoffice CLI.
 
@@ -397,6 +397,8 @@ def convert_office_doc(
     target_filter: str
         The output filter name to use when converting. See references below
         for details.
+    wait_for_soffice_ready_time_out: int
+        The max wait time in seconds for soffice to become available to run
 
     References
     ----------
@@ -420,8 +422,12 @@ def convert_office_doc(
         input_filename,
     ]
     try:
-        while _is_soffice_running():
-            sleep(0.01)
+        # only one soffice process can be ran
+        wait_time = 0
+        sleep_time = 0.01
+        while wait_time < wait_for_soffice_ready_time_out and _is_soffice_running():
+            wait_time += sleep_time
+            sleep(sleep_time)
         output = subprocess.run(command, capture_output=True)
     except FileNotFoundError:
         raise FileNotFoundError(
@@ -433,26 +439,10 @@ on your system and try again.
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
 
-    logger.info(output.stdout.strip())
+    logger.info(output.stdout.decode().strip())
     if output.returncode != 0:
         logger.error("soffice failed to convert %s with code %i", input_filename, output.returncode)
-        logger.error(output)
-
-    if not os.path.exists(output_directory):
-        raise RuntimeError(f"temp dir {output_directory} gone before processing converted file")
-
-    _, filename_no_path = os.path.split(os.path.abspath(input_filename))
-    base_filename, _ = os.path.splitext(filename_no_path)
-    target_file_path = os.path.join(output_directory, f"{base_filename}.docx")
-
-    if not os.path.exists(output_directory):
-        raise RuntimeError(f"temp dir {output_directory} gone before processing converted file")
-
-    if not os.path.isfile(target_file_path):
-        raise RuntimeError(f"no output file {target_file_path} produced by soffice")
-
-    if not zipfile.is_zipfile(target_file_path):
-        raise RuntimeError(f"output file {target_file_path} is not a ZIP archive")
+        logger.error(output.stderr.decode().strip())
 
 
 def exactly_one(**kwargs: Any) -> None:
