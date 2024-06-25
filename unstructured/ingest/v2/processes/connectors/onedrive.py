@@ -39,7 +39,7 @@ MAX_MB_SIZE = 512_000_000
 
 @dataclass
 class OnedriveAccessConfig(AccessConfig):
-    client_credential: str
+    client_cred: str
 
 
 @dataclass
@@ -58,7 +58,7 @@ class OnedriveConnectionConfig(ConnectionConfig):
             app = ConfidentialClientApplication(
                 authority=f"{self.authority_url}/{self.tenant}",
                 client_id=self.client_id,
-                client_credential=self.access_config.client_credential,
+                client_credential=self.access_config.client_cred,
             )
             token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
         except ValueError as exc:
