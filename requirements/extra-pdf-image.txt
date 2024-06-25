@@ -103,7 +103,6 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   layoutparser

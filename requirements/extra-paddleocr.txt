@@ -99,7 +99,6 @@ networkx==3.2.1
     # via scikit-image
 numpy==1.26.4
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   imageio
