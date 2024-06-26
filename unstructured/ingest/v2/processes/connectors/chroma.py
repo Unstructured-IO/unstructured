@@ -193,8 +193,6 @@ class ChromaUploader(Uploader):
             f"at {self.connection_config.host}",
         )
 
-        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
-
         collection = self.client.get_or_create_collection(
             name=self.connection_config.collection_name
         )
