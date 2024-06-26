@@ -160,6 +160,7 @@ class LocalUploaderConfig(UploaderConfig):
 
 @dataclass
 class LocalUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: LocalUploaderConfig = field(default_factory=lambda: LocalUploaderConfig())
     connection_config: LocalConnectionConfig = field(
         default_factory=lambda: LocalConnectionConfig()

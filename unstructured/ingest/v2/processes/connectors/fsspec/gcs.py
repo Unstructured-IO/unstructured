@@ -111,6 +111,7 @@ class GcsUploaderConfig(FsspecUploaderConfig):
 
 @dataclass
 class GcsUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: GcsConnectionConfig
     upload_config: GcsUploaderConfig = field(default=None)
 

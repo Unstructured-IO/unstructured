@@ -25,6 +25,7 @@ class UploadContent:
 
 @dataclass
 class Uploader(BaseProcess, BaseConnector, ABC):
+    connector_type: str
     upload_config: UploaderConfigT
 
     def is_async(self) -> bool:

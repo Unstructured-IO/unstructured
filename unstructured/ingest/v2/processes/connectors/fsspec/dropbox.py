@@ -99,7 +99,8 @@ class DropboxUploaderConfig(FsspecUploaderConfig):
 
 
 @dataclass
-class DropboxUpload(FsspecUploader):
+class DropboxUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: DropboxConnectionConfig
     upload_config: DropboxUploaderConfig = field(default=None)
 
@@ -130,7 +131,7 @@ add_source_entry(
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
-        uploader=DropboxUpload,
+        uploader=DropboxUploader,
         uploader_config=DropboxUploaderConfig,
         connection_config=DropboxConnectionConfig,
     ),

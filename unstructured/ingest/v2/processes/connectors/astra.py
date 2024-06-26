@@ -90,6 +90,7 @@ class AstraUploaderConfig(UploaderConfig):
 
 @dataclass
 class AstraUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: AstraConnectionConfig
     upload_config: AstraUploaderConfig
 
