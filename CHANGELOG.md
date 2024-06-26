@@ -5,6 +5,7 @@
 ### Features
 
 ### Fixes
+- Fix counting false negatives and false positives in table structure evaluation
 
 ## 0.14.8
 
