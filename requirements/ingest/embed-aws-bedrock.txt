@@ -87,7 +87,6 @@ mypy-extensions==1.0.0
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
 orjson==3.10.5
@@ -120,7 +119,7 @@ requests==2.32.3
     #   langchain
     #   langchain-community
     #   langsmith
-s3transfer==0.10.1
+s3transfer==0.10.2
     # via boto3
 six==1.16.0
     # via
@@ -130,7 +129,7 @@ sqlalchemy==2.0.31
     # via
     #   langchain
     #   langchain-community
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community

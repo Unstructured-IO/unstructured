@@ -11,7 +11,9 @@ emoji
 dataclasses-json
 python-iso639
 langdetect
-numpy
+# NOTE(robinson) - pinned due to a feature being deprecated in the latest version. plan to
+# investigate and remove pin
+numpy<2
 rapidfuzz
 backoff
 typing-extensions
