@@ -618,10 +618,10 @@ def test_table_eval_processor_when_no_tables():
     result = te_processor.process_file()
     assert result.total_tables == 0
     assert result.table_level_acc == 1
-    assert result.element_row_level_index_acc == np.nan
-    assert result.element_col_level_index_acc == np.nan
-    assert result.element_row_level_content_acc == np.nan
-    assert result.element_col_level_content_acc == np.nan
+    assert np.isnan(result.element_row_level_index_acc)
+    assert np.isnan(result.element_col_level_index_acc)
+    assert np.isnan(result.element_row_level_content_acc)
+    assert np.isnan(result.element_col_level_content_acc)
 
 
 def test_table_eval_processor_when_only_gt():
