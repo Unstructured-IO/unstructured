@@ -18,6 +18,7 @@ from unstructured.metrics.element_type import (
     calculate_element_type_percent_match,
     get_element_type_frequency,
 )
+from unstructured.metrics.object_detection import ObjectDetectionEvalProcessor
 from unstructured.metrics.table.table_eval import TableEvalProcessor
 from unstructured.metrics.text_extraction import calculate_accuracy, calculate_percent_missing_text
 from unstructured.metrics.utils import (
@@ -585,3 +586,58 @@ def filter_metrics(
         raise ValueError("Please provide `export_filename`.")
     else:
         raise ValueError("Return type must be either `dataframe` or `file`.")
+
+
+@dataclass
+class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
+    """
+    Calculates object detection metrics for each document:
+    - f1 score
+    - precision
+    - recall
+    - average precision (mAP)
+    It also calculates aggregated metrics.
+    """
+
+    def __post_init__(self):
+        super().__post_init__()
+
+    @property
+    def supported_metric_names(self):
+        return ["f1_score", "precision", "recall", "mAP"]
+
+    def default_tsv_name(self):
+        return "all-docs-object-detection-metrics.tsv"
+
+    def default_agg_tsv_name(self):
+        return "aggregate-object-detection-metrics.tsv"
+
+    def _process_document(self, doc: Path) -> list:
+        doc_path = Path(doc)
+        out_filename = doc_path.stem
+        doctype = Path(out_filename).suffix[1:]
+
+        src_gt_filename = out_filename + ".json"  # TODO gt file is not ready yet
+
+        if src_gt_filename in self._ground_truth_paths:
+            return None
+
+        prediction_file = self.documents_dir / doc
+        if not prediction_file.exists():
+            logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
+            return None
+
+        ground_truth_file = self.ground_truths_dir / src_gt_filename
+        if not ground_truth_file.exists():
+            logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
+            return None
+
+        processor = ObjectDetectionEvalProcessor.from_json_files(
+            prediction_file=prediction_file, ground_truth_file=ground_truth_file
+        )
+        metrics = processor.get_metrics()
+
+        return [
+            out_filename,
+            doctype,
+        ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
