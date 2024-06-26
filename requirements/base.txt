@@ -73,6 +73,8 @@ nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
     # via -r ./base.in
+ordered-set==4.1.0
+    # via deepdiff
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt
