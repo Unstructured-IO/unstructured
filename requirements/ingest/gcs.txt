@@ -42,7 +42,7 @@ fsspec==2024.5.0
     #   gcsfs
 gcsfs==2024.5.0
     # via -r ./ingest/gcs.in
-google-api-core==2.19.0
+google-api-core==2.19.1
     # via
     #   google-cloud-core
     #   google-cloud-storage
@@ -65,7 +65,7 @@ google-crc32c==1.5.0
     #   google-resumable-media
 google-resumable-media==2.7.1
     # via google-cloud-storage
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via google-api-core
 idna==3.7
     # via
