@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
+from urllib.parse import quote
 
 from dateutil import parser
 
@@ -85,8 +86,8 @@ class SharepointIndexer(Indexer):
             return folder.files
 
         folder.expand(["Files", "Folders"]).get().execute_query()
-        files: list["File"] = folder.files
-        folders: list["Folder"] = folder.folders
+        files: list["File"] = list(folder.files)
+        folders: list["Folder"] = list(folder.folders)
         for f in folders:
             if "/Forms" in f.serverRelativeUrl:
                 continue
@@ -152,7 +153,7 @@ class SharepointIndexer(Indexer):
             additional_metadata=self.get_properties(raw_properties=page.properties),
         )
 
-    def file_to_file_data(self, file: "File") -> FileData:
+    def file_to_file_data(self, client: "ClientContext", file: "File") -> FileData:
         expansion_fields = [
             "Name",
             "TimeCreated",
@@ -165,10 +166,7 @@ class SharepointIndexer(Indexer):
             "TimeLastModified",
         ]
         file.expand(expansion_fields).get().execute_query()
-        linking_url = file.properties.get("LinkingUrl", None)
-        absolute_url = None
-        if linking_url:
-            absolute_url = linking_url.split("?")[0]
+        absolute_url = f"{client.base_url}{quote(file.serverRelativeUrl)}"
         date_modified_dt = (
             parser.parse(file.time_last_modified) if file.time_last_modified else None
         )
@@ -182,14 +180,12 @@ class SharepointIndexer(Indexer):
                 rel_path=str(file.server_relative_path).replace(self.index_config.path, ""),
             ),
             metadata=DataSourceMetadata(
-                url=absolute_url or file.serverRelativeUrl,
+                url=absolute_url,
                 version=f"{file.major_version}.{file.minor_version}",
                 date_modified=str(date_modified_dt.timestamp()) if date_modified_dt else None,
                 date_created=str(date_created_at.timestamp()) if date_created_at else None,
                 date_processed=str(time()),
-                record_locator={
-                    "server_path": file.serverRelativeUrl,
-                },
+                record_locator={"server_path": file.serverRelativeUrl, "site_url": client.base_url},
             ),
             additional_metadata=self.get_properties(raw_properties=file.properties),
         )
@@ -204,8 +200,7 @@ class SharepointIndexer(Indexer):
         root_folder = self.get_root(client=client)
         files = self.list_files(root_folder, recursive=self.index_config.recursive)
         for file in files:
-            file_data = self.file_to_file_data(file=file)
-            file_data.metadata.record_locator["site_url"] = client.base_url
+            file_data = self.file_to_file_data(file=file, client=client)
             yield file_data
         if self.index_config.process_pages:
             pages = self.list_pages(client=client)
