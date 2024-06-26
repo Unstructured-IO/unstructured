@@ -43,27 +43,6 @@ class PineconeConnectionConfig(ConnectionConfig):
     environment: str
     access_config: PineconeAccessConfig = enhanced_field(sensitive=True)
 
-    @requires_dependencies(["pinecone"], extras="pinecone")
-    def get_index(self) -> "PineconeIndex":
-        from pinecone import Pinecone
-
-        from unstructured import __version__ as unstructured_version
-
-        pc = Pinecone(
-            api_key=self.connection_config.access_config.api_key,
-            source_tag=f"unstructured=={unstructured_version}",
-        )
-
-        index = pc.Index(self.connection_config.index_name)
-        logger.debug(f"Connected to index: {pc.describe_index(self.connection_config.index_name)}")
-        return index
-
-    @property
-    def pinecone_index(self):
-        if self._index is None:
-            self._index = self.get_index()
-        return self._index
-
 
 @dataclass
 class PineconeUploadStagerConfig(UploadStagerConfig):
@@ -127,16 +106,30 @@ class PineconeUploader(Uploader):
     index: Optional["PineconeIndex"] = field(init=False)
 
     def __post_init__(self):
-        self.index = self.connection_config.pinecone_index
+        self.index = self.create_index()
+
+    @requires_dependencies(["pinecone"], extras="pinecone")
+    def create_index(self) -> "PineconeIndex":
+        from pinecone import Pinecone
+
+        from unstructured import __version__ as unstructured_version
+
+        pc = Pinecone(
+            api_key=self.connection_config.access_config.api_key,
+            source_tag=f"unstructured=={unstructured_version}",
+        )
+
+        index = pc.Index(self.connection_config.index_name)
+        logger.debug(f"Connected to index: {pc.describe_index(self.connection_config.index_name)}")
+        return index
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
 
-        index = self.pinecone_index
         try:
-            response = index.upsert(batch)
+            response = self.index.upsert(batch)
         except pinecone.core.client.exceptions.PineconeApiException as api_error:
             raise WriteError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
