@@ -50,6 +50,7 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --username "admin" \
   --password "admin" \
   --use-ssl \
-  --batch-size-bytes 150
+  --batch-size-bytes 150 \
+  --num-threads "$max_processes"
 
 scripts/opensearch-test-helpers/destination_connector/test-ingest-opensearch-output.py
