@@ -2,6 +2,11 @@
 
 ### Enhancements
 
+* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used
+  to visualize the result of the OD model and dump the result to a file.
+  Additionally, the visualization of bounding boxes of each layout source is rendered and saved
+  for each page.
+
 ### Features
 
 ### Fixes
