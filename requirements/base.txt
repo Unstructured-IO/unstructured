@@ -53,9 +53,7 @@ mypy-extensions==1.0.0
 nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt

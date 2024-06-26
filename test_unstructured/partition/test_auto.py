@@ -178,6 +178,7 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
     assert elements == expected_docx_elements
 
 
+@pytest.mark.parametrize("file_name", ["simple.docx", "simple.doc", "simple.odt"])
 @pytest.mark.parametrize(
     "strategy",
     [
@@ -187,7 +188,17 @@ def test_auto_partition_doc_with_file(mock_docx_document, expected_docx_elements
         PartitionStrategy.OCR_ONLY,
     ],
 )
-def test_partition_forwards_strategy_arg_to_partition_docx(request: FixtureRequest, strategy: str):
+def test_partition_forwards_strategy_arg_to_partition_docx_and_its_brokers(
+    request: FixtureRequest, file_name: str, strategy: str
+):
+    """The `strategy` arg value received by `partition()` is received by `partition_docx().
+
+    To do this in the brokering-partitioner cases (DOC, ODT) it must make its way to
+    `partition_doc()` or `partition_odt()` which must then forward it to `partition_docx()`. This
+    test makes sure it made it all the way.
+
+    Note this is 3 file-types X 4 strategies = 12 test-cases.
+    """
     from unstructured.partition.docx import _DocxPartitioner
 
     def fake_iter_document_elements(self: _DocxPartitioner) -> Iterator[Element]:
@@ -200,7 +211,7 @@ def test_partition_forwards_strategy_arg_to_partition_docx(request: FixtureReque
         side_effect=fake_iter_document_elements,
     )
 
-    (element,) = partition(example_doc_path("simple.docx"), strategy=strategy)
+    (element,) = partition(example_doc_path(file_name), strategy=strategy)
 
     _iter_elements_.assert_called_once_with(ANY)
     assert element.text == f"strategy=={strategy}"
@@ -589,6 +600,7 @@ def test_auto_partition_pptx_from_filename():
     assert elements[0].metadata.file_directory == os.path.split(filename)[0]
 
 
+@pytest.mark.parametrize("file_name", ["simple.pptx", "fake-power-point.ppt"])
 @pytest.mark.parametrize(
     "strategy",
     [
@@ -598,7 +610,17 @@ def test_auto_partition_pptx_from_filename():
         PartitionStrategy.OCR_ONLY,
     ],
 )
-def test_partition_forwards_strategy_arg_to_partition_pptx(request: FixtureRequest, strategy: str):
+def test_partition_forwards_strategy_arg_to_partition_pptx_and_its_brokers(
+    request: FixtureRequest, file_name: str, strategy: str
+):
+    """The `strategy` arg value received by `partition()` is received by `partition_pptx().
+
+    To do this in the brokering-partitioner case (PPT) the strategy argument must make its way to
+    `partition_ppt()` which must then forward it to `partition_pptx()`. This test makes sure it
+    made it all the way.
+
+    Note this is 2 file-types X 4 strategies = 8 test-cases.
+    """
     from unstructured.partition.pptx import _PptxPartitioner
 
     def fake_iter_presentation_elements(self: _PptxPartitioner) -> Iterator[Element]:
@@ -611,35 +633,7 @@ def test_partition_forwards_strategy_arg_to_partition_pptx(request: FixtureReque
         side_effect=fake_iter_presentation_elements,
     )
 
-    (element,) = partition(example_doc_path("simple.pptx"), strategy=strategy)
-
-    _iter_elements_.assert_called_once_with(ANY)
-    assert element.text == f"strategy=={strategy}"
-
-
-@pytest.mark.parametrize(
-    "strategy",
-    [
-        PartitionStrategy.AUTO,
-        PartitionStrategy.FAST,
-        PartitionStrategy.HI_RES,
-        PartitionStrategy.OCR_ONLY,
-    ],
-)
-def test_partition_forwards_strategy_arg_to_partition_ppt(request: FixtureRequest, strategy: str):
-    from unstructured.partition.pptx import _PptxPartitioner
-
-    def fake_iter_presentation_elements(self: _PptxPartitioner) -> Iterator[Element]:
-        yield Text(f"strategy=={self._opts.strategy}")
-
-    _iter_elements_ = method_mock(
-        request,
-        _PptxPartitioner,
-        "_iter_presentation_elements",
-        side_effect=fake_iter_presentation_elements,
-    )
-
-    (element,) = partition(example_doc_path("fake-power-point.ppt"), strategy=strategy)
+    (element,) = partition(example_doc_path(file_name), strategy=strategy)
 
     _iter_elements_.assert_called_once_with(ANY)
     assert element.text == f"strategy=={strategy}"

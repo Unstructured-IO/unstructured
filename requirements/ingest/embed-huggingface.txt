@@ -105,7 +105,6 @@ networkx==3.2.1
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   scikit-learn
@@ -167,7 +166,7 @@ sqlalchemy==2.0.31
     #   langchain-community
 sympy==1.12.1
     # via torch
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community
