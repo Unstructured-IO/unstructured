@@ -596,7 +596,8 @@ def test_table_eval_processor_when_no_match_with_pred():
         }
     ]
 
-    with mock.patch.object(TableAlignment, "get_table_level_alignment", new=lambda *args: [-1]):
+    with mock.patch.object(TableAlignment, "get_table_level_alignment") as align_fn:
+        align_fn.return_value = [-1]
         te_processor = TableEvalProcessor(prediction, ground_truth)
         result = te_processor.process_file()
 
