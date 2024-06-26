@@ -185,8 +185,8 @@ class GoogleDriveIndexer(Indexer):
         if extensions:
             ext_filter = " or ".join([f"fileExtension = '{e}'" for e in extensions])
             q = f"{q} and ({ext_filter} or mimeType = 'application/vnd.google-apps.folder')"
-        logger.info(f"Query used when indexing: {q}")
-        logger.info("response fields limited to: {}".format(", ".join(self.fields)))
+        logger.debug(f"Query used when indexing: {q}")
+        logger.debug("response fields limited to: {}".format(", ".join(self.fields)))
         done = False
         page_token = None
         files_response = []
@@ -297,7 +297,7 @@ class GoogleDriveDownloader(Downloader):
     def _write_file(self, file_data: FileData, file_contents: io.BytesIO):
         download_path = self.get_download_path(file_data=file_data)
         download_path.parent.mkdir(parents=True, exist_ok=True)
-        logger.info(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
+        logger.debug(f"writing {file_data.source_identifiers.fullpath} to {download_path}")
         with open(download_path, "wb") as handler:
             handler.write(file_contents.getbuffer())
         if (
@@ -315,7 +315,7 @@ class GoogleDriveDownloader(Downloader):
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         from googleapiclient.http import MediaIoBaseDownload
 
-        logger.info(f"fetching file: {file_data.source_identifiers.fullpath}")
+        logger.debug(f"fetching file: {file_data.source_identifiers.fullpath}")
         mime_type = file_data.additional_metadata["mimeType"]
         record_id = file_data.identifier
         files_client = self.connection_config.get_files_service()
