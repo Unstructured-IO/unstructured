@@ -4,7 +4,7 @@
 #
 #    pip-compile ./ingest/jira.in
 #
-atlassian-python-api==3.41.13
+atlassian-python-api==3.41.14
     # via -r ./ingest/jira.in
 beautifulsoup4==4.12.3
     # via
@@ -46,7 +46,7 @@ soupsieve==2.5
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

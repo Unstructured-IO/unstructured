@@ -23,7 +23,7 @@ idna==3.7
     # via
     #   -c ./ingest/../base.txt
     #   requests
-msal==1.28.1
+msal==1.29.0
     # via
     #   -r ./ingest/outlook.in
     #   office365-rest-python-client
@@ -42,7 +42,7 @@ requests==2.32.3
     #   -c ./ingest/../base.txt
     #   msal
     #   office365-rest-python-client
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

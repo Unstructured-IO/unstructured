@@ -65,10 +65,9 @@ multidict==6.0.5
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   voyageai
-orjson==3.10.4
+orjson==3.10.5
     # via langsmith
 packaging==23.2
     # via
@@ -92,9 +91,9 @@ requests==2.32.3
     #   langchain
     #   langsmith
     #   voyageai
-sqlalchemy==2.0.30
+sqlalchemy==2.0.31
     # via langchain
-tenacity==8.3.0
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-core
@@ -105,7 +104,7 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

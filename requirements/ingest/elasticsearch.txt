@@ -4,6 +4,14 @@
 #
 #    pip-compile ./ingest/elasticsearch.in
 #
+aiohttp==3.9.5
+    # via elasticsearch
+aiosignal==1.3.1
+    # via aiohttp
+async-timeout==4.0.3
+    # via aiohttp
+attrs==23.2.0
+    # via aiohttp
 certifi==2024.6.2
     # via
     #   -c ./ingest/../base.txt
@@ -11,10 +19,24 @@ certifi==2024.6.2
     #   elastic-transport
 elastic-transport==8.13.1
     # via elasticsearch
-elasticsearch==8.14.0
+elasticsearch[async]==8.14.0
     # via -r ./ingest/elasticsearch.in
-urllib3==1.26.18
+frozenlist==1.4.1
+    # via
+    #   aiohttp
+    #   aiosignal
+idna==3.7
+    # via
+    #   -c ./ingest/../base.txt
+    #   yarl
+multidict==6.0.5
+    # via
+    #   aiohttp
+    #   yarl
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt
     #   elastic-transport
+yarl==1.9.4
+    # via aiohttp

@@ -116,7 +116,7 @@ jobs:
     - name: Test
       env:
         UNS_API_KEY: ${{ secrets.UNS_API_KEY }}
-        TESSERACT_VERSION : "5.3.4"
+        TESSERACT_VERSION : "5.4.1"
       run: |
         source .venv/bin/activate
         sudo apt-get update
@@ -342,6 +342,7 @@ jobs:
         AZURE_SEARCH_ENDPOINT: ${{ secrets.AZURE_SEARCH_ENDPOINT }}
         AZURE_SEARCH_API_KEY: ${{ secrets.AZURE_SEARCH_API_KEY }}
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        OCTOAI_API_KEY: ${{ secrets.OCTOAI_API_KEY }}
         PINECONE_API_KEY: ${{secrets.PINECONE_API_KEY}}
         TABLE_OCR: "tesseract"
         OCR_AGENT: "unstructured.partition.utils.ocr_models.tesseract_ocr.OCRAgentTesseract"
@@ -427,6 +428,29 @@ jobs:
         tesseract --version
         ./test_unstructured_ingest/test-ingest-dest.sh
 
+  test_ingest_help:
+    environment: ci
+    strategy:
+      matrix:
+        python-version: ["3.9","3.10","3.11", "3.12"]
+    runs-on: ubuntu-latest
+    needs: [setup_ingest, lint]
+    steps:
+      - uses: 'actions/checkout@v4'
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Setup virtual environment
+        uses: ./.github/actions/base-ingest-cache
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Validate --help
+        run: |
+          source .venv/bin/activate
+          ./test_unstructured_ingest/test-help.sh
+
+
   test_unstructured_api_unit:
     strategy:
       matrix:
@@ -499,7 +523,6 @@ jobs:
       - name: Test Dockerfile
         run: |
           echo "UNS_API_KEY=${{ secrets.UNS_API_KEY }}" > uns_test_env_file
-          make docker-dl-packages
           make docker-build
           make docker-test CI=true UNSTRUCTURED_INCLUDE_DEBUG_METADATA=true
       - name: Scan image

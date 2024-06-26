@@ -42,7 +42,7 @@ fsspec==2024.5.0
     #   gcsfs
 gcsfs==2024.5.0
     # via -r ./ingest/gcs.in
-google-api-core==2.19.0
+google-api-core==2.19.1
     # via
     #   google-cloud-core
     #   google-cloud-storage
@@ -65,7 +65,7 @@ google-crc32c==1.5.0
     #   google-resumable-media
 google-resumable-media==2.7.1
     # via google-cloud-storage
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via google-api-core
 idna==3.7
     # via
@@ -78,7 +78,7 @@ multidict==6.0.5
     #   yarl
 oauthlib==3.2.2
     # via requests-oauthlib
-proto-plus==1.23.0
+proto-plus==1.24.0
     # via google-api-core
 protobuf==4.23.4
     # via
@@ -107,7 +107,7 @@ soupsieve==2.5
     # via
     #   -c ./ingest/../base.txt
     #   beautifulsoup4
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ./ingest/../base.txt
     #   -c ./ingest/../deps/constraints.txt

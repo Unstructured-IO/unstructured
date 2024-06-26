@@ -38,16 +38,10 @@ trap stop_container EXIT
 await_container
 
 # Run the tests
-if [[ "$DOCKER_IMAGE" == *"arm64"* ]]; then
-  docker cp test_unstructured_ingest $CONTAINER_NAME:/home/notebook-user
-  docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R 1000:1000 /home/notebook-user/test_unstructured_ingest"
-  docker exec "$CONTAINER_NAME" /bin/bash -c "/home/notebook-user/test_unstructured_ingest/src/wikipedia.sh"
-else
-  docker cp test_unstructured_ingest $CONTAINER_NAME:/app
-  docker cp requirements/ingest $CONTAINER_NAME:/app/requirements/ingest
-  docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R nonroot:nonroot /app/test_unstructured_ingest"
-  docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/wikipedia.sh"
-fi
+docker cp test_unstructured_ingest $CONTAINER_NAME:/app
+docker cp requirements/ingest $CONTAINER_NAME:/app/requirements/ingest
+docker exec -u root "$CONTAINER_NAME" /bin/bash -c "chown -R notebook-user:notebook-user /app/test_unstructured_ingest"
+docker exec "$CONTAINER_NAME" /bin/bash -c "/app/test_unstructured_ingest/src/wikipedia.sh"
 
 result=$?
 exit $result

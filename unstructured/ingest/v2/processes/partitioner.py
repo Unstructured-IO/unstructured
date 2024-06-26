@@ -1,7 +1,8 @@
+import asyncio
 from abc import ABC
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from pathlib import Path
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
@@ -10,13 +11,17 @@ from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import elements_to_dicts, flatten_dict
 
+if TYPE_CHECKING:
+    from unstructured_client import UnstructuredClient
+    from unstructured_client.models.shared import PartitionParameters
+
 
 @dataclass
 class PartitionerConfig(EnhancedDataClassJsonMixin):
     strategy: str = "auto"
     ocr_languages: Optional[list[str]] = None
     encoding: Optional[str] = None
-    additional_partition_args: dict[str, Any] = field(default_factory=dict)
+    additional_partition_args: Optional[dict[str, Any]] = None
     skip_infer_table_types: Optional[list[str]] = None
     fields_include: list[str] = field(
         default_factory=lambda: ["element_id", "text", "type", "metadata", "embeddings"],
@@ -87,7 +92,7 @@ class Partitioner(BaseProcess, ABC):
                 elem.update(flatten_dict(metadata, keys_to_omit=["data_source_record_locator"]))
         return element_dicts
 
-    def run(
+    def partition_locally(
         self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
     ) -> list[dict]:
         from unstructured.partition.auto import partition
@@ -101,28 +106,60 @@ class Partitioner(BaseProcess, ABC):
         )
         return self.postprocess(elements=elements_to_dicts(elements))
 
-    async def run_async(
-        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
-    ) -> list[dict]:
-        from unstructured_client import UnstructuredClient
+    async def call_api(self, client: "UnstructuredClient", request: "PartitionParameters"):
+        # TODO when client supports async, run without using run_in_executor
+        # isolate the IO heavy call
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, client.general.partition, request)
+
+    def create_partition_parameters(self, filename: Path) -> "PartitionParameters":
         from unstructured_client.models.shared import Files, PartitionParameters
 
-        logger.info(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
-        client = UnstructuredClient(
-            server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
-        )
         partition_request = self.config.to_partition_kwargs()
+        possible_fields = [f.name for f in fields(PartitionParameters)]
+        filtered_partition_request = {
+            k: v for k, v in partition_request.items() if k in possible_fields
+        }
+        if len(filtered_partition_request) != len(partition_request):
+            logger.debug(
+                "Following fields were omitted due to not being "
+                "supported by the currently used unstructured client: {}".format(
+                    ", ".join([v for v in partition_request if v not in filtered_partition_request])
+                )
+            )
         logger.debug(f"Using hosted partitioner with kwargs: {partition_request}")
         with open(filename, "rb") as f:
             files = Files(
                 content=f.read(),
                 file_name=str(filename.resolve()),
             )
-            partition_request["files"] = files
-        partition_params = PartitionParameters(**partition_request)
-        resp = client.general.partition(partition_params)
+            filtered_partition_request["files"] = files
+        partition_params = PartitionParameters(**filtered_partition_request)
+        return partition_params
+
+    async def partition_via_api(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        from unstructured_client import UnstructuredClient
+
+        logger.info(f"partitioning file {filename} with metadata: {metadata.to_dict()}")
+        client = UnstructuredClient(
+            server_url=self.config.partition_endpoint, api_key_auth=self.config.api_key
+        )
+        partition_params = self.create_partition_parameters(filename=filename)
+        resp = await self.call_api(client=client, request=partition_params)
         elements = resp.elements or []
         # Append the data source metadata the auto partition does for you
         for element in elements:
             element["metadata"]["data_source"] = metadata.to_dict()
         return self.postprocess(elements=elements)
+
+    def run(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        return self.partition_locally(filename, metadata=metadata, **kwargs)
+
+    async def run_async(
+        self, filename: Path, metadata: Optional[DataSourceMetadata] = None, **kwargs
+    ) -> list[dict]:
+        return await self.partition_via_api(filename, metadata=metadata, **kwargs)

@@ -44,7 +44,6 @@ If the connector has an available `fsspec` implementation, then refer to [s3.py]
 
 Make sure to update the source registry via `add_source_entry` using a unique key for the source type. This will expose it as an available connector.
 
-
 Create at least one folder [examples/ingest](examples/ingest) with an easily reproducible
 script that shows the new connector in action.
 
@@ -52,6 +51,8 @@ Finally, to ensure the connector remains stable, add a new script test_unstructu
 
 You'll notice that the unstructured outputs for the new documents are expected
 to be checked into CI under test_unstructured_ingest/expected-structured-output/\<folder-name-relevant-to-your-dataset\>. So, you'll need to `git add` those json outputs so that `test-ingest.sh` passes in CI.
+
+Double check that the connector is optimized for the best fan out, check [here](#parallel-execution) for more details.
 
 ## Adding Destination Data Connectors
 
@@ -62,6 +63,8 @@ If the connector has an available `fsspec` implementation, then refer to [s3.py]
 Make sure to update the destination registry via `add_source_entry` using a unique key for the source type. This will expose it as an available connector.
 
 Similar tests and examples should be added to demonstrate/validate the use of the destination connector similar to the steps laid out for a source connector.
+
+Double check that the connector is optimized for the best fan out, check [here](#parallel-execution) for more details.
 
 ### The checklist:
 
@@ -118,5 +121,9 @@ The ingest flow is similar to an ETL pipeline that gets defined at runtime based
 ![unstructured ingest sequence diagram](assets/sequence.png)
 
 
-### Parallel Execution/Concurrency
-For each step in the pipeline, a choice can be made when to run it async to support IO heavy tasks vs multiprocessing for CPU heavy loads.
+### Parallel Execution
+For each step in the pipeline, a choice can be made when to run it async to support IO heavy tasks vs multiprocessing for CPU heavy loads. This choice should be make with care
+because if enabling async, that code will be run in a single process with the assumption that the async support will provide better fan out and optimization that running the code
+with a multiprocessing pool fan out. If the underlying code is completely blocking but the async flag is enabled, this will run as if it's a normal for loop and will get worse performance
+than is simply run via multiprocessing. One option to help support IO heavy tasks that might not support async yet is wrapping it in a `run_in_executor()` call. Otherwise, it is common that
+the underlying SDKs have an async version to run the same network calls without blocking the event loop.

@@ -6,7 +6,7 @@ from typing import Callable, Optional, TypedDict
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.uploader import UploadContent, Uploader
 from unstructured.ingest.v2.logger import logger
-from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, iterable_input
+from unstructured.ingest.v2.pipeline.interfaces import PipelineStep, iterable_input, timed
 from unstructured.ingest.v2.pipeline.utils import sterilize_dict
 
 STEP_ID = "upload"
@@ -44,13 +44,7 @@ class UploadStep(PipelineStep):
     def process_whole(self, iterable: iterable_input):
         self.run(contents=iterable)
 
-    async def _process_async(self, iterable: iterable_input):
-        return await asyncio.gather(*[self.run_async(**i) for i in iterable])
-
-    def process_async(self, iterable: iterable_input):
-        logger.info("processing content async")
-        return asyncio.run(self._process_async(iterable=iterable))
-
+    @timed
     def __call__(self, iterable: iterable_input):
         logger.info(
             f"Calling {self.__class__.__name__} " f"with {len(iterable)} docs",  # type: ignore

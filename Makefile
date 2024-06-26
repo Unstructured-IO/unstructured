@@ -169,6 +169,10 @@ install-ingest-reddit:
 install-ingest-slack:
 	pip install -r requirements/ingest/slack.txt
 
+.PHONY: install-ingest-kafka
+install-ingest-kafka:
+	python3 -m pip install -r requirements/ingest/kafka.txt
+
 .PHONY: install-ingest-wikipedia
 install-ingest-wikipedia:
 	python3 -m pip install -r requirements/ingest/wikipedia.txt
@@ -317,7 +321,7 @@ test-no-extras:
 		UNSTRUCTURED_INCLUDE_DEBUG_METADATA=$(UNSTRUCTURED_INCLUDE_DEBUG_METADATA) pytest \
 		test_${PACKAGE_NAME}/partition/test_text.py \
 		test_${PACKAGE_NAME}/partition/test_email.py \
-		test_${PACKAGE_NAME}/partition/test_html.py \
+		test_${PACKAGE_NAME}/partition/html/test_partition.py \
 		test_${PACKAGE_NAME}/partition/test_xml_partition.py
 
 .PHONY: test-extra-csv
@@ -459,10 +463,6 @@ DOCKER_IMAGE ?= unstructured:dev
 .PHONY: docker-build
 docker-build:
 	PIP_VERSION=${PIP_VERSION} DOCKER_IMAGE_NAME=${DOCKER_IMAGE} ./scripts/docker-build.sh
-
-.PHONY: docker-dl-packages
-docker-dl-packages:
-	@scripts/docker-dl-packages.sh
 
 .PHONY: docker-start-bash
 docker-start-bash:

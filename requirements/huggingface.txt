@@ -17,7 +17,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   sacremoses
-filelock==3.15.1
+filelock==3.15.4
     # via
     #   huggingface-hub
     #   torch
@@ -27,7 +27,7 @@ fsspec==2024.5.0
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-huggingface-hub==0.23.3
+huggingface-hub==0.23.4
     # via
     #   tokenizers
     #   transformers
@@ -53,7 +53,6 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   transformers
 packaging==23.2
@@ -107,7 +106,7 @@ typing-extensions==4.12.2
     #   -c ./base.txt
     #   huggingface-hub
     #   torch
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt
