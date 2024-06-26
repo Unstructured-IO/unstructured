@@ -1,5 +1,5 @@
 """
-TODO: Implement object detection metrics
+Implements object detection metrics: average precision, precision, recall, and f1 score.
 """
 
 import json
@@ -7,12 +7,8 @@ from pathlib import Path
 
 import numpy as np
 import torch
-from unstructured_inference_prop.object_detection.yolox_super_gradients import (
-    YOLO_SG_LABEL_MAP,
-)
 
-NUM_CLASSES = len(YOLO_SG_LABEL_MAP)
-THRESHOLDS = torch.tensor(
+IOU_THRESHOLDS = torch.tensor(
     [0.5000, 0.5500, 0.6000, 0.6500, 0.7000, 0.7500, 0.8000, 0.8500, 0.9000, 0.9500]
 )
 SCORE_THRESHOLD = 0.1
@@ -21,54 +17,82 @@ RECALL_THRESHOLDS = torch.arange(0, 1.01, 0.01)
 
 class ObjectDetectionEvalProcessor:
 
-    class_labels = YOLO_SG_LABEL_MAP
-    num_cls = NUM_CLASSES
-    thresholds = THRESHOLDS
+    iou_thresholds = IOU_THRESHOLDS
     score_threshold = SCORE_THRESHOLD
     recall_thresholds = RECALL_THRESHOLDS
 
-    def __init__(self, document_preds, document_targets, pages_height, pages_width, device="cpu"):
+    def __init__(
+        self,
+        document_preds: list[torch.Tensor],
+        document_targets: list[torch.Tensor],
+        pages_height: list[int],
+        pages_width: list[int],
+        class_labels: list[str],
+        device: str = "cpu",
+    ):
         """
         Initializes the ObjectDetection prediction and ground truth.
 
         Args:
-            document_preds:     list (of length pages of document) of Tensors of shape (num_predictions, 6)
-                                format: (x1, y1, x2, y2, confidence, class_label) where x1,y1,x2,y2 are according to image size
-            document_targets:   list (of length pages of document) of Tensors of shape (num_targets, 6)
-                                format: (label, x, y, w, h,) where x,y,w,h are according to image size
+            document_preds (list):      list (of length pages of document) of
+                                        Tensors of shape
+                                        (num_predictions, 6)
+                                        format: (x1, y1, x2, y2, confidence, class_label)
+                                        where x1,y1,x2,y2 are according to image size
+            document_targets (list):    list (of length pages of document) of
+                                        Tensors of shape
+                                        (num_targets, 6)
+                                        format: (label, cx, cy, w, h,)
+                                        where x,y,w,h are according to image size
+            pages_height (list):        list of height of each page in the document
+            pages_width (list):         list of width of each page in the document
+            class_labels (list):        list of class labels
         """
         self.device = device
         self.document_preds = [pred.to(device) for pred in document_preds]
         self.document_targets = [target.to(device) for target in document_targets]
         self.pages_height = pages_height
         self.pages_width = pages_width
+        self.num_cls = len(class_labels)
 
     @classmethod
     def from_json_files(
         cls,
         prediction_file_path: Path,
         ground_truth_file_path: Path,
-    ):
+    ) -> "ObjectDetectionEvalProcessor":
         """
         Initializes the ObjectDetection prediction and ground truth,
         and converts the data to the required format.
 
         Args:
-            prediction_file_path (_type_): path to json file with predictions dump from OD model
-            ground_truth_file_path (_type_): path to json file with OD ground truth data
+            prediction_file_path (Path): path to json file with predictions dump from OD model
+            ground_truth_file_path (Path): path to json file with OD ground truth data
         """
-        # TODO: Update and test after https://unstructured-ai.atlassian.net/browse/ML-88
-        # and https://unstructured-ai.atlassian.net/browse/ML-92 are done.
+        # TODO: Test after https://unstructured-ai.atlassian.net/browse/ML-92 is done.
         with open(prediction_file_path) as f:
             predictions_data = json.load(f)
         with open(ground_truth_file_path) as f:
             ground_truth_data = json.load(f)
 
-        document_preds = cls._process_data(predictions_data, cls.class_labels, prediction=True)
-        document_targets = cls._process_data(ground_truth_data, cls.class_labels)
+        assert (
+            predictions_data["object_detection_classes"]
+            == ground_truth_data["object_detection_classes"]
+        ), "Classes in predictions and ground truth do not match."
+        assert len(predictions_data["pages"]) == len(
+            ground_truth_data["pages"]
+        ), "Pages number in predictions and ground truth do not match."
+        for pred_page, gt_page in zip(predictions_data["pages"], ground_truth_data["pages"]):
+            assert (
+                pred_page["size"] == gt_page["size"]
+            ), "Page sizes in predictions and ground truth do not match."
+
+        class_labels = predictions_data["object_detection_classes"]
+        document_preds = cls._process_data(predictions_data, class_labels, prediction=True)
+        document_targets = cls._process_data(ground_truth_data, class_labels)
         pages_height, pages_width = cls._parse_page_dimensions(predictions_data)
 
-        return cls(document_preds, document_targets, pages_height, pages_width)
+        return cls(document_preds, document_targets, pages_height, pages_width, class_labels)
 
     @staticmethod
     def _parse_page_dimensions(data: dict) -> tuple[list, list]:
@@ -78,8 +102,8 @@ class ObjectDetectionEvalProcessor:
         pages_height = []
         pages_width = []
         for page in data["pages"]:
-            pages_height.append(page["size"][0])  # TODO check with @pawel-kmiecik  if this is true
-            pages_width.append(page["size"][1])  # TODO check with @pawel-kmiecik  if this is true
+            pages_height.append(page["size"]["height"])
+            pages_width.append(page["size"]["width"])
         return pages_height, pages_width
 
     @staticmethod
@@ -92,10 +116,8 @@ class ObjectDetectionEvalProcessor:
             page_elements = []
             for element in page["elements"]:
                 # Extract coordinates, confidence, and class label from each prediction
-
                 class_label = element["type"]
-                # class_idx = class_labels[class_label]  # TODO "types" in dump are not not compatible with OD class labels @pawel-kmiecik
-                class_idx = 0  # TODO remove this line after fixing the class labels
+                class_idx = class_labels.index(class_label)
                 if prediction:
                     confidence = element["prob"]
                     x1, y1, x2, y2 = element["bbox"]
@@ -184,7 +206,8 @@ class ObjectDetectionEvalProcessor:
             box2: Tensor of shape [M, 4]
 
         Returns:
-            iou:  Tensor of shape [N, M]: the NxM matrix containing the pairwise IoU values for every element in boxes1 and boxes2
+            iou:    Tensor of shape [N, M]: the NxM matrix containing the pairwise IoU values
+                    for every element in boxes1 and boxes2
         """
 
         def box_area(box):
@@ -286,25 +309,30 @@ class ObjectDetectionEvalProcessor:
         Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
 
         Args:
-            preds:           Tensor of shape (num_img_predictions, 6)
-                                format:     (x1, y1, x2, y2, confidence, class_label) where x1,y1,x2,y2 are according to image size
-            targets:         targets for this image of shape (num_img_targets, 6)
-                                format:     (label, cx, cy, w, h) where cx,cy,w,h
-            height:          dimensions of the image
-            width:           dimensions of the image
-            top_k:           Number of predictions to keep per class, ordered by confidence score
-            return_on_cpu:   If True, the output will be returned on "CPU", otherwise it will be returned on "device"
+            preds:          Tensor of shape (num_img_predictions, 6)
+                            format: (x1, y1, x2, y2, confidence, class_label)
+                            where x1,y1,x2,y2 are according to image size
+            targets:        targets for this image of shape (num_img_targets, 5)
+                            format:     (label, cx, cy, w, h) where cx,cy,w,h
+            height:         dimensions of the image
+            width:          dimensions of the image
+            top_k:          Number of predictions to keep per class, ordered by confidence score
+            return_on_cpu:  If True, the output will be returned on "CPU", otherwise it will be
+                            returned on "device"
 
         Returns:
-            preds_matched:     Tensor of shape (num_img_predictions, n_thresholds)
-                                    True when prediction (i) is matched with a target with respect to the (j)th threshold
-            preds_to_ignore:   Tensor of shape (num_img_predictions, n_thresholds)
-                                    True when prediction (i) is matched with a crowd target with respect to the (j)th threshold
-            preds_scores:      Tensor of shape (num_img_predictions), confidence score for every prediction
-            preds_cls:         Tensor of shape (num_img_predictions), predicted class for every prediction
-            targets_cls:       Tensor of shape (num_img_targets), ground truth class for every target
+            preds_matched:      Tensor of shape (num_img_predictions, n_thresholds)
+                                True when prediction (i) is matched with a target with respect to the (j)th threshold
+            preds_to_ignore:    Tensor of shape (num_img_predictions, n_thresholds)
+                                True when prediction (i) is matched with a crowd target with respect to the (j)th threshold
+            preds_scores:       Tensor of shape (num_img_predictions),
+                                confidence score for every prediction
+            preds_cls:          Tensor of shape (num_img_predictions),
+                                predicted class for every prediction
+            targets_cls:        Tensor of shape (num_img_targets),
+                                ground truth class for every target
         """
-        thresholds = self.thresholds.to(device=self.device)
+        thresholds = self.iou_thresholds.to(device=self.device)
         num_thresholds = len(thresholds)
 
         if preds is None or len(preds) == 0:
@@ -365,17 +393,19 @@ class ObjectDetectionEvalProcessor:
 
         Args:
             preds_matched:      Tensor of shape (num_predictions, n_iou_thresholds)
-                                        True when prediction (i) is matched with a target with respect to the (j)th IoU threshold
+                                True when prediction (i) is matched with a target with respect to the (j)th IoU threshold
             preds_to_ignore     Tensor of shape (num_predictions, n_iou_thresholds)
-                                        True when prediction (i) is matched with a crowd target with respect to the (j)th IoU threshold
-            preds_scores:       Tensor of shape (num_predictions), confidence score for every prediction
-            preds_cls:          Tensor of shape (num_predictions), predicted class for every prediction
-            targets_cls:        Tensor of shape (num_targets), ground truth class for every target box to be detected
+                                True when prediction (i) is matched with a crowd target with respect to the (j)th IoU threshold
+            preds_scores:       Tensor of shape (num_predictions),
+                                confidence score for every prediction
+            preds_cls:          Tensor of shape (num_predictions),
+                                predicted class for every prediction
+            targets_cls:        Tensor of shape (num_targets),
+                                ground truth class for every target box to be detected
 
         Returns:
-            ap, precision, recall, f1: Tensors of shape (n_class, nb_iou_thrs)
-            unique_classes:            Vector with all unique target classes
-
+            ap, precision, recall, f1:  Tensors of shape (n_class, nb_iou_thrs)
+            unique_classes:             Vector with all unique target classes
         """
 
         preds_matched, preds_to_ignore = preds_matched.to(self.device), preds_to_ignore.to(
@@ -398,31 +428,27 @@ class ObjectDetectionEvalProcessor:
         precision = torch.zeros((n_class, nb_iou_thrs), device=self.device)
         recall = torch.zeros((n_class, nb_iou_thrs), device=self.device)
 
-        nb_score_thrs = len(recall_thresholds)
-        f1_per_class_per_threshold = torch.zeros((n_class, nb_score_thrs), device=self.device)
-
         for cls_i, class_value in enumerate(unique_classes):
             cls_preds_idx, cls_targets_idx = (preds_cls == class_value), (
                 targets_cls == class_value
             )
-            cls_ap, cls_precision, cls_recall, cls_f1_per_threshold = (
-                self._compute_detection_metrics_per_cls(
-                    preds_matched=preds_matched[cls_preds_idx],
-                    preds_to_ignore=preds_to_ignore[cls_preds_idx],
-                    preds_scores=preds_scores[cls_preds_idx],
-                    n_targets=cls_targets_idx.sum(),
-                    recall_thresholds=recall_thresholds,
-                    score_threshold=score_threshold,
-                )
+            (
+                cls_ap,
+                cls_precision,
+                cls_recall,
+            ) = self._compute_detection_metrics_per_cls(
+                preds_matched=preds_matched[cls_preds_idx],
+                preds_to_ignore=preds_to_ignore[cls_preds_idx],
+                preds_scores=preds_scores[cls_preds_idx],
+                n_targets=cls_targets_idx.sum(),
+                recall_thresholds=recall_thresholds,
+                score_threshold=score_threshold,
             )
             ap[cls_i, :] = cls_ap
             precision[cls_i, :] = cls_precision
             recall[cls_i, :] = cls_recall
 
-            f1_per_class_per_threshold[cls_i, :] = cls_f1_per_threshold
-
         f1 = 2 * precision * recall / (precision + recall + 1e-16)
-
         return ap, precision, recall, f1, unique_classes
 
     def _compute_detection_metrics_per_cls(
@@ -435,30 +461,29 @@ class ObjectDetectionEvalProcessor:
         score_threshold: float,
     ):
         """
+        Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
         Compute the list of precision, recall and MaP of a given class for every recall threshold.
 
         Args:
             preds_matched:      Tensor of shape (num_predictions, n_thresholds)
-                                        True when prediction (i) is matched with a target
-                                        with respect to the(j)th threshold
+                                True when prediction (i) is matched with a target
+                                with respect to the(j)th threshold
             preds_to_ignore     Tensor of shape (num_predictions, n_thresholds)
-                                        True when prediction (i) is matched with a crowd target
-                                        with respect to the (j)th threshold
-            preds_scores:       Tensor of shape (num_predictions), confidence score for every prediction
+                                True when prediction (i) is matched with a crowd target
+                                with respect to the (j)th threshold
+            preds_scores:       Tensor of shape (num_predictions),
+                                confidence score for every prediction
             n_targets:          Number of target boxes of this class
-            recall_thresholds:  Tensor of shape (max_n_rec_thresh) list of recall thresholds used to compute MaP
-            score_threshold:    Minimum confidence score to consider a prediction for the computation of
-                                        precision and recall (not MaP)
+            recall_thresholds:  Tensor of shape (max_n_rec_thresh)
+                                list of recall thresholds used to compute MaP
+            score_threshold:    Minimum confidence score to consider a prediction
+                                for the computation of precision and recall (not MaP)
 
         Returns:
             ap, precision, recall:     Tensors of shape (nb_thrs)
-            mean_f1_per_threshold:     Tensor of shape (nb_score_thresholds) if calc_best_score_thresholds is True else None
         """
 
         nb_iou_thrs = preds_matched.shape[-1]
-        nb_score_thrs = len(recall_thresholds)
-
-        mean_f1_per_threshold = torch.zeros(nb_score_thrs, device=self.device)
 
         tps = preds_matched
         fps = torch.logical_and(
@@ -470,7 +495,6 @@ class ObjectDetectionEvalProcessor:
                 torch.zeros(nb_iou_thrs, device=self.device),
                 torch.zeros(nb_iou_thrs, device=self.device),
                 torch.zeros(nb_iou_thrs, device=self.device),
-                mean_f1_per_threshold,
             )
 
         # Sort by decreasing score
@@ -518,41 +542,6 @@ class ObjectDetectionEvalProcessor:
             precision = rolling_precisions[lowest_score_above_threshold - 1]
 
         # ==================
-        # BEST CONFIDENCE SCORE THRESHOLD PER CLASS
-        all_score_thresholds = torch.linspace(0, 1, nb_score_thrs, device=self.device)
-
-        # We want the rolling precision/recall at index i so that: preds_scores[i-1] > score_threshold >= preds_scores[i]
-        # Note: torch.searchsorted works on increasing sequence and preds_scores is decreasing, so we work with "-"
-        lowest_scores_above_thresholds = torch.searchsorted(
-            -preds_scores, -all_score_thresholds, right=True
-        )
-
-        # When score_threshold > preds_scores[0], then no pred is above the threshold, so we pad with zeros
-        rolling_recalls_padded = torch.cat(
-            (torch.zeros(1, nb_iou_thrs, device=self.device), rolling_recalls), dim=0
-        )
-        rolling_precisions_padded = torch.cat(
-            (torch.zeros(1, nb_iou_thrs, device=self.device), rolling_precisions), dim=0
-        )
-
-        # shape = (n_score_thresholds, nb_iou_thrs)
-        recalls_per_threshold = torch.index_select(
-            input=rolling_recalls_padded, dim=0, index=lowest_scores_above_thresholds
-        )
-        precisions_per_threshold = torch.index_select(
-            input=rolling_precisions_padded, dim=0, index=lowest_scores_above_thresholds
-        )
-
-        # shape (n_score_thresholds, nb_iou_thrs)
-        f1_per_threshold = (
-            2
-            * recalls_per_threshold
-            * precisions_per_threshold
-            / (recalls_per_threshold + precisions_per_threshold + 1e-16)
-        )
-        mean_f1_per_threshold = torch.mean(f1_per_threshold, dim=1)  # average over iou thresholds
-
-        # ==================
         # AVERAGE PRECISION
 
         # shape = (nb_iou_thrs, n_recall_thresholds)
@@ -578,7 +567,7 @@ class ObjectDetectionEvalProcessor:
         # Average over the recall_thresholds
         ap = sampled_precision_points.mean(0)
 
-        return ap, precision, recall, mean_f1_per_threshold
+        return ap, precision, recall
 
     def get_metrics(self) -> dict:
         """Get per document OD metrics.
@@ -661,3 +650,16 @@ class ObjectDetectionEvalProcessor:
         }
 
         return output_dict
+
+
+if __name__ == "__main__":
+    # Example usage
+    prediction_file_path = Path("path/to/predictions.json")
+    ground_truth_file_path = Path("path/to/ground_truth.json")
+
+    eval_processor = ObjectDetectionEvalProcessor.from_json_files(
+        prediction_file_path, ground_truth_file_path
+    )
+
+    metrics = eval_processor.get_metrics()
+    print(metrics)
