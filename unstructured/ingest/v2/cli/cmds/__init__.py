@@ -12,8 +12,8 @@ from .fsspec.s3 import s3_dest_cmd, s3_src_cmd
 from .fsspec.sftp import sftp_dest_cmd, sftp_src_cmd
 from .google_drive import google_drive_src_cmd
 from .local import local_dest_cmd, local_src_cmd
+from .opensearch import opensearch_src_cmd
 from .weaviate import weaviate_dest_cmd
-from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 
 src_cmds = [
     azure_src_cmd,
