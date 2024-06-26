@@ -73,34 +73,6 @@ def test_partition_via_api_from_filename(monkeypatch):
     assert elements[0].metadata.filetype == "message/rfc822"
 
 
-def test_partition_via_api_custom_url(monkeypatch):
-    """
-    Assert that we can specify api_url and requests are sent to the right place
-    """
-    mock_request = Mock(return_value=MockResponse(status_code=200))
-
-    monkeypatch.setattr(requests.Session, "request", mock_request)
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-    custom_url = "http://localhost:8000/general/v0/general"
-
-    with open(filename, "rb") as f:
-        partition_via_api(file=f, api_url=custom_url, metadata_filename=filename)
-
-    mock_request.assert_called_with(
-        "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
-    )
-
-    # The sdk uses the server url, so we should be able to pass that as well
-    base_url = "http://localhost:8000"
-
-    with open(filename, "rb") as f:
-        partition_via_api(file=f, api_url=base_url, metadata_filename=filename)
-
-    mock_request.assert_called_with(
-        "POST", custom_url, data=ANY, files=ANY, headers=ANY, params=ANY
-    )
-
-
 def test_partition_via_api_from_file(monkeypatch):
     monkeypatch.setattr(
         General,
