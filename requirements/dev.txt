@@ -267,7 +267,9 @@ prompt-toolkit==3.0.47
     #   ipython
     #   jupyter-console
 psutil==6.0.0
-    # via ipykernel
+    # via
+    #   -c ./test.txt
+    #   ipykernel
 ptyprocess==0.7.0
     # via
     #   pexpect

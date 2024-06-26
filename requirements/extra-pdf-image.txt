@@ -46,7 +46,7 @@ fsspec==2024.5.0
     #   -c ././deps/constraints.txt
     #   huggingface-hub
     #   torch
-google-api-core[grpc]==2.19.0
+google-api-core[grpc]==2.19.1
     # via google-cloud-vision
 google-auth==2.30.0
     # via
@@ -54,7 +54,7 @@ google-auth==2.30.0
     #   google-cloud-vision
 google-cloud-vision==3.7.2
     # via -r ./extra-pdf-image.in
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via
     #   google-api-core
     #   grpcio-status
@@ -103,7 +103,6 @@ networkx==3.2.1
     # via torch
 numpy==1.26.4
     # via
-    #   -c ././deps/constraints.txt
     #   -c ./base.txt
     #   contourpy
     #   layoutparser
