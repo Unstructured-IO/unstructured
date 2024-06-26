@@ -37,7 +37,7 @@ class ObjectDetectionEvalProcessor:
             document_preds (list):      list (of length pages of document) of
                                         Tensors of shape
                                         (num_predictions, 6)
-                                        format: (x1, y1, x2, y2, confidence, class_label)
+                                        format: (x1, y1, x2, y2, confidence,class_label)
                                         where x1,y1,x2,y2 are according to image size
             document_targets (list):    list (of length pages of document) of
                                         Tensors of shape
@@ -69,7 +69,8 @@ class ObjectDetectionEvalProcessor:
             prediction_file_path (Path): path to json file with predictions dump from OD model
             ground_truth_file_path (Path): path to json file with OD ground truth data
         """
-        # TODO: Test after https://unstructured-ai.atlassian.net/browse/ML-92 is done.
+        # TODO: Test after https://unstructured-ai.atlassian.net/browse/ML-92
+        # is done.
         with open(prediction_file_path) as f:
             predictions_data = json.load(f)
         with open(ground_truth_file_path) as f:
@@ -135,9 +136,9 @@ class ObjectDetectionEvalProcessor:
     def _get_top_k_idx_per_cls(
         preds_scores: torch.Tensor, preds_cls: torch.Tensor, top_k: int
     ) -> torch.Tensor:
+        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
         Get the indexes of all the top k predictions for every class
-        From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
 
         Args:
             preds_scores:   The confidence scores, vector of shape (n_pred)
@@ -162,9 +163,9 @@ class ObjectDetectionEvalProcessor:
     def _change_bbox_bounds_for_image_size(
         boxes: np.ndarray, img_shape: tuple[int, int]
     ) -> np.ndarray:
+        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
         Clips bboxes to image boundaries.
-        From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
 
         Args:
             bboxes:         Input bounding boxes in XYXY format of [..., 4] shape
@@ -178,9 +179,9 @@ class ObjectDetectionEvalProcessor:
 
     @staticmethod
     def _cxcywh2xyxy(bboxes: torch.Tensor | np.ndarray) -> torch.Tensor | np.ndarray:
+        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
-        Transforms bboxes from centerized xy wh format to xyxy format
-        From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
+        Transforms bboxes from centerized xy wh format to xyxy format.
 
         Args:
             bboxes:  array, shaped (nboxes, 4)
@@ -196,10 +197,10 @@ class ObjectDetectionEvalProcessor:
 
     @staticmethod
     def _box_iou(box1: torch.Tensor, box2: torch.Tensor) -> torch.Tensor:
+        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
         Return intersection-over-union (Jaccard index) of boxes.
         Both sets of boxes are expected to be in (x1, y1, x2, y2) format.
-        From: https://github.com/pytorch/vision/blob/master/torchvision/ops/boxes.py
 
         Args:
             box1: Tensor of shape [N, 4]
@@ -236,9 +237,9 @@ class ObjectDetectionEvalProcessor:
         preds_idx_to_use: torch.Tensor,
         iou_thresholds: torch.Tensor,
     ) -> torch.Tensor:
+        # From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
         Computes the matching targets based on IoU for regular scenarios.
-        From: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
 
         Args:
             preds_box_xyxy: (torch.Tensor) Predicted bounding boxes in XYXY format.
@@ -255,27 +256,32 @@ class ObjectDetectionEvalProcessor:
         # shape = (n_preds x n_targets)
         iou = self._box_iou(preds_box_xyxy[preds_idx_to_use], targets_box_xyxy)
 
-        # Fill IoU values at index (i, j) with 0 when the prediction (i) and target(j) are of different class
-        # Filling with 0 is equivalent to ignore these values since with want IoU > iou_threshold > 0
+        # Fill IoU values at index (i, j) with 0 when the prediction (i) and target(j)
+        # are of different class
+        # Filling with 0 is equivalent to ignore these values
+        # since with want IoU > iou_threshold > 0
         cls_mismatch = preds_cls[preds_idx_to_use].view(-1, 1) != targets_cls.view(1, -1)
         iou[cls_mismatch] = 0
 
         # The matching priority is first detection confidence and then IoU value.
-        # The detection is already sorted by confidence in NMS, so here for each prediction we order the targets by iou.
+        # The detection is already sorted by confidence in NMS,
+        # so here for each prediction we order the targets by iou.
         sorted_iou, target_sorted = iou.sort(descending=True, stable=True)
 
         # Only iterate over IoU values higher than min threshold to speed up the process
         for pred_selected_i, target_sorted_i in (sorted_iou > iou_thresholds[0]).nonzero(
             as_tuple=False
         ):
-            # pred_selected_i and target_sorted_i are relative to filters/sorting, so we extract their absolute indexes
+            # pred_selected_i and target_sorted_i are relative to filters/sorting,
+            # so we extract their absolute indexes
             pred_i = preds_idx_to_use[pred_selected_i]
             target_i = target_sorted[pred_selected_i, target_sorted_i]
 
             # Vector[j], True when IoU(pred_i, target_i) is above the (j)th threshold
             is_iou_above_threshold = sorted_iou[pred_selected_i, target_sorted_i] > iou_thresholds
 
-            # Vector[j], True when both pred_i and target_i are not matched yet for the (j)th threshold
+            # Vector[j], True when both pred_i and target_i are not matched yet
+            # for the (j)th threshold
             are_candidates_free = torch.logical_and(
                 ~preds_matched[pred_i, :], ~targets_matched[target_i, :]
             )
@@ -283,7 +289,8 @@ class ObjectDetectionEvalProcessor:
             # Vector[j], True when (pred_i, target_i) can be matched for the (j)th threshold
             are_candidates_good = torch.logical_and(is_iou_above_threshold, are_candidates_free)
 
-            # For every threshold (j) where target_i and pred_i can be matched together ( are_candidates_good[j]==True )
+            # For every threshold (j) where target_i and pred_i can be matched together
+            # ( are_candidates_good[j]==True )
             # fill the matching placeholders with True
             targets_matched[target_i, are_candidates_good] = True
             preds_matched[pred_i, are_candidates_good] = True
@@ -303,10 +310,10 @@ class ObjectDetectionEvalProcessor:
         top_k: int = 100,
         return_on_cpu: bool = True,
     ) -> tuple:
+        # Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
-        Match predictions (NMS output) and the targets (ground truth) with respect to metric and confidence score
-        for a given image.
-        Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
+        Match predictions (NMS output) and the targets (ground truth) with respect to metric
+        and confidence score for a given image.
 
         Args:
             preds:          Tensor of shape (num_img_predictions, 6)
@@ -322,9 +329,11 @@ class ObjectDetectionEvalProcessor:
 
         Returns:
             preds_matched:      Tensor of shape (num_img_predictions, n_thresholds)
-                                True when prediction (i) is matched with a target with respect to the (j)th threshold
+                                True when prediction (i) is matched with a target with respect to
+                                the (j)th threshold
             preds_to_ignore:    Tensor of shape (num_img_predictions, n_thresholds)
-                                True when prediction (i) is matched with a crowd target with respect to the (j)th threshold
+                                True when prediction (i) is matched with a crowd target with
+                                respect to the (j)th threshold
             preds_scores:       Tensor of shape (num_img_predictions),
                                 confidence score for every prediction
             preds_cls:          Tensor of shape (num_img_predictions),
@@ -387,15 +396,17 @@ class ObjectDetectionEvalProcessor:
         preds_cls: torch.Tensor,
         targets_cls: torch.Tensor,
     ) -> tuple:
+        # Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
-        Compute the list of precision, recall, MaP and f1 for every recall IoU threshold and for every class.
-        Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
+        Compute the list of precision, recall, MaP and f1 for every class.
 
         Args:
             preds_matched:      Tensor of shape (num_predictions, n_iou_thresholds)
-                                True when prediction (i) is matched with a target with respect to the (j)th IoU threshold
+                                True when prediction (i) is matched with a target with respect
+                                to the (j)th IoU threshold
             preds_to_ignore     Tensor of shape (num_predictions, n_iou_thresholds)
-                                True when prediction (i) is matched with a crowd target with respect to the (j)th IoU threshold
+                                True when prediction (i) is matched with a crowd target with
+                                respect to the (j)th IoU threshold
             preds_scores:       Tensor of shape (num_predictions),
                                 confidence score for every prediction
             preds_cls:          Tensor of shape (num_predictions),
@@ -460,8 +471,8 @@ class ObjectDetectionEvalProcessor:
         recall_thresholds: torch.Tensor,
         score_threshold: float,
     ):
+        # Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py  # noqa E501
         """
-        Adapted from: https://github.com/Deci-AI/super-gradients/blob/master/src/super_gradients/training/utils/detection_utils.py
         Compute the list of precision, recall and MaP of a given class for every recall threshold.
 
         Args:
@@ -523,8 +534,10 @@ class ObjectDetectionEvalProcessor:
         # ==================
         # RECALL & PRECISION
 
-        # We want the rolling precision/recall at index i so that: preds_scores[i-1] >= score_threshold > preds_scores[i]
-        # Note: torch.searchsorted works on increasing sequence and preds_scores is decreasing, so we work with "-"
+        # We want the rolling precision/recall at index i so that:
+        # preds_scores[i-1] >= score_threshold > preds_scores[i]
+        # Note: torch.searchsorted works on increasing sequence and preds_scores is decreasing,
+        # so we work with "-"
         # Note2: right=True due to negation
         lowest_score_above_threshold = torch.searchsorted(
             -preds_scores, -score_threshold, right=True
@@ -547,14 +560,17 @@ class ObjectDetectionEvalProcessor:
         # shape = (nb_iou_thrs, n_recall_thresholds)
         recall_thresholds = recall_thresholds.view(1, -1).repeat(nb_iou_thrs, 1)
 
-        # We want the index i so that: rolling_recalls[i-1] < recall_thresholds[k] <= rolling_recalls[i]
+        # We want the index i so that:
+        # rolling_recalls[i-1] < recall_thresholds[k] <= rolling_recalls[i]
         # Note:  when recall_thresholds[k] > max(rolling_recalls), i = len(rolling_recalls)
-        # Note2: we work with transpose (.T) to apply torch.searchsorted on first dim instead of the last one
+        # Note2: we work with transpose (.T) to apply torch.searchsorted on first dim
+        # instead of the last one
         recall_threshold_idx = torch.searchsorted(
             rolling_recalls.T.contiguous(), recall_thresholds, right=False
         ).T
 
-        # When recall_thresholds[k] > max(rolling_recalls), rolling_precisions[i] is not defined, and we want precision = 0
+        # When recall_thresholds[k] > max(rolling_recalls),
+        # rolling_precisions[i] is not defined, and we want precision = 0
         rolling_precisions = torch.cat(
             (rolling_precisions, torch.zeros(1, nb_iou_thrs, device=self.device)), dim=0
         )
@@ -616,7 +632,8 @@ class ObjectDetectionEvalProcessor:
             )
 
             # Precision, recall and f1 are computed for IoU threshold range, averaged over classes
-            # results before version 3.0.4 (Dec 11 2022) were computed only for smallest value (i.e IoU 0.5 if metric is @0.5:0.95)
+            # results before version 3.0.4 (Dec 11 2022) were computed only for smallest value
+            # (i.e IoU 0.5 if metric is @0.5:0.95)
             mean_precision, mean_recall, mean_f1 = (
                 precision_per_present_classes.mean(),
                 recall_per_present_classes.mean(),
@@ -626,7 +643,8 @@ class ObjectDetectionEvalProcessor:
             # MaP is averaged over IoU thresholds and over classes
             mean_ap = ap_per_present_classes.mean()
 
-            # Fill array of per-class AP scores with values for classes that were present in the dataset
+            # Fill array of per-class AP scores with values for classes that were present in the
+            # dataset
             ap_per_class = ap_per_present_classes.mean(1)
             precision_per_class = precision_per_present_classes.mean(1)
             recall_per_class = recall_per_present_classes.mean(1)
