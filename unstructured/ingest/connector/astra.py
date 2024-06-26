@@ -115,8 +115,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        if self._astra_db_collection is not None:  ### FIX THIS IS NEVER NONE
-            print("getting connection **************")
+        if self._astra_db_collection is not None:  # FIX THIS IS NEVER NONE
             from astrapy.db import AstraDB
 
             # Build the Astra DB object.
