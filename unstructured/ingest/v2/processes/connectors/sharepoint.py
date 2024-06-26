@@ -225,8 +225,10 @@ class SharepointDownloader(Downloader):
     connection_config: SharepointConnectionConfig
     download_config: SharepointDownloaderConfig
 
-    def get_download_path(self, file_data: FileData) -> Optional[Path]:
-        return None
+    def get_download_path(self, file_data: FileData) -> Path:
+        rel_path = file_data.source_identifiers.relative_path
+        rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
+        return self.download_dir / Path(rel_path)
 
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         pass
