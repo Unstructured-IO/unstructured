@@ -45,8 +45,6 @@ class SimpleAstraConfig(BaseConnectorConfig):
     requested_indexing_policy: t.Optional[t.Dict[str, t.Any]] = None
 
 
-
-
 @dataclass
 class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     connector_config: SimpleAstraConfig
@@ -63,10 +61,11 @@ class AstraIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def _output_filename(self):
-        return (Path(self.processor_config.output_dir)
+        return (
+            Path(self.processor_config.output_dir)
             / self.connector_config.collection_name
             / f"{self.metadata['_id']}.json"
-            )
+        )
 
     def update_source_metadata(self, **kwargs):
         if not self.metadata:
@@ -111,12 +110,12 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
         if hasattr(self_cp, "_astra_db_collection"):
             setattr(self_cp, "_astra_db_collection", None)
 
-        return _asdict(self_cp, **kwargs) # type: ignore
+        return _asdict(self_cp, **kwargs)  # type: ignore
 
     @property
     @requires_dependencies(["astrapy"], extras="astra")
     def astra_db_collection(self) -> "AstraDBCollection":
-        if self._astra_db_collection is not None: ### FIX THIS IS NEVER NONE
+        if self._astra_db_collection is not None:  ### FIX THIS IS NEVER NONE
             print("getting connection **************")
             from astrapy.db import AstraDB
 
@@ -134,10 +133,10 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             self._astra_db_collection = self._astra_db.collection(
                 collection_name=self.connector_config.collection_name,
             )
-        return self._astra_db_collection # type: ignore
+        return self._astra_db_collection  # type: ignore
 
     @requires_dependencies(["astrapy"], extras="astra")
-    @SourceConnectionError.wrap # type: ignore
+    @SourceConnectionError.wrap  # type: ignore
     def initialize(self):
         _ = self.astra_db_collection
 
@@ -151,7 +150,7 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             raise SourceConnectionError(f"failed to validate connection: {e}")
 
     @requires_dependencies(["astrapy"], extras="astra")
-    def get_ingest_docs(self): # type: ignore
+    def get_ingest_docs(self):  # type: ignore
         # Perform the find operation
         astra_docs = list(self.astra_db_collection.paginated_find())
 
@@ -169,18 +168,6 @@ class AstraSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
             doc_list.append(doc)
 
         return doc_list
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @dataclass

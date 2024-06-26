@@ -61,6 +61,7 @@ class AstraCliConfig(SimpleAstraConfig, CliConfig):
         ]
         return options
 
+
 @dataclass
 class AstraCliReadConfig(SimpleAstraConfig, CliConfig):
     @staticmethod
@@ -74,6 +75,7 @@ class AstraCliReadConfig(SimpleAstraConfig, CliConfig):
             ),
         ]
         return options
+
 
 @dataclass
 class AstraCliWriteConfig(AstraWriteConfig, CliConfig):
@@ -99,6 +101,8 @@ def get_base_src_cmd():
         additional_cli_options=[AstraCliReadConfig],
     )
     return cmd_cls
+
+
 def get_base_dest_cmd():
     from unstructured.ingest.cli.base.dest import BaseDestCmd
 
