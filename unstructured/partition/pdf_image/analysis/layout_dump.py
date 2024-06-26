@@ -28,7 +28,10 @@ def extract_layout_info(layout: DocumentLayout) -> dict:
     pages = []
 
     for page in layout.pages:
-        size = [page.image_metadata.get("width"), page.image_metadata.get("height")]
+        size = {
+            "width": page.image_metadata.get("width"),
+            "height": page.image_metadata.get("height"),
+        }
         elements = []
         for element in page.elements:
             bbox = element.bbox

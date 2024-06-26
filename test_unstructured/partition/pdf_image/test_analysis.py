@@ -123,7 +123,10 @@ def test_od_document_layout_dump():
         "pages": [
             {
                 "number": 1,
-                "size": [100, 100],
+                "size": {
+                    "width": 100,
+                    "height": 100,
+                },
                 "elements": [
                     {"bbox": [0, 0, 10, 10], "type": "Title", "prob": 0.7},
                     {"bbox": [0, 100, 10, 110], "type": "Paragraph", "prob": 0.8},
@@ -131,7 +134,10 @@ def test_od_document_layout_dump():
             },
             {
                 "number": 2,
-                "size": [100, 100],
+                "size": {
+                    "width": 100,
+                    "height": 100,
+                },
                 "elements": [
                     {"bbox": [0, 0, 10, 10], "type": "Table", "prob": 0.9},
                     {"bbox": [0, 100, 10, 110], "type": "Image", "prob": 1.0},
@@ -140,4 +146,9 @@ def test_od_document_layout_dump():
         ]
     }
     od_layout_dump = ObjectDetectionLayoutDumper(od_document_layout).dump()
+
     assert {"pages": od_layout_dump.get("pages")} == expected_dump
+
+    # check OD model classes are attached but do not depend on a specific model instance
+    assert "object_detection_classes" in od_layout_dump
+    assert len(od_layout_dump["object_detection_classes"]) > 0
