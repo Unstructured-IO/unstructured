@@ -31,7 +31,7 @@ click==8.1.7
     # via
     #   -c ./base.txt
     #   black
-coverage[toml]==7.5.3
+coverage[toml]==7.5.4
     # via
     #   -r ./test.in
     #   pytest-cov
@@ -71,7 +71,7 @@ mccabe==0.7.0
     # via flake8
 multidict==6.0.5
     # via yarl
-mypy==1.10.0
+mypy==1.10.1
     # via -r ./test.in
 mypy-extensions==1.0.0
     # via
@@ -92,6 +92,8 @@ platformdirs==3.10.0
     #   black
 pluggy==1.5.0
     # via pytest
+psutil==6.0.0
+    # via -r ./test.in
 pycodestyle==2.12.0
     # via
     #   flake8
@@ -132,7 +134,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-ruff==0.4.9
+ruff==0.4.10
     # via -r ./test.in
 six==1.16.0
     # via
@@ -162,7 +164,7 @@ typing-extensions==4.12.2
     #   mypy
     #   pydantic
     #   pydantic-core
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   -c ./base.txt

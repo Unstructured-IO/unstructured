@@ -53,9 +53,7 @@ mypy-extensions==1.0.0
 nltk==3.8.1
     # via -r ./base.in
 numpy==1.26.4
-    # via
-    #   -c ././deps/constraints.txt
-    #   -r ./base.in
+    # via -r ./base.in
 packaging==23.2
     # via
     #   -c ././deps/constraints.txt
@@ -103,7 +101,7 @@ unstructured-client==0.18.0
     # via
     #   -c ././deps/constraints.txt
     #   -r ./base.in
-urllib3==1.26.18
+urllib3==1.26.19
     # via
     #   -c ././deps/constraints.txt
     #   requests

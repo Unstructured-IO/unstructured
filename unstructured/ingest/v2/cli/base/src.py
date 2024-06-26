@@ -50,7 +50,7 @@ class SrcCmd(BaseCmd):
         cmd = click.group(fn, cls=Group)
         if not isinstance(cmd, click.core.Group):
             raise ValueError(f"generated src command was not of expected type Group: {type(cmd)}")
-        cmd.name = self.cmd_name
+        cmd.name = self.cli_cmd_name
         cmd.short_help = "v2"
         cmd.invoke_without_command = True
         extras = [
