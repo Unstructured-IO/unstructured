@@ -612,33 +612,28 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-object-detection-metrics.tsv"
 
-    def _process_document(self, doc: Path) -> list:  # TODO implement
+    def _process_document(self, doc: Path) -> list:
         doc_path = Path(doc)
         out_filename = doc_path.stem
         doctype = Path(out_filename).suffix[1:]
 
-        src_gt_filename = out_filename + ".json"  # TODO check if this is correct
-        # currently we have different ground truth format
-        # but it would be better to re-format it into single json for single document
+        src_gt_filename = out_filename + ".json"  # TODO gt file is not ready yet
 
         if src_gt_filename in self._ground_truth_paths:
             return None
 
-        prediction_file = self.documents_dir / doc  # TODO check it after format is known
+        prediction_file = self.documents_dir / doc
         if not prediction_file.exists():
             logger.warning(f"Prediction file {prediction_file} does not exist, skipping")
             return None
 
-        ground_truth_file = (
-            self.ground_truths_dir / src_gt_filename
-        )  # TODO check it after format is known
+        ground_truth_file = self.ground_truths_dir / src_gt_filename
         if not ground_truth_file.exists():
             logger.warning(f"Ground truth file {ground_truth_file} does not exist, skipping")
             return None
 
         processor = ObjectDetectionEvalProcessor.from_json_files(
-            prediction_file=prediction_file,
-            ground_truth_file=ground_truth_file
+            prediction_file=prediction_file, ground_truth_file=ground_truth_file
         )
         metrics = processor.get_metrics()
 
