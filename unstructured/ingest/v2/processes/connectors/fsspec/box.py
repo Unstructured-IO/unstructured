@@ -100,7 +100,8 @@ class BoxUploaderConfig(FsspecUploaderConfig):
 
 
 @dataclass
-class BoxUpload(FsspecUploader):
+class BoxUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: BoxConnectionConfig
     upload_config: BoxUploaderConfig = field(default=None)
 
@@ -131,6 +132,8 @@ add_source_entry(
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
-        uploader=BoxUpload, uploader_config=BoxUploaderConfig, connection_config=BoxConnectionConfig
+        uploader=BoxUploader,
+        uploader_config=BoxUploaderConfig,
+        connection_config=BoxConnectionConfig,
     ),
 )

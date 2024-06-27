@@ -1,13 +1,13 @@
-## 0.14.9-dev7
+## 0.14.9-dev9
 
 ### Enhancements
 
-* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used
-  to visualize the result of the OD model and dump the result to a file.
-  Additionally, the visualization of bounding boxes of each layout source is rendered and saved
-  for each page.
+* **Added visualization and OD model result dump for PDF** In PDF `hi_res` strategy the `analysis` parameter can be used to visualize the result of the OD model and dump the result to a file. Additionally, the visualization of bounding boxes of each layout source is rendered and saved for each page.
+* **`partition_docx()` distinguishes "file not found" from "not a ZIP archive" error.** `partition_docx()` now provides different error messages for "file not found" and "file is not a ZIP archive (and therefore not a DOCX file)". This aids diagnosis since these two conditions generally point in different directions as to the cause and fix.
 
 ### Features
+
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
 
 ### Fixes
 
