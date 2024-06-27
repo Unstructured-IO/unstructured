@@ -1,5 +1,4 @@
 import json
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from time import time
@@ -190,28 +189,6 @@ class OnedriveDownloader(Downloader):
         rel_path = file_data.source_identifiers.relative_path
         rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
         return self.download_dir / Path(rel_path)
-
-    @staticmethod
-    def is_float(value: str):
-        try:
-            float(value)
-            return True
-        except ValueError:
-            return False
-
-    def generate_download_response(
-        self, file_data: FileData, download_path: Path
-    ) -> DownloadResponse:
-        if (
-            file_data.metadata.date_modified
-            and self.is_float(file_data.metadata.date_modified)
-            and file_data.metadata.date_created
-            and self.is_float(file_data.metadata.date_created)
-        ):
-            date_modified = float(file_data.metadata.date_modified)
-            date_created = float(file_data.metadata.date_created)
-            os.utime(download_path, times=(date_created, date_modified))
-        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
     @SourceConnectionError.wrap
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:

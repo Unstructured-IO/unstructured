@@ -350,7 +350,7 @@ class SharepointDownloader(Downloader):
         )
         with download_path.open("wb") as f:
             file.download(f).execute_query()
-        return DownloadResponse(path=download_path, file_data=file_data)
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
     def get_site_page(self, file_data: FileData) -> DownloadResponse:
         # TODO fetch comments for site page as well
@@ -380,7 +380,7 @@ class SharepointDownloader(Downloader):
         )
         with download_path.open("w") as f:
             f.write(etree.tostring(document, encoding="unicode", pretty_print=True))
-        return DownloadResponse(path=download_path, file_data=file_data)
+        return self.generate_download_response(file_data=file_data, download_path=download_path)
 
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
         content_type = file_data.additional_metadata.get("sharepoint_content_type")

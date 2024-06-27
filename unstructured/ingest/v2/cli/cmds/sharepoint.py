@@ -71,6 +71,21 @@ class SharepointCliIndexerConfig(CliConfig):
                 default=False,
                 help="Don't process site pages.",
             ),
+            click.Option(
+                ["--permissions-application-id"],
+                type=str,
+                help="Microsoft Graph API application id",
+            ),
+            click.Option(
+                ["--permissions-client-cred"],
+                type=str,
+                help="Microsoft Graph API application credentials",
+            ),
+            click.Option(
+                ["--permissions-tenant"],
+                type=str,
+                help="e.g https://contoso.onmicrosoft.com to get permissions data within tenant.",
+            ),
         ]
         return options
 
