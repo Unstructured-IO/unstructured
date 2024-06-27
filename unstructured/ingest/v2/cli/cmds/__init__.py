@@ -15,7 +15,7 @@ from .google_drive import google_drive_src_cmd
 from .local import local_dest_cmd, local_src_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .weaviate import weaviate_dest_cmd
-from .salesforce import salesforce_dest_cmd
+from .salesforce import salesforce_src_cmd
 
 src_cmds = [
     azure_src_cmd,
@@ -27,6 +27,7 @@ src_cmds = [
     local_src_cmd,
     onedrive_drive_src_cmd,
     s3_src_cmd,
+    salesforce_src_cmd,
     sftp_src_cmd,
 ]
 duplicate_src_names = [
@@ -49,7 +50,6 @@ dest_cmds = [
     gcs_dest_cmd,
     local_dest_cmd,
     s3_dest_cmd,
-    salesforce_dest_cmd,
     sftp_dest_cmd,
     weaviate_dest_cmd,
 ]

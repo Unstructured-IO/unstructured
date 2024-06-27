@@ -5,7 +5,7 @@ import click
 from unstructured.ingest.v2.cli.base import SrcCmd
 from unstructured.ingest.v2.cli.interfaces import CliConfig
 from unstructured.ingest.v2.cli.utils import DelimitedString, FileOrJson
-from unstructured.ingest.v2.processes.connectors.google_drive import CONNECTOR_TYPE
+from unstructured.ingest.v2.processes.connectors.salesforce import CONNECTOR_TYPE
 
 
 @dataclass
@@ -49,6 +49,13 @@ class SalesforceCliIndexerConfig(CliConfig):
                 type=DelimitedString(choices=possible_categories),
                 help="Comma-delimited salesforce categories to download. "
                 "Currently only {}.".format(", ".join(possible_categories)),
+            ),
+            click.Option(
+                ["--recursive"],
+                is_flag=True,
+                default=False,
+                help="Recursively download files in their respective folders "
+                "otherwise stop at the files in provided folder level.",
             ),
         ]
         return options

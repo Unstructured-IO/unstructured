@@ -67,6 +67,7 @@ class SalesforceAccessConfig(AccessConfig):
 
     @requires_dependencies(["cryptography"])
     def get_private_key_value_and_type(self) -> t.Tuple[str, t.Type]:
+        print("********* get_private_key_value_and_type ******")
         from cryptography.hazmat.primitives import serialization
 
         try:
@@ -93,6 +94,7 @@ class SimpleSalesforceConfig(BaseConnectorConfig):
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_client(self):
+        print("********* get_client ******")
         from simple_salesforce import Salesforce
 
         pkey_value, pkey_type = self.access_config.get_private_key_value_and_type()
@@ -116,11 +118,13 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def record(self):
+        print("********* record ******")
         if not self._record:
             self._record = self.get_record()
         return self._record
 
     def get_file_extension(self) -> str:
+        print("********* get_file_extension ******")
         if self.record_type == "EmailMessage":
             extension = ".eml"
         elif self.record_type in ["Account", "Lead", "Case", "Campaign"]:
@@ -132,22 +136,29 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         return extension
 
     def _tmp_download_file(self) -> Path:
+        print("********* _tmp_download_file ******")
         record_file = self.record_id + self.get_file_extension()
+        print(Path(self.read_config.download_dir) / self.record_type / record_file)
         return Path(self.read_config.download_dir) / self.record_type / record_file
 
     @property
     def _output_filename(self) -> Path:
+        print("********* _output_filename ******")
         record_file = self.record_id + self.get_file_extension() + ".json"
         return Path(self.processor_config.output_dir) / self.record_type / record_file
 
     def _create_full_tmp_dir_path(self):
+        print("********* _create_full_tmp_dir_path ******")
+
         self._tmp_download_file().parent.mkdir(parents=True, exist_ok=True)
 
     def _xml_for_record(self, record: OrderedDict) -> str:
         """Creates partitionable xml file from a record"""
+        print("********* _xml_for_record ******")
         import xml.etree.ElementTree as ET
 
         def flatten_dict(data, parent, prefix=""):
+            print("********* _flatten_dict ******")
             for key, value in data.items():
                 if isinstance(value, OrderedDict):
                     flatten_dict(value, parent, prefix=f"{prefix}{key}.")
@@ -163,6 +174,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     def _eml_for_record(self, email_json: t.Dict[str, t.Any]) -> str:
         from dateutil import parser  # type: ignore
+        print("********* _eml_for_record ******")
 
         """Recreates standard expected .eml format using template."""
         eml = EMAIL_TEMPLATE.substitute(
@@ -182,12 +194,14 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @SourceConnectionNetworkError.wrap
     def _get_response(self):
+        print("********* _get_response ******")
         client = self.connector_config.get_client()
         return client.query_all(
             f"select FIELDS(STANDARD) from {self.record_type} where Id='{self.record_id}'",
         )
 
     def get_record(self) -> OrderedDict:
+        print("********* get_record ******")
         # Get record from Salesforce based on id
         response = self._get_response()
         logger.debug(f"response was returned for salesforce record id: {self.record_id}")
@@ -200,6 +214,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
         return record_json
 
     def update_source_metadata(self) -> None:  # type: ignore
+        print("********* update_source_metadata ******")
         record_json = self.record
 
         date_format = "%Y-%m-%dT%H:%M:%S.000+0000"
@@ -218,6 +233,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
     @SourceConnectionError.wrap
     @BaseSingleIngestDoc.skip_if_file_exists
     def get_file(self):
+        print("********* get_file ******")
         """Saves individual json records locally."""
         self._create_full_tmp_dir_path()
         record = self.record
@@ -241,6 +257,7 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 
     @property
     def filename(self):
+        print("********* filename ******")
         """The filename of the file created from a Salesforce record"""
         return self._tmp_download_file()
 
@@ -248,11 +265,15 @@ class SalesforceIngestDoc(IngestDocCleanupMixin, BaseSingleIngestDoc):
 @dataclass
 class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector):
     connector_config: SimpleSalesforceConfig
+    print("********* SalesforceSourceConnector ******")
 
     def __post_init__(self):
+        print("********* post_init ******")
         self.ingest_doc_cls: t.Type[SalesforceIngestDoc] = SalesforceIngestDoc
 
     def initialize(self):
+        print("********* initialize ******")
+
         pass
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
@@ -267,6 +288,7 @@ class SalesforceSourceConnector(SourceConnectorCleanupMixin, BaseSourceConnector
 
     @requires_dependencies(["simple_salesforce"], extras="salesforce")
     def get_ingest_docs(self) -> t.List[SalesforceIngestDoc]:
+        print("********* get_ingest_docs ******")
         """Get Salesforce Ids for the records.
         Send them to next phase where each doc gets downloaded into the
         appropriate format for partitioning.
