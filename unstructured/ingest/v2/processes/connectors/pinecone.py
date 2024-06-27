@@ -120,6 +120,7 @@ class PineconeUploadStager(UploadStager):
 class PineconeUploader(Uploader):
     upload_config: PineconeUploaderConfig
     connection_config: PineconeConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @DestinationConnectionError.wrap
     def check_connection(self):
