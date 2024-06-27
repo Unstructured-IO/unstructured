@@ -92,6 +92,7 @@ class AstraUploaderConfig(UploaderConfig):
 class AstraUploader(Uploader):
     connection_config: AstraConnectionConfig
     upload_config: AstraUploaderConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["astrapy"], extras="astra")
     def get_collection(self) -> "AstraDBCollection":

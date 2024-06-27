@@ -304,6 +304,7 @@ FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderCon
 
 @dataclass
 class FsspecUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: FsspecUploaderConfigT = field(default=None)
 
     @property
@@ -341,7 +342,7 @@ class FsspecUploader(Uploader):
         if self.fs.exists(path=str(upload_path)) and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
-        logger.info(f"Writing local file {path_str} to {upload_path}")
+        logger.debug(f"Writing local file {path_str} to {upload_path}")
         self.fs.upload(lpath=path_str, rpath=str(upload_path))
 
     async def run_async(self, path: Path, file_data: FileData, **kwargs: Any) -> None:
@@ -352,5 +353,5 @@ class FsspecUploader(Uploader):
         if already_exists and not self.upload_config.overwrite:
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
-        logger.info(f"Writing local file {path_str} to {upload_path}")
+        logger.debug(f"Writing local file {path_str} to {upload_path}")
         self.fs.upload(lpath=path_str, rpath=str(upload_path))
