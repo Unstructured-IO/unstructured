@@ -165,14 +165,7 @@ class SharepointIndexer(Indexer):
         return pages
 
     def page_to_file_data(self, site_page: "SitePage") -> FileData:
-        additional_fields = [
-            "AuthorByline",
-            "CommentsDisabled",
-            "Description",
-            "LayoutWebpartsContent",
-            "TopicHeader",
-        ]
-        site_page.expand(additional_fields).get().execute_query()
+        site_page.expand(site_page.properties.keys()).get().execute_query()
         version = site_page.properties.get("Version", None)
         unique_id = site_page.properties.get("UniqueId", None)
         modified_date = site_page.properties.get("Modified", None)
@@ -209,8 +202,7 @@ class SharepointIndexer(Indexer):
         )
 
     def file_to_file_data(self, client: "ClientContext", file: "File") -> FileData:
-        additional_fields = ["SiteId", "ServerRelativePath", "ListId", "WebId"]
-        file.expand(additional_fields).get().execute_query()
+        file.expand(file.properties.keys()).get().execute_query()
         absolute_url = f"{client.base_url}{quote(file.serverRelativeUrl)}"
         date_modified_dt = (
             parser.parse(file.time_last_modified) if file.time_last_modified else None
