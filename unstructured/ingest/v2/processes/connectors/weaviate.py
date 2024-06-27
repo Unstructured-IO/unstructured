@@ -154,6 +154,7 @@ class WeaviateUploaderConfig(UploaderConfig):
 
 @dataclass
 class WeaviateUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: WeaviateUploaderConfig
     connection_config: WeaviateConnectionConfig
     client: Optional["Client"] = field(init=False)
