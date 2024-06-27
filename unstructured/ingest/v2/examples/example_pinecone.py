@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from unstructured.ingest.v2.interfaces import ProcessorConfig
@@ -40,7 +41,7 @@ if __name__ == "__main__":
         ),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=PineconeConnectionConfig(
-            access_config=PineconeAccessConfig(api_key="0e8555a2-b944-4da4-837e-03b1202e00c7"),
+            access_config=PineconeAccessConfig(api_key=os.getenv("PINECONE_API_KEY")),
             index_name="v2-connectors-test",
             environment="us-east-1",
         ),
