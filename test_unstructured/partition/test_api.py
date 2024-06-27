@@ -192,6 +192,8 @@ def test_partition_via_api_image_block_extraction():
         strategy="hi_res",
         extract_image_block_types=["image", "table"],
         api_key=get_api_key(),
+        # The url has changed since the 06/24 API release while the sdk defaults to the old url
+        api_url="https://api.unstructuredapp.io/general/v0/general",
     )
     image_elements = [el for el in elements if el.category == ElementType.IMAGE]
     for el in image_elements:
