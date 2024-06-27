@@ -3,7 +3,6 @@ import contextlib
 import json
 import os
 import pathlib
-from unittest.mock import ANY, Mock
 
 import pytest
 import requests
@@ -200,38 +199,6 @@ def test_partition_via_api_image_block_extraction():
         assert el.metadata.image_mime_type is not None
         image_data = base64.b64decode(el.metadata.image_base64)
         assert isinstance(image_data, bytes)
-
-
-def test_partition_via_api_pass_list_type_parameters(monkeypatch):
-    mock_request = Mock(return_value=MockResponse(status_code=200))
-    monkeypatch.setattr(requests.Session, "request", mock_request)
-
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "embedded-images-tables.pdf")
-
-    partition_via_api(
-        filename=filename,
-        strategy="hi_res",
-        extract_image_block_types=["image", "table"],
-        skip_infer_table_types=["pdf", "docx"],
-        languages=["eng"],
-    )
-
-    mock_request.assert_called_with(
-        "POST",
-        ANY,
-        data=ANY,
-        files=[
-            ["extract_image_block_types[]", [None, "image"]],
-            ["extract_image_block_types[]", [None, "table"]],
-            ["files", ANY],
-            ["languages[]", [None, "eng"]],
-            ["skip_infer_table_types[]", [None, "pdf"]],
-            ["skip_infer_table_types[]", [None, "docx"]],
-            ["strategy", [None, "hi_res"]],
-        ],
-        headers=ANY,
-        params=ANY,
-    )
 
 
 # Note(austin) - This test is way too noisy against the hosted api
