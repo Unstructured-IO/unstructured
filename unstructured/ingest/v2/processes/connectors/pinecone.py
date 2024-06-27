@@ -122,6 +122,10 @@ class PineconeUploader(Uploader):
     connection_config: PineconeConnectionConfig
 
     @DestinationConnectionError.wrap
+    def check_connection(self):
+        _ = self.connection_config.create_index()
+
+    @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
         import pinecone.core.client.exceptions
