@@ -64,6 +64,8 @@ all_tests=(
   'sftp.sh'
   'opensearch.sh'
   'mongodb.sh'
+  'multi-doc-against-open-source.sh'
+  'multi-doc-against-api.sh'
 )
 
 full_python_matrix_tests=(

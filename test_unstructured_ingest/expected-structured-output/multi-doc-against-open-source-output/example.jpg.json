@@ -1,0 +1,22 @@
+[
+  {
+    "type": "Image",
+    "element_id": "4e60cb70abb299938e0133508d6f9459",
+    "text": "",
+    "metadata": {
+      "filetype": "image/jpeg",
+      "languages": [
+        "eng"
+      ],
+      "page_number": 1,
+      "filename": "example.jpg",
+      "data_source": {
+        "permissions_data": [
+          {
+            "mode": 33188
+          }
+        ]
+      }
+    }
+  }
+]
