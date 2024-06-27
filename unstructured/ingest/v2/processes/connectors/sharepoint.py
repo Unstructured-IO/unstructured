@@ -165,6 +165,14 @@ class SharepointIndexer(Indexer):
         return pages
 
     def page_to_file_data(self, site_page: "SitePage") -> FileData:
+        additional_fields = [
+            "AuthorByline",
+            "CommentsDisabled",
+            "Description",
+            "LayoutWebpartsContent",
+            "TopicHeader",
+        ]
+        site_page.expand(additional_fields).get().execute_query()
         version = site_page.properties.get("Version", None)
         unique_id = site_page.properties.get("UniqueId", None)
         modified_date = site_page.properties.get("Modified", None)
@@ -302,6 +310,7 @@ class SharepointIndexer(Indexer):
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         client = self.connection_config.get_client()
         root_folder = self.get_root(client=client)
+        logger.debug(f"processing content from path: {self.index_config.path}")
         if not self.index_config.omit_files:
             files = self.list_files(root_folder, recursive=self.index_config.recursive)
             file_data = [self.file_to_file_data(file=file, client=client) for file in files]
