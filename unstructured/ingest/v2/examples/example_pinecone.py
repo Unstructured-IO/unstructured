@@ -38,10 +38,11 @@ if __name__ == "__main__":
         chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=PineconeConnectionConfig(
+            # You'll need to set PINECONE_API_KEY environment variable to run this example
             access_config=PineconeAccessConfig(api_key=os.getenv("PINECONE_API_KEY")),
-            index_name="v2-connectors-test",
-            environment="us-east-1",
+            index_name="your index name here. e.g. my-index",
+            environment="your environment name here. e.g. us-east-1",
         ),
         stager_config=PineconeUploadStagerConfig(),
-        uploader_config=PineconeUploaderConfig(batch_size=10, num_of_processes=1),
+        uploader_config=PineconeUploaderConfig(batch_size=10, num_of_processes=2),
     ).run()
