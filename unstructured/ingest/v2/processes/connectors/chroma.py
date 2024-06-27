@@ -114,6 +114,7 @@ class ChromaUploaderConfig(UploaderConfig):
 
 @dataclass
 class ChromaUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
     client: Optional["Client"] = field(init=False)

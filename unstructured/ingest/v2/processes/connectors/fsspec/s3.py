@@ -125,7 +125,8 @@ class S3UploaderConfig(FsspecUploaderConfig):
 
 
 @dataclass
-class S3Upload(FsspecUploader):
+class S3Uploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: S3ConnectionConfig
     upload_config: S3UploaderConfig = field(default=None)
 
@@ -156,7 +157,7 @@ add_source_entry(
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(
-        uploader=S3Upload,
+        uploader=S3Uploader,
         uploader_config=S3UploaderConfig,
         connection_config=S3ConnectionConfig,
     ),
