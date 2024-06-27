@@ -201,7 +201,8 @@ class SharepointIndexer(Indexer):
         )
 
     def file_to_file_data(self, client: "ClientContext", file: "File") -> FileData:
-        file.get().execute_query()
+        additional_fields = ["SiteId", "ServerRelativePath", "ListId", "WebId"]
+        file.expand(additional_fields).get().execute_query()
         absolute_url = f"{client.base_url}{quote(file.serverRelativeUrl)}"
         date_modified_dt = (
             parser.parse(file.time_last_modified) if file.time_last_modified else None
@@ -209,13 +210,17 @@ class SharepointIndexer(Indexer):
         date_created_at = parser.parse(file.time_created) if file.time_created else None
         additional_metadata = self.get_properties(raw_properties=file.properties)
         additional_metadata["sharepoint_content_type"] = SharepointContentType.DOCUMENT.value
+        fullpath = str(file.server_relative_path)
+        rel_path = fullpath.replace(self.index_config.path, "")
+        while rel_path[0] == "/":
+            rel_path = rel_path[1:]
         return FileData(
             identifier=file.unique_id,
             connector_type=CONNECTOR_TYPE,
             source_identifiers=SourceIdentifiers(
                 filename=file.name,
-                fullpath=str(file.server_relative_path),
-                rel_path=str(file.server_relative_path).replace(self.index_config.path, ""),
+                fullpath=fullpath,
+                rel_path=rel_path,
             ),
             metadata=DataSourceMetadata(
                 url=absolute_url,
@@ -326,7 +331,7 @@ class SharepointDownloader(Downloader):
 
     def get_download_path(self, file_data: FileData) -> Path:
         content_type = file_data.additional_metadata.get("sharepoint_content_type")
-        rel_path = file_data.source_identifiers.relative_path
+        rel_path = file_data.source_identifiers.fullpath
         rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
         download_path = self.download_dir / Path(rel_path)
         if content_type == SharepointContentType.SITEPAGE.value:
@@ -335,7 +340,16 @@ class SharepointDownloader(Downloader):
         return download_path
 
     def get_document(self, file_data: FileData) -> DownloadResponse:
-        pass
+        client: "ClientContext" = self.connection_config.get_client()
+        file: "File" = client.web.get_file_by_id(unique_id=file_data.identifier)
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.debug(
+            f"writing document content {file_data.source_identifiers.fullpath} to {download_path}"
+        )
+        with download_path.open("wb") as f:
+            file.download(f).execute_query()
+        return DownloadResponse(path=download_path, file_data=file_data)
 
     def get_site_page(self, file_data: FileData) -> DownloadResponse:
         # TODO fetch comments for site page as well
