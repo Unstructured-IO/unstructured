@@ -53,10 +53,10 @@ class ElasticsearchAccessConfig(AccessConfig):
 
 @dataclass
 class ElasticsearchClientInput(EnhancedDataClassJsonMixin):
-    hosts: Optional[str] = None
+    hosts: Optional[list[str]] = None
     cloud_id: Optional[str] = None
     ca_certs: Optional[str] = None
-    basic_auth: Optional[tuple[str, str]] = None
+    basic_auth: Optional[tuple[str, str]] = enhanced_field(sensitive=True, default=None)
     api_key: Optional[str] = enhanced_field(sensitive=True, default=None)
 
 
@@ -331,6 +331,7 @@ class ElasticsearchUploader(Uploader):
     upload_config: ElasticsearchUploaderConfig
     connection_config: ElasticsearchConnectionConfig
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
     def load_parallel_bulk(self):
         from elasticsearch.helpers import parallel_bulk
 
