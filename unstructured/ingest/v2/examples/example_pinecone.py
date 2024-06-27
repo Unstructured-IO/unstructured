@@ -29,16 +29,13 @@ if __name__ == "__main__":
     logger.info(f"Writing all content in: {work_dir.resolve()}")
     Pipeline.from_configs(
         context=ProcessorConfig(work_dir=str(work_dir.resolve())),
-        indexer_config=LocalIndexerConfig(input_path=str(docs_path.resolve()) + "/multisimple/"),
+        indexer_config=LocalIndexerConfig(
+            input_path=str(docs_path.resolve()) + "/book-war-and-peace-1p.txt"
+        ),
         downloader_config=LocalDownloaderConfig(download_dir=download_path),
         source_connection_config=LocalConnectionConfig(),
         partitioner_config=PartitionerConfig(strategy="fast"),
-        chunker_config=ChunkerConfig(
-            chunking_strategy="by_title",
-            chunk_include_orig_elements=False,
-            chunk_max_characters=1500,
-            chunk_multipage_sections=True,
-        ),
+        chunker_config=ChunkerConfig(chunking_strategy="by_title"),
         embedder_config=EmbedderConfig(embedding_provider="langchain-huggingface"),
         destination_connection_config=PineconeConnectionConfig(
             access_config=PineconeAccessConfig(api_key=os.getenv("PINECONE_API_KEY")),
@@ -46,5 +43,5 @@ if __name__ == "__main__":
             environment="us-east-1",
         ),
         stager_config=PineconeUploadStagerConfig(),
-        uploader_config=PineconeUploaderConfig(batch_size=10, num_of_processes=2),
+        uploader_config=PineconeUploaderConfig(batch_size=10, num_of_processes=1),
     ).run()

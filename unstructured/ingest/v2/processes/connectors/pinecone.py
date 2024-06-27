@@ -56,7 +56,7 @@ class PineconeUploadStager(UploadStager):
     )
 
     @staticmethod
-    def normalize_dict(element_dict: dict) -> dict:
+    def conform_dict(element_dict: dict) -> dict:
         # While flatten_dict enables indexing on various fields,
         # element_serialized enables easily reloading the element object to memory.
         # element_serialized is formed without text/embeddings to avoid data bloating.
@@ -85,7 +85,9 @@ class PineconeUploadStager(UploadStager):
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
 
-        conformed_elements = [self.conform_dict(data=element) for element in elements_contents]
+        conformed_elements = [
+            self.conform_dict(element_dict=element) for element in elements_contents
+        ]
 
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
