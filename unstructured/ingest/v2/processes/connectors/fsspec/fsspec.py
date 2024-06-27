@@ -306,9 +306,6 @@ FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderCon
 class FsspecUploader(Uploader):
     upload_config: FsspecUploaderConfigT = field(default=None)
 
-    def is_async(self) -> bool:
-        return self.fs.async_impl
-
     @property
     def fs(self) -> "AbstractFileSystem":
         from fsspec import get_filesystem_class

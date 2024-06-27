@@ -31,9 +31,6 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from chromadb import Client
 
-
-import typing as t
-
 CONNECTOR_TYPE = "chroma"
 
 
@@ -161,7 +158,7 @@ class ChromaUploader(Uploader):
             raise ValueError(f"chroma error: {e}") from e
 
     @staticmethod
-    def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
+    def prepare_chroma_list(chunk: tuple[dict[str, Any]]) -> dict[str, list[Any]]:
         """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
         ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
         chroma_dict = {}

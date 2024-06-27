@@ -44,7 +44,6 @@ idna==3.7
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   qdrant-client
 portalocker==2.10.0
     # via qdrant-client
