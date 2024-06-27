@@ -9,6 +9,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, e
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import dict_to_elements, elements_from_json
+from unstructured.utils import run_func_async
 
 
 @dataclass
@@ -89,7 +90,7 @@ class Chunker(BaseProcess, ABC):
             )
             filtered_partition_request["files"] = files
         partition_params = PartitionParameters(**filtered_partition_request)
-        resp = client.general.partition(partition_params)
+        resp = await run_func_async(client.general.partition, partition_params)
         elements_raw = resp.elements or []
         elements = dict_to_elements(elements_raw)
         assign_and_map_hash_ids(elements)

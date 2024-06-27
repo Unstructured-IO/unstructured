@@ -8,6 +8,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.utils.compression import TAR_FILE_EXT, ZIP_FILE_EXT, uncompress_file
 from unstructured.ingest.v2.interfaces import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
+from unstructured.utils import run_func_async
 
 
 @dataclass
@@ -40,4 +41,4 @@ class Uncompressor(BaseProcess, ABC):
         return responses
 
     async def run_async(self, file_data: FileData, **kwargs: Any) -> list[FileData]:
-        return self.run(file_data=file_data, **kwargs)
+        return await run_func_async(self.run, file_data=file_data, **kwargs)

@@ -7,6 +7,7 @@ from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin
 from unstructured.ingest.v2.interfaces.connector import BaseConnector
 from unstructured.ingest.v2.interfaces.file_data import FileData
 from unstructured.ingest.v2.interfaces.process import BaseProcess
+from unstructured.utils import run_func_async
 
 
 @dataclass
@@ -53,4 +54,4 @@ class Downloader(BaseProcess, BaseConnector, ABC):
         pass
 
     async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        return self.run(file_data=file_data, **kwargs)
+        return await run_func_async(self.run, file_data=file_data, **kwargs)

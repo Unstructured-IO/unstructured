@@ -27,6 +27,7 @@ from unstructured.ingest.v2.interfaces import (
 )
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connectors.fsspec.utils import sterilize_dict
+from unstructured.utils import run_func_async
 
 if TYPE_CHECKING:
     from fsspec import AbstractFileSystem
@@ -354,4 +355,4 @@ class FsspecUploader(Uploader):
             logger.debug(f"Skipping upload of {path} to {upload_path}, file already exists")
             return
         logger.debug(f"Writing local file {path_str} to {upload_path}")
-        self.fs.upload(lpath=path_str, rpath=str(upload_path))
+        await run_func_async(self.fs.upload, lpath=path_str, rpath=str(upload_path))

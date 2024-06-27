@@ -1,4 +1,3 @@
-import asyncio
 from abc import ABC
 from dataclasses import dataclass, field, fields
 from pathlib import Path
@@ -10,6 +9,7 @@ from unstructured.ingest.enhanced_dataclass.dataclasses import enhanced_field
 from unstructured.ingest.v2.interfaces.process import BaseProcess
 from unstructured.ingest.v2.logger import logger
 from unstructured.staging.base import elements_to_dicts, flatten_dict
+from unstructured.utils import run_func_async
 
 if TYPE_CHECKING:
     from unstructured_client import UnstructuredClient
@@ -109,8 +109,7 @@ class Partitioner(BaseProcess, ABC):
     async def call_api(self, client: "UnstructuredClient", request: "PartitionParameters"):
         # TODO when client supports async, run without using run_in_executor
         # isolate the IO heavy call
-        loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, client.general.partition, request)
+        return await run_func_async(client.general.partition, request)
 
     def create_partition_parameters(self, filename: Path) -> "PartitionParameters":
         from unstructured_client.models.shared import Files, PartitionParameters

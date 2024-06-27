@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 import threading
 from datetime import datetime
-from functools import wraps
+from functools import partial, wraps
 from itertools import combinations
 from typing import (
     TYPE_CHECKING,
@@ -832,3 +832,21 @@ class FileHandler:
         with self.lock:
             if os.path.exists(self.file_path):
                 os.remove(self.file_path)
+
+
+RunAsyncRReturn = TypeVar("RunAsyncRReturn")
+
+
+async def run_func_async(
+    func: Callable[..., RunAsyncRReturn], *args: Any, **kwargs: Any
+) -> RunAsyncRReturn:
+    """
+    Run a function asynchronously using an executor.
+
+    :param func: The function to run.
+    :param args: Positional arguments to pass to the function.
+    :param kwargs: Keyword arguments to pass to the function.
+    :return: The result of the function.
+    """
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, partial(func, *args, **kwargs))

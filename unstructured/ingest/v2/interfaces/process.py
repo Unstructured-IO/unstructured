@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
 
+from unstructured.utils import run_func_async
+
 
 @dataclass
 class BaseProcess(ABC):
@@ -13,7 +15,7 @@ class BaseProcess(ABC):
         pass
 
     async def run_async(self, **kwargs: Any) -> Any:
-        return self.run(**kwargs)
+        return await run_func_async(self.run, **kwargs)
 
     def check_connection(self):
         # If the process requires external connections, run a quick check

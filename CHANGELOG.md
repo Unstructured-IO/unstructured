@@ -1,4 +1,4 @@
-## 0.14.9-dev8
+## 0.14.9-dev9
 
 ### Enhancements
 
@@ -11,6 +11,8 @@
 
 * **Fix a bug where multiple `soffice` processes could be attempted** Add a wait mechanism in `convert_office_doc` so that the function first checks if another `soffice` is running already: if yes wait till the other process finishes or till the wait timeout before spawning a subprocess to run `soffice`
 * **`partition()` now forwards `strategy` arg to `partition_docx()`, `partition_pptx()`, and their brokering partitioners for DOC, ODT, and PPT formats.** A `strategy` argument passed to `partition()` (or the default value "auto" assigned by `partition()`) is now forwarded to `partition_docx()`, `partition_pptx()`, and their brokering partitioners when those filetypes are detected.
+
+* Fix blocking async interfaces for v2 ingest framework
 
 ## 0.14.8
 
