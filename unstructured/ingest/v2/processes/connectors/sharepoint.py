@@ -9,6 +9,7 @@ from dateutil import parser
 
 from unstructured.documents.elements import DataSourceMetadata
 from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.error import SourceConnectionNetworkError
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -28,6 +29,8 @@ from unstructured.ingest.v2.processes.connector_registry import (
 from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
+    from office365.graph_client import GraphClient
+    from office365.onedrive.sites.site import Site
     from office365.sharepoint.client_context import ClientContext
     from office365.sharepoint.files.file import File
     from office365.sharepoint.folders.folder import Folder
@@ -45,10 +48,19 @@ class SharepointAccessConfig(AccessConfig):
 
 
 @dataclass
+class SharepointPermissionsConfig:
+    permissions_application_id: str
+    permissions_tenant: str
+    permissions_client_cred: str = enhanced_field(sensitive=True)
+    authority_url: Optional[str] = field(repr=False, default="https://login.microsoftonline.com")
+
+
+@dataclass
 class SharepointConnectionConfig(ConnectionConfig):
     client_id: str
     site: str
     access_config: SharepointAccessConfig = enhanced_field(sensitive=True)
+    permissions_config: Optional[SharepointPermissionsConfig] = None
 
     @requires_dependencies(["office365"], extras="sharepoint")
     def get_client(self) -> "ClientContext":
@@ -63,16 +75,46 @@ class SharepointConnectionConfig(ConnectionConfig):
             raise e
         return site_client
 
+    @requires_dependencies(["msal"], extras="sharepoint")
+    def get_permissions_token(self):
+        from msal import ConfidentialClientApplication
+
+        try:
+            app = ConfidentialClientApplication(
+                authority=f"{self.permissions_config.authority_url}/"
+                f"{self.permissions_config.permissions_tenant}",
+                client_id=self.permissions_config.permissions_application_id,
+                client_credential=self.permissions_config.permissions_client_cred,
+            )
+            token = app.acquire_token_for_client(scopes=["https://graph.microsoft.com/.default"])
+        except ValueError as exc:
+            logger.error("Couldn't set up credentials for Sharepoint")
+            raise exc
+        if "error" in token:
+            raise SourceConnectionNetworkError(
+                "failed to fetch token, {}: {}".format(token["error"], token["error_description"])
+            )
+        return token
+
+    @requires_dependencies(["office365"], extras="sharepoint")
+    def get_permissions_client(self) -> Optional["GraphClient"]:
+        from office365.graph_client import GraphClient
+
+        if self.permissions_config is None:
+            return None
+
+        client = GraphClient(self.get_permissions_token)
+        return client
+
 
 @dataclass
 class SharepointIndexerConfig(IndexerConfig):
     path: Optional[str] = None
     process_pages: bool = field(default=True, init=False)
     recursive: bool = False
-    files_only: bool = False
-
-    def __post_init__(self):
-        self.process_pages = not self.files_only
+    omit_files: bool = False
+    omit_pages: bool = False
+    omit_lists: bool = False
 
 
 @dataclass
@@ -80,7 +122,7 @@ class SharepointIndexer(Indexer):
     connection_config: SharepointConnectionConfig
     index_config: SharepointIndexerConfig
 
-    def list_files(self, folder, recursive) -> list["File"]:
+    def list_files(self, folder: "Folder", recursive: bool = False) -> list["File"]:
         if not recursive:
             folder.expand(["Files"]).get().execute_query()
             return folder.files
@@ -193,16 +235,25 @@ class SharepointIndexer(Indexer):
     def get_root(self, client: "ClientContext") -> "Folder":
         if path := self.index_config.path:
             return client.web.get_folder_by_server_relative_path(path)
-        return client.web.root_folder
+        default_document_library = client.web.default_document_library()
+        return default_document_library.root_folder
+
+    def get_site_url(self, client: "ClientContext") -> str:
+        res = client.web.get().execute_query()
+        return res.url
+
+    def get_site(self, permissions_client: "GraphClient", site_url) -> "Site":
+        return permissions_client.sites.get_by_url(url=site_url).execute_query()
 
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         client = self.connection_config.get_client()
         root_folder = self.get_root(client=client)
-        files = self.list_files(root_folder, recursive=self.index_config.recursive)
-        for file in files:
-            file_data = self.file_to_file_data(file=file, client=client)
-            yield file_data
-        if self.index_config.process_pages:
+        if not self.index_config.omit_files:
+            files = self.list_files(root_folder, recursive=self.index_config.recursive)
+            for file in files:
+                file_data = self.file_to_file_data(file=file, client=client)
+                yield file_data
+        if not self.index_config.omit_pages:
             pages = self.list_pages(client=client)
             for page in pages:
                 file_data = self.page_to_file_data(page=page)
