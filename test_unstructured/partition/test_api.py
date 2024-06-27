@@ -185,6 +185,8 @@ def test_partition_via_api_valid_request_data_kwargs():
     assert isinstance(elements, list)
 
 
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
 def test_partition_via_api_image_block_extraction():
     filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "embedded-images-tables.pdf")
     elements = partition_via_api(
