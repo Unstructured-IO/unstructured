@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 from time import time
 from typing import TYPE_CHECKING, Any, Generator, Optional
@@ -43,6 +44,11 @@ CONNECTOR_TYPE = "sharepoint"
 
 MAX_MB_SIZE = 512_000_000
 CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
+
+
+class SharepointContentType(Enum):
+    DOCUMENT = "document"
+    SITEPAGE = "site_page"
 
 
 @dataclass
@@ -177,6 +183,8 @@ class SharepointIndexer(Indexer):
         )
         file_path = page.get_property("Url", "")
         server_path = file_path if file_path[0] != "/" else file_path[1:]
+        additional_metadata = self.get_properties(raw_properties=page.properties)
+        additional_metadata["sharepoint_content_type"] = SharepointContentType.SITEPAGE.value
         return FileData(
             identifier=unique_id,
             connector_type=CONNECTOR_TYPE,
@@ -195,7 +203,7 @@ class SharepointIndexer(Indexer):
                     "server_path": server_path,
                 },
             ),
-            additional_metadata=self.get_properties(raw_properties=page.properties),
+            additional_metadata=additional_metadata,
         )
 
     def file_to_file_data(self, client: "ClientContext", file: "File") -> FileData:
@@ -216,6 +224,8 @@ class SharepointIndexer(Indexer):
             parser.parse(file.time_last_modified) if file.time_last_modified else None
         )
         date_created_at = parser.parse(file.time_created) if file.time_created else None
+        additional_metadata = self.get_properties(raw_properties=file.properties)
+        additional_metadata["sharepoint_content_type"] = SharepointContentType.DOCUMENT.value
         return FileData(
             identifier=file.unique_id,
             connector_type=CONNECTOR_TYPE,
@@ -232,7 +242,7 @@ class SharepointIndexer(Indexer):
                 date_processed=str(time()),
                 record_locator={"server_path": file.serverRelativeUrl, "site_url": client.base_url},
             ),
-            additional_metadata=self.get_properties(raw_properties=file.properties),
+            additional_metadata=additional_metadata,
         )
 
     def get_root(self, client: "ClientContext") -> "Folder":
