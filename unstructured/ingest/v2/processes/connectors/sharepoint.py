@@ -30,6 +30,9 @@ from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from office365.graph_client import GraphClient
+    from office365.onedrive.driveitems.driveItem import DriveItem
+    from office365.onedrive.drives.drive import Drive
+    from office365.onedrive.permissions.permission import Permission
     from office365.onedrive.sites.site import Site
     from office365.sharepoint.client_context import ClientContext
     from office365.sharepoint.files.file import File
@@ -236,7 +239,10 @@ class SharepointIndexer(Indexer):
         if path := self.index_config.path:
             return client.web.get_folder_by_server_relative_path(path)
         default_document_library = client.web.default_document_library()
-        return default_document_library.root_folder
+        root_folder = default_document_library.root_folder
+        root_folder = root_folder.get().execute_query()
+        self.index_config.path = root_folder.name
+        return root_folder
 
     def get_site_url(self, client: "ClientContext") -> str:
         res = client.web.get().execute_query()
@@ -245,14 +251,67 @@ class SharepointIndexer(Indexer):
     def get_site(self, permissions_client: "GraphClient", site_url) -> "Site":
         return permissions_client.sites.get_by_url(url=site_url).execute_query()
 
+    def get_permissions_items(self, site: "Site") -> list["DriveItem"]:
+        # TODO find a way to narrow this search down by name of drive
+        items: list["DriveItem"] = []
+        drives: list["Drive"] = site.drives.get_all().execute_query()
+        for drive in drives:
+            items.extend(drive.root.children.get_all().execute_query())
+        return items
+
+    def map_permission(self, permission: "Permission") -> dict:
+        return {
+            "id": permission.id,
+            "roles": list(permission.roles),
+            "share_id": permission.share_id,
+            "has_password": permission.has_password,
+            "link": permission.link.to_json(),
+            "granted_to_identities": permission.granted_to_identities.to_json(),
+            "granted_to": permission.granted_to.to_json(),
+            "granted_to_v2": permission.granted_to_v2.to_json(),
+            "granted_to_identities_v2": permission.granted_to_identities_v2.to_json(),
+            "invitation": permission.invitation.to_json(),
+        }
+
+    def enrich_permissions_on_files(self, all_file_data: list[FileData], site_url: str) -> None:
+        logger.debug("Enriching permissions on files")
+        permission_client = self.connection_config.get_permissions_client()
+        if permission_client is None:
+            return
+        site = self.get_site(permissions_client=permission_client, site_url=site_url)
+        existing_items = self.get_permissions_items(site=site)
+        for file_data in all_file_data:
+            etag = file_data.additional_metadata.get("ETag")
+            if not etag:
+                continue
+            matching_items = list(filter(lambda x: x.etag == etag, existing_items))
+            if not matching_items:
+                continue
+            if len(matching_items) > 1:
+                logger.warning(
+                    "Found multiple drive items with etag matching {}, skipping: {}".format(
+                        etag, ", ".join([i.name for i in matching_items])
+                    )
+                )
+                continue
+            matching_item = matching_items[0]
+            permissions: list["Permission"] = matching_item.permissions.get_all().execute_query()
+            permissions_data = [
+                self.map_permission(permission=permission) for permission in permissions
+            ]
+            file_data.metadata.permissions_data = permissions_data
+
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
         client = self.connection_config.get_client()
         root_folder = self.get_root(client=client)
         if not self.index_config.omit_files:
             files = self.list_files(root_folder, recursive=self.index_config.recursive)
-            for file in files:
-                file_data = self.file_to_file_data(file=file, client=client)
-                yield file_data
+            file_data = [self.file_to_file_data(file=file, client=client) for file in files]
+            self.enrich_permissions_on_files(
+                all_file_data=file_data, site_url=self.get_site_url(client=client)
+            )
+            for file in file_data:
+                yield file
         if not self.index_config.omit_pages:
             pages = self.list_pages(client=client)
             for page in pages:
