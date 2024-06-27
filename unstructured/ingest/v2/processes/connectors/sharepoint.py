@@ -16,6 +16,7 @@ from unstructured.ingest.v2.interfaces import (
     ConnectionConfig,
     Downloader,
     DownloaderConfig,
+    DownloadResponse,
     FileData,
     Indexer,
     IndexerConfig,
@@ -43,12 +44,15 @@ if TYPE_CHECKING:
 CONNECTOR_TYPE = "sharepoint"
 
 MAX_MB_SIZE = 512_000_000
-CONTENT_LABELS = ["CanvasContent1", "LayoutWebpartsContent1", "TimeCreated"]
+
+# TODO handle other data types possible from Sharepoint
+# exampled: https://github.com/vgrem/Office365-REST-Python-Client/tree/master/examples/sharepoint
 
 
 class SharepointContentType(Enum):
     DOCUMENT = "document"
     SITEPAGE = "site_page"
+    LIST = "list"
 
 
 @dataclass
@@ -160,36 +164,26 @@ class SharepointIndexer(Indexer):
         pages = client.site_pages.pages.get().execute_query()
         return pages
 
-    def page_to_file_data(self, page: "SitePage") -> FileData:
-        expansion_fields = [
-            "FirstPublished",
-            "Version",
-            "AbsoluteUrl",
-            "FileName",
-            "LastModifiedBy",
-            "UniqueId",
-            "Modified",
-        ]
-        page.expand(expansion_fields).get().execute_query()
-        version = page.properties.get("Version", None)
-        unique_id = page.properties.get("UniqueId", None)
-        modified_date = page.properties.get("Modified", None)
-        url = page.properties.get("AbsoluteUrl", None)
+    def page_to_file_data(self, site_page: "SitePage") -> FileData:
+        version = site_page.properties.get("Version", None)
+        unique_id = site_page.properties.get("UniqueId", None)
+        modified_date = site_page.properties.get("Modified", None)
+        url = site_page.properties.get("AbsoluteUrl", None)
         date_modified_dt = parser.parse(modified_date) if modified_date else None
         date_created_at = (
-            parser.parse(page.first_published)
-            if (page.first_published and page.first_published != "0001-01-01T08:00:00Z")
+            parser.parse(site_page.first_published)
+            if (site_page.first_published and site_page.first_published != "0001-01-01T08:00:00Z")
             else None
         )
-        file_path = page.get_property("Url", "")
+        file_path = site_page.get_property("Url", "")
         server_path = file_path if file_path[0] != "/" else file_path[1:]
-        additional_metadata = self.get_properties(raw_properties=page.properties)
+        additional_metadata = self.get_properties(raw_properties=site_page.properties)
         additional_metadata["sharepoint_content_type"] = SharepointContentType.SITEPAGE.value
         return FileData(
             identifier=unique_id,
             connector_type=CONNECTOR_TYPE,
             source_identifiers=SourceIdentifiers(
-                filename=page.file_name,
+                filename=site_page.file_name,
                 fullpath=file_path,
                 rel_path=file_path.replace(self.index_config.path, ""),
             ),
@@ -207,18 +201,7 @@ class SharepointIndexer(Indexer):
         )
 
     def file_to_file_data(self, client: "ClientContext", file: "File") -> FileData:
-        expansion_fields = [
-            "Name",
-            "TimeCreated",
-            "MinorVersion",
-            "MajorVersion",
-            "UniqueId",
-            "Length",
-            "ServerRelativePath",
-            "ServerRelativeUrl",
-            "TimeLastModified",
-        ]
-        file.expand(expansion_fields).get().execute_query()
+        file.get().execute_query()
         absolute_url = f"{client.base_url}{quote(file.serverRelativeUrl)}"
         date_modified_dt = (
             parser.parse(file.time_last_modified) if file.time_last_modified else None
@@ -325,7 +308,7 @@ class SharepointIndexer(Indexer):
         if not self.index_config.omit_pages:
             pages = self.list_pages(client=client)
             for page in pages:
-                file_data = self.page_to_file_data(page=page)
+                file_data = self.page_to_file_data(site_page=page)
                 file_data.metadata.record_locator["site_url"] = client.base_url
                 yield file_data
 
@@ -339,14 +322,61 @@ class SharepointDownloaderConfig(DownloaderConfig):
 class SharepointDownloader(Downloader):
     connection_config: SharepointConnectionConfig
     download_config: SharepointDownloaderConfig
+    connector_type: str = CONNECTOR_TYPE
 
     def get_download_path(self, file_data: FileData) -> Path:
+        content_type = file_data.additional_metadata.get("sharepoint_content_type")
         rel_path = file_data.source_identifiers.relative_path
         rel_path = rel_path[1:] if rel_path.startswith("/") else rel_path
-        return self.download_dir / Path(rel_path)
+        download_path = self.download_dir / Path(rel_path)
+        if content_type == SharepointContentType.SITEPAGE.value:
+            # Update output extension to html if site page
+            download_path = download_path.with_suffix(".html")
+        return download_path
+
+    def get_document(self, file_data: FileData) -> DownloadResponse:
+        pass
+
+    def get_site_page(self, file_data: FileData) -> DownloadResponse:
+        # TODO fetch comments for site page as well
+        from lxml import etree, html
+
+        canvas_content_raw = file_data.additional_metadata.get("CanvasContent1")
+        layout_web_parts_content_raw = file_data.additional_metadata.get("LayoutWebpartsContent")
+        html_content = []
+        if layout_web_parts_content_raw:
+            layout_web_parts_content = json.loads(layout_web_parts_content_raw)
+            for web_part in layout_web_parts_content:
+                properties = web_part.get("properties", {})
+                if title := properties.get("title"):
+                    html_content.append(f"<title>{title}</title>")
+        if canvas_content_raw:
+            canvas_content = json.loads(canvas_content_raw)
+            for content in canvas_content:
+                if inner_html := content.get("innerHTML"):
+                    html_content.append(inner_html)
+        htmls = "".join(html_content)
+        content = f"<div>{htmls}</div>"
+        document = html.fromstring(content)
+        download_path = self.get_download_path(file_data=file_data)
+        download_path.parent.mkdir(parents=True, exist_ok=True)
+        logger.debug(
+            f"writing site page content {file_data.source_identifiers.filename} to {download_path}"
+        )
+        with download_path.open("w") as f:
+            f.write(etree.tostring(document, encoding="unicode", pretty_print=True))
+        return DownloadResponse(path=download_path, file_data=file_data)
 
     def run(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        pass
+        content_type = file_data.additional_metadata.get("sharepoint_content_type")
+        if not content_type:
+            raise ValueError(
+                f"Missing sharepoint_content_type metadata: {file_data.additional_metadata}"
+            )
+        if content_type == SharepointContentType.DOCUMENT.value:
+            return self.get_document(file_data=file_data)
+        elif content_type == SharepointContentType.SITEPAGE.value:
+            return self.get_site_page(file_data=file_data)
 
 
 add_source_entry(
