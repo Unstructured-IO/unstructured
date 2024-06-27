@@ -16,6 +16,7 @@ from .local import local_dest_cmd, local_src_cmd
 from .onedrive import onedrive_drive_src_cmd
 from .opensearch import opensearch_dest_cmd, opensearch_src_cmd
 from .pinecone import pinecone_dest_cmd
+from .sharepoint import sharepoint_drive_src_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -29,6 +30,7 @@ src_cmds = [
     onedrive_drive_src_cmd,
     opensearch_src_cmd,
     s3_src_cmd,
+    sharepoint_drive_src_cmd,
     sftp_src_cmd,
 ]
 duplicate_src_names = [

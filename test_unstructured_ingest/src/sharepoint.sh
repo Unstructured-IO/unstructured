@@ -45,7 +45,6 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --client-cred "$SHAREPOINT_CRED" \
   --client-id "$SHAREPOINT_CLIENT_ID" \
   --site "$SHAREPOINT_SITE" \
-  --path "Shared Documents" \
   --recursive \
   --work-dir "$WORK_DIR"
 
