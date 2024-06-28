@@ -9,7 +9,7 @@ import pandas as pd
 from dateutil import parser
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.utils.table import convert_to_pandas_dataframe
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -141,7 +141,7 @@ class SingleStoreUploader(Uploader):
         data_as_tuples = list(df.itertuples(index=False, name=None))
         with self.connection_config.get_connection() as conn:
             with conn.cursor() as cur:
-                for chunk in chunk_generator(
+                for chunk in batch_generator(
                     data_as_tuples, batch_size=self.upload_config.batch_size
                 ):
                     cur.executemany(stmt, chunk)
