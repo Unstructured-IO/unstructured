@@ -123,7 +123,6 @@ class SharepointConnectionConfig(ConnectionConfig):
 @dataclass
 class SharepointIndexerConfig(IndexerConfig):
     path: Optional[str] = None
-    process_pages: bool = field(default=True, init=False)
     recursive: bool = False
     omit_files: bool = False
     omit_pages: bool = False
@@ -133,7 +132,7 @@ class SharepointIndexerConfig(IndexerConfig):
 @dataclass
 class SharepointIndexer(Indexer):
     connection_config: SharepointConnectionConfig
-    index_config: SharepointIndexerConfig
+    index_config: SharepointIndexerConfig = field(default_factory=lambda: SharepointIndexerConfig())
 
     def list_files(self, folder: "Folder", recursive: bool = False) -> list["File"]:
         if not recursive:
@@ -210,7 +209,7 @@ class SharepointIndexer(Indexer):
         date_created_at = parser.parse(file.time_created) if file.time_created else None
         additional_metadata = self.get_properties(raw_properties=file.properties)
         additional_metadata["sharepoint_content_type"] = SharepointContentType.DOCUMENT.value
-        fullpath = str(file.server_relative_path)
+        fullpath = str(file.serverRelativeUrl)
         rel_path = fullpath.replace(self.index_config.path, "")
         while rel_path[0] == "/":
             rel_path = rel_path[1:]
