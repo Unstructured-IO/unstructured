@@ -164,8 +164,8 @@ class SalesforceConnectionConfig(ConnectionConfig):
 @dataclass
 class SalesforceIndexerConfig(IndexerConfig):
     categories: t.List[str]
-    record_type: str
-    record_id: str
+    record_type: str = None
+    record_id: str = None
     registry_name: str = "salesforce"
     _record: OrderedDict = field(default_factory=lambda: OrderedDict())
     recursive: bool = False
@@ -203,6 +203,7 @@ class SalesforceIndexer(Indexer):
         from simple_salesforce.exceptions import SalesforceMalformedRequest
 
         client = self.connection_config.get_client()
+        # breakpoint()
 
         ingest_docs = []
         for record_type in self.index_config.categories:
@@ -216,13 +217,14 @@ class SalesforceIndexer(Indexer):
                 )
                 for record in records["records"]:
                     ingest_docs.append(
-                        SalesforceIngestDoc(
-                            connector_config=self.connector_config,
-                            processor_config=self.processor_config,
-                            read_config=self.read_config,
-                            record_type=record_type,
-                            record_id=record["Id"],
-                        ),
+                        # SalesforceIngestDoc(
+                        #     connector_config=self.connector_config,
+                        #     processor_config=self.processor_config,
+                        #     read_config=self.read_config,
+                        #     record_type=record_type,
+                        #     record_id=record["Id"],
+                        # ),
+                        record["Id"]
                     )
             except SalesforceMalformedRequest as e:
                 raise SalesforceMalformedRequest(f"Problem with Salesforce query: {e}")
@@ -230,14 +232,15 @@ class SalesforceIndexer(Indexer):
         return ingest_docs
 
     def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
-        breakpoint()
-        # for f in self.get_files(
-        #     files_client=self.connection_config.get_files_service(),
-        #     object_id=self.connection_config.drive_id,
-        #     recursive=self.index_config.recursive,
-        #     extensions=self.index_config.extensions,
+        # breakpoint()
+        for f in self.get_ingest_docs():
+            # files_client=self.connection_config.get_files_service(),
+            # object_id=self.connection_config.drive_id,
+            # recursive=self.index_config.recursive,
+            # extensions=self.index_config.extensions,
         # ):
-        #     yield f
+            print(f"********* run ****** {f}")
+            yield f
 
 
 
@@ -391,14 +394,14 @@ class SalesforceIndexer(Indexer):
             d.metadata.record_locator["drive_id"]: object_id
         return data
 
-    def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
-        for f in self.get_files(
-            files_client=self.connection_config.get_files_service(),
-            object_id=self.connection_config.drive_id,
-            recursive=self.index_config.recursive,
-            extensions=self.index_config.extensions,
-        ):
-            yield f
+    # def run(self, **kwargs: Any) -> Generator[FileData, None, None]:
+    #     for f in self.get_files(
+    #         files_client=self.connection_config.get_files_service(),
+    #         object_id=self.connection_config.drive_id,
+    #         recursive=self.index_config.recursive,
+    #         extensions=self.index_config.extensions,
+    #     ):
+    #         yield f
 
 
 @dataclass
