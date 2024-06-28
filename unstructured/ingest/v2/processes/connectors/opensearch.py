@@ -97,6 +97,7 @@ class OpenSearchConnectionConfig(ConnectionConfig):
 @dataclass
 class OpenSearchUploader(ElasticsearchUploader):
     connection_config: OpenSearchConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def load_parallel_bulk(self):
