@@ -44,7 +44,7 @@ The `unstructured` library provides open-source components for ingesting and pre
 Looking for better performance and less setup? Check out our new [Serverless API](https://unstructured.io/api-key-hosted)!
 The Unstructured Serverless API is our most performant API yet, delivering a more responsive,
 production-grade solution to better support your business and LLM needs.
-Head to our [https://app.unstructured.io/](https://app.unstructured.io/) page to get started for
+Head to our [signup page](https://app.unstructured.io/) page to get started for
 free.
 
 ## :eight_pointed_black_star: Quick Start
