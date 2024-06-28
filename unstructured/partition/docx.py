@@ -8,7 +8,7 @@ import itertools
 import os
 import tempfile
 import zipfile
-from typing import IO, Any, Iterator, Optional, Protocol, Type
+from typing import IO, Any, Iterator, Optional, Protocol, Type, cast
 
 # -- CT_* stands for "complex-type", an XML element type in docx parlance --
 import docx
@@ -196,6 +196,7 @@ class DocxPartitionerOptions:
         self,
         *,
         date_from_file_object: bool,
+        # -- NOTE `file` may be mutated by `._validate()` to fix SpooledTemporaryFile problem --
         file: IO[bytes] | None,
         file_path: str | None,
         include_page_breaks: bool,
@@ -355,31 +356,28 @@ class DocxPartitionerOptions:
         This is either a `str` path or a file-like object. `python-docx` accepts either for opening
         a document file.
         """
-        if self._file_path:
-            return self._file_path
-
-        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
-        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
-        # -- to work around that bug here.
-        if isinstance(self._file, tempfile.SpooledTemporaryFile):
-            self._file.seek(0)
-            return io.BytesIO(self._file.read())
-
-        assert self._file is not None  # -- assured by `._validate()` --
-        return self._file
+        return self._file_path if self._file_path else cast(IO[bytes], self._file)
 
     def _validate(self) -> DocxPartitionerOptions:
-        """Raise on first invalide option, return self otherwise."""
+        """Raise on first invalid option, otherwise return self."""
         # -- provide distinguished error between "file-not-found" and "not-a-DOCX-file" --
         if self._file_path:
             if not os.path.isfile(self._file_path):
                 raise FileNotFoundError(f"no such file or directory: {repr(self._file_path)}")
             if not zipfile.is_zipfile(self._file_path):
                 raise ValueError(f"not a ZIP archive (so not a DOCX file): {repr(self._file_path)}")
-        elif self._file:
-            if not zipfile.is_zipfile(self._file):
-                raise ValueError(f"not a ZIP archive (so not a DOCX file): {repr(self._file)}")
-        else:
+
+        # -- In Python <3.11 SpooledTemporaryFile does not implement ".seekable" which triggers an
+        # -- exception when Zipfile tries to open it. The docx format is a zip archive so we need
+        # -- to work around that bug here.
+        if isinstance(self._file, tempfile.SpooledTemporaryFile):
+            self._file.seek(0)
+            self._file = io.BytesIO(self._file.read())
+
+        if self._file and not zipfile.is_zipfile(self._file):
+            raise ValueError(f"not a ZIP archive (so not a DOCX file): {repr(self._file)}")
+
+        if not self._file_path and not self._file:
             raise ValueError(
                 "no DOCX document specified, either `filename` or `file` argument must be provided"
             )

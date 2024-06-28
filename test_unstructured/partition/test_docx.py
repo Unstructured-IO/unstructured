@@ -77,14 +77,15 @@ def test_partition_docx_with_spooled_file(
     `python-docx` will NOT accept a `SpooledTemporaryFile` in Python versions before 3.11 so we need
     to ensure the source file is appropriately converted in this case.
     """
-    with open(mock_document_file_path, "rb") as test_file:
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(test_file.read())
+    with tempfile.SpooledTemporaryFile() as spooled_temp_file:
+        with open(mock_document_file_path, "rb") as f:
+            spooled_temp_file.write(f.read())
         spooled_temp_file.seek(0)
+
         elements = partition_docx(file=spooled_temp_file)
+
         assert elements == expected_elements
-        for element in elements:
-            assert element.metadata.filename is None
+        assert all(e.metadata.filename is None for e in elements)
 
 
 def test_partition_docx_from_file(mock_document_file_path: str, expected_elements: list[Text]):
@@ -98,8 +99,12 @@ def test_partition_docx_from_file(mock_document_file_path: str, expected_element
 def test_partition_docx_uses_file_path_when_both_are_specified(
     mock_document_file_path: str, expected_elements: list[Text]
 ):
-    f = io.BytesIO(b"abcde")
-    elements = partition_docx(filename=mock_document_file_path, file=f)
+    with open(example_doc_path("simple.docx"), "rb") as f:
+        file = io.BytesIO(f.read())
+
+    elements = partition_docx(filename=mock_document_file_path, file=file)
+    elements = partition_docx(example_doc_path("simple.docx"), file=file)
+
     assert elements == expected_elements
 
 
@@ -1010,20 +1015,6 @@ class DescribeDocxPartitionerOptions:
 
         assert opts._docx_file == "l/m/n.docx"
 
-    def and_it_uses_a_BytesIO_file_to_replaces_a_SpooledTemporaryFile_provided(
-        self, opts_args: dict[str, Any]
-    ):
-        spooled_temp_file = tempfile.SpooledTemporaryFile()
-        spooled_temp_file.write(b"abcdefg")
-        opts_args["file"] = spooled_temp_file
-        opts = DocxPartitionerOptions(**opts_args)
-
-        docx_file = opts._docx_file
-
-        assert docx_file is not spooled_temp_file
-        assert isinstance(docx_file, io.BytesIO)
-        assert docx_file.getvalue() == b"abcdefg"
-
     def and_it_uses_the_provided_file_directly_when_not_a_SpooledTemporaryFile(
         self, opts_args: dict[str, Any]
     ):
@@ -1050,6 +1041,23 @@ class DescribeDocxPartitionerOptions:
         opts_args["file_path"] = example_doc_path("simple.doc")
         with pytest.raises(ValueError, match=r"not a ZIP archive \(so not a DOCX file\): "):
             DocxPartitionerOptions.load(**opts_args)
+
+    def it_uses_a_BytesIO_file_to_replace_a_SpooledTemporaryFile_provided(
+        self, opts_args: dict[str, Any]
+    ):
+        with open(example_doc_path("simple.docx"), "rb") as f:
+            file_bytes = f.read()
+
+        spooled_temp_file = tempfile.SpooledTemporaryFile()
+        spooled_temp_file.write(file_bytes)
+        opts_args["file"] = spooled_temp_file
+        opts = DocxPartitionerOptions(**opts_args)
+
+        opts._validate()
+
+        assert opts._docx_file is not spooled_temp_file
+        assert isinstance(opts._docx_file, io.BytesIO)
+        assert opts._docx_file.getvalue() == file_bytes
 
     def and_it_raises_when_the_file_like_object_is_not_a_ZIP_archive(
         self, opts_args: dict[str, Any]
