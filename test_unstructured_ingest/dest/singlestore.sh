@@ -30,7 +30,14 @@ trap cleanup EXIT
 # Create singlestore instance and create `elements` class
 echo "Creating singlestore instance"
 # shellcheck source=/dev/null
-docker compose -f scripts/singlestore-test-helpers/docker-compose.yml up --wait-timeout 60
+docker compose -f scripts/singlestore-test-helpers/docker-compose.yml up -d --wait-timeout 60
+
+DATABASE=ingest_test
+USER=root
+HOST=localhost
+PASSWORD=password
+PORT=3306
+TABLE=elements
 
 PYTHONPATH=. ./unstructured/ingest/main.py \
   local \
@@ -43,9 +50,13 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --work-dir "$WORK_DIR" \
   --embedding-provider "langchain-huggingface" \
   singlestore \
-  --host http://localhost \
-  --user root \
-  --password password \
-  --database ingest_test \
-  --table-name elements \
+  --host $HOST \
+  --user $USER \
+  --password $PASSWORD \
+  --database $DATABASE \
+  --port $PORT \
+  --table-name $TABLE \
   --drop-empty-cols
+
+expected_num_elements=$(cat $WORK_DIR/embed/* | jq 'length')
+./scripts/singlestore-test-helpers/test_outputs.py --table-name $TABLE --database $DATABASE --num-elements $expected_num_elements

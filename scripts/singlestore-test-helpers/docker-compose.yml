@@ -11,3 +11,11 @@ services:
       - ROOT_PASSWORD=password
     volumes:
       - ./schema.sql:/init.sql
+
+  # Allow docker compose up --wait to exit only when singlestore is healthy
+  wait:
+    image: hello-world:latest
+    container_name: singlestore-waiter
+    depends_on:
+      singlestore:
+        condition: service_healthy
