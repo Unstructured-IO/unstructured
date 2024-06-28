@@ -26,6 +26,7 @@ from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     add_destination_entry,
 )
+from unstructured.utils import requires_dependencies
 
 if TYPE_CHECKING:
     from singlestoredb.connection import Connection
@@ -46,6 +47,7 @@ class SingleStoreConnectionConfig(ConnectionConfig):
     database: Optional[str] = None
     access_config: SingleStoreAccessConfig = enhanced_field(sensitive=True)
 
+    @requires_dependencies(["singlestoredb"], extras="singlestore")
     def get_connection(self) -> "Connection":
         import singlestoredb as s2
 
