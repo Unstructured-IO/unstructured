@@ -7,10 +7,6 @@ CREATE TABLE elements (
     text TEXT,
     embeddings Vector(384),
     type TEXT,
-    system TEXT,
-    layout_width DECIMAL,
-    layout_height DECIMAL,
-    points TEXT,
     url TEXT,
     version TEXT,
     data_source_date_created TIMESTAMP,
@@ -42,6 +38,10 @@ CREATE TABLE elements (
     regex_metadata TEXT,
     detection_class_prob DECIMAL,
     is_continuation BOOLEAN,
-    orig_elements TEXT
+    orig_elements TEXT,
+    coordinates_points TEXT,
+    coordinates_system TEXT,
+    coordinates_layout_width DECIMAL,
+    coordinates_layout_height DECIMAL
 );
 
