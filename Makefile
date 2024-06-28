@@ -197,6 +197,10 @@ install-ingest-airtable:
 install-ingest-sharepoint:
 	python3 -m pip install -r requirements/ingest/sharepoint.txt
 
+.PHONY: install-ingest-singlestore
+install-ingest-singlestore:
+	python3 -m pip install -r requirements/ingest/singlestore.txt
+
 .PHONY: install-ingest-weaviate
 install-ingest-weaviate:
 	python3 -m pip install -r requirements/ingest/weaviate.txt
