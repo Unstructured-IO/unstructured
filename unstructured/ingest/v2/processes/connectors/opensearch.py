@@ -144,7 +144,7 @@ class OpenSearchDownloader(ElasticsearchDownloader):
         }
 
         download_responses = []
-        async with AsyncOpenSearchClient(**self.connection_config.to_dict()) as client:
+        async with AsyncOpenSearchClient(**self.connection_config.get_client_kwargs()) as client:
             async for result in async_scan(
                 client,
                 query=scan_query,
