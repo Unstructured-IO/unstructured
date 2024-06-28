@@ -2,7 +2,7 @@ CREATE DATABASE ingest_test;
 USE ingest_test;
 
 CREATE TABLE elements (
-    id TEXT PRIMARY KEY,
+    id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
     element_id TEXT,
     text TEXT,
     embeddings Vector(384),
@@ -13,11 +13,11 @@ CREATE TABLE elements (
     points TEXT,
     url TEXT,
     version TEXT,
-    date_created TIMESTAMP,
-    date_modified TIMESTAMP,
-    date_processed TIMESTAMP,
-    permissions_data TEXT,
-    record_locator TEXT,
+    data_source_date_created TIMESTAMP,
+    data_source_date_modified TIMESTAMP,
+    data_source_date_processed TIMESTAMP,
+    data_source_permissions_data TEXT,
+    data_source_record_locator JSON,
     category_depth INTEGER,
     parent_id TEXT,
     attached_filename TEXT,
@@ -41,6 +41,7 @@ CREATE TABLE elements (
     text_as_html TEXT,
     regex_metadata TEXT,
     detection_class_prob DECIMAL,
-    is_continuation BOOLEAN
+    is_continuation BOOLEAN,
+    orig_elements TEXT
 );
 
