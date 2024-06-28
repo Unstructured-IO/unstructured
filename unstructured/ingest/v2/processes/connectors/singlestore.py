@@ -63,7 +63,7 @@ class SingleStoreConnectionConfig(ConnectionConfig):
 
 @dataclass
 class SingleStoreUploadStagerConfig(UploadStagerConfig):
-    drop_empty_cols: bool = True
+    drop_empty_cols: bool = False
 
 
 @dataclass
