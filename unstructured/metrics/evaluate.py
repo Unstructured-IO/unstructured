@@ -601,6 +601,10 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
 
     def __post_init__(self):
         super().__post_init__()
+        self._document_paths = [
+            path.relative_to(self.documents_dir)
+            for path in self.documents_dir.rglob("analysis/*/layout_dump/object_detection.json")
+        ]
 
     @property
     def supported_metric_names(self):
@@ -612,15 +616,22 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
     def default_agg_tsv_name(self):
         return "aggregate-object-detection-metrics.tsv"
 
+    def _find_file_in_ground_truth(self, file_stem: str):
+        for path in self._ground_truth_paths:
+            if Path(path.stem).stem == file_stem:
+                return path
+        return None
+
     def _process_document(self, doc: Path) -> list:
-        doc_path = Path(doc)
-        out_filename = doc_path.stem
-        doctype = Path(out_filename).suffix[1:]
+        od_dump_path = Path(doc)
+        file_stem = od_dump_path.parts[-3]
 
-        src_gt_filename = out_filename + ".json"  # TODO gt file is not ready yet
+        src_gt_filename = self._find_file_in_ground_truth(file_stem)
 
-        if src_gt_filename in self._ground_truth_paths:
+        if src_gt_filename not in self._ground_truth_paths:
             return None
+
+        doctype = Path(src_gt_filename.stem).suffix[1:]
 
         prediction_file = self.documents_dir / doc
         if not prediction_file.exists():
@@ -633,11 +644,35 @@ class ObjectDetectionMetricsCalculator(BaseMetricsCalculator):
             return None
 
         processor = ObjectDetectionEvalProcessor.from_json_files(
-            prediction_file=prediction_file, ground_truth_file=ground_truth_file
+            prediction_file_path=prediction_file,
+            ground_truth_file_path=ground_truth_file,
         )
         metrics = processor.get_metrics()
 
         return [
-            out_filename,
+            src_gt_filename.stem,
             doctype,
+            None,  # connector
         ] + [getattr(metrics, metric) for metric in self.supported_metric_names]
+
+    def _generate_dataframes(self, rows):
+        headers = ["filename", "doctype", "connector"] + self.supported_metric_names
+        df = pd.DataFrame(rows, columns=headers)
+
+        if df.empty:
+            agg_df = pd.DataFrame(columns=AGG_HEADERS)
+        else:
+            element_metrics_results = {}
+            for metric in self.supported_metric_names:
+                metric_df = df[df[metric].notnull()]
+                agg_metric = metric_df[metric].agg([_mean, _stdev, _pstdev, _count]).transpose()
+                if agg_metric.empty:
+                    element_metrics_results[metric] = pd.Series(
+                        data=[None, None, None, 0], index=["_mean", "_stdev", "_pstdev", "_count"]
+                    )
+                else:
+                    element_metrics_results[metric] = agg_metric
+            agg_df = pd.DataFrame(element_metrics_results).transpose().reset_index()
+        agg_df.columns = AGG_HEADERS
+
+        return df, agg_df
