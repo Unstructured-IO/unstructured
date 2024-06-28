@@ -3,6 +3,7 @@ import contextlib
 import json
 import os
 import pathlib
+from typing import Any
 
 import pytest
 import requests
@@ -17,97 +18,19 @@ from ..unit_utils import ANY, FixtureRequest, example_doc_path, method_mock
 
 DIRECTORY = pathlib.Path(__file__).parent.resolve()
 
-EML_TEST_FILE = "eml/fake-email.eml"
-
 skip_outside_ci = os.getenv("CI", "").lower() in {"", "false", "f", "0"}
 skip_not_on_main = os.getenv("GITHUB_REF_NAME", "").lower() != "main"
 
-MOCK_TEXT = """[
-    {
-        "element_id": "f49fbd614ddf5b72e06f59e554e6ae2b",
-        "text": "This is a test email to use for unit tests.",
-        "type": "NarrativeText",
-        "metadata": {
-            "sent_from": [
-                "Matthew Robinson <mrobinson@unstructured.io>"
-            ],
-            "sent_to": [
-                "Matthew Robinson <mrobinson@unstructured.io>"
-            ],
-            "subject": "Test Email",
-            "filename": "fake-email.eml",
-            "filetype": "message/rfc822"
-        }
-    }
-]"""
 
-
-class FakeResponse:
-    def __init__(self, status_code: int):
-        self.status_code = status_code
-        # The string representation of partitioned elements is nested in an additional
-        # layer in the new unstructured-client:
-        #     `elements_from_json(text=response.raw_response.text)`
-        self.raw_response = FakeRawResponse()
-        self.headers = {"Content-Type": "application/json"}
-
-    def json(self):
-        return json.loads(self.text)
-
-    @property
-    def text(self):
-        return MOCK_TEXT
-
-
-class FakeRawResponse:
-    def __init__(self):
-        self.text = MOCK_TEXT
-
-
-def test_partition_via_api_from_filename(request: FixtureRequest):
-    partition_ = method_mock(
+def test_partition_via_api_from_filename(request: FixtureRequest, expected_call: tuple[Any, Any]):
+    partition_mock_ = method_mock(
         request, General, "partition", return_value=FakeResponse(status_code=200)
     )
-    elements = partition_via_api(example_doc_path(EML_TEST_FILE))
-    with open(example_doc_path(EML_TEST_FILE), "rb") as f:
-        file_bytes = f.read()
 
-    partition_.assert_called_once_with(
-        ANY,
-        PartitionParameters(
-            files=shared.Files(
-                content=file_bytes,
-                file_name="/Users/johnjennings/src/unstructured/example-docs/eml/fake-email.eml",
-            ),
-            chunking_strategy=None,
-            combine_under_n_chars=None,
-            coordinates=False,
-            encoding=None,
-            extract_image_block_types=None,
-            gz_uncompressed_content_type=None,
-            hi_res_model_name=None,
-            include_orig_elements=None,
-            include_page_breaks=False,
-            languages=None,
-            max_characters=None,
-            multipage_sections=True,
-            new_after_n_chars=None,
-            ocr_languages=None,
-            output_format=shared.OutputFormat.APPLICATION_JSON,
-            overlap=0,
-            overlap_all=False,
-            pdf_infer_table_structure=True,
-            similarity_threshold=None,
-            skip_infer_table_types=None,
-            split_pdf_concurrency_level=5,
-            split_pdf_page=True,
-            starting_page_number=None,
-            strategy=shared.Strategy.AUTO,
-            unique_element_ids=False,
-            xml_keep_tags=False,
-        ),
-    )
-    assert isinstance(partition_.call_args_list[0].args[0], General)
+    elements = partition_via_api(example_doc_path("eml/fake-email.eml"))
+
+    partition_mock_.assert_called_once_with(*expected_call)
+    assert isinstance(partition_mock_.call_args_list[0].args[0], General)
     assert len(elements) == 1
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
@@ -118,8 +41,10 @@ def test_partition_via_api_from_file(monkeypatch: pytest.MonkeyPatch):
         General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
     )
 
-    with open(example_doc_path(EML_TEST_FILE), "rb") as f:
-        elements = partition_via_api(file=f, metadata_filename=example_doc_path(EML_TEST_FILE))
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        elements = partition_via_api(
+            file=f, metadata_filename=example_doc_path("eml/fake-email.eml")
+        )
     assert elements[0] == NarrativeText("This is a test email to use for unit tests.")
     assert elements[0].metadata.filetype == "message/rfc822"
 
@@ -131,8 +56,8 @@ def test_partition_via_api_from_file_warns_with_file_filename(
         General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
     )
 
-    with open(example_doc_path(EML_TEST_FILE), "rb") as f:
-        partition_via_api(file=f, file_filename=example_doc_path(EML_TEST_FILE))
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        partition_via_api(file=f, file_filename=example_doc_path("eml/fake-email.eml"))
 
     assert "WARNING" in caplog.text
     assert "The file_filename kwarg will be deprecated" in caplog.text
@@ -144,7 +69,7 @@ def test_partition_via_api_from_file_raises_with_metadata_and_file_filename(
     monkeypatch.setattr(
         General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
     )
-    filename = example_doc_path(EML_TEST_FILE)
+    filename = example_doc_path("eml/fake-email.eml")
 
     with open(filename, "rb") as f, pytest.raises(ValueError):
         partition_via_api(file=f, file_filename=filename, metadata_filename=filename)
@@ -155,7 +80,7 @@ def test_partition_via_api_from_file_raises_without_filename(monkeypatch: pytest
         General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
     )
 
-    with open(example_doc_path(EML_TEST_FILE), "rb") as f, pytest.raises(ValueError):
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f, pytest.raises(ValueError):
         partition_via_api(file=f)
 
 
@@ -165,7 +90,7 @@ def test_partition_via_api_raises_with_bad_response(monkeypatch: pytest.MonkeyPa
     )
 
     with pytest.raises(ValueError):
-        partition_via_api(filename=example_doc_path(EML_TEST_FILE))
+        partition_via_api(filename=example_doc_path("eml/fake-email.eml"))
 
 
 @pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
@@ -243,6 +168,258 @@ def test_partition_via_api_image_block_extraction():
 #         partition_via_api(filename=filename, strategy="not_a_strategy")
 
 
+def test_partition_multiple_via_api_with_single_filename(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(
+        requests, "post", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+    )
+    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml")
+
+    elements = partition_multiple_via_api(filenames=[filename])
+    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_multiple_via_api_from_filenames(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    )
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    elements = partition_multiple_via_api(filenames=filenames)
+
+    assert len(elements) == 2
+    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_multiple_via_api_from_files(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    )
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        elements = partition_multiple_via_api(
+            files=files,
+            metadata_filenames=filenames,
+        )
+    assert len(elements) == 2
+    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
+    assert elements[0][0].metadata.filetype == "message/rfc822"
+
+
+def test_partition_multiple_via_api_warns_with_file_filename(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    )
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        partition_multiple_via_api(
+            files=files,
+            file_filenames=filenames,
+        )
+    assert "WARNING" in caplog.text
+    assert "The file_filenames kwarg will be deprecated" in caplog.text
+
+
+def test_partition_multiple_via_api_warns_with_file_and_metadata_filename(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+                metadata_filenames=filenames,
+                file_filenames=filenames,
+            )
+
+
+def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(
+        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
+    )
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with pytest.raises(ValueError):
+        partition_multiple_via_api(filenames=filenames)
+
+
+def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
+    )
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with pytest.raises(ValueError):
+        partition_multiple_via_api(
+            filenames=filenames,
+            content_types=["text/plain"],
+        )
+
+
+def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+                metadata_filenames=filenames,
+                content_types=["text/plain"],
+            )
+
+
+def test_partition_multiple_via_api_from_files_raises_without_filenames(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        requests,
+        "post",
+        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
+    )
+
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
+    ]
+
+    with contextlib.ExitStack() as stack:
+        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
+        with pytest.raises(ValueError):
+            partition_multiple_via_api(
+                files=files,
+            )
+
+
+def get_api_key():
+    api_key = os.getenv("UNS_API_KEY")
+    if api_key is None:
+        raise ValueError("UNS_API_KEY environment variable not set")
+    return api_key
+
+
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
+def test_partition_multiple_via_api_valid_request_data_kwargs():
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+    ]
+
+    elements = partition_multiple_via_api(
+        filenames=filenames,
+        strategy="auto",
+        api_key=get_api_key(),
+    )
+    assert isinstance(elements, list)
+
+
+@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
+def test_partition_multiple_via_api_invalid_request_data_kwargs():
+    filenames = [
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
+        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
+    ]
+    with pytest.raises(ValueError):
+        partition_multiple_via_api(
+            filenames=filenames,
+            strategy="not_a_strategy",
+            api_key=get_api_key(),
+        )
+
+
+MOCK_TEXT = """[
+    {
+        "element_id": "f49fbd614ddf5b72e06f59e554e6ae2b",
+        "text": "This is a test email to use for unit tests.",
+        "type": "NarrativeText",
+        "metadata": {
+            "sent_from": [
+                "Matthew Robinson <mrobinson@unstructured.io>"
+            ],
+            "sent_to": [
+                "Matthew Robinson <mrobinson@unstructured.io>"
+            ],
+            "subject": "Test Email",
+            "filename": "fake-email.eml",
+            "filetype": "message/rfc822"
+        }
+    }
+]"""
+
+
+class FakeResponse:
+    def __init__(self, status_code: int):
+        self.status_code = status_code
+        # The string representation of partitioned elements is nested in an additional
+        # layer in the new unstructured-client:
+        #     `elements_from_json(text=response.raw_response.text)`
+        self.raw_response = FakeRawResponse()
+        self.headers = {"Content-Type": "application/json"}
+
+    def json(self):
+        return json.loads(self.text)
+
+    @property
+    def text(self):
+        return MOCK_TEXT
+
+
+class FakeRawResponse:
+    def __init__(self):
+        self.text = MOCK_TEXT
+
+
 class FakeMultipleResponse:
     def __init__(self, status_code: int):
         self.status_code = status_code
@@ -292,211 +469,42 @@ class FakeMultipleResponse:
 ]"""
 
 
-def test_partition_multiple_via_api_with_single_filename(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests, "post", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
+@pytest.fixture()
+def expected_call():
+    with open(example_doc_path("eml/fake-email.eml"), "rb") as f:
+        file_bytes = f.read()
+    return (
+        ANY,
+        PartitionParameters(
+            files=shared.Files(
+                content=file_bytes,
+                file_name=example_doc_path("eml/fake-email.eml"),
+            ),
+            chunking_strategy=None,
+            combine_under_n_chars=None,
+            coordinates=False,
+            encoding=None,
+            extract_image_block_types=None,
+            gz_uncompressed_content_type=None,
+            hi_res_model_name=None,
+            include_orig_elements=None,
+            include_page_breaks=False,
+            languages=None,
+            max_characters=None,
+            multipage_sections=True,
+            new_after_n_chars=None,
+            ocr_languages=None,
+            output_format=shared.OutputFormat.APPLICATION_JSON,
+            overlap=0,
+            overlap_all=False,
+            pdf_infer_table_structure=True,
+            similarity_threshold=None,
+            skip_infer_table_types=None,
+            split_pdf_concurrency_level=5,
+            split_pdf_page=True,
+            starting_page_number=None,
+            strategy=shared.Strategy.AUTO,
+            unique_element_ids=False,
+            xml_keep_tags=False,
+        ),
     )
-    filename = os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE)
-
-    elements = partition_multiple_via_api(filenames=[filename])
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
-    assert elements[0][0].metadata.filetype == "message/rfc822"
-
-
-def test_partition_multiple_via_api_from_filenames(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "eml/fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    elements = partition_multiple_via_api(filenames=filenames)
-
-    assert len(elements) == 2
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
-    assert elements[0][0].metadata.filetype == "message/rfc822"
-
-
-def test_partition_multiple_via_api_from_files(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with contextlib.ExitStack() as stack:
-        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-        elements = partition_multiple_via_api(
-            files=files,
-            metadata_filenames=filenames,
-        )
-    assert len(elements) == 2
-    assert elements[0][0] == NarrativeText("This is a test email to use for unit tests.")
-    assert elements[0][0].metadata.filetype == "message/rfc822"
-
-
-def test_partition_multiple_via_api_warns_with_file_filename(
-    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
-):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with contextlib.ExitStack() as stack:
-        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-        partition_multiple_via_api(
-            files=files,
-            file_filenames=filenames,
-        )
-    assert "WARNING" in caplog.text
-    assert "The file_filenames kwarg will be deprecated" in caplog.text
-
-
-def test_partition_multiple_via_api_warns_with_file_and_metadata_filename(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=200)  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with contextlib.ExitStack() as stack:
-        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-        with pytest.raises(ValueError):
-            partition_multiple_via_api(
-                files=files,
-                metadata_filenames=filenames,
-                file_filenames=filenames,
-            )
-
-
-def test_partition_multiple_via_api_raises_with_bad_response(monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
-    )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with pytest.raises(ValueError):
-        partition_multiple_via_api(filenames=filenames)
-
-
-def test_partition_multiple_via_api_raises_with_content_types_size_mismatch(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        General, "partition", lambda *args, **kwargs: FakeResponse(status_code=500)  # type: ignore
-    )
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake-email.eml"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with pytest.raises(ValueError):
-        partition_multiple_via_api(
-            filenames=filenames,
-            content_types=["text/plain"],
-        )
-
-
-def test_partition_multiple_via_api_from_files_raises_with_size_mismatch(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with contextlib.ExitStack() as stack:
-        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-        with pytest.raises(ValueError):
-            partition_multiple_via_api(
-                files=files,
-                metadata_filenames=filenames,
-                content_types=["text/plain"],
-            )
-
-
-def test_partition_multiple_via_api_from_files_raises_without_filenames(
-    monkeypatch: pytest.MonkeyPatch,
-):
-    monkeypatch.setattr(
-        requests,
-        "post",
-        lambda *args, **kwargs: FakeMultipleResponse(status_code=200),  # type: ignore
-    )
-
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", EML_TEST_FILE),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "fake.docx"),
-    ]
-
-    with contextlib.ExitStack() as stack:
-        files = [stack.enter_context(open(filename, "rb")) for filename in filenames]
-        with pytest.raises(ValueError):
-            partition_multiple_via_api(
-                files=files,
-            )
-
-
-def get_api_key():
-    api_key = os.getenv("UNS_API_KEY")
-    if api_key is None:
-        raise ValueError("UNS_API_KEY environment variable not set")
-    return api_key
-
-
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
-@pytest.mark.skipif(skip_not_on_main, reason="Skipping test run outside of main branch")
-def test_partition_multiple_via_api_valid_request_data_kwargs():
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
-    ]
-
-    elements = partition_multiple_via_api(
-        filenames=filenames,
-        strategy="auto",
-        api_key=get_api_key(),
-    )
-    assert isinstance(elements, list)
-
-
-@pytest.mark.skipif(skip_outside_ci, reason="Skipping test run outside of CI")
-def test_partition_multiple_via_api_invalid_request_data_kwargs():
-    filenames = [
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.pdf"),
-        os.path.join(DIRECTORY, "..", "..", "example-docs", "layout-parser-paper-fast.jpg"),
-    ]
-    with pytest.raises(ValueError):
-        partition_multiple_via_api(
-            filenames=filenames,
-            strategy="not_a_strategy",
-            api_key=get_api_key(),
-        )
