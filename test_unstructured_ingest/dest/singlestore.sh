@@ -58,5 +58,8 @@ PYTHONPATH=. ./unstructured/ingest/main.py \
   --table-name $TABLE \
   --drop-empty-cols
 
-expected_num_elements=$(cat $WORK_DIR/embed/* | jq 'length')
-./scripts/singlestore-test-helpers/test_outputs.py --table-name $TABLE --database $DATABASE --num-elements $expected_num_elements
+expected_num_elements=$(cat "$WORK_DIR"/embed/* | jq 'length')
+./scripts/singlestore-test-helpers/test_outputs.py \
+  --table-name $TABLE \
+  --database $DATABASE \
+  --num-elements "$expected_num_elements"
