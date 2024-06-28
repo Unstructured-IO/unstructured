@@ -1,8 +1,7 @@
-import json
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Optional
 
-from unstructured.ingest.enhanced_dataclass import enhanced_field
+from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.error import (
     DestinationConnectionError,
 )
@@ -12,6 +11,7 @@ from unstructured.ingest.v2.interfaces import (
     FileData,
     download_responses,
 )
+from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
     DestinationRegistryEntry,
     SourceRegistryEntry,
@@ -51,23 +51,57 @@ class OpenSearchAccessConfig(AccessConfig):
 
 
 @dataclass
+class OpenSearchClientInput(EnhancedDataClassJsonMixin):
+    http_auth: Optional[tuple[str, str]] = enhanced_field(sensitive=True, default=None)
+    hosts: Optional[list[str]] = None
+    use_ssl: bool = False
+    verify_certs: bool = False
+    ssl_show_warn: bool = False
+    ca_certs: Optional[str] = None
+    client_cert: Optional[str] = None
+    client_key: Optional[str] = None
+
+
+@dataclass
 class OpenSearchConnectionConfig(ConnectionConfig):
     hosts: Optional[list[str]] = None
     username: Optional[str] = None
     access_config: OpenSearchAccessConfig = enhanced_field(sensitive=True)
 
-    def to_dict(self, **kwargs) -> dict[str, json]:
-        d = super().to_dict(**kwargs)
-        d.update(self.access_config.to_dict())
-        d["http_auth"] = (self.username, self.access_config.password)
-        return d
+    def get_client_kwargs(self) -> dict:
+        # Update auth related fields to conform to what the SDK expects based on the
+        # supported methods:
+        # https://github.com/opensearch-project/opensearch-py/blob/main/opensearchpy/client/__init__.py
+        client_input = OpenSearchClientInput()
+        if self.hosts:
+            client_input.hosts = self.hosts
+        if self.access_config.use_ssl:
+            client_input.use_ssl = self.access_config.use_ssl
+        if self.access_config.verify_certs:
+            client_input.verify_certs = self.access_config.verify_certs
+        if self.access_config.ssl_show_warn:
+            client_input.ssl_show_warn = self.access_config.ssl_show_warn
+        if self.access_config.ca_certs:
+            client_input.ca_certs = self.access_config.ca_certs
+        if self.access_config.client_cert:
+            client_input.client_cert = self.access_config.client_cert
+        if self.access_config.client_key:
+            client_input.client_key = self.access_config.client_key
+        if self.username and self.access_config.password:
+            client_input.http_auth = (self.username, self.access_config.password)
+        logger.debug(
+            f"OpenSearch client inputs mapped to: {client_input.to_dict(redact_sensitive=True)}"
+        )
+        client_kwargs = client_input.to_dict(redact_sensitive=False)
+        client_kwargs = {k: v for k, v in client_kwargs.items() if v is not None}
+        return client_kwargs
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["opensearchpy"], extras="opensearch")
     def get_client(self) -> "OpenSearch":
         from opensearchpy import OpenSearch
 
-        return OpenSearch(**self.to_dict(apply_name_overload=False))
+        return OpenSearch(**self.get_client_kwargs())
 
 
 @dataclass
@@ -128,7 +162,9 @@ class OpenSearchDownloader(ElasticsearchDownloader):
 @dataclass
 class OpenSearchUploader(ElasticsearchUploader):
     connection_config: OpenSearchConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
 
+    @requires_dependencies(["opensearchpy"], extras="opensearch")
     def load_parallel_bulk(self):
         from opensearchpy.helpers import parallel_bulk
 
@@ -145,7 +181,6 @@ add_source_entry(
         downloader_config=ElasticsearchDownloaderConfig,
     ),
 )
-
 add_destination_entry(
     destination_type=CONNECTOR_TYPE,
     entry=DestinationRegistryEntry(

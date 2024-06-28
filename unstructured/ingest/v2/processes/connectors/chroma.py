@@ -114,6 +114,7 @@ class ChromaUploaderConfig(UploaderConfig):
 
 @dataclass
 class ChromaUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
     client: Optional["Client"] = field(init=False)
@@ -192,8 +193,6 @@ class ChromaUploader(Uploader):
             f"collection {self.connection_config.collection_name} "
             f"at {self.connection_config.host}",
         )
-
-        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
         collection = self.client.get_or_create_collection(
             name=self.connection_config.collection_name
