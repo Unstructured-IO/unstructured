@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from unstructured import __name__ as integration_name
 from unstructured.__version__ import __version__ as integration_version
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.data_prep import batch_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -138,7 +138,7 @@ class AstraUploader(Uploader):
         astra_batch_size = self.upload_config.batch_size
         collection = self.get_collection()
 
-        for chunk in chunk_generator(elements_dict, astra_batch_size):
+        for chunk in batch_generator(elements_dict, astra_batch_size):
             collection.insert_many(chunk)
 
 
