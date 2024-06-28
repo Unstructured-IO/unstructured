@@ -35,7 +35,7 @@ all_tests=(
   'sharepoint-embed-cog-index.sh'
   'sqlite.sh'
   'vectara.sh'
-  'singlestore'
+  'singlestore.sh'
   'weaviate.sh'
 )
 
