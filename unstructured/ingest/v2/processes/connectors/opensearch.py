@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from unstructured.ingest.enhanced_dataclass import EnhancedDataClassJsonMixin, enhanced_field
 from unstructured.ingest.error import (
@@ -8,8 +8,6 @@ from unstructured.ingest.error import (
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
-    FileData,
-    download_responses,
 )
 from unstructured.ingest.v2.logger import logger
 from unstructured.ingest.v2.processes.connector_registry import (
@@ -110,53 +108,23 @@ class OpenSearchIndexer(ElasticsearchIndexer):
     client: "OpenSearch" = field(init=False)
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
-    def _get_doc_ids(self) -> set[str]:
-        """Fetches all document ids in an index"""
+    def load_scan(self):
         from opensearchpy.helpers import scan
 
-        scan_query: dict = {"stored_fields": [], "query": {"match_all": {}}}
-        hits = scan(
-            self.client,
-            query=scan_query,
-            scroll="1m",
-            index=self.index_config.index_name,
-        )
-
-        return {hit["_id"] for hit in hits}
+        return scan
 
 
 @dataclass
 class OpenSearchDownloader(ElasticsearchDownloader):
     connection_config: OpenSearchConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @requires_dependencies(["opensearchpy"], extras="opensearch")
-    async def run_async(self, file_data: FileData, **kwargs: Any) -> download_responses:
-        from opensearchpy import AsyncOpenSearch as AsyncOpenSearchClient
+    def load_async(self):
+        from opensearchpy import AsyncOpenSearch
         from opensearchpy.helpers import async_scan
 
-        index_name: str = file_data.additional_metadata["index_name"]
-        ids: list[str] = file_data.additional_metadata["ids"]
-
-        scan_query = {
-            "_source": self.download_config.fields,
-            "version": True,
-            "query": {"ids": {"values": ids}},
-        }
-
-        download_responses = []
-        async with AsyncOpenSearchClient(**self.connection_config.get_client_kwargs()) as client:
-            async for result in async_scan(
-                client,
-                query=scan_query,
-                scroll="1m",
-                index=index_name,
-            ):
-                download_responses.append(
-                    self.generate_download_response(
-                        result=result, index_name=index_name, file_data=file_data
-                    )
-                )
-        return download_responses
+        return AsyncOpenSearch, async_scan
 
 
 @dataclass
