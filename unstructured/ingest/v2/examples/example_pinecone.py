@@ -40,8 +40,16 @@ if __name__ == "__main__":
         destination_connection_config=PineconeConnectionConfig(
             # You'll need to set PINECONE_API_KEY environment variable to run this example
             access_config=PineconeAccessConfig(api_key=os.getenv("PINECONE_API_KEY")),
-            index_name="your index name here. e.g. my-index",
-            environment="your environment name here. e.g. us-east-1",
+            index_name=os.getenv(
+                "PINECONE_INDEX",
+                default="your index name here. e.g. my-index,"
+                "or define in environment variable PINECONE_INDEX",
+            ),
+            environment=os.getenv(
+                "PINECONE_ENVIRONMENT",
+                default="your environment name here. e.g. us-east-1,"
+                "or define in environment variable PINECONE_ENVIRONMENT",
+            ),
         ),
         stager_config=PineconeUploadStagerConfig(),
         uploader_config=PineconeUploaderConfig(batch_size=10, num_of_processes=2),
