@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Optional
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
-from unstructured.ingest.error import DestinationConnectionError, WriteError
+from unstructured.ingest.error import DestinationConnectionError
 from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -128,16 +128,15 @@ class PineconeUploader(Uploader):
     def check_connection(self):
         _ = self.connection_config.create_index()
 
-    @DestinationConnectionError.wrap
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
-        import pinecone.core.client.exceptions
+        from pinecone.core.client.exceptions import PineconeApiException
 
         try:
             index = self.connection_config.create_index()
             response = index.upsert(batch)
-        except pinecone.core.client.exceptions.PineconeApiException as api_error:
-            raise WriteError(f"http error: {api_error}") from api_error
+        except PineconeApiException as api_error:
+            raise DestinationConnectionError(f"http error: {api_error}") from api_error
         logger.debug(f"results: {response}")
 
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
