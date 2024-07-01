@@ -8,7 +8,6 @@ flake8-print
 freezegun
 label_studio_sdk
 mypy
-psutil
 pydantic
 pytest-cov
 pytest-mock
