@@ -278,7 +278,7 @@ prompt-toolkit==3.0.47
     #   jupyter-console
 psutil==6.0.0
     # via
-    #   -c ./test.txt
+    #   -c ./base.txt
     #   ipykernel
 ptyprocess==0.7.0
     # via

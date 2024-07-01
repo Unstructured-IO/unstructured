@@ -11,8 +11,8 @@ emoji
 dataclasses-json
 python-iso639
 langdetect
-# NOTE(robinson) - pinned due to a feature being deprecated in the latest version. plan to
-# investigate and remove pin
+# NOTE(robinson) - numpy pin is because ONNX model weights are only compatible
+# with numpy 1.x.x
 numpy<2
 rapidfuzz
 backoff
@@ -20,3 +20,4 @@ typing-extensions
 unstructured-client
 wrapt
 tqdm
+psutil

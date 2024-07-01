@@ -125,7 +125,7 @@ oauthlib==3.2.2
     # via
     #   kubernetes
     #   requests-oauthlib
-onnxruntime==1.18.0
+onnxruntime==1.18.1
     # via chromadb
 opentelemetry-api==1.25.0
     # via

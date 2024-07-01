@@ -121,7 +121,7 @@ onnx==1.16.1
     # via
     #   -r ./extra-pdf-image.in
     #   unstructured-inference
-onnxruntime==1.18.0
+onnxruntime==1.18.1
     # via unstructured-inference
 opencv-python==4.8.0.76
     # via
@@ -153,7 +153,7 @@ pdfplumber==0.11.1
     # via layoutparser
 pikepdf==9.0.0
     # via -r ./extra-pdf-image.in
-pillow==10.3.0
+pillow==10.4.0
     # via
     #   layoutparser
     #   matplotlib
@@ -277,7 +277,7 @@ tqdm==4.66.4
     #   huggingface-hub
     #   iopath
     #   transformers
-transformers==4.41.2
+transformers==4.42.3
     # via unstructured-inference
 typing-extensions==4.12.2
     # via
