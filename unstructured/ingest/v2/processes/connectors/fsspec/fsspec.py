@@ -304,6 +304,7 @@ FsspecUploaderConfigT = TypeVar("FsspecUploaderConfigT", bound=FsspecUploaderCon
 
 @dataclass
 class FsspecUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: FsspecUploaderConfigT = field(default=None)
 
     @property

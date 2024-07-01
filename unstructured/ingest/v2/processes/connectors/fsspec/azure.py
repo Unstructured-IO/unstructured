@@ -114,6 +114,7 @@ class AzureUploaderConfig(FsspecUploaderConfig):
 
 @dataclass
 class AzureUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: AzureConnectionConfig
     upload_config: AzureUploaderConfig = field(default=None)
 

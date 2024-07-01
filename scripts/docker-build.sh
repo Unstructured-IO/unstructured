@@ -9,7 +9,6 @@ DOCKER_BUILD_CMD=(docker buildx build --load -f Dockerfile
   --build-arg PIP_VERSION="$PIP_VERSION"
   --build-arg BUILDKIT_INLINE_CACHE=1
   --progress plain
-  --platform linux/amd64
   --cache-from "$DOCKER_REPOSITORY":latest
   -t "$DOCKER_IMAGE" .)
 
