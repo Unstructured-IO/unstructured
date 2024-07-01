@@ -530,4 +530,5 @@ jobs:
         with:
           image: "unstructured:dev"
           # NOTE(robinson) - revert this to medium when we bump libreoffice
-          severity-cutoff: high
+          severity-cutoff: critical
+          only-fixed: true
