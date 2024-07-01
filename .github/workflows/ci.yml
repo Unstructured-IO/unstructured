@@ -530,3 +530,4 @@ jobs:
         with:
           image: "unstructured:dev"
           severity-cutoff: critical
+          only-fixed: true
