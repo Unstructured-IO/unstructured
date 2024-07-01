@@ -6,6 +6,8 @@
 
 ### Fixes
 
+* **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
+
 ## 0.14.9
 
 ### Enhancements
