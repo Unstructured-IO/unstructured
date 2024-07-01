@@ -111,6 +111,8 @@ class PineconeUploadStager(UploadStager):
         ]
 
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
         with open(output_path, "w") as output_file:
             json.dump(conformed_elements, output_file)
         return output_path
