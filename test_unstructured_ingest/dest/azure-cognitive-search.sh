@@ -73,7 +73,7 @@ fi
 RUN_SCRIPT=${RUN_SCRIPT:-./unstructured/ingest/main.py}
 PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   local \
-  --num-processes "1" \
+  --num-processes "$max_processes" \
   --output-dir "$OUTPUT_DIR" \
   --strategy fast \
   --verbose \
@@ -81,6 +81,7 @@ PYTHONPATH=${PYTHONPATH:-.} "$RUN_SCRIPT" \
   --input-path example-docs/fake-memo.pdf \
   --work-dir "$WORK_DIR" \
   azure-cognitive-search \
+  --num-processes "1" \
   --key "$AZURE_SEARCH_API_KEY" \
   --endpoint "$AZURE_SEARCH_ENDPOINT" \
   --index "$DESTINATION_INDEX"

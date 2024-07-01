@@ -55,7 +55,7 @@ class AzureCognitiveSearchCliUploaderConfig(CliConfig):
             ),
             click.Option(
                 ["--num-processes"],
-                default=4,
+                default=1,
                 type=int,
                 help="Number of processes to use for uploading.",
             ),

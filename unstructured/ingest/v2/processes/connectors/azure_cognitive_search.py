@@ -1,4 +1,5 @@
 import json
+import multiprocessing as mp
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -6,6 +7,7 @@ from pathlib import Path
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
+from unstructured.ingest.utils.data_prep import chunk_generator
 from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
@@ -61,7 +63,7 @@ class AzureCognitiveSearchUploadStagerConfig(UploadStagerConfig):
 @dataclass
 class AzureCognitiveSearchUploaderConfig(UploaderConfig):
     batch_size: int = 100
-    num_of_processes: int = 4
+    num_of_processes: int = 1
 
 
 @dataclass
@@ -195,21 +197,17 @@ class AzureCognitiveSearchUploader(Uploader):
             f" {str(self.upload_config.num_of_processes)} (number of) processes"
         )
 
-        # batch_size = self.upload_config.batch_size
+        batch_size = self.upload_config.batch_size
 
-        for element in elements_dict:
-            self.write_dict(elements_dict=[element])
+        if self.upload_config.num_of_processes == 1:
+            for chunk in chunk_generator(elements_dict, batch_size):
+                self.write_dict(elements_dict=chunk)  # noqa: E203
 
-        # # if self.upload_config.num_of_processes == 1:
-        # for chunk in chunk_generator(elements_dict, batch_size):
-        #     import pdb; pdb.set_trace()
-        #     self.write_dict(elements_dict=chunk)  # noqa: E203
-
-        # else:
-        #     with mp.Pool(
-        #         processes=self.upload_config.num_of_processes,
-        #     ) as pool:
-        #         pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
+        else:
+            with mp.Pool(
+                processes=self.upload_config.num_of_processes,
+            ) as pool:
+                pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
 
 
 add_destination_entry(
