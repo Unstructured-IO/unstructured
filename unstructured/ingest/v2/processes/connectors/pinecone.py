@@ -44,7 +44,7 @@ class PineconeConnectionConfig(ConnectionConfig):
     access_config: PineconeAccessConfig = enhanced_field(sensitive=True)
 
     @requires_dependencies(["pinecone"], extras="pinecone")
-    def create_index(self) -> "PineconeIndex":
+    def get_index(self) -> "PineconeIndex":
         from pinecone import Pinecone
 
         from unstructured import __version__ as unstructured_version
@@ -126,14 +126,14 @@ class PineconeUploader(Uploader):
 
     @DestinationConnectionError.wrap
     def check_connection(self):
-        _ = self.connection_config.create_index()
+        _ = self.connection_config.get_index()
 
     @requires_dependencies(["pinecone"], extras="pinecone")
     def upsert_batch(self, batch):
         from pinecone.core.client.exceptions import PineconeApiException
 
         try:
-            index = self.connection_config.create_index()
+            index = self.connection_config.get_index()
             response = index.upsert(batch)
         except PineconeApiException as api_error:
             raise DestinationConnectionError(f"http error: {api_error}") from api_error
