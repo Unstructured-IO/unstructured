@@ -7,6 +7,8 @@
 
 ### Features
 
+* **Add AstraDB source connector** Adds support for ingesting documents from AstraDB.
+
 ### Fixes
 
 * **Fix Slack CI test** Change channel that Slack test is pointing to because previous test bot expired
