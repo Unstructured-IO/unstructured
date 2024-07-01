@@ -113,7 +113,6 @@ class Chunker(ReformatNode):
                 api_url=self.partition_config.partition_endpoint,  # type: ignore
                 chunking_strategy=self.chunking_config.chunking_strategy,
                 combine_under_n_chars=self.chunking_config.combine_text_under_n_chars,
-                combine_text_under_n_chars=self.chunking_config.combine_text_under_n_chars,
                 include_orig_elements=self.chunking_config.include_orig_elements,
                 max_characters=self.chunking_config.max_characters,
                 multipage_sections=self.chunking_config.multipage_sections,
