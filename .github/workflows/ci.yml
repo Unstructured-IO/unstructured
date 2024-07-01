@@ -529,5 +529,5 @@ jobs:
         uses: anchore/scan-action@v3
         with:
           image: "unstructured:dev"
-          # NOTE(robinson) - revert this to medium when we bump libreoffice
           severity-cutoff: critical
+          only-fixed: true
