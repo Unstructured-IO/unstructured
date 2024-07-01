@@ -53,10 +53,10 @@ class ElasticsearchAccessConfig(AccessConfig):
 
 @dataclass
 class ElasticsearchClientInput(EnhancedDataClassJsonMixin):
-    hosts: Optional[str] = None
+    hosts: Optional[list[str]] = None
     cloud_id: Optional[str] = None
     ca_certs: Optional[str] = None
-    basic_auth: Optional[tuple[str, str]] = None
+    basic_auth: Optional[tuple[str, str]] = enhanced_field(sensitive=True, default=None)
     api_key: Optional[str] = enhanced_field(sensitive=True, default=None)
 
 
@@ -322,7 +322,7 @@ class ElasticsearchUploadStager(UploadStager):
 class ElasticsearchUploaderConfig(UploaderConfig):
     index_name: str
     batch_size_bytes: int = 15_000_000
-    thread_count: int = 4
+    num_threads: int = 4
 
 
 @dataclass
@@ -331,7 +331,14 @@ class ElasticsearchUploader(Uploader):
     upload_config: ElasticsearchUploaderConfig
     connection_config: ElasticsearchConnectionConfig
 
+    @requires_dependencies(["elasticsearch"], extras="elasticsearch")
+    def load_parallel_bulk(self):
+        from elasticsearch.helpers import parallel_bulk
+
+        return parallel_bulk
+
     def run(self, contents: list[UploadContent], **kwargs: Any) -> None:
+        parallel_bulk = self.load_parallel_bulk()
         elements_dict = []
         for content in contents:
             with open(content.path) as elements_file:
@@ -342,14 +349,13 @@ class ElasticsearchUploader(Uploader):
             f"writing {len(elements_dict)} elements via document batches to destination "
             f"index named {self.upload_config.index_name} at {upload_destination} with "
             f"batch size (in bytes) {self.upload_config.batch_size_bytes} with "
-            f"{self.upload_config.thread_count} (number of) threads"
+            f"{self.upload_config.num_threads} (number of) threads"
         )
-        from elasticsearch.helpers import parallel_bulk
 
         client = self.connection_config.get_client()
         if not client.indices.exists(index=self.upload_config.index_name):
             logger.warning(
-                f"Elasticsearch index does not exist: "
+                f"{(self.__class__.__name__).replace('Uploader', '')} index does not exist: "
                 f"{self.upload_config.index_name}. "
                 f"This may cause issues when uploading."
             )
@@ -359,11 +365,14 @@ class ElasticsearchUploader(Uploader):
             for success, info in parallel_bulk(
                 client=client,
                 actions=batch,
-                thread_count=self.upload_config.thread_count,
+                thread_count=self.upload_config.num_threads,
             ):
                 if not success:
                     logger.error(
-                        "upload failed for a batch in elasticsearch destination connector:", info
+                        "upload failed for a batch in "
+                        f"{(self.__class__.__name__).replace('Uploader', '')} "
+                        "destination connector:",
+                        info,
                     )
 
 
