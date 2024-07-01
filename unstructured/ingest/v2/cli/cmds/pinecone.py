@@ -55,16 +55,8 @@ class PineconeCliUploaderConfig(CliConfig):
         return options
 
 
-@dataclass
-class PineconeCliUploadStagerConfig(CliConfig):
-    @staticmethod
-    def get_cli_options() -> list[click.Option]:
-        return []
-
-
 pinecone_dest_cmd = DestCmd(
     cmd_name=CONNECTOR_TYPE,
     connection_config=PineconeCliConnectionConfig,
     uploader_config=PineconeCliUploaderConfig,
-    upload_stager_config=PineconeCliUploadStagerConfig,
 )
