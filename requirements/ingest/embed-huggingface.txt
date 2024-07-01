@@ -67,20 +67,21 @@ jsonpatch==1.33
     # via langchain-core
 jsonpointer==3.0.0
     # via jsonpatch
-langchain==0.2.3
+langchain==0.2.6
     # via langchain-community
-langchain-community==0.2.4
-    # via -r ./ingest/embed-huggingface.in
-langchain-core==0.2.2
+langchain-community==0.2.6
+    # via
+    #   -c ./ingest/../deps/constraints.txt
+    #   -r ./ingest/embed-huggingface.in
+langchain-core==0.2.10
     # via
     #   langchain
     #   langchain-community
     #   langchain-text-splitters
-langchain-text-splitters==0.2.1
+langchain-text-splitters==0.2.2
     # via langchain
-langsmith==0.1.62
+langsmith==0.1.82
     # via
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   langchain-core
@@ -105,7 +106,6 @@ networkx==3.2.1
 numpy==1.26.4
     # via
     #   -c ./ingest/../base.txt
-    #   -c ./ingest/../deps/constraints.txt
     #   langchain
     #   langchain-community
     #   scikit-learn
@@ -167,7 +167,7 @@ sqlalchemy==2.0.31
     #   langchain-community
 sympy==1.12.1
     # via torch
-tenacity==8.4.1
+tenacity==8.4.2
     # via
     #   langchain
     #   langchain-community

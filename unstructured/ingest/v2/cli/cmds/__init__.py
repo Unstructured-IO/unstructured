@@ -2,6 +2,7 @@ from collections import Counter
 
 import click
 
+from .astra import astra_dest_cmd
 from .chroma import chroma_dest_cmd
 from .elasticsearch import elasticsearch_dest_cmd, elasticsearch_src_cmd
 from .fsspec.azure import azure_dest_cmd, azure_src_cmd
@@ -10,7 +11,10 @@ from .fsspec.dropbox import dropbox_dest_cmd, dropbox_src_cmd
 from .fsspec.gcs import gcs_dest_cmd, gcs_src_cmd
 from .fsspec.s3 import s3_dest_cmd, s3_src_cmd
 from .fsspec.sftp import sftp_dest_cmd, sftp_src_cmd
+from .google_drive import google_drive_src_cmd
 from .local import local_dest_cmd, local_src_cmd
+from .onedrive import onedrive_drive_src_cmd
+from .opensearch import opensearch_dest_cmd
 from .weaviate import weaviate_dest_cmd
 
 src_cmds = [
@@ -19,7 +23,9 @@ src_cmds = [
     dropbox_src_cmd,
     elasticsearch_src_cmd,
     gcs_src_cmd,
+    google_drive_src_cmd,
     local_src_cmd,
+    onedrive_drive_src_cmd,
     s3_src_cmd,
     sftp_src_cmd,
 ]
@@ -34,6 +40,7 @@ if duplicate_src_names:
     )
 
 dest_cmds = [
+    astra_dest_cmd,
     azure_dest_cmd,
     box_dest_cmd,
     chroma_dest_cmd,
@@ -41,6 +48,7 @@ dest_cmds = [
     elasticsearch_dest_cmd,
     gcs_dest_cmd,
     local_dest_cmd,
+    opensearch_dest_cmd,
     s3_dest_cmd,
     sftp_dest_cmd,
     weaviate_dest_cmd,

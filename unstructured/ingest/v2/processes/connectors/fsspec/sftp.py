@@ -136,6 +136,7 @@ class SftpUploaderConfig(FsspecUploaderConfig):
 
 @dataclass
 class SftpUploader(FsspecUploader):
+    connector_type: str = CONNECTOR_TYPE
     connection_config: SftpConnectionConfig
     upload_config: SftpUploaderConfig = field(default=None)
 

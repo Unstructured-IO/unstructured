@@ -31,9 +31,6 @@ from unstructured.utils import requires_dependencies
 if TYPE_CHECKING:
     from chromadb import Client
 
-
-import typing as t
-
 CONNECTOR_TYPE = "chroma"
 
 
@@ -117,6 +114,7 @@ class ChromaUploaderConfig(UploaderConfig):
 
 @dataclass
 class ChromaUploader(Uploader):
+    connector_type: str = CONNECTOR_TYPE
     upload_config: ChromaUploaderConfig
     connection_config: ChromaConnectionConfig
     client: Optional["Client"] = field(init=False)
@@ -165,7 +163,7 @@ class ChromaUploader(Uploader):
             raise ValueError(f"chroma error: {e}") from e
 
     @staticmethod
-    def prepare_chroma_list(chunk: t.Tuple[t.Dict[str, t.Any]]) -> t.Dict[str, t.List[t.Any]]:
+    def prepare_chroma_list(chunk: tuple[dict[str, Any]]) -> dict[str, list[Any]]:
         """Helper function to break a tuple of dicts into list of parallel lists for ChromaDb.
         ({'id':1}, {'id':2}, {'id':3}) -> {'ids':[1,2,3]}"""
         chroma_dict = {}
@@ -195,8 +193,6 @@ class ChromaUploader(Uploader):
             f"collection {self.connection_config.collection_name} "
             f"at {self.connection_config.host}",
         )
-
-        logger.info(f"Inserting / updating {len(elements_dict)} documents to destination ")
 
         collection = self.client.get_or_create_collection(
             name=self.connection_config.collection_name

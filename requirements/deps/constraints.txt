@@ -54,14 +54,9 @@ unstructured-client<=0.18.0
 fsspec==2024.5.0
 
 # python 3.12 support
-# NOTE(robinson) - pinned due to a feature being deprecated in the latest version. plan to
-# investigate and remove pin
-numpy==1.26.4
 wrapt>=1.14.0
 
-
-# NOTE(robinson): for compatiblity with voyage embeddings
-langsmith==0.1.62
+langchain-community>=0.2.5
 
 # NOTE(robinson): choma was pinned to importlib-metadata>=7.1.0 but 7.1.0 was installed
 # instead of 7.2.0. Need to investigate

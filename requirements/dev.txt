@@ -66,7 +66,7 @@ comm==0.2.2
     # via
     #   ipykernel
     #   ipywidgets
-debugpy==1.8.1
+debugpy==1.8.2
     # via ipykernel
 decorator==5.1.1
     # via ipython
@@ -186,7 +186,7 @@ jupyter-server==2.14.1
     #   notebook-shim
 jupyter-server-terminals==0.5.3
     # via jupyter-server
-jupyterlab==4.2.2
+jupyterlab==4.2.3
     # via notebook
 jupyterlab-pygments==0.3.0
     # via nbconvert
@@ -267,7 +267,9 @@ prompt-toolkit==3.0.47
     #   ipython
     #   jupyter-console
 psutil==6.0.0
-    # via ipykernel
+    # via
+    #   -c ./test.txt
+    #   ipykernel
 ptyprocess==0.7.0
     # via
     #   pexpect

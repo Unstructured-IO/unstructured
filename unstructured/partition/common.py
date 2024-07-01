@@ -6,9 +6,11 @@ import subprocess
 from datetime import datetime
 from io import BufferedReader, BytesIO, TextIOWrapper
 from tempfile import SpooledTemporaryFile
+from time import sleep
 from typing import IO, TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import emoji
+import psutil
 from tabulate import tabulate
 
 from unstructured.documents.coordinates import CoordinateSystem, PixelSpace
@@ -365,11 +367,22 @@ def remove_element_metadata(layout_elements) -> list[Element]:
     return elements
 
 
+def _is_soffice_running():
+    for proc in psutil.process_iter():
+        try:
+            if "soffice" in proc.name().lower():
+                return True
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+    return False
+
+
 def convert_office_doc(
     input_filename: str,
     output_directory: str,
     target_format: str = "docx",
     target_filter: Optional[str] = None,
+    wait_for_soffice_ready_time_out: int = 10,
 ):
     """Converts a .doc file to a .docx file using the libreoffice CLI.
 
@@ -384,6 +397,8 @@ def convert_office_doc(
     target_filter: str
         The output filter name to use when converting. See references below
         for details.
+    wait_for_soffice_ready_time_out: int
+        The max wait time in seconds for soffice to become available to run
 
     References
     ----------
@@ -407,12 +422,21 @@ def convert_office_doc(
         input_filename,
     ]
     try:
-        process = subprocess.Popen(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        output, error = process.communicate()
+        # only one soffice process can be ran
+        wait_time = 0
+        sleep_time = 0.1
+        output = subprocess.run(command, capture_output=True)
+        message = output.stdout.decode().strip()
+        # we can't rely on returncode unfortunately because on macOS it would return 0 even when the
+        # command failed to run; instead we have to rely on the stdout being empty as a sign of the
+        # process failed
+        while (wait_time < wait_for_soffice_ready_time_out) and (message == ""):
+            wait_time += sleep_time
+            if _is_soffice_running():
+                sleep(sleep_time)
+            else:
+                output = subprocess.run(command, capture_output=True)
+                message = output.stdout.decode().strip()
     except FileNotFoundError:
         raise FileNotFoundError(
             """soffice command was not found. Please install libreoffice
@@ -423,9 +447,12 @@ on your system and try again.
 - Debian: https://wiki.debian.org/LibreOffice""",
         )
 
-    logger.info(output.decode().strip())
-    if error:
-        logger.error(error.decode().strip())
+    logger.info(message)
+    if output.returncode != 0 or message == "":
+        logger.error(
+            "soffice failed to convert to format %s with code %i", target_format, output.returncode
+        )
+        logger.error(output.stderr.decode().strip())
 
 
 def exactly_one(**kwargs: Any) -> None:
