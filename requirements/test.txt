@@ -132,7 +132,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-ruff==0.5.0
+ruff==0.4.10
     # via -r ./test.in
 six==1.16.0
     # via
