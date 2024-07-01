@@ -1,4 +1,4 @@
-FROM quay.io/unstructured-io/base-images:wolfi-base-9b05821@sha256:7ae732aa190348e121899b9699c660bacde2d3659f854d6014044cff9d22e0ed as base
+FROM quay.io/unstructured-io/base-images:wolfi-base-d46498e@sha256:3db0544df1d8d9989cd3c3b28670d8b81351dfdc1d9129004c71ff05996fd51e as base
 
 USER root
 
