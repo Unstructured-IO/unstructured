@@ -1,6 +1,4 @@
-# type: ignore
 import json
-import multiprocessing as mp
 import typing as t
 import uuid
 from dataclasses import dataclass, field
@@ -8,7 +6,7 @@ from pathlib import Path
 
 from unstructured.ingest.enhanced_dataclass import enhanced_field
 from unstructured.ingest.error import DestinationConnectionError, WriteError
-from unstructured.ingest.utils.data_prep import chunk_generator
+from unstructured.ingest.utils.string_and_date_utils import ensure_isoformat_datetime
 from unstructured.ingest.v2.interfaces import (
     AccessConfig,
     ConnectionConfig,
@@ -73,7 +71,7 @@ class AzureCognitiveSearchUploadStager(UploadStager):
     )
 
     @staticmethod
-    def conform_dict(data: dict) -> None:
+    def conform_dict(data: dict) -> dict:
         """
         updates the dictionary that is from each Element being converted into a dict/json
         into a dictionary that conforms to the schema expected by the
@@ -96,25 +94,32 @@ class AzureCognitiveSearchUploadStager(UploadStager):
         if links := data.get("metadata", {}).get("links"):
             data["metadata"]["links"] = [json.dumps(link) for link in links]
         if last_modified := data.get("metadata", {}).get("last_modified"):
-            data["metadata"]["last_modified"] = parser.parse(last_modified).strftime(
+            data["metadata"]["last_modified"] = parser.parse(
+                ensure_isoformat_datetime(last_modified)
+            ).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             )
         if date_created := data.get("metadata", {}).get("data_source", {}).get("date_created"):
-            data["metadata"]["data_source"]["date_created"] = parser.parse(date_created).strftime(
+            data["metadata"]["data_source"]["date_created"] = parser.parse(
+                ensure_isoformat_datetime(date_created)
+            ).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             )
         if date_modified := data.get("metadata", {}).get("data_source", {}).get("date_modified"):
-            data["metadata"]["data_source"]["date_modified"] = parser.parse(date_modified).strftime(
+            data["metadata"]["data_source"]["date_modified"] = parser.parse(
+                ensure_isoformat_datetime(date_modified)
+            ).strftime(
                 "%Y-%m-%dT%H:%M:%S.%fZ",
             )
         if date_processed := data.get("metadata", {}).get("data_source", {}).get("date_processed"):
             data["metadata"]["data_source"]["date_processed"] = parser.parse(
-                date_processed,
+                ensure_isoformat_datetime(date_processed)
             ).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         if regex_metadata := data.get("metadata", {}).get("regex_metadata"):
             data["metadata"]["regex_metadata"] = json.dumps(regex_metadata)
         if page_number := data.get("metadata", {}).get("page_number"):
             data["metadata"]["page_number"] = str(page_number)
+        return data
 
     def run(
         self,
@@ -126,9 +131,7 @@ class AzureCognitiveSearchUploadStager(UploadStager):
         with open(elements_filepath) as elements_file:
             elements_contents = json.load(elements_file)
 
-        conformed_elements = [
-            self.conform_dict(element_dict=element) for element in elements_contents
-        ]
+        conformed_elements = [self.conform_dict(data=element) for element in elements_contents]
 
         output_path = Path(output_dir) / Path(f"{output_filename}.json")
         with open(output_path, "w") as output_file:
@@ -140,6 +143,7 @@ class AzureCognitiveSearchUploadStager(UploadStager):
 class AzureCognitiveSearchUploader(Uploader):
     upload_config: AzureCognitiveSearchUploaderConfig
     connection_config: AzureCognitiveSearchConnectionConfig
+    connector_type: str = CONNECTOR_TYPE
 
     @DestinationConnectionError.wrap
     @requires_dependencies(["azure"], extras="azure-cognitive-search")
@@ -185,23 +189,27 @@ class AzureCognitiveSearchUploader(Uploader):
 
         logger.info(
             f"writing document batches to destination"
-            f" endpoint at {self.connection_config.endpoint}"
-            f" index at {self.connection_config.index}",
-            f" with batch size {self.upload_config.batch_size} and"
-            f" {self.upload_config.num_of_processes} (number of) processes",
+            f" endpoint at {str(self.connection_config.endpoint)}"
+            f" index at {str(self.connection_config.index)}"
+            f" with batch size {str(self.upload_config.batch_size)} and"
+            f" {str(self.upload_config.num_of_processes)} (number of) processes"
         )
 
-        batch_size = self.upload_config.batch_size
+        # batch_size = self.upload_config.batch_size
 
-        if self.upload_config.num_of_processes == 1:
-            for chunk in chunk_generator(elements_dict, batch_size):
-                self.write_dict(chunk)  # noqa: E203
+        for element in elements_dict:
+            self.write_dict(elements_dict=[element])
 
-        else:
-            with mp.Pool(
-                processes=self.upload_config.num_of_processes,
-            ) as pool:
-                pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
+        # # if self.upload_config.num_of_processes == 1:
+        # for chunk in chunk_generator(elements_dict, batch_size):
+        #     import pdb; pdb.set_trace()
+        #     self.write_dict(elements_dict=chunk)  # noqa: E203
+
+        # else:
+        #     with mp.Pool(
+        #         processes=self.upload_config.num_of_processes,
+        #     ) as pool:
+        #         pool.map(self.write_dict, list(chunk_generator(elements_dict, batch_size)))
 
 
 add_destination_entry(
